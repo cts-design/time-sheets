@@ -1,0 +1,226 @@
+/*
+    Document   : style
+    Created on : Dec 13, 2010, 3:06:41 PM
+    Author     : Daniel Nolan
+    Description: main site style sheet
+    Copyright  : Complete Technology Solutions
+
+*/
+
+/* HTML Elements */
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    overflow-y: scroll;
+}
+
+a {
+    color: #3B71A0;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+h1 {
+    color: orange;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+h2 {
+    color: orange;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+strong {
+    font-weight: bold;
+}
+
+
+/* Text */
+.small {
+    font-size: 11px;
+}
+
+.normal {
+    font-weight: normal;
+}
+
+/* Margin Classes */
+.bot-mar-10 {
+    margin-bottom: 10px;
+}
+
+.right-mar-10 {
+    margin-right: 10px;
+}
+
+.left-mar-10 {
+    margin-left: 10px;
+}
+
+/* Structure Elements */
+
+#container {
+    margin: 0 auto;
+    width: 977px;
+}
+
+#header {
+    width: 970px;
+    color: #333;
+    padding: 0 0 0 0;
+    height: 90px;
+    margin: 0;
+    background: #FFF;
+}
+
+#nav {
+    color: white;
+    background-color: #333;
+    height: 30px;
+
+}
+
+#nav li {
+    float: left;
+    margin: 8px 10px 0 ;
+
+}
+
+#nav a {
+    color: white;
+
+}
+
+#content {
+    width: 950px;
+    color: #333;
+    background: #fff;
+    margin: 0px 0px 5px 0px;
+    padding: 10px;
+    min-height: 400px;
+    overflow: hidden;
+}
+
+#footer {
+    background-color: #fff;
+    font-size: 10px;
+    font-weight: normal;
+    color: #000;
+    width: 950px;
+    border: none;
+    margin: 0px 0px 10px 0px;
+    padding: 10px;
+}
+
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
+}
+
+.clear {
+    clear: both;
+}
+
+/*Specific Styles */
+
+#logo{
+    font-size: 40px;
+    margin: 10px 0 0 10px;
+}
+
+#logoLogout {
+    text-align: right;
+    margin: 0 10px 10px 0;
+}
+
+#logoLogout img{
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+#logoLogout p{
+    height: 15px;
+    width: 300px;
+}
+
+#content h1 {
+    margin: 5px 10px 5px 0;
+}
+
+
+/* nav */
+#navigation {
+    background: #fff;
+    margin: 5px 0;
+    padding: 0 10px;
+    height: 40px;
+    line-height: 40px;
+    width: 950px;
+}
+
+#navigation ul {
+    background: #fff;
+    width: 775px;
+    margin: 0 auto;
+}
+
+#navigation ul li {
+    background: #fff;
+    float: left;
+    margin-right: 25px;
+}
+
+#navigation ul li a {
+    font-size: 14px;
+    display: block;
+    padding: 0 10px;
+}
+
+#navigation ul li a:hover {
+    background-color: #1875BB;
+    color: #fff;
+    text-decoration: none;
+}
+
+/* nav */
+#bottom_navigation {
+    background: #fff;
+    margin: 5px 0;
+    padding: 0 10px;
+    height: 40px;
+    line-height: 40px;
+    width: 950px;
+}
+
+#bottom_navigation ul {
+    background: #fff;
+    width: 775px;
+    margin: 0 auto;
+}
+
+#bottom_navigation ul li {
+    background: #fff;
+    float: left;
+    margin-right: 25px;
+}
+
+#bottom_navigation ul li a {
+    font-size: 14px;
+    display: block;
+    padding: 0 10px;
+}
+
+#bottom_navigation ul li a:hover {
+    background-color: #1875BB;
+    color: #fff;
+    text-decoration: none;
+}
