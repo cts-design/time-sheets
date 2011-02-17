@@ -9,3 +9,9 @@ app/config/database.php
 app/config/atlas.php
 .settings
 .project
+app/webroot/files/public/*
+webroot/files/public/*
+app/img/public/*
+img/public/*
+app/img/_thumbs/*
+img/_thumbs/*
