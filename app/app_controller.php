@@ -70,39 +70,46 @@ class AppController extends Controller {
 	'WY'=>"Wyoming");
 
     function beforeFilter() {
-	parent::beforeFilter();
-	$this->Auth->autoRedirect = false;
-	$this->Auth->authorize = 'actions';
-	$this->Auth->actionPath = 'controllers/';
-	//@TODO possibly change this to check specfic permissions 
-	if($this->Auth->user('role_id') > 1) {
-	    $this->Auth->allow(
-		    'display',
-		    'admin_auto_complete_first_ajax',
-		    'admin_auto_complete_last_ajax',
-		    'admin_auto_complete_ssn_ajax'
-		    );
-	}
-	else {
-	    $this->Auth->allow('display');
-	}
-	// Disable caching of pages that require authentication
-	if($this->Auth->user()) {
-	    $this->disableCache();
-	}
-	if (isset($this->params['prefix']) && $this->params['prefix'] == 'admin') {
-	    $this->layout = 'admin';
-	    if($this->Auth->user('role_id') == 1 ) {
-		$this->Session->destroy();
-		$this->Session->setFlash(__('You are not authorized to access that location', true), 'flash_failure');
-		$this->redirect(array('controller' => 'users', 'action' => 'self_sign_login', 'admin' => false));
-	    }
-	    $this->Auth->loginAction = array('admin' => true, 'controller' => 'users', 'action' => 'login');
-
-	} else {
-	   $this->Auth->loginAction = array('admin' => false, 'controller' => 'users', 'action' => 'self_sign_login');
-	}
-	$this->Auth->flashElement = 'flash_auth';
+		parent::beforeFilter();
+		$this->Auth->autoRedirect = false;
+		$this->Auth->authorize = 'actions';
+		$this->Auth->actionPath = 'controllers/';
+		//@TODO possibly change this to check specfic permissions 
+		if($this->Auth->user('role_id') > 1) {
+		    $this->Auth->allow(
+			    'display',
+			    'admin_auto_complete_first_ajax',
+			    'admin_auto_complete_last_ajax',
+			    'admin_auto_complete_ssn_ajax'
+			    );
+		}
+		else {
+		    $this->Auth->allow('display');
+		}
+		// Disable caching of pages that require authentication
+		if($this->Auth->user()) {
+		    $this->disableCache();
+		}
+		if (isset($this->params['prefix']) && $this->params['prefix'] == 'admin') {
+		    $this->layout = 'admin';
+		    if($this->Auth->user('role_id') == 1 ) {
+			$this->Session->destroy();
+			$this->Session->setFlash(__('You are not authorized to access that location', true), 'flash_failure');
+			$this->redirect(array('controller' => 'users', 'action' => 'self_sign_login', 'admin' => false));
+		    }
+		    $this->Auth->loginAction = array('admin' => true, 'controller' => 'users', 'action' => 'login');
+	
+		} else {
+		   $this->Auth->loginAction = array('admin' => false, 'controller' => 'users', 'action' => 'self_sign_login');
+		}
+		$this->Auth->flashElement = 'flash_auth';
+	        $this->loadModel('ModuleAccessControl');
+	        if(isset($this->params['admin']) && $this->params['admin'] == 1 && $this->Auth->user()) {
+	            if($this->ModuleAccessControl->checkPermissions($this->params['controller'])) {
+	                $this->Session->setFlash(__('This module needs to be activated, please contact CTS', true), 'flash_failure');
+	                $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => true));
+	            }
+	        }
     }
 
     function admin_auto_complete_first_ajax() {
