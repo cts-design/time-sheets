@@ -8,10 +8,10 @@
  * @package ATLAS V3
  */
 
-$config['URL'] = 'http://dev.ctsfla.com/';
-$config['Admin']['URL'] = 'http://dev.ctsfla.com/admin';
+$config['URL'] = 'http://atlas.dev/';
+$config['Admin']['URL'] = 'http://atlas.dev/admin';
 //domain for use with cookies
-$config['domain'] = 'dev.ctsfla.com';
+$config['domain'] = 'atlas.dev';
 
 // Company Name
 $config['Company']['name'] = 'ATLAS';
@@ -40,4 +40,3 @@ $config['Pagination']['admin']['limit'] = 10 ;
 $config['Pagination']['kiosk']['limit'] = 10 ;
 $config['Pagination']['selfSignLogArchive']['limit'] = 10;
 $config['Pagination']['deletedDocument']['limit'] = 10;
-
