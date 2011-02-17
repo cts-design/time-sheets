@@ -19,6 +19,9 @@ $config['Company']['name'] = 'ATLAS';
 // Company Logo
 $config['Company']['logo'] = 'atlas_logo.jpg';
 
+// Kiodk Header
+$config['Kiosk']['header'] = 'kiosk/kiosk_header.jpg';
+
 // System Email From Address
 $config['System']['email'] = 'noreply@atlasforworkforce.com';
 
