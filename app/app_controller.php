@@ -106,10 +106,9 @@ class AppController extends Controller {
 	        $this->loadModel('ModuleAccessControl');
 	        if(isset($this->params['admin']) && $this->params['admin'] == 1 && $this->Auth->user()) {
 	            if($this->ModuleAccessControl->checkPermissions($this->params['controller'])) {
-	                $this->Session->setFlash(__('This module needs to be activated, please contact CTS', true));
+	                $this->Session->setFlash(__('This module needs to be activated, please contact CTS', true), 'flash_failure');
 	                $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => true));
 	            }
-	
 	        }
     }
 
