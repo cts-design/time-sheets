@@ -1,5 +1,5 @@
 <?php 
-/* App schema generated on: 2011-02-09 18:13:30 : 1297275210*/
+/* App schema generated on: 2011-02-16 22:06:20 : 1297893980*/
 class AppSchema extends CakeSchema {
 	var $name = 'App';
 
@@ -156,6 +156,15 @@ class AppSchema extends CakeSchema {
 		'deleted' => array('type' => 'boolean', 'null' => false, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
 		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MyISAM')
+	);
+	var $module_access_controls = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
+		'name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 50, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+		'permission' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
+		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'InnoDB')
 	);
 	var $navigations = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
