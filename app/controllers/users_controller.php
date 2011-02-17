@@ -208,6 +208,9 @@ class UsersController extends AppController {
 
     function mini_registration($lastname=null, $dob=null) {
 	if (!empty($this->data)) {
+		foreach($this->data['User'] as $k => $v) {
+			$this->data['User'][$k] = trim($v, ' ');
+		}		
 	    $this->User->create();
 	    if ($this->User->save($this->data)) {
 		$userId = $this->User->getInsertId();
