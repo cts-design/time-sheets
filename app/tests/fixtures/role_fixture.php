@@ -13,12 +13,42 @@ class RoleFixture extends CakeTestFixture {
 	);
 
 	var $records = array(
-		array(
-			'id' => 1,
-			'name' => 'Lorem ipsum dolor sit amet',
-			'created' => '2010-11-10 16:00:26',
-			'modified' => '2010-11-10 16:00:26'
-		),
+            array(
+                    'id' => 1,
+                    'name' => 'Customers',
+                    'created' => '2010-11-10 16:00:26',
+                    'modified' => '2010-11-10 16:00:26'
+            ),
+            array(
+                    'id' => 2,
+                    'name' => 'Super Admin',
+                    'created' => '2010-11-10 16:00:26',
+                    'modified' => '2010-11-10 16:00:26'
+            ),
+            array(
+                    'id' => 3,
+                    'name' => 'Admin',
+                    'created' => '2010-11-10 16:00:26',
+                    'modified' => '2010-11-10 16:00:26'
+            ),
+            array(
+                    'id' => 4,
+                    'name' => 'Custom 1',
+                    'created' => '2010-11-10 16:00:26',
+                    'modified' => '2010-11-10 16:00:26'
+            ),
+            array(
+                    'id' => 5,
+                    'name' => 'Custom 2',
+                    'created' => '2010-11-10 16:00:26',
+                    'modified' => '2010-11-10 16:00:26'
+            ),
+            array(
+                    'id' => 6,
+                    'name' => 'Custom 3',
+                    'created' => '2010-11-10 16:00:26',
+                    'modified' => '2010-11-10 16:00:26'
+            )
 	);
 }
 ?>
