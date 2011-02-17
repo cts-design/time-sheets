@@ -62,5 +62,7 @@
 	    ?>
 	</fieldset>
 	<?php echo $this->Form->end(array('label' => __('Submit', true), 'class' => 'self-sign-kiosk-button')); ?>
+	<?php echo $this->Html->link('Cancel', array('controller' => 'users', 'action' => 'self_sign_login'),
+		 array('class' => 'self-sign-kiosk-link'))?>
     </div>
 </div>
