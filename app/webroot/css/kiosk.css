@@ -177,6 +177,8 @@ margin-bottom: 10px;
     margin-left: 40px;
 }
 
+
+
 .self-sign-kiosk-button, .self-scan-kiosk-button {
     width:284px;
     height: 60px;
@@ -212,6 +214,17 @@ margin-bottom: 10px;
 #miniRegistration br {
     line-height: 0px;
 }
+
+#miniRegistration .self-sign-kiosk-link {
+	display: block;
+	margin: 0 auto 10px;
+}
+
+#miniRegistration .self-sign-kiosk-link .ui-button-text{
+	font-size: 18px;
+	padding: 0.8em 1em;
+}
+
 
 #selfSignConfirm  {
     text-align: center;
