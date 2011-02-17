@@ -6,6 +6,11 @@
  * @package ATLAS V3
  */
 ?>
+<?php
+if (!isset($userEmail)) {
+    $userEmail = Configure::read('PrePop.email');
+}
+?>
 <div id="crumbWrapper">
     <span>You are here > </span>
     <?php echo $crumb->getHtml('Add Admin', null, 'unique') ; ?>
@@ -39,7 +44,7 @@
 		)); ?>
 	    <?php echo  '<br class="clear"/>' ?>
 	    <?php echo $this->Form->input('email', array(
-		    'value' => Configure::read('PrePop.email'),
+		    'value' => $userEmail,
 		    'before' => '<p class="left">',
 		    'between' => '</p><p class="left">',
 		    'after' => '</p>'
