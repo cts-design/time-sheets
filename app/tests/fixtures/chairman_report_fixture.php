@@ -14,12 +14,12 @@ class ChairmanReportFixture extends CakeTestFixture {
 	);
 
 	var $records = array(
-		array(
+                array(
 			'id' => 1,
 			'title' => 'Lorem ipsum dolor sit amet',
-			'file' => 'Lorem ipsum dolor sit amet',
-			'created' => '2011-02-09 18:13:18',
-			'modified' => '2011-02-09 18:13:18'
+			'file' => 'http://atlas.dev/files/public/file.pdf',
+			'created' => '2011-02-09 15:20:21',
+			'modified' => '2011-02-09 15:20:21'
 		),
 	);
 }

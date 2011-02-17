@@ -18,13 +18,40 @@ class DocumentFilingCategoryFixture extends CakeTestFixture {
 	var $records = array(
 		array(
 			'id' => 1,
-			'parent_id' => 1,
-			'name' => 'Lorem ipsum dolor sit amet',
-			'order' => 1,
-			'deleted' => 1,
+			'parent_id' => NULL,
+			'name' => 'Valid Category',
+			'order' => 9999,
+			'deleted' => 0,
 			'created' => '2010-10-19 15:57:41',
 			'modified' => '2010-10-19 15:57:41'
 		),
+		array(
+			'id' => 2,
+			'parent_id' => NULL,
+			'name' => 'Another Valid Category',
+			'order' => 9999,
+			'deleted' => 0,
+			'created' => '2010-10-19 15:57:41',
+			'modified' => '2010-10-19 15:57:41'
+		),
+		array(
+			'id' => 3,
+			'parent_id' => 1,
+			'name' => 'A Nested Valid Category',
+			'order' => 9999,
+			'deleted' => 0,
+			'created' => '2010-10-19 15:57:41',
+			'modified' => '2010-10-19 15:57:41'
+		),
+                array(
+			'id' => 4,
+			'parent_id' => 3,
+			'name' => 'A Second Level Nested Valid Category',
+			'order' => 9999,
+			'deleted' => 0,
+			'created' => '2010-10-19 15:57:41',
+			'modified' => '2010-10-19 15:57:41'
+                )
 	);
 }
 ?>

@@ -7,6 +7,7 @@ class DocumentFilingCategoryTestCase extends CakeTestCase {
 
 	function startTest() {
 		$this->DocumentFilingCategory =& ClassRegistry::init('DocumentFilingCategory');
+        $this->DocumentFilingCategory->create();
 	}
 
 	function endTest() {
@@ -14,5 +15,31 @@ class DocumentFilingCategoryTestCase extends CakeTestCase {
 		ClassRegistry::flush();
 	}
 
+        function testValidation() {
+            $invalidRecordNoName = array(
+                'DocumentFilingCategory' => array(
+                    'name' => ''
+                )
+            );
+
+            $validRecord = array(
+                'DocumentFilingCategory' => array(
+                    'name' => 'validname',
+                    'created' => '0000-00-00 00:00:00',
+                    'modified' => '0000-00-00 00:00:00'
+                )
+            );
+
+            $expected = array(
+                'DocumentFilingCategory' => array(
+                    'name' => 'validname',
+                    'created' => '0000-00-00 00:00:00',
+                    'modified' => '0000-00-00 00:00:00'
+                )
+            );
+
+            $this->assertFalse($this->DocumentFilingCategory->save($invalidRecordNoName));
+            $this->assertEqual($this->DocumentFilingCategory->save($validRecord), $expected);
+        }
 }
 ?>
