@@ -220,6 +220,9 @@ ul.x-tab-strip-bottom{
     color: #15428b;
 }
 
+.x-toolbar-ct {}
+.x-toolbar-left {}
+
 .x-editor .x-form-check-wrap {
     background-color:#fff;
 }
@@ -1055,6 +1058,15 @@ td.grid-hd-group-cell {
 .x-date-mmenu .x-menu-item {
 	font-size:10px;
 	color:#000;
+}
+
+.x-window table {
+	background: #CCD8E7 !important;
+	margin-bottom: 0 !important;
+}
+
+.x-window table tr td {
+	border-bottom: none !important;
 }
 
 .x-date-mp {
