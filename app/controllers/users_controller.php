@@ -13,49 +13,41 @@ class UsersController extends AppController {
 
 
     function beforeFilter() {
-	parent::beforeFilter();
-	if (isset($this->data['User']['dob'])) {
-	    $dob = date('Y-m-d', strtotime($this->data['User']['dob']));
-	}
-	$this->User->recursive = 0;
-	if(isset($this->data['User']['username'])) {
-	    if($this->params['action'] == 'admin_login' || $this->params['action'] == 'self_sign_login') {
-		$user = $this->User->findByUsername($this->data['User']['username']);
-		if($user['User']['status'] == 1 || $user['User']['deleted'] == 1) {
-		    $this->Session->setFlash(__('Account is inactive or has been deleted', true), 'flash_failure');
-		    $this->redirect($this->referer());
+		parent::beforeFilter();
+		$this->User->recursive = 0;
+		if(isset($this->data['User']['username'])) {
+		    if($this->params['action'] == 'admin_login' || $this->params['action'] == 'self_sign_login') {
+				$user = $this->User->findByUsername($this->data['User']['username']);
+				if($user['User']['status'] == 1 || $user['User']['deleted'] == 1) {
+				    $this->Session->setFlash(__('Account is inactive or has been deleted', true), 'flash_failure');
+				    $this->redirect($this->referer());
+				}
+	    	}
 		}
-	    }
-	}
-	if (isset($this->data['User']['self_sign'])) {
-	    $this->Auth->userScope = array('User.dob' => $dob);
-	    $this->Auth->loginError = 'Login information is not correct, please try again.';
-	}
-	$this->Auth->allow('mini_registration', 'add', 'admin_password_reset', 'build_acl', 'admin_login', 'admin_logout', 'self_sign_login');
+		$this->Auth->allow('mini_registration', 'add', 'admin_password_reset', 'build_acl', 'admin_login', 'admin_logout', 'self_sign_login');
 
-	if (isset($this->data['User']['username'], $this->data['User']['password'],$this->data['User']['self_sign'] ) &&
-		$this->data['User']['username'] != '' && $this->data['User']['password'] != '') {
-	    $count = $this->User->find('count', array(
-			'conditions' => array(
-			    'User.username' => $this->data['User']['username'],
-			    'and' => array(
-				'User.password' => $this->Auth->password($this->data['User']['password']),
-				'User.dob' => $dob))));
-	    if ($count === 0) {
-		if ($this->data['User']['self_sign'] == 'self') {
-		    $this->redirect(array('action' => 'mini_registration',
-			$this->data['User']['username'], str_replace('/', '_', $this->data['User']['dob'])));
+		if (isset($this->data['User']['username'], $this->data['User']['password'],$this->data['User']['self_sign'] ) &&
+			$this->data['User']['username'] != '' && $this->data['User']['password'] != '') {
+		    $count = $this->User->find('count', array(
+				'conditions' => array(
+				    'User.username' => $this->data['User']['username'],
+				    'and' => array(
+					'User.password' => $this->Auth->password($this->data['User']['password'])))));
+		    if ($count === 0) {
+				if ($this->data['User']['self_sign'] == 'self') {
+				    $this->redirect(array('action' => 'mini_registration',
+					$this->data['User']['username'], str_replace('/', '_', $this->data['User']['dob'])));
+				}
+				else
+				    $this->redirect(array('action' => 'add'));
+		    }
 		}
-		else
-		    $this->redirect(array('action' => 'add'));
-	    }
-	}
-	if($this->Auth->user() &&  $this->params['action'] == 'admin_dashboard' ) {
-	    if(! $this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Users/admin_dashboard', '*')) {
-		$this->Session->setFlash(__('You are not authorized to access the admin dashboard.', true) , 'flash_failure') ;
-		$this->redirect('/');
-	    }
-	}
+		if($this->Auth->user() &&  $this->params['action'] == 'admin_dashboard' ) {
+		    if(! $this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Users/admin_dashboard', '*')) {
+			$this->Session->setFlash(__('You are not authorized to access the admin dashboard.', true) , 'flash_failure') ;
+			$this->redirect('/');
+		    }
+		}
     }
 
     function admin_index() {
