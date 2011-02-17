@@ -132,6 +132,7 @@ class UsersController extends AppController {
 	    $this->redirect(array('action' => 'index'));
 	}
 	if (!empty($this->data)) {
+            FireCake::log($this->data, 'we have data!');
 	    if ($this->User->save($this->data)) {
 		$this->Transaction->createUserTransaction('Customer',
 			null, null, 'Edited customer '. $this->data['User']['firstname'] . 
@@ -336,6 +337,11 @@ class UsersController extends AppController {
 	$this->set('title_for_layout', 'Add Administrator');
 	if (!empty($this->data)) {
 	    $this->User->create();
+
+            if ($this->data['User']['email'] != Configure::read('PrePop.email')) {
+                $userEmail = $this->data['User']['email'];
+                $this->set(compact('userEmail'));
+            }
 
 	    if ($this->User->save($this->data)) {
 		$message = 'Welcome to the Atlas system.' . "\r\n\r\n";
