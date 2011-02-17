@@ -1,3 +1,12 @@
-
-/nbproject
 app/tmp/*
+app/config/atlas.php 
+app/config/core.php
+app/config/database.php  
+/nbproject
+config/atlas.php 
+config/core.php
+config/database.php app/config/atlas.php
+app/config/database.php
+app/config/atlas.php
+.settings
+.project
