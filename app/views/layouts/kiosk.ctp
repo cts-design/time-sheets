@@ -43,7 +43,7 @@
 			  noconfirm: 10000,
 			  sessionAlive: false,
 			  logout_url: '/',
-			  redirect_url: '/users/autoLogout'
+			  redirect_url: '/users/auto_logout'
 			})
 		});");
 	    }

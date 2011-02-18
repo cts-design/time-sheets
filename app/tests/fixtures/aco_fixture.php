@@ -298,7 +298,7 @@ class AcoFixture extends CakeTestFixture {
         array('id' => 592, 'parent_id' => 588, 'model' => null, 'foreign_key' => null, 'alias' => 'admin_delete', 'lft' => 547, 'rght' => 548),
         array('id' => 593, 'parent_id' => 588, 'model' => null, 'foreign_key' => null, 'alias' => 'selfSignLogin', 'lft' => 549, 'rght' => 550),
         array('id' => 594, 'parent_id' => 588, 'model' => null, 'foreign_key' => null, 'alias' => 'logout', 'lft' => 551, 'rght' => 552),
-        array('id' => 595, 'parent_id' => 588, 'model' => null, 'foreign_key' => null, 'alias' => 'autoLogout', 'lft' => 553, 'rght' => 554),
+        array('id' => 595, 'parent_id' => 588, 'model' => null, 'foreign_key' => null, 'alias' => 'auto_logout', 'lft' => 553, 'rght' => 554),
         array('id' => 596, 'parent_id' => 588, 'model' => null, 'foreign_key' => null, 'alias' => 'miniRegistration', 'lft' => 555, 'rght' => 556),
         array('id' => 597, 'parent_id' => 588, 'model' => null, 'foreign_key' => null, 'alias' => 'admin_login', 'lft' => 557, 'rght' => 558),
         array('id' => 598, 'parent_id' => 588, 'model' => null, 'foreign_key' => null, 'alias' => 'admin_logout', 'lft' => 559, 'rght' => 560),

@@ -200,7 +200,7 @@ class UsersController extends AppController {
 	}
     }
 
-    function autoLogout() {
+    function auto_logout() {
 	$this->Session->destroy();
 	$this->Session->setFlash(__('You have been logged out due to inactivity.', true), 'flash_failure');
 	$this->redirect(array('action' => 'self_sign_login'));   
