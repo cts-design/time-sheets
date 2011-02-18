@@ -10,7 +10,6 @@ class DocumentFilingCategoriesController extends AppController {
 
     var $name = 'DocumentFilingCategories';
     var $helpers = array('Tree');
-    var $components = array('RequestHandler');
 
     function beforeFilter() {
 	parent::beforeFilter();

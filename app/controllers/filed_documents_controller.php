@@ -9,7 +9,7 @@
 class FiledDocumentsController extends AppController {
 
     var $name = 'FiledDocuments';
-    var $components = array('RequestHandler');
+
     //@TODO possibly move to app controller
     var $reasons = array(
 	'Duplicate scan' => 'Duplicate scan',
