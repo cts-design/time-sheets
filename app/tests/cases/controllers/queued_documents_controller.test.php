@@ -1,7 +1,7 @@
 <?php
 /* QueuedDocuments Test cases generated on: 2010-11-08 13:11:02 : 1289221982*/
 App::import('Controller', 'QueuedDocuments');
-
+App::import('Lib', 'AtlasTestCase');
 class TestQueuedDocumentsController extends QueuedDocumentsController {
 	var $autoRender = false;
 
@@ -10,7 +10,7 @@ class TestQueuedDocumentsController extends QueuedDocumentsController {
 	}
 }
 
-class QueuedDocumentsControllerTestCase extends CakeTestCase {
+class QueuedDocumentsControllerTestCase extends AtlasTestCase {
 	var $fixtures = array(
             'app.aco',
             'app.aro',

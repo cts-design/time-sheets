@@ -1,7 +1,7 @@
 <?php
 /* DocumentFilingCategories Test cases generated on: 2010-10-19 17:10:54 : 1287509754*/
 App::import('Controller', 'DocumentFilingCategories');
-
+App::import('Lib', 'AtlasTestCase');
 class TestDocumentFilingCategoriesController extends DocumentFilingCategoriesController {
 	var $autoRender = false;
 
@@ -10,7 +10,7 @@ class TestDocumentFilingCategoriesController extends DocumentFilingCategoriesCon
 	}
 }
 
-class DocumentFilingCategoriesControllerTestCase extends CakeTestCase {
+class DocumentFilingCategoriesControllerTestCase extends AtlasTestCase {
 	var $fixtures = array(
             'app.aco',
             'app.aro',

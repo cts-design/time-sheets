@@ -1,7 +1,7 @@
 <?php
 /* Navigations Test cases generated on: 2011-02-04 19:52:09 : 1296849129*/
 App::import('Controller', 'Navigations');
-
+App::import('Lib', 'AtlasTestCase');
 class TestNavigationsController extends NavigationsController {
 	var $autoRender = false;
 
@@ -10,7 +10,7 @@ class TestNavigationsController extends NavigationsController {
 	}
 }
 
-class NavigationsControllerTestCase extends CakeTestCase {
+class NavigationsControllerTestCase extends AtlasTestCase {
 	var $fixtures = array(
             'app.aco',
             'app.aro',

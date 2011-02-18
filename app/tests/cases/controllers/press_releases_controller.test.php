@@ -1,7 +1,7 @@
 <?php
 /* PressReleases Test cases generated on: 2011-02-09 15:21:32 : 1297264892*/
 App::import('Controller', 'PressReleases');
-
+App::import('Lib', 'AtlasTestCase');
 class TestPressReleasesController extends PressReleasesController {
 	var $autoRender = false;
 
@@ -10,7 +10,7 @@ class TestPressReleasesController extends PressReleasesController {
 	}
 }
 
-class PressReleasesControllerTestCase extends CakeTestCase {
+class PressReleasesControllerTestCase extends AtlasTestCase {
 	var $fixtures = array(
             'app.aco',
             'app.aro',

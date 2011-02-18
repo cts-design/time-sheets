@@ -1,7 +1,7 @@
 <?php
 /* ChairmanReports Test cases generated on: 2011-02-09 18:14:25 : 1297275265*/
 App::import('Controller', 'ChairmanReports');
-
+App::import('Lib', 'AtlasTestCase');
 class TestChairmanReportsController extends ChairmanReportsController {
 	var $autoRender = false;
 
@@ -10,7 +10,7 @@ class TestChairmanReportsController extends ChairmanReportsController {
 	}
 }
 
-class ChairmanReportsControllerTestCase extends CakeTestCase {
+class ChairmanReportsControllerTestCase extends AtlasTestCase {
 	var $fixtures = array(
             'app.aco',
             'app.aro',

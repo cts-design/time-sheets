@@ -1,7 +1,7 @@
 <?php
 /* Pages Test cases generated on: 2011-02-04 14:51:59 : 1296831119*/
 App::import('Controller', 'Pages');
-
+App::import('Lib', 'AtlasTestCase');
 class TestPagesController extends PagesController {
 	var $autoRender = false;
         var $autoLayout = false;
@@ -11,7 +11,7 @@ class TestPagesController extends PagesController {
 	}
 }
 
-class PagesControllerTestCase extends CakeTestCase {
+class PagesControllerTestCase extends AtlasTestCase {
 	var $fixtures = array(
             'app.aco',
             'app.aro',

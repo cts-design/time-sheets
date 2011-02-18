@@ -1,7 +1,7 @@
 <?php
 /* SelfSignLogArchives Test cases generated on: 2010-10-29 12:10:24 : 1288355004*/
 App::import('Controller', 'SelfSignLogArchives');
-
+App::import('Lib', 'AtlasTestCase');
 class TestSelfSignLogArchivesController extends SelfSignLogArchivesController {
 	var $autoRender = false;
 
@@ -10,7 +10,7 @@ class TestSelfSignLogArchivesController extends SelfSignLogArchivesController {
 	}
 }
 
-class SelfSignLogArchivesControllerTestCase extends CakeTestCase {
+class SelfSignLogArchivesControllerTestCase extends AtlasTestCase {
 	var $fixtures = array(
             'app.aco',
             'app.aro',

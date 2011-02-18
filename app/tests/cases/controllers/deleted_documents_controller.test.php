@@ -1,7 +1,7 @@
 <?php
 /* DeletedDocuments Test cases generated on: 2010-12-02 19:12:31 : 1291319071*/
 App::import('Controller', 'DeletedDocuments');
-
+App::import('Lib', 'AtlasTestCase');
 class TestDeletedDocumentsController extends DeletedDocumentsController {
 	var $autoRender = false;
 
@@ -10,7 +10,7 @@ class TestDeletedDocumentsController extends DeletedDocumentsController {
 	}
 }
 
-class DeletedDocumentsControllerTestCase extends CakeTestCase {
+class DeletedDocumentsControllerTestCase extends AtlasTestCase {
 	var $fixtures = array(
             'app.aco',
             'app.aro',

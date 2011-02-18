@@ -1,7 +1,7 @@
 <?php
 /* FtpDocumentScanners Test cases generated on: 2010-11-05 19:11:47 : 1288983647*/
 App::import('Controller', 'FtpDocumentScanners');
-
+App::import('Lib', 'AtlasTestCase');
 class TestFtpDocumentScannersController extends FtpDocumentScannersController {
 	var $autoRender = false;
 
@@ -10,7 +10,7 @@ class TestFtpDocumentScannersController extends FtpDocumentScannersController {
 	}
 }
 
-class FtpDocumentScannersControllerTestCase extends CakeTestCase {
+class FtpDocumentScannersControllerTestCase extends AtlasTestCase {
 	var $fixtures = array(
             'app.aco',
             'app.aro',

@@ -1,7 +1,7 @@
 <?php
 /* KioskButtons Test cases generated on: 2010-09-27 19:09:52 : 1285615792*/
 App::import('Controller', 'KioskButtons');
-
+App::import('Lib', 'AtlasTestCase');
 class TestKioskButtonsController extends KioskButtonsController {
 	var $autoRender = false;
 
@@ -10,7 +10,7 @@ class TestKioskButtonsController extends KioskButtonsController {
 	}
 }
 
-class KioskButtonsControllerTestCase extends CakeTestCase {
+class KioskButtonsControllerTestCase extends AtlasTestCase {
 	var $fixtures = array(
             'app.aco',
             'app.aro',

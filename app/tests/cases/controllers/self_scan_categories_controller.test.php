@@ -1,7 +1,7 @@
 <?php
 /* SelfScanCategories Test cases generated on: 2010-12-15 21:12:58 : 1292447938*/
 App::import('Controller', 'SelfScanCategories');
-
+App::import('Lib', 'AtlasTestCase');
 class TestSelfScanCategoriesController extends SelfScanCategoriesController {
 	var $autoRender = false;
 
@@ -10,7 +10,7 @@ class TestSelfScanCategoriesController extends SelfScanCategoriesController {
 	}
 }
 
-class SelfScanCategoriesControllerTestCase extends CakeTestCase {
+class SelfScanCategoriesControllerTestCase extends AtlasTestCase {
 	var $fixtures = array(
             'app.aco',
             'app.aro',

@@ -1,6 +1,7 @@
 <?php
 /* Roles Test cases generated on: 2010-11-10 16:11:22 : 1289404882*/
 App::import('Controller', 'Roles');
+App::import('Lib', 'AtlasTestCase');
 App::import('Component', 'DebugKit.Toolbar');
 class TestRolesController extends RolesController {
 	var $autoRender = false;
@@ -10,7 +11,7 @@ class TestRolesController extends RolesController {
 	}
 }
 
-class RolesControllerTestCase extends CakeTestCase {
+class RolesControllerTestCase extends AtlasTestCase {
 	var $fixtures = array(
             'app.aco',
             'app.aro',
