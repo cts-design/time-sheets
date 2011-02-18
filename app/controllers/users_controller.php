@@ -15,6 +15,11 @@ class UsersController extends AppController {
     function beforeFilter() {
 		parent::beforeFilter();
 		$this->User->recursive = 0;
+		if(!empty($this->data['User'])) {
+			foreach($this->data['User'] as $k => $v) {
+				$this->data['User'][$k] = trim($v, ' ');
+			}		
+		}		
 		if(isset($this->data['User']['username'])) {
 		    if($this->params['action'] == 'admin_login' || $this->params['action'] == 'self_sign_login') {
 				$user = $this->User->findByUsername($this->data['User']['username']);
@@ -207,10 +212,7 @@ class UsersController extends AppController {
     }
 
     function mini_registration($lastname=null, $dob=null) {
-	if (!empty($this->data)) {
-		foreach($this->data['User'] as $k => $v) {
-			$this->data['User'][$k] = trim($v, ' ');
-		}		
+	if (!empty($this->data)) {	
 	    $this->User->create();
 	    if ($this->User->save($this->data)) {
 		$userId = $this->User->getInsertId();
