@@ -9,7 +9,7 @@
 class UsersController extends AppController {
 
     var $name = 'Users';
-    var $components = array('Email', 'RequestHandler');
+    var $components = array('Email');
 
 
     function beforeFilter() {
@@ -124,7 +124,6 @@ class UsersController extends AppController {
 	    $this->redirect(array('action' => 'index'));
 	}
 	if (!empty($this->data)) {
-            FireCake::log($this->data, 'we have data!');
 	    if ($this->User->save($this->data)) {
 		$this->Transaction->createUserTransaction('Customer',
 			null, null, 'Edited customer '. $this->data['User']['firstname'] . 
@@ -234,7 +233,6 @@ class UsersController extends AppController {
     
     function admin_login() {
 	if($this->RequestHandler->isAjax()) {
-	    Configure::write('debug', 0);
 	    $this->Auth->login($this->data);
 	    if($this->Auth->user()) {
 		$response = array('success' => true, 'sessId' => $this->Session->id());

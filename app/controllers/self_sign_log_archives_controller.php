@@ -9,72 +9,61 @@
 class SelfSignLogArchivesController extends AppController {
 
     var $name = 'SelfSignLogArchives';
-    var $components = array('RequestHandler');
     var $helpers = array('Excel');
 
     function admin_index() {
-	$this->SelfSignLogArchive->recursive = 0;
-	if(!empty($this->data['SelfSignLogArchive']['search'])) {
-	    $conditions = $this->_setConditions();
-	    $locations = '';
-	    foreach($this->data['SelfSignLogArchive'] as $k => $v) {
-		if($k == 'date_from' || $k == 'date_to' && !empty($v)) {
-		    $this->passedArgs[$k] = date('Y-m-d', strtotime($v));
+		$this -> SelfSignLogArchive -> recursive = 0;
+		if(!empty($this -> data['SelfSignLogArchive']['search'])) {
+			$conditions = $this -> _setConditions();
+			$locations = '';
+			foreach($this->data['SelfSignLogArchive'] as $k => $v) {
+				if($k == 'date_from' || $k == 'date_to' && !empty($v)) {
+					$this -> passedArgs[$k] = date('Y-m-d',  strtotime($v));
+				}
+				if($k == 'locations' && $v != '') {
+					foreach($v as $key => $value) {
+						$locations .= $value . ',';
+					}
+				} elseif($k != 'locations' && $k != 'date_from' && $k != 'date_to') {
+					$this -> passedArgs[$k] = $v;
+				}
+			}
+			$this -> passedArgs['locations'] = trim($locations, ',');
 		}
-		if($k == 'locations' && $v != '') {
-		    foreach($v as $key => $value) {
-			$locations .= $value . ',';
-		    }
+		if(!empty($this -> passedArgs['locations'])) {
+			$conditions['SelfSignLogArchive.location_id'] = explode(',', $this -> passedArgs['locations']);
 		}
-		elseif($k != 'locations' && $k != 'date_from' && $k != 'date_to') {
-		    $this->passedArgs[$k] = $v;
+		if(!empty($this -> passedArgs['button_1'])) {
+			$conditions['SelfSignLogArchive.level_1'] = $this -> passedArgs['button_1'];
 		}
-	    }
-	    $this->passedArgs['locations'] = trim($locations, ',');
+		if(!empty($this -> passedArgs['button_2'])) {
+			$conditions['SelfSignLogArchive.level_2'] = $this -> passedArgs['button_2'];
+		}
+		if(!empty($this -> passedArgs['button_3'])) {
+			$conditions['SelfSignLogArchive.level_3'] = $this -> passedArgs['button_3'];
+		}
+		if(isset($this -> passedArgs['status']) && $this -> passedArgs['status'] != null) {
+			$conditions['SelfSignLogArchive.status'] = $this -> passedArgs['status'];
+		}
+		if(!empty($this -> passedArgs['date_from']) && !empty($this -> passedArgs['date_to'])) {
+			$from = date('Y-m-d H:i:m',  strtotime($this -> passedArgs['date_from'] . " 12:00 am"));
+			$to = date('Y-m-d H:i:m',  strtotime($this -> passedArgs['date_to'] . " 11:59 pm"));
+			$conditions['SelfSignLogArchive.created BETWEEN ? AND ?'] = array($from, $to);
+		}
+		if(isset($conditions)) {
+			$this -> paginate = array('conditions' => $conditions, 'limit' => Configure::read('Pagination.selfSignLogArchive.limit'), 'order' => array('SelfSignLogArchive.id' => 'desc'));
+		}
+		else {
+			$this -> paginate = array('limit' => Configure::read('Pagination.selfSignLogArchive.limit'), 'order' => array('SelfSignLogArchive.id' => 'desc'));
+		}
+		$selfSignLogArchives = $this -> paginate('SelfSignLogArchive');
+		$masterButtonList = $this -> SelfSignLogArchive -> Kiosk -> KioskButton -> MasterKioskButton -> find('list');
+		$data = array('title_for_layout' => 'Self Sign Archives', 'selfSignLogArchives' => $selfSignLogArchives, 'masterButtonList' => $this -> SelfSignLogArchive -> Kiosk -> KioskButton -> MasterKioskButton -> find('list'), 'statuses' => array('0' => 'Open', '1' => 'Closed'), 'locations' => $this -> SelfSignLogArchive -> Kiosk -> Location -> find('list'));
+		$this -> set($data);
+		if($this -> RequestHandler -> isAjax()) {
+			$this -> render('/elements/self_sign_log_archives/index_table');
+		}
 	}
-	if(!empty($this->passedArgs['locations'])) {
-	    $conditions['SelfSignLogArchive.location_id'] = explode(',', $this->passedArgs['locations']);
-	}
-	if(!empty($this->passedArgs['button_1'])) {
-	    $conditions['SelfSignLogArchive.level_1'] = $this->passedArgs['button_1'];
-	}
-	if(!empty($this->passedArgs['button_2'])) {
-	    $conditions['SelfSignLogArchive.level_2'] = $this->passedArgs['button_2'];
-	}
-	if(!empty($this->passedArgs['button_3'])) {
-	    $conditions['SelfSignLogArchive.level_3'] = $this->passedArgs['button_3'];
-	}
-	if(isset($this->passedArgs['status']) &&
-		$this->passedArgs['status'] != null) {
-	    $conditions['SelfSignLogArchive.status'] = $this->passedArgs['status'];
-	}
-	if(!empty($this->passedArgs['date_from'])
-		&& !empty($this->passedArgs['date_to'])) {
-	    $from = date('Y-m-d H:i:m', strtotime($this->passedArgs['date_from'] . " 12:00 am"));
-	    $to = date('Y-m-d H:i:m', strtotime($this->passedArgs['date_to'] . " 11:59 pm"));
-	    $conditions['SelfSignLogArchive.created BETWEEN ? AND ?'] = array($from, $to);
-	}
-	if(isset($conditions)) {
-	    $this->paginate = array('conditions' => $conditions, 'limit' => Configure::read('Pagination.selfSignLogArchive.limit'), 'order' => array('SelfSignLogArchive.id' => 'desc'));
-	}
-	else {
-	    $this->paginate = array('limit' => Configure::read('Pagination.selfSignLogArchive.limit'), 'order' => array('SelfSignLogArchive.id' => 'desc'));
-	}
-	$selfSignLogArchives = $this->paginate('SelfSignLogArchive');
-	$masterButtonList = $this->SelfSignLogArchive->Kiosk->KioskButton->MasterKioskButton->find('list');
-	$data = array(
-	    'title_for_layout' => 'Self Sign Archives',
-	    'selfSignLogArchives' => $selfSignLogArchives,
-	    'masterButtonList' => $this->SelfSignLogArchive->Kiosk->KioskButton->MasterKioskButton->find('list'),
-	    'statuses' => array('0' => 'Open', '1' => 'Closed'),
-	    'locations' => $this->SelfSignLogArchive->Kiosk->Location->find('list')
-	);
-	$this->set($data);
-	if($this->RequestHandler->isAjax()) {
-	    Configure::write('debug', 0);
-	    $this->render('/elements/self_sign_log_archives/index_table');
-	}
-    }
 
     function admin_report() {
 	if(!empty($this->data['SelfSignLogArchive']['locations'])
@@ -151,7 +140,6 @@ class SelfSignLogArchivesController extends AppController {
     function admin_get_parent_buttons_ajax() {
 	if($this->RequestHandler->isAjax()) {
 	    $masterButtonList = $this->SelfSignLogArchive->Kiosk->KioskButton->MasterKioskButton->find('list');
-	    Configure::write('debug', 0);
 	    if(!empty($this->params['url']['ids']) && $this->params['url']['ids'] != 'null') {
 		$conditions = array(
 		    'SelfSignLogArchive.location_id' => $this->params['url']['ids'],
@@ -180,7 +168,6 @@ class SelfSignLogArchivesController extends AppController {
     function admin_get_child_buttons_ajax() {
 	if($this->RequestHandler->isAjax()) {
 	    $masterButtonList = $this->SelfSignLogArchive->Kiosk->KioskButton->MasterKioskButton->find('list');
-	    Configure::write('debug', 0);
 	    if(empty($this->params['url']['location'])) {
 		$conditions = array(
 		    'SelfSignLogArchive.level_2 !=' => null);
@@ -220,7 +207,6 @@ class SelfSignLogArchivesController extends AppController {
     function admin_get_grand_child_buttons_ajax() {
 	if($this->RequestHandler->isAjax()) {
 	    $masterButtonList = $this->SelfSignLogArchive->Kiosk->KioskButton->MasterKioskButton->find('list');
-	    Configure::write('debug', 0);
 	    if(empty($this->params['url']['location'])) {
 		$conditions = array(
 		    'SelfSignLogArchive.level_3 !=' => null);
