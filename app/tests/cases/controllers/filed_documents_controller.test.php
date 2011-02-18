@@ -26,6 +26,7 @@ class FiledDocumentsControllerTestCase extends AtlasTestCase {
             'kiosk_button',
             'location',
             'master_kiosk_button',
+            'module_access_control',
             'navigation',
             'page',
             'press_release',
