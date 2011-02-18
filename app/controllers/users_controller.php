@@ -187,10 +187,15 @@ class UsersController extends AppController {
 	$this->layout = 'kiosk';
     }
 
-    function logout($type=null) {
+    function logout($type=null, $logoutMsg=null) {
 	if ($this->Auth->user('role_id') == '1') {
 	    if($type == 'selfSign') {
-		$msg = 'Your log in has been recorded, someone will be with you shortly.';
+		    if(!empty($logoutMsg)) {
+		    	$msg = $logoutMsg;
+		    }
+			else {
+				$msg = 'Your log in has been recorded, someone will be with you shortly.';
+			}			
 	    }
 	    else {
 		$msg = 'You have logged out successfully.';

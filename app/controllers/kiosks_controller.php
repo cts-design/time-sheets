@@ -25,20 +25,19 @@ class KiosksController extends AppController {
     }
 
     function admin_add() {
-	if(!empty($this->data)) {
-	    $this->Kiosk->create();
-	    if($this->Kiosk->save($this->data)) {
-		$this->Transaction->createUserTransaction('Kiosk',
-			null, null, 'Added kiosk ' . $this->data['Kiosk']['location_recognition_name']);
-		$this->Session->setFlash(__('The kiosk has been saved', true), 'flash_success');
-		$this->redirect(array('action' => 'index'));
-	    }
-	    else {
-		$this->Session->setFlash(__('The kiosk could not be saved. Please, try again.', true), 'flash_failure');
-	    }
-	}
-	$locations = $this->Kiosk->Location->find('list');
-	$this->set(compact('locations'));
+		if(!empty($this->data)) {
+			$this->Kiosk->create();
+			if($this->Kiosk->save($this->data)) {
+				$this->Transaction->createUserTransaction('Kiosk', null, null, 'Added kiosk ' . $this->data['Kiosk']['location_recognition_name']);
+				$this->Session->setFlash(__('The kiosk has been saved', true), 'flash_success');
+				$this->redirect( array('action' => 'index'));
+			}
+			else {
+				$this->Session->setFlash(__('The kiosk could not be saved. Please, try again.', true), 'flash_failure');
+			}
+		}
+		$locations = $this->Kiosk->Location->find('list');
+		$this->set(compact('locations'));
     }
 
     function admin_edit($id = null) {
@@ -123,8 +122,10 @@ class KiosksController extends AppController {
 			    array('conditions' => array(
 				    'Kiosk.location_recognition_name' => $oneStopLocation,
 				    'Kiosk.deleted' => 0)));
+								
 	    $this->Cookie->write('location', $kiosk['Kiosk']['location_id']);
 	    $this->Cookie->write('kioskId', $kiosk['Kiosk']['id']);
+		$this->Cookie->write('logout_message', $kiosk['Kiosk']['logout_message']);
 	    $this->Kiosk->KioskButton->recursive = -1;
 	    $rootButtons = $this->Kiosk->KioskButton->find('all',
 			    array('conditions' => array(
@@ -170,7 +171,8 @@ class KiosksController extends AppController {
 		    $this->Kiosk->SelfSignLogArchive->create();
 		    $this->Kiosk->SelfSignLogArchive->save($data['SelfSignLog']);
 		    $this->Transaction->createUserTransaction('Self Sign');
-		    $this->redirect(array('controller' => 'users', 'action' => 'logout', 'selfSign'));
+
+		    $this->redirect(array('controller' => 'users', 'action' => 'logout', 'selfSign', $this->Cookie->read('logout_message')));
 		}
 	    }
 	    else {
@@ -214,7 +216,7 @@ class KiosksController extends AppController {
 				$this->Kiosk->SelfSignLogArchive->create();
 				$this->Kiosk->SelfSignLogArchive->save($data['SelfSignLog']);
 				$this->Transaction->createUserTransaction('Self Sign');
-				$this->redirect(array('controller' => 'users', 'action' => 'logout', 'selfSign'));
+				$this->redirect(array('controller' => 'users', 'action' => 'logout', 'selfSign', $this->Cookie->read('logout_message')));
 			    }
 			}
 		    }
@@ -237,7 +239,7 @@ class KiosksController extends AppController {
 			    $this->Kiosk->SelfSignLogArchive->create();
 			    $this->Kiosk->SelfSignLogArchive->save($data['SelfSignLog']);
 			    $this->Transaction->createUserTransaction('Self Sign');
-			    $this->redirect(array('controller' => 'users', 'action' => 'logout', 'selfSign'));
+			    $this->redirect(array('controller' => 'users', 'action' => 'logout', 'selfSign', $this->Cookie->read('logout_message')));
 			}
 		    }
 		}
@@ -283,7 +285,7 @@ class KiosksController extends AppController {
 		$this->Kiosk->SelfSignLogArchive->save($data['SelfSignLog']);
 		$this->Cookie->write('details.other', $this->data['SelfSignLog']['other']);
 		$this->Transaction->createUserTransaction('Self Sign');
-		$this->redirect(array('controller' => 'users', 'action' => 'logout', 'selfSign'));
+		$this->redirect(array('controller' => 'users', 'action' => 'logout', 'selfSign', $this->Cookie->read('logout_message')));
 	    }
 	    else {
 		$this->Session->setFlash(__('An error occured please try again', true), 'flash_failure');
@@ -388,4 +390,5 @@ class KiosksController extends AppController {
 	    return false;
 	}
     }
+
 }

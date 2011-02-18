@@ -19,9 +19,10 @@
     <table cellpadding="0" cellspacing="0">
 	<thead class="ui-widget-header">
 	    <tr>
-		<th width="20%" class="ui-state-default"><?php echo $this->Paginator->sort('Location', 'Location.name'); ?></th>
-		<th width="30%" class="ui-state-default"><?php echo $this->Paginator->sort('location_recognition_name'); ?></th>
-		<th width="40%" class="ui-state-default"><?php echo $this->Paginator->sort('location_description'); ?></th>
+		<th width="10%" class="ui-state-default"><?php echo $this->Paginator->sort('Location', 'Location.name'); ?></th>
+		<th width="20%" class="ui-state-default"><?php echo $this->Paginator->sort('location_recognition_name'); ?></th>
+		<th width="30%" class="ui-state-default"><?php echo $this->Paginator->sort('location_description'); ?></th>
+		<th width="30%" class="ui-state-default"><?php echo $this->Paginator->sort('logout_message'); ?></th>
 		<th width="10%" class="actions ui-state-default"><?php __('Actions'); ?></th>
 	    </tr>
 	</thead>
@@ -37,6 +38,7 @@
     	    <td><?php echo $kiosk['Location']['name']; ?>&nbsp;</td>
     	    <td><?php echo $kiosk['Kiosk']['location_recognition_name']; ?>&nbsp;</td>
     	    <td><?php echo $kiosk['Kiosk']['location_description']; ?>&nbsp;</td>
+    	    <td><?php echo $kiosk['Kiosk']['logout_message']; ?>&nbsp;</td>
     	    <td class="actions">
 		    <?php echo $this->Html->link(__('Buttons', true), array('controller' => 'kiosk_buttons', 'action' => 'index', $kiosk['Kiosk']['id']), array('class' => 'buttons')); ?>
 		    <?php echo $this->Html->link(__('Edit', true), array('action' => 'edit', $kiosk['Kiosk']['id']), array('class' => 'edit')); ?>
