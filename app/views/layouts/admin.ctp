@@ -24,7 +24,9 @@
 
 	echo $this->Html->css('ui-darkness/jquery-ui-1.8.7.custom');
 
-        echo $this->Html->css('ext/ext-all');
+    echo $this->Html->css('ext/ext-all');
+	
+	echo $this->Html->css('ext/atlas');
 
 	echo $this->Html->css('admin');
 

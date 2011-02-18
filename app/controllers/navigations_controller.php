@@ -9,15 +9,11 @@ App::import('Vendor', 'DebugKit.FireCake'); // @TODO remove from production
 class NavigationsController extends AppController {
 
 	var $name = 'Navigations';
-        var $components = array('RequestHandler', 'Security');
+        var $components = array('Security');
         var $helpers = array();
 
         function beforeFilter() {
             parent::beforeFilter();
-
-            if ($this->RequestHandler->isAjax()) {
-                Configure::write('debug', 0);
-            }
 
             // ensure our ajax methods are POSTed
             $this->Security->requirePost('admin_get_nodes', 'admin_reorder', 'admin_reparent', 'admin_rename_node');
