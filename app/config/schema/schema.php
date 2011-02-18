@@ -1,5 +1,5 @@
 <?php 
-/* App schema generated on: 2011-02-16 22:06:20 : 1297893980*/
+/* App schema generated on: 2011-02-18 16:30:30 : 1298046630*/
 class AppSchema extends CakeSchema {
 	var $name = 'App';
 
@@ -138,6 +138,7 @@ class AppSchema extends CakeSchema {
 		'location_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'location_recognition_name' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 50, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'location_description' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+		'logout_message' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'deleted' => array('type' => 'boolean', 'null' => false, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
 		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MyISAM')

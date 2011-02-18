@@ -2,6 +2,7 @@ app/tmp/*
 app/config/atlas.php 
 app/config/core.php
 app/config/database.php
+app/storage
 config/atlas.php 
 config/core.php
 config/database.php app/config/atlas.php
