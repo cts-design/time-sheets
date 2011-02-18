@@ -11,34 +11,6 @@ class TestChairmanReportsController extends ChairmanReportsController {
 }
 
 class ChairmanReportsControllerTestCase extends AtlasTestCase {
-	var $fixtures = array(
-            'app.aco',
-            'app.aro',
-            'app.aro_aco',
-            'chairman_report',
-            'deleted_document',
-            'document_filing_category',
-            'document_queue_category',
-            'document_transaction',
-            'filed_document',
-            'ftp_document_scanner',
-            'kiosk',
-            'kiosk_button',
-            'location',
-            'master_kiosk_button',
-            'module_access_control',
-            'navigation',
-            'page',
-            'press_release',
-            'queued_document',
-            'role',
-            'self_scan_category',
-            'self_sign_log',
-            'self_sign_log_archive',
-            'user',
-            'user_transaction'
-        );
-
 	function startTest() {
 		$this->ChairmanReports =& new TestChairmanReportsController();
 		$this->ChairmanReports->constructClasses();

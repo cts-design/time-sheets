@@ -7,6 +7,35 @@
  */
 App::import('Vendor', 'DebugKit.FireCake');
 class AtlasTestCase extends CakeTestCase {
+	// since the list of fixtures needed grows exponentially
+	// and to keep the code dry, we set our fixtures here
+	var $fixtures = array(
+	    'app.aco',
+	    'app.aro',
+	    'app.aro_aco',
+	    'chairman_report',
+	    'deleted_document',
+	    'document_filing_category',
+	    'document_queue_category',
+	    'document_transaction',
+	    'filed_document',
+	    'ftp_document_scanner',
+	    'kiosk',
+	    'kiosk_button',
+	    'location',
+	    'master_kiosk_button',
+	    'module_access_control',
+	    'navigation',
+	    'page',
+	    'press_release',
+	    'queued_document',
+	    'role',
+	    'self_scan_category',
+	    'self_sign_log',
+	    'self_sign_log_archive',
+	    'user',
+	    'user_transaction'
+	);
 
    /**
     * Will return true if a matching flashMessage is in the Session
