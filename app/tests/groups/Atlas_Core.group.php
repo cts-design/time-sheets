@@ -42,6 +42,8 @@ class AtlasCoreGroupTest extends TestSuite {
 
             TestManager::addTestFile($this, TESTS . 'cases' . DS . 'controllers' . DS . 'locations_controller');
             TestManager::addTestFile($this, TESTS . 'cases' . DS . 'models' . DS . 'location');
+			
+			TestManager::addTestFile($this, TESTS . 'cases' . DS . 'models' . DS . 'module_access_control');
 
             TestManager::addTestFile($this, TESTS . 'cases' . DS . 'controllers' . DS . 'queued_documents_controller');
             TestManager::addTestFile($this, TESTS . 'cases' . DS . 'models' . DS . 'queued_document');
