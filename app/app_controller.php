@@ -9,7 +9,7 @@
 class AppController extends Controller {
 	
     var $helpers = array('Html', 'Form', 'Session', 'Js' => array('Jquery'), 'Time', 'Crumb', 'Nav');
-    var $components = array( /*'DebugKit.Toolbar',*/'Session', 'Auth', 'Acl', 'Cookie', 'Transaction');
+    var $components = array( /*'DebugKit.Toolbar',*/'Session', 'RequestHandler', 'Auth', 'Acl', 'Cookie', 'Transaction');
 	var $genders = array(
 		'male' => 'Male',
 		'female' => 'Female');
@@ -72,6 +72,11 @@ class AppController extends Controller {
 		
     function beforeFilter() {
 		parent::beforeFilter();
+		
+		if ($this->RequestHandler->isAjax()) {
+			Configure::write('debug', 0);
+		}
+		
 		$this->Auth->autoRedirect = false;
 		$this->Auth->authorize = 'actions';
 		$this->Auth->actionPath = 'controllers/';
