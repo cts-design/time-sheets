@@ -12,7 +12,7 @@ class AtlasTestCase extends CakeTestCase {
 	var $fixtures = array(
 	    'app.aco',
 	    'app.aro',
-	    'app.aro_aco',
+	    'app.aros_aco',
 	    'chairman_report',
 	    'deleted_document',
 	    'document_filing_category',
