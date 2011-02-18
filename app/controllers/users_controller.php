@@ -461,4 +461,11 @@ class UsersController extends AppController {
 	}
     }
 
+    function admin_resolve_login_issues() {
+    	if(!empty($this->data)) {
+    		FireCake::log($this->data, 'Data Array');
+    	}
+    	
+    }
+
 }
