@@ -29,7 +29,7 @@ class AtlasCoreGroupTest extends TestSuite {
             TestManager::addTestFile($this, TESTS . 'cases' . DS . 'controllers' . DS . 'document_queue_categories_controller');
             TestManager::addTestFile($this, TESTS . 'cases' . DS . 'models' . DS . 'document_queue_category');
 
-            TestManager::addTestFile($this, TESTS . 'cases' . DS . 'controllers' . DS . 'filed_documents_controller');
+            //TestManager::addTestFile($this, TESTS . 'cases' . DS . 'controllers' . DS . 'filed_documents_controller');
             TestManager::addTestFile($this, TESTS . 'cases' . DS . 'models' . DS . 'filed_document');
 
             TestManager::addTestFile($this, TESTS . 'cases' . DS . 'controllers' . DS . 'ftp_document_scanners_controller');
@@ -48,7 +48,7 @@ class AtlasCoreGroupTest extends TestSuite {
             TestManager::addTestFile($this, TESTS . 'cases' . DS . 'controllers' . DS . 'queued_documents_controller');
             TestManager::addTestFile($this, TESTS . 'cases' . DS . 'models' . DS . 'queued_document');
 
-            TestManager::addTestFile($this, TESTS . 'cases' . DS . 'controllers' . DS . 'roles_controller');
+            //TestManager::addTestFile($this, TESTS . 'cases' . DS . 'controllers' . DS . 'roles_controller');
             TestManager::addTestFile($this, TESTS . 'cases' . DS . 'models' . DS . 'role');
 
             TestManager::addTestFile($this, TESTS . 'cases' . DS . 'controllers' . DS . 'self_scan_categories_controller');
@@ -63,7 +63,7 @@ class AtlasCoreGroupTest extends TestSuite {
             TestManager::addTestFile($this, TESTS . 'cases' . DS . 'controllers' . DS . 'user_transactions_controller');
             TestManager::addTestFile($this, TESTS . 'cases' . DS . 'models' . DS . 'user_transaction');
 
-            TestManager::addTestFile($this, TESTS . 'cases' . DS . 'controllers' . DS . 'users_controller');
+            //TestManager::addTestFile($this, TESTS . 'cases' . DS . 'controllers' . DS . 'users_controller');
             TestManager::addTestFile($this, TESTS . 'cases' . DS . 'models' . DS . 'user');
 	}
 }
