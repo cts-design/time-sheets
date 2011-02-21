@@ -422,50 +422,77 @@ class UsersController extends AppController {
     }
 
     function admin_password_reset() {
-	$this->set('title_for_layout', 'Password Reset');
-	if ($this->data['User']['email'] != '') {
-	    $user = $this->User->find('first', array('conditions' => array ('User.email' => $this->data['User']['email'])));
-	    $this->data['User']['id'] = $user['User']['id'];
-	    $this->data['User']['role_id'] = $user['User']['role_id'];
-	    if ($user['User']['email'] != '') {
-		$tempPassword = rand(10000,100000);
-		$this->data['User']['password'] = Security::hash($tempPassword, null, true);
-		unset($this->data['User']['email']);
-		if ($this->User->save($this->data, array('validate' => false))) {
-		    // Fire off the E-Mail
-		    $message = Configure::read('Admin.URL') . "\n\n" . 'Temp Password: ' . $tempPassword ;
-		    $this->Email->from = Configure::read('System.email');
-		    $this->Email->to = $user['User']['firstname']." ".$user['User']['lastname']."<".$user['User']['email'].">";
-		    $this->Email->subject = 'Password Reset Request';
-		    if($this->Email->send($message)) {
-		    // Set flash message
-		    $this->Session->setFlash(__('Your password has been changed. Please check your E-Mail.', true), 'flash_success');
-		    // Redirect to login page
-		    $this->redirect(array('action' => 'login', 'admin' => true));
+		$this->set('title_for_layout', 'Password Reset');
+		if ($this->data['User']['email'] != '') {
+		    $user = $this->User->find('first', array('conditions' => array ('User.email' => $this->data['User']['email'])));
+		    $this->data['User']['id'] = $user['User']['id'];
+		    $this->data['User']['role_id'] = $user['User']['role_id'];
+		    if ($user['User']['email'] != '') {
+			$tempPassword = rand(10000,100000);
+			$this->data['User']['password'] = Security::hash($tempPassword, null, true);
+			unset($this->data['User']['email']);
+			if ($this->User->save($this->data, array('validate' => false))) {
+			    // Fire off the E-Mail
+			    $message = Configure::read('Admin.URL') . "\n\n" . 'Temp Password: ' . $tempPassword ;
+			    $this->Email->from = Configure::read('System.email');
+			    $this->Email->to = $user['User']['firstname']." ".$user['User']['lastname']."<".$user['User']['email'].">";
+			    $this->Email->subject = 'Password Reset Request';
+			    if($this->Email->send($message)) {
+			    // Set flash message
+			    $this->Session->setFlash(__('Your password has been changed. Please check your E-Mail.', true), 'flash_success');
+			    // Redirect to login page
+			    $this->redirect(array('action' => 'login', 'admin' => true));
+			    }
+			    else {
+				$this->Session->setFlash(__('Error occured sending E-Mail. Please retry.', true), 'flash_failure');
+				$this->redirect(array('action' => 'password_reset'));
+			    }
+			}
+			else {
+			    $this->Session->setFlash(__('Error saving record. Please retry.', true), 'flash_failure');
+			    $this->redirect(array('action' => 'password_reset'));
+			}
 		    }
 		    else {
-			$this->Session->setFlash(__('Error occured sending E-Mail. Please retry.', true), 'flash_failure');
-			$this->redirect(array('action' => 'password_reset'));
+		    // E-Mail address provided was not found in system.
+		    $this->Session->setFlash(__('E-Mail address not found', true), 'flash_failure');
+		    $this->redirect(array('action' => 'password_reset'));
 		    }
 		}
-		else {
-		    $this->Session->setFlash(__('Error saving record. Please retry.', true), 'flash_failure');
-		    $this->redirect(array('action' => 'password_reset'));
-		}
-	    }
-	    else {
-	    // E-Mail address provided was not found in system.
-	    $this->Session->setFlash(__('E-Mail address not found', true), 'flash_failure');
-	    $this->redirect(array('action' => 'password_reset'));
-	    }
-	}
     }
 
     function admin_resolve_login_issues() {
-    	if(!empty($this->data)) {
-    		FireCake::log($this->data, 'Data Array');
+    	if($this->RequestHandler->isAjax()) {
+    			Configure::write('debug', 0);
+				if($this->params['form']['xaction'] == 'update')  {
+					$postData = json_decode($this->params['form']['users'], true);
+					$this->data['User']['id'] = $postData['id'];
+					$this->data['User']['lastname'] = $postData['lastname'];
+					$this->data['User']['username'] = $this->data['User']['lastname'];
+					
+					if($this->User->save($this->data, array('validate' => false))){
+						FireCake::log('got here');
+						$data['success'] = 'true';
+						$this->set('data', $data);
+						$this->render(null, null,  '/elements/ajaxreturn');	
+					}
+				}	
+				if($this->params['form']['xaction'] == 'read') {
+				$this->User->recursive = -1;    		
+				$results = $this->User->find('all', array('conditions' => array('User.lastname' => $this->params['form']['lastname'])));
+				$i = 0;
+				foreach($results as $result) {
+					$users['users'][$i]['id'] = $result['User']['id'];
+					$users['users'][$i]['firstname'] = $result['User']['firstname'];
+					$users['users'][$i]['lastname'] = $result['User']['lastname'];
+					$users['users'][$i]['ssn'] = substr($result['User']['ssn'], -4);
+					$i++;
+				}
+				$this->set('data', $users);
+				$this->render(null, null,  '/elements/ajaxreturn');	
+				}
+					    		
     	}
-    	
     }
 
 }
