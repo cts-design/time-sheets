@@ -26,6 +26,8 @@
 
     echo $this->Html->css('ext/ext-all');
 	
+	echo $this->Html->css('ext/RowEditor');
+	
 	echo $this->Html->css('ext/atlas');
 
 	echo $this->Html->css('admin');
