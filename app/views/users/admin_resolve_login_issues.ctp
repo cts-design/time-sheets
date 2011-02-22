@@ -1,7 +1,7 @@
 <?php
 /**
  * @author Daniel Nolan
- * @copyright Complete Technology Solutions 2010
+ * @copyright Complete Technology Solutions 2011
  * @link http://ctsfla.com
  * @package ATLAS V3
  */
@@ -13,36 +13,45 @@
 	$this->Html->script('ext/ux/RowEditor', array('inline' => FALSE));
 ?>
 <script type="text/javascript">
+	var vals = null;
 	Ext.onReady(function(){
 		Ext.QuickTips.init();
 	    var searchForm = new Ext.FormPanel({
-	        labelWidth: 75, // label settings here cascade unless overridden
-	        url:'/admin/users/resolve_login_issues',
 	        frame:true,
+	        labelWidth: 75,
 	        title: 'Search Form',
-	        bodyStyle:'padding:5px 5px 0',
-	        width: 350,
+	        width: 300,
 	        id: 'search-form',
 	        collapsible: true,
-	        defaults: {width: 230},
 	        defaultType: 'textfield',
-	
 	        items: [{
-	                fieldLabel: 'Last Name',
-	                name: 'lastname'
-	            },{
-	                fieldLabel: 'Last 4 SSN',
-	                name: 'ssn'
+	            	fieldLabel: 'Search Type',
+	            	xtype: 'radiogroup',
+	            	items: [{
+	            		boxLabel: 'Last Name',
+	            		name: 'searchType',
+	            		inputValue: 'lastname',
+	            	},{
+	     	           	boxLabel: 'Last 4 SSN',
+	            		name: 'searchType', 
+	            		inputValue: 'ssn',	
+	            	}]    	
+	            },	             
+	        	{
+	                fieldLabel: 'Search',
+	                name: 'search',
+	                width: 200
 	            }
 	        ],
 	        buttons: [{
 	            text: 'Search',
 	            handler: function(){
-	            	var vals = Ext.getCmp('search-form').getForm().getValues();
-	            	store.reload({
+	            	vals = Ext.getCmp('search-form').getForm().getValues();
+	            	console.log(vals);
+	            	store.load({
 	            		params: {
-	            			lastname: vals.lastname,
-	            			ssn: vals.ssn
+	            			search: vals.search,
+	            			searchType: vals.searchType
 	            		}
 	            	});
 	            }
@@ -74,27 +83,68 @@
 			root: 'users',
 			proxy: proxy,
 			reader: reader,
-			writer: writer
-		});    	
-        store.load()  	
+			writer: writer,
+			listeners: {
+				save: function() {
+					store.reload({
+	            		params: {
+	            			search: vals.search,
+	            			searchType: vals.searchType
+	            		}
+	            	});
+	            	Ext.Msg.alert('Status', 'Changes saved successfully.');
+				}
+			}
+		}); 
+		
+		var adminStore = new Ext.data.JsonStore({
+			url: '/admin/users/get_admin_list',
+			storeId: 'adminStore',
+			root: 'admins',
+			idProperty: 'id',
+			fields: ['id', 'name']
+		});		   	
+        
+		var combo = new Ext.form.ComboBox({
+		    typeAhead: true,
+		    triggerAction: 'all',
+		    mode: 'remote',
+		    store: adminStore,
+		    valueField: 'id',
+		    displayField: 'name'
+		});
+	    
+        var tb = new Ext.Toolbar({
+        	width: 300,
+        	items: [combo,{
+				text: 'Request SSN Change',
+				icon: '/img/icons/email_go.png'
+        	}]
+        });
+          	
     	var grid = new Ext.grid.GridPanel({
     		store: store,
     		height: 300,
-    		width: 350,
+    		title: 'Customers',
+    		width: 325,
     		frame: true,
     		plugins: [editor],
     		columns: [{
     			id: 'firstname',
     			header: 'First Name',
-    			dataIndex: 'firstname'
+    			dataIndex: 'firstname',
+    			width: 100
     		},{
     			header: 'Last Name',
     			dataIndex: 'lastname',
-    		 	editor: new Ext.form.TextField({})
+    		 	editor: new Ext.form.TextField({}),
+    		 	width: 100
     		},{
     			header: 'SSN Last 4',
-    			dataIndex: 'ssn'
-    		}]
+    			dataIndex: 'ssn',
+    			width: 80			
+    		}],
+    		tbar: tb
     	});
     	
     	grid.render('grid');	
