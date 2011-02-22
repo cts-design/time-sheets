@@ -118,7 +118,18 @@
         	width: 300,
         	items: [combo,{
 				text: 'Request SSN Change',
-				icon: '/img/icons/email_go.png'
+				icon: '/img/icons/email_go.png',
+				handler: function(){
+					var row = grid.getSelectionModel().getSelected();
+					var adminId = combo.getValue()		
+					Ext.Ajax.request({
+						url: '/admin/users/request_ssn_change',
+						params: {
+							userId: row.id,
+							adminId: adminId
+						}
+					});
+				}
         	}]
         });
           	
