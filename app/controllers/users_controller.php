@@ -463,23 +463,29 @@ class UsersController extends AppController {
 
     function admin_resolve_login_issues() {
     	if($this->RequestHandler->isAjax()) {
-    			Configure::write('debug', 0);
-				if($this->params['form']['xaction'] == 'update')  {
-					$postData = json_decode($this->params['form']['users'], true);
-					$this->data['User']['id'] = $postData['id'];
-					$this->data['User']['lastname'] = $postData['lastname'];
-					$this->data['User']['username'] = $this->data['User']['lastname'];
-					
-					if($this->User->save($this->data, array('validate' => false))){
-						FireCake::log('got here');
-						$data['success'] = 'true';
-						$this->set('data', $data);
-						$this->render(null, null,  '/elements/ajaxreturn');	
-					}
-				}	
-				if($this->params['form']['xaction'] == 'read') {
-				$this->User->recursive = -1;    		
-				$results = $this->User->find('all', array('conditions' => array('User.lastname' => $this->params['form']['lastname'])));
+			if($this->params['form']['xaction'] == 'update')  {
+				$postData = json_decode($this->params['form']['users'], true);
+				$this->data['User']['id'] = $postData['id'];
+				$this->data['User']['lastname'] = $postData['lastname'];
+				$this->data['User']['username'] = $this->data['User']['lastname'];
+				
+				if($this->User->save($this->data, array('validate' => false))){
+					FireCake::log('got here');
+					$data['success'] = 'true';
+					$this->set('data', $data);
+					$this->render(null, null,  '/elements/ajaxreturn');	
+				}
+			}	
+			if($this->params['form']['xaction'] == 'read') {
+				$this->User->recursive = -1;
+				if($this->params['form']['searchType'] == 'ssn') {
+					$conditions = array('User.ssn LIKE' => '%'.$this->params['form']['search'].'%');
+				}
+				if($this->params['form']['searchType'] == 'lastname') {
+					$conditions = array('User.lastname' => $this->params['form']['search']);
+				}    		
+				$results = $this->User->find('all', array(
+					'conditions' => $conditions));
 				$i = 0;
 				foreach($results as $result) {
 					$users['users'][$i]['id'] = $result['User']['id'];
@@ -490,9 +496,22 @@ class UsersController extends AppController {
 				}
 				$this->set('data', $users);
 				$this->render(null, null,  '/elements/ajaxreturn');	
-				}
-					    		
+			}		    		
     	}
     }
+
+	function admin_get_admin_list() {
+		if($this->RequestHandler->isAjax()) {
+			$admins = $this->User->find('all', array('conditions' => array('User.role_id' => 3)));		
+			$i = 0;
+			foreach($admins as $admin) {
+				$data['admins'][$i]['id'] = $admin['User']['id'];
+				$data['admins'][$i]['name'] = $admin['User']['lastname'] . ', ' . $admin['User']['firstname'];
+				$i++;
+			}
+			$this->set('data', $data);
+			$this->render(null, null,  '/elements/ajaxreturn');	
+		}
+	}
 
 }
