@@ -142,24 +142,24 @@ legend {
     margin-left: 10px;
 }
 
-label {
+.input label {
     font-weight: bold;
 }
 
-input  {
+.input input  {
     width: 200px;
 }
 
-input[type=submit] {
+.input input[type=submit] {
     width: 100px;
     padding: 2px;
 }
 
-input[type=submit]:hover {
+.input input[type=submit]:hover {
     cursor: pointer;
 }
 
-select {
+.input select {
     width: 150px;
     padding: 0;
     margin: 0
