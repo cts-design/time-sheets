@@ -479,10 +479,13 @@ class UsersController extends AppController {
 			if($this->params['form']['xaction'] == 'read') {
 				$this->User->recursive = -1;
 				if($this->params['form']['searchType'] == 'ssn') {
-					$conditions = array('User.ssn LIKE' => '%'.$this->params['form']['search'].'%');
+					$conditions = array(
+						'User.ssn LIKE' => '%'.$this->params['form']['search'].'%', 
+						'User.role_id' => 1
+						);
 				}
 				if($this->params['form']['searchType'] == 'lastname') {
-					$conditions = array('User.lastname' => $this->params['form']['search']);
+					$conditions = array('User.lastname' => $this->params['form']['search'], 'User.role_id' => 1);
 				}    		
 				$results = $this->User->find('all', array(
 					'conditions' => $conditions));
@@ -502,7 +505,14 @@ class UsersController extends AppController {
 
 	function admin_get_admin_list() {
 		if($this->RequestHandler->isAjax()) {
-			$admins = $this->User->find('all', array('conditions' => array('User.role_id' => 3)));		
+			if(!empty($this->params['form']['query'])) {
+				$conditions = array( 'User.role_id' => 3, 'User.lastname LIKE' => '%'.$this->params['form']['query'].'%');
+			}
+			else {
+				$conditions = array('User.role_id' => 3);
+			}
+			$this->User->recursive = -1;
+			$admins = $this->User->find('all', array('conditions' => $conditions));		
 			$i = 0;
 			foreach($admins as $admin) {
 				$data['admins'][$i]['id'] = $admin['User']['id'];
@@ -511,6 +521,20 @@ class UsersController extends AppController {
 			}
 			$this->set('data', $data);
 			$this->render(null, null,  '/elements/ajaxreturn');	
+		}
+	}
+	
+	function admin_request_ssn_change() {
+		if($this->RequestHandler->isAjax()) {
+			if(!empty($this->params['form']['userId']) && !empty($this->params['form']['adminId'])){
+				$admin = $this->User->read(null, $this->params['form']['adminId']);
+				FireCake::log($admin);
+				$this->Email->from = $this->Auth->user('firstname') .' ' . $this->Auth->user('lastname') . '<'.$this->Auth->user('email') .'>';
+				$this->Email->to = $admin['User']['email'];
+				$this->Email->subject = 'SSN Change Request';
+				$this->Email->send('Please edit user this users SSN ' . Configure::read('Admin.URL') . '/users/edit/' . $this->params['form']['userId']);
+				exit;
+			}
 		}
 	}
 
