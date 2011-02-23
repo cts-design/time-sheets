@@ -70,6 +70,12 @@
 			    <li rel="trash"><?php echo $html->link('Deleted Documents', array('controller' => 'deleted_documents', 'action' => 'index')) ?></li>
 			</ul>
 		    </li>
+		    <li rel="tools" id="tools">
+			<a>Tools</a>
+			<ul>
+			    <li rel="loginIssues"><?php echo $html->link('Resolve Login Issues', array('controller' => 'users', 'action' => 'resolve_login_issues')) ?></li>
+			</ul>
+		    </li>		    
 		</ul>
 	    </div>
 	</fieldset>
