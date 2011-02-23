@@ -1,7 +1,7 @@
 <?php
 /* FiledDocuments Test cases generated on: 2010-11-24 15:11:59 : 1290612419*/
 App::import('Controller', 'FiledDocuments');
-
+App::import('Lib', 'AtlasTestCase');
 class TestFiledDocumentsController extends FiledDocumentsController {
 	var $autoRender = false;
 
@@ -10,7 +10,7 @@ class TestFiledDocumentsController extends FiledDocumentsController {
 	}
 }
 
-class FiledDocumentsControllerTestCase extends CakeTestCase {
+class FiledDocumentsControllerTestCase extends AtlasTestCase {
 	var $fixtures = array(
             'app.aco',
             'app.aro',
@@ -26,6 +26,7 @@ class FiledDocumentsControllerTestCase extends CakeTestCase {
             'kiosk_button',
             'location',
             'master_kiosk_button',
+            'module_access_control',
             'navigation',
             'page',
             'press_release',
@@ -47,26 +48,73 @@ class FiledDocumentsControllerTestCase extends CakeTestCase {
 		unset($this->FiledDocuments);
 		ClassRegistry::flush();
 	}
+function testIndex() {
+            $result = $this->testAction('/chairman_reports/index', array('return' => 'view'));
+            //debug(htmlentities($result));
+        }
 
 	function testAdminIndex() {
-
+            $result = $this->testAction('/admin/chairman_reports/index', array('return' => 'view'));
+//            debug(htmlentities($result));
 	}
 
-	function testAdminView() {
+	function testAdminEditWithValidData() {
+            $this->FiledDocuments->data = array(
+                'FiledDocument' => array(
+                    'title' => 'Valid Title'
+                )
+            );
 
+            $this->FiledDocuments->admin_edit(1);
+			$this->assertFlashMessage($this->FiledDocuments, 'The filed document has been saved', 'flash_success');
 	}
 
-	function testAdminAdd() {
 
+	function testAdminDeleteValidRecord() {
+        	$this->FiledDocuments->data = array(
+				'FiledDocument' => array(
+					'id' => 1,
+					'reason' => 'Duplicate Scan'
+				)
+			);
+            $this->FiledDocuments->admin_delete();
+			$this->assertFlashMessage($this->FiledDocuments, 'Filed document deleted', 'flash_success');
 	}
 
-	function testAdminEdit() {
+        function testAdminDeleteInvalidRecord() {
+        	$this->FiledDocuments->data = array(
+				'FiledDocument' => array(
+					'id' => 1
+				)
+			);
+            $this->FiledDocuments->admin_delete();
+            $this->assertEqual($this->FiledDocuments->redirectUrl, array('action' => 'index'));
 
-	}
+            $flashMessage = $this->FiledDocuments->Session->read('Message.flash');
+            $expectedFlashMessage = array(
+                'message' => 'Chairman report was not deleted',
+                'element' => 'flash_failure',
+                'params' => array()
+            );
 
-	function testAdminDelete() {
+            $this->assertEqual($flashMessage, $expectedFlashMessage);
+        }
 
-	}
+        function testAdminDeleteWithNoSpecifiedRecord() {
+            $this->FiledDocuments->admin_delete();
 
+                        $flashMessage = $this->FiledDocuments->Session->read('Message.flash');
+            $expectedFlashMessage = array(
+                'message' => 'Chairman report was not deleted',
+                'element' => 'flash_failure',
+                'params' => array()
+            );
+
+            $this->assertEqual($flashMessage, $expectedFlashMessage);
+
+            $this->assertEqual($this->FiledDocuments->redirectUrl, array('action' => 'index'));
+
+
+       }
 }
 ?>

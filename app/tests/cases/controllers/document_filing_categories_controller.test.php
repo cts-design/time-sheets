@@ -1,7 +1,7 @@
 <?php
 /* DocumentFilingCategories Test cases generated on: 2010-10-19 17:10:54 : 1287509754*/
 App::import('Controller', 'DocumentFilingCategories');
-
+App::import('Lib', 'AtlasTestCase');
 class TestDocumentFilingCategoriesController extends DocumentFilingCategoriesController {
 	var $autoRender = false;
 
@@ -10,34 +10,7 @@ class TestDocumentFilingCategoriesController extends DocumentFilingCategoriesCon
 	}
 }
 
-class DocumentFilingCategoriesControllerTestCase extends CakeTestCase {
-	var $fixtures = array(
-            'app.aco',
-            'app.aro',
-            'app.aro_aco',
-            'chairman_report',
-            'deleted_document',
-            'document_filing_category',
-            'document_queue_category',
-            'document_transaction',
-            'filed_document',
-            'ftp_document_scanner',
-            'kiosk',
-            'kiosk_button',
-            'location',
-            'master_kiosk_button',
-            'navigation',
-            'page',
-            'press_release',
-            'queued_document',
-            'role',
-            'self_scan_category',
-            'self_sign_log',
-            'self_sign_log_archive',
-            'user',
-            'user_transaction'
-        );
-
+class DocumentFilingCategoriesControllerTestCase extends AtlasTestCase {
 	function startTest() {
 		$this->DocumentFilingCategories =& new TestDocumentFilingCategoriesController();
 		$this->DocumentFilingCategories->constructClasses();
