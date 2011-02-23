@@ -1,5 +1,5 @@
 <?php 
-/* App schema generated on: 2011-02-18 16:30:30 : 1298046630*/
+/* App schema generated on: 2011-02-23 22:07:22 : 1298498842*/
 class AppSchema extends CakeSchema {
 	var $name = 'App';
 
