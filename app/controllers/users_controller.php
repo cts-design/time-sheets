@@ -478,25 +478,41 @@ class UsersController extends AppController {
 				$this->render(null, null,  '/elements/ajaxreturn');					
 			}	
 			if($this->params['form']['xaction'] == 'read') {
+				$useDate = false;
+				if(!empty($this->params['form']['from']) && !empty($this->params['form']['to'])) {
+					$from = date('Y-m-d H:i:s', strtotime($this->params['form']['from'] . ' 00:00:01'));
+					$to = date('Y-m-d H:i:s', strtotime($this->params['form']['to'] . '23:59:59'));
+					$useDate = true;					
+				}
 				$this->User->recursive = -1;
 				if($this->params['form']['searchType'] == 'ssn') {
-					$conditions = array(
-						'User.ssn LIKE' => '%'.$this->params['form']['search'].'%', 
-						'User.role_id' => 1
-						);
+					if($useDate){
+						$conditions = array(
+							'User.ssn LIKE' => '%'.$this->params['form']['search'].'%', 
+							'User.role_id' => 1,
+							'User.created BETWEEN ? AND ?' => array($from, $to)
+							);							
+					}
+					else {
+						$conditions = array(
+							'User.ssn LIKE' => '%'.$this->params['form']['search'].'%', 
+							'User.role_id' => 1
+							);						
+					}
+
 				}
 				if($this->params['form']['searchType'] == 'lastname') {
-					if(!empty($this->params['form']['from']) && !empty($this->params['form']['to'])){
-						$from = date('Y-m-d H:i:s', strtotime($this->params['form']['from'] . ' 00:00:01'));
-						$to = date('Y-m-d H:i:s', strtotime($this->params['form']['to'] . '23:59:59'));
+					if($useDate){
 						$conditions = array(
-							'User.lastname' => $this->params['form']['search'], 
+							'User.lastname LIKE' => '%'.$this->params['form']['search'].'%', 
 							'User.role_id' => 1,
 							'User.created BETWEEN ? AND ?' => array($from, $to)
 							);
 					}
 					else {
-						$conditions = array('User.lastname' => $this->params['form']['search'], 'User.role_id' => 1);	
+						$conditions = array(
+							'User.lastname LIKE' => '%'.$this->params['form']['search'].'%', 
+							'User.role_id' => 1);	
 					}
 				}    		
 				$results = $this->User->find('all', array(
