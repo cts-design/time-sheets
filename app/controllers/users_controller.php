@@ -577,9 +577,13 @@ class UsersController extends AppController {
 					$this->Auth->user('lastname') . '<'.$this->Auth->user('email') .'>';
 				$this->Email->to = $admin['User']['email'];
 				$this->Email->subject = 'SSN Change Request';
-				if($this->Email->send('Please edit user this users SSN ' . 
-					Configure::read('Admin.URL') . '/users/edit/' . $this->params['form']['userId'])){
-						$this->data = $this->User->read(null, $this->params['form']['userId']);
+						
+				$message = 'A Social Security Number edit has been requested by ' . 
+					$this->Auth->user('firstname'). ' ' . $this->Auth->user('lastname') . '.' .  "\r\n" .
+					'Please edit the following customers record accordingly' . "\r\n" . 
+					Configure::read('Admin.URL') . '/users/edit/' . $this->params['form']['userId']. "\r\n";					
+				if($this->Email->send($message)){
+					$this->data = $this->User->read(null, $this->params['form']['userId']);
 						$this->Transaction->createUserTransaction('Customer', null, null,
 							'Requested SSN change for customer '. $this->data['User']['lastname'] . ', ' . 
 							 $this->data['User']['firstname'] . ' - '. substr($this->data['User']['ssn'], -4)
