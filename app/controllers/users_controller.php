@@ -53,6 +53,9 @@ class UsersController extends AppController {
 			$this->redirect('/');
 		    }
 		}
+		if($this->Auth->user() && $this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Users/admin_resolve_login_issues', '*') == true) {
+			$this->Auth->allow('admin_request_ssn_change', 'admin_get_admin_list');
+		}
     }
 
     function admin_index() {
