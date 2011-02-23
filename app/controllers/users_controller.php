@@ -470,6 +470,11 @@ class UsersController extends AppController {
 				$this->data['User']['username'] = $this->data['User']['lastname'];				
 				if($this->User->save($this->data, array('validate' => false))){
 					$data['success'] = true;
+					$this->data = $this->User->read(null, $postData['id']);
+					$this->Transaction->createUserTransaction('Customer', null, null,
+						'Edited last name for customer '. $this->data['User']['lastname'] . ', ' . 
+						 $this->data['User']['firstname'] . ' - '. substr($this->data['User']['ssn'], -4)
+					);
 				}
 				else {
 					$data['success'] = false;
@@ -574,7 +579,12 @@ class UsersController extends AppController {
 				$this->Email->subject = 'SSN Change Request';
 				if($this->Email->send('Please edit user this users SSN ' . 
 					Configure::read('Admin.URL') . '/users/edit/' . $this->params['form']['userId'])){
-					$data['success'] = true;
+						$this->data = $this->User->read(null, $this->params['form']['userId']);
+						$this->Transaction->createUserTransaction('Customer', null, null,
+							'Requested SSN change for customer '. $this->data['User']['lastname'] . ', ' . 
+							 $this->data['User']['firstname'] . ' - '. substr($this->data['User']['ssn'], -4)
+						);						
+						$data['success'] = true;
 				}
 				else {
 					$data['success'] = false;
