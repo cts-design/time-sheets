@@ -467,14 +467,15 @@ class UsersController extends AppController {
 				$postData = json_decode($this->params['form']['users'], true);
 				$this->data['User']['id'] = $postData['id'];
 				$this->data['User']['lastname'] = $postData['lastname'];
-				$this->data['User']['username'] = $this->data['User']['lastname'];
-				
+				$this->data['User']['username'] = $this->data['User']['lastname'];				
 				if($this->User->save($this->data, array('validate' => false))){
-					FireCake::log('got here');
-					$data['success'] = 'true';
-					$this->set('data', $data);
-					$this->render(null, null,  '/elements/ajaxreturn');	
+					$data['success'] = true;
 				}
+				else {
+					$data['success'] = false;
+				}
+				$this->set('data', $data);
+				$this->render(null, null,  '/elements/ajaxreturn');					
 			}	
 			if($this->params['form']['xaction'] == 'read') {
 				$this->User->recursive = -1;
@@ -485,17 +486,33 @@ class UsersController extends AppController {
 						);
 				}
 				if($this->params['form']['searchType'] == 'lastname') {
-					$conditions = array('User.lastname' => $this->params['form']['search'], 'User.role_id' => 1);
+					if(!empty($this->params['form']['from']) && !empty($this->params['form']['to'])){
+						$from = date('Y-m-d H:i:s', strtotime($this->params['form']['from'] . ' 00:00:01'));
+						$to = date('Y-m-d H:i:s', strtotime($this->params['form']['to'] . '23:59:59'));
+						$conditions = array(
+							'User.lastname' => $this->params['form']['search'], 
+							'User.role_id' => 1,
+							'User.created BETWEEN ? AND ?' => array($from, $to)
+							);
+					}
+					else {
+						$conditions = array('User.lastname' => $this->params['form']['search'], 'User.role_id' => 1);	
+					}
 				}    		
 				$results = $this->User->find('all', array(
 					'conditions' => $conditions));
-				$i = 0;
-				foreach($results as $result) {
-					$users['users'][$i]['id'] = $result['User']['id'];
-					$users['users'][$i]['firstname'] = $result['User']['firstname'];
-					$users['users'][$i]['lastname'] = $result['User']['lastname'];
-					$users['users'][$i]['ssn'] = substr($result['User']['ssn'], -4);
-					$i++;
+				if($results) {
+					$i = 0;
+					foreach($results as $result) {
+						$users['users'][$i]['id'] = $result['User']['id'];
+						$users['users'][$i]['firstname'] = $result['User']['firstname'];
+						$users['users'][$i]['lastname'] = $result['User']['lastname'];
+						$users['users'][$i]['ssn'] = substr($result['User']['ssn'], -4);
+						$i++;
+					}					
+				}	
+				else {
+					$users['users'] = array();
 				}
 				$this->set('data', $users);
 				$this->render(null, null,  '/elements/ajaxreturn');	
@@ -513,14 +530,21 @@ class UsersController extends AppController {
 			}
 			$this->User->recursive = -1;
 			$admins = $this->User->find('all', array('conditions' => $conditions));		
-			$i = 0;
-			foreach($admins as $admin) {
-				$data['admins'][$i]['id'] = $admin['User']['id'];
-				$data['admins'][$i]['name'] = $admin['User']['lastname'] . ', ' . $admin['User']['firstname'];
-				$i++;
+			if($admins) {
+				$i = 0;
+				foreach($admins as $admin) {
+					$data['admins'][$i]['id'] = $admin['User']['id'];
+					$data['admins'][$i]['name'] = $admin['User']['lastname'] . ', ' . $admin['User']['firstname'];
+					$i++;
+				}
+				$data['success'] = true;
+			}
+			else {
+				$data['success'] = false;
 			}
 			$this->set('data', $data);
 			$this->render(null, null,  '/elements/ajaxreturn');	
+
 		}
 	}
 	
@@ -528,12 +552,19 @@ class UsersController extends AppController {
 		if($this->RequestHandler->isAjax()) {
 			if(!empty($this->params['form']['userId']) && !empty($this->params['form']['adminId'])){
 				$admin = $this->User->read(null, $this->params['form']['adminId']);
-				FireCake::log($admin);
-				$this->Email->from = $this->Auth->user('firstname') .' ' . $this->Auth->user('lastname') . '<'.$this->Auth->user('email') .'>';
+				$this->Email->from = $this->Auth->user('firstname') .' ' . 
+					$this->Auth->user('lastname') . '<'.$this->Auth->user('email') .'>';
 				$this->Email->to = $admin['User']['email'];
 				$this->Email->subject = 'SSN Change Request';
-				$this->Email->send('Please edit user this users SSN ' . Configure::read('Admin.URL') . '/users/edit/' . $this->params['form']['userId']);
-				exit;
+				if($this->Email->send('Please edit user this users SSN ' . 
+					Configure::read('Admin.URL') . '/users/edit/' . $this->params['form']['userId'])){
+					$data['success'] = true;
+				}
+				else {
+					$data['success'] = false;
+				}
+				$this->set('data', $data);
+				$this->render(null, null, '/elements/ajaxreturn');
 			}
 		}
 	}
