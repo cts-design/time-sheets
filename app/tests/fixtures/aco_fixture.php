@@ -192,7 +192,7 @@ class AcoFixture extends CakeTestFixture {
         array('id' => 369, 'parent_id' => 359, 'model' => null, 'foreign_key' => null, 'alias' => 'admin_autoCompleteSsnAjax', 'lft' => 101, 'rght' => 102),
         array('id' => 368, 'parent_id' => 359, 'model' => null, 'foreign_key' => null, 'alias' => 'admin_autoCompleteLastAjax', 'lft' => 99, 'rght' => 100),
         array('id' => 367, 'parent_id' => 359, 'model' => null, 'foreign_key' => null, 'alias' => 'admin_autoCompleteFirstAjax', 'lft' => 97, 'rght' => 98),
-        array('id' => 366, 'parent_id' => 359, 'model' => null, 'foreign_key' => null, 'alias' => 'admin_getGrandChildCatsAjax', 'lft' => 95, 'rght' => 96),
+        array('id' => 366, 'parent_id' => 359, 'model' => null, 'foreign_key' => null, 'alias' => 'admin_get_grand_child_cats_ajax', 'lft' => 95, 'rght' => 96),
         array('id' => 365, 'parent_id' => 359, 'model' => null, 'foreign_key' => null, 'alias' => 'admin_getChildCatsAjax', 'lft' => 93, 'rght' => 94),
         array('id' => 364, 'parent_id' => 359, 'model' => null, 'foreign_key' => null, 'alias' => 'admin_delete', 'lft' => 91, 'rght' => 92),
         array('id' => 363, 'parent_id' => 359, 'model' => null, 'foreign_key' => null, 'alias' => 'admin_edit', 'lft' => 89, 'rght' => 90),

@@ -14,7 +14,7 @@ class DocumentFilingCategoriesController extends AppController {
     function beforeFilter() {
 	parent::beforeFilter();
 	if($this->Auth->user('role_id') > 1) {
-	    $this->Auth->allow('admin_get_child_cats_ajax', 'admin_getGrandChildCatsAjax');
+	    $this->Auth->allow('admin_get_child_cats_ajax', 'admin_get_grand_child_cats_ajax');
 	}
     }
 
@@ -125,7 +125,7 @@ class DocumentFilingCategoriesController extends AppController {
 	}
     }
 
-    function admin_getGrandChildCatsAjax() {
+    function admin_get_grand_child_cats_ajax() {
 	if($this->RequestHandler->isAjax()) {
 	    $options = $this->DocumentFilingCategory->find('list', array(
 			'conditions' => array('DocumentFilingCategory.parent_id' => $this->params['url']['id'])));

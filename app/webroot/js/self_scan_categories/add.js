@@ -41,7 +41,7 @@ $(document).ready(function(){
 	});
     });
     $("#SelfScanCategoryCat2").change(function(){
-	$.getJSON('/admin/document_filing_categories/getGrandChildCatsAjax',{
+	$.getJSON('/admin/document_filing_categories/get_grand_child_cats_ajax',{
 	    id: $(this).val()
 	},
 	function(grandCats) {
