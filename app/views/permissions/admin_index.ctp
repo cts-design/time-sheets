@@ -120,6 +120,13 @@
 	   'label' => 'Index',
 	    'checked' => (isset($controllers['UserTransactions']['All'])) ? $controllers['UserTransactions']['All'] : '' ));?>
     </fieldset>
+    <fieldset class="left right-mar-10">
+	<legend>Tools</legend>
+       <?php echo $this->Form->input('Users.admin_resolve_login_issues', array(
+	    'type' => 'checkbox',
+	   	'label' => 'Resolve Login Issues',
+	    'checked' => (isset($controllers['Users']['admin_resolve_login_issues'])) ? $controllers['Users']['admin_resolve_login_issues'] : '' ));?>
+    </fieldset>    
     <br class="clear" />
     <?php echo $this->Form->end('Submit')?>
 

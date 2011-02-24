@@ -213,7 +213,7 @@ class User extends AppModel {
 	),
 	'email' => array(
 	    'notempty' => array(
-		'rule' => array('notempty'),
+		'rule' => array('notEmpty'),
 		'message' => 'Please provide an email address.',
 	    //'allowEmpty' => false,
 	    //'required' => false,
@@ -306,13 +306,13 @@ class User extends AppModel {
     }
 
     function pauseValidation($rules) {
-	foreach ($rules as $key => $value) {
-	    if(is_array($value)) {
-		 foreach ($value as $k => $v){
-		     unset($this->validate[$key][$v]);
-		}
-	    }
-	    else {
+        foreach ($rules as $key => $value) {
+            if(is_array($value)) {
+                foreach ($value as $k => $v){
+                    unset($this->validate[$key][$v]);
+                }
+            }
+            else {
                 unset($this->validate[$key][$value]);
             }
         }
@@ -349,7 +349,7 @@ class User extends AppModel {
 	    $node = $this->node();
 	    $aro = $node[0];
 	    $aro['Aro']['parent_id'] = $parent[0]['Aro']['id'];
-	    $this->Aro->save($aro);
+            $this->Aro->save($aro);
 	}
     }
    

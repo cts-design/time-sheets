@@ -1,7 +1,7 @@
 <?php
 /* SelfSignLogArchives Test cases generated on: 2010-10-29 12:10:24 : 1288355004*/
 App::import('Controller', 'SelfSignLogArchives');
-
+App::import('Lib', 'AtlasTestCase');
 class TestSelfSignLogArchivesController extends SelfSignLogArchivesController {
 	var $autoRender = false;
 
@@ -10,9 +10,7 @@ class TestSelfSignLogArchivesController extends SelfSignLogArchivesController {
 	}
 }
 
-class SelfSignLogArchivesControllerTestCase extends CakeTestCase {
-	var $fixtures = array('app.self_sign_log_archive', 'app.user', 'app.self_sign_log', 'app.kiosk', 'app.kiosk_button', 'app.user_transaction');
-
+class SelfSignLogArchivesControllerTestCase extends AtlasTestCase {
 	function startTest() {
 		$this->SelfSignLogArchives =& new TestSelfSignLogArchivesController();
 		$this->SelfSignLogArchives->constructClasses();

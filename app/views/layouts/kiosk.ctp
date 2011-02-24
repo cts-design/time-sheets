@@ -43,7 +43,7 @@
 			  noconfirm: 10000,
 			  sessionAlive: false,
 			  logout_url: '/',
-			  redirect_url: '/users/autoLogout'
+			  redirect_url: '/users/auto_logout'
 			})
 		});");
 	    }
@@ -58,7 +58,7 @@
     <body>
 	<div id="container">
 	    <div id="header">		
-		<?php echo $this->Html->image('kiosk/kiosk_header.jpg');?>
+		<?php echo $this->Html->image(Configure::read('Kiosk.header'));?>
 	    </div>
 	    <div id="content">
 		<?php echo $content_for_layout; ?>

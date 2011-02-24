@@ -84,6 +84,16 @@ $(document).ready(function () {
                     icon : {
                         image : "/img/icons/chairman_reports.png"
                     }
+                },
+                loginIssues: {
+                	icon : {
+                		image: "/img/icons/application_key.png"
+                	}
+                },
+                tools :{
+                	icon : {
+                		image: "/img/icons/settings.png"
+                	}
                 }
 	    }
 	},

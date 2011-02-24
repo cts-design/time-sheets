@@ -1,7 +1,7 @@
 <?php
 /* Locations Test cases generated on: 2010-11-05 19:11:25 : 1288983745*/
 App::import('Controller', 'Locations');
-
+App::import('Lib', 'AtlasTestCase');
 class TestLocationsController extends LocationsController {
 	var $autoRender = false;
 
@@ -10,9 +10,7 @@ class TestLocationsController extends LocationsController {
 	}
 }
 
-class LocationsControllerTestCase extends CakeTestCase {
-	var $fixtures = array('app.location', 'app.ftp_document_scanner');
-
+class LocationsControllerTestCase extends AtlasTestCase {
 	function startTest() {
 		$this->Locations =& new TestLocationsController();
 		$this->Locations->constructClasses();

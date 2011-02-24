@@ -1,7 +1,7 @@
 <?php
 /* Navigations Test cases generated on: 2011-02-04 19:52:09 : 1296849129*/
 App::import('Controller', 'Navigations');
-
+App::import('Lib', 'AtlasTestCase');
 class TestNavigationsController extends NavigationsController {
 	var $autoRender = false;
 
@@ -10,9 +10,7 @@ class TestNavigationsController extends NavigationsController {
 	}
 }
 
-class NavigationsControllerTestCase extends CakeTestCase {
-	var $fixtures = array('app.navigation');
-
+class NavigationsControllerTestCase extends AtlasTestCase {
 	function startTest() {
 		$this->Navigations =& new TestNavigationsController();
 		$this->Navigations->constructClasses();

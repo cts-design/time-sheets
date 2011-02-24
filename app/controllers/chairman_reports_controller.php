@@ -28,6 +28,8 @@ class ChairmanReportsController extends AppController {
                         $this->data['ChairmanReport']['file'] = Configure::read('URL') . $file;
 			$this->ChairmanReport->create();
 			if ($this->ChairmanReport->save($this->data)) {
+                                $this->Transaction->createUserTransaction('CMS', null, null,
+                                        'Created chairman report ID ' . $this->ChairmanReport->id);
 				$this->Session->setFlash(__('The chairman report has been saved', true), 'flash_success');
 				$this->redirect(array('action' => 'index'));
 			} else {
@@ -43,6 +45,8 @@ class ChairmanReportsController extends AppController {
 		}
 		if (!empty($this->data)) {
 			if ($this->ChairmanReport->save($this->data)) {
+                                $this->Transaction->createUserTransaction('CMS', null, null,
+                                        'Edited chairman report ID ' . $id);
 				$this->Session->setFlash(__('The chairman report has been saved', true), 'flash_success');
 				$this->redirect(array('action' => 'index'));
 			} else {
@@ -60,6 +64,8 @@ class ChairmanReportsController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 		if ($this->ChairmanReport->delete($id)) {
+                        $this->Transaction->createUserTransaction('CMS', null, null,
+                                        'Deleted chairman report ID ' . $id);
 			$this->Session->setFlash(__('Chairman report deleted', true), 'flash_success');
 			$this->redirect(array('action'=>'index'));
 		}

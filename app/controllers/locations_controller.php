@@ -9,7 +9,7 @@
 class LocationsController extends AppController {
 
 	var $name = 'Locations';
-	var $components = array('RequestHandler');
+
 	function admin_index() {
 		$this->Location->recursive = 0;
 		$this->set('locations', $this->paginate());
@@ -60,16 +60,15 @@ class LocationsController extends AppController {
 
 	function admin_get_locations_ajax() {
 	    if ($this->RequestHandler->isAjax()) {
-		Configure::write('debug', 0);
-		$options = array('locations' => array());
-		$locations = $this->Location->find('all');
-		$i = 0;
-		foreach($locations as $location) {
-		    $options['locations'][$i]['id'] = $location['Location']['id'];
-		    $options['locations'][$i]['name'] = $location['Location']['name'];
-		    $i++;
-		}
-		$this->set(compact('options'));
+			$options = array('locations' => array());
+			$locations = $this->Location->find('all');
+			$i = 0;
+			foreach($locations as $location) {
+			    $options['locations'][$i]['id'] = $location['Location']['id'];
+			    $options['locations'][$i]['name'] = $location['Location']['name'];
+			    $i++;
+			}
+			$this->set(compact('options'));
 	    }
 	}
 }

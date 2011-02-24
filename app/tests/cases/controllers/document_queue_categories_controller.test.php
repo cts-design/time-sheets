@@ -1,7 +1,7 @@
 <?php
 /* DocumentQueueCategories Test cases generated on: 2010-11-05 19:11:14 : 1288984814*/
 App::import('Controller', 'DocumentQueueCategories');
-
+App::import('Lib', 'AtlasTestCase');
 class TestDocumentQueueCategoriesController extends DocumentQueueCategoriesController {
 	var $autoRender = false;
 
@@ -10,9 +10,7 @@ class TestDocumentQueueCategoriesController extends DocumentQueueCategoriesContr
 	}
 }
 
-class DocumentQueueCategoriesControllerTestCase extends CakeTestCase {
-	var $fixtures = array('app.document_queue_category');
-
+class DocumentQueueCategoriesControllerTestCase extends AtlasTestCase {
 	function startTest() {
 		$this->DocumentQueueCategories =& new TestDocumentQueueCategoriesController();
 		$this->DocumentQueueCategories->constructClasses();

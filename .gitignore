@@ -1,0 +1,18 @@
+app/tmp/*
+app/config/atlas.php 
+app/config/core.php
+app/config/database.php
+app/storage
+config/atlas.php 
+config/core.php
+config/database.php app/config/atlas.php
+app/config/database.php
+app/config/atlas.php
+.settings
+.project
+app/webroot/files/public/*
+webroot/files/public/*
+app/img/public/*
+img/public/*
+app/img/_thumbs/*
+img/_thumbs/*

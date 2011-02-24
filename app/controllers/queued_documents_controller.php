@@ -3,7 +3,7 @@
 class QueuedDocumentsController extends AppController {
 
     var $name = 'QueuedDocuments';
-    var $components = array('RequestHandler');
+
     var $lockStatuses = array(
 	0 => 'Un-Locked',
 	1 => 'Locked'
@@ -170,7 +170,6 @@ class QueuedDocumentsController extends AppController {
 	}
 	$this->set($data);
 	if($this->RequestHandler->isAjax()) {
-	    Configure::write('debug', 0);
 	    $this->layout = 'ajax';
 	    if(!empty($this->params['named']['page'])) {
 		$this->render('/elements/queued_documents/index_table');

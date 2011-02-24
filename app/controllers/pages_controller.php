@@ -92,6 +92,8 @@ class PagesController extends AppController {
 		if (!empty($this->data)) {
 			$this->Page->create();
 			if ($this->Page->save($this->data)) {
+                                $this->Transaction->createUserTransaction('CMS', null, null,
+                                        'Created page: ' . $this->data['Page']['title'] . ' (ID ' . $this->Page->id . ')');
 				$this->Session->setFlash(__('The page has been saved', true), 'flash_success');
 				$this->redirect(array('action' => 'index'));
 			} else {
@@ -107,6 +109,8 @@ class PagesController extends AppController {
 		}
 		if (!empty($this->data)) {
 			if ($this->Page->save($this->data)) {
+                                $this->Transaction->createUserTransaction('CMS', null, null,
+                                        'Edit page ID: ' . $id);
 				$this->Session->setFlash(__('The page has been saved', true), 'flash_success');
 				$this->redirect(array('action' => 'index'));
 			} else {
@@ -124,6 +128,8 @@ class PagesController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 		if ($this->Page->delete($id)) {
+                        $this->Transaction->createUserTransaction('CMS', null, null,
+                                        'Deleted page ID: ' . $id);
 			$this->Session->setFlash(__('Page deleted', true), 'flash_success');
 			$this->redirect(array('action'=>'index'));
 		}

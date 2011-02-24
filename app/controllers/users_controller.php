@@ -9,53 +9,53 @@
 class UsersController extends AppController {
 
     var $name = 'Users';
-    var $components = array('Email', 'RequestHandler');
+    var $components = array('Email');
 
 
     function beforeFilter() {
-	parent::beforeFilter();
-	if (isset($this->data['User']['dob'])) {
-	    $dob = date('Y-m-d', strtotime($this->data['User']['dob']));
-	}
-	$this->User->recursive = 0;
-	if(isset($this->data['User']['username'])) {
-	    if($this->params['action'] == 'admin_login' || $this->params['action'] == 'self_sign_login') {
-		$user = $this->User->findByUsername($this->data['User']['username']);
-		if($user['User']['status'] == 1 || $user['User']['deleted'] == 1) {
-		    $this->Session->setFlash(__('Account is inactive or has been deleted', true), 'flash_failure');
-		    $this->redirect($this->referer());
+		parent::beforeFilter();
+		$this->User->recursive = 0;
+		if(!empty($this->data['User'])) {
+			foreach($this->data['User'] as $k => $v) {
+				$this->data['User'][$k] = trim($v, ' ');
+			}		
+		}		
+		if(isset($this->data['User']['username'])) {
+		    if($this->params['action'] == 'admin_login' || $this->params['action'] == 'self_sign_login') {
+				$user = $this->User->findByUsername($this->data['User']['username']);
+				if($user['User']['status'] == 1 || $user['User']['deleted'] == 1) {
+				    $this->Session->setFlash(__('Account is inactive or has been deleted', true), 'flash_failure');
+				    $this->redirect($this->referer());
+				}
+	    	}
 		}
-	    }
-	}
-	if (isset($this->data['User']['self_sign'])) {
-	    $this->Auth->userScope = array('User.dob' => $dob);
-	    $this->Auth->loginError = 'Login information is not correct, please try again.';
-	}
-	$this->Auth->allow('mini_registration', 'add', 'admin_password_reset', 'build_acl', 'admin_login', 'admin_logout', 'self_sign_login');
+		$this->Auth->allow('mini_registration', 'add', 'admin_password_reset', 'build_acl', 'admin_login', 'admin_logout', 'self_sign_login');
 
-	if (isset($this->data['User']['username'], $this->data['User']['password'],$this->data['User']['self_sign'] ) &&
-		$this->data['User']['username'] != '' && $this->data['User']['password'] != '') {
-	    $count = $this->User->find('count', array(
-			'conditions' => array(
-			    'User.username' => $this->data['User']['username'],
-			    'and' => array(
-				'User.password' => $this->Auth->password($this->data['User']['password']),
-				'User.dob' => $dob))));
-	    if ($count === 0) {
-		if ($this->data['User']['self_sign'] == 'self') {
-		    $this->redirect(array('action' => 'mini_registration',
-			$this->data['User']['username'], str_replace('/', '_', $this->data['User']['dob'])));
+		if (isset($this->data['User']['username'], $this->data['User']['password'],$this->data['User']['self_sign'] ) &&
+			$this->data['User']['username'] != '' && $this->data['User']['password'] != '') {
+		    $count = $this->User->find('count', array(
+				'conditions' => array(
+				    'User.username' => $this->data['User']['username'],
+				    'and' => array(
+					'User.password' => $this->Auth->password($this->data['User']['password'])))));
+		    if ($count === 0) {
+				if ($this->data['User']['self_sign'] == 'self') {
+				    $this->redirect(array('action' => 'mini_registration',
+					$this->data['User']['username'], str_replace('/', '_', $this->data['User']['dob'])));
+				}
+				else
+				    $this->redirect(array('action' => 'add'));
+		    }
 		}
-		else
-		    $this->redirect(array('action' => 'add'));
-	    }
-	}
-	if($this->Auth->user() &&  $this->params['action'] == 'admin_dashboard' ) {
-	    if(! $this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Users/admin_dashboard', '*')) {
-		$this->Session->setFlash(__('You are not authorized to access the admin dashboard.', true) , 'flash_failure') ;
-		$this->redirect('/');
-	    }
-	}
+		if($this->Auth->user() &&  $this->params['action'] == 'admin_dashboard' ) {
+		    if(! $this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Users/admin_dashboard', '*')) {
+			$this->Session->setFlash(__('You are not authorized to access the admin dashboard.', true) , 'flash_failure') ;
+			$this->redirect('/');
+		    }
+		}
+		if($this->Auth->user() && $this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Users/admin_resolve_login_issues', '*') == true) {
+			$this->Auth->allow('admin_request_ssn_change', 'admin_get_admin_list');
+		}
     }
 
     function admin_index() {
@@ -190,10 +190,15 @@ class UsersController extends AppController {
 	$this->layout = 'kiosk';
     }
 
-    function logout($type=null) {
+    function logout($type=null, $logoutMsg=null) {
 	if ($this->Auth->user('role_id') == '1') {
 	    if($type == 'selfSign') {
-		$msg = 'Your log in has been recorded, someone will be with you shortly.';
+		    if(!empty($logoutMsg)) {
+		    	$msg = $logoutMsg;
+		    }
+			else {
+				$msg = 'Your log in has been recorded, someone will be with you shortly.';
+			}			
 	    }
 	    else {
 		$msg = 'You have logged out successfully.';
@@ -207,14 +212,14 @@ class UsersController extends AppController {
 	}
     }
 
-    function autoLogout() {
+    function auto_logout() {
 	$this->Session->destroy();
 	$this->Session->setFlash(__('You have been logged out due to inactivity.', true), 'flash_failure');
 	$this->redirect(array('action' => 'self_sign_login'));   
     }
 
     function mini_registration($lastname=null, $dob=null) {
-	if (!empty($this->data)) {
+	if (!empty($this->data)) {	
 	    $this->User->create();
 	    if ($this->User->save($this->data)) {
 		$userId = $this->User->getInsertId();
@@ -241,7 +246,6 @@ class UsersController extends AppController {
     
     function admin_login() {
 	if($this->RequestHandler->isAjax()) {
-	    Configure::write('debug', 0);
 	    $this->Auth->login($this->data);
 	    if($this->Auth->user()) {
 		$response = array('success' => true, 'sessId' => $this->Session->id());
@@ -337,6 +341,11 @@ class UsersController extends AppController {
 	if (!empty($this->data)) {
 	    $this->User->create();
 
+            if ($this->data['User']['email'] != Configure::read('PrePop.email')) {
+                $userEmail = $this->data['User']['email'];
+                $this->set(compact('userEmail'));
+            }
+
 	    if ($this->User->save($this->data)) {
 		$message = 'Welcome to the Atlas system.' . "\r\n\r\n";
 		$message .= 'Your username is: ' . substr($this->data['User']['firstname'], 0, 1).$this->data['User']['lastname'] . "\r\n\r\n";
@@ -416,43 +425,181 @@ class UsersController extends AppController {
     }
 
     function admin_password_reset() {
-	$this->set('title_for_layout', 'Password Reset');
-	if ($this->data['User']['email'] != '') {
-	    $user = $this->User->find('first', array('conditions' => array ('User.email' => $this->data['User']['email'])));
-	    $this->data['User']['id'] = $user['User']['id'];
-	    $this->data['User']['role_id'] = $user['User']['role_id'];
-	    if ($user['User']['email'] != '') {
-		$tempPassword = rand(10000,100000);
-		$this->data['User']['password'] = Security::hash($tempPassword, null, true);
-		unset($this->data['User']['email']);
-		if ($this->User->save($this->data, array('validate' => false))) {
-		    // Fire off the E-Mail
-		    $message = Configure::read('Admin.URL') . "\n\n" . 'Temp Password: ' . $tempPassword ;
-		    $this->Email->from = Configure::read('System.email');
-		    $this->Email->to = $user['User']['firstname']." ".$user['User']['lastname']."<".$user['User']['email'].">";
-		    $this->Email->subject = 'Password Reset Request';
-		    if($this->Email->send($message)) {
-		    // Set flash message
-		    $this->Session->setFlash(__('Your password has been changed. Please check your E-Mail.', true), 'flash_success');
-		    // Redirect to login page
-		    $this->redirect(array('action' => 'login', 'admin' => true));
+		$this->set('title_for_layout', 'Password Reset');
+		if ($this->data['User']['email'] != '') {
+		    $user = $this->User->find('first', array('conditions' => array ('User.email' => $this->data['User']['email'])));
+		    $this->data['User']['id'] = $user['User']['id'];
+		    $this->data['User']['role_id'] = $user['User']['role_id'];
+		    if ($user['User']['email'] != '') {
+			$tempPassword = rand(10000,100000);
+			$this->data['User']['password'] = Security::hash($tempPassword, null, true);
+			unset($this->data['User']['email']);
+			if ($this->User->save($this->data, array('validate' => false))) {
+			    // Fire off the E-Mail
+			    $message = Configure::read('Admin.URL') . "\n\n" . 'Temp Password: ' . $tempPassword ;
+			    $this->Email->from = Configure::read('System.email');
+			    $this->Email->to = $user['User']['firstname']." ".$user['User']['lastname']."<".$user['User']['email'].">";
+			    $this->Email->subject = 'Password Reset Request';
+			    if($this->Email->send($message)) {
+			    // Set flash message
+			    $this->Session->setFlash(__('Your password has been changed. Please check your E-Mail.', true), 'flash_success');
+			    // Redirect to login page
+			    $this->redirect(array('action' => 'login', 'admin' => true));
+			    }
+			    else {
+				$this->Session->setFlash(__('Error occured sending E-Mail. Please retry.', true), 'flash_failure');
+				$this->redirect(array('action' => 'password_reset'));
+			    }
+			}
+			else {
+			    $this->Session->setFlash(__('Error saving record. Please retry.', true), 'flash_failure');
+			    $this->redirect(array('action' => 'password_reset'));
+			}
 		    }
 		    else {
-			$this->Session->setFlash(__('Error occured sending E-Mail. Please retry.', true), 'flash_failure');
-			$this->redirect(array('action' => 'password_reset'));
+		    // E-Mail address provided was not found in system.
+		    $this->Session->setFlash(__('E-Mail address not found', true), 'flash_failure');
+		    $this->redirect(array('action' => 'password_reset'));
 		    }
 		}
-		else {
-		    $this->Session->setFlash(__('Error saving record. Please retry.', true), 'flash_failure');
-		    $this->redirect(array('action' => 'password_reset'));
-		}
-	    }
-	    else {
-	    // E-Mail address provided was not found in system.
-	    $this->Session->setFlash(__('E-Mail address not found', true), 'flash_failure');
-	    $this->redirect(array('action' => 'password_reset'));
-	    }
-	}
     }
+
+    function admin_resolve_login_issues() {
+    	if($this->RequestHandler->isAjax()) {
+			if($this->params['form']['xaction'] == 'update')  {
+				$postData = json_decode($this->params['form']['users'], true);
+				$this->data['User']['id'] = $postData['id'];
+				$this->data['User']['lastname'] = $postData['lastname'];
+				$this->data['User']['username'] = $this->data['User']['lastname'];				
+				if($this->User->save($this->data, array('validate' => false))){
+					$data['success'] = true;
+					$this->data = $this->User->read(null, $postData['id']);
+					$this->Transaction->createUserTransaction('Customer', null, null,
+						'Edited last name for customer '. $this->data['User']['lastname'] . ', ' . 
+						 $this->data['User']['firstname'] . ' - '. substr($this->data['User']['ssn'], -4)
+					);
+				}
+				else {
+					$data['success'] = false;
+				}
+				$this->set('data', $data);
+				$this->render(null, null,  '/elements/ajaxreturn');					
+			}	
+			if($this->params['form']['xaction'] == 'read') {
+				$useDate = false;
+				if(!empty($this->params['form']['from']) && !empty($this->params['form']['to'])) {
+					$from = date('Y-m-d H:i:s', strtotime($this->params['form']['from'] . ' 00:00:01'));
+					$to = date('Y-m-d H:i:s', strtotime($this->params['form']['to'] . '23:59:59'));
+					$useDate = true;					
+				}
+				$this->User->recursive = -1;
+				if($this->params['form']['searchType'] == 'ssn') {
+					if($useDate){
+						$conditions = array(
+							'User.ssn LIKE' => '%'.$this->params['form']['search'].'%', 
+							'User.role_id' => 1,
+							'User.created BETWEEN ? AND ?' => array($from, $to)
+							);							
+					}
+					else {
+						$conditions = array(
+							'User.ssn LIKE' => '%'.$this->params['form']['search'].'%', 
+							'User.role_id' => 1
+							);						
+					}
+
+				}
+				if($this->params['form']['searchType'] == 'lastname') {
+					if($useDate){
+						$conditions = array(
+							'User.lastname LIKE' => '%'.$this->params['form']['search'].'%', 
+							'User.role_id' => 1,
+							'User.created BETWEEN ? AND ?' => array($from, $to)
+							);
+					}
+					else {
+						$conditions = array(
+							'User.lastname LIKE' => '%'.$this->params['form']['search'].'%', 
+							'User.role_id' => 1);	
+					}
+				}    		
+				$results = $this->User->find('all', array(
+					'conditions' => $conditions));
+				if($results) {
+					$i = 0;
+					foreach($results as $result) {
+						$users['users'][$i]['id'] = $result['User']['id'];
+						$users['users'][$i]['firstname'] = $result['User']['firstname'];
+						$users['users'][$i]['lastname'] = $result['User']['lastname'];
+						$users['users'][$i]['ssn'] = substr($result['User']['ssn'], -4);
+						$i++;
+					}					
+				}	
+				else {
+					$users['users'] = array();
+				}
+				$this->set('data', $users);
+				$this->render(null, null,  '/elements/ajaxreturn');	
+			}		    		
+    	}
+    }
+
+	function admin_get_admin_list() {
+		if($this->RequestHandler->isAjax()) {
+			if(!empty($this->params['form']['query'])) {
+				$conditions = array( 'User.role_id' => 3, 'User.lastname LIKE' => '%'.$this->params['form']['query'].'%');
+			}
+			else {
+				$conditions = array('User.role_id' => 3);
+			}
+			$this->User->recursive = -1;
+			$admins = $this->User->find('all', array('conditions' => $conditions));		
+			if($admins) {
+				$i = 0;
+				foreach($admins as $admin) {
+					$data['admins'][$i]['id'] = $admin['User']['id'];
+					$data['admins'][$i]['name'] = $admin['User']['lastname'] . ', ' . $admin['User']['firstname'];
+					$i++;
+				}
+				$data['success'] = true;
+			}
+			else {
+				$data['success'] = false;
+			}
+			$this->set('data', $data);
+			$this->render(null, null,  '/elements/ajaxreturn');	
+
+		}
+	}
+	
+	function admin_request_ssn_change() {
+		if($this->RequestHandler->isAjax()) {
+			if(!empty($this->params['form']['userId']) && !empty($this->params['form']['adminId'])){
+				$admin = $this->User->read(null, $this->params['form']['adminId']);
+				$this->Email->from = $this->Auth->user('firstname') .' ' . 
+					$this->Auth->user('lastname') . '<'.$this->Auth->user('email') .'>';
+				$this->Email->to = $admin['User']['email'];
+				$this->Email->subject = 'SSN Change Request';
+						
+				$message = 'A Social Security Number edit has been requested by ' . 
+					$this->Auth->user('firstname'). ' ' . $this->Auth->user('lastname') . '.' .  "\r\n" .
+					'Please edit the following customers record accordingly' . "\r\n" . 
+					Configure::read('Admin.URL') . '/users/edit/' . $this->params['form']['userId']. "\r\n";					
+				if($this->Email->send($message)){
+					$this->data = $this->User->read(null, $this->params['form']['userId']);
+						$this->Transaction->createUserTransaction('Customer', null, null,
+							'Requested SSN change for customer '. $this->data['User']['lastname'] . ', ' . 
+							 $this->data['User']['firstname'] . ' - '. substr($this->data['User']['ssn'], -4)
+						);						
+						$data['success'] = true;
+				}
+				else {
+					$data['success'] = false;
+				}
+				$this->set('data', $data);
+				$this->render(null, null, '/elements/ajaxreturn');
+			}
+		}
+	}
 
 }

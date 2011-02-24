@@ -10,7 +10,6 @@ class SelfSignLogsController extends AppController {
     var $name = 'SelfSignLogs';
     var $uses = array('SelfSignLog', 'MasterKioskButton');
     var $statuses = array(0 => 'open', 1 => 'closed');
-    var $components = array('RequestHandler');
 
     function admin_index() {
 	$data = array(
@@ -24,7 +23,6 @@ class SelfSignLogsController extends AppController {
 
     function admin_get_logs_ajax() {
 	if($this->RequestHandler->isAjax()) {
-	    Configure::write('debug', 0);
 	    $date = date('Y-m-d') . ' 00:01:00';
 	    if (isset($this->params['url']['location'], $this->params['url']['service']) &&
 		    $this->params['url']['location'] != '' && $this->params['url']['service'] != '') {
@@ -104,8 +102,7 @@ class SelfSignLogsController extends AppController {
     }
 
     function admin_get_logs_ajax_json(){
-	if($this->RequestHandler->isAjax()) {   
-	    Configure::write('debug', 0);	    
+	if($this->RequestHandler->isAjax()) {   	    
 	    $date = date('Y-m-d') . ' 00:01:00';
 	    if (isset($this->params['form']['location'], $this->params['form']['services']) &&
 		    $this->params['form']['location'] != '' && $this->params['form']['services'] != '') {
@@ -163,7 +160,6 @@ class SelfSignLogsController extends AppController {
 
     function admin_get_services_ajax() {
 	if ($this->RequestHandler->isAjax()) {
-	    Configure::write('debug', 0);
 	    $this->loadModel('KioskButton');
 	    $masterParentButtonNameList = $this->_getParentMasterButtonNames();
 	    if (isset($this->params['url']['id']) && $this->params['url']['id'] != '' ) {
@@ -189,7 +185,6 @@ class SelfSignLogsController extends AppController {
 
     function admin_get_services_ajax_air() {
 	if ($this->RequestHandler->isAjax()) {
-	    Configure::write('debug', 0);
 	    $this->loadModel('KioskButton');
 	    $masterParentButtonNameList = $this->_getParentMasterButtonNames();
 	    if (isset($this->params['form']['id']) && $this->params['form']['id'] != '' ) {

@@ -9,7 +9,7 @@ App::import('Vendor', 'DebugKit.FireCake'); // @TODO remove from production
 class NavigationsController extends AppController {
 
 	var $name = 'Navigations';
-        var $components = array('RequestHandler', 'Security');
+        var $components = array('Security');
         var $helpers = array();
 
         function beforeFilter() {
@@ -17,10 +17,6 @@ class NavigationsController extends AppController {
 
             // ensure our ajax methods are POSTed
             $this->Security->requirePost('admin_get_nodes', 'admin_reorder', 'admin_reparent', 'admin_rename_node');
-        }
-
-        function populate() {
-            $this->Navigation->populateDb();
         }
 
 	function admin_index() {
@@ -32,8 +28,6 @@ class NavigationsController extends AppController {
          * Retrieves request from Ajax and finds the parent and it's children
          */
         function admin_get_nodes() {
-            $this->autoRender = FALSE;
-
             // retreive the node id that ExtJS posts via Ajax
             $parent = intval($this->params['form']['node']);
 
@@ -41,88 +35,79 @@ class NavigationsController extends AppController {
             // the second parameter (true) means we only want direct children
             $nodes = $this->Navigation->children($parent, true);
 
-            $data = array();
-
-            foreach ($nodes as $node){
-                $data[] = array(
-                    "text" => $node['Navigation']['title'],
-                    "id" => $node['Navigation']['id'],
-                    "cls" => "folder",
-                    "leaf" => ($node['Navigation']['lft'] + 1 == $node['Navigation']['rght'])
-                );
-            }
-
-            echo json_encode($data);
+            $this->set(compact('nodes'));
         }
 
         function admin_reorder(){
-
+            $success = false;
             // retrieve the node instructions from javascript
             // delta is the difference in position (1 = next node, -1 = previous node)
-
             $node = intval($this->params['form']['node']);
             $delta = intval($this->params['form']['delta']);
 
             if ($delta > 0) {
-                $this->Navigation->movedown($node, abs($delta));
+                if ($this->Navigation->movedown($node, abs($delta))) {
+                    $success = true;
+                }
             } elseif ($delta < 0) {
-                $this->Navigation->moveup($node, abs($delta));
+                if ($this->Navigation->moveup($node, abs($delta))) {
+                    $success = true;
+                }
             }
 
-            // send success response
-            exit('1');
-
+            $this->set(compact('success'));
         }
 
         function admin_reparent(){
-
+            $success = false;
             $node = intval($this->params['form']['node']);
             $parent = intval($this->params['form']['parent']);
             $position = intval($this->params['form']['position']);
 
-            FireCake::log($this->params['form']);
-
             // save the navigation node with the new parent id
             // this will move the employee node to the bottom of the parent list
-
             $this->Navigation->id = $node;
             $this->Navigation->saveField('parent_id', $parent);
-
 
             $count = $this->Navigation->childcount($parent, true);
             $delta = $count-$position-1;
             if ($delta > 0){
-                $this->Navigation->moveup($node, $delta);
+                if ($this->Navigation->moveup($node, $delta)) {
+                    $success = true;
+                }
             }
-            
-            // send success response
-            exit('1');
 
+            $this->set(compact('success'));
         }
 
         function admin_rename_node() {
+            $success = false;
             $nodeId = intval($this->params['form']['id']);
             $nodeTitle = $this->params['form']['title'];
             
             $this->Navigation->read(null, $nodeId);
             $this->Navigation->set('title', $nodeTitle);
             if ($this->Navigation->save()) {
-                exit('1');
-            } else {
-                exit('0');
+                $success = true;
             }
+
+            $this->set(compact('success'));
         }
 
         function admin_delete_node() {
+            $success = false;
             $nodeId = intval($this->params['form']['id']);
+            FireCake::log($nodeId);
             if ($this->Navigation->delete($nodeId)) {
-                exit('1');
+                FireCake::log('truth');
+                $success = true;
             }
 
-            exit('0');
+            $this->set(compact('success'));
         }
 
         function admin_add_node() {
+            $success = false;
             $nodeTitle = $this->params['form']['title'];
             $nodeLink  = $this->params['form']['link'];
             $parentId  = intval($this->params['form']['parent_id']);
@@ -137,10 +122,13 @@ class NavigationsController extends AppController {
             );
 
             if ($this->Navigation->save($data)) {
-                exit($this->Navigation->id);
+                $success = true;
+                $id = $this->Navigation->id;
             } else {
-                exit('0');
+                $success = false;
             }
+
+            $this->set(compact('id', 'success'));
         }
 }
 ?>

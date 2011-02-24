@@ -29,6 +29,8 @@ class PressReleasesController extends AppController {
                     $this->PressRelease->create();
                     
                     if ($this->PressRelease->save($this->data)) {
+                            $this->Transaction->createUserTransaction('CMS', null, null,
+                                        'Created press release ID ' . $this->PressRelease->id);
                             $this->Session->setFlash(__('The press release has been saved', true), 'flash_success');
                             $this->redirect(array('action' => 'index'));
                     } else {
@@ -44,6 +46,8 @@ class PressReleasesController extends AppController {
 		}
 		if (!empty($this->data)) {
 			if ($this->PressRelease->save($this->data)) {
+                                $this->Transaction->createUserTransaction('CMS', null, null,
+                                        'Edited press release ID ' . $id);
 				$this->Session->setFlash(__('The press release has been saved', true), 'flash_success');
 				$this->redirect(array('action' => 'index'));
 			} else {
@@ -61,6 +65,8 @@ class PressReleasesController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 		if ($this->PressRelease->delete($id)) {
+                        $this->Transaction->createUserTransaction('CMS', null, null,
+                                        'Deleted press release ID ' . $id);
 			$this->Session->setFlash(__('Press release deleted', true), 'flash_success');
 			$this->redirect(array('action'=>'index'));
 		}

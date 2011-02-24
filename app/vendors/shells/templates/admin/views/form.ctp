@@ -17,27 +17,19 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
+<div id="crumbWrapper">
+    <span>You are here > </span>
+<?php
+if (strpos($action, 'add' === false)) {
+    echo "<?php echo \$crumb->getHtml('Edit ".$singularHumanName."', null, 'unique'); ?>";
+} else {
+    echo "<?php echo \$crumb->getHtml('Add ".$singularHumanName."', null, 'unique'); ?>";
+}
+?>
+</div>
 <div class="<?php echo $pluralVar;?> form admin">
     <div class="actions ui-widget-header">
-	<ul>
-
-<?php if (strpos($action, 'add') === false): ?>
-		<li><?php echo "<?php echo \$this->Html->link(__('Delete', true), array('action' => 'delete', \$this->Form->value('{$modelClass}.{$primaryKey}')), null, sprintf(__('Are you sure you want to delete # %s?', true), \$this->Form->value('{$modelClass}.{$primaryKey}'))); ?>";?></li>
-<?php endif;?>
-		<li><?php echo "<?php echo \$this->Html->link(__('List " . $pluralHumanName . "', true), array('action' => 'index'));?>";?></li>
-<?php
-		$done = array();
-		foreach ($associations as $type => $data) {
-			foreach ($data as $alias => $details) {
-				if ($details['controller'] != $this->name && !in_array($details['controller'], $done)) {
-					echo "\t\t<li><?php echo \$this->Html->link(__('List " . Inflector::humanize($details['controller']) . "', true), array('controller' => '{$details['controller']}', 'action' => 'index')); ?> </li>\n";
-					echo "\t\t<li><?php echo \$this->Html->link(__('New " . Inflector::humanize(Inflector::underscore($alias)) . "', true), array('controller' => '{$details['controller']}', 'action' => 'add')); ?> </li>\n";
-					$done[] = $details['controller'];
-				}
-			}
-		}
-?>
-	</ul>
+	<ul></ul>
 </div>
 <?php echo "<?php echo \$this->Form->create('{$modelClass}');?>\n";?>
 	<fieldset>

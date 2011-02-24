@@ -58,9 +58,18 @@
 		'before' => '<p class="left">',
 		'between' => '</p><p class="left">',
 		'after' => '</p>'));
+		echo '<br class="clear"/>';
+	    echo $this->Form->input('phone', array(
+			'label' => __('Phone', true),
+			'before' => '<p class="left">',
+			'between' => '</p><p class="left">',
+			'after' => '</p>'
+		));		
 	    echo $this->Form->hidden('mini_registration', array('value' => 'mini'));
 	    ?>
 	</fieldset>
 	<?php echo $this->Form->end(array('label' => __('Submit', true), 'class' => 'self-sign-kiosk-button')); ?>
+	<?php echo $this->Html->link('Cancel', array('controller' => 'users', 'action' => 'self_sign_login'),
+		 array('class' => 'self-sign-kiosk-link'))?>
     </div>
 </div>

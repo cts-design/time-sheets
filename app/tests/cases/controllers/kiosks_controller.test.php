@@ -1,7 +1,7 @@
 <?php
 /* Kiosks Test cases generated on: 2010-09-27 15:09:12 : 1285601112*/
 App::import('Controller', 'Kiosks');
-
+App::import('Lib', 'AtlasTestCase');
 class TestKiosksController extends KiosksController {
 	var $autoRender = false;
 
@@ -10,9 +10,7 @@ class TestKiosksController extends KiosksController {
 	}
 }
 
-class KiosksControllerTestCase extends CakeTestCase {
-	var $fixtures = array('app.kiosk');
-
+class KiosksControllerTestCase extends AtlasTestCase {
 	function startTest() {
 		$this->Kiosks =& new TestKiosksController();
 		$this->Kiosks->constructClasses();

@@ -1,7 +1,7 @@
 <?php
 /* SelfScanCategories Test cases generated on: 2010-12-15 21:12:58 : 1292447938*/
 App::import('Controller', 'SelfScanCategories');
-
+App::import('Lib', 'AtlasTestCase');
 class TestSelfScanCategoriesController extends SelfScanCategoriesController {
 	var $autoRender = false;
 
@@ -10,9 +10,7 @@ class TestSelfScanCategoriesController extends SelfScanCategoriesController {
 	}
 }
 
-class SelfScanCategoriesControllerTestCase extends CakeTestCase {
-	var $fixtures = array('app.self_scan_category');
-
+class SelfScanCategoriesControllerTestCase extends AtlasTestCase {
 	function startTest() {
 		$this->SelfScanCategories =& new TestSelfScanCategoriesController();
 		$this->SelfScanCategories->constructClasses();

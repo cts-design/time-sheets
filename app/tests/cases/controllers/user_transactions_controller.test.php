@@ -1,7 +1,7 @@
 <?php
 /* UserTransactions Test cases generated on: 2010-10-28 12:10:07 : 1288269787*/
 App::import('Controller', 'UserTransactions');
-
+App::import('Lib', 'AtlasTestCase');
 class TestUserTransactionsController extends UserTransactionsController {
 	var $autoRender = false;
 
@@ -10,9 +10,7 @@ class TestUserTransactionsController extends UserTransactionsController {
 	}
 }
 
-class UserTransactionsControllerTestCase extends CakeTestCase {
-	var $fixtures = array('app.user_transaction');
-
+class UserTransactionsControllerTestCase extends AtlasTestCase {
 	function startTest() {
 		$this->UserTransactions =& new TestUserTransactionsController();
 		$this->UserTransactions->constructClasses();

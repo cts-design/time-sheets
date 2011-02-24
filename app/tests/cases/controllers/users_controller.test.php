@@ -1,67 +1,116 @@
 <?php
 /* Users Test cases generated on: 2010-09-22 15:09:30 : 1285168950*/
 App::import('Controller', 'Users');
-
+App::import('Lib', 'AtlasTestCase');
 class TestUsersController extends UsersController {
-	var $autoRender = false;
+    var $autoRender = false;
 
-	function redirect($url, $status = null, $exit = true) {
-		$this->redirectUrl = $url;
-	}
+    function redirect($url, $status = null, $exit = true) {
+        $this->redirectUrl = $url;
+    }
 }
 
-class UsersControllerTestCase extends CakeTestCase {
-	var $fixtures = array('app.user');
+class UsersControllerTestCase extends AtlasTestCase {
+    function startCase() {
+        Configure::write('Acl.database', 'test');
+    }
 
-	function startTest() {
-		$this->Users =& new TestUsersController();
-		$this->Users->constructClasses();
-	}
+    function endCase() {
+        Configure::write('Acl.database', 'default');
+    }
 
-	function endTest() {
-		unset($this->Users);
-		ClassRegistry::flush();
-	}
+    function startTest() {
+        $this->Users =& new TestUsersController();
+        $this->Users->constructClasses();
+    }
 
-	function testIndex() {
+    function endTest() {
+        unset($this->Users);
+        ClassRegistry::flush();
+    }
 
-	}
+    function testAdminAddWithValidData() {
+        $this->Users->data = array(
+            'User' => array(
+                'role_id' => 2,
+                'firstname' => 'brandon',
+                'lastname' => 'cordell',
+                'middle_initial' => 'D',
+                'ssn' => '123456789',
+                'ssn_confirm' => '123456789',
+                'username' => 'validuser',
+                'password' => 'asd123',
+                'address_1' => '123 main st',
+                'address_2' => '',
+                'city' => 'spring hill',
+                'state' => 'fl',
+                'zip' => '34609',
+                'phone' => '',
+                'alt_phone' => '',
+                'gender' => 'Male',
+                'dob' => '01/10/1986',
+                'email' => 'brandonc@gmail.com',
+                'location_id' => '1',
+                'signature_created' => '2010-09-22 15:02:21',
+                'signature_modified' => '2010-09-22 15:02:21',
+                'created' => '2010-09-22 15:02:21',
+                'modified' => '2010-09-22 15:02:21'
+            )
+        );
 
-	function testView() {
+        $this->Users->admin_add();
+        $this->assertFlashMessage($this->Users, 'The customer has been saved', 'flash_success');
+    }
 
-	}
+    function testAdminAddWithInvalidData() {
+        $this->Users->data = array(
+            'User' => array(
+                'name' => '',
+                'created' => '0000-00-00 00:00:00',
+                'modified' => '0000-00-00 00:00:00'
+            )
+        );
 
-	function testAdd() {
+        $this->Users->admin_add();
+        $this->assertFlashMessage($this->Users, 'The customer could not be saved. Please, try again.', 'flash_failure');
+    }
 
-	}
+    function testAdminEditWithInvalidId() {
+        $this->Users->admin_edit();
+        $this->assertFlashMessage($this->Users, 'Invalid customer', 'flash_failure');
 
-	function testEdit() {
+        $this->Users->admin_edit(2);
+        $this->assertFlashMessage($this->Users, 'Invalid customer', 'flash_failure');
+    }
 
-	}
+    function testAdminEditWithValidData() {
+        $this->Users->data = array(
+            'User' => array(
+                'firstname' => 'Valid'
+            )
+        );
+        $this->Users->admin_edit(1);
+        $this->assertFlashMessage($this->Users, 'The customer has been saved', 'flash_success');
+    }
 
-	function testDelete() {
+    function testAdminEditWithInvalidData() {
+        $this->Users->data = array(
+            'User' => array(
+                'name' => ''
+            )
+        );
+        $this->Users->admin_edit(4);
+        $this->assertFlashMessage($this->Users, 'The customer could not be saved. Please, try again.', 'flash_failure');
+    }
 
-	}
+    function testAdminDeleteWithInvalidId() {
+        $this->Users->admin_delete();
+        $this->assertFlashMessage($this->Users, 'Customer was not deleted', 'flash_failure');
+    }
 
-	function testAdminIndex() {
-
-	}
-
-	function testAdminView() {
-
-	}
-
-	function testAdminAdd() {
-
-	}
-
-	function testAdminEdit() {
-
-	}
-
-	function testAdminDelete() {
-
-	}
-
+    function testAdminDelete() {
+        $this->Users->admin_delete(1);
+        $this->assertFlashMessage($this->Users, 'Customer was not deleted', 'flash_failure');
+    }
 }
 ?>
