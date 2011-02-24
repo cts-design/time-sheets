@@ -58,6 +58,13 @@
 		'before' => '<p class="left">',
 		'between' => '</p><p class="left">',
 		'after' => '</p>'));
+		echo '<br class="clear"/>';
+	    echo $this->Form->input('phone', array(
+			'label' => __('Phone', true),
+			'before' => '<p class="left">',
+			'between' => '</p><p class="left">',
+			'after' => '</p>'
+		));		
 	    echo $this->Form->hidden('mini_registration', array('value' => 'mini'));
 	    ?>
 	</fieldset>
