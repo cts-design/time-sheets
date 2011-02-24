@@ -6,37 +6,149 @@
  * @package ATLAS V3
  */
 ?>
-<?php echo $this->Html->script('jquery.jstree', array('inline' => false)) ?>
-<?php echo $this->Html->script('jquery.cookie', array('inline' => false)) ?>
-<?php echo $this->Html->script('/js/document_filing_categories/tree', array('inline' => false))?>
+<?php echo $this->Html->script('ext/adapter/ext/ext-base-debug', array('inline' => FALSE));?>
+<?php echo $this->Html->script('ext-all-debug', array('inline' => FALSE));?>
+
+
+<script type="text/javascript">
+   var getnodesUrl = '<?php echo $html->url('/admin/document_filing_categories') ?>';
+   var reorderUrl = '<?php echo $html->url('/admin/document_filing_categories/reorder_categories_ajax') ?>';
+
+Ext.onReady(function(){
+	Ext.QuickTips.init();
+	Ext.state.Manager.setProvider(new Ext.state.CookieProvider({
+	    expires: new Date(new Date().getTime()+(1000*60*60*24*7)), //7 days from now
+	}));
+	
+	var addCat = new Ext.Button({
+		text: 'Add New Category',
+		tooltip: 'Add Document Filing Category.',
+		handler: function() {
+			var parent = tree.getSelectionModel().getSelectedNode();
+			var name = catName.getValue(); 
+			console.log(name);
+			Ext.Ajax.request({
+					url: '/admin/document_filing_categories/add',
+					params: {
+						parentId: parent.id,
+						catName: name
+					},
+					scope: this,
+					success: function(response, options) {
+						var o = {};
+						try {o = Ext.decode(response.responseText);}
+						catch(e) {
+							Ext.Msg.alert('Error','Unable to save category, please try again.');
+							return;
+						}
+						if(o.success !== true) {
+							Ext.Msg.alert('Error','Unable to save category, please try again..');
+						}
+						else {
+							Ext.Msg.alert('Success','Category was saved successfully.');
+							tree.getRootNode().reload();						
+						}
+					},
+					failure: function() {
+						Ext.Msg.alert('Error','Unable to save category, please try again.');
+					}
+				});
+		}
+	});	
+	var catName = new Ext.form.Field({
+		
+	});
+	
+    var tb = new Ext.Toolbar({
+    	width: 300,
+    	items: [catName, addCat]
+    });	
+    
+	var tree = new Ext.tree.TreePanel({
+		renderTo: 'documentFilingCategoryTree',
+		id: 'docCatTree',
+		useArrows: true,
+		width: 300,
+		stateful: true, 
+		animate: true,
+		enableDD: true,
+		containerScroll: true,
+		border: false,
+		tbar: [tb],
+		dataUrl: '/admin/document_filing_categories',
+		root: {
+			nodeType: 'async',
+			expanded: true,
+			text: 'Document Filing Catgories',
+			draggable: false,
+			id: 'source'
+		},	
+	});
+var oldPosition = null;
+var oldNextSibling = null;
+
+tree.on('startdrag', function(tree, node, event){
+    oldPosition = node.parentNode.indexOf(node);
+    oldNextSibling = node.nextSibling;
+});
+
+tree.on('movenode', function(tree, node, oldParent, newParent, position){
+
+    if (oldParent == newParent){
+        var url = reorderUrl;
+        var params = {'node':node.id, 'delta':(position-oldPosition)};
+    } else {
+        var url = reparentUrl;
+        var params = {'node':node.id, 'parent':newParent.id, 'position':position};
+    }
+    
+    // we disable tree interaction until we've heard a response from the server
+    // this prevents concurrent requests which could yield unusual results
+    
+    tree.disable();
+    
+    Ext.Ajax.request({
+        url:url,
+        params:params,
+        success:function(response, request) {
+        
+            // if the first char of our response is zero, then we fail the operation,
+            // otherwise we re-enable the tree
+            
+            if (response.responseText.charAt(0) != 1){
+                request.failure();
+            } else {
+                tree.enable();
+            }
+        },
+        failure:function() {
+        
+            // we move the node back to where it was beforehand and
+            // we suspendEvents() so that we don't get stuck in a possible infinite loop
+            
+            tree.suspendEvents();
+            oldParent.appendChild(node);
+            if (oldNextSibling){
+                oldParent.insertBefore(node, oldNextSibling);
+            }
+            
+            tree.resumeEvents();
+            tree.enable();
+            
+            alert("Oh no! Your changes could not be saved!");
+        }
+    
+    });
+
+});
+	
+});	
+</script>
+
 
 <div id="crumbWrapper">
     <span>You are here > </span>
     <?php echo $crumb->getHtml('Document Filing Categories', null, 'unique') ; ?>
 </div>
-<div id="manageDocumentFilingCategories" class="admin">
-    <div class="actions ui-widget-header">
-	<ul>
-	    <li><?php echo $this->Html->link('Add Root Category', '/admin/document_filing_categories/', array('id' => 'addCategory')) ?></li>
-	    <li><?php echo $this->Html->link('Edit Category', '', array('id' => 'editCategory')) ?></li>
-	    <li><?php echo $this->Html->link('Delete Category', '', array('id' => 'deleteCategory'), __('Are you sure you want to delete this category?', true)) ?></li>
-	</ul>
-    </div>
-    <?php if (!empty($data)) { ?>
-    <h2><?php echo __('Categories')?></h2>
-    <p class="expand-wrap"><?php echo $this->Html->link('Expand All', '', array('class' => 'expand')) ?></p>
-	<?php echo '<div id="documentCategoryTree">' . $tree->generate($data, array('element' => 'document_filing_categories/document_filing_category_tree')) . '</div>'; ?>
-    <?php } else
-	echo '<p>There are no categories, please add some</p>'; ?>
-    <br />
-    <div class="mini-form">
-	<fieldset>
-	    <legend>Add New Document Filing Category</legend>
-	    <?php echo $this->Form->create('DocumentFilingCategory', array('action' => 'add')) ?>
-	    <?php echo $this->Form->hidden('parent_id') ?>
-	    <?php echo $this->Form->hidden('order', array('value' => 1000))?>
-	    <?php echo $this->Form->input('name') ?>
-	</fieldset>
-	<?php echo $this->Form->end('submit') ?>
-    </div>
-</div>
+
+<div id="documentFilingCategoryTree"></div>
