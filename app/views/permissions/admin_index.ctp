@@ -127,7 +127,74 @@
 	   	'label' => 'Resolve Login Issues',
 	    'checked' => (isset($controllers['Users']['admin_resolve_login_issues'])) ? $controllers['Users']['admin_resolve_login_issues'] : '' ));?>
     </fieldset>    
+    <fieldset class="left right-mar-10">
+	<legend>Website Pages</legend>
+       <?php echo $this->Form->input('Pages.admin_index', array(
+	    'type' => 'checkbox',
+	   	'label' => 'Index',
+	    'checked' => (isset($controllers['Pages']['admin_index'])) ? $controllers['Pages']['admin_index'] : '' ));?>
+       <?php echo $this->Form->input('Pages.admin_add', array(
+	    'type' => 'checkbox',
+	   	'label' => 'Add',
+	    'checked' => (isset($controllers['Pages']['admin_add'])) ? $controllers['Pages']['admin_add'] : '' ));?>
+       <?php echo $this->Form->input('Pages.admin_edit', array(
+	    'type' => 'checkbox',
+	   	'label' => 'Edit',
+	    'checked' => (isset($controllers['Pages']['admin_edit'])) ? $controllers['Pages']['admin_edit'] : '' ));?>
+       <?php echo $this->Form->input('Pages.admin_delete', array(
+	    'type' => 'checkbox',
+	   	'label' => 'Delete',
+	    'checked' => (isset($controllers['Pages']['admin_delete'])) ? $controllers['Pages']['admin_delete'] : '' ));?>
+    </fieldset>
+    <fieldset class="left right-mar-10">
+	<legend>Website Navigation</legend>
+       <?php echo $this->Form->input('Navigations.all', array(
+	    'type' => 'checkbox',
+	   	'label' => 'Index',
+	    'checked' => (isset($controllers['Navigations']['all'])) ? $controllers['Navigations']['all'] : '' ));?>
+    </fieldset>
+    <fieldset class="left right-mar-10">
+	<legend>Chairman Reports</legend>
+       <?php echo $this->Form->input('ChairmanReports.admin_index', array(
+	    'type' => 'checkbox',
+	   	'label' => 'Index',
+	    'checked' => (isset($controllers['ChairmanReports']['admin_index'])) ? $controllers['ChairmanReports']['admin_index'] : '' ));?>
+       <?php echo $this->Form->input('ChairmanReports.admin_add', array(
+	    'type' => 'checkbox',
+	   	'label' => 'Add',
+	    'checked' => (isset($controllers['ChairmanReports']['admin_add'])) ? $controllers['ChairmanReports']['admin_add'] : '' ));?>
+       <?php echo $this->Form->input('ChairmanReports.admin_edit', array(
+	    'type' => 'checkbox',
+	   	'label' => 'Edit',
+	    'checked' => (isset($controllers['ChairmanReports']['admin_edit'])) ? $controllers['ChairmanReports']['admin_edit'] : '' ));?>
+       <?php echo $this->Form->input('ChairmanReports.admin_delete', array(
+	    'type' => 'checkbox',
+	   	'label' => 'Delete',
+	    'checked' => (isset($controllers['ChairmanReports']['admin_delete'])) ? $controllers['ChairmanReports']['admin_delete'] : '' ));?>
+    </fieldset>   
     <br class="clear" />
+    <fieldset class="left right-mar-10">
+    <legend>Press Releases</legend>
+       <?php echo $this->Form->input('PressReleases.admin_index', array(
+	    'type' => 'checkbox',
+	   	'label' => 'Index',
+	    'checked' => (isset($controllers['PressReleases']['admin_index'])) ? $controllers['PressReleases']['admin_index'] : '' ));?>
+       <?php echo $this->Form->input('PressReleases.admin_add', array(
+	    'type' => 'checkbox',
+	   	'label' => 'Add',
+	    'checked' => (isset($controllers['PressReleases']['admin_add'])) ? $controllers['PressReleases']['admin_add'] : '' ));?>
+       <?php echo $this->Form->input('PressReleases.admin_edit', array(
+	    'type' => 'checkbox',
+	   	'label' => 'Edit',
+	    'checked' => (isset($controllers['PressReleases']['admin_edit'])) ? $controllers['PressReleases']['admin_edit'] : '' ));?>
+       <?php echo $this->Form->input('PressReleases.admin_delete', array(
+	    'type' => 'checkbox',
+	   	'label' => 'Delete',
+	    'checked' => (isset($controllers['PressReleases']['admin_delete'])) ? $controllers['PressReleases']['admin_delete'] : '' ));?>
+    </fieldset>
+    
+    <br class="clear" />
+
     <?php echo $this->Form->end('Submit')?>
 
     <br />
