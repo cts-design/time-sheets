@@ -4,7 +4,6 @@ config/atlas.php
 config/core.php
 config/database.php
 storage/
-config/atlas.php 
 config/core.php
 .settings
 .project
