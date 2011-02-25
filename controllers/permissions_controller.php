@@ -11,57 +11,62 @@ class PermissionsController extends AppController {
     var $uses = '';
 
     function admin_index($id=null, $model=null) {
-	if(!$id) {
-	    $this->Session->setFlash(__('Invalid Id. Please try again.', true), 'flash_failure');
-	    $this->redirect($this->referer());
-	}
-	if(isset($model) && $model == 'Role') {
-	    $this->loadModel('Role');
-	    $role = $this->Role->find('first', array('conditions' => array('Role.id' => $id)));
-	    $title_for_layout = 'Editing permissions for role ' . $role['Role']['name'];
-	}
-
-	$perms = $this->Acl->Aro->find('threaded', array('conditions' => array('Aro.foreign_key' => $id, 'Aro.model' => $model)));
-	if($model == 'User') {
-	    $this->loadModel('User');
-	    $user = $this->User->find('first', array('conditions' => array('User.id' => $id)));
-	    $title_for_layout = 'Editing permissions for ' . $user['User']['firstname'] . ' ' . $user['User']['lastname'];
-	    $data['aroId'] = $perms[0]['Aro']['id'];
-	    $parentPerms = $this->Acl->Aro->find('first', array('conditions' => array('Aro.id' => $perms[0]['Aro']['parent_id'])));
-	}
-	$acos = Set::extract('/Aco', $perms);
-	if(isset($parentPerms)) {
-	    $acos1 = Set::extract('/Aco', $parentPerms);
-	    $acos = array_merge($acos1, $acos);
-	}
-	foreach($acos as $aco) {
-	    if(isset($aco['Aco']['Permission']) && $aco['Aco']['Permission']['_create'] && $aco['Aco']['Permission']['_read'] &&
-		    $aco['Aco']['Permission']['_update'] && $aco['Aco']['Permission']['_delete'] == 1) {
-
-		if($aco['Aco']['parent_id'] == '' || $aco['Aco']['parent_id'] == 1) {
-		    $data['controllers'][$aco['Aco']['alias']]['All'] = true;
+	    $ModuleAccessControl =& ClassRegistry::init('ModuleAccessControl');
+			
+		if(!$id) {
+		    $this->Session->setFlash(__('Invalid Id. Please try again.', true), 'flash_failure');
+		    $this->redirect($this->referer());
 		}
-		else {
-		   $parent = $this->Acl->Aco->find('first', array('conditions' => array('Aco.id' => $aco['Aco']['parent_id'])));
-		   $data['controllers'][$parent['Aco']['alias']][$aco['Aco']['alias']] = true;
+		if(isset($model) && $model == 'Role') {
+		    $this->loadModel('Role');
+		    $role = $this->Role->find('first', array('conditions' => array('Role.id' => $id)));
+		    $title_for_layout = 'Editing permissions for role ' . $role['Role']['name'];
 		}
-	    }
-	    if(isset($aco['Aco']['Permission']) && $aco['Aco']['Permission']['_create'] && $aco['Aco']['Permission']['_read'] &&
-		    $aco['Aco']['Permission']['_update'] && $aco['Aco']['Permission']['_delete'] == '-1') {
-
-		if($aco['Aco']['parent_id'] == '' || $aco['Aco']['parent_id'] == 1) {
-		    $data['controllers'][$aco['Aco']['alias']]['All'] = false;
+	
+		$perms = $this->Acl->Aro->find('threaded', array('conditions' => array('Aro.foreign_key' => $id, 'Aro.model' => $model)));
+		if($model == 'User') {
+		    $this->loadModel('User');
+		    $user = $this->User->find('first', array('conditions' => array('User.id' => $id)));
+		    $title_for_layout = 'Editing permissions for ' . $user['User']['firstname'] . ' ' . $user['User']['lastname'];
+		    $data['aroId'] = $perms[0]['Aro']['id'];
+		    $parentPerms = $this->Acl->Aro->find('first', array('conditions' => array('Aro.id' => $perms[0]['Aro']['parent_id'])));
 		}
-		else {
-		   $parent = $this->Acl->Aco->find('first', array('conditions' => array('Aco.id' => $aco['Aco']['parent_id'])));
-		   $data['controllers'][$parent['Aco']['alias']][$aco['Aco']['alias']] = false;
+		$acos = Set::extract('/Aco', $perms);
+		if(isset($parentPerms)) {
+		    $acos1 = Set::extract('/Aco', $parentPerms);
+		    $acos = array_merge($acos1, $acos);
 		}
-	    }
-	}
-	$data['title_for_layout'] = $title_for_layout;
-	$data['id'] = $id;
-	$data['model'] = $model;
-	$this->set($data);
+		foreach($acos as $aco) {
+		    if(isset($aco['Aco']['Permission']) && $aco['Aco']['Permission']['_create'] && $aco['Aco']['Permission']['_read'] &&
+			    $aco['Aco']['Permission']['_update'] && $aco['Aco']['Permission']['_delete'] == 1) {
+	
+			if($aco['Aco']['parent_id'] == '' || $aco['Aco']['parent_id'] == 1) {
+			    $data['controllers'][$aco['Aco']['alias']]['All'] = true;
+			}
+			else {
+			   $parent = $this->Acl->Aco->find('first', array('conditions' => array('Aco.id' => $aco['Aco']['parent_id'])));
+			   $data['controllers'][$parent['Aco']['alias']][$aco['Aco']['alias']] = true;
+			}
+		    }
+		    if(isset($aco['Aco']['Permission']) && $aco['Aco']['Permission']['_create'] && $aco['Aco']['Permission']['_read'] &&
+			    $aco['Aco']['Permission']['_update'] && $aco['Aco']['Permission']['_delete'] == '-1') {
+	
+			if($aco['Aco']['parent_id'] == '' || $aco['Aco']['parent_id'] == 1) {
+			    $data['controllers'][$aco['Aco']['alias']]['All'] = false;
+			}
+			else {
+			   $parent = $this->Acl->Aco->find('first', array('conditions' => array('Aco.id' => $aco['Aco']['parent_id'])));
+			   $data['controllers'][$parent['Aco']['alias']][$aco['Aco']['alias']] = false;
+			}
+		    }
+		}
+		$data['disabledModules'] = $ModuleAccessControl->find('list',
+															  array('fields' => array('ModuleAccessControl.name'),
+															  		'conditions' => array('permission' => 1)));
+		$data['title_for_layout'] = $title_for_layout;
+		$data['id'] = $id;
+		$data['model'] = $model;
+		$this->set($data);
     }
 
     function admin_set_permissions() {
