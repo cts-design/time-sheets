@@ -13,17 +13,10 @@ class DocumentFilingCategoriesController extends AppController {
 	var $components = array('RequestHandler');
 	
     function beforeFilter() {
-<<<<<<< HEAD:app/controllers/document_filing_categories_controller.php
 		parent::beforeFilter();
 		if($this->Auth->user('role_id') > 1) {
 		    $this->Auth->allow('admin_get_child_cats_ajax', 'admin_get_grand_child_cats_ajax');
 		}
-=======
-	parent::beforeFilter();
-	if($this->Auth->user('role_id') > 1) {
-	    $this->Auth->allow('admin_get_child_cats_ajax', 'admin_get_grand_child_cats_ajax');
-	}
->>>>>>> master:controllers/document_filing_categories_controller.php
     }
 
     function admin_index() {
