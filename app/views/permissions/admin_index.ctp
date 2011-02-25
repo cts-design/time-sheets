@@ -42,6 +42,8 @@
 	    'label' => 'Delete',
 	    'checked' => (isset($controllers['Users']['admin_delete'])) ? $controllers['Users']['admin_delete'] : ''));?>
     </fieldset>
+    
+    <?php if (!in_array('SelfSignLogs', $disabledModules)): ?>
     <fieldset class="left right-mar-10">
 	<legend>Self Sign</legend>
        <?php echo $this->Form->input('SelfSignLogs.all', array(
@@ -49,6 +51,9 @@
 	   'label' => 'Index',
 	    'checked' => (isset($controllers['SelfSignLogs']['All'])) ? $controllers['SelfSignLogs']['All'] : '' ));?>
     </fieldset>
+    <?php endif; ?>
+    
+    <?php if (!in_array('SelfSignLogArchives', $disabledModules)): ?>
     <fieldset class="left right-mar-10">
 	<legend>Self Sign Archive</legend>
        <?php echo $this->Form->input('SelfSignLogArchives.all', array(
@@ -56,6 +61,9 @@
 	   'label' => 'Index',
 	    'checked' => (isset($controllers['SelfSignLogArchives']['All'])) ? $controllers['SelfSignLogArchives']['All'] : '' ));?>
     </fieldset>
+    <?php endif; ?>
+    
+    <?php if (!in_array('QueuedDocuments', $disabledModules)): ?>
     <fieldset class="left right-mar-10">
 	<legend>Queued Docs</legend>
        <?php echo $this->Form->input('QueuedDocuments.admin_index', array(
@@ -79,6 +87,9 @@
 	   'label' => 'Delete Docs',
 	    'checked' => (isset($controllers['QueuedDocuments']['admin_delete'])) ? $controllers['QueuedDocuments']['admin_delete'] : '' ));?>
     </fieldset>
+    <?php endif; ?>
+    
+    <?php if (!in_array('FiledDocuments', $disabledModules)): ?>
     <fieldset class="left right-mar-10">
 	<legend>Filed Docs</legend>
 	<?php echo $this->Form->input('FiledDocuments.admin_index', array(
@@ -106,6 +117,9 @@
 	   'label' => 'Delete',
 	    'checked' => (isset($controllers['FiledDocuments']['admin_delete'])) ? $controllers['FiledDocuments']['admin_delete'] : '' ));?>
     </fieldset>
+    <?php endif; ?>
+    
+    <?php if (!in_array('DeletedDocuments', $disabledModules)): ?>
     <fieldset class="left right-mar-10">
 	<legend>Deleted Docs</legend>
        <?php echo $this->Form->input('DeletedDocuments.all', array(
@@ -113,6 +127,9 @@
 	   'label' => 'Index',
 	    'checked' => (isset($controllers['DeletedDocuments']['All'])) ? $controllers['DeletedDocuments']['All'] : '' ));?>
     </fieldset>
+    <?php endif; ?>
+    
+    <?php if (!in_array('UserTransactions', $disabledModules)): ?>
     <fieldset class="left right-mar-10">
 	<legend>Activity</legend>
        <?php echo $this->Form->input('UserTransactions.all', array(
@@ -120,13 +137,17 @@
 	   'label' => 'Index',
 	    'checked' => (isset($controllers['UserTransactions']['All'])) ? $controllers['UserTransactions']['All'] : '' ));?>
     </fieldset>
+    <?php endif; ?>
+    
     <fieldset class="left right-mar-10">
 	<legend>Tools</legend>
        <?php echo $this->Form->input('Users.admin_resolve_login_issues', array(
 	    'type' => 'checkbox',
 	   	'label' => 'Resolve Login Issues',
 	    'checked' => (isset($controllers['Users']['admin_resolve_login_issues'])) ? $controllers['Users']['admin_resolve_login_issues'] : '' ));?>
-    </fieldset>    
+    </fieldset>
+    
+    <?php if (!in_array('Pages', $disabledModules)): ?>
     <fieldset class="left right-mar-10">
 	<legend>Website Pages</legend>
        <?php echo $this->Form->input('Pages.admin_index', array(
@@ -146,6 +167,9 @@
 	   	'label' => 'Delete',
 	    'checked' => (isset($controllers['Pages']['admin_delete'])) ? $controllers['Pages']['admin_delete'] : '' ));?>
     </fieldset>
+    <?php endif; ?>
+    
+    <?php if (!in_array('Navigations', $disabledModules)): ?>
     <fieldset class="left right-mar-10">
 	<legend>Website Navigation</legend>
        <?php echo $this->Form->input('Navigations.all', array(
@@ -153,6 +177,9 @@
 	   	'label' => 'Index',
 	    'checked' => (isset($controllers['Navigations']['all'])) ? $controllers['Navigations']['all'] : '' ));?>
     </fieldset>
+    <?php endif; ?>
+    
+    <?php if (!in_array('ChairmanReports', $disabledModules)): ?>
     <fieldset class="left right-mar-10">
 	<legend>Chairman Reports</legend>
        <?php echo $this->Form->input('ChairmanReports.admin_index', array(
@@ -171,8 +198,11 @@
 	    'type' => 'checkbox',
 	   	'label' => 'Delete',
 	    'checked' => (isset($controllers['ChairmanReports']['admin_delete'])) ? $controllers['ChairmanReports']['admin_delete'] : '' ));?>
-    </fieldset>   
+    </fieldset>
+    <?php endif; ?>
     <br class="clear" />
+    
+    <?php if (!in_array('PressReleases', $disabledModules)): ?>
     <fieldset class="left right-mar-10">
     <legend>Press Releases</legend>
        <?php echo $this->Form->input('PressReleases.admin_index', array(
@@ -192,7 +222,7 @@
 	   	'label' => 'Delete',
 	    'checked' => (isset($controllers['PressReleases']['admin_delete'])) ? $controllers['PressReleases']['admin_delete'] : '' ));?>
     </fieldset>
-    
+    <?php endif; ?>
     <br class="clear" />
 
     <?php echo $this->Form->end('Submit')?>
