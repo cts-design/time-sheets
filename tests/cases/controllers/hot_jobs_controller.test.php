@@ -26,19 +26,7 @@ class HotJobsControllerTestCase extends AtlasTestCase {
 	function testIndex() {
 
 	}
-
-	function testAdd() {
-
-	}
-
-	function testEdit() {
-
-	}
-
-	function testDelete() {
-
-	}
-
+	
 	function testAdminIndex() {
 
 	}
