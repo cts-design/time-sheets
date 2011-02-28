@@ -941,3 +941,7 @@ p.short {
     margin-right: 1px !important;
     width: 25px !important;
 }
+
+#not_specified_link {
+	cursor: pointer;
+}
