@@ -68,5 +68,12 @@ class HotJobsController extends AppController {
 		$this->Session->setFlash(__('Hot job was not deleted', true), 'flash_failure');
 		$this->redirect(array('action' => 'index'));
 	}
+	
+	function apply($jobId) {
+		if (!$jobId) {
+			$this->Session->setFlash(__('Invalid job id', true), 'flash_failure');
+			$this->redirect(array('action'=>'index'));
+		}
+	}
 }
 ?>
