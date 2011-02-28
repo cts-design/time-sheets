@@ -11,8 +11,6 @@ class TestHotJobsController extends HotJobsController {
 }
 
 class HotJobsControllerTestCase extends AtlasTestCase {
-	var $fixtures = array('app.hot_job');
-
 	function startTest() {
 		$this->HotJobs =& new TestHotJobsController();
 		$this->HotJobs->constructClasses();
