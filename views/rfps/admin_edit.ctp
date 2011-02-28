@@ -7,8 +7,13 @@
 </div>
 <?php echo $this->Form->create('Rfp');?>
 	<fieldset>
- 		<legend><?php __('Add Rfp'); ?></legend>
+ 		<legend><?php __('Admin Edit Rfp'); ?></legend>
 	<?php
+		echo $this->Form->input('id', array(
+							'before' => '<p class="left">',
+							'between' => '</p><p class="left">',
+							'after' => '</p>'));
+		echo '<br class="clear" />';
 		echo $this->Form->input('title', array(
 							'before' => '<p class="left">',
 							'between' => '</p><p class="left">',
