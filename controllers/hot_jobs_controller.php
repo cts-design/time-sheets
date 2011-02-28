@@ -2,6 +2,11 @@
 class HotJobsController extends AppController {
 
 	var $name = 'HotJobs';
+	
+	function beforeFilter() {
+		parent::beforeFilter();
+		$this->Auth->allow('index');
+	}
 
 	function index() {
 		$this->HotJob->recursive = 0;
