@@ -11,27 +11,28 @@
 
 
 <script type="text/javascript">
-   var getnodesUrl = '<?php echo $html->url('/admin/document_filing_categories') ?>';
-   var reorderUrl = '<?php echo $html->url('/admin/document_filing_categories/reorder_categories_ajax') ?>';
-
+   var getnodesUrl = "<?php echo $html->url('/admin/document_filing_categories') ?>";
+   var reorderUrl = "<?php echo $html->url('/admin/document_filing_categories/reorder_categories_ajax') ?>";
+   var reparentUrl = "<?php echo $html->url('/admin/document_filing_categories/reparent_categories') ?>";
+   Ext.state.Manager.setProvider(new Ext.state.CookieProvider());		
 Ext.onReady(function(){
 	Ext.QuickTips.init();
-	Ext.state.Manager.setProvider(new Ext.state.CookieProvider({
-	    expires: new Date(new Date().getTime()+(1000*60*60*24*7)), //7 days from now
-	}));
 	
 	var addCat = new Ext.Button({
 		text: 'Add New Category',
 		tooltip: 'Add Document Filing Category.',
-		handler: function() {
-			var parent = tree.getSelectionModel().getSelectedNode();
-			var name = catName.getValue(); 
-			console.log(name);
-			Ext.Ajax.request({
+		icon: '/img/icons/add.png',
+		handler: function() {						
+			console.log(parent);
+			if(catName.isValid()){
+				var name = catName.getValue();
+				var parent = tree.getSelectionModel().getSelectedNode();
+				Ext.Ajax.request({
 					url: '/admin/document_filing_categories/add',
 					params: {
 						parentId: parent.id,
-						catName: name
+						catName: name,
+						parentPath: parent.getPath()
 					},
 					scope: this,
 					success: function(response, options) {
@@ -42,21 +43,25 @@ Ext.onReady(function(){
 							return;
 						}
 						if(o.success !== true) {
-							Ext.Msg.alert('Error','Unable to save category, please try again..');
+							Ext.Msg.alert('Error', o.message);
 						}
 						else {
-							Ext.Msg.alert('Success','Category was saved successfully.');
-							tree.getRootNode().reload();						
+							Ext.Msg.alert('Success', o.message);
+							tree.getRootNode().reload();
+							tree.expandPath(o.node);	
+							tree.selectPath(o.node);					
 						}
 					},
 					failure: function() {
 						Ext.Msg.alert('Error','Unable to save category, please try again.');
 					}
-				});
+				});			
+			} 
 		}
 	});	
-	var catName = new Ext.form.Field({
-		
+	var catName = new Ext.form.TextField({
+		width: 175,
+		allowBlank: false
 	});
 	
     var tb = new Ext.Toolbar({
@@ -69,12 +74,44 @@ Ext.onReady(function(){
 		id: 'docCatTree',
 		useArrows: true,
 		width: 300,
-		stateful: true, 
+		stateful: true,
+		stateId: 'docCatTree',
+		stateEvents: ['expandnode', 'collapsenode', 'click'], 
+		getState: function () {
+            var nodes = [];
+            var lastnode;
+            this.getRootNode().eachChild(function (child) {
+                //function to store state of tree recursively
+			    var storeTreeState = function (node, expandedNodes) {
+			        if (node.isExpanded() && node.childNodes.length > 0) {
+			            expandedNodes.push(node.getPath());
+			            node.eachChild(function (child) {
+			                storeTreeState(child, expandedNodes);
+			            });
+			        }
+		    };
+		    storeTreeState(child, nodes);
+		});
+		    return {
+		        expandedNodes: nodes
+		    }
+		},
+		applyState: function (state) {
+            var that = this;
+            this.getLoader().on('load', function () {
+                var nodes = state.expandedNodes;
+                for (var i = 0; i < nodes.length; i++) {
+                    if (typeof nodes[i] != 'undefined') {
+                        that.expandPath(nodes[i]);
+                    }
+                }
+            });
+        },
 		animate: true,
 		enableDD: true,
 		containerScroll: true,
 		border: false,
-		tbar: [tb],
+		tbar: tb,
 		dataUrl: '/admin/document_filing_categories',
 		root: {
 			nodeType: 'async',
@@ -82,7 +119,7 @@ Ext.onReady(function(){
 			text: 'Document Filing Catgories',
 			draggable: false,
 			id: 'source'
-		},	
+		}	
 	});
 var oldPosition = null;
 var oldNextSibling = null;
