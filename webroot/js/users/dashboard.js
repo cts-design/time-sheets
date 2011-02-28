@@ -99,6 +99,11 @@ $(document).ready(function () {
 	        	icon: {
 	        		image: "/img/icons/hot_jobs.png"
 	        	}
+	        },
+	        rfp: {
+	        	icon: {
+	        		image: "/img/icons/rfps.png"
+	        	}
 	        }
 	    }
 	},
