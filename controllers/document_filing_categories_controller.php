@@ -39,22 +39,32 @@ class DocumentFilingCategoriesController extends AppController {
 
     function admin_add() {
 		if($this->RequestHandler->isAjax()) {
-			if(!empty($this->params['form']['parentId']) && !empty($this->params['form']['catName'])){
-				fireCake::log($this->params);
-				$this->data['DocumentFilingCategory']['name'] = $this->params['form']['catName'];
-				if($this->params['form']['parentId'] == 'source') {
-					$this->params['form']['parentId'] = null;
-				}
-				$this->data['DocumentFilingCategory']['parent_id'] = $this->params['form']['parentId'];
-				if($this->DocumentFilingCategory->save($this->data)){
-					$data['success'] = true;
-				}
-				else $data['success'] = false;					
+			if(!empty($this->params['form']['parentId']) && !empty($this->params['form']['catName'])){			
+				$parents = $this->DocumentFilingCategory->getpath($this->params['form']['parentId']);
+				if(count($parents) > 2) {
+					$data['success'] = false;
+					$data['message'] = 'Categories cannot be more than three levels deep.';
+ 				}
+				else {
+					$this->data['DocumentFilingCategory']['name'] = $this->params['form']['catName'];
+					if($this->params['form']['parentId'] == 'source') {
+						$this->params['form']['parentId'] = null;
+					}
+					$this->data['DocumentFilingCategory']['parent_id'] = $this->params['form']['parentId'];
+					if($this->DocumentFilingCategory->save($this->data)){
+						$data['success'] = true;
+						$data['message'] = 'Category was saved successfully.';
+						$data['node'] = $this->params['form']['parentPath'];
+					}
+					else{
+						$data['message'] = 'Unable to save category at this time, please try again.';
+						$data['success'] = false;		
+					} 			
+				}		
 			}
 			$this->set('data', $data);
 			$this->render(null, null, '/elements/ajaxreturn');	
-		}
-		
+		}		
     }
 
     function admin_reorder_categories_ajax() {
@@ -72,6 +82,35 @@ class DocumentFilingCategoriesController extends AppController {
 		    exit('1');    				
 	    }		
     }
+	
+    function admin_reparent_categories() {
+	    $node = intval($this->params['form']['node']);
+	    $parent = intval($this->params['form']['parent']);
+	    $position = intval($this->params['form']['position']);
+	    
+	    // save the employee node with the new parent id
+	    // this will move the employee node to the bottom of the parent list
+	    
+	    $this->DocumentFilingCategory->id = $node;
+	    $this->DocumentFilingCategory->saveField('parent_id', $parent);
+	    
+	    // If position == 0, then we move it straight to the top
+	    // otherwise we calculate the distance to move ($delta).
+	    // We have to check if $delta > 0 before moving due to a bug
+	    // in the tree behavior (https://trac.cakephp.org/ticket/4037)
+	    
+	    if ($position == 0){
+	        $this->DocumentFilingCategory->moveup($node, true);
+	    } else {
+	        $count = $this->DocumentFilingCategory->childcount($parent, true);
+	        $delta = $count-$position-1;
+	        if ($delta > 0){
+	            $this->DocumentFilingCategory->moveup($node, $delta);
+	        }
+	    }    
+	    // send success response
+	    exit('1');
+    }	
 
     function admin_edit($id = null) {
 	if(!$id && empty($this->data)) {
