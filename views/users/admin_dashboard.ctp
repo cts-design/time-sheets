@@ -31,6 +31,7 @@
                                 <li rel="navigation"><?php echo $html->link('Navigation', array('controller' => 'navigations', 'action' => 'index')); ?></li>
                                 <li rel="pressReleases"><?php echo $html->link('Press Releases', array('controller' => 'press_releases', 'action' => 'index')); ?></li>
                                 <li rel="chairmanReports"><?php echo $html->link('Chairman Reports', array('controller' => 'chairman_reports', 'action' => 'index')); ?></li>
+                            	<li rel="hotJobs"><?php echo $html->link('Hot Jobs', array('controller' => 'hot_jobs', 'action' => 'index')); ?></li>
                             </ul>
                         </li>
 			<li rel="settings" id="settings">
