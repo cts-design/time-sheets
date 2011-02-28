@@ -8,7 +8,8 @@ if ($nodes) {
             "text" => $node['Navigation']['title'],
             "id" => $node['Navigation']['id'],
             "cls" => "folder",
-            "leaf" => ($node['Navigation']['lft'] + 1 == $node['Navigation']['rght'])
+            "leaf" => ($node['Navigation']['lft'] + 1 == $node['Navigation']['rght']),
+            "linkUrl" => $node['Navigation']['link']
         );
     }
 

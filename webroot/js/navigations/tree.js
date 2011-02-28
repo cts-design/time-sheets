@@ -17,69 +17,135 @@ Ext.onReady(function() {
     // track what nodes are moved and send to server to save
     var oldPosition = null,
     oldNextSibling = null;
+    
+	// form to place on the window
+	var formPanel = new Ext.FormPanel({
+		defaultType: 'field',
+		autoScroll: true,
+		id: 'formpanel',
+		frame: true,
+		items: [{
+			xtype: 'textfield',
+			fieldLabel: 'Name',
+			name: 'name'
+		},{
+			xtype: 'textfield',
+			fieldLabel: 'URL',
+			name: 'url'
+		}],
+		buttons: [{
+			text: 'Save',
+			handler: function(b, e) {
+				
+			}
+		},{
+			text: 'Cancel',
+			handler: function(b, e) {
+				win.close();
+			}			
+		}],
+		buttonAlign: 'right'
+	});
 
     var addLinkButton = new Ext.Button({
         text: 'Add Link',
         handler: function() {
-            var selectedNode = tree.selModel.selNode;
-            var parentId;
+			var selectedNode = tree.selModel.selNode;
+			var parentId;
             
             if (!selectedNode || !selectedNode.parentNode || selectedNode.parentNode.isRoot == true) {
                 parentId = tree.root.firstChild.attributes.id;
             } else {
                 parentId = selectedNode.parentNode.attributes.id;
             }
+            
+            //console.log(parentId);
+            
+    		win = new Ext.Window({
+    			title: 'Add Link',
+    			modal: true,
+    			closeAction: 'hide',
+        		items: [formPanel]
+        	});
 
-            Ext.MessageBox.prompt('New Link', 'Please enter the name of the new link', function(btn, text) {
-                if (btn == 'cancel' || text == '') {
-                    return;
-                }
+        	win.show();
+        	
+        	
+            // 
 
-                var newNodeName = text;
-                Ext.MessageBox.prompt('New Link', 'Please enter the url of the ' + newNodeName + ' link', function(b,t) {
-                    if (b == 'cancel' || t == '') {
-                        return;
-                    }
-
-                    var newNodeUrl = t;
-                    tree.disable();
-                    var params = {'title':newNodeName, 'link':newNodeUrl, 'parent_id':parentId};
-
-                    Ext.Ajax.request({
-                        url:addNodeUrl,
-                        params:params,
-                        success:function(response, request) {
-                            if (response.responseText.charAt(0) == 0){
-                               request.failure();
-                            } else {
-                                //console.log(response);
-
-                                var newNode = new Ext.tree.TreeNode({id: response, text: newNodeName, leaf: true});
-                                if (!selectedNode || !selectedNode.parentNode || selectedNode.parentNode.isRoot == true) {
-                                    tree.root.firstChild.appendChild(newNode);
-                                } else {
-                                    selectedNode.parentNode.appendChild(newNode);
-                                }
-                                tree.enable();
-                            }
-                        },
-                        failure:function() {
-                            // we move the node back to where it was beforehand and
-                            // we suspendEvents() so that we don't get stuck in a possible infinite loop
-                            tree.suspendEvents();
-                            tree.resumeEvents();
-                            tree.enable();
-
-                            Ext.MessageBox.show({
-                                title: 'Error',
-                                msg: 'Unable to save your changes',
-                                buttons: Ext.MessageBox.OK,
-                                icon: Ext.MessageBox.ERROR
-                            });
-                        }
-                    });
-                });
-            });
+            // 
+            // Ext.MessageBox.prompt('New Link', 'Please enter the name of the new link', function(btn, text) {
+            //     if (btn == 'cancel' || text == '') {
+            //         return;
+            //     }
+            // 
+            //     var newNodeName = text;
+            //     Ext.MessageBox.prompt('New Link', 'Please enter the url of the ' + newNodeName + ' link', function(b,t) {
+            //         if (b == 'cancel' || t == '') {
+            //             return;
+            //         }
+            // 
+            //         var newNodeUrl = t;
+            //         tree.disable();
+            //         var params = {'title':newNodeName, 'link':newNodeUrl, 'parent_id':parentId};
+            // 
+            //         Ext.Ajax.request({
+            //             url:addNodeUrl,
+            //             params:params,
+            //             success:function(response, request) {
+            //                 if (response.responseText.charAt(0) == 0){
+            //                    request.failure();
+            //                 } else {
+            //                     //console.log(response);
+            // 
+            //                     var newNode = new Ext.tree.TreeNode({id: response, text: newNodeName, leaf: true});
+            //                     if (!selectedNode || !selectedNode.parentNode || selectedNode.parentNode.isRoot == true) {
+            //                         tree.root.firstChild.appendChild(newNode);
+            //                     } else {
+            //                         selectedNode.parentNode.appendChild(newNode);
+            //                     }
+            //                     tree.enable();
+            //                 }
+            //             },
+            //             failure:function() {
+            //                 // we move the node back to where it was beforehand and
+            //                 // we suspendEvents() so that we don't get stuck in a possible infinite loop
+            //                 tree.suspendEvents();
+            //                 tree.resumeEvents();
+            //                 tree.enable();
+            // 
+            //                 Ext.MessageBox.show({
+            //                     title: 'Error',
+            //                     msg: 'Unable to save your changes',
+            //                     buttons: Ext.MessageBox.OK,
+            //                     icon: Ext.MessageBox.ERROR
+            //                 });
+            //             }
+            //         });
+            //     });
+            // });
+        }
+    });
+    
+    var editLinkButton = new Ext.Button({
+        text: 'Edit Link',
+        disabled: true,
+        handler: function() {
+        	var selectedNode = tree.selModel.selNode;
+        	
+        	if (selectedNode || selectedNode.parentNode || !selectedNode.parentNode.isRoot) {
+                formPanel.getForm().findField('name').setValue(selectedNode.attributes.text);
+                formPanel.getForm().findField('url').setValue(selectedNode.attributes.linkUrl);
+                
+	    		win = new Ext.Window({
+	    			title: 'Edit Link',
+	    			modal: true,
+	    			closeAction: 'hide',
+	        		items: [formPanel]
+	        	});
+	
+	        	win.show();
+            }
         }
     });
 
@@ -141,18 +207,6 @@ Ext.onReady(function() {
             }
         }
     });
-    
-    var linkNameField = new Ext.form.TextField({
-    	hidden: true
-    });
-    
-    var linkUrlField = new Ext.form.TextField({
-    	hidden: true
-    });
-    
-    var create = new Ext.form.TextField({
-    	hidden: true
-    });    
 
     var Tree = Ext.tree;
     var tree = new Tree.TreePanel({
@@ -175,16 +229,17 @@ Ext.onReady(function() {
         tbar: new Ext.Toolbar({
         	items: [
         		addLinkButton,
-				removeLinkButton,
-				linkNameField,
-				linkUrlField,
+        		editLinkButton,
+				removeLinkButton
         	]
         }),
         listeners: {
         	click: function(node, e) {
         		if (!node.parentNode || node.parentNode.isRoot == true) {
+        			editLinkButton.disable();
         			removeLinkButton.disable();
         		} else {
+        			editLinkButton.enable();
         			removeLinkButton.enable();
         		}
         	},
