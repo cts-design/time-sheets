@@ -20,14 +20,14 @@ class HotJobFixture extends CakeTestFixture {
 	var $records = array(
 		array(
 			'id' => 1,
-			'employer' => 'Lorem ipsum dolor sit amet',
-			'title' => 'Lorem ipsum dolor sit amet',
-			'descriptions' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
-			'location' => 'Lorem ipsum dolor sit amet',
-			'url' => 'Lorem ipsum dolor sit amet',
-			'reference_number' => 'Lorem ipsum dolor ',
-			'contact' => 'Lorem ipsum dolor sit amet',
-			'file' => 'Lorem ipsum dolor sit amet'
+			'employer' => 'CNCists',
+			'title' => 'CNC Swiss Lathe 7 Axis Operator',
+			'descriptions' => 'Must have HS/GED w/5 yrs exp in CNC lathe machinery & familiar w/ISO 9001 requirements. Will set-up, program & operate 2 CNC Swiss CNC lathe 7 axis machines. Pay: $15-25/hr.',
+			'location' => 'Pinellas County',
+			'url' => 'http://cncists.com',
+			'reference_number' => '9509835',
+			'contact' => 'Email resume in Word wit Ref # to hloeun@worknetpinellas.org',
+			'file' => ''
 		),
 	);
 }
