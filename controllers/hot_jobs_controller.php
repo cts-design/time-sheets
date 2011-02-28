@@ -20,6 +20,10 @@ class HotJobsController extends AppController {
 
 	function admin_add() {
 		if (!empty($this->data)) {
+			if ($this->data['HotJob']['file']['error'] === 4) {
+				unset($this->data['HotJob']['file']);
+			}
+		
 			$this->HotJob->create();
 			if ($this->HotJob->save($this->data)) {
 				$this->Session->setFlash(__('The hot job has been saved', true), 'flash_success');
@@ -36,6 +40,10 @@ class HotJobsController extends AppController {
 			$this->redirect(array('action' => 'index'));
 		}
 		if (!empty($this->data)) {
+			if ($this->data['HotJob']['file']['error'] === 4) {
+				unset($this->data['HotJob']['file']);
+			}
+
 			if ($this->HotJob->save($this->data)) {
 				$this->Session->setFlash(__('The hot job has been saved', true), 'flash_success');
 				$this->redirect(array('action' => 'index'));
