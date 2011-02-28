@@ -13,7 +13,7 @@
 					<th class="ui-state-default"><?php echo $this->Paginator->sort('id');?></th>
 					<th class="ui-state-default"><?php echo $this->Paginator->sort('employer');?></th>
 					<th class="ui-state-default"><?php echo $this->Paginator->sort('title');?></th>
-					<th class="ui-state-default"><?php echo $this->Paginator->sort('descriptions');?></th>
+					<th class="ui-state-default"><?php echo $this->Paginator->sort('description');?></th>
 					<th class="ui-state-default"><?php echo $this->Paginator->sort('location');?></th>
 					<th class="ui-state-default"><?php echo $this->Paginator->sort('url');?></th>
 					<th class="ui-state-default"><?php echo $this->Paginator->sort('reference_number');?></th>
@@ -34,7 +34,7 @@
 		<td><?php echo $hotJob['HotJob']['id']; ?>&nbsp;</td>
 		<td><?php echo $hotJob['HotJob']['employer']; ?>&nbsp;</td>
 		<td><?php echo $hotJob['HotJob']['title']; ?>&nbsp;</td>
-		<td><?php echo $hotJob['HotJob']['descriptions']; ?>&nbsp;</td>
+		<td><?php echo $hotJob['HotJob']['description']; ?>&nbsp;</td>
 		<td><?php echo $hotJob['HotJob']['location']; ?>&nbsp;</td>
 		<td><?php echo $hotJob['HotJob']['url']; ?>&nbsp;</td>
 		<td><?php echo $hotJob['HotJob']['reference_number']; ?>&nbsp;</td>
