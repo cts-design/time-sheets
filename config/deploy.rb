@@ -3,26 +3,31 @@ require 'capcake'
 
 set :application, 'atlas' # Your app's location (domain or sub-domain name)
 set :repository, "git@git.assembla.com:CTSATLAS.git"
+set :branch, 'tbwa_staging'
 
 ssh_options[:forward_agent] = true
 
-set :deploy_to, "/var/www/vhosts/dev.ctsfla.com/atlas"
+set :deploy_to, "/var/www/vhosts/atlas.workforcetampa.com/atlas"
 
-server "dev.ctsfla.com:22", :app, :web, :db, :primary => true
-default_environment['PATH'] = "/var/www/vhosts/dev.ctsfla.com/atlas/shared/cakephp/cake/console:$PATH"
+server "atlas.workforcetampa.com", :app, :web, :db, :primary => true
+default_environment['PATH'] = "/var/www/vhosts/atlas.workforcetampa.com/atlas/shared/cakephp/cake/console:$PATH"
 default_run_options[:pty] = true
 
-set :user, 'devftp'
+set :user, 'wftftp'
+
 
 # Cake Settings
-set :cake_branch, "1.3.7"
+set :cake_branch, "master"
 
 task :finalize_deploy, :roles => [:web] do
 	#run "chmod 755 -R #{release_path}"
 	run "mv #{release_path}/webroot/index_staging.php #{release_path}/webroot/index.php"
 	run "mv #{release_path}/config/atlas.default.php #{release_path}/config/atlas.php"
 	run "ln -s #{shared_path}/plugins #{current_release}/plugins"
-	run "ln -s #{shared_path}/config/core.php #{current_release}/config/core.php" 
+	run "ln -s #{shared_path}/config/core.php #{current_release}/config/core.php"
+	run "ln -s #{shared_path}/webroot/img/kiosk/kiosk_header.jpg #{current_release}/webroot/img/kiosk/kiosk_header.jpg"
+	#run "ln -s #{shared_path}/img/admin_logo.jpg #{current_release}/webroot/img/admin_logo.jpg"
+	run "ln -s #{shared_path}/storage #{current_release}/storage"
 end
 
 # remove the .git directory and .gitignore from the current release
