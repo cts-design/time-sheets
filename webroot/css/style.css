@@ -225,21 +225,24 @@ strong {
     text-decoration: none;
 }
 
-.hotJobs .job {
+.hotJobs .job, .featuredEmployers .featuredEmployer {
 	border-bottom: 1px solid #3366CC;
 	margin: 8px 0 18px;
 	padding: 0 0 12px;
 }
 
-.hotJobs .job h2 {
+.hotJobs .job h2,
+.featuredEmployers .featuredEmployer h2 {
 	margin: 0 0 12px 0;
 }
 
-.hotJobs .job p {
+.hotJobs .job p,
+.featuredEmployers .featuredEmployer p {
 	margin: 0 0 12px;
 }
 
-.hotJobs .job ul {
+.hotJobs .job ul,
+.featuredEmployers .featuredEmployer ul {
 	margin: 0 0 12px 10px;
 }
 
