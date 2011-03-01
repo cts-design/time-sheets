@@ -74,6 +74,8 @@ var tb = new Ext.Toolbar({
 var tree = new Ext.tree.TreePanel({
 	id: 'docCatTree',
 	useArrows: true,
+	title: 'Document Filing Categories',
+	frame: true,
 	width: 400,
 	stateful: true,
 	stateId: 'docCatTree',
@@ -190,7 +192,6 @@ var confirmEdit = function() {
 		'Editing this category name can affect the entire system.',
 		function (button){
 			if(button == 'no') {
-				returnVal = false;
 				treeEditor.cancelEdit();
 			}
 			else {
@@ -203,9 +204,21 @@ var confirmEdit = function() {
 	return returnVal;		
 }
 
-var editComplete = function(){
+var editComplete = function(editor, value, startValue){
+	tree.disable();
 	treeEditor.addListener('beforecomplete', confirmEdit);
+	Ext.Ajax.request({
+		url: '/admin/document_filing_categories/edit',
+		params: {
+			'data[DocumentFilingCategory][id]' : editor.editNode.id,
+			'data[DocumentFilingCategory][name]' : value
+		},
+		success: function() {
+			tree.enable();
+		}
+	});
 }
+
 
 treeEditor.on('beforecomplete', confirmEdit);
 treeEditor.on('complete', editComplete);
