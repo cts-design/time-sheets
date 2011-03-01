@@ -25,9 +25,16 @@ class DocumentFilingCategoriesController extends AppController {
 			 $nodes = $this->DocumentFilingCategory->children($parent, true);
 			 $data = array();
 			foreach ($nodes as $node){
+				if($node['DocumentFilingCategory']['disabled'] == 0) {
+					$disabled = false;
+				}
+				else {
+					$disabled = true;
+				}
 			    $data[] = array(
 			        "text" => $node['DocumentFilingCategory']['name'], 
-			        "id" => $node['DocumentFilingCategory']['id'], 
+			        "id" => $node['DocumentFilingCategory']['id'],
+			        "disabled" =>  $disabled,
 			        "cls" => "folder",
 			        "leaf" => ($node['DocumentFilingCategory']['lft'] + 1 == $node['DocumentFilingCategory']['rght'])
 			    );
@@ -99,85 +106,83 @@ class DocumentFilingCategoriesController extends AppController {
 	    // We have to check if $delta > 0 before moving due to a bug
 	    // in the tree behavior (https://trac.cakephp.org/ticket/4037)
 	    
-	    if ($position == 0){
-	        $this->DocumentFilingCategory->moveup($node, true);
-	    } else {
-	        $count = $this->DocumentFilingCategory->childcount($parent, true);
-	        $delta = $count-$position-1;
-	        if ($delta > 0){
-	            $this->DocumentFilingCategory->moveup($node, $delta);
-	        }
-	    }    
-	    // send success response
-	    exit('1');
+		if($position == 0) {
+			$this->DocumentFilingCategory->moveup($node, true);
+		}
+		else {
+			$count = $this->DocumentFilingCategory->childcount($parent, true);
+			$delta = $count - $position - 1;
+			if($delta > 0) {
+				$this->DocumentFilingCategory->moveup($node, $delta);
+			}
+		}
+		// send success response
+		exit('1');
     }	
 
-    function admin_edit($id = null) {
-	if(!$id && empty($this->data)) {
-	    $this->Session->setFlash(__('Invalid category', true), 'flash_failure');
-	    $this->redirect(array('action' => 'index'));
-	}
-	if(!empty($this->data)) {
-	    if($this->DocumentFilingCategory->save($this->data)) {
-		$this->Session->setFlash(__('The category has been saved', true), 'flash_success');
-		$this->redirect(array('action' => 'index'));
-	    }
-	    else {
-		$this->Session->setFlash(__('The category could not be saved. Please, try again.', true), 'flash_failure');
-		$this->redirect(array('action' => 'index'));
-	    }
-	}
-	if(empty($this->data)) {
-	    $this->data = $this->DocumentFilingCategory->read(null, $id);
-	}
+    function admin_edit() {
+		if($this->RequestHandler->isAjax()){
+			if(!empty($this->data)){
+				if($this->DocumentFilingCategory->save($this->data)){
+					$data['success'] = true;
+				}
+				else {
+					$data['success'] = false;
+				}
+			}
+			else $data['success'] = false;
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+		exit;
     }
 
-    function admin_delete($id = null) {
-	if(!$id) {
-	    $this->Session->setFlash(__('Invalid id for category', true), 'flash_failure');
-	    $this->redirect(array('action' => 'index'));
-	} else {
-            $count = $this->DocumentFilingCategory->find('count', array(
-                        'conditions' => array(
-                            'DocumentFilingCategory.parent_id' => $id,
-                            'DocumentFilingCategory.deleted' => 0)));
-            if($count > 0) {
-                $this->Session->setFlash(__('Cannot delete category that has children', true), 'flash_failure');
-                $this->redirect(array('action' => 'index'));
-            } else {
-                if($this->DocumentFilingCategory->delete($id)) {
-                    $this->Session->setFlash(__('Category deleted', true), 'flash_success');
-                    $this->redirect(array('action' => 'index'));
-                } else {
-                    $this->Session->setFlash(__('Category was not deleted', true), 'flash_failure');
-                    $this->redirect(array('action' => 'index'));
-                }
-            }
-        }
-    }
+    function admin_delete($id =null) {
+		if(!$id) {
+			$this->Session->setFlash(__('Invalid id for category', true), 'flash_failure');
+			$this->redirect( array('action' => 'index'));
+		}
+		else {
+			$count = $this->DocumentFilingCategory->find('count', array('conditions' => array('DocumentFilingCategory.parent_id' => $id, 'DocumentFilingCategory.deleted' => 0)));
+			if($count > 0) {
+				$this->Session->setFlash(__('Cannot delete category that has children', true), 'flash_failure');
+				$this->redirect( array('action' => 'index'));
+			}
+			else {
+				if($this->DocumentFilingCategory->delete($id)) {
+					$this->Session->setFlash(__('Category deleted', true), 'flash_success');
+					$this->redirect( array('action' => 'index'));
+				}
+				else {
+					$this->Session->setFlash(__('Category was not deleted', true), 'flash_failure');
+					$this->redirect( array('action' => 'index'));
+				}
+			}
+		}
+	}
 
     function admin_get_child_cats_ajax() {
-	if($this->RequestHandler->isAjax()) {
-	    $options = $this->DocumentFilingCategory->find('list', array(
-			'conditions' => array('DocumentFilingCategory.parent_id' => $this->params['url']['id']),
-			'fields' => array('DocumentFilingCategory.id', 'DocumentFilingCategory.name')));
-	    $this->set(compact('options'));
-	}
+		if($this->RequestHandler->isAjax()) {
+		    $options = $this->DocumentFilingCategory->find('list', array(
+				'conditions' => array('DocumentFilingCategory.parent_id' => $this->params['url']['id']),
+				'fields' => array('DocumentFilingCategory.id', 'DocumentFilingCategory.name')));
+		    $this->set(compact('options'));
+		}
     }
 
     function admin_get_grand_child_cats_ajax() {
-	if($this->RequestHandler->isAjax()) {
-	    $options = $this->DocumentFilingCategory->find('list', array(
-			'conditions' => array('DocumentFilingCategory.parent_id' => $this->params['url']['id'])));
-	    $this->set(compact('options'));
-	}
+		if($this->RequestHandler->isAjax()) {
+		    $options = $this->DocumentFilingCategory->find('list', array(
+				'conditions' => array('DocumentFilingCategory.parent_id' => $this->params['url']['id'])));
+		    $this->set(compact('options'));
+		}
     }
 
     function _setTreeData() {
-	$this->DocumentFilingCategory->recursive = -1;
-	$data = $this->DocumentFilingCategory->find('threaded',
-			array('order' => array('DocumentFilingCategory.order' => 'asc'),
-			    'conditions' => array('DocumentFilingCategory.deleted' => 0)));
-	$this->set('data', $data);
+		$this->DocumentFilingCategory->recursive = -1;
+		$data = $this->DocumentFilingCategory->find('threaded',
+				array('order' => array('DocumentFilingCategory.order' => 'asc'),
+				    'conditions' => array('DocumentFilingCategory.deleted' => 0)));
+		$this->set('data', $data);
     }
 }
