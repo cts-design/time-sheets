@@ -15,7 +15,7 @@ default_run_options[:pty] = true
 set :user, 'devftp'
 
 # Cake Settings
-set :cake_branch, "1.3.7"
+set :cake_branch, "master"
 
 task :finalize_deploy, :roles => [:web] do
 	#run "chmod 755 -R #{release_path}"
