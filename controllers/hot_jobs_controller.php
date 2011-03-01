@@ -5,7 +5,7 @@ class HotJobsController extends AppController {
 	
 	function beforeFilter() {
 		parent::beforeFilter();
-		$this->Auth->allow('index');
+		$this->Auth->allow('index', 'apply');
 	}
 
 	function index() {
@@ -33,6 +33,8 @@ class HotJobsController extends AppController {
 			$this->HotJob->create();
 			
 			if ($this->HotJob->save($this->data)) {
+				$this->HotJob->createUserTransaction('CMS', null, null,
+                                        'Created hot job ID ' . $this->HotJob->id);
 				$this->Session->setFlash(__('The hot job has been saved', true), 'flash_success');
 				$this->redirect(array('action' => 'index'));
 			} else {
@@ -52,6 +54,8 @@ class HotJobsController extends AppController {
 			}
 
 			if ($this->HotJob->save($this->data)) {
+				$this->HotJob->createUserTransaction('CMS', null, null,
+                                        'Edited hot job ID ' . $id);
 				$this->Session->setFlash(__('The hot job has been saved', true), 'flash_success');
 				$this->redirect(array('action' => 'index'));
 			} else {
@@ -69,6 +73,8 @@ class HotJobsController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 		if ($this->HotJob->delete($id)) {
+			$this->HotJob->createUserTransaction('CMS', null, null,
+                                        'Deleted hot job ID ' . $id);
 			$this->Session->setFlash(__('Hot job deleted', true), 'flash_success');
 			$this->redirect(array('action'=>'index'));
 		}
@@ -78,9 +84,19 @@ class HotJobsController extends AppController {
 	
 	function apply($jobId) {
 		if (!$jobId) {
-			$this->Session->setFlash(__('Invalid job id', true), 'flash_failure');
+			$this->Session->setFlash(__('No job specified', true), 'flash_failure');
 			$this->redirect(array('action'=>'index'));
 		}
+		
+		$this->HotJob->recursive = 0;
+		$job = $this->HotJob->read(null, $jobId);
+		
+		if (!$job) {
+			$this->Session->setFlash(__('We couldn\'t find the job you were looking for', true), 'flash_failure');
+			$this->redirect(array('action'=>'index'));
+		}
+		
+		$this->set(compact('job'));
 	}
 	
     function _uploadFile() {
