@@ -20,7 +20,7 @@
 	<?php
 	echo $this->Html->meta('favicon.ico', '/favicon.ico', array('type' => 'icon'));
 
-	echo $this->Html->css('reset') ;
+	echo $this->Html->css('reset');
 
 	echo $this->Html->css('ui-darkness/jquery-ui-1.8.7.custom');
 
@@ -51,7 +51,7 @@
 	<div id="container" style="display: none">
 	    <div id="header">
 		<div id="logo" class="left">
-		    <?php echo $this->Html->link($this->Html->image(Configure::read('Company.logo')),
+		    <?php echo $this->Html->link($this->Html->image('/img/admin/admin_header_logo.jpg'),
 				array('controller' => 'users',
 					'action' => 'dashboard',
 					'admin' => true), array('escape' => false));
