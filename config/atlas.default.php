@@ -8,13 +8,13 @@
  * @package ATLAS V3
  */
 
-$config['URL'] = 'http://dev.ctsfla.com/';
-$config['Admin']['URL'] = 'http://dev.ctsfla.com/admin';
+$config['URL'] = 'http://atlas.workforcetampa.com/';
+$config['Admin']['URL'] = 'http://atlas.workforcetampa.com/admin';
 //domain for use with cookies
-$config['domain'] = 'dev.ctsfla.com';
+$config['domain'] = 'atlas.workforcetampa.com/';
 
 // Company Name
-$config['Company']['name'] = 'ATLAS';
+$config['Company']['name'] = 'Tampa Bay Workforce Alliance';
 
 // Company Logo
 $config['Company']['logo'] = 'atlas_logo.jpg';
