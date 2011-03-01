@@ -13,10 +13,11 @@
 	    <?php echo Configure::read('Company.name').' - ' ?>
 	    <?php echo $title_for_layout; ?>
 	</title>
-	<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.2.0/build/cssreset/reset-min.css" />
 	<?php
 	    echo $this->Html->meta('icon');
-
+		
+		echo $this->Html->css('reset');
+		
 	    echo $this->Html->css('custom-theme/jquery-ui-1.8.5.custom');
 
 	    echo $this->Html->css('kiosk');
@@ -58,7 +59,7 @@
     <body>
 	<div id="container">
 	    <div id="header">		
-		<?php echo $this->Html->image(Configure::read('Kiosk.header'));?>
+		<?php echo $this->Html->image('/img/kiosk/kiosk_header.jpg');?>
 	    </div>
 	    <div id="content">
 		<?php echo $content_for_layout; ?>
