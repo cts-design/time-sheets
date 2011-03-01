@@ -4,6 +4,7 @@ require 'capcake'
 set :application, 'atlas' # Your app's location (domain or sub-domain name)
 set :repository, "git@git.assembla.com:CTSATLAS.git"
 set :branch, 'tbwa_staging'
+set :deploy_via, :export
 
 ssh_options[:forward_agent] = true
 
@@ -25,8 +26,6 @@ task :finalize_deploy, :roles => [:web] do
 	run "mv #{release_path}/config/atlas.default.php #{release_path}/config/atlas.php"
 	run "ln -s #{shared_path}/plugins #{current_release}/plugins"
 	run "ln -s #{shared_path}/config/core.php #{current_release}/config/core.php"
-	run "ln -s #{shared_path}/webroot/img/kiosk/kiosk_header.jpg #{current_release}/webroot/img/kiosk/kiosk_header.jpg"
-	#run "ln -s #{shared_path}/img/admin_logo.jpg #{current_release}/webroot/img/admin_logo.jpg"
 	run "ln -s #{shared_path}/storage #{current_release}/storage"
 end
 
@@ -48,6 +47,6 @@ task :migrate_database_update, roles => [:web] do
 end
 
 after "deploy:update_code", :finalize_deploy
-after "deploy:update_code", :remove_git_directories
+#after "deploy:update_code", :remove_git_directories
 
 capcake
