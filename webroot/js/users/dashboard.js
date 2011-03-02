@@ -104,6 +104,16 @@ $(document).ready(function () {
 	        	icon: {
 	        		image: "/img/icons/rfps.png"
 	        	}
+	        },
+	        locations: {
+	        	icon: {
+	        		image: "/img/icons/location.png"
+	        	}
+	        },
+	        featured: {
+	        	icon: {
+	        		image: "/img/icons/featured.png"
+	        	}
 	        }
 	    }
 	},

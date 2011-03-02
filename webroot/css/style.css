@@ -15,6 +15,7 @@ body {
     overflow-y: scroll;
 }
 
+
 a {
     color: #3B71A0;
     text-decoration: none;
@@ -225,22 +226,41 @@ strong {
     text-decoration: none;
 }
 
-.hotJobs .job {
+.hotJobs .job, .featuredEmployers .featuredEmployer,
+.rfps .rfp {
 	border-bottom: 1px solid #3366CC;
 	margin: 8px 0 18px;
 	padding: 0 0 12px;
 }
 
-.hotJobs .job h2 {
+.hotJobs .job h2,
+.featuredEmployers .featuredEmployer h2,
+.rfps .rfp h2 {
 	margin: 0 0 12px 0;
 }
 
-.hotJobs .job p {
+.hotJobs .job p,
+.featuredEmployers .featuredEmployer p,
+.rfps .rfp p {
 	margin: 0 0 12px;
 }
 
-.hotJobs .job ul {
+.hotJobs .job ul,
+.featuredEmployers .featuredEmployer ul, 
+.rfps .rfp ul{
 	margin: 0 0 12px 10px;
+}
+
+.rfp_download {
+	display: block;
+	margin-left: 10px;
+	width: 96px;
+}
+.rfp_download:hover {
+	text-decoration: none;
+}
+.rfp_download img {
+	margin: 0 0 0 16px;
 }
 
 .counter {
