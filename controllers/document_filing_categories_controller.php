@@ -136,6 +136,13 @@ class DocumentFilingCategoriesController extends AppController {
 		}
 		exit;
     }
+	
+	function admin_toggle_disabled() {
+		if($this->RequestHandler->isAjax()){
+			FireCake::log($this->params);
+			exit;
+		}
+	}
 
     function admin_delete($id =null) {
 		if(!$id) {

@@ -179,6 +179,52 @@ tree.on('movenode', function(tree, node, oldParent, newParent, position) {
 	});
 });
 
+
+var treeSm = tree.getSelectionModel();
+tree.on('beforeclick', function(node, e){	
+	if(node.disabled) {
+		Ext.Msg.show({
+		   title:'Eanable Category?',
+		   msg: 'Do you want to enable this category?',
+		   buttons: Ext.Msg.YESNO,
+		   fn: function(button){
+		   	if(button == 'yes') {
+		   		tree.disable();
+				Ext.Ajax.request({
+						url: '/admin/document_filing_categories/toggle_disabled',
+						params: {
+							nodeId: node.id
+						},
+						scope: this,
+						success: function(response, options) {
+							var o = {};
+							try {
+								o = Ext.decode(response.responseText);
+							} catch(e) {
+								Ext.Msg.alert('Error','Unable to update category status, please try again.');
+								return;
+							}
+							if(o.success !== true) {
+								Ext.Msg.alert('Error', o.message);
+							} else {
+								Ext.Msg.alert('Success', o.message);
+								tree.enable();
+								node.enable();
+							}
+						},
+						failure: function() {
+							Ext.Msg.alert('Error','Unable to save category, please try again.');
+						}
+					});		   		
+		   	}
+		   },
+		   animEl: 'elId',
+		   icon: Ext.MessageBox.QUESTION
+		});
+		console.log(node);
+	}
+})
+
 var treeEditor = new Ext.tree.TreeEditor(tree, {}, {
 	allowBlank:false,
 	maxWidth: 150,
