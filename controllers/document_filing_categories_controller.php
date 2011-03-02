@@ -139,9 +139,49 @@ class DocumentFilingCategoriesController extends AppController {
 	
 	function admin_toggle_disabled() {
 		if($this->RequestHandler->isAjax()){
-			if(!empty($this->data)) {
+			if(!empty($this->data)) {			
+				if($this->data['DocumentFilingCategory']['id'] == 'source'){
+					$data['success'] = false;
+					$data['message'] = 'Cannot disable root category.';
+					$this->set(compact('data'));
+					return $this->render(null, null, '/elements/ajaxreturn');				
+				}			
+				if($this->data['DocumentFilingCategory']['disabled'] == 1) {
+					$count = $this->DocumentFilingCategory->find('count', array(
+						'conditions' => array(
+							'DocumentFilingCategory.parent_id' => $this->data['DocumentFilingCategory']['id'],
+							'DocumentFilingCategory.disabled' => 0)));
+					if(isset($count) && $count > 0){
+						$data['success'] = false;
+						$data['message'] = 'Cannot disable category that has children.';
+						$this->set(compact('data'));
+						return $this->render(null, null, '/elements/ajaxreturn');							
+					}							
+				}				
+				if($this->data['DocumentFilingCategory']['disabled'] == 0) {
+					$cat = $this->DocumentFilingCategory->findById($this->data['DocumentFilingCategory']['id']);
+					FireCake::log($cat);
+					if($cat['DocumentFilingCategory']['parent_id'] != NULL) {
+						$parent = $this->DocumentFilingCategory->findById($cat['DocumentFilingCategory']['parent_id']);
+						FireCake::log($parent);
+						if($parent['DocumentFilingCategory']['disabled'] == 1) {
+							$data['success'] = false;
+							$data['message'] = 'Cannot enable child category of disabled parent.';	
+							$this->set(compact('data'));
+							return $this->render(null, null, '/elements/ajaxreturn');
+						}						
+					}
+				}
 				if($this->DocumentFilingCategory->save($this->data)){
 					$data['success'] = true;
+					if($this->data['DocumentFilingCategory']['disabled'] == 0){
+						$data['message'] = 'Category enabled successfully.';
+						$data['disabled'] = false;
+					}
+					elseif($this->data['DocumentFilingCategory']['disabled'] == 1) {
+						$data['message'] = 'Category disabled successfully.';
+						$data['disabled'] = true;						
+					}
  				}
 				else $data['success'] = false;
 			}
@@ -180,7 +220,9 @@ class DocumentFilingCategoriesController extends AppController {
     function admin_get_child_cats_ajax() {
 		if($this->RequestHandler->isAjax()) {
 		    $options = $this->DocumentFilingCategory->find('list', array(
-				'conditions' => array('DocumentFilingCategory.parent_id' => $this->params['url']['id']),
+				'conditions' => array(
+					'DocumentFilingCategory.parent_id' => $this->params['url']['id'],
+					'DocumentFilingCategory.disabled' => 0),
 				'fields' => array('DocumentFilingCategory.id', 'DocumentFilingCategory.name')));
 		    $this->set(compact('options'));
 		}
@@ -189,16 +231,10 @@ class DocumentFilingCategoriesController extends AppController {
     function admin_get_grand_child_cats_ajax() {
 		if($this->RequestHandler->isAjax()) {
 		    $options = $this->DocumentFilingCategory->find('list', array(
-				'conditions' => array('DocumentFilingCategory.parent_id' => $this->params['url']['id'])));
+				'conditions' => array(
+					'DocumentFilingCategory.parent_id' => $this->params['url']['id'],
+					'DocumentFilingCategory.disabled' => 0)));
 		    $this->set(compact('options'));
 		}
-    }
-
-    function _setTreeData() {
-		$this->DocumentFilingCategory->recursive = -1;
-		$data = $this->DocumentFilingCategory->find('threaded',
-				array('order' => array('DocumentFilingCategory.order' => 'asc'),
-				    'conditions' => array('DocumentFilingCategory.deleted' => 0)));
-		$this->set('data', $data);
     }
 }
