@@ -15,7 +15,7 @@ default_run_options[:pty] = true
 set :user, 'devftp'
 
 # Cake Settings
-set :cake_branch, "1.3.7"
+set :cake_branch, "master"
 
 task :finalize_deploy, :roles => [:web] do
 	#run "chmod 755 -R #{release_path}"
@@ -23,13 +23,6 @@ task :finalize_deploy, :roles => [:web] do
 	run "mv #{release_path}/config/atlas.default.php #{release_path}/config/atlas.php"
 	run "ln -s #{shared_path}/plugins #{current_release}/plugins"
 	run "ln -s #{shared_path}/config/core.php #{current_release}/config/core.php" 
-end
-
-# remove the .git directory and .gitignore from the current release
-desc "Remove git directories from release"
-	task :remove_git_directories, :roles => [:web] do
-	run "rm -rfd #{release_path}/.git"
-	run "rm #{release_path}/.gitignore"
 end
 
 desc "Update database schema create tables"
@@ -43,6 +36,5 @@ task :migrate_database_update, roles => [:web] do
 end
 
 after "deploy:update_code", :finalize_deploy
-after "deploy:update_code", :remove_git_directories
 
 capcake

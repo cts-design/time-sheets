@@ -20,7 +20,7 @@
 	<?php
 	echo $this->Html->meta('favicon.ico', '/favicon.ico', array('type' => 'icon'));
 
-	echo $this->Html->css('reset') ;
+	echo $this->Html->css('reset');
 
 	echo $this->Html->css('ui-darkness/jquery-ui-1.8.7.custom');
 
@@ -31,6 +31,10 @@
 	echo $this->Html->css('ext/atlas');
 
 	echo $this->Html->css('admin');
+	
+	echo $this->Html->script('ext/adapter/ext/ext-base-debug');
+	
+	echo $this->Html->script('ext-all-debug');
 
 	echo $this->Html->script('https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js');
 	
@@ -47,7 +51,7 @@
 	<div id="container" style="display: none">
 	    <div id="header">
 		<div id="logo" class="left">
-		    <?php echo $this->Html->link($this->Html->image(Configure::read('Company.logo')),
+		    <?php echo $this->Html->link($this->Html->image('/img/admin/admin_header_logo.jpg'),
 				array('controller' => 'users',
 					'action' => 'dashboard',
 					'admin' => true), array('escape' => false));

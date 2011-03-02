@@ -25,33 +25,28 @@ ini_set('display_errors', 1);
 	if (!defined('DS')) {
 		define('DS', DIRECTORY_SEPARATOR);
 	}
-/**
- * These defines should only be edited if you have cake installed in
- * a directory layout other than the way it is distributed.
- * When using custom settings be sure to use the DS and do not add a trailing DS.
- */
-
-/**
+/** 
  * The full path to the directory which holds "app", WITHOUT a trailing DS.
  *
  */
 	if (!defined('ROOT')) {
-		define('ROOT', dirname(dirname(dirname(__FILE__))));
+		define('ROOT', 'c:' . DS . 'wamp' . DS . 'www');
 	}
 /**
  * The actual directory name for the "app".
  *
  */
 	if (!defined('APP_DIR')) {
-		define('APP_DIR', basename(dirname(dirname(__FILE__))));
+		define('APP_DIR', 'atlas');
 	}
 /**
  * The absolute path to the "cake" directory, WITHOUT a trailing DS.
  *
  */
 	if (!defined('CAKE_CORE_INCLUDE_PATH')) {
-		define('CAKE_CORE_INCLUDE_PATH', ROOT);
+		define('CAKE_CORE_INCLUDE_PATH', 'C:' . DS . 'wamp' . DS . 'bin' . DS . 'libraries' . DS . 'cakephp-1.3.7');
 	}
+
 
 /**
  * Editing below this line should not be necessary.

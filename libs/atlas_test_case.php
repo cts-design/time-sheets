@@ -20,6 +20,7 @@ class AtlasTestCase extends CakeTestCase {
 	    'document_transaction',
 	    'filed_document',
 	    'ftp_document_scanner',
+	    'hot_job',
 	    'kiosk',
 	    'kiosk_button',
 	    'location',

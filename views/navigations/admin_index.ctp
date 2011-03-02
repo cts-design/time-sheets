@@ -10,9 +10,7 @@
     <?php echo $crumb->getHtml('Navigation', null, 'unique'); ?>
 </div>
 
-<div class="navigations admin">
-    <div id="add-button-div"></div>
-    <div id="remove-button-div"></div>
+<div class="navigations">
     <div id="window-div"></div>
     <div id="tree-div"></div>
 </div>
