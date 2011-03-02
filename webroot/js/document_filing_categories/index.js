@@ -193,7 +193,8 @@ tree.on('beforeclick', function(node, e){
 				Ext.Ajax.request({
 						url: '/admin/document_filing_categories/toggle_disabled',
 						params: {
-							nodeId: node.id
+							'data[DocumentFilingCategory][id]': node.id,
+							'data[DocumentFilingCategory][disabled]' : 0
 						},
 						scope: this,
 						success: function(response, options) {
