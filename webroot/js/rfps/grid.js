@@ -4,36 +4,17 @@
  * @link http://ctsfla.com
  * @package ATLAS V3
  */
-
-var proxy = new Ext.data.HttpProxy({
-	url: '/admin/rfps/data_delegate'
-});
-
-var reader = new Ext.data.JsonReader({
-    root: 'rfps',
-    successProperty: "success",
-    fields: ['id', 'title', 'byline', 'description', 'deadline', 'expires', 'contact_email', 'file']
-});
-
-var writer = new Ext.data.JsonWriter({
-	encode: true	
-});
-
-var store = new Ext.data.JsonStore({
-	autoLoad: true,
-	storeId: 'rfp',
-	root: 'rfps',
-	proxy: proxy,
-	reader: reader,
-	writer: writer,
-	listeners: {
-		save: function() {
-
-		}
-	}
+var alphaSpace = /^[-_0-9a-zA-Z ]+$/i;
+Ext.apply(Ext.form.VTypes, {
+	alphaspace: function(val, field) {
+		return alphaSpace.test(val);
+	},
+	alphaspaceText: 'This field should only contain letters, numbers, spaces, or -_',
+	alphaspaceMask: alphaSpace	
 });
 
 var rfpForm = new Ext.form.FormPanel({
+	fileUpload: true,
     frame:true,
     labelWidth: 75,
     height: 300,
@@ -48,11 +29,11 @@ var rfpForm = new Ext.form.FormPanel({
     		items: [{
     			xtype: 'textfield',
 	          	fieldLabel: 'Title',
-	        	name: 'title',
+	          	name: 'title',
 	        	allowBlank: false,
 	        	width: 200,
 	        	anchor: '95%',
-	        	vtype: 'alphanum'
+	        	vtype: 'alphaspace'
     		},{
     			xtype: 'textfield',
 	            fieldLabel: 'Byline',
@@ -60,11 +41,11 @@ var rfpForm = new Ext.form.FormPanel({
 	            allowBlank: false,
 	            width: 200,
 	            anchor: '95%',
-	            vtype: 'alphanum'
+	            vtype: 'alphaspace'
     		},{
     			xtype: 'textfield',
     			fieldLabel: 'Contact Email',
-    			name: 'contactEmail',
+    			name: 'contact_email',
     			allowBlank: false,
     			width: 200,
     			anchor: '95%',
@@ -80,8 +61,8 @@ var rfpForm = new Ext.form.FormPanel({
 	        	width: 200,
 	        	anchor: '98%'
 	    	},{
-	        	fieldLabel: 'Expiration',
-	        	name: 'expiration',
+	        	fieldLabel: 'Expires',
+	        	name: 'expires',
 	        	xtype: 'datefield',
 	        	width: 200,
 	        	anchor: '98%'	    		
@@ -89,6 +70,7 @@ var rfpForm = new Ext.form.FormPanel({
 	    		fieldLabel: 'File',
 	    		name: 'file',
 	    		xtype: 'fileuploadfield',
+	    		emptyText: 'Please select a document to upload',
 	    		width: 200,
 	    		anchor: '98%'
 	    	}]
@@ -96,6 +78,7 @@ var rfpForm = new Ext.form.FormPanel({
      },{
      	xtype: 'htmleditor',
 		enableFont: false,
+		allowBlank: false,
 		fieldLabel: 'Description',
 		name: 'description',
 		width: 300,
@@ -103,42 +86,155 @@ var rfpForm = new Ext.form.FormPanel({
     }],
     buttons: [{
         text: 'Save',
+        id: 'saveButton',
         handler: function(){
-
+			var f = rfpForm.getForm();
+			if (f.isValid()) {
+				var vals = f.getValues();
+				f.reset();
+				console.log(vals);
+				var Rfp = new grid.store.recordType({
+				 	title: vals.title,
+				 	byline: vals.byline,
+				 	description: vals.description,
+				 	deadline: vals.deadline,
+				 	expires: vals.expires,
+				 	contact_email: vals.contact_email
+				});
+				store.add(Rfp);
+			}
         }
+    },{
+    	text: 'Update',
+    	id: 'updateButton',
+    	disabled: true,
+    	handler: function() {
+    		var f = rfpForm.getForm();
+    		if (f.isValid()) {
+    			rec = grid.getSelectionModel().getSelected();
+    			f.updateRecord(rec);
+    		}
+    	}
+    },{
+    	text: 'Cancel',
+    	id: 'cancelButton',
+    	handler: function() {
+    		Ext.getCmp('updateButton').disable();
+     		Ext.getCmp('saveButton').enable();
+    		rfpForm.getForm().reset();
+    	}
     }]
+});
+
+var proxy = new Ext.data.HttpProxy({
+	api: {
+		create:  { url: '/admin/rfps/create',  method: 'POST' },
+		read:    { url: '/admin/rfps/read',    method: 'GET' },
+		update:  { url: '/admin/rfps/update',  method: 'POST' },
+		destroy: { url: '/admin/rfps/destroy', method: 'POST' }
+	},
+	listeners: {
+		write: function() {
+			rfpForm.getForm().reset();
+    		Ext.getCmp('updateButton').disable();
+     		Ext.getCmp('saveButton').enable();
+		}
+	}
+});
+
+var fields = Ext.data.Record.create([
+	{ name: 'id' },
+	{ name: 'title' },
+	{ name: 'byline' },
+	{ name: 'description' },
+	{ name: 'deadline' },
+	{ name: 'expires' },
+	{ name: 'contact_email' },
+	{ name: 'file' }	
+]);
+
+var reader = new Ext.data.JsonReader({
+    totalProperty: 'total',
+    successProperty: 'success',
+    idProperty: 'id',
+    root: 'rfps',
+    messageProperty: 'message'
+}, fields);
+
+var writer = new Ext.data.JsonWriter({
+	encoded: true,
+	writeAllFields: false
+});
+
+var store = new Ext.data.Store({
+	storeId: 'store',
+	proxy: proxy,
+	reader: reader,
+	writer: writer,
+	autoSave: true
+});
+
+store.load();
+
+var gridView = new Ext.grid.GridView({
+	forceFit: true	
+});
+
+var colModel = new Ext.grid.ColumnModel([
+	{ header: 'id', width: 50, dataIndex: 'id' },
+	{ header: 'Title', width: 180, sortable: true, dataIndex: 'title' },
+	{ header: 'Byline', width: 180, sortable: true, dataIndex: 'byline' },
+	{ header: 'Description', width: 200, sortable: true, dataIndex: 'description' },
+	{ header: 'Deadline', width: 125, sortable: true, dataIndex: 'deadline' },
+	{ header: 'Expires', width: 125, sortable: true, dataIndex: 'expires' },
+	{ header: 'Contact Email', width: 200, sortable: true, dataIndex: 'contact_email' },
+	{ header: 'File', width: 100, sortable: true, dataIndex: 'file' },
+	{
+		header: 'Actions',
+		xtype: 'actioncolumn',
+		width: 60,
+		items: [{
+			icon: '/img/icons/delete.png',
+			tooltip: 'Remove RFP',
+			handler: function(grid, rowIndex, colIndex) {
+				var rec = store.getAt(rowIndex);
+				Ext.Msg.show({
+					title: 'Remove RFP?',
+					msg: 'Removing the RFP will make it inactive, it will no longer available unless reactivated',
+					buttons: {
+						yes: 'Yes, remove the RFP',
+						no: 'No, don\'t remove the RFP'
+					},
+					animEl: 'elId',
+					icon: Ext.MessageBox.QUESTION,
+					fn: function() {
+						store.remove(rec);
+					}
+				});
+			}
+		}]
+	}
+]);
+
+var selModel = new Ext.grid.RowSelectionModel({
+     singleSelect : true,
+     listeners: {
+     	rowselect: function(sm, row, rec) {
+     		Ext.getCmp('updateButton').enable();
+     		Ext.getCmp('saveButton').disable();
+     		var f = rfpForm.getForm();
+     		f.loadRecord(rec);
+     	}
+     }
 });
 
 var grid = new Ext.grid.GridPanel({
 	store: store,
+	colModel: colModel,
+	sm: selModel,
+	view: gridView,
 	height: 300,
-	frame: true,
-	columns: [{
-		id: 'title',
-		header: 'Title',
-		dataIndex: 'title',
-	},{
-		header: 'Byline',
-		dataIndex: 'byline',
-	 	editor: new Ext.form.TextField({}),
-	},{
-		header: 'Deadline',
-		dataIndex: 'deadline',
-	},{
-		header: 'Expires',
-		dataIndex: 'expires'
-	}],
-	viewConfig: {
-		forceFit: true,
-		emptyText: 'No records found.'
-	},
-	bbar: pagingToolbar
-});
-
-var pagingToolbar = new Ext.PagingToolbar({
-	store: store,
-	displayInfo: true,
-	pageSize: 10
+	frame: true
 });
 
 Ext.onReady(function() {
