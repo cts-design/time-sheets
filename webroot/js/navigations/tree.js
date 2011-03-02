@@ -187,6 +187,7 @@ Ext.onReady(function() {
                         } else {
                             selectedNode.destroy();
                             tree.enable();
+                            removeLinkButton.disable();
                         }
                     },
                     failure:function() {
