@@ -18,6 +18,10 @@ var addCat = new Ext.Button({
 		if(catName.isValid()) {
 			var name = catName.getValue();
 			var parent = tree.getSelectionModel().getSelectedNode();
+			if(parent == null) {
+				Ext.MessageBox.alert('Error', 'Please seleact a parent category to add category to.');
+				return false;
+			}
 			Ext.Ajax.request({
 				url: '/admin/document_filing_categories/add',
 				params: {
@@ -52,13 +56,11 @@ var addCat = new Ext.Button({
 });
 
 var disableCat = new Ext.Button({
-	text: 'Disable Category'
-
-})
-
-var enableCat = new Ext.Button({
-	text: 'Enable Category'
-
+	text: 'Disable Category',
+	handler: function(){
+		var node = treeSm.getSelectedNode();
+		toggleNodeDisabled(node, 1);
+	}
 })
 
 var catName = new Ext.form.TextField({
@@ -76,6 +78,8 @@ var tree = new Ext.tree.TreePanel({
 	useArrows: true,
 	title: 'Document Filing Categories',
 	frame: true,
+	hlColor: '666666',
+	useArrows: true,
 	width: 400,
 	stateful: true,
 	stateId: 'docCatTree',
@@ -174,7 +178,7 @@ tree.on('movenode', function(tree, node, oldParent, newParent, position) {
 			tree.resumeEvents();
 			tree.enable();
 
-			alert("Oh no! Your changes could not be saved!");
+			Ext.MessageBox.alert('Error', 'Changes could not be saved');
 		}
 	});
 });
@@ -190,41 +194,50 @@ tree.on('beforeclick', function(node, e){
 		   fn: function(button){
 		   	if(button == 'yes') {
 		   		tree.disable();
-				Ext.Ajax.request({
-						url: '/admin/document_filing_categories/toggle_disabled',
-						params: {
-							'data[DocumentFilingCategory][id]': node.id,
-							'data[DocumentFilingCategory][disabled]' : 0
-						},
-						scope: this,
-						success: function(response, options) {
-							var o = {};
-							try {
-								o = Ext.decode(response.responseText);
-							} catch(e) {
-								Ext.Msg.alert('Error','Unable to update category status, please try again.');
-								return;
-							}
-							if(o.success !== true) {
-								Ext.Msg.alert('Error', o.message);
-							} else {
-								Ext.Msg.alert('Success', o.message);
-								tree.enable();
-								node.enable();
-							}
-						},
-						failure: function() {
-							Ext.Msg.alert('Error','Unable to save category, please try again.');
-						}
-					});		   		
+			   	toggleNodeDisabled(node, 0)	
 		   	}
 		   },
 		   animEl: 'elId',
 		   icon: Ext.MessageBox.QUESTION
 		});
-		console.log(node);
 	}
 })
+
+var toggleNodeDisabled = function(node, status) {
+	Ext.Ajax.request({
+		url: '/admin/document_filing_categories/toggle_disabled',
+		params: {
+			'data[DocumentFilingCategory][id]': node.id,
+			'data[DocumentFilingCategory][disabled]' : status
+		},
+		scope: this,
+		success: function(response, options) {
+			var o = {};
+			try {
+				o = Ext.decode(response.responseText);
+			} catch(e) {
+				Ext.Msg.alert('Error','Unable to update category status, please try again.');
+				return;
+			}
+			if(o.success !== true) {
+				Ext.Msg.alert('Error', o.message);
+				tree.enable();
+			} else {
+				Ext.Msg.alert('Success', o.message);
+					if(o.disabled == false) {
+						node.enable();
+					}
+					if(o.disabled == true) {
+						node.disable()
+					}
+					tree.enable();
+			}
+		},
+		failure: function() {
+			Ext.Msg.alert('Error','Unable to update category status, please try again.');
+		}
+	});	
+}
 
 var treeEditor = new Ext.tree.TreeEditor(tree, {}, {
 	allowBlank:false,
