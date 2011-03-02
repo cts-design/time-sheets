@@ -1,25 +1,20 @@
 <div id="crumbWrapper">
     <span>You are here > </span>
-<?php echo $crumb->getHtml('Add Rfp', null, 'unique'); ?></div>
-<div class="rfps form admin">
+<?php echo $crumb->getHtml('Add Featured Employer', null, 'unique'); ?></div>
+<div class="featuredEmployers form admin">
     <div class="actions ui-widget-header">
 	<ul></ul>
 </div>
-<?php echo $this->Form->create('Rfp');?>
+<?php echo $this->Form->create('FeaturedEmployer');?>
 	<fieldset>
- 		<legend><?php __('Admin Edit Rfp'); ?></legend>
+ 		<legend><?php __('Admin Edit Featured Employer'); ?></legend>
 	<?php
 		echo $this->Form->input('id', array(
 							'before' => '<p class="left">',
 							'between' => '</p><p class="left">',
 							'after' => '</p>'));
 		echo '<br class="clear" />';
-		echo $this->Form->input('title', array(
-							'before' => '<p class="left">',
-							'between' => '</p><p class="left">',
-							'after' => '</p>'));
-		echo '<br class="clear" />';
-		echo $this->Form->input('byline', array(
+		echo $this->Form->input('name', array(
 							'before' => '<p class="left">',
 							'between' => '</p><p class="left">',
 							'after' => '</p>'));
@@ -29,22 +24,12 @@
 							'between' => '</p><p class="left">',
 							'after' => '</p>'));
 		echo '<br class="clear" />';
-		echo $this->Form->input('deadline', array(
+		echo $this->Form->input('image', array(
 							'before' => '<p class="left">',
 							'between' => '</p><p class="left">',
 							'after' => '</p>'));
 		echo '<br class="clear" />';
-		echo $this->Form->input('expires', array(
-							'before' => '<p class="left">',
-							'between' => '</p><p class="left">',
-							'after' => '</p>'));
-		echo '<br class="clear" />';
-		echo $this->Form->input('contact_email', array(
-							'before' => '<p class="left">',
-							'between' => '</p><p class="left">',
-							'after' => '</p>'));
-		echo '<br class="clear" />';
-		echo $this->Form->input('file', array(
+		echo $this->Form->input('url', array(
 							'before' => '<p class="left">',
 							'between' => '</p><p class="left">',
 							'after' => '</p>'));
