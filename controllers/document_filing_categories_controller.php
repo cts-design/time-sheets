@@ -139,7 +139,16 @@ class DocumentFilingCategoriesController extends AppController {
 	
 	function admin_toggle_disabled() {
 		if($this->RequestHandler->isAjax()){
-			FireCake::log($this->params);
+			if(!empty($this->data)) {
+				if($this->DocumentFilingCategory->save($this->data)){
+					$data['success'] = true;
+ 				}
+				else $data['success'] = false;
+			}
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+		else {
 			exit;
 		}
 	}
