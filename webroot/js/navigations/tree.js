@@ -77,7 +77,7 @@ Ext.onReady(function() {
             // Ext.MessageBox.prompt('New Link', 'Please enter the name of the new link', function(btn, text) {
             //     if (btn == 'cancel' || text == '') {
             //         return;
-            //     }
+            //     }TEST
             // 
             //     var newNodeName = text;
             //     Ext.MessageBox.prompt('New Link', 'Please enter the url of the ' + newNodeName + ' link', function(b,t) {
