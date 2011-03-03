@@ -11,47 +11,51 @@ class TestRfpsController extends RfpsController {
 }
 
 class RfpsControllerTestCase extends AtlasTestCase {
-	var $fixtures = array('app.rfp');
-
 	function startTest() {
-		$this->Rfps =& new TestRfpsController();
+		$this->Rfps =& new TestRfpsController(array('components' => array('RequestHandler')));
 		$this->Rfps->constructClasses();
+		$this->RequestHandler =& $this->Rfps->RequestHandler;
 	}
 
 	function endTest() {
+		unset($this->RequestHandler);
 		unset($this->Rfps);
 		ClassRegistry::flush();
 	}
 
 	function testIndex() {
+		
+	}
+
+	function testAdminCreateWithValidData() {
+		App::import('Vendor', 'DebugKit.FireCake');
+		
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->Rfps->params = Router::parse('/admin/rfps/create');
+		$this->Rfps->params['form'] =  array('rfps' => '{"title":"test","byline":"test","description":"asdf","deadline":"","expires":"","contact_email":"sdd@sdfsd.com"}');
+		
+		$this->Rfps->Component->initialize($this->Rfps);
+		$this->Rfps->beforeFilter();
+		$this->Rfps->Component->startup($this->Rfps);
+		$result = json_decode($this->Rfps->admin_create(), true);
+		
+		$this->assertEqual($this->Rfps->layout, $this->RequestHandler->ajaxLayout);
+		$this->assertTrue(array_key_exists('success', $result));
+		$this->assertTrue($result['success'], 'true');
+	}
+	function testAdminCreateWithInvalidData() {
+		
+	}
+	
+	function testAdminRead() {
+		
+	}
+
+	function testAdminUpdate() {
 
 	}
 
-	function testAdd() {
-
-	}
-
-	function testEdit() {
-
-	}
-
-	function testDelete() {
-
-	}
-
-	function testAdminIndex() {
-
-	}
-
-	function testAdminAdd() {
-
-	}
-
-	function testAdminEdit() {
-
-	}
-
-	function testAdminDelete() {
+	function testAdminDestroy() {
 
 	}
 
