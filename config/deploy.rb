@@ -20,6 +20,28 @@ set :user, 'tbwaftp'
 # Cake Settings
 set :cake_branch, "master"
 
+_cset(:files_path) { File.join(shared_path, "webroot/files/public") }
+_cset(:img_path) { File.join(shared_path, "webroot/img/public") }
+_cset(:storage_path) { File.join(shared_path, "storage") }
+
+namespace :deploy do
+	desc "Updates symlinks needed to make application work"
+    task :symlink, :except => { :no_release => true } do
+      on_rollback do
+        if previous_release
+          run "rm -f #{current_path}; ln -s #{previous_release} #{current_path}; true"
+        else
+          logger.important "no previous release to rollback to, rollback of symlink skipped"
+        end
+      end
+      run "ln -s #{shared_path}/system #{latest_release}/webroot/system && ln -s #{shared_path}/tmp #{latest_release}/tmp";
+      run "ln -s #{shared_path}/storage #{current_release}/storage"
+      run "ln -s #{shared_path}/webroot/files/public #{current_release}/webroot/files/public"
+      run "ln -s #{shared_path}/webroot/img/public #{current_release}/webroot/img/public"
+      run "rm -f #{current_path} && ln -s #{latest_release} #{current_path}"    
+    end	
+end
+
 
 desc "Update database schema create tables"
 	task :migrate_database_create, roles => [:web] do
@@ -34,8 +56,7 @@ end
 task :finalize_deploy, :roles => [:web] do
 	run "chmod 755 -R #{release_path}"
 	run "mv #{release_path}/webroot/index.staging.php #{release_path}/webroot/index.php"
-	#run "ln -s #{shared_path}/system #{current_release}/webroot/"
-	#run "ln -s #{shared_path}/storage #{current_release}/storage"
+	run "ln -s #{shared_path}/storage #{current_release}/storage"
 	run "mv #{release_path}/config/atlas.default.php #{release_path}/config/atlas.php"
 	run "mv #{release_path}/config/core.default.php #{release_path}/config/core.php"
 end	
