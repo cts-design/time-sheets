@@ -15,6 +15,7 @@ class RfpsController extends AppController {
 	}
 
 	function admin_create() {
+		FireCake::log($this->params);
 		FireCake::log($_FILES, 'in create');
 		if ($this->RequestHandler->isAjax()) {
 			if (!empty($this->params)) {
@@ -39,7 +40,7 @@ class RfpsController extends AppController {
 				$this->set(compact('data'));
 			}
 			
-			$this->render(null, null, '/elements/ajaxreturn');
+			return $this->render(null, null, '/elements/ajaxreturn');
 		} else {
 			exit;
 		}
