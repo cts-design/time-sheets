@@ -21,26 +21,30 @@ class DocumentFilingCategoriesController extends AppController {
 
     function admin_index() {
     	if($this->RequestHandler->isAjax()) {
+    		FireCake::log($this->params);
 			 $parent = intval($this->params['form']['node']);
 			 $nodes = $this->DocumentFilingCategory->children($parent, true);
 			 $data = array();
-			foreach ($nodes as $node){
-				if($node['DocumentFilingCategory']['disabled'] == 0) {
-					$disabled = false;
-				}
-				else {
-					$disabled = true;
-				}
-			    $data[] = array(
-			        "text" => $node['DocumentFilingCategory']['name'], 
-			        "id" => $node['DocumentFilingCategory']['id'],
-			        "disabled" =>  $disabled,
-			        "cls" => "folder",
-			        "leaf" => ($node['DocumentFilingCategory']['lft'] + 1 == $node['DocumentFilingCategory']['rght'])
-			    );
-			}
+			 if($nodes) {
+				foreach ($nodes as $node){
+					if($node['DocumentFilingCategory']['disabled'] == 0) {
+						$disabled = false;
+					}
+					else {
+						$disabled = true;
+					}
+				    $data[] = array(
+				    	"success" => true,
+				        "text" => $node['DocumentFilingCategory']['name'], 
+				        "id" => $node['DocumentFilingCategory']['id'],
+				        "disabled" =>  $disabled,
+				        "cls" => "folder",
+				        "leaf" => ($node['DocumentFilingCategory']['lft'] + 1 == $node['DocumentFilingCategory']['rght'])
+				    );
+				}			 	
+			 }
 			$this->set('data', $data);
-			$this->render(null, null, '/elements/ajaxreturn');    		
+			return $this->render(null, null, '/elements/ajaxreturn');    		
     	}	
     }
 
