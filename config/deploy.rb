@@ -8,6 +8,7 @@ set :deploy_via, :export
 
 ssh_options[:forward_agent] = true
 
+
 set :deploy_to, "/var/www/vhosts/tbwa.ctsfla.com/atlas"
 
 server "tbwa.ctsfla.com", :app, :web, :db, :primary => true
@@ -16,12 +17,15 @@ default_run_options[:pty] = true
 
 set :user, 'tbwaftp'
 
+
 # Cake Settings
 set :cake_branch, "master"
 
 task :finalize_deploy, :roles => [:web] do
 	run "chmod 755 -R #{release_path}"
 	run "mv #{release_path}/webroot/index_staging.php #{release_path}/webroot/index.php"
+	run "ln -fs #{current_path}/webroot ~/public_html"
+	#run "ln -s #{shared_path}/system ~/public_html/system"
 	run "mv #{release_path}/config/atlas.default.php #{release_path}/config/atlas.php"
 	run "ln -s #{shared_path}/plugins #{current_release}/plugins"
 	run "ln -s #{shared_path}/config/core.php #{current_release}/config/core.php"
