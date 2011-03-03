@@ -40,7 +40,6 @@ set :cake_branch, "master"
 		run "mv #{release_path}/config/core.default.php #{release_path}/config/core.php"
 	end	
 
-
 after "deploy:update_code", :finalize_deploy
 
 capcake
