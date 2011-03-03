@@ -8,19 +8,19 @@ set :deploy_via, :export
 
 ssh_options[:forward_agent] = true
 
-set :deploy_to, "/var/www/vhosts/atlas.workforcetampa.com/atlas"
+set :deploy_to, "/var/www/vhosts/tbwa.ctsfla.com/atlas"
 
-server "atlas.workforcetampa.com", :app, :web, :db, :primary => true
-default_environment['PATH'] = "/var/www/vhosts/atlas.workforcetampa.com/atlas/shared/cakephp/cake/console:$PATH"
+server "tbwa.ctsfla.com", :app, :web, :db, :primary => true
+default_environment['PATH'] = "/var/www/vhosts/tbwa.ctsfla.com/atlas/shared/cakephp/cake/console:$PATH"
 default_run_options[:pty] = true
 
-set :user, 'wftftp'
+set :user, 'tbwaftp'
 
 # Cake Settings
 set :cake_branch, "master"
 
 task :finalize_deploy, :roles => [:web] do
-	#run "chmod 755 -R #{release_path}"
+	run "chmod 755 -R #{release_path}"
 	run "mv #{release_path}/webroot/index_staging.php #{release_path}/webroot/index.php"
 	run "mv #{release_path}/config/atlas.default.php #{release_path}/config/atlas.php"
 	run "ln -s #{shared_path}/plugins #{current_release}/plugins"
