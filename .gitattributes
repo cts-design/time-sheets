@@ -1,1 +1,2 @@
 config/deploy.rb merge=ours
+config/index.staging.php merge=ours
