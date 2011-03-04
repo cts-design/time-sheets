@@ -7,13 +7,11 @@ set :repository, "git@git.assembla.com:CTSATLAS.git"
 set :branch, 'tbwa_staging'
 set :deploy_via, :export
 
-ssh_options[:forward_agent] = true
+set :default_shell, '/bin/bash'
 
 set :deploy_to, "/var/www/vhosts/tbwa.ctsfla.com/atlas"
 
 server "tbwa.ctsfla.com", :app, :web, :db, :primary => true
-
-default_run_options[:pty] = true
 
 set :user, 'tbwaftp'
 
