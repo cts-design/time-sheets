@@ -6,15 +6,13 @@ set :repository, "git@git.assembla.com:CTSATLAS.git"
 set :branch, 'staging'
 set :deploy_via, :export
 
-ssh_options[:forward_agent] = true
+set :default_shell, '/bin/bash'
 
 set :deploy_to, "/var/www/vhosts/development.ctsfla.com/atlas"
 
 server "development.ctsfla.com", :app, :web, :db, :primary => true
-default_run_options[:pty] = true
 
 set :user, 'dev4cts'
-
 
 # Cake Settings
 set :cake_branch, "master"
@@ -38,7 +36,6 @@ namespace :deploy do
       run "rm -f #{current_path} && ln -s #{latest_release} #{current_path}"    
     end	
 end
-
 
 desc "Update database schema create tables"
 	task :migrate_database_create, roles => [:web] do
