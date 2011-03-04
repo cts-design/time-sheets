@@ -3,6 +3,7 @@ require 'capcake'
 
 set :application, 'atlas' # Your app's location (domain or sub-domain name)
 set :repository, "git@git.assembla.com:CTSATLAS.git"
+
 set :branch, 'tbwa_staging'
 set :deploy_via, :export
 
@@ -11,7 +12,7 @@ ssh_options[:forward_agent] = true
 set :deploy_to, "/var/www/vhosts/tbwa.ctsfla.com/atlas"
 
 server "tbwa.ctsfla.com", :app, :web, :db, :primary => true
-#default_environment['PATH'] = "/var/www/vhosts/tbwa.ctsfla.com/atlas/shared/cakephp/cake/console:$PATH"
+
 default_run_options[:pty] = true
 
 set :user, 'tbwaftp'
@@ -20,9 +21,8 @@ set :user, 'tbwaftp'
 # Cake Settings
 set :cake_branch, "master"
 
-_cset(:files_path) { File.join(shared_path, "webroot/files/public") }
-_cset(:img_path) { File.join(shared_path, "webroot/img/public") }
-_cset(:storage_path) { File.join(shared_path, "storage") }
+set :shared_children,       %w(config system tmp webroot/public/files webroot/public/img storage)
+
 
 namespace :deploy do
 	desc "Updates symlinks needed to make application work"
@@ -54,9 +54,8 @@ task :migrate_database_update, roles => [:web] do
 end  
 
 task :finalize_deploy, :roles => [:web] do
-	run "chmod 755 -R #{release_path}"
+	run "chmod 755 -R #{release_path}"	
 	run "mv #{release_path}/webroot/index.staging.php #{release_path}/webroot/index.php"
-	run "ln -s #{shared_path}/storage #{current_release}/storage"
 	run "mv #{release_path}/config/atlas.default.php #{release_path}/config/atlas.php"
 	run "mv #{release_path}/config/core.default.php #{release_path}/config/core.php"
 end	
