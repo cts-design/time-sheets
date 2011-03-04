@@ -15,17 +15,20 @@ class RfpsController extends AppController {
 	}
 
 	function admin_create() {
-		FireCake::log($this->params);
-		FireCake::log($_FILES, 'in create');
 		if ($this->RequestHandler->isAjax()) {
 			if (!empty($this->params)) {
 				$this->data['Rfp'] = json_decode($this->params['form']['rfps'], true);
 				
-				$deadline = $this->data['Rfp']['deadline'];
-				$expires  = $this->data['Rfp']['expires'];
-				$this->data['Rfp']['deadline'] = date('Y-m-d H-i-s', strtotime($deadline));
-				$this->data['Rfp']['expires']  = date('Y-m-d H-i-s', strtotime($expires));
+				if (!empty($this->data['Rfp']['deadline'])) {
+					$deadline = $this->data['Rfp']['deadline'];
+					$this->data['Rfp']['deadline'] = date('Y-m-d H-i-s', strtotime($deadline));
+				}
 				
+				if (!empty($this->data['Rfp']['expires'])) {
+					$expires  = $this->data['Rfp']['expires'];
+					$this->data['Rfp']['expires']  = date('Y-m-d H-i-s', strtotime($expires));
+				}
+
 				$this->Rfp->create();
 				if ($this->Rfp->save($this->data)) {
 					$id = $this->Rfp->getLastInsertId();
@@ -42,6 +45,7 @@ class RfpsController extends AppController {
 			
 			return $this->render(null, null, '/elements/ajaxreturn');
 		} else {
+			FireCake::log($this->params);
 			exit;
 		}
 	}
@@ -76,16 +80,21 @@ class RfpsController extends AppController {
 			if (!empty($this->params)) {
 				$this->data['Rfp'] = json_decode($this->params['form']['rfps'], true);
 				
-				$deadline = $this->data['Rfp']['deadline'];
-				$expires  = $this->data['Rfp']['expires'];
-				$this->data['Rfp']['deadline'] = date('Y-m-d H-i-s', strtotime($deadline));
-				$this->data['Rfp']['expires']  = date('Y-m-d H-i-s', strtotime($expires));
+				if (!empty($this->data['Rfp']['deadline'])) {
+					$deadline = $this->data['Rfp']['deadline'];
+					$this->data['Rfp']['deadline'] = date('Y-m-d H-i-s', strtotime($deadline));
+				}
+				
+				if (!empty($this->data['Rfp']['expires'])) {
+					$expires  = $this->data['Rfp']['expires'];
+					$this->data['Rfp']['expires']  = date('Y-m-d H-i-s', strtotime($expires));
+				}
 				
 				if ($this->Rfp->save($this->data)) {
 					$rfp = $this->Rfp->read(null, $this->data['Rfp']['id']);
 					$rfp['Rfp']['deadline'] = date('m/d/Y', strtotime($rfp['Rfp']['deadline']));
 					$rfp['Rfp']['expires'] = date('m/d/Y', strtotime($rfp['Rfp']['expires']));
-					$data['rfps'][] = $rfp['Rfp'];
+					$data['rfps'] = $rfp['Rfp'];
 					$data['success'] = true;
 				} else {
 					$data['success'] = false;
@@ -93,7 +102,7 @@ class RfpsController extends AppController {
 				$this->set(compact('data'));
 			}
 			
-			$this->render(null, null, '/elements/ajaxreturn');
+			return $this->render(null, null, '/elements/ajaxreturn');
 		} else {
 			exit;
 		}		
@@ -110,22 +119,19 @@ class RfpsController extends AppController {
 			}
 			
 			$this->set('data', $data);
-			$this->render(null, null, '/elements/ajaxreturn');
+			return $this->render(null, null, '/elements/ajaxreturn');
 		} else {
 			exit;
 		}
 	}
 	
 	function admin_upload() {
-		FireCake::log($_FILES);
-
 		// get the document relative path to the inital storage folder
         $abs_path = WWW_ROOT . 'files/public/rfps/';
         $rel_path = 'files/public/rfps/';
         $file_ext = '';
         $filename = '';
 		
-		FireCake::log('sss all good');
 	    switch($_FILES['file']['type']) {
             case 'application/pdf':
                 $file_ext = '.pdf';
@@ -150,15 +156,13 @@ class RfpsController extends AppController {
             $url = $rel_path . $filename;
 
             if (!move_uploaded_file($_FILES['file']['tmp_name'], $url)) {
-            	FireCake::log('failing');
                 $data['success'] = false;
 			} else {
-				FireCake::log('didnt fail');		
 				$data['success'] = true;
 				$data['url'] = $url;
 			}
         }
-		
+		// must re
 		$this->header('Content-type: text/html');
 		$this->render(null, null, '/elements/ajaxreturn');
 	}

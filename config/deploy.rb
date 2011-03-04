@@ -15,7 +15,6 @@ server "tbwa.ctsfla.com", :app, :web, :db, :primary => true
 
 set :user, 'tbwaftp'
 
-
 # Cake Settings
 set :cake_branch, "master"
 
@@ -39,7 +38,6 @@ namespace :deploy do
       run "rm -f #{current_path} && ln -s #{latest_release} #{current_path}"    
     end	
 end
-
 
 desc "Update database schema create tables"
 	task :migrate_database_create, roles => [:web] do
