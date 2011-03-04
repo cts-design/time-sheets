@@ -8,7 +8,6 @@ storage/
 .settings
 .project
 webroot/files/public/*
-webroot/files/public/*
 webroot/img/public/*
 webroot/img/_thumbs/*
 config/atlas.php

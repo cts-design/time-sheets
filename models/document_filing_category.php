@@ -7,6 +7,9 @@
  */
 class DocumentFilingCategory extends AppModel {
 	var $name = 'DocumentFilingCategory';
+	
+	var $actsAs = array('Tree');
+	
 	var $validate = array(
 	    'name' => array(
 		'notEmpty' => array(
