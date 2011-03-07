@@ -33,7 +33,6 @@
                                 <li rel="chairmanReports"><?php echo $html->link('Chairman Reports', array('controller' => 'chairman_reports', 'action' => 'index')); ?></li>
                             	<li rel="hotJobs"><?php echo $html->link('Hot Jobs', array('controller' => 'hot_jobs', 'action' => 'index')); ?></li>
                             	<li rel="rfp"><?php echo $html->link('RFPs & Bids', array('controller' => 'rfps', 'action' => 'index')); ?></li>
-                            	<li rel="locations"><?php echo $html->link('Locations', array('controller' => 'locations', 'action' => 'index')); ?></li>
                             	<li rel="featured"><?php echo $html->link('Featured Employer', array('controller' => 'featured_employers', 'action' => 'index')); ?></li>
                             </ul>
                         </li>
