@@ -223,6 +223,60 @@
 	    'checked' => (isset($controllers['PressReleases']['admin_delete'])) ? $controllers['PressReleases']['admin_delete'] : '' ));?>
     </fieldset>
     <?php endif; ?>
+    
+    <?php if (!in_array('HotJobs', $disabledModules)): ?>
+    <fieldset class="left right-mar-10">
+    <legend>Hot Jobs</legend>
+       <?php echo $this->Form->input('HotJobs.admin_index', array(
+	    'type' => 'checkbox',
+	   	'label' => 'Index',
+	    'checked' => (isset($controllers['HotJobs']['admin_index'])) ? $controllers['HotJobs']['admin_index'] : '' ));?>
+       <?php echo $this->Form->input('HotJobs.admin_add', array(
+	    'type' => 'checkbox',
+	   	'label' => 'Add',
+	    'checked' => (isset($controllers['HotJobs']['admin_add'])) ? $controllers['HotJobs']['admin_add'] : '' ));?>
+       <?php echo $this->Form->input('HotJobs.admin_edit', array(
+	    'type' => 'checkbox',
+	   	'label' => 'Edit',
+	    'checked' => (isset($controllers['HotJobs']['admin_edit'])) ? $controllers['HotJobs']['admin_edit'] : '' ));?>
+       <?php echo $this->Form->input('HotJobs.admin_delete', array(
+	    'type' => 'checkbox',
+	   	'label' => 'Delete',
+	    'checked' => (isset($controllers['HotJobs']['admin_delete'])) ? $controllers['HotJobs']['admin_delete'] : '' ));?>
+    </fieldset>
+    <?php endif; ?>
+    
+    <?php if (!in_array('Rfps', $disabledModules)): ?>
+    <fieldset class="left right-mar-10">
+    <legend>RFPs &amp; Bids</legend>
+       <?php echo $this->Form->input('Rfps.admin_index', array(
+	    'type' => 'checkbox',
+	   	'label' => 'Index',
+	    'checked' => (isset($controllers['Rfps']['admin_index'])) ? $controllers['Rfps']['admin_index'] : '' ));?>
+    </fieldset>
+    <?php endif; ?>
+    
+    <?php if (!in_array('FeaturedEmployer', $disabledModules)): ?>
+    <fieldset class="left right-mar-10">
+    <legend>Featured Employer</legend>
+       <?php echo $this->Form->input('FeaturedEmployer.admin_index', array(
+	    'type' => 'checkbox',
+	   	'label' => 'Index',
+	    'checked' => (isset($controllers['FeaturedEmployer']['admin_index'])) ? $controllers['FeaturedEmployer']['admin_index'] : '' ));?>
+       <?php echo $this->Form->input('FeaturedEmployer.admin_add', array(
+	    'type' => 'checkbox',
+	   	'label' => 'Add',
+	    'checked' => (isset($controllers['FeaturedEmployer']['admin_add'])) ? $controllers['FeaturedEmployer']['admin_add'] : '' ));?>
+       <?php echo $this->Form->input('FeaturedEmployer.admin_edit', array(
+	    'type' => 'checkbox',
+	   	'label' => 'Edit',
+	    'checked' => (isset($controllers['FeaturedEmployer']['admin_edit'])) ? $controllers['FeaturedEmployer']['admin_edit'] : '' ));?>
+       <?php echo $this->Form->input('FeaturedEmployer.admin_delete', array(
+	    'type' => 'checkbox',
+	   	'label' => 'Delete',
+	    'checked' => (isset($controllers['FeaturedEmployer']['admin_delete'])) ? $controllers['FeaturedEmployer']['admin_delete'] : '' ));?>
+    </fieldset>
+    <?php endif; ?>
     <br class="clear" />
 
     <?php echo $this->Form->end('Submit')?>
