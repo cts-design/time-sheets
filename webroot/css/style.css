@@ -267,6 +267,39 @@ strong {
 	margin: 0 0 0 16px;
 }
 
+.inTheNews {
+	margin: 12px 0 0;
+}
+
+.inTheNews .article {
+	border-top: 1px solid #D0E0EE;
+	margin: 0 0 18px;
+	padding: 8px 0;
+}
+
+.inTheNews .article .date {
+	color: #666;
+	margin: 0 0 12px;
+}
+
+.inTheNews .article h2 {
+	font-size: 13px;
+	margin: 0 0 2px;
+}
+
+.inTheNews .article .reporter {
+	color: #888888;
+	display: block;
+	font-style: italic;
+	margin: 0 0 12px;
+}
+
+.inTheNews .article .summary {
+	line-height: 1.4em;
+	margin: 0 0 18px;
+	width: 450px;
+}
+
 .counter {
 	color: #A4A4A4;
 }
