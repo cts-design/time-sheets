@@ -4,7 +4,7 @@
 <div class="inTheNews admin">
 <div class="actions ui-widget-header">
 	<ul>
-		<li><?php echo $this->Html->link(__('New In The News', true), array('action' => 'add')); ?></li>
+		<li><?php echo $this->Html->link(__('New Article', true), array('action' => 'add')); ?></li>
 	</ul>
 </div>
 	<table cellpadding="0" cellspacing="0">
