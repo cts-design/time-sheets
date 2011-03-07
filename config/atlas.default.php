@@ -8,10 +8,10 @@
  * @package ATLAS V3
  */
 
-$config['URL'] = 'http://dev.ctsfla.com/';
-$config['Admin']['URL'] = 'http://dev.ctsfla.com/admin';
+$config['URL'] = 'http://development.ctsfla.com/';
+$config['Admin']['URL'] = 'http://development.ctsfla.com/admin';
 //domain for use with cookies
-$config['domain'] = 'dev.ctsfla.com';
+$config['domain'] = 'development.ctsfla.com';
 
 // Company Name
 $config['Company']['name'] = 'ATLAS';
