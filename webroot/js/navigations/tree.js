@@ -4,9 +4,10 @@
  * @link http://ctsfla.com
  * @package ATLAS V3
  */
-Ext.BLANK_IMAGE_URL = "/img/ext/default/s.gif";
-
 Ext.onReady(function() {
+	Ext.QuickTips.init();
+	Ext.BLANK_IMAGE_URL = "/img/ext/default/s.gif";
+	
     var win; // holds the Ext.Window object
     var getNodesUrl = '/admin/navigations/get_nodes/',
     addNodeUrl = '/admin/navigations/add_node/',
@@ -131,18 +132,21 @@ Ext.onReady(function() {
         text: 'Edit Link',
         disabled: true,
         handler: function() {
+        	var f = formPanel.getForm();
         	var selectedNode = tree.selModel.selNode;
         	
         	if (selectedNode || selectedNode.parentNode || !selectedNode.parentNode.isRoot) {
-                formPanel.getForm().findField('name').setValue(selectedNode.attributes.text);
-                formPanel.getForm().findField('url').setValue(selectedNode.attributes.linkUrl);
+                f.findField('name').setValue(selectedNode.attributes.text);
+                f.findField('url').setValue(selectedNode.attributes.linkUrl);
                 
-	    		win = new Ext.Window({
-	    			title: 'Edit Link',
-	    			modal: true,
-	    			closeAction: 'hide',
-	        		items: [formPanel]
-	        	});
+                if (!win) {
+		    		win = new Ext.Window({
+		    			title: 'Edit Link',
+		    			modal: true,
+		    			closeAction: 'hide',
+		        		items: [formPanel]
+		        	});
+                };
 	
 	        	win.show();
             }
@@ -183,6 +187,7 @@ Ext.onReady(function() {
                         } else {
                             selectedNode.destroy();
                             tree.enable();
+                            removeLinkButton.disable();
                         }
                     },
                     failure:function() {
@@ -228,6 +233,25 @@ Ext.onReady(function() {
         }),
         tbar: new Ext.Toolbar({
         	items: [
+        	{
+        		icon: '/img/icons/expand.png',
+        		id: 'expandall',
+        		handler: function() {
+        			tree.expandAll();
+        			Ext.getCmp('expandall').setVisible(false);
+        			Ext.getCmp('collapseall').setVisible(true);
+        		}
+        	},
+        	{
+        		icon: '/img/icons/collapse.png',
+        		id: 'collapseall',
+        		hidden: true,
+        		handler: function() {
+        			tree.collapseAll();
+        			Ext.getCmp('collapseall').setVisible(false);
+        			Ext.getCmp('expandall').setVisible(true);
+        		}
+        	},
         		addLinkButton,
         		editLinkButton,
 				removeLinkButton

@@ -21,11 +21,13 @@ class RfpsController extends AppController {
 				
 				if (!empty($this->data['Rfp']['deadline'])) {
 					$deadline = $this->data['Rfp']['deadline'];
+					FireCake::log($deadline);
 					$this->data['Rfp']['deadline'] = date('Y-m-d H-i-s', strtotime($deadline));
 				}
 				
 				if (!empty($this->data['Rfp']['expires'])) {
 					$expires  = $this->data['Rfp']['expires'];
+					FireCake::log($expires);
 					$this->data['Rfp']['expires']  = date('Y-m-d H-i-s', strtotime($expires));
 				}
 
@@ -126,45 +128,50 @@ class RfpsController extends AppController {
 	}
 	
 	function admin_upload() {
+		// although this function doesnt get called from ajax,
+		// we need to return our data without a layout so that
+		// ext file upload doesnt break
+		$this->layout = 'ajax';
+		
 		// get the document relative path to the inital storage folder
-        $abs_path = WWW_ROOT . 'files/public/rfps/';
-        $rel_path = 'files/public/rfps/';
-        $file_ext = '';
-        $filename = '';
+	    $abs_path = WWW_ROOT . 'files/public/rfps/';
+	    $rel_path = 'files/public/rfps/';
+	    $file_ext = '';
+	    $filename = '';
 		
 	    switch($_FILES['file']['type']) {
-            case 'application/pdf':
-                $file_ext = '.pdf';
-                break;
-            case 'application/msword':
-                $file_ext = '.doc';
-                break;
-            case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-                $file_ext = '.docx';
-                break;
-        }
-
-        $filename = date('YmdHis') . $file_ext;
-
-        // check to see if the directory exists
-        if (!is_dir($abs_path)) {
-            mkdir($abs_path);
-        }
-
-        if (!file_exists($abs_path . $filename)) {
-            $full_url = $abs_path . $filename;
-            $url = $rel_path . $filename;
-
-            if (!move_uploaded_file($_FILES['file']['tmp_name'], $url)) {
-                $data['success'] = false;
+	        case 'application/pdf':
+	            $file_ext = '.pdf';
+	            break;
+	        case 'application/msword':
+	            $file_ext = '.doc';
+	            break;
+	        case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+	            $file_ext = '.docx';
+	            break;
+	    }
+	
+	    $filename = date('YmdHis') . $file_ext;
+	
+	    // check to see if the directory exists
+	    if (!is_dir($abs_path)) {
+	        mkdir($abs_path);
+	    }
+	
+	    if (!file_exists($abs_path . $filename)) {
+	        $full_url = $abs_path . $filename;
+	        $url = $rel_path . $filename;
+	
+	        if (!move_uploaded_file($_FILES['file']['tmp_name'], $url)) {
+	            $data['success'] = false;
 			} else {
 				$data['success'] = true;
 				$data['url'] = $url;
 			}
-        }
-		// must re
-		$this->header('Content-type: text/html');
-		$this->render(null, null, '/elements/ajaxreturn');
+	    }
+	
+		$this->set(compact('data'));
+		return $this->render(null, null, '/elements/ajaxreturn');
 	}
 }
 ?>
