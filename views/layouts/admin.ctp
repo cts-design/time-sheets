@@ -39,8 +39,6 @@
 	echo $this->Html->script('https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js');
 	
 	echo $this->Html->script('https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js');
-	
-	echo $this->Html->script('jquery.backstretch.min');
 
 	echo $this->Html->script('layouts/admin');
 
