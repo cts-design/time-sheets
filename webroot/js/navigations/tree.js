@@ -13,36 +13,148 @@ Ext.onReady(function() {
     addNodeUrl = '/admin/navigations/add_node/',
     reorderUrl = '/admin/navigations/reorder/',
     reparentUrl = '/admin/navigations/reparent/',
-    renameNodeUrl = '/admin/navigations/rename_node/',
     deleteNodeUrl = '/admin/navigations/delete_node/';
     // track what nodes are moved and send to server to save
     var oldPosition = null,
     oldNextSibling = null;
     
+    var cmsStore = new Ext.data.JsonStore({
+    	autoLoad: true,
+		url: '/admin/pages/get_short_list',
+		storeId: 'cmsStore',
+		root: 'pages',
+		idProperty: 'title',
+		fields: ['title', 'slug']
+	});
+	
+	var cmsCombo = new Ext.form.ComboBox({
+		store: cmsStore,
+		mode: 'local',
+		name: 'cmscombo',
+		triggerAction: 'all',
+		typeAhead: true,
+	    valueField: 'title',
+	    displayField: 'title',
+	    fieldLabel: 'Use an Existing CMS Page',
+	    disabledClass: 'test',
+	    listeners: {
+	    	select: function(combo, record, index) {
+	    		var f = formPanel.getForm();
+	    		f.setValues({
+	    			name: record.data.title,
+	    			link: record.data.slug
+	    		});
+	    	}
+	    }
+	});
+    
 	// form to place on the window
 	var formPanel = new Ext.FormPanel({
 		defaultType: 'field',
+		labelWidth: 150,
 		autoScroll: true,
 		id: 'formpanel',
 		frame: true,
-		items: [{
+		items: [
+		cmsCombo,
+		{
 			xtype: 'textfield',
 			fieldLabel: 'Name',
 			name: 'name'
 		},{
 			xtype: 'textfield',
 			fieldLabel: 'URL',
-			name: 'url'
+			name: 'link'
 		}],
 		buttons: [{
 			text: 'Save',
 			handler: function(b, e) {
+				var submitUrl = (win.title == 'Edit Link' ? '/admin/navigations/update' : '/admin/navigations/create');
+				var f = formPanel.getForm();
+				var vals = f.getValues();
 				
+				var selectedNode = tree.selModel.selNode;
+				var parentId;
+	            
+	            console.log('Selected Node:', selectedNode);
+	            
+	            if (!selectedNode || !selectedNode.parentNode) {
+	            	parentId = tree.root.firstChild.attributes.id;
+	            } else if (selectedNode.leaf) {
+	            	parentId = selectedNode.parentNode.attributes.id;
+	            } else if (selectedNode.parentNode.isRoot) {
+	            	parentId = selectedNode.attributes.id;
+	            }
+	            
+	            console.log(parentId);
+				
+				f.submit({
+					url: submitUrl,
+					params: {
+						parentId: parentId
+					},
+					success: function(form, action) {
+						console.log(action);
+					
+						if (action.result.success !== true) {
+							action.options.failure();
+						} else {
+							var newNode = new Ext.tree.TreeNode({
+								id: action.result.navigation.id, 
+								text: action.result.navigation.title,
+								linkUrl: action.result.navigation.link,
+								leaf: true
+							});
+							
+							console.log("Tree:", tree);
+							
+							var parentNode;
+							
+							if (!selectedNode || !selectedNode.parentNode) {
+								parentNode = tree.root.firstChild;
+							} else if (selectedNode.leaf) {
+								parentNode = selectedNode.parentNode;
+							} else if (selectedNode.parentNode.isRoot) {
+								parentNode = selectedNode;
+							}
+		                     
+							if (!parentNode.expanded) {
+								parentNode.expand;
+							}
+							parentNode.appendChild(newNode);
+						}
+						
+						win.hide();
+						formPanel.getForm().setValues({
+							cmscombo: '',
+							name: '',
+							link: ''
+						});
+					},
+					failure: function(form, action) {
+						switch (action.failureType) {
+							case Ext.form.Action.CLIENT_INVALID:
+								Ext.Msg.alert('Failure', 'Form fields may not be submitted with invalid keys');
+								break;
+							case Ext.form.Action.CONNECT_FAILURE:
+								Ext.Msg.alert('Failure', 'Ajax Communication Failed');
+								break;
+							case Ext.form.Action.SERVER_INVALID:
+								Ext.Msg.alert('Failure', action.result.msg);
+								break;
+						}
+					}
+				});
 			}
 		},{
 			text: 'Cancel',
 			handler: function(b, e) {
-				win.close();
+				win.hide();
+				formPanel.getForm().setValues({
+					cmscombo: '',
+					name: '',
+					link: ''
+				});
 			}			
 		}],
 		buttonAlign: 'right'
@@ -51,80 +163,24 @@ Ext.onReady(function() {
     var addLinkButton = new Ext.Button({
         text: 'Add Link',
         handler: function() {
-			var selectedNode = tree.selModel.selNode;
-			var parentId;
-            
-            if (!selectedNode || !selectedNode.parentNode || selectedNode.parentNode.isRoot == true) {
-                parentId = tree.root.firstChild.attributes.id;
-            } else {
-                parentId = selectedNode.parentNode.attributes.id;
-            }
-            
-            //console.log(parentId);
-            
     		win = new Ext.Window({
     			title: 'Add Link',
     			modal: true,
     			closeAction: 'hide',
-        		items: [formPanel]
+        		items: [formPanel],
+        		listeners: {
+        			beforehide: function(c) {
+        				var f = formPanel.getForm();
+		        		f.setValues({
+							cmscombo: '',
+							name: '',
+							link: ''
+						});
+        			}
+        		}
         	});
 
         	win.show();
-        	
-        	
-            // 
-
-            // 
-            // Ext.MessageBox.prompt('New Link', 'Please enter the name of the new link', function(btn, text) {
-            //     if (btn == 'cancel' || text == '') {
-            //         return;
-            //     }
-            // 
-            //     var newNodeName = text;
-            //     Ext.MessageBox.prompt('New Link', 'Please enter the url of the ' + newNodeName + ' link', function(b,t) {
-            //         if (b == 'cancel' || t == '') {
-            //             return;
-            //         }
-            // 
-            //         var newNodeUrl = t;
-            //         tree.disable();
-            //         var params = {'title':newNodeName, 'link':newNodeUrl, 'parent_id':parentId};
-            // 
-            //         Ext.Ajax.request({
-            //             url:addNodeUrl,
-            //             params:params,
-            //             success:function(response, request) {
-            //                 if (response.responseText.charAt(0) == 0){
-            //                    request.failure();
-            //                 } else {
-            //                     //console.log(response);
-            // 
-            //                     var newNode = new Ext.tree.TreeNode({id: response, text: newNodeName, leaf: true});
-            //                     if (!selectedNode || !selectedNode.parentNode || selectedNode.parentNode.isRoot == true) {
-            //                         tree.root.firstChild.appendChild(newNode);
-            //                     } else {
-            //                         selectedNode.parentNode.appendChild(newNode);
-            //                     }
-            //                     tree.enable();
-            //                 }
-            //             },
-            //             failure:function() {
-            //                 // we move the node back to where it was beforehand and
-            //                 // we suspendEvents() so that we don't get stuck in a possible infinite loop
-            //                 tree.suspendEvents();
-            //                 tree.resumeEvents();
-            //                 tree.enable();
-            // 
-            //                 Ext.MessageBox.show({
-            //                     title: 'Error',
-            //                     msg: 'Unable to save your changes',
-            //                     buttons: Ext.MessageBox.OK,
-            //                     icon: Ext.MessageBox.ERROR
-            //                 });
-            //             }
-            //         });
-            //     });
-            // });
         }
     });
     
@@ -136,17 +192,27 @@ Ext.onReady(function() {
         	var selectedNode = tree.selModel.selNode;
         	
         	if (selectedNode || selectedNode.parentNode || !selectedNode.parentNode.isRoot) {
-                f.findField('name').setValue(selectedNode.attributes.text);
-                f.findField('url').setValue(selectedNode.attributes.linkUrl);
+                f.setValues({
+                	name: selectedNode.attributes.text,
+                	link: selectedNode.attributes.linkUrl
+                });
                 
-                if (!win) {
-		    		win = new Ext.Window({
-		    			title: 'Edit Link',
-		    			modal: true,
-		    			closeAction: 'hide',
-		        		items: [formPanel]
-		        	});
-                };
+	    		win = new Ext.Window({
+	    			title: 'Edit Link',
+	    			modal: true,
+	    			closeAction: 'hide',
+	        		items: [formPanel],
+		        	listeners: {
+	        			beforehide: function(c) {
+	        				var f = formPanel.getForm();
+			        		f.setValues({
+								cmscombo: '',
+								name: '',
+								link: ''
+							});
+	        			}
+	        		}
+	        	});
 	
 	        	win.show();
             }
@@ -187,16 +253,12 @@ Ext.onReady(function() {
                         } else {
                             selectedNode.destroy();
                             tree.enable();
+                            editLinkButton.disable();
                             removeLinkButton.disable();
                         }
                     },
                     failure:function() {
-
-                        // we move the node back to where it was beforehand and
-                        // we suspendEvents() so that we don't get stuck in a possible infinite loop
-
                         tree.suspendEvents();
-
                         tree.resumeEvents();
                         tree.enable();
 
@@ -282,7 +344,6 @@ Ext.onReady(function() {
 		
 		        // we disable tree interaction until we've heard a response from the server
 		        // this prevents concurrent requests which could yield unusual results
-		
 		        tree.disable();
 		
 		        Ext.Ajax.request({
@@ -300,10 +361,8 @@ Ext.onReady(function() {
 		                }
 		            },
 		            failure:function() {
-		
 		                // we move the node back to where it was beforehand and
 		                // we suspendEvents() so that we don't get stuck in a possible infinite loop
-		
 		                tree.suspendEvents();
 		                oldParent.appendChild(node);
 		                if (oldNextSibling){
@@ -320,52 +379,10 @@ Ext.onReady(function() {
 		                    icon: Ext.MessageBox.ERROR
 		                });
 		            }
-		
 		        });
         	}
         }
     });
 
     tree.root.expand();
-
-    var tree_editor = new Ext.tree.TreeEditor(tree, {/* fieldconfig here */ }, {
-        allowBlank:false,
-        blankText:'A name is required',
-        selectOnFocus:true,
-        listeners: {
-        	complete: function(treeEditor, newValue, oldValue) {
-		        if (newValue === oldValue) {
-		            return false;
-		        }
-		
-		        tree.disable();
-		        var nodeId = treeEditor.editNode.attributes.id;
-		        var params = {'id': nodeId, 'title':newValue};
-		
-		        Ext.Ajax.request({
-		            url:renameNodeUrl,
-		            params:params,
-		            success:function(response, request) {
-		                if (response.responseText.charAt(0) != 1){
-		                    request.failure();
-		                } else {
-		                    tree.enable();
-		                }
-		            },
-		            failure:function() {
-		                tree.suspendEvents();
-		                tree.resumeEvents();
-		                tree.enable();
-		
-		                Ext.MessageBox.show({
-		                    title: 'Error',
-		                    msg: 'Unable to save your changes',
-		                    buttons: Ext.MessageBox.OK,
-		                    icon: Ext.MessageBox.ERROR
-		                });
-		            }
-		        });        		
-        	}
-        }
-    });
 });
