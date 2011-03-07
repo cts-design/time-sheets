@@ -4,7 +4,6 @@
  * @link http://ctsfla.com
  */
 $(document).ready(function(){
-    $.backstretch('/img/blue_back.jpg'); 
     $('th a').live('click', function(){
 	$(this).parent().addClass('ui-state-active')
     })
