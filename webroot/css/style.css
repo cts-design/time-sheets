@@ -270,3 +270,14 @@ strong {
 .counter {
 	color: #A4A4A4;
 }
+
+.locations {
+	margin: 15px 0 0;
+}
+
+.locations .location {
+	border-top: 1px solid #D0E0EE;
+	height: 200px;
+	margin: 0 0 18px;
+	padding: 25px 0;
+}
