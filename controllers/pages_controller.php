@@ -5,6 +5,8 @@
  * @link http://ctsfla.com
  * @package ATLAS V3
  */
+ 
+ App::import('Vendor', 'DebugKit.FireCake');
 class PagesController extends AppController {
 
 /**
@@ -135,6 +137,24 @@ class PagesController extends AppController {
 		}
 		$this->Session->setFlash(__('Page was not deleted', true), 'flash_failure');
 		$this->redirect(array('action' => 'index'));
+	}
+
+	// returns a list of pages. on returns the title and slug field
+	// used from admin/navigations
+	function admin_get_short_list() {
+		$pages = $this->Page->find('all', array('fields' => array('Page.title', 'Page.slug'), 'conditions' => array('Page.published' => 1)));
+		
+		foreach ($pages as $key => $value) {
+// 			FireCake::log($key);
+//			FireCake::log($value);
+			$data['pages'][$key]['title'] = $value['Page']['title'];
+			$data['pages'][$key]['slug'] = $value['Page']['slug'];
+		}
+		
+		FireCake::log(json_encode($data));
+		
+		$this->set(compact('data'));
+		return $this->render(null, null, '/elements/ajaxreturn');
 	}
 }
 ?>

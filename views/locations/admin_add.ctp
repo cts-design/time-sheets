@@ -24,6 +24,78 @@
 							'after' => '</p>'));
 		echo '<br class="clear" />';
 	?>
+	
+	<?php
+		echo $this->Form->input('public_name', array(
+							'before' => '<p class="left">',
+							'between' => '</p><p class="left">',
+							'after' => '</p>'));
+		echo '<br class="clear" />';
+	?>
+	
+	<?php
+		echo $this->Form->input('address_1', array(
+							'before' => '<p class="left">',
+							'between' => '</p><p class="left">',
+							'after' => '</p>'));
+		echo '<br class="clear" />';
+	?>
+	
+	<?php
+		echo $this->Form->input('address_2', array(
+							'before' => '<p class="left">',
+							'between' => '</p><p class="left">',
+							'after' => '</p>'));
+		echo '<br class="clear" />';
+	?>
+	
+	<?php
+		echo $this->Form->input('city', array(
+							'before' => '<p class="left">',
+							'between' => '</p><p class="left">',
+							'after' => '</p>'));
+		echo '<br class="clear" />';
+	?>
+	
+	<?php
+		echo $this->Form->input('state', array(
+							'before' => '<p class="left">',
+							'between' => '</p><p class="left">',
+							'after' => '</p>'));
+		echo '<br class="clear" />';
+	?>
+	
+	<?php
+		echo $this->Form->input('zip', array(
+							'before' => '<p class="left">',
+							'between' => '</p><p class="left">',
+							'after' => '</p>'));
+		echo '<br class="clear" />';
+	?>
+	
+	<?php
+		echo $this->Form->input('country', array(
+							'before' => '<p class="left">',
+							'between' => '</p><p class="left">',
+							'after' => '</p>'));
+		echo '<br class="clear" />';
+	?>
+	
+	<?php
+		echo $this->Form->input('telephone', array(
+							'before' => '<p class="left">',
+							'between' => '</p><p class="left">',
+							'after' => '</p>'));
+		echo '<br class="clear" />';
+	?>
+	
+	<?php
+		echo $this->Form->input('fax', array(
+							'before' => '<p class="left">',
+							'between' => '</p><p class="left">',
+							'after' => '</p>'));
+		echo '<br class="clear" />';
+	?>
 	</fieldset>
 <?php echo $this->Form->end(__('Submit', true));?>
 </div>

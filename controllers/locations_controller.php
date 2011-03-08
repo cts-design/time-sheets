@@ -9,6 +9,13 @@
 class LocationsController extends AppController {
 
 	var $name = 'Locations';
+	
+	function index() {
+		$this->Location->recursive = 0;
+		$locations = $this->Location->find('all');
+		
+		$this->set(compact('locations'));
+	}
 
 	function admin_index() {
 		$this->Location->recursive = 0;

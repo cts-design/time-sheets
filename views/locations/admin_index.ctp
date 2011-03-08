@@ -20,6 +20,10 @@
 	    <thead class="ui-widget-header">
 		<tr>
 		    <th class="ui-state-default"><?php echo $this->Paginator->sort('name');?></th>
+			<th class="ui-state-default"><?php echo $this->Paginator->sort('public_name');?></th>
+			<th class="ui-state-default">Address</th>
+			<th class="ui-state-default"><?php echo $this->Paginator->sort('telephone');?></th>
+			<th class="ui-state-default"><?php echo $this->Paginator->sort('fax');?></th>
 		    <th class="actions ui-state-default"><?php __('Actions');?></th>
 		</tr>
 	    </thead>
@@ -33,9 +37,17 @@
 	?>
 	<tr<?php echo $class;?>>
 		<td><?php echo $location['Location']['name']; ?>&nbsp;</td>
+		<td><?php echo $location['Location']['public_name']; ?>&nbsp;</td>
+		<td>
+			<?php echo $location['Location']['address_1']; ?><br />
+			<?php echo (!empty($location['Location']['address_2'])) ? $location['Location']['address_2'] . '<br />' : ''; ?>
+			<?php echo $location['Location']['city']; ?>, <?php echo $location['Location']['state']; ?>&nbsp;<?php echo $location['Location']['zip']; ?>
+		</td>
+		<td><?php echo $location['Location']['telephone']; ?>&nbsp;</td>
+		<td><?php echo $location['Location']['fax']; ?>&nbsp;</td>
 		<td class="actions">
 		    <?php echo $this->Html->link(__('Edit', true), array('action' => 'edit', $location['Location']['id']), array('class'=>'edit')); ?>
-		    <?php echo $this->Html->link(__('Delete', true), array('action' => 'delete', $location['Location']['id']), array('class'=>'delete'), __('Are you sure you want to delete this location?', true)); ?>
+		    <?php // echo $this->Html->link(__('Delete', true), array('action' => 'delete', $location['Location']['id']), array('class'=>'delete'), __('Are you sure you want to delete this location?', true)); ?>
 		</td>
 	</tr>
 <?php endforeach; ?>

@@ -29,11 +29,17 @@
                             <ul>
                                 <li rel="pages"><?php echo $html->link('Pages', array('controller' => 'pages', 'action' => 'index')); ?></li>
                                 <li rel="navigation"><?php echo $html->link('Navigation', array('controller' => 'navigations', 'action' => 'index')); ?></li>
-                                <li rel="pressReleases"><?php echo $html->link('Press Releases', array('controller' => 'press_releases', 'action' => 'index')); ?></li>
-                                <li rel="chairmanReports"><?php echo $html->link('Chairman Reports', array('controller' => 'chairman_reports', 'action' => 'index')); ?></li>
+                            	<li rel="inTheNews">
+                            		<a>News</a>
+                            		<ul>
+										<li rel="pressReleases"><?php echo $html->link('Press Releases', array('controller' => 'press_releases', 'action' => 'index')); ?></li>
+                                		<li rel="chairmanReports"><?php echo $html->link('Chairman Reports', array('controller' => 'chairman_reports', 'action' => 'index')); ?></li>                            			
+                            			<li rel="inTheNews"><?php echo $html->link('In the News', array('controller' => 'in_the_news', 'action' => 'index')) ?></li>
+                            			<li rel="inTheNews"><?php echo $html->link('Helpful Articles', array('controller' => 'helpful_articles', 'action' => 'index')) ?></li>
+                            		</ul>
+                            	</li>     
                             	<li rel="hotJobs"><?php echo $html->link('Hot Jobs', array('controller' => 'hot_jobs', 'action' => 'index')); ?></li>
                             	<li rel="rfp"><?php echo $html->link('RFPs & Bids', array('controller' => 'rfps', 'action' => 'index')); ?></li>
-                            	<li rel="locations"><?php echo $html->link('Locations', array('controller' => 'locations', 'action' => 'index')); ?></li>
                             	<li rel="featured"><?php echo $html->link('Featured Employer', array('controller' => 'featured_employers', 'action' => 'index')); ?></li>
                             </ul>
                         </li>
