@@ -202,30 +202,6 @@ class DocumentFilingCategoriesController extends AppController {
 		}
 	}
 
-    function admin_delete($id =null) {
-		if(!$id) {
-			$this->Session->setFlash(__('Invalid id for category', true), 'flash_failure');
-			$this->redirect( array('action' => 'index'));
-		}
-		else {
-			$count = $this->DocumentFilingCategory->find('count', array('conditions' => array('DocumentFilingCategory.parent_id' => $id, 'DocumentFilingCategory.deleted' => 0)));
-			if($count > 0) {
-				$this->Session->setFlash(__('Cannot delete category that has children', true), 'flash_failure');
-				$this->redirect( array('action' => 'index'));
-			}
-			else {
-				if($this->DocumentFilingCategory->delete($id)) {
-					$this->Session->setFlash(__('Category deleted', true), 'flash_success');
-					$this->redirect( array('action' => 'index'));
-				}
-				else {
-					$this->Session->setFlash(__('Category was not deleted', true), 'flash_failure');
-					$this->redirect( array('action' => 'index'));
-				}
-			}
-		}
-	}
-
     function admin_get_child_cats_ajax() {
 		if($this->RequestHandler->isAjax()) {
 		    $options = $this->DocumentFilingCategory->find('list', array(
