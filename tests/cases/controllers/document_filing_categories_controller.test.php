@@ -30,10 +30,41 @@ class DocumentFilingCategoriesControllerTestCase extends AtlasTestCase {
 		$this->DocumentFilingCategories->beforeFilter();
 		$this->DocumentFilingCategories->Component->startup($this->DocumentFilingCategories);
 		$result = json_decode($this->DocumentFilingCategories->admin_index(), true);
+		FireCake::log($result);
 		$this->assertEqual($this->DocumentFilingCategories->layout, $this->RequestHandler->ajaxLayout);
 		$this->assertTrue(array_key_exists('success', $result));
-		//$this->assertTrue($result['success'], 'true');		
+		$this->assertTrue($result['success']);		
 	}
+	
+	function testAdminIndexGetChildNode(){
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->DocumentFilingCategories->params = Router::parse('/admin/document_filing_categories/');
+		$this->DocumentFilingCategories->params['form'] =  array('node' => '2');		
+		$this->DocumentFilingCategories->Component->initialize($this->DocumentFilingCategories);
+		$this->DocumentFilingCategories->beforeFilter();
+		$this->DocumentFilingCategories->Component->startup($this->DocumentFilingCategories);
+		$result = json_decode($this->DocumentFilingCategories->admin_index(), true);
+		FireCake::log($result);
+		$this->assertEqual($this->DocumentFilingCategories->layout, $this->RequestHandler->ajaxLayout);
+		$this->assertTrue(array_key_exists('success', $result));
+		$this->assertTrue($result['success']);		
+		
+	}
+	
+	function testAdminIndexNoResults(){
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->DocumentFilingCategories->params = Router::parse('/admin/document_filing_categories/');
+		$this->DocumentFilingCategories->params['form'] =  array('node' => '10');		
+		$this->DocumentFilingCategories->Component->initialize($this->DocumentFilingCategories);
+		$this->DocumentFilingCategories->beforeFilter();
+		$this->DocumentFilingCategories->Component->startup($this->DocumentFilingCategories);
+		$result = json_decode($this->DocumentFilingCategories->admin_index(), true);
+		FireCake::log($result['success']);
+		$this->assertEqual($this->DocumentFilingCategories->layout, $this->RequestHandler->ajaxLayout);
+		$this->assertTrue(array_key_exists('success', $result));
+		$this->assertFalse($result['success']);		
+		
+	}	
 
 }
 ?>
