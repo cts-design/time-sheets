@@ -24,7 +24,7 @@ $(document).ready(function(){
     });
     $('.reset').button();
     $('.view').button();
-    $.getJSON('/admin/document_filing_categories/get_child_cats_ajax',{
+    $.getJSON('/admin/document_filing_categories/get_child_cats',{
 	id: $("#FiledDocumentCat1").val()
     },
     function(childCats) {
@@ -37,7 +37,7 @@ $(document).ready(function(){
     });
 
     $("#FiledDocumentCat1").change(function(){
-	$.getJSON('/admin/document_filing_categories/get_child_cats_ajax',{
+	$.getJSON('/admin/document_filing_categories/get_child_cats',{
 	    id: $(this).val()
 	},
 	function(childCats) {
@@ -53,7 +53,7 @@ $(document).ready(function(){
 	});
     });
     $("#FiledDocumentCat2").change(function(){
-	$.getJSON('/admin/document_filing_categories/get_grand_child_cats_ajax',{
+	$.getJSON('/admin/document_filing_categories/get_grand_child_cats',{
 	    id: $(this).val()
 	},
 	function(grandCats) {

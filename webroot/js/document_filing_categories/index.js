@@ -4,7 +4,7 @@
  * @link http://ctsfla.com
  */
 var getnodesUrl = '/admin/document_filing_categories';
-var reorderUrl = '/admin/document_filing_categories/reorder_categories_ajax';
+var reorderUrl = '/admin/document_filing_categories/reorder_categories';
 var reparentUrl = '/admin/document_filing_categories/reparent_categories';
 
 Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
