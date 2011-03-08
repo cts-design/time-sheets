@@ -21,7 +21,6 @@ class DocumentFilingCategoriesController extends AppController {
 
     function admin_index() {
     	if($this->RequestHandler->isAjax()) {
-    		FireCake::log($this->params);
 			 $parent = intval($this->params['form']['node']);
 			 $nodes = $this->DocumentFilingCategory->children($parent, true);
 			 $data = array();
@@ -34,18 +33,23 @@ class DocumentFilingCategoriesController extends AppController {
 						$disabled = true;
 					}
 				    $data[] = array(
-				    	"success" => true,
 				        "text" => $node['DocumentFilingCategory']['name'], 
 				        "id" => $node['DocumentFilingCategory']['id'],
 				        "disabled" =>  $disabled,
 				        "cls" => "folder",
 				        "leaf" => ($node['DocumentFilingCategory']['lft'] + 1 == $node['DocumentFilingCategory']['rght'])
 				    );
-				}			 	
+				}
+				$data['success'] = true;			 	
+			 }
+			 else {
+			 	$data['success'] = false;
+				$data['message'] = 'No categories found';
 			 }
 			$this->set('data', $data);
 			return $this->render(null, null, '/elements/ajaxreturn');    		
-    	}	
+    	}
+		else exit;	
     }
 
     function admin_add() {
@@ -75,7 +79,8 @@ class DocumentFilingCategoriesController extends AppController {
 			}
 			$this->set('data', $data);
 			$this->render(null, null, '/elements/ajaxreturn');	
-		}		
+		}
+		else exit;		
     }
 
     function admin_reorder_categories_ajax() {
