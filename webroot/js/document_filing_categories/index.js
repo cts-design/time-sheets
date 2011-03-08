@@ -153,15 +153,20 @@ tree.on('movenode', function(tree, node, oldParent, newParent, position) {
 	Ext.Ajax.request({
 		url:url,
 		params:params,
+
 		success: function(response, request) {
-
-			// if the first char of our response is zero, then we fail the operation,
-			// otherwise we re-enable the tree
-
-			if (response.responseText.charAt(0) != 1) {
-				request.failure();
-			} else {
+			var o = {};
+			try {
+				o = Ext.decode(response.responseText);
+			} catch(e) {
+				Ext.Msg.alert('Error','Unable to move category, please try again.');
+				return;
+			}
+			console.log(o);
+			if(o.success == true) {
 				tree.enable();
+			} else {
+				request.failure();
 			}
 		},
 		failure: function() {
