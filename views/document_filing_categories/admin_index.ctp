@@ -6,8 +6,6 @@
  * @package ATLAS V3
  */
 ?>
-<?php echo $this->Html->script('ext/adapter/ext/ext-base-debug', array('inline' => FALSE));?>
-<?php echo $this->Html->script('ext-all-debug', array('inline' => FALSE));?>
 <?php echo $this->Html->script('document_filing_categories/index', array('inline' => FALSE));?>
 
 <div id="crumbWrapper">
