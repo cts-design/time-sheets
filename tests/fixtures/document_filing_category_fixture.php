@@ -23,7 +23,7 @@ class DocumentFilingCategoryFixture extends CakeTestFixture {
 			'name' => 'Valid Category',
 			'disabled' => 0,
 			'lft' => 1,
-			'rght' => 2,
+			'rght' => 6,
 			'created' => '2010-10-19 15:57:41',
 			'modified' => '2010-10-19 15:57:41'
 		),
@@ -32,28 +32,28 @@ class DocumentFilingCategoryFixture extends CakeTestFixture {
 			'parent_id' => NULL,
 			'name' => 'Disabled Category',
 			'disabled' => 1,
-			'lft' => 2,
-			'rght' => 5,
+			'lft' => 7,
+			'rght' => 8,
 			'created' => '2010-10-19 15:57:41',
 			'modified' => '2010-10-19 15:57:41'
 		),
 		array(
 			'id' => 3,
-			'parent_id' => 2,
+			'parent_id' => 1,
 			'name' => 'A Nested Valid Category',
 			'disabled' => 0,
-			'lft' => 3,
-			'rght' => 6,
+			'lft' => 2,
+			'rght' => 5,
 			'created' => '2010-10-19 15:57:41',
 			'modified' => '2010-10-19 15:57:41'
 		),
         array(
 			'id' => 4,
 			'parent_id' => 3,
-			'name' => 'Aother Nested Disabled Category',
+			'name' => 'Another Nested Category',
 			'disabled' => 0,
-			'lft' => 5,
-			'rght' => 6,
+			'lft' => 3,
+			'rght' => 4,
 			'created' => '2010-10-19 15:57:41',
 			'modified' => '2010-10-19 15:57:41'
         )
