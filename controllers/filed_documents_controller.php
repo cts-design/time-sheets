@@ -2,25 +2,26 @@
 
 /**
  * @author Daniel Nolan
- * @copyright Complete Technology Solutions 2010
+ * @copyright Complete Technology Solutions 2011
  * @link http://ctsfla.com
  * @package ATLAS V3
  */
 class FiledDocumentsController extends AppController {
 
     var $name = 'FiledDocuments';
+	
+	var $components = array('RequestHandler');
 
-    //@TODO possibly move to app controller
     var $reasons = array(
-	'Duplicate scan' => 'Duplicate scan',
-	'Customer info missing' => 'Customer info missing',
-	'Multiple customers in same scan' => 'Multiple customers in same scan',
-	'Multiple programs in same scan' => 'Multiple programs in same scan',
-	'Document unreadable' => 'Document unreadable',
-	'Scan is incomplete' => 'Scan is incomplete',
-	'Document scanned in error or not needed' => 'Document scanned in error or not needed',
-	'Other' => 'Other'
-    );
+		'Duplicate scan' => 'Duplicate scan',
+		'Customer info missing' => 'Customer info missing',
+		'Multiple customers in same scan' => 'Multiple customers in same scan',
+		'Multiple programs in same scan' => 'Multiple programs in same scan',
+		'Document unreadable' => 'Document unreadable',
+		'Scan is incomplete' => 'Scan is incomplete',
+		'Document scanned in error or not needed' => 'Document scanned in error or not needed',
+		'Other' => 'Other'
+	);
 
     function admin_index($userId=null) {
 	$bool = false;
@@ -237,10 +238,42 @@ class FiledDocumentsController extends AppController {
 	$this->set(compact('title_for_layout', 'cat1', 'sessId'));
     }
 
+	function admin_view_all_docs(){
+		if($this->RequestHandler->isAjax()){
+			if(!isset($this->params['url']['search'])){
+
+				$query = $this->FiledDocument->find('all', array(
+					'limit' => $this->params['url']['start']. ',' .$this->params['url']['limit']));
+				$docs =  Set::classicExtract($query, '{n}.FiledDocument');
+				$admins = Set::classicExtract($query, '{n}.Admin');
+				$users = Set::classicExtract($query, '{n}.User');
+				$lastActAdmins = Set::classicExtract($query, '{n}.LastActAdmin');
+				
+				$data['docs'] = array();
+				$data['totalCount'] = $this->FiledDocument->find('count');
+				$i = 0;
+				foreach($docs as $doc) {
+					$data['docs'][$i]['id'] = $doc['id'];
+					$data['docs'][$i]['customer'] = $users[$i]['firstname'];
+					$data['docs'][$i]['last4'] = $users[$i]['ssn'];
+					$data['docs'][$i]['admin'] = $admins[$i]['firstname'];
+					$data['docs'][$i]['location'] = $doc['filed_location_id'];
+					$data['docs'][$i]['cat_1'] = $doc['cat_1'];
+					$data['docs'][$i]['created'] = $doc['created'];
+					$data['docs'][$i]['last_activity_admin'] = $lastActAdmins[$i]['firstname'];
+					$i++;
+				}
+				$this->set(compact('data'));			
+				return $this->render(null, null, '/elements/ajaxreturn');
+				FireCake::log(json_encode($data));
+			}		
+		}
+	}
+
     function _getParentDocumentFilingCats() {
 	$this->loadModel('DocumentFilingCategory');
 	return $this->DocumentFilingCategory->find('list',
 		array('conditions' => array('DocumentFilingCategory.parent_id' => null)));
     }
-
+	
 }
