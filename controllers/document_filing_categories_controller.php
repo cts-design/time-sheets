@@ -2,7 +2,7 @@
 
 /**
  * @author Daniel Nolan
- * @copyright Complete Technology Solutions 2010
+ * @copyright Complete Technology Solutions 2011
  * @link http://ctsfla.com
  * @package ATLAS V3
  */
@@ -33,14 +33,14 @@ class DocumentFilingCategoriesController extends AppController {
 						$disabled = true;
 					}
 				    $data[] = array(
+				    	"success" => true,
 				        "text" => $node['DocumentFilingCategory']['name'], 
 				        "id" => $node['DocumentFilingCategory']['id'],
 				        "disabled" =>  $disabled,
 				        "cls" => "folder",
 				        "leaf" => ($node['DocumentFilingCategory']['lft'] + 1 == $node['DocumentFilingCategory']['rght'])
 				    );
-				}
-				$data['success'] = true;			 	
+				}			 	
 			 }
 			 else {
 			 	$data['success'] = false;
@@ -48,8 +48,7 @@ class DocumentFilingCategoriesController extends AppController {
 			 }
 			$this->set('data', $data);
 			return $this->render(null, null, '/elements/ajaxreturn');    		
-    	}
-		else exit;	
+    	}	
     }
 
     function admin_add() {
@@ -78,55 +77,72 @@ class DocumentFilingCategoriesController extends AppController {
 				}		
 			}
 			$this->set('data', $data);
-			$this->render(null, null, '/elements/ajaxreturn');	
-		}
-		else exit;		
+			return $this->render(null, null, '/elements/ajaxreturn');	
+		}	
     }
 
     function admin_reorder_categories_ajax() {
 	    // retrieve the node instructions from javascript
 	    // delta is the difference in position (1 = next node, -1 = previous node)
 	    if($this->RequestHandler->isAjax()){
-	    	$node = intval($this->params['form']['node']);
-	    	$delta = intval($this->params['form']['delta']);
-		    if ($delta > 0) {
-		        $this->DocumentFilingCategory->movedown($node, abs($delta));
-		    } elseif ($delta < 0) {
-		        $this->DocumentFilingCategory->moveup($node, abs($delta));
-		    }
-		    // send success response
-		    exit('1');    				
+	    	if(isset($this->params['form']['node'], $this->params['form']['delta'])) {
+	    		$node = intval($this->params['form']['node']);
+		    	$delta = intval($this->params['form']['delta']);
+			    if ($delta > 0) {
+			        $this->DocumentFilingCategory->movedown($node, abs($delta));
+			    } 
+			    elseif ($delta < 0) {
+			        $this->DocumentFilingCategory->moveup($node, abs($delta));
+			    }
+			    // send success response
+			    $data['success'] = true;
+	    	}
+			else {
+				$data['success'] = false;
+			}
+			$this->set('data', $data);
+			return $this->render(null, null, '/elements/ajaxreturn');	   				
 	    }		
     }
 	
     function admin_reparent_categories() {
-	    $node = intval($this->params['form']['node']);
-	    $parent = intval($this->params['form']['parent']);
-	    $position = intval($this->params['form']['position']);
-	    
-	    // save the employee node with the new parent id
-	    // this will move the employee node to the bottom of the parent list
-	    
-	    $this->DocumentFilingCategory->id = $node;
-	    $this->DocumentFilingCategory->saveField('parent_id', $parent);
-	    
-	    // If position == 0, then we move it straight to the top
-	    // otherwise we calculate the distance to move ($delta).
-	    // We have to check if $delta > 0 before moving due to a bug
-	    // in the tree behavior (https://trac.cakephp.org/ticket/4037)
-	    
-		if($position == 0) {
-			$this->DocumentFilingCategory->moveup($node, true);
-		}
-		else {
-			$count = $this->DocumentFilingCategory->childcount($parent, true);
-			$delta = $count - $position - 1;
-			if($delta > 0) {
-				$this->DocumentFilingCategory->moveup($node, $delta);
-			}
-		}
-		// send success response
-		exit('1');
+    	if($this->RequestHandler->isAjax()){
+    		if(isset($this->params['form']['node'], 
+    		$this->params['form']['parent'], $this->params['form']['position'] )){
+   				$node = intval($this->params['form']['node']);
+		    	$parent = intval($this->params['form']['parent']);
+		    	$position = intval($this->params['form']['position']);
+		    
+			    // save the employee node with the new parent id
+			    // this will move the employee node to the bottom of the parent list
+			    
+			    $this->DocumentFilingCategory->id = $node;
+			    $this->DocumentFilingCategory->saveField('parent_id', $parent);
+			    
+			    // If position == 0, then we move it straight to the top
+			    // otherwise we calculate the distance to move ($delta).
+			    // We have to check if $delta > 0 before moving due to a bug
+			    // in the tree behavior (https://trac.cakephp.org/ticket/4037)
+			    
+				if($position == 0) {
+					$this->DocumentFilingCategory->moveup($node, true);
+				}
+				else {
+					$count = $this->DocumentFilingCategory->childcount($parent, true);
+					$delta = $count - $position - 1;
+					if($delta > 0) {
+						$this->DocumentFilingCategory->moveup($node, $delta);
+					}
+				}
+			    // send success response
+			    $data['success'] = true;    			
+	    	}
+			else {
+				$data['success'] = false;
+			}			 
+			$this->set('data', $data);
+			return $this->render(null, null, '/elements/ajaxreturn');
+		}	
     }	
 
     function admin_edit() {
