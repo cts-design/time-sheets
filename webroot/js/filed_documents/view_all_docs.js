@@ -7,50 +7,103 @@ var allFiledDocsProxy = new Ext.data.HttpProxy({
 var allFiledDocsStore = new Ext.data.JsonStore({
 	proxy: allFiledDocsProxy,
 	storeId: 'allFiledDocsStore',
+	remoteSort: true,
+	paramNames: {
+		start: 'start',
+		limit: 'limit',
+		sort: 'sort',
+		dir: 'direction'
+	},
 	totalProperty: 'totalCount',
+	baseParams:{page:1},
 	root: 'docs',
 	idProperty: 'id',
-	fields: ['id', 'customer', 'location', 'admin', 'cat_1', 'created', 'last_activity_admin']
+	fields: [
+		'id', 
+		'User-lastname', 
+		'Location-name', 
+		'Admin-lastname', 
+		'Cat1-name', 
+		'Cat2-name', 
+		'Cat3-name', 
+		'created', 
+		'LastActAdmin-lastname',
+		'view'
+	]
 });
 
 var allDocsGrid = new Ext.grid.GridPanel({
 	store: allFiledDocsStore,
-	title: 'All Filed Documents',
+	title: 'Documents',
 	frame: true,
-	height: 600,
+	height: 620,
 	columns:[{
 		header: 'Id',
-		dataIndex: 'id'	
+		dataIndex: 'id',
+		sortable: true,
+		width: 30	
 	},{
 		header: 'Customer',
-		dataIndex: 'customer'
+		dataIndex: "User-lastname",
+		sortable: true,	
+		width: 130
 	},{
 		header: 'Location',
-		dataIndex: 'location'
+		dataIndex: 'Location-name',
+		sortable: true,	
+		width: 80	
 	},{
-		header: 'Admin',
-		dataIndex: 'admin'
+		header: 'Filed by Admin',
+		dataIndex: 'Admin-lastname',
+		sortable: true,	
+		width: 105
 	},{
-		header: 'Cat',
-		dataIndex: 'cat_1'
+		header: 'Main Cat',
+		dataIndex: 'Cat1-name',
+		sortable: true
 	},{
-		header: 'Created',
-		dataIndex: 'created'
+		header: 'Second Cat',
+		dataIndex: 'Cat2-name',
+		sortable: true
+	},{
+		header: 'Third Cat',
+		dataIndex: 'Cat3-name',
+		sortable: true
 	},{
 		header: 'Last Activity Admin',
-		dataIndex: 'last_activity_admin'
+		dataIndex: 'LastActAdmin-lastname',
+		sortable: true,	
+		width: 105
+	},{
+		header: 'Created',
+		dataIndex: 'created',
+		sortable: true,
+		width: 120
+	},{
+		header: 'Actions',
+		dataIndex: 'view',
+		width: 50
 	}],
+	viewConfig: {
+		scrollOffset: 0
+	},
 	 bbar: new Ext.PagingToolbar({
 	            pageSize: 25,
 	            store: allFiledDocsStore,
 	            displayInfo: true,
-	            displayMsg: 'Displaying topics {0} - {1} of {2}',
-	            emptyMsg: "No topics to display"
+	            displayMsg: 'Displaying documents {0} - {1} of {2}',
+	            emptyMsg: "No documents to display",
+	            listeners: {
+				 	beforechange: function(paging , params) {
+						var pagingData = paging.getPageData();
+						CurrentPage = Math.ceil(params.start / paging.pageSize);
+						this.store.setBaseParam('page',CurrentPage+1);
+					}
+				}
 	        })
-	
 });
 
 Ext.onReady(function(){
 	allDocsGrid.render('allDocsGrid');
-	allFiledDocsStore.load({params:{start:0, limit:25}});
+	allFiledDocsStore.load({params: {limit:25}});
 });
