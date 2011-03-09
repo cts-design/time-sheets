@@ -5,4 +5,6 @@
     <?php echo $crumb->getHtml('Filed Document Archive', null, 'unique') ; ?>
 </div>
 
+<div id="allDocsSearch"></div>
+<br />
 <div id="allDocsGrid"></div>
