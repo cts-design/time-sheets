@@ -241,39 +241,50 @@ class FiledDocumentsController extends AppController {
 	function admin_view_all_docs(){
 		if($this->RequestHandler->isAjax()){
 			if(!isset($this->params['url']['search'])){
-
-				$query = $this->FiledDocument->find('all', array(
-					'limit' => $this->params['url']['start']. ',' .$this->params['url']['limit']));
+				FireCake::log($this->params);
+				if(isset($this->params['url']['sort'])) {
+					$this->params['url']['sort'] = str_replace('-', '.', $this->params['url']['sort']);
+				}
+				$query = $this->Paginate('FiledDocument');
 				$docs =  Set::classicExtract($query, '{n}.FiledDocument');
 				$admins = Set::classicExtract($query, '{n}.Admin');
 				$users = Set::classicExtract($query, '{n}.User');
 				$lastActAdmins = Set::classicExtract($query, '{n}.LastActAdmin');
-				
+				$mainCats = Set::classicExtract($query, '{n}.Cat1');
+				$secondCats = Set::classicExtract($query, '{n}.Cat2');
+				$thirdCats = Set::classicExtract($query, '{n}.Cat3');
+				$locations = Set::classicExtract($query, '{n}.Location');
 				$data['docs'] = array();
 				$data['totalCount'] = $this->FiledDocument->find('count');
 				$i = 0;
 				foreach($docs as $doc) {
 					$data['docs'][$i]['id'] = $doc['id'];
-					$data['docs'][$i]['customer'] = $users[$i]['firstname'];
-					$data['docs'][$i]['last4'] = $users[$i]['ssn'];
-					$data['docs'][$i]['admin'] = $admins[$i]['firstname'];
-					$data['docs'][$i]['location'] = $doc['filed_location_id'];
-					$data['docs'][$i]['cat_1'] = $doc['cat_1'];
-					$data['docs'][$i]['created'] = $doc['created'];
-					$data['docs'][$i]['last_activity_admin'] = $lastActAdmins[$i]['firstname'];
+					$data['docs'][$i]['User-lastname'] = 
+						trim(ucwords($users[$i]['lastname']  . ', ' . $users[$i]['firstname'] . 
+						' - ' . substr($users[$i]['ssn'], -4)), ', ');
+					$data['docs'][$i]['Admin-lastname'] = 
+						trim(ucwords($admins[$i]['lastname'] .', '. $admins[$i]['firstname']), ', ');
+					$data['docs'][$i]['Location-name'] = $locations[$i]['name'];
+					$data['docs'][$i]['Cat1-name'] = $mainCats[$i]['name'];
+					$data['docs'][$i]['Cat2-name'] = $secondCats[$i]['name'];
+					$data['docs'][$i]['Cat3-name'] = $thirdCats[$i]['name'];
+					$data['docs'][$i]['created'] = date('m-d-Y g:i a', strtotime($doc['created']));
+					$data['docs'][$i]['LastActAdmin-lastname'] = 
+					 trim(ucwords($lastActAdmins[$i]['lastname'] . ', ' . $lastActAdmins[$i]['firstname']), ', ');
+					 $data['docs'][$i]['view'] = '<a target="_blank" href="/admin/filed_documents/view/'.$doc['id'].'">View</a>';
 					$i++;
 				}
 				$this->set(compact('data'));			
 				return $this->render(null, null, '/elements/ajaxreturn');
-				FireCake::log(json_encode($data));
 			}		
 		}
+		$this->set('title_for_layout', 'Filed Document Archive');
 	}
 
     function _getParentDocumentFilingCats() {
-	$this->loadModel('DocumentFilingCategory');
-	return $this->DocumentFilingCategory->find('list',
-		array('conditions' => array('DocumentFilingCategory.parent_id' => null)));
+		$this->loadModel('DocumentFilingCategory');
+		return $this->DocumentFilingCategory->find('list',
+			array('conditions' => array('DocumentFilingCategory.parent_id' => null)));
     }
 	
 }
