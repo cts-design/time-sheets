@@ -97,5 +97,22 @@
 		echo '<br class="clear" />';
 	?>
 	</fieldset>
+
+	<fieldset>
+		<legend><?php __('Location Hours') ?></legend>
+		<?php
+			echo $this->Form->input('open', array(
+								'before' => '<p class="left">',
+								'between' => '</p><p class="left time">',
+								'after' => '</p>'));
+			echo '<br class="clear" />';
+			
+			echo $this->Form->input('close', array(
+								'before' => '<p class="left">',
+								'between' => '</p><p class="left time">',
+								'after' => '</p>'));
+			echo '<br class="clear" />';
+		?>		
+	</fieldset>
 <?php echo $this->Form->end(__('Submit', true));?>
 </div>
