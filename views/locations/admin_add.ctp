@@ -114,6 +114,16 @@
 			echo '<br class="clear" />';
 		?>		
 	</fieldset>
+	<fieldset>
+		<legend><?php echo __('Location Facilities') ?></legend>
+		<?php
+			echo $this->Form->input('facilities', array(
+								'before' => '<p class="left">',
+								'between' => '</p><p class="left wide">',
+								'after' => '</p>'));
+			echo '<br class="clear" />';
+		?>			
+	</fieldset>
 		<?php
 			echo $this->Form->input('hidden', array(
 								'label' => 'Hide from website',
