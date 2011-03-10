@@ -165,6 +165,7 @@ Ext.onReady(function() {
         handler: function() {
     		win = new Ext.Window({
     			title: 'Add Link',
+    			width: 350,
     			modal: true,
     			closeAction: 'hide',
         		items: [formPanel],
@@ -199,6 +200,7 @@ Ext.onReady(function() {
                 
 	    		win = new Ext.Window({
 	    			title: 'Edit Link',
+	    			width: 350,
 	    			modal: true,
 	    			closeAction: 'hide',
 	        		items: [formPanel],
