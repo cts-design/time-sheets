@@ -16,6 +16,13 @@ class LocationsController extends AppController {
 		
 		$this->set(compact('locations'));
 	}
+	
+	function beforeFilter(){
+		parent::beforeFilter();
+		if($this->Auth->user() && $this->Auth->user('role_id') >= 2){
+			$this->Auth->allow('admin_get_location_list');
+		}
+	}
 
 	function admin_index() {
 		$this->Location->recursive = 0;
@@ -65,17 +72,23 @@ class LocationsController extends AppController {
 		$this->redirect(array('action' => 'index'));
 	}
 
-	function admin_get_locations_ajax() {
+	function admin_get_location_list() {
 	    if ($this->RequestHandler->isAjax()) {
-			$options = array('locations' => array());
 			$locations = $this->Location->find('all');
 			$i = 0;
 			foreach($locations as $location) {
-			    $options['locations'][$i]['id'] = $location['Location']['id'];
-			    $options['locations'][$i]['name'] = $location['Location']['name'];
+			    $data['locations'][$i]['id'] = $location['Location']['id'];
+			    $data['locations'][$i]['name'] = $location['Location']['name'];
 			    $i++;
 			}
-			$this->set(compact('options'));
+			if(!empty($data)){
+				$data['success'] = true;
+			}
+			else {
+				$data['success'] = false;
+			}
+			$this->set(compact('data'));
+			return $this->render(null, null, '/elements/ajaxreturn');			
 	    }
 	}
 }
