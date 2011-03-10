@@ -20,7 +20,7 @@
 				$addressString = '';
 				$addressString .= $location['Location']['address_1'];
 				if (!empty($location['Location']['address_2'])) {
-					$addressString .= $location['Location']['address_2'];
+					$addressString .= ' ' . $location['Location']['address_2'];
 				}
 				$addressString .= ', ' . $location['Location']['city'] . ', ' . $location['Location']['state'] . ' ' . $location['Location']['zip'];
 			?>
