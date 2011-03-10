@@ -29,7 +29,7 @@
                             <ul>
                                 <li rel="pages"><?php echo $html->link('Pages', array('controller' => 'pages', 'action' => 'index')); ?></li>
                                 <li rel="navigation"><?php echo $html->link('Navigation', array('controller' => 'navigations', 'action' => 'index')); ?></li>
-                            	<li rel="inTheNews">
+                            	<li rel="inTheNews" id="news">
                             		<a>News</a>
                             		<ul>
 										<li rel="pressReleases"><?php echo $html->link('Press Releases', array('controller' => 'press_releases', 'action' => 'index')); ?></li>
