@@ -76,7 +76,7 @@ Ext.onReady(function() {
 				var selectedNode = tree.selModel.selNode;
 				var parentId;
 	            
-	            console.log('Selected Node:', selectedNode);
+	            //console.log('Selected Node:', selectedNode);
 	            
 	            if (!selectedNode || !selectedNode.parentNode) {
 	            	parentId = tree.root.firstChild.attributes.id;
@@ -86,7 +86,7 @@ Ext.onReady(function() {
 	            	parentId = selectedNode.attributes.id;
 	            }
 	            
-	            console.log(parentId);
+	            //console.log(parentId);
 				
 				f.submit({
 					url: submitUrl,
@@ -94,7 +94,7 @@ Ext.onReady(function() {
 						parentId: parentId
 					},
 					success: function(form, action) {
-						console.log(action);
+						//console.log(action);
 					
 						if (action.result.success !== true) {
 							action.options.failure();
@@ -106,7 +106,7 @@ Ext.onReady(function() {
 								leaf: true
 							});
 							
-							console.log("Tree:", tree);
+							//console.log("Tree:", tree);
 							
 							var parentNode;
 							
