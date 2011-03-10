@@ -958,3 +958,9 @@ p.time {
 p.time select {
 	width: 50px;
 }
+
+p.checkbox {
+	text-align: left;
+	width: 250px;
+	line-height: 12px;
+}
