@@ -12,7 +12,7 @@ class LocationsController extends AppController {
 	
 	function index() {
 		$this->Location->recursive = 0;
-		$locations = $this->Location->find('all');
+		$locations = $this->Location->find('all', array('conditions' => array('hidden' => '0')));
 		
 		$this->set(compact('locations'));
 	}
