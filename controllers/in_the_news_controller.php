@@ -17,25 +17,25 @@ class InTheNewsController extends AppController {
 		if (!empty($this->data)) {
 			$this->InTheNews->create();
 			if ($this->InTheNews->save($this->data)) {
-				$this->Session->setFlash(__('The in the news has been saved', true), 'flash_success');
+				$this->Session->setFlash(__('The in the news article has been saved', true), 'flash_success');
 				$this->redirect(array('action' => 'index'));
 			} else {
-				$this->Session->setFlash(__('The in the news could not be saved. Please, try again.', true), 'flash_failure');
+				$this->Session->setFlash(__('The in the news article could not be saved. Please, try again.', true), 'flash_failure');
 			}
 		}
 	}
 
 	function admin_edit($id = null) {
 		if (!$id && empty($this->data)) {
-			$this->Session->setFlash(__('Invalid in the news', true), 'flash_failure');
+			$this->Session->setFlash(__('Invalid in the news article', true), 'flash_failure');
 			$this->redirect(array('action' => 'index'));
 		}
 		if (!empty($this->data)) {
 			if ($this->InTheNews->save($this->data)) {
-				$this->Session->setFlash(__('The in the news has been saved', true), 'flash_success');
+				$this->Session->setFlash(__('The in the news article has been saved', true), 'flash_success');
 				$this->redirect(array('action' => 'index'));
 			} else {
-				$this->Session->setFlash(__('The in the news could not be saved. Please, try again.', true), 'flash_failure');
+				$this->Session->setFlash(__('The in the news article could not be saved. Please, try again.', true), 'flash_failure');
 			}
 		}
 		if (empty($this->data)) {
@@ -45,14 +45,14 @@ class InTheNewsController extends AppController {
 
 	function admin_delete($id = null) {
 		if (!$id) {
-			$this->Session->setFlash(__('Invalid id for in the news', true), 'flash_failure');
+			$this->Session->setFlash(__('Invalid id for in the news article', true), 'flash_failure');
 			$this->redirect(array('action'=>'index'));
 		}
 		if ($this->InTheNews->delete($id)) {
-			$this->Session->setFlash(__('In the news deleted', true), 'flash_success');
+			$this->Session->setFlash(__('In the news article deleted', true), 'flash_success');
 			$this->redirect(array('action'=>'index'));
 		}
-		$this->Session->setFlash(__('In the news was not deleted', true), 'flash_failure');
+		$this->Session->setFlash(__('In the news article was not deleted', true), 'flash_failure');
 		$this->redirect(array('action' => 'index'));
 	}
 }
