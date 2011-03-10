@@ -11,10 +11,17 @@ class LocationsController extends AppController {
 	var $name = 'Locations';
 	
 	function index() {
-		$this->Location->recursive = 0;
+		$this->Location->recursive = -1;
 		$locations = $this->Location->find('all', array('conditions' => array('hidden' => '0')));
 		
 		$this->set(compact('locations'));
+	}
+	
+	function facilities($locId) {
+		$this->Location->recursive = -1;
+		$location = $this->Location->read(null, $locId);
+		
+		$this->set(compact('location'));
 	}
 
 	function admin_index() {
