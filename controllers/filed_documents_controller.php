@@ -240,9 +240,35 @@ class FiledDocumentsController extends AppController {
 
 	function admin_view_all_docs(){
 		if($this->RequestHandler->isAjax()){
+			if(!empty($this->params['url']['filters'])) {
+				FireCake::log(json_decode($this->params['url']['filters'], true));
+				$filters = json_decode($this->params['url']['filters'], true);
+				if($filters['searchType'] == 'last4' && (!empty($filters['cusSearch']))) {
+					$conditions['RIGHT (User.ssn , 4) LIKE'] = '%'.$filters['cusSearch'].'%';
+				}
+				if($filters['searchType'] == 'lastname' && (!empty($filters['cusSearch']))) {
+					$conditions['User.lastname LIKE'] = '%'.$filters['cusSearch'].'%';
+				}
+				if(!empty($filters['fromDate']) && !empty($filters['toDate'])){
+					$from = date('Y-m-d H:i:m', strtotime($filters['fromDate'] . '12:00 AM'));
+					$to = date('Y-m-d H:i:m', strtotime($filters['toDate'] . '11:59 PM'));
+					FireCake::log($to);
+					$conditions['FiledDocument.created BETWEEN ? AND ?'] = array($from, $to);
+				}				
+				$conditions['FiledDocument.filed_location_id'] = $filters['filed_location_id'];
+				$conditions['FiledDocument.admin_id'] = $filters['admin_id'];
+				foreach($conditions as $k => $v) {
+					if(empty($v)){
+						unset($conditions[$k]);
+					}
+				}
+				$this->paginate = array('conditions' => $conditions);
+				
+			}			
 			if(isset($this->params['url']['sort'])) {
 				$this->params['url']['sort'] = str_replace('-', '.', $this->params['url']['sort']);
 			}
+			
 			$query = $this->Paginate('FiledDocument');
 			$docs =  Set::classicExtract($query, '{n}.FiledDocument');
 			$admins = Set::classicExtract($query, '{n}.Admin');
@@ -253,24 +279,34 @@ class FiledDocumentsController extends AppController {
 			$thirdCats = Set::classicExtract($query, '{n}.Cat3');
 			$locations = Set::classicExtract($query, '{n}.Location');
 			$data['docs'] = array();
-			$data['totalCount'] = $this->FiledDocument->find('count');
+			if(!empty($conditions)) {
+				$data['totalCount'] = $this->FiledDocument->find('count', array('conditions' => $conditions));	
+			}
+			else{
+				$data['totalCount'] = $this->FiledDocument->find('count');	
+			}
 			$i = 0;
-			foreach($docs as $doc) {
-				$data['docs'][$i]['id'] = $doc['id'];
-				$data['docs'][$i]['User-lastname'] = 
-					trim(ucwords($users[$i]['lastname']  . ', ' . $users[$i]['firstname'] . 
-					' - ' . substr($users[$i]['ssn'], -4)), ', ');
-				$data['docs'][$i]['Admin-lastname'] = 
-					trim(ucwords($admins[$i]['lastname'] .', '. $admins[$i]['firstname']), ', ');
-				$data['docs'][$i]['Location-name'] = $locations[$i]['name'];
-				$data['docs'][$i]['Cat1-name'] = $mainCats[$i]['name'];
-				$data['docs'][$i]['Cat2-name'] = $secondCats[$i]['name'];
-				$data['docs'][$i]['Cat3-name'] = $thirdCats[$i]['name'];
-				$data['docs'][$i]['created'] = date('m-d-Y g:i a', strtotime($doc['created']));
-				$data['docs'][$i]['LastActAdmin-lastname'] = 
-				 trim(ucwords($lastActAdmins[$i]['lastname'] . ', ' . $lastActAdmins[$i]['firstname']), ', ');
-				 $data['docs'][$i]['view'] = '<a target="_blank" href="/admin/filed_documents/view/'.$doc['id'].'">View</a>';
-				$i++;
+			if(!empty($docs)) {
+				foreach($docs as $doc) {
+					$data['docs'][$i]['id'] = $doc['id'];
+					$data['docs'][$i]['User-lastname'] = 
+						trim(ucwords($users[$i]['lastname']  . ', ' . $users[$i]['firstname'] . 
+						' - ' . substr($users[$i]['ssn'], -4)), ', ');
+					$data['docs'][$i]['Admin-lastname'] = 
+						trim(ucwords($admins[$i]['lastname'] .', '. $admins[$i]['firstname']), ', ');
+					$data['docs'][$i]['Location-name'] = $locations[$i]['name'];
+					$data['docs'][$i]['Cat1-name'] = $mainCats[$i]['name'];
+					$data['docs'][$i]['Cat2-name'] = $secondCats[$i]['name'];
+					$data['docs'][$i]['Cat3-name'] = $thirdCats[$i]['name'];
+					$data['docs'][$i]['created'] = date('m-d-Y g:i a', strtotime($doc['created']));
+					$data['docs'][$i]['LastActAdmin-lastname'] = 
+					 trim(ucwords($lastActAdmins[$i]['lastname'] . ', ' . $lastActAdmins[$i]['firstname']), ', ');
+					 $data['docs'][$i]['view'] = '<a target="_blank" href="/admin/filed_documents/view/'.$doc['id'].'">View</a>';
+					$i++;
+				}
+			}
+			else {
+				$data['docs'] = array();
 			}
 			$this->set(compact('data'));			
 			return $this->render(null, null, '/elements/ajaxreturn');	
