@@ -115,5 +115,13 @@
 			echo '<br class="clear" />';
 		?>		
 	</fieldset>
+		<?php
+			echo $this->Form->input('hidden', array(
+								'label' => 'Hide from website',
+								'before' => '<br /><p class="left">',
+								'between' => '</p><p class="left checkbox">',
+								'after' => '</p>'));
+			echo '<br class="clear" />';
+		?>		
 <?php echo $this->Form->end(__('Submit', true));?>
 </div>
