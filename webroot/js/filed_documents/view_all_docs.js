@@ -15,7 +15,7 @@ var allFiledDocsStore = new Ext.data.JsonStore({
 		dir: 'direction'
 	},
 	totalProperty: 'totalCount',
-	baseParams:{page:1},
+	baseParams:{page:1, filters: ''},
 	root: 'docs',
 	idProperty: 'id',
 	fields: [
@@ -103,18 +103,69 @@ var allDocsGrid = new Ext.grid.GridPanel({
 	        })
 });
 
+var searchTypeStore = new Ext.data.ArrayStore({
+	fields: ['type', 'label'],
+	id: 0,
+	data:[[
+		'lastname', 'Last Name'
+	],[
+		'last4', 'Last 4 SSN'
+	]]
+});
+
+var adminProxy = new Ext.data.HttpProxy({
+	url: '/admin/users/get_admin_list',
+	method: 'GET'
+});
+
+var adminStore = new Ext.data.JsonStore({
+	proxy: adminProxy,
+	storeId: 'adminStore',
+	root: 'admins',
+	fields: ['id', 'name']
+});
+
+var locationProxy = new Ext.data.HttpProxy({
+	url: '/admin/locations/get_location_list',
+	method: 'GET'
+});
+
+var locationStore = new Ext.data.JsonStore({
+	method: 'GET',
+	proxy: locationProxy,
+	storeId: 'locationStore',
+	root: 'locations',
+	fields: ['id', 'name']
+});
+
 var dateSearchTb = new Ext.Toolbar({
 	width: 250,
 	items: [{
-		text: 'Today'
+		text: 'Today',
+		handler: function(){
+			var dt = new Date();		
+			var formated = dt.format('m/d/Y');
+			Ext.getCmp('fromDate').setValue(formated);
+			Ext.getCmp('toDate').setValue(formated);		
+		}
 	},{
 		xtype: 'tbseparator'
 	},{
-		text: 'Yesterday'
+		text: 'Yesterday',
+		handler: function(){
+			var dt = new Date();
+			dt.setDate(dt.getDate() - 1);
+			var formated = dt.format('m/d/Y');
+			Ext.getCmp('fromDate').setValue(formated);
+			Ext.getCmp('toDate').setValue(formated);	
+		}
 	},{
 		xtype: 'tbseparator'
 	},{
-		text: 'Last Week'
+		text: 'Last Week',
+		handler: function() {
+
+		}
 	},{
 		xtype: 'tbseparator'
 	},{
@@ -125,51 +176,118 @@ var dateSearchTb = new Ext.Toolbar({
 var allDocsSearch = new Ext.form.FormPanel({
 	frame: true,
 	collapsible: true,
-	labelWidth: 75,
+	labelWidth: 50,
 	title: 'Filters',
 	id: 'allDocsSearchForm',
 	items:[{
 		layout: 'column',
 		items: [{
 			layout: 'form',
-			columnWidth: 0.35,
+			columnWidth: 0.275,
 			frame: true,
 			title: 'Dates',
 			items: [{
 				xtype: 'datefield',
+				id: 'fromDate',
 				fieldLabel: 'From',
-				name: 'from'
+				name: 'fromDate'
 			},{
 				xtype: 'datefield',
 				fieldLabel: 'To',
-				name: 'to'
+				name: 'toDate',
+				id: 'toDate'
 			}, dateSearchTb]
 		},{
 			layout: 'form',
 			title: 'Customer',
 			frame: true,
+			columnWidth: 0.275,
 			items: [{
 				xtype: 'combo',
-				fieldLabel: 'Search Type'
+				fieldLabel: 'Search Type',
+				triggerAction: 'all',
+				store: searchTypeStore,
+				mode: 'local',
+				hiddenName: 'searchType',
+				valueField: 'type',
+				displayField: 'label',
+				name: 'cusSearchType'
 			},{
 				xtype: 'textfield',
 				fieldLabel: 'Search',
-				name: 'search'
+				name: 'cusSearch'
+			}]
+		},{
+			layout: 'form',
+			title: 'Filing Categories',
+			frame: true,
+			defaults: {
+				width: 100
+			},
+			columnWidth: 0.20,
+			items: [{
+				xtype: 'combo',
+				fieldLabel: 'Cat 1',
+			},{
+				xtype: 'combo',
+				fieldLabel: 'Cat 2',
+			},{
+				xtype: 'combo',
+				fieldLabel: 'Cat 3',
 			}]
 		},{
 			layout: 'form',
 			title: 'Additional Filters',
 			frame: true,
+			columnWidth: 0.25,
 			items: [{
 				xtype: 'combo',
-				fieldLabel: 'Admins'
+				triggerAction: 'all',
+				mode: 'remote',
+				fieldLabel: 'Admin',
+				hiddenName: 'admin_id',
+				store: adminStore,
+				valueField: 'id',
+				displayField: 'name'
 			},{
 				xtype: 'combo',
-				fieldLabel: 'Locations'
+				id: 'location',
+				triggerAction: 'all',
+				mode: 'remote',
+				fieldLabel: 'Locations',
+				store: locationStore,
+				hiddenName: 'filed_location_id',
+				valueField: 'id',
+				displayField: 'name'
 			}]
 		}]
+	}],
+	fbar: [{
+		text: 'Submit',
+		handler: function(){
+			var f = allDocsSearch.getForm();
+			console.log(f.getValues());
+			var vals = f.getValues();
+			vals = Ext.util.JSON.encode(vals);
+			allFiledDocsStore.setBaseParam('filters', vals);
+			allFiledDocsStore.load({params: {limit: 25, page: 1}});
+			//allFiledDocsStore.load({params: {filters: vals}})	;
+				
+		}
+	},{
+		text: 'Reset',
+		handler: function() {
+			var f = allDocsSearch.getForm();
+			f.reset();
+			allFiledDocsStore.setBaseParam('filters', '');
+			allFiledDocsStore.load();			
+		}
+	},{
+		text: 'Report'
 	}]
 })
+
+
 
 Ext.onReady(function(){
 	allDocsSearch.render('allDocsSearch');	
