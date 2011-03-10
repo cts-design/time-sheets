@@ -248,9 +248,6 @@ class atlasSchema extends CakeSchema {
 		'fax' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 14, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'open' => array('type' => 'time', 'null' => false, 'default' => NULL),
 		'close' => array('type' => 'time', 'null' => false, 'default' => NULL),
-		'special_hours_label' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 50, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
-		'special_hours_open' => array('type' => 'time', 'null' => false, 'default' => NULL),
-		'special_hours_close' => array('type' => 'time', 'null' => false, 'default' => NULL),
 		'facilities' => array('type' => 'text', 'null' => false, 'default' => NULL, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
 		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MyISAM')
