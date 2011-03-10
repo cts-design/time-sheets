@@ -110,9 +110,9 @@ $(document).ready(function () {
 	        		image: "/img/icons/location.png"
 	        	}
 	        },
-	        featured: {
+	        inTheNews: {
 	        	icon: {
-	        		image: "/img/icons/featured.png"
+	        		image: "/img/icons/news.png"
 	        	}
 	        }
 	    }

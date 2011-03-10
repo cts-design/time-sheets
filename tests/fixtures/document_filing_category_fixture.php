@@ -23,37 +23,67 @@ class DocumentFilingCategoryFixture extends CakeTestFixture {
 			'name' => 'Valid Category',
 			'disabled' => 0,
 			'lft' => 1,
-			'rght' => 2,
+			'rght' => 8,
 			'created' => '2010-10-19 15:57:41',
 			'modified' => '2010-10-19 15:57:41'
 		),
 		array(
 			'id' => 2,
 			'parent_id' => NULL,
-			'name' => 'Another Valid Category',
-			'disabled' => 0,
-			'lft' => 2,
-			'rght' => 5,
+			'name' => 'Disabled Category',
+			'disabled' => 1,
+			'lft' => 9,
+			'rght' => 12,
 			'created' => '2010-10-19 15:57:41',
 			'modified' => '2010-10-19 15:57:41'
 		),
 		array(
 			'id' => 3,
-			'parent_id' => 2,
+			'parent_id' => 1,
 			'name' => 'A Nested Valid Category',
 			'disabled' => 0,
-			'lft' => 3,
-			'rght' => 6,
+			'lft' => 2,
+			'rght' => 7,
 			'created' => '2010-10-19 15:57:41',
 			'modified' => '2010-10-19 15:57:41'
 		),
         array(
 			'id' => 4,
 			'parent_id' => 3,
-			'name' => 'Aother Nested Valid Category',
+			'name' => 'Another Nested Category',
+			'disabled' => 0,
+			'lft' => 3,
+			'rght' => 4,
+			'created' => '2010-10-19 15:57:41',
+			'modified' => '2010-10-19 15:57:41'
+        ),
+        array(
+			'id' => 5,
+			'parent_id' => NULL,
+			'name' => 'Another Parent Category',
+			'disabled' => 0,
+			'lft' => 3,
+			'rght' => 4,
+			'created' => '2010-10-19 15:57:41',
+			'modified' => '2010-10-19 15:57:41'
+        ) ,
+        array(
+			'id' => 6,
+			'parent_id' => 3,
+			'name' => 'Another Parent Category',
 			'disabled' => 0,
 			'lft' => 5,
 			'rght' => 6,
+			'created' => '2010-10-19 15:57:41',
+			'modified' => '2010-10-19 15:57:41'
+        ),
+        array(
+			'id' => 7,
+			'parent_id' => 2,
+			'name' => 'Disabled Child',
+			'disabled' => 1,
+			'lft' => 10,
+			'rght' => 11,
 			'created' => '2010-10-19 15:57:41',
 			'modified' => '2010-10-19 15:57:41'
         )

@@ -2,7 +2,7 @@
 
 /**
  * @author Daniel Nolan
- * @copyright Complete Technology Solutions 2010
+ * @copyright Complete Technology Solutions 2011
  * @link http://ctsfla.com
  * @package ATLAS V3
  */
@@ -15,13 +15,12 @@ class DocumentFilingCategoriesController extends AppController {
     function beforeFilter() {
 		parent::beforeFilter();
 		if($this->Auth->user('role_id') > 1) {
-		    $this->Auth->allow('admin_get_child_cats_ajax', 'admin_get_grand_child_cats_ajax');
+		    $this->Auth->allow('admin_get_child_cats', 'admin_get_grand_child_cats');
 		}
     }
 
     function admin_index() {
     	if($this->RequestHandler->isAjax()) {
-    		FireCake::log($this->params);
 			 $parent = intval($this->params['form']['node']);
 			 $nodes = $this->DocumentFilingCategory->children($parent, true);
 			 $data = array();
@@ -42,6 +41,10 @@ class DocumentFilingCategoriesController extends AppController {
 				        "leaf" => ($node['DocumentFilingCategory']['lft'] + 1 == $node['DocumentFilingCategory']['rght'])
 				    );
 				}			 	
+			 }
+			 else {
+			 	$data['success'] = false;
+				$data['message'] = 'No categories found';
 			 }
 			$this->set('data', $data);
 			return $this->render(null, null, '/elements/ajaxreturn');    		
@@ -74,54 +77,72 @@ class DocumentFilingCategoriesController extends AppController {
 				}		
 			}
 			$this->set('data', $data);
-			$this->render(null, null, '/elements/ajaxreturn');	
-		}		
+			return $this->render(null, null, '/elements/ajaxreturn');	
+		}	
     }
 
-    function admin_reorder_categories_ajax() {
+    function admin_reorder_categories() {
 	    // retrieve the node instructions from javascript
 	    // delta is the difference in position (1 = next node, -1 = previous node)
 	    if($this->RequestHandler->isAjax()){
-	    	$node = intval($this->params['form']['node']);
-	    	$delta = intval($this->params['form']['delta']);
-		    if ($delta > 0) {
-		        $this->DocumentFilingCategory->movedown($node, abs($delta));
-		    } elseif ($delta < 0) {
-		        $this->DocumentFilingCategory->moveup($node, abs($delta));
-		    }
-		    // send success response
-		    exit('1');    				
+	    	if(isset($this->params['form']['node'], $this->params['form']['delta'])) {
+	    		$node = intval($this->params['form']['node']);
+		    	$delta = intval($this->params['form']['delta']);
+			    if ($delta > 0) {
+			        $this->DocumentFilingCategory->movedown($node, abs($delta));
+			    } 
+			    elseif ($delta < 0) {
+			        $this->DocumentFilingCategory->moveup($node, abs($delta));
+			    }
+			    // send success response
+			    $data['success'] = true;
+	    	}
+			else {
+				$data['success'] = false;
+			}
+			$this->set('data', $data);
+			return $this->render(null, null, '/elements/ajaxreturn');	   				
 	    }		
     }
 	
     function admin_reparent_categories() {
-	    $node = intval($this->params['form']['node']);
-	    $parent = intval($this->params['form']['parent']);
-	    $position = intval($this->params['form']['position']);
-	    
-	    // save the employee node with the new parent id
-	    // this will move the employee node to the bottom of the parent list
-	    
-	    $this->DocumentFilingCategory->id = $node;
-	    $this->DocumentFilingCategory->saveField('parent_id', $parent);
-	    
-	    // If position == 0, then we move it straight to the top
-	    // otherwise we calculate the distance to move ($delta).
-	    // We have to check if $delta > 0 before moving due to a bug
-	    // in the tree behavior (https://trac.cakephp.org/ticket/4037)
-	    
-		if($position == 0) {
-			$this->DocumentFilingCategory->moveup($node, true);
-		}
-		else {
-			$count = $this->DocumentFilingCategory->childcount($parent, true);
-			$delta = $count - $position - 1;
-			if($delta > 0) {
-				$this->DocumentFilingCategory->moveup($node, $delta);
-			}
-		}
-		// send success response
-		exit('1');
+    	if($this->RequestHandler->isAjax()){
+    		if(isset($this->params['form']['node'], 
+    		$this->params['form']['parent'], $this->params['form']['position'] )){
+   				$node = intval($this->params['form']['node']);
+		    	$parent = intval($this->params['form']['parent']);
+		    	$position = intval($this->params['form']['position']);
+		    
+			    // save the node with the new parent id
+			    // this will move the node to the bottom of the parent list
+			    
+			    $this->DocumentFilingCategory->id = $node;
+			    $this->DocumentFilingCategory->saveField('parent_id', $parent);
+			    
+			    // If position == 0, then we move it straight to the top
+			    // otherwise we calculate the distance to move ($delta).
+			    // We have to check if $delta > 0 before moving due to a bug
+			    // in the tree behavior (https://trac.cakephp.org/ticket/4037)
+			    
+				if($position == 0) {
+					$this->DocumentFilingCategory->moveup($node, true);
+				}
+				else {
+					$count = $this->DocumentFilingCategory->childcount($parent, true);
+					$delta = $count - $position - 1;
+					if($delta > 0) {
+						$this->DocumentFilingCategory->moveup($node, $delta);
+					}
+				}
+			    // send success response
+			    $data['success'] = true;    			
+	    	}
+			else {
+				$data['success'] = false;
+			}			 
+			$this->set('data', $data);
+			return $this->render(null, null, '/elements/ajaxreturn');
+		}	
     }	
 
     function admin_edit() {
@@ -136,9 +157,8 @@ class DocumentFilingCategoriesController extends AppController {
 			}
 			else $data['success'] = false;
 			$this->set(compact('data'));
-			$this->render(null, null, '/elements/ajaxreturn');
+			return $this->render(null, null, '/elements/ajaxreturn');
 		}
-		exit;
     }
 	
 	function admin_toggle_disabled() {
@@ -164,10 +184,10 @@ class DocumentFilingCategoriesController extends AppController {
 				}				
 				if($this->data['DocumentFilingCategory']['disabled'] == 0) {
 					$cat = $this->DocumentFilingCategory->findById($this->data['DocumentFilingCategory']['id']);
-					FireCake::log($cat);
+
 					if($cat['DocumentFilingCategory']['parent_id'] != NULL) {
 						$parent = $this->DocumentFilingCategory->findById($cat['DocumentFilingCategory']['parent_id']);
-						FireCake::log($parent);
+
 						if($parent['DocumentFilingCategory']['disabled'] == 1) {
 							$data['success'] = false;
 							$data['message'] = 'Cannot enable child category of disabled parent.';	
@@ -190,55 +210,31 @@ class DocumentFilingCategoriesController extends AppController {
 				else $data['success'] = false;
 			}
 			$this->set(compact('data'));
-			$this->render(null, null, '/elements/ajaxreturn');
-		}
-		else {
-			exit;
+			return $this->render(null, null, '/elements/ajaxreturn');
 		}
 	}
 
-    function admin_delete($id =null) {
-		if(!$id) {
-			$this->Session->setFlash(__('Invalid id for category', true), 'flash_failure');
-			$this->redirect( array('action' => 'index'));
-		}
-		else {
-			$count = $this->DocumentFilingCategory->find('count', array('conditions' => array('DocumentFilingCategory.parent_id' => $id, 'DocumentFilingCategory.deleted' => 0)));
-			if($count > 0) {
-				$this->Session->setFlash(__('Cannot delete category that has children', true), 'flash_failure');
-				$this->redirect( array('action' => 'index'));
-			}
-			else {
-				if($this->DocumentFilingCategory->delete($id)) {
-					$this->Session->setFlash(__('Category deleted', true), 'flash_success');
-					$this->redirect( array('action' => 'index'));
-				}
-				else {
-					$this->Session->setFlash(__('Category was not deleted', true), 'flash_failure');
-					$this->redirect( array('action' => 'index'));
-				}
-			}
-		}
-	}
-
-    function admin_get_child_cats_ajax() {
+    function admin_get_child_cats() {
 		if($this->RequestHandler->isAjax()) {
-		    $options = $this->DocumentFilingCategory->find('list', array(
+		    $data = $this->DocumentFilingCategory->find('list', array(
 				'conditions' => array(
 					'DocumentFilingCategory.parent_id' => $this->params['url']['id'],
 					'DocumentFilingCategory.disabled' => 0),
 				'fields' => array('DocumentFilingCategory.id', 'DocumentFilingCategory.name')));
-		    $this->set(compact('options'));
+				FireCake::log($data);	
+			$this->set(compact('data'));
+			return $this->render(null, null, '/elements/ajaxreturn');
 		}
     }
 
-    function admin_get_grand_child_cats_ajax() {
+    function admin_get_grand_child_cats() {
 		if($this->RequestHandler->isAjax()) {
-		    $options = $this->DocumentFilingCategory->find('list', array(
+		    $data = $this->DocumentFilingCategory->find('list', array(
 				'conditions' => array(
 					'DocumentFilingCategory.parent_id' => $this->params['url']['id'],
 					'DocumentFilingCategory.disabled' => 0)));
-		    $this->set(compact('options'));
+			$this->set(compact('data'));
+			return $this->render(null, null, '/elements/ajaxreturn');
 		}
     }
 }
