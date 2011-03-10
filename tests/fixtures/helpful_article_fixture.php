@@ -19,10 +19,10 @@ class HelpfulArticleFixture extends CakeTestFixture {
 	var $records = array(
 		array(
 			'id' => 1,
-			'title' => 'Lorem ipsum dolor sit amet',
-			'reporter' => 'Lorem ipsum dolor sit amet',
+			'title' => 'A Helpful Article From Some Publication',
+			'reporter' => 'Sally Beard - WSJ.com',
 			'summary' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
-			'link' => 'Lorem ipsum dolor sit amet',
+			'link' => 'http://www.wsj.com/sally.beard/a-helpful-article',
 			'posted_date' => '2011-03-07',
 			'created' => '2011-03-07 20:29:20',
 			'modified' => '2011-03-07 20:29:20'
