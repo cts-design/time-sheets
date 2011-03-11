@@ -114,6 +114,11 @@ $(document).ready(function () {
 	        	icon: {
 	        		image: "/img/icons/news.png"
 	        	}
+	        },
+	        surveys: {
+	        	icon: {
+	        		image: "/img/icons/survey.png"
+	        	}
 	        }
 	    }
 	},

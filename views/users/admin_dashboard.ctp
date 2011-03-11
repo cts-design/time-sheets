@@ -41,6 +41,7 @@
                             	<li rel="hotJobs"><?php echo $html->link('Hot Jobs', array('controller' => 'hot_jobs', 'action' => 'index')); ?></li>
                             	<li rel="rfp"><?php echo $html->link('RFPs & Bids', array('controller' => 'rfps', 'action' => 'index')); ?></li>
                             	<li rel="featured"><?php echo $html->link('Featured Employer', array('controller' => 'featured_employers', 'action' => 'index')); ?></li>
+                            	<li rel="surveys"><?php echo $html->link('Surveys', array('controller' => 'surveys', 'action' => 'index')) ?></li>
                             </ul>
                         </li>
 			<li rel="settings" id="settings">
