@@ -119,6 +119,11 @@ $(document).ready(function () {
 	        	icon: {
 	        		image: "/img/icons/survey.png"
 	        	}
+			},
+	        featured: {
+	        	icon: {
+	        		image: "/img/icons/featured.png"
+	        	}
 	        }
 	    }
 	},
