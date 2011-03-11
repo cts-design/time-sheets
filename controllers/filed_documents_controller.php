@@ -241,7 +241,6 @@ class FiledDocumentsController extends AppController {
 	function admin_view_all_docs(){
 		if($this->RequestHandler->isAjax()){
 			if(!empty($this->params['url']['filters'])) {
-				FireCake::log(json_decode($this->params['url']['filters'], true));
 				$filters = json_decode($this->params['url']['filters'], true);
 				if($filters['searchType'] == 'last4' && (!empty($filters['cusSearch']))) {
 					$conditions['RIGHT (User.ssn , 4) LIKE'] = '%'.$filters['cusSearch'].'%';
@@ -257,18 +256,21 @@ class FiledDocumentsController extends AppController {
 				}				
 				$conditions['FiledDocument.filed_location_id'] = $filters['filed_location_id'];
 				$conditions['FiledDocument.admin_id'] = $filters['admin_id'];
+				$conditions['FiledDocument.cat_1'] = $filters['cat_1'];
+				if(isset($filters['cat_2'])) 
+					$conditions['FiledDocument.cat_2'] = $filters['cat_2'];
+				if(isset($filters['cat_3'])) 
+					$conditions['FiledDocument.cat_3'] = $filters['cat_3'];
 				foreach($conditions as $k => $v) {
 					if(empty($v)){
 						unset($conditions[$k]);
 					}
 				}
-				$this->paginate = array('conditions' => $conditions);
-				
+				$this->paginate = array('conditions' => $conditions);				
 			}			
 			if(isset($this->params['url']['sort'])) {
 				$this->params['url']['sort'] = str_replace('-', '.', $this->params['url']['sort']);
-			}
-			
+			}			
 			$query = $this->Paginate('FiledDocument');
 			$docs =  Set::classicExtract($query, '{n}.FiledDocument');
 			$admins = Set::classicExtract($query, '{n}.Admin');
