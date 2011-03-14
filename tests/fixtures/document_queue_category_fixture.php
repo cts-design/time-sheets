@@ -17,9 +17,17 @@ class DocumentQueueCategoryFixture extends CakeTestFixture {
 	var $records = array(
 		array(
 			'id' => 1,
-			'ftp_path' => 'Lorem ipsum dolor sit amet',
-			'name' => 'Lorem ipsum dolor sit amet',
+			'ftp_path' => '/ftp/path/to/file',
+			'name' => 'Name1',
 			'deleted' => 1,
+			'created' => '2010-11-05 19:19:36',
+			'modified' => '2010-11-05 19:19:36'
+		),
+		array(
+			'id' => 2,
+			'ftp_path' => '/ftp/path/to/file',
+			'name' => 'Name2',
+			'deleted' => 0,
 			'created' => '2010-11-05 19:19:36',
 			'modified' => '2010-11-05 19:19:36'
 		),

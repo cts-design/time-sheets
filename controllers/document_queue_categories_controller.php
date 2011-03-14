@@ -21,7 +21,7 @@ class DocumentQueueCategoriesController extends AppController {
 		if (!empty($this->data)) {
 			$this->DocumentQueueCategory->create();
 			if ($this->DocumentQueueCategory->save($this->data)) {
-				$this->Session->setFlash(__('The document queue category has been saved', true), 'flash_succcess');
+				$this->Session->setFlash(__('The document queue category has been saved', true), 'flash_success');
 				$this->redirect(array('action' => 'index'));
 			} else {
 				$this->Session->setFlash(__('The document queue category could not be saved. Please, try again.', true), 'flash_failure');
