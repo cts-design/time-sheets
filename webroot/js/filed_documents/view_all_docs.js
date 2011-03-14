@@ -171,7 +171,6 @@ var docFilingGrandChildCatStore = new Ext.data.JsonStore({
 });
 
 var dateSearchTb = new Ext.Toolbar({
-	width: 250,
 	items: [{
 		text: 'Today',
 		handler: function(){
@@ -197,7 +196,7 @@ var dateSearchTb = new Ext.Toolbar({
 			var dt = new Date();
 			dt.setDate(dt.getDate() - (dt.format('N') + 6));
 			Ext.getCmp('fromDate').setValue(dt.format('m/d/Y'));
-			dt.setDate(dt.getDate()+4);		
+			dt.setDate(dt.getDate() + 6);		
 			Ext.getCmp('toDate').setValue(dt.format('m/d/Y'));
 		}
 	},{
@@ -224,7 +223,7 @@ var allDocsSearch = new Ext.form.FormPanel({
 		layout: 'column',
 		items: [{
 			layout: 'form',
-			columnWidth: 0.275,
+			columnWidth: 0.29,
 			height: 115,
 			frame: true,
 			title: 'Dates',
@@ -243,7 +242,7 @@ var allDocsSearch = new Ext.form.FormPanel({
 			layout: 'form',
 			title: 'Customer',
 			frame: true,
-			columnWidth: 0.275,
+			columnWidth: 0.25,
 			height: 115,		
 			items: [{
 				xtype: 'combo',
@@ -293,7 +292,7 @@ var allDocsSearch = new Ext.form.FormPanel({
 			defaults: {
 				width: 100
 			},
-			columnWidth: 0.20,
+			columnWidth: 0.21,
 			items: [{
 				xtype: 'combo',
 				fieldLabel: 'Cat 1',
@@ -416,6 +415,13 @@ var allDocsSearch = new Ext.form.FormPanel({
 	},{
 		text: 'Report',
 		icon:  '/img/icons/excel.png',
+		handler: function(){
+			var f = allDocsSearch.getForm();
+			var vals = f.getValues();
+			vals = Ext.util.JSON.encode(vals);
+			allFiledDocsStore.setBaseParam('filters', vals);			
+			window.location = '/admin/filed_documents/report?filters='+ vals
+		}
 	}]
 })
 
