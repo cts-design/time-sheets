@@ -319,7 +319,8 @@ class FiledDocumentsController extends AppController {
 		);
 		Configure::write('debug', 0);
 		$this->layout = 'ajax';
-		$this->set($data);		
+		$this->set($data);
+		$this->render('/elements/excelreport');		
 	}
 		
 	function _setFilters() {
