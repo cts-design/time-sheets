@@ -269,9 +269,9 @@ class FiledDocumentsController extends AppController {
 					$data['docs'][$k]['id'] = $v['FiledDocument']['id'];
 					$data['docs'][$k]['User-lastname'] = 
 						trim(ucwords($v['User']['lastname']  . ', ' . $v['User']['firstname'] . 
-						' - ' . substr($v['User']['ssn'], -4)), ', ');
+						' - ' . substr($v['User']['ssn'], -4)), ', - ');
 					$data['docs'][$k]['Admin-lastname'] = 
-						trim(ucwords($v['Admin']['lastname'] .', '. $v['Admin']['firstname']), ', - ');
+						trim(ucwords($v['Admin']['lastname'] .', '. $v['Admin']['firstname']), ', ');
 					$data['docs'][$k]['Location-name'] = $v['Location']['name'];
 					$data['docs'][$k]['Cat1-name'] = $v['Cat1']['name'];
 					$data['docs'][$k]['Cat2-name'] = $v['Cat2']['name'];
