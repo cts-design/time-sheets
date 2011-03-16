@@ -62,10 +62,10 @@ class FiledDocument extends AppModel {
 		    'message' => 'Admin Id required'
 		)
 	    ),
-	    'location_id' => array(
+	    'filed_location_id' => array(
 		'notEmpty' => array(
 		    'rule' => 'notEmpty',
-		    'message' => 'Location is required'
+		    'message' => 'Filed location is required'
 		)
 	    ),
 	    'id' => array(
