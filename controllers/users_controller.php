@@ -22,7 +22,9 @@ class UsersController extends AppController {
 		}		
 		if(isset($this->data['User']['username'])) {
 		    if($this->params['action'] == 'admin_login' || $this->params['action'] == 'self_sign_login') {
-				$user = $this->User->findByUsername($this->data['User']['username']);
+				$user = $this->User->find('first', array('conditions' => array(
+					'username' => $this->data['User']['username'],
+					'password' => Security::hash($this->data['User']['password'], null, true))));			
 				if($user['User']['status'] == 1 || $user['User']['deleted'] == 1) {
 				    $this->Session->setFlash(__('Account is inactive or has been deleted', true), 'flash_failure');
 				    $this->redirect($this->referer());
