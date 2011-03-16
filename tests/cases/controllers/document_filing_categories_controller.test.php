@@ -16,9 +16,9 @@ class DocumentFilingCategoriesControllerTestCase extends AtlasTestCase {
 		$this->DocumentFilingCategories->constructClasses();
 		$this->RequestHandler =& $this->DocumentFilingCategories->RequestHandler;
     	$this->DocumentFilingCategories->Session->write('Auth.User', array(
-	        'id' => 3,
-			'role_id' => 3,
-	        'username' => 'tester',
+	        'id' => 2,
+			'role_id' => 2,
+	        'username' => 'dnolan',
 	    	));
 	}
 
