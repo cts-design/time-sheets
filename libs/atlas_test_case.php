@@ -36,6 +36,8 @@ class AtlasTestCase extends CakeTestCase {
 	    'self_scan_category',
 	    'self_sign_log',
 	    'self_sign_log_archive',
+	    'survey',
+	    'survey_question',
 	    'user',
 	    'user_transaction'
 	);
