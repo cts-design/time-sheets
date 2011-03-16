@@ -77,6 +77,7 @@
 			    <li rel="queue"><?php echo $html->link('Queued Documents', array('controller' => 'queued_documents', 'action' => 'index')) ?></li>
 			    <li rel="scan"><?php echo $html->link('Desktop Scan', array('controller' => 'queued_documents', 'action' => 'desktop_scan_document')) ?></li>
 			    <li rel=""><?php echo $html->link('My Filed Documents', array('controller' => 'filed_documents', 'action' => 'index')) ?></li>
+			    <li rel="archive"><?php echo $html->link('Filed Document Archive', array('controller' => 'filed_documents', 'action' => 'view_all_docs')) ?></li>
 			    <li rel="trash"><?php echo $html->link('Deleted Documents', array('controller' => 'deleted_documents', 'action' => 'index')) ?></li>
 			</ul>
 		    </li>
