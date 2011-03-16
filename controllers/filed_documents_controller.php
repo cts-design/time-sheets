@@ -60,9 +60,9 @@ class FiledDocumentsController extends AppController {
 		$this->set(compact('title_for_layout', 'filedDocuments', 'actButton', 'user', 'reasons'));
 	    }
 	
-	    function admin_view($id = null) {
+	function admin_view($id = null) {
 		if(!$id) {
-		    $this->Session->setFlash(__('Invalid filed document', true));
+		    $this->Session->setFlash(__('Invalid filed document', true), 'flash_failure');
 		    $this->redirect(array('action' => 'index'));
 		}
 		$this->view = 'Media';
@@ -78,12 +78,13 @@ class FiledDocumentsController extends AppController {
 		$this->Transaction->createUserTransaction('Storage', null, null,
 			'Viewed filed document ID ' . $doc['FiledDocument']['id']);
 		$this->set($params);
+		return $params;
     }
 
     function admin_edit($id = null) {
-		if(!$id && empty($this->data)) {
+		if(!$id) {
 		    $this->Session->setFlash(__('Invalid filed document', true), 'flash_failure');
-		    // @FIXME proper redirect. 
+		    // @FIXME proper redirect. 			    			
 		    $this->redirect(array('action' => 'index'));
 		}
 		if(!empty($this->data)) {
@@ -98,14 +99,14 @@ class FiledDocumentsController extends AppController {
 		    $this->data['FiledDocument']['location_id'] = $this->Auth->user('location_id');
 	
 		    if($this->FiledDocument->save($this->data)) {
-			$this->Transaction->createUserTransaction('Storage', null, null,
-				'Edited filed document ID ' . $id . ' for ' . $user['User']['lastname'] .
-				', ' . $user['User']['firstname'] . ' - ' . substr($user['User']['ssn'], 5));
-			$this->Session->setFlash(__('The filed document has been saved', true), 'flash_success');
-			$this->redirect(array('action' => 'index', ($this->data['FiledDocument']['edit_type'] == 'user') ? $user['User']['id'] : ''));
+				$this->Transaction->createUserTransaction('Storage', null, null,
+					'Edited filed document ID ' . $id . ' for ' . $user['User']['lastname'] .
+					', ' . $user['User']['firstname'] . ' - ' . substr($user['User']['ssn'], 5));
+				$this->Session->setFlash(__('The filed document has been saved', true), 'flash_success');
+				$this->redirect(array('action' => 'index', ($this->data['FiledDocument']['edit_type'] == 'user') ? $user['User']['id'] : ''));
 		    }
 		    else {
-			$this->Session->setFlash(__('The filed document could not be saved. Please, try again.', true), 'flash_failure');
+				$this->Session->setFlash(__('The filed document could not be saved. Please, try again.', true), 'flash_failure');
 		    }
 		}
 		if(empty($this->data)) {
@@ -127,18 +128,22 @@ class FiledDocumentsController extends AppController {
 		    $data = $this->data;
 		    $this->FiledDocument->set($data);
 		}
-		if(!$id) {
+		if(!isset($id)) {
 		    $this->Session->setFlash(__('Invalid id for filed document', true), 'flash_failure');
 		    $this->redirect($this->referer());
 		}
-		if($this->FiledDocument->delete($id)) {
-		    $this->Transaction->createUserTransaction('Storage', null, null,
-			    'Deleted filed document ID ' . $id);
-		    $this->Session->setFlash(__('Filed document deleted', true), 'flash_success');
-		    $this->redirect($this->referer());
+		if(isset($id)) {
+			if($this->FiledDocument->delete($id)) {
+			    $this->Transaction->createUserTransaction('Storage', null, null,
+				    'Deleted filed document ID ' . $id);
+			    $this->Session->setFlash(__('Filed document deleted', true), 'flash_success');
+			    $this->redirect($this->referer());
+			}
+			else {
+				$this->Session->setFlash(__('Filed document was not deleted', true), 'flash_failure');
+				$this->redirect($this->referer());			
+			}			
 		}
-		$this->Session->setFlash(__('Filed document was not deleted', true), 'flash_failure');
-		$this->redirect($this->referer());
     }
 
     function admin_upload_document($userId=null) {
@@ -241,6 +246,7 @@ class FiledDocumentsController extends AppController {
 
 	function admin_view_all_docs(){
 		if($this->RequestHandler->isAjax()){
+
 			if(!empty($this->params['url']['filters'])) {
 				$conditions = $this->_setFilters();
 				if($conditions) {
@@ -285,15 +291,16 @@ class FiledDocumentsController extends AppController {
 		$this->set('title_for_layout', 'Filed Document Archive');
 	}
 
-	function admin_report(){
+	function admin_report(){			
 		if(isset($this->params['url']['filters'])) {
+			
 			$conditions = $this->_setFilters();
 			if($conditions){
 				$query = $this->FiledDocument->find('all', array('conditions' => $conditions));
 			}
-			else {
-				$query = $this->FiledDocument->find('all');
-			}
+		}
+		else {
+			$query = $this->FiledDocument->find('all');
 		}	
 		$title = 'Filed Document Archive Report ' . date('m/d/Y');
 		foreach($query as $k => $v) {
@@ -309,14 +316,20 @@ class FiledDocumentsController extends AppController {
 			$report[$k]['Last Activity Admin'] = trim(ucwords($v['LastActAdmin']['lastname'] . ', '. $v['LastActAdmin']['firstname']), ' ,');
 			$report[$k]['Created'] = date('m/d/y h:i a', strtotime($v['FiledDocument']['created']));		
 		}
+
 		if(empty($report[0])) {
 		    $this->Session->setFlash('There are no results to generate a report', 'flash_failure');
 		    $this->redirect(array('action' => 'view_all_docs'));
-		}				
+			return 'No Report Results';
+		}
+						
 		$data = array(
 		    'data' => $report,
 		    'title' => $title
 		);
+		if (isset($this->params['requested'])) {
+		 	return $data;
+		} 		
 		Configure::write('debug', 0);
 		$this->layout = 'ajax';
 		$this->set($data);
