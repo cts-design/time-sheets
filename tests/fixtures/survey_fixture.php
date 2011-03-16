@@ -16,11 +16,18 @@ class SurveyFixture extends CakeTestFixture {
 	var $records = array(
 		array(
 			'id' => 1,
-			'name' => 'Lorem ipsum dolor sit amet',
+			'name' => 'Awesome Survey',
 			'published' => 1,
 			'created' => '2011-03-11 16:02:44',
 			'modified' => '2011-03-11 16:02:44'
 		),
+		array(
+			'id' => 2,
+			'name' => 'Another Awesome Survey',
+			'published' => 0,
+			'created' => '2011-03-11 16:02:44',
+			'modified' => '2011-03-11 16:02:44'
+		)
 	);
 }
 ?>
