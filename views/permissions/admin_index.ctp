@@ -100,6 +100,10 @@
 	    'type' => 'checkbox',
 	   'label' => 'View',
 	    'checked' => (isset($controllers['FiledDocuments']['admin_view'])) ? $controllers['FiledDocuments']['admin_view'] : '' ));?>
+	<?php echo $this->Form->input('FiledDocuments.admin_view_all_docs', array(
+	    'type' => 'checkbox',
+	   'label' => 'Archive',
+	    'checked' => (isset($controllers['FiledDocuments']['admin_view_all_docs'])) ? $controllers['FiledDocuments']['admin_view_all_docs'] : '' ));?>	
 	<?php echo $this->Form->input('FiledDocuments.admin_upload_document', array(
 	    'type' => 'checkbox',
 	   'label' => 'Upload',
