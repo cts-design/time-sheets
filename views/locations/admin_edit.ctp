@@ -6,6 +6,9 @@
  * @package ATLAS V3
  */
 ?>
+<?php echo $this->Html->script('ckeditor/ckeditor', array('inline' => FALSE)); ?>
+<?php echo $this->Html->script('ckfinder/ckfinder', array('inline' => FALSE)); ?>
+<?php echo $this->Html->script('locations/wysiwyg', array('inline' => FALSE)); ?>
 <div id="crumbWrapper">
     <span>You are here > </span>
     <?php echo $crumb->getHtml('Edit Location', null, 'unique'); ?>
@@ -98,5 +101,40 @@
 		echo '<br class="clear" />';
 	?>
 	</fieldset>
+	
+	<fieldset>
+		<legend><?php __('Location Hours') ?></legend>
+		<?php
+			echo $this->Form->input('open', array(
+								'before' => '<p class="left">',
+								'between' => '</p><p class="left time">',
+								'after' => '</p>'));
+			echo '<br class="clear" />';
+			
+			echo $this->Form->input('close', array(
+								'before' => '<p class="left">',
+								'between' => '</p><p class="left time">',
+								'after' => '</p>'));
+			echo '<br class="clear" />';
+		?>		
+	</fieldset>
+	<fieldset>
+		<legend><?php echo __('Location Facilities') ?></legend>
+		<?php
+			echo $this->Form->input('facilities', array(
+								'before' => '<p class="left">',
+								'between' => '</p><p class="left wide">',
+								'after' => '</p>'));
+			echo '<br class="clear" />';
+		?>			
+	</fieldset>
+		<?php
+			echo $this->Form->input('hidden', array(
+								'label' => 'Hide from website',
+								'before' => '<br /><p class="left">',
+								'between' => '</p><p class="left checkbox">',
+								'after' => '</p>'));
+			echo '<br class="clear" />';
+		?>		
 <?php echo $this->Form->end(__('Submit', true));?>
 </div>

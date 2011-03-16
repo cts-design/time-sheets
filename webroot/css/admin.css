@@ -949,3 +949,18 @@ p.short {
 #not_specified_link {
 	cursor: pointer;
 }
+
+p.time {
+	text-align: left;
+	width: 250px;
+}
+
+p.time select {
+	width: 50px;
+}
+
+p.checkbox {
+	text-align: left;
+	width: 250px;
+	line-height: 12px;
+}

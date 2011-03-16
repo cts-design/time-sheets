@@ -18,10 +18,10 @@ class FtpDocumentScannerFixture extends CakeTestFixture {
 	var $records = array(
 		array(
 			'id' => 1,
-			'device_ip' => 'Lorem ipsum dolor sit amet',
-			'device_name' => 'Lorem ipsum dolor sit amet',
+			'device_ip' => '192.168.1.1',
+			'device_name' => 'Awesome-o 3000',
 			'location_id' => 1,
-			'deleted' => 1,
+			'deleted' => 0,
 			'created' => '2010-11-05 18:58:49',
 			'modified' => '2010-11-05 18:58:49'
 		),

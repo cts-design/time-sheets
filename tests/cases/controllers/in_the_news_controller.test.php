@@ -27,33 +27,56 @@ class InTheNewsControllerTestCase extends AtlasTestCase {
 
 	}
 
-	function testAdd() {
+	function testAdminEditWithValidData() {
+        $this->InTheNews->data = array(
+            'InTheNews' => array(
+                'title' => 'Valid Title'
+            )
+        );
 
+        $this->InTheNews->admin_edit(1);
+        $this->assertEqual($this->InTheNews->redirectUrl, array('action' => 'index'));
+
+		$this->assertFlashMessage($this->InTheNews, 'The in the news article has been saved', 'flash_success');
 	}
 
-	function testEdit() {
+    function testAdminEditWithInvalidData() {
+        $this->InTheNews->data = array(
+            'InTheNews' => array(
+                'title' => ''
+            )
+        );
 
+        $this->InTheNews->admin_edit(1);
+		$this->assertFlashMessage($this->InTheNews, 'The in the news article could not be saved. Please, try again.', 'flash_failure');
+    }
+
+    function testAdminEditInvalidRecord() {
+        $this->InTheNews->admin_edit();
+        $this->assertEqual($this->InTheNews->redirectUrl, array('action' => 'index'));
+		
+		$this->assertFlashMessage($this->InTheNews, 'Invalid in the news article', 'flash_failure');
+    }
+
+	function testAdminDeleteValidRecord() {
+            $this->InTheNews->admin_delete(1);
+            $this->assertEqual($this->InTheNews->redirectUrl, array('action' => 'index'));
+            $this->assertFalse($this->InTheNews->InTheNews->read(null, 1));
 	}
 
-	function testDelete() {
+    function testAdminDeleteInvalidRecord() {
+        $this->InTheNews->admin_delete(100);
+        $this->assertEqual($this->InTheNews->redirectUrl, array('action' => 'index'));
 
-	}
+		$this->assertFlashMessage($this->InTheNews, 'In the news article was not deleted', 'flash_failure');
+    }
 
-	function testAdminIndex() {
-
-	}
-
-	function testAdminAdd() {
-
-	}
-
-	function testAdminEdit() {
-
-	}
-
-	function testAdminDelete() {
-
-	}
+    function testAdminDeleteWithNoSpecifiedRecord() {
+        $this->InTheNews->admin_delete();
+		
+		$this->assertFlashMessage($this->InTheNews, 'In the news article was not deleted', 'flash_failure');
+        $this->assertEqual($this->InTheNews->redirectUrl, array('action' => 'index'));
+   }
 
 }
 ?>

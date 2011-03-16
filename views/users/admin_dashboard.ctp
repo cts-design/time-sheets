@@ -29,7 +29,7 @@
                             <ul>
                                 <li rel="pages"><?php echo $html->link('Pages', array('controller' => 'pages', 'action' => 'index')); ?></li>
                                 <li rel="navigation"><?php echo $html->link('Navigation', array('controller' => 'navigations', 'action' => 'index')); ?></li>
-                            	<li rel="inTheNews">
+                            	<li rel="inTheNews" id="news">
                             		<a>News</a>
                             		<ul>
 										<li rel="pressReleases"><?php echo $html->link('Press Releases', array('controller' => 'press_releases', 'action' => 'index')); ?></li>
@@ -41,6 +41,7 @@
                             	<li rel="hotJobs"><?php echo $html->link('Hot Jobs', array('controller' => 'hot_jobs', 'action' => 'index')); ?></li>
                             	<li rel="rfp"><?php echo $html->link('RFPs & Bids', array('controller' => 'rfps', 'action' => 'index')); ?></li>
                             	<li rel="featured"><?php echo $html->link('Featured Employer', array('controller' => 'featured_employers', 'action' => 'index')); ?></li>
+                            	<li rel="surveys"><?php echo $html->link('Surveys', array('controller' => 'surveys', 'action' => 'index')) ?></li>
                             </ul>
                         </li>
 			<li rel="settings" id="settings">

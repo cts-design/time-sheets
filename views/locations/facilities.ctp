@@ -1,5 +1,4 @@
 <div class="locations">
-	<?php foreach ($locations as $location): ?>
 	<div class="location">
 		<div class="left">
 			<address>
@@ -13,12 +12,6 @@
 			<br />
 			<br />
 			<strong>Hours:</strong> Monday&ndash;Friday <?php echo date('g:i A', strtotime($location['Location']['open'])) ?>&ndash;<?php echo date('g:i A', strtotime($location['Location']['close'])) ?>
-			<br />
-			<br />
-			<?php if (!empty($location['Location']['facilities'])): ?>
-			<?php echo $this->Html->link('Facilities', array('controller' => 'locations', 'action' => 'facilities', $location['Location']['id'])) ?>
-			<?php endif; ?>
-			
 		</div>
 		
 		<div class="right">
@@ -36,5 +29,7 @@
 		</div>
 	</div>
 	<br class='clear' />
-	<?php endforeach; ?>
+	<div class="location_facilities">
+		<?php echo $location['Location']['facilities'] ?>
+	</div>
 </div>

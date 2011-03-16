@@ -10,18 +10,26 @@ class LocationsController extends AppController {
 
 	var $name = 'Locations';
 	
-	function index() {
-		$this->Location->recursive = 0;
-		$locations = $this->Location->find('all');
-		
-		$this->set(compact('locations'));
-	}
-	
 	function beforeFilter(){
 		parent::beforeFilter();
 		if($this->Auth->user() && $this->Auth->user('role_id') >= 2){
 			$this->Auth->allow('admin_get_location_list');
 		}
+	}	
+		
+	function index() {
+		$this->Location->recursive = -1;
+		$locations = $this->Location->find('all', array('conditions' => array('hidden' => '0')));
+		
+		$this->set(compact('locations'));
+	}
+	
+	function facilities($locId) {
+		$this->Location->recursive = -1;
+		$location = $this->Location->read(null, $locId);
+		
+		$this->set(compact('location'));
+
 	}
 
 	function admin_index() {
