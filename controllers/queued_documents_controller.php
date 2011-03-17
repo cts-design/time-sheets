@@ -199,18 +199,35 @@ class QueuedDocumentsController extends AppController {
     }
 
     function admin_view($id = null) {
-	$this->view = 'Media';
-	$doc = $this->QueuedDocument->read(null, $id);
-	$params = array(
-	    'id' => $doc['QueuedDocument']['filename'],
-	    'name' => str_replace('.pdf', '', $doc['QueuedDocument']['filename']),
-	    'extension' => 'pdf',
-	    'path' =>  Configure::read('Document.storage.path') .
-	    date('Y', strtotime($doc['QueuedDocument']['created'])) . '/' .
-	    date('m', strtotime($doc['QueuedDocument']['created'])) . '/'
-	);
-	$this->set($params);
+		$this->view = 'Media';
+		$doc = $this->QueuedDocument->read(null, $id);
+		$params = array(
+		    'id' => $doc['QueuedDocument']['filename'],
+		    'name' => str_replace('.pdf', '', $doc['QueuedDocument']['filename']),
+		    'extension' => 'pdf',
+		    'path' =>  Configure::read('Document.storage.path') .
+		    date('Y', strtotime($doc['QueuedDocument']['created'])) . '/' .
+		    date('m', strtotime($doc['QueuedDocument']['created'])) . '/'
+		);
+		$this->set($params);
     }
+
+	function admin_view_thumbnail($id = null) {
+		$this->view = 'Media';
+		$doc = $this->QueuedDocument->read(null, $id);
+		$params = array(
+		    'id' => str_replace('.pdf', '.jpg', $doc['QueuedDocument']['filename']),
+		    'name' => str_replace('.pdf', '', $doc['QueuedDocument']['filename']),
+		    'extension' => 'jpg',
+		    'download' => false,
+		    'mimeType' => array('jpg' => 'image/jpeg'),
+		    'path' =>  Configure::read('Document.jpeg.path') .
+		    date('Y', strtotime($doc['QueuedDocument']['created'])) . '/' .
+		    date('m', strtotime($doc['QueuedDocument']['created'])) . '/'
+		);
+		debug($params);
+		$this->set($params);		
+	}
 
     function admin_file_document() {
 	if(empty($this->data['FiledDocument']['id'])) {
