@@ -18,10 +18,9 @@
     </p>
 
     <div id="administration" class="left">
-	<fieldset>
-	    <legend>Administration</legend>
+	    <h3><?php echo $html->image('icons/user_suit.png')?> Administration</h3>
 	    <p class="expand-wrap"><?php echo $this->Html->link('Expand All', '', array('id' => 'expand')) ?></p>
-	    <div id="dashboardAdminTree">
+	    <div id="dashboardAdminTree" style="background-color: transparent">
 		<ul>
 		    <?php if($this->Session->read('Auth.User.role_id') == 2 || $this->Session->read('Auth.User.role_id') == 3 )  { ?>
                         <li rel="website" id="website">
@@ -90,12 +89,22 @@
 		    </li>		    
 		</ul>
 	    </div>
-	</fieldset>
     </div>
     <div id="information" class="left">
-	<fieldset>
-	    <legend>Information</legend>
-	</fieldset>
+	    <div id='help'>
+	    	<h3><?php echo $html->image('icons/help.png')?> Help</h3>
+	    	<p>
+	    		<?php echo $html->image('icons/email.png')?> 
+	    		<a href="mailto:CTSATLAS@tickets.assembla.com
+	    			&subject=This subject line will be the title of your ticket
+	    			&body=Please be as descriptive as possible.
+	    			%0AAttcahments included in this email will be included in the ticket.
+	    			%0AInclude a sreenshot of the error as an attachment if possible.
+	    			%0AReply to a ticket alert from Assembla and your email will be posted as a ticket comment.">Create a support ticket via email</a> 
+	    	</p>
+	    	<p><?php echo $html->image('icons/telephone.png')?> 352-666-0333</p>    	
+	    </div>
+
     </div>
 </div>
 
