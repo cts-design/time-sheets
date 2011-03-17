@@ -40,7 +40,6 @@
                             	<li rel="hotJobs"><?php echo $html->link('Hot Jobs', array('controller' => 'hot_jobs', 'action' => 'index')); ?></li>
                             	<li rel="rfp"><?php echo $html->link('RFPs & Bids', array('controller' => 'rfps', 'action' => 'index')); ?></li>
                             	<li rel="featured"><?php echo $html->link('Featured Employer', array('controller' => 'featured_employers', 'action' => 'index')); ?></li>
-                            	<li rel="surveys"><?php echo $html->link('Surveys', array('controller' => 'surveys', 'action' => 'index')) ?></li>
                             </ul>
                         </li>
 			<li rel="settings" id="settings">
@@ -102,7 +101,8 @@
 	    			%0AInclude a sreenshot of the error as an attachment if possible.
 	    			%0AReply to a ticket alert from Assembla and your email will be posted as a ticket comment.">Create a support ticket via email</a> 
 	    	</p>
-	    	<p><?php echo $html->image('icons/telephone.png')?> 352-666-0333</p>    	
+	    	<p><?php echo $html->image('icons/telephone.png')?> 352-666-0333</p> 
+	    	<p><?php echo $html->image('icons/application_xp_terminal.png')?> Atlas 3.0.0</p>     	
 	    </div>
 
     </div>

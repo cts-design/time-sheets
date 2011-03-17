@@ -18,7 +18,7 @@ set :user, 'tbwaftp'
 # Cake Settings
 set :cake_branch, "master"
 
-set :shared_children,       %w(config system tmp webroot/public/files webroot/public/img storage)
+set :shared_children,       %w(config system tmp webroot/public/files webroot/public/img storage storage/thumbnails)
 
 
 namespace :deploy do
