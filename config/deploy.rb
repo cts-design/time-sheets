@@ -31,7 +31,6 @@ namespace :deploy do
       end
       run "ln -s #{shared_path}/system #{latest_release}/webroot/system && ln -s #{shared_path}/tmp #{latest_release}/tmp";
       run "ln -s #{shared_path}/storage #{current_release}/storage"
-      run "ln -s #{shared_path}/storage/thumbnails #{current_release}/storage/thumbnails"
       run "ln -s #{shared_path}/webroot/files/public #{current_release}/webroot/files/public"
       run "ln -s #{shared_path}/webroot/img/public #{current_release}/webroot/img/public"
       run "rm -f #{current_path} && ln -s #{latest_release} #{current_path}"    
