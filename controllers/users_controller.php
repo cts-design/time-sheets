@@ -498,7 +498,7 @@ class UsersController extends AppController {
 				if($this->params['form']['searchType'] == 'ssn') {
 					if($useDate){
 						$conditions = array(
-							'User.ssn LIKE' => '%'.$this->params['form']['search'].'%', 
+							'RIGHT (User.ssn , 4) LIKE' => '%'.$this->params['form']['search'].'%', 
 							'User.role_id' => 1,
 							'User.created BETWEEN ? AND ?' => array($from, $to)
 							);							
