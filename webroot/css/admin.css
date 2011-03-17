@@ -19,6 +19,7 @@ body {
     overflow-y: scroll;
 }
 
+a {
     color: #3B71A0;
     text-decoration: none;
 }
@@ -360,7 +361,7 @@ legend {
 
 #information #help {	
 	border: 1px solid #B5D3DF;  
-	height: 75px; 
+	height: 100px; 
 	padding: 10px; 
 	background-color:#F1F8FB
 }
