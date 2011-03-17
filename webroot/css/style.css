@@ -9,6 +9,11 @@
 
 /* HTML Elements */
 
+html {
+	background: #1875BB;
+}
+
+
 body {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 13px;
@@ -263,6 +268,62 @@ strong {
 	margin: 0 0 0 16px;
 }
 
+.inTheNews,
+.helpfulArticles {
+	margin: 12px 0 0;
+}
+
+.inTheNews .article,
+.helpfulArticles .article {
+	border-top: 1px solid #D0E0EE;
+	margin: 0 0 18px;
+	padding: 8px 0;
+}
+
+.inTheNews .article .date,
+.helpfulArticles .article .date {
+	color: #666;
+	margin: 0 0 12px;
+}
+
+.inTheNews .article h2,
+.helpfulArticles .article h2 {
+	font-size: 13px;
+	margin: 0 0 2px;
+}
+
+.inTheNews .article .reporter,
+.helpfulArticles .article .reporter {
+	color: #888888;
+	display: block;
+	font-style: italic;
+	margin: 0 0 12px;
+}
+
+.inTheNews .article .summary,
+.helpfulArticles .article .summary {
+	line-height: 1.4em;
+	margin: 0 0 18px;
+	width: 450px;
+}
+
 .counter {
 	color: #A4A4A4;
+}
+
+.locations {
+	margin: 15px 0 0;
+}
+
+.locations .location {
+	border-top: 1px solid #D0E0EE;
+	height: 200px;
+	margin: 0 0 18px;
+	padding: 25px 0;
+}
+
+.location_facilities {
+	border-top: 1px solid #D0E0EE;
+	margin: 0 0 18px;
+	padding: 25px 0;
 }

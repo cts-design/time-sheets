@@ -26,14 +26,11 @@
 
 	echo $this->Html->script('jquery-ui-1.8.5.custom.min');
 
-	echo $this->Html->script('jquery.backstretch.min.js');
-
 	echo $scripts_for_layout;
 	?>
 	<?php echo $this->Html->scriptBlock(
 		"$(document).ready(function(){
 		$('.message').fadeOut(10000);
-		$.backstretch('/img/blue_back.jpg');
 		if($('.actions ul').text() == '') {
 		    $('div.actions').hide();
 		}

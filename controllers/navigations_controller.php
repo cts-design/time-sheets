@@ -44,16 +44,22 @@ class NavigationsController extends AppController {
             // delta is the difference in position (1 = next node, -1 = previous node)
             $node = intval($this->params['form']['node']);
             $delta = intval($this->params['form']['delta']);
+			
+			FireCake::log($this->params);
 
             if ($delta > 0) {
-                if ($this->Navigation->movedown($node, abs($delta))) {
+            	FireCake::log('delta is greater than 0');
+                if ($this->Navigation->moveDown($node, abs($delta))) {
                     $success = true;
                 }
             } elseif ($delta < 0) {
-                if ($this->Navigation->moveup($node, abs($delta))) {
+            	FireCake::log('delta is less than 0');
+                if ($this->Navigation->moveUp($node, abs($delta))) {
                     $success = true;
                 }
             }
+			
+			FireCake::log($success, 'success');
 
             $this->set(compact('success'));
         }
@@ -79,6 +85,33 @@ class NavigationsController extends AppController {
 
             $this->set(compact('success'));
         }
+		
+		function admin_update() {
+   			FireCake::log($this->params);
+		}
+		
+		function admin_create() {			
+			$params = $this->params;
+			$this->data = array(
+				'Navigation' => array(
+					'title' => $params['form']['name'],
+					'link'  => $params['form']['link'],
+					'parent_id' => $params['form']['parentId']
+				)
+			);
+			$record = $this->Navigation->save($this->data);
+			
+			if ($record) {
+				$data['success'] = true;
+				$data['navigation'] = $record['Navigation'];
+				$data['navigation']['id'] = $this->Navigation->getLastInsertId();
+			} else {
+				$data['success'] = false;
+			}
+			
+			$this->set(compact('data'));
+			return $this->render(null, null, '/elements/ajaxreturn');			
+		}
 
         function admin_rename_node() {
             $success = false;
@@ -97,38 +130,11 @@ class NavigationsController extends AppController {
         function admin_delete_node() {
             $success = false;
             $nodeId = intval($this->params['form']['id']);
-            FireCake::log($nodeId);
             if ($this->Navigation->delete($nodeId)) {
-                FireCake::log('truth');
                 $success = true;
             }
 
             $this->set(compact('success'));
-        }
-
-        function admin_add_node() {
-            $success = false;
-            $nodeTitle = $this->params['form']['title'];
-            $nodeLink  = $this->params['form']['link'];
-            $parentId  = intval($this->params['form']['parent_id']);
-
-            $this->Navigation->create();
-            $data = array(
-                'Navigation' => array(
-                    'title' => $nodeTitle,
-                    'link'  => $nodeLink,
-                    'parent_id' => $parentId
-                )
-            );
-
-            if ($this->Navigation->save($data)) {
-                $success = true;
-                $id = $this->Navigation->id;
-            } else {
-                $success = false;
-            }
-
-            $this->set(compact('id', 'success'));
         }
 }
 ?>

@@ -110,6 +110,16 @@ $(document).ready(function () {
 	        		image: "/img/icons/location.png"
 	        	}
 	        },
+	        inTheNews: {
+	        	icon: {
+	        		image: "/img/icons/news.png"
+	        	}
+	        },
+	        surveys: {
+	        	icon: {
+	        		image: "/img/icons/survey.png"
+	        	}
+			},
 	        featured: {
 	        	icon: {
 	        		image: "/img/icons/featured.png"

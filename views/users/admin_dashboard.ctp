@@ -18,10 +18,9 @@
     </p>
 
     <div id="administration" class="left">
-	<fieldset>
-	    <legend>Administration</legend>
+	    <h3><?php echo $html->image('icons/user_suit.png')?> Administration</h3>
 	    <p class="expand-wrap"><?php echo $this->Html->link('Expand All', '', array('id' => 'expand')) ?></p>
-	    <div id="dashboardAdminTree">
+	    <div id="dashboardAdminTree" style="background-color: transparent">
 		<ul>
 		    <?php if($this->Session->read('Auth.User.role_id') == 2 || $this->Session->read('Auth.User.role_id') == 3 )  { ?>
                         <li rel="website" id="website">
@@ -29,12 +28,19 @@
                             <ul>
                                 <li rel="pages"><?php echo $html->link('Pages', array('controller' => 'pages', 'action' => 'index')); ?></li>
                                 <li rel="navigation"><?php echo $html->link('Navigation', array('controller' => 'navigations', 'action' => 'index')); ?></li>
-                                <li rel="pressReleases"><?php echo $html->link('Press Releases', array('controller' => 'press_releases', 'action' => 'index')); ?></li>
-                                <li rel="chairmanReports"><?php echo $html->link('Chairman Reports', array('controller' => 'chairman_reports', 'action' => 'index')); ?></li>
+                            	<li rel="inTheNews" id="news">
+                            		<a>News</a>
+                            		<ul>
+										<li rel="pressReleases"><?php echo $html->link('Press Releases', array('controller' => 'press_releases', 'action' => 'index')); ?></li>
+                                		<li rel="chairmanReports"><?php echo $html->link('Chairman Reports', array('controller' => 'chairman_reports', 'action' => 'index')); ?></li>                            			
+                            			<li rel="inTheNews"><?php echo $html->link('In the News', array('controller' => 'in_the_news', 'action' => 'index')) ?></li>
+                            			<li rel="inTheNews"><?php echo $html->link('Helpful Articles', array('controller' => 'helpful_articles', 'action' => 'index')) ?></li>
+                            		</ul>
+                            	</li>     
                             	<li rel="hotJobs"><?php echo $html->link('Hot Jobs', array('controller' => 'hot_jobs', 'action' => 'index')); ?></li>
                             	<li rel="rfp"><?php echo $html->link('RFPs & Bids', array('controller' => 'rfps', 'action' => 'index')); ?></li>
-                            	<li rel="locations"><?php echo $html->link('Locations', array('controller' => 'locations', 'action' => 'index')); ?></li>
                             	<li rel="featured"><?php echo $html->link('Featured Employer', array('controller' => 'featured_employers', 'action' => 'index')); ?></li>
+                            	<li rel="surveys"><?php echo $html->link('Surveys', array('controller' => 'surveys', 'action' => 'index')) ?></li>
                             </ul>
                         </li>
 			<li rel="settings" id="settings">
@@ -71,6 +77,7 @@
 			    <li rel="queue"><?php echo $html->link('Queued Documents', array('controller' => 'queued_documents', 'action' => 'index')) ?></li>
 			    <li rel="scan"><?php echo $html->link('Desktop Scan', array('controller' => 'queued_documents', 'action' => 'desktop_scan_document')) ?></li>
 			    <li rel=""><?php echo $html->link('My Filed Documents', array('controller' => 'filed_documents', 'action' => 'index')) ?></li>
+			    <li rel="archive"><?php echo $html->link('Filed Document Archive', array('controller' => 'filed_documents', 'action' => 'view_all_docs')) ?></li>
 			    <li rel="trash"><?php echo $html->link('Deleted Documents', array('controller' => 'deleted_documents', 'action' => 'index')) ?></li>
 			</ul>
 		    </li>
@@ -82,12 +89,22 @@
 		    </li>		    
 		</ul>
 	    </div>
-	</fieldset>
     </div>
     <div id="information" class="left">
-	<fieldset>
-	    <legend>Information</legend>
-	</fieldset>
+	    <div id='help'>
+	    	<h3><?php echo $html->image('icons/help.png')?> Help</h3>
+	    	<p>
+	    		<?php echo $html->image('icons/email.png')?> 
+	    		<a href="mailto:CTSATLAS@tickets.assembla.com
+	    			&subject=This subject line will be the title of your ticket
+	    			&body=Please be as descriptive as possible.
+	    			%0AAttcahments included in this email will be included in the ticket.
+	    			%0AInclude a sreenshot of the error as an attachment if possible.
+	    			%0AReply to a ticket alert from Assembla and your email will be posted as a ticket comment.">Create a support ticket via email</a> 
+	    	</p>
+	    	<p><?php echo $html->image('icons/telephone.png')?> 352-666-0333</p>    	
+	    </div>
+
     </div>
 </div>
 

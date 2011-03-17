@@ -12,239 +12,332 @@ class TestDocumentFilingCategoriesController extends DocumentFilingCategoriesCon
 
 class DocumentFilingCategoriesControllerTestCase extends AtlasTestCase {
 	function startTest() {
-		$this->DocumentFilingCategories =& new TestDocumentFilingCategoriesController();
+		$this->DocumentFilingCategories =& new TestDocumentFilingCategoriesController(array('components' => array('RequestHandler')));
 		$this->DocumentFilingCategories->constructClasses();
+		$this->RequestHandler =& $this->DocumentFilingCategories->RequestHandler;
+    	$this->DocumentFilingCategories->Session->write('Auth.User', array(
+	        'id' => 2,
+			'role_id' => 2,
+	        'username' => 'dnolan',
+	    	));
 	}
 
 	function endTest() {
 		unset($this->DocumentFilingCategories);
 		ClassRegistry::flush();
 	}
-
+	
 	function testAdminIndex() {
-            $result = $this->testAction('/admin/document_filing_categories', array('return' => 'vars'));
-            FireCake::log($result['data']);
-            $expected = array(
-                '0' => array(
-                    'DocumentFilingCategory' => array(
-                        'id' => 1,
-                        'parent_id' => NULL,
-                        'name' => 'Valid Category',
-                        'order' => 9999,
-                        'deleted' => 0,
-                        'created' => '2010-10-19 15:57:41',
-                        'modified' => '2010-10-19 15:57:41'
-                    ),
-                    'children' => array(
-                        '0' => array(
-                            'DocumentFilingCategory' => array(
-                                'id' => 3,
-                                'parent_id' => 1,
-                                'name' => 'A Nested Valid Category',
-                                'order' => 9999,
-                                'deleted' => 0,
-                                'created' => '2010-10-19 15:57:41',
-                                'modified' => '2010-10-19 15:57:41'
-                            ),
-                            'children' => array(
-                                '0' => array(
-                                    'DocumentFilingCategory' => array(
-                                        'id' => 4,
-                                        'parent_id' => 3,
-                                        'name' => 'A Second Level Nested Valid Category',
-                                        'order' => 9999,
-                                        'deleted' => 0,
-                                        'created' => '2010-10-19 15:57:41',
-                                        'modified' => '2010-10-19 15:57:41'
-                                    ),
-                                    'children' => array()
-                                )
-                            )
-                        )
-                    )
-                ),
-                '1' => array(
-                    'DocumentFilingCategory' => array(
-                        'id' => 2,
-                        'parent_id' => NULL,
-                        'name' => 'Another Valid Category',
-                        'order' => 9999,
-                        'deleted' => 0,
-                        'created' => '2010-10-19 15:57:41',
-                        'modified' => '2010-10-19 15:57:41'
-                    ),
-                    'children' => array()
-                )
-            );
-
-            $this->assertEqual($result['data'], $expected);
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->DocumentFilingCategories->params = Router::parse('/admin/document_filing_categories/');
+		$this->DocumentFilingCategories->params['form'] =  array('node' => 'source');		
+		$this->DocumentFilingCategories->Component->initialize($this->DocumentFilingCategories);
+		$this->DocumentFilingCategories->beforeFilter();
+		$this->DocumentFilingCategories->Component->startup($this->DocumentFilingCategories);
+		$result = json_decode($this->DocumentFilingCategories->admin_index(), true);
+		$this->assertTrue($this->RequestHandler->isAjax());
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+		$this->assertTrue(array_key_exists('success', $result[0]));
+		$this->assertTrue($result[0]['success']);		
+	}
+	
+	function testAdminIndexGetChildNode(){
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->DocumentFilingCategories->params = Router::parse('/admin/document_filing_categories/');
+		$this->DocumentFilingCategories->params['form'] =  array('node' => '1');		
+		$this->DocumentFilingCategories->Component->initialize($this->DocumentFilingCategories);
+		$this->DocumentFilingCategories->beforeFilter();
+		$this->DocumentFilingCategories->Component->startup($this->DocumentFilingCategories);
+		$result = json_decode($this->DocumentFilingCategories->admin_index(), true);
+		$this->assertTrue($this->RequestHandler->isAjax());
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+		$this->assertTrue(array_key_exists('success', $result[0]));
+		$this->assertTrue($result[0]['success']);		
+		
+	}
+	
+	function testAdminIndexNoResults(){
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->DocumentFilingCategories->params = Router::parse('/admin/document_filing_categories/');
+		$this->DocumentFilingCategories->params['form'] =  array('node' => '10');		
+		$this->DocumentFilingCategories->Component->initialize($this->DocumentFilingCategories);
+		$this->DocumentFilingCategories->beforeFilter();
+		$this->DocumentFilingCategories->Component->startup($this->DocumentFilingCategories);
+		$result = json_decode($this->DocumentFilingCategories->admin_index(), true);
+		$this->assertTrue($this->RequestHandler->isAjax());
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+		$this->assertTrue(array_key_exists('success', $result));
+		$this->assertFalse($result['success']);		
+		
+	}
+	
+	function testAdminAdd() {
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->DocumentFilingCategories->params = Router::parse('/admin/document_filing_categories/add');
+		$this->DocumentFilingCategories->params['form']['parentId'] = 'source';
+		$this->DocumentFilingCategories->params['form']['catName'] = 'Test';
+		$this->DocumentFilingCategories->params['form']['parentPath'] = '/source';	
+		$this->DocumentFilingCategories->Component->initialize($this->DocumentFilingCategories);
+		$this->DocumentFilingCategories->beforeFilter();
+		$this->DocumentFilingCategories->Component->startup($this->DocumentFilingCategories);
+		$result = json_decode($this->DocumentFilingCategories->admin_add(), true);																
+		$this->assertTrue($this->RequestHandler->isAjax());
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+		$this->assertTrue(array_key_exists('success', $result));
+		$this->assertTrue($result['success']);	
+	}
+	
+	function testAdminAddChildTooDeep() {
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->DocumentFilingCategories->params = Router::parse('/admin/document_filing_categories/add');
+		$this->DocumentFilingCategories->params['form']['parentId'] = '4';
+		$this->DocumentFilingCategories->params['form']['catName'] = 'Test';
+		$this->DocumentFilingCategories->params['form']['parentPath'] = '/source/1/3';	
+		$this->DocumentFilingCategories->Component->initialize($this->DocumentFilingCategories);
+		$this->DocumentFilingCategories->beforeFilter();
+		$this->DocumentFilingCategories->Component->startup($this->DocumentFilingCategories);
+		$result = json_decode($this->DocumentFilingCategories->admin_add(), true);
+		$this->assertTrue($this->RequestHandler->isAjax());
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+		$this->assertTrue(array_key_exists('success', $result));
+		$this->assertFalse($result['success']);	
+	}
+	
+	function testAdminAddBadData() {
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->DocumentFilingCategories->params = Router::parse('/admin/document_filing_categories/add');
+		$this->DocumentFilingCategories->params['form'] = array('parentId' => 'FOO', 'catName' => 'Test', 'parentPath' => '/source');
+		$this->DocumentFilingCategories->Component->initialize($this->DocumentFilingCategories);
+		$this->DocumentFilingCategories->beforeFilter();
+		$this->DocumentFilingCategories->Component->startup($this->DocumentFilingCategories);
+		$result = json_decode($this->DocumentFilingCategories->admin_add(), true);
+		$this->assertTrue($this->RequestHandler->isAjax());
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+		$this->assertTrue(array_key_exists('success', $result));
+		$this->assertFalse($result['success']);	
+	}
+	
+	function testAdminReorderCategoriesAjaxMoveUp() {
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->DocumentFilingCategories->params = Router::parse('/admin/document_filing_categories/reorder_categories');
+		$this->DocumentFilingCategories->params['form'] = array('node' => '4', 'delta' => '-1');
+		$this->DocumentFilingCategories->Component->initialize($this->DocumentFilingCategories);
+		$this->DocumentFilingCategories->beforeFilter();
+		$this->DocumentFilingCategories->Component->startup($this->DocumentFilingCategories);
+		$result = json_decode($this->DocumentFilingCategories->admin_reorder_categories(), true);
+		$this->assertTrue($this->RequestHandler->isAjax());
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+		$this->assertTrue(array_key_exists('success', $result));
+		$this->assertTrue($result['success']);			
+	}
+	
+	function testAdminReorderCategoriesAjaxMoveDown() {
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->DocumentFilingCategories->params = Router::parse('/admin/document_filing_categories/reorder_categories');
+		$this->DocumentFilingCategories->params['form'] = array('node' => '4', 'delta' => '1');
+		$this->DocumentFilingCategories->Component->initialize($this->DocumentFilingCategories);
+		$this->DocumentFilingCategories->beforeFilter();
+		$this->DocumentFilingCategories->Component->startup($this->DocumentFilingCategories);
+		$result = json_decode($this->DocumentFilingCategories->admin_reorder_categories(), true);
+		$this->assertTrue($this->RequestHandler->isAjax());
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+		$this->assertTrue(array_key_exists('success', $result));
+		$this->assertTrue($result['success']);			
+	}
+	
+	function testAdminReorderCategoriesBadData(){
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->DocumentFilingCategories->params = Router::parse('/admin/document_filing_categories/reorder_categories');
+		$this->DocumentFilingCategories->params['form'] = array('tode' => '4', 'wow' => '1');
+		$this->DocumentFilingCategories->Component->initialize($this->DocumentFilingCategories);
+		$this->DocumentFilingCategories->beforeFilter();
+		$this->DocumentFilingCategories->Component->startup($this->DocumentFilingCategories);
+		$result = json_decode($this->DocumentFilingCategories->admin_reorder_categories(), true);
+		$this->assertTrue($this->RequestHandler->isAjax());
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+		$this->assertTrue(array_key_exists('success', $result));
+		$this->assertFalse($result['success']);	
+	}
+	
+	function testAdminReparentCategories() {
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->DocumentFilingCategories->params = Router::parse('/admin/document_filing_categories/reparent_categories');
+		$this->DocumentFilingCategories->params['form'] = array('node' => '4', 'parent' => '3', 'position' => '1');
+		$this->DocumentFilingCategories->Component->initialize($this->DocumentFilingCategories);
+		$this->DocumentFilingCategories->beforeFilter();
+		$this->DocumentFilingCategories->Component->startup($this->DocumentFilingCategories);
+		$result = json_decode($this->DocumentFilingCategories->admin_reparent_categories(), true);
+		$this->assertTrue($this->RequestHandler->isAjax());
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);;
+		$this->assertTrue(array_key_exists('success', $result));
+		$this->assertTrue($result['success']);			
+	}
+	
+	function testAdminReparentCategories0Position() {
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->DocumentFilingCategories->params = Router::parse('/admin/document_filing_categories/reparent_categories');
+		$this->DocumentFilingCategories->params['form'] = array('node' => '4', 'parent' => '3', 'position' => '0');
+		$this->DocumentFilingCategories->Component->initialize($this->DocumentFilingCategories);
+		$this->DocumentFilingCategories->beforeFilter();
+		$this->DocumentFilingCategories->Component->startup($this->DocumentFilingCategories);
+		$result = json_decode($this->DocumentFilingCategories->admin_reparent_categories(), true);
+		$this->assertTrue($this->RequestHandler->isAjax());
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+		$this->assertTrue(array_key_exists('success', $result));
+		$this->assertTrue($result['success']);			
 	}
 
-        // should fail if you try to nest more than 3 levels
-        function testAdminAddNestedTooFar() {
-            $this->DocumentFilingCategories->data = array(
-                'DocumentFilingCategory' => array(
-                    'name' => 'A Nested Category Too Deep',
-                    'parent_id' => 4,
-                    'order' => 1000,
-                    'created' => '0000-00-00 00:00:00',
-                    'modified' => '0000-00-00 00:00:00'
-                )
-            );
-            $this->DocumentFilingCategories->admin_add();
-
-            $flashMessage = $this->DocumentFilingCategories->Session->read('Message.flash');
-            $expectedFlashMessage = array(
-                'message' => 'Categories cannot be more than three levels deep',
-                'element' => 'flash_failure',
-                'params' => array()
-            );
-            $this->assertEqual($flashMessage, $expectedFlashMessage);
-        }
-
-	function testAdminAddRootCategory() {
-            $this->DocumentFilingCategories->data = array(
-                'DocumentFilingCategory' => array(
-                    'name' => 'A Root Category',
-                    'parent_id' => NULL,
-                    'created' => '0000-00-00 00:00:00',
-                    'modified' => '0000-00-00 00:00:00'
-                )
-            );
-            $this->DocumentFilingCategories->admin_add();
-
-            $flashMessage = $this->DocumentFilingCategories->Session->read('Message.flash');
-            $expectedFlashMessage = array(
-                'message' => 'The category has been saved',
-                'element' => 'flash_success',
-                'params' => array()
-            );
-            $this->assertEqual($flashMessage, $expectedFlashMessage);
+	function testAdminReparentCategoriesDeltaGreaterThan0() {
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->DocumentFilingCategories->params = Router::parse('/admin/document_filing_categories/reparent_categories');
+		$this->DocumentFilingCategories->params['form'] = array('node' => '5', 'parent' => '3', 'position' => '1');
+		$this->DocumentFilingCategories->Component->initialize($this->DocumentFilingCategories);
+		$this->DocumentFilingCategories->beforeFilter();
+		$this->DocumentFilingCategories->Component->startup($this->DocumentFilingCategories);
+		$result = json_decode($this->DocumentFilingCategories->admin_reparent_categories(), true);
+		$this->assertTrue($this->RequestHandler->isAjax());
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+		$this->assertTrue(array_key_exists('success', $result));
+		$this->assertTrue($result['success']);			
 	}
-        
-        function testAdminAddNestedOneLevels() {
-            $this->DocumentFilingCategories->data = array(
-                'DocumentFilingCategory' => array(
-                    'name' => 'A Nested Category',
-                    'parent_id' => 1,
-                    'created' => '0000-00-00 00:00:00',
-                    'modified' => '0000-00-00 00:00:00'
-                )
-            );
-            $this->DocumentFilingCategories->admin_add();
-
-            $flashMessage = $this->DocumentFilingCategories->Session->read('Message.flash');
-            $expectedFlashMessage = array(
-                'message' => 'The category has been saved',
-                'element' => 'flash_success',
-                'params' => array()
-            );
-            $this->assertEqual($flashMessage, $expectedFlashMessage);
-        }
-
-        function testAdminAddNestedTwoLevels() {
-            $this->DocumentFilingCategories->data = array(
-                'DocumentFilingCategory' => array(
-                    'name' => 'A Nested Category Two Deep',
-                    'parent_id' => 3,
-                    'created' => '0000-00-00 00:00:00',
-                    'modified' => '0000-00-00 00:00:00'
-                )
-            );
-            $this->DocumentFilingCategories->admin_add();
-
-            $flashMessage = $this->DocumentFilingCategories->Session->read('Message.flash');
-            $expectedFlashMessage = array(
-                'message' => 'The category has been saved',
-                'element' => 'flash_success',
-                'params' => array()
-            );
-            $this->assertEqual($flashMessage, $expectedFlashMessage);
-        }
-       
-	function testAdminEditWithoutPassingId() {
-            $this->DocumentFilingCategories->admin_edit();
-            
-            $flashMessage = $this->DocumentFilingCategories->Session->read('Message.flash');
-            $expectedFlashMessage = array(
-                'message' => 'Invalid category',
-                'element' => 'flash_failure',
-                'params' => array()
-            );
-            $this->assertEqual($flashMessage, $expectedFlashMessage);
+	
+	function testAdminReparentCategoriesBadData() {
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->DocumentFilingCategories->params = Router::parse('/admin/document_filing_categories/reparent_categories');
+		$this->DocumentFilingCategories->params['form'] = array('chode' => '4', 'noob' => '3', 'wow' => '1');
+		$this->DocumentFilingCategories->Component->initialize($this->DocumentFilingCategories);
+		$this->DocumentFilingCategories->beforeFilter();
+		$this->DocumentFilingCategories->Component->startup($this->DocumentFilingCategories);
+		$result = json_decode($this->DocumentFilingCategories->admin_reparent_categories(), true);
+		$this->assertTrue($this->RequestHandler->isAjax());
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+		$this->assertTrue(array_key_exists('success', $result));
+		$this->assertFalse($result['success']);			
+	}
+	
+	function testAdminEdit() { 
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->DocumentFilingCategories->params = Router::parse('/admin/document_filing_categories/edit');
+		$this->DocumentFilingCategories->data = array('DocumentFilingCategory' => array('id' => '4', 'name' => 'Test Cat 2'));
+		$this->DocumentFilingCategories->Component->initialize($this->DocumentFilingCategories);
+		$this->DocumentFilingCategories->beforeFilter();
+		$this->DocumentFilingCategories->Component->startup($this->DocumentFilingCategories);
+		$result = json_decode($this->DocumentFilingCategories->admin_edit(), true);																	
+		$this->assertTrue($this->RequestHandler->isAjax());
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+		$this->assertTrue(array_key_exists('success', $result));
+		$this->assertTrue($result['success']);			
+	}
+	
+	function testAdminEditArrayEmpty() { 
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->DocumentFilingCategories->params = Router::parse('/admin/document_filing_categories/edit');
+		$this->DocumentFilingCategories->data = array();
+		$this->DocumentFilingCategories->Component->initialize($this->DocumentFilingCategories);
+		$this->DocumentFilingCategories->beforeFilter();
+		$this->DocumentFilingCategories->Component->startup($this->DocumentFilingCategories);
+		$result = json_decode($this->DocumentFilingCategories->admin_edit(), true);																	
+		$this->assertTrue($this->RequestHandler->isAjax());
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+		$this->assertTrue(array_key_exists('success', $result));
+		$this->assertFalse($result['success']);			
+	}
+		
+	function testAdminToggleDisabled() {
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->DocumentFilingCategories->params = Router::parse('/admin/document_filing_categories/toggle_disabled');
+		$this->DocumentFilingCategories->data = array('DocumentFilingCategory' => array('id' => 6, 'disabled' => 1));
+		$this->DocumentFilingCategories->Component->initialize($this->DocumentFilingCategories);
+		$this->DocumentFilingCategories->beforeFilter();
+		$this->DocumentFilingCategories->Component->startup($this->DocumentFilingCategories);
+		$result = json_decode($this->DocumentFilingCategories->admin_toggle_disabled(), true);																
+		$this->assertTrue($this->RequestHandler->isAjax());
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+		$this->assertTrue(array_key_exists('success', $result));
+		$this->assertTrue($result['success']);			
 	}
 
-        function testAdminEditWithValidData() {
-            $this->DocumentFilingCategories->data = array(
-                'DocumentFilingCategory' => array(
-                    'name' => 'An Edited Name'
-                )
-            );
-
-            $this->DocumentFilingCategories->admin_edit(1);
-
-            $flashMessage = $this->DocumentFilingCategories->Session->read('Message.flash');
-            $expectedFlashMessage = array(
-                'message' => 'The category has been saved',
-                'element' => 'flash_success',
-                'params' => array()
-            );
-            $this->assertEqual($flashMessage, $expectedFlashMessage);
-        }
-
-        function testAdminEditWithInvalidData() {
-            $this->DocumentFilingCategories->data = array(
-                'DocumentFilingCategory' => array(
-                    'name' => ''
-                )
-            );
-
-            $this->DocumentFilingCategories->admin_edit(1);
-
-            $flashMessage = $this->DocumentFilingCategories->Session->read('Message.flash');
-            $expectedFlashMessage = array(
-                'message' => 'The category could not be saved. Please, try again.',
-                'element' => 'flash_failure',
-                'params' => array()
-            );
-            $this->assertEqual($flashMessage, $expectedFlashMessage);
-        }
-
-        function testAdminDeleteWithoutPassingId() {
-            $this->DocumentFilingCategories->admin_delete();
-
-            $flashMessage = $this->DocumentFilingCategories->Session->read('Message.flash');
-            $expectedFlashMessage = array(
-                'message' => 'Invalid id for category',
-                'element' => 'flash_failure',
-                'params' => array()
-            );
-            $this->assertEqual($flashMessage, $expectedFlashMessage);
+	function testAdminToggleDisabledEnabled() {
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->DocumentFilingCategories->params = Router::parse('/admin/document_filing_categories/toggle_disabled');
+		$this->DocumentFilingCategories->data = array('DocumentFilingCategory' => array('id' => 6, 'disabled' => 0));
+		$this->DocumentFilingCategories->Component->initialize($this->DocumentFilingCategories);
+		$this->DocumentFilingCategories->beforeFilter();
+		$this->DocumentFilingCategories->Component->startup($this->DocumentFilingCategories);
+		$result = json_decode($this->DocumentFilingCategories->admin_toggle_disabled(), true);																
+		$this->assertTrue($this->RequestHandler->isAjax());
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+		$this->assertTrue(array_key_exists('success', $result));
+		$this->assertTrue($result['success']);			
 	}
 
-        function testAdminDeleteCategoryWithChildren() {
-            $this->DocumentFilingCategories->admin_delete(1);
-
-            $flashMessage = $this->DocumentFilingCategories->Session->read('Message.flash');
-            $expectedFlashMessage = array(
-                'message' => 'Cannot delete category that has children',
-                'element' => 'flash_failure',
-                'params' => array()
-            );
-            $this->assertEqual($flashMessage, $expectedFlashMessage);
-        }
-
-	function testAdminDelete() {
-            $this->DocumentFilingCategories->admin_delete(2);
-
-            $flashMessage = $this->DocumentFilingCategories->Session->read('Message.flash');
-            $expectedFlashMessage = array(
-                'message' => 'Category deleted',
-                'element' => 'flash_success',
-                'params' => array()
-            );
-            $this->assertEqual($flashMessage, $expectedFlashMessage);
+	function testAdminToggleDisabledParentWithChildren() {
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->DocumentFilingCategories->params = Router::parse('/admin/document_filing_categories/toggle_disabled');
+		$this->DocumentFilingCategories->data = array('DocumentFilingCategory' => array('id' => 1, 'disabled' => 1));
+		$this->DocumentFilingCategories->Component->initialize($this->DocumentFilingCategories);
+		$this->DocumentFilingCategories->beforeFilter();
+		$this->DocumentFilingCategories->Component->startup($this->DocumentFilingCategories);
+		$result = json_decode($this->DocumentFilingCategories->admin_toggle_disabled(), true);																
+		$this->assertTrue($this->RequestHandler->isAjax());
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+		$this->assertTrue(array_key_exists('success', $result));
+		$this->assertFalse($result['success']);			
 	}
-
+		
+	function testAdminToggleDisabledRoot() {
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->DocumentFilingCategories->params = Router::parse('/admin/document_filing_categories/toggle_disabled');
+		$this->DocumentFilingCategories->data = array('DocumentFilingCategory' => array('id' => 'source', 'disabled' => 1));
+		$this->DocumentFilingCategories->Component->initialize($this->DocumentFilingCategories);
+		$this->DocumentFilingCategories->beforeFilter();
+		$this->DocumentFilingCategories->Component->startup($this->DocumentFilingCategories);
+		$result = json_decode($this->DocumentFilingCategories->admin_toggle_disabled(), true);																
+		$this->assertTrue($this->RequestHandler->isAjax());
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+		$this->assertTrue(array_key_exists('success', $result));
+		$this->assertFalse($result['success']);			
+	}
+	
+	function testAdminToggleDisabledEnableChildOfDiasabledParent() {
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->DocumentFilingCategories->params = Router::parse('/admin/document_filing_categories/toggle_disabled');
+		$this->DocumentFilingCategories->data = array('DocumentFilingCategory' => array('id' => '7', 'disabled' => 0));
+		$this->DocumentFilingCategories->Component->initialize($this->DocumentFilingCategories);
+		$this->DocumentFilingCategories->beforeFilter();
+		$this->DocumentFilingCategories->Component->startup($this->DocumentFilingCategories);
+		$result = json_decode($this->DocumentFilingCategories->admin_toggle_disabled(), true);																
+		$this->assertTrue($this->RequestHandler->isAjax());
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+		$this->assertTrue(array_key_exists('success', $result));
+		$this->assertFalse($result['success']);			
+	}
+	
+	function testAdminGetChildCats() {
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->DocumentFilingCategories->params = Router::parse('/admin/document_filing_categories/get_child_cats');
+		$this->DocumentFilingCategories->params['url'] = array('id' => '1');
+		$this->DocumentFilingCategories->Component->initialize($this->DocumentFilingCategories);
+		$this->DocumentFilingCategories->beforeFilter();
+		$this->DocumentFilingCategories->Component->startup($this->DocumentFilingCategories);
+		$result = json_decode($this->DocumentFilingCategories->admin_get_child_cats(), true);																
+		$this->assertTrue($this->RequestHandler->isAjax());
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+		$this->assertTrue(count($result) > 0);			
+	}
+	
+	function testAdminGetGrandchildCats() {
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->DocumentFilingCategories->params = Router::parse('/admin/document_filing_categories/get_grand_child_cats');
+		$this->DocumentFilingCategories->params['url'] = array('id' => '3');
+		$this->DocumentFilingCategories->Component->initialize($this->DocumentFilingCategories);
+		$this->DocumentFilingCategories->beforeFilter();
+		$this->DocumentFilingCategories->Component->startup($this->DocumentFilingCategories);
+		$result = json_decode($this->DocumentFilingCategories->admin_get_grand_child_cats(), true);																
+		$this->assertTrue($this->RequestHandler->isAjax());
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+		$this->assertTrue(count($result) > 0);			
+	}	
+	
 }
 ?>

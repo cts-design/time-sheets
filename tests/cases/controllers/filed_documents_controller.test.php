@@ -1,16 +1,16 @@
 <?php
 /* FiledDocuments Test cases generated on: 2010-11-24 15:11:59 : 1290612419*/
 App::import('Controller', 'FiledDocuments');
-App::import('Lib', 'AtlasTestCase');
 class TestFiledDocumentsController extends FiledDocumentsController {
 	var $autoRender = false;
 
 	function redirect($url, $status = null, $exit = true) {
 		$this->redirectUrl = $url;
+		return $this->redirectUrl;
 	}
 }
 
-class FiledDocumentsControllerTestCase extends AtlasTestCase {
+class FiledDocumentsControllerTestCase extends CakeTestCase {
 	var $fixtures = array(
             'app.aco',
             'app.aro',
@@ -42,79 +42,312 @@ class FiledDocumentsControllerTestCase extends AtlasTestCase {
 	function startTest() {
 		$this->FiledDocuments =& new TestFiledDocumentsController();
 		$this->FiledDocuments->constructClasses();
+		$this->FiledDocuments->Component->initialize($this->FiledDocuments);	
 	}
 
 	function endTest() {
+		$this->FiledDocuments->Session->destroy();
 		unset($this->FiledDocuments);
 		ClassRegistry::flush();
 	}
-function testIndex() {
-            $result = $this->testAction('/chairman_reports/index', array('return' => 'view'));
-            //debug(htmlentities($result));
-        }
-
-	function testAdminIndex() {
-            $result = $this->testAction('/admin/chairman_reports/index', array('return' => 'view'));
-//            debug(htmlentities($result));
+	
+	function testAdminIndexNoId() {
+		$this->FiledDocuments->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'username' => 'dnolan',
+	        'role_id' => 2,
+	        'location_id' => 1
+	    ));
+		$result = $this->testAction('/admin/filed_documents/index', array('return' => 'vars'));
+		$result = Set::extract('/filedDocuments/.[1]', $result);		
+		$this->assertEqual($result[0]['FiledDocument']['id'], 111);
 	}
-
+	
+	function testAdminIndexWithId() {
+		$this->FiledDocuments->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+		$result = $this->testAction('/admin/filed_documents/index/10', array('return' => 'vars'));
+		$result = Set::extract('/filedDocuments/.[1]', $result);		
+		$this->assertEqual($result[0]['FiledDocument']['id'], 111);
+	}
+	
+	function testAdminIndexWithBadId() {
+		$this->FiledDocuments->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+		$result = $this->testAction('/admin/filed_documents/index/30', array('return' => 'vars'));	
+		$this->assertEqual($result['filedDocuments'], array());
+	}
+	
+	function testAdminView() {
+		$this->FiledDocuments->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+		$result = $this->testAction('/admin/filed_documents/view/111', array('return' => 'result'));
+		$this->assertEqual($result['id'], 'Lorem ipsum dolor sit amet');		
+	}
+	
+	function testAdminViewNoId() {
+		$this->FiledDocuments->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+	    $this->FiledDocuments->params = Router::parse('/admin/filed_documents/view');
+	    $this->FiledDocuments->beforeFilter();
+	    $this->FiledDocuments->Component->startup($this->FiledDocuments);
+		$this->FiledDocuments->admin_view();	
+		$this->assertEqual($this->FiledDocuments->Session->read('Message.flash.element'), 'flash_failure');		
+	}	
+		
 	function testAdminEditWithValidData() {
-            $this->FiledDocuments->data = array(
-                'FiledDocument' => array(
-                    'title' => 'Valid Title'
-                )
-            );
-
-            $this->FiledDocuments->admin_edit(1);
-			$this->assertFlashMessage($this->FiledDocuments, 'The filed document has been saved', 'flash_success');
+		$this->FiledDocuments->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));	
+        $this->FiledDocuments->data = array(
+            'FiledDocument' => array(
+                'title' => 'Valid Title',
+                'edit_type' => 'user'
+            ),
+            'User' => array(
+            'firstname' => 'Daniel',
+			'lastname' => 'Test',
+			'ssn' => '123441234')
+        );
+	    $this->FiledDocuments->params = Router::parse('/admin/filed_documents/edit/1');
+	    $this->FiledDocuments->beforeFilter();
+	    $this->FiledDocuments->Component->startup($this->FiledDocuments);
+		$this->FiledDocuments->admin_edit(1);	
+		$this->assertEqual($this->FiledDocuments->Session->read('Message.flash.element'), 'flash_success');
 	}
-
-
+	
+	
+	function testAdminEditWithInvalidId() {
+	    $this->FiledDocuments->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));	
+		$this->FiledDocuments->params = Router::parse('/admin/filed_documents/edit');
+   		$this->FiledDocuments->beforeFilter();
+    	$this->FiledDocuments->Component->startup($this->FiledDocuments);
+        $this->FiledDocuments->admin_edit();	
+		$this->assertEqual($this->FiledDocuments->Session->read('Message.flash.element'), 'flash_failure');
+	}
+	
+	function testAdminEditWithInvalidData() {
+        $this->FiledDocuments->data = array(
+            'FiledDocument' => array(
+                'title' => 'Valid Title',
+                'edit_type' => 'user'
+            ),
+            'User' => array(
+            'firstname' => 'Daniel',
+			'lastname' => 'Test',
+			'ssn' => '123441')
+        );		
+		$this->FiledDocuments->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan'
+	    ));	
+		$this->FiledDocuments->params = Router::parse('/admin/filed_documents/edit/11');
+   		$this->FiledDocuments->beforeFilter();
+    	$this->FiledDocuments->Component->startup($this->FiledDocuments);		
+        $this->FiledDocuments->admin_edit(11);	
+		$this->assertEqual($this->FiledDocuments->Session->read('Message.flash.element'), 'flash_failure');
+	}	
+		
 	function testAdminDeleteValidRecord() {
-        	$this->FiledDocuments->data = array(
-				'FiledDocument' => array(
-					'id' => 1,
-					'reason' => 'Duplicate Scan'
-				)
-			);
-            $this->FiledDocuments->admin_delete();
-			$this->assertFlashMessage($this->FiledDocuments, 'Filed document deleted', 'flash_success');
+	    $this->FiledDocuments->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'username' => 'dnolan',
+	        'role_id' => 2,
+	        'location_id' => 1
+	    ));			
+    	$this->FiledDocuments->data = array(
+			'FiledDocument' => array(
+				'id' => 111,
+				'reason' => 'Duplicate Scan'
+			)
+		);
+		$this->FiledDocuments->params = Router::parse('/admin/filed_documents/delete/111');
+   		$this->FiledDocuments->beforeFilter();
+    	$this->FiledDocuments->Component->startup($this->FiledDocuments);		
+        $this->FiledDocuments->admin_delete();
+		$this->assertEqual($this->FiledDocuments->Session->read('Message.flash.element'), 'flash_success');
 	}
 
-        function testAdminDeleteInvalidRecord() {
-        	$this->FiledDocuments->data = array(
-				'FiledDocument' => array(
-					'id' => 1
-				)
-			);
-            $this->FiledDocuments->admin_delete();
-            $this->assertEqual($this->FiledDocuments->redirectUrl, array('action' => 'index'));
+    function testAdminDeleteInvalidRecord() {
+	    $this->FiledDocuments->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));	    	
+    	$this->FiledDocuments->data = array(
+			'FiledDocument' => array(
+				'id' => 33,
+				'reason' => 'Duplicate Scan'
+			)
+		);
+		$this->FiledDocuments->params = Router::parse('/admin/filed_documents/delete/33');
+   		$this->FiledDocuments->beforeFilter();
+    	$this->FiledDocuments->Component->startup($this->FiledDocuments);			
+        $this->FiledDocuments->admin_delete();
+        $this->assertEqual($this->FiledDocuments->redirectUrl, $this->FiledDocuments->referer());
+        $this->assertEqual($this->FiledDocuments->Session->read('Message.flash.element'), 'flash_failure');
+    }
 
-            $flashMessage = $this->FiledDocuments->Session->read('Message.flash');
-            $expectedFlashMessage = array(
-                'message' => 'Chairman report was not deleted',
-                'element' => 'flash_failure',
-                'params' => array()
-            );
+    function testAdminDeleteWithNoSpecifiedRecord() {
+	    $this->FiledDocuments->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+		$this->FiledDocuments->params = Router::parse('/admin/filed_documents/delete');
+   		$this->FiledDocuments->beforeFilter();
+    	$this->FiledDocuments->Component->startup($this->FiledDocuments);			
+        $this->FiledDocuments->admin_delete();			    	
+        $this->assertEqual($this->FiledDocuments->Session->read('Message.flash.element'), 'flash_failure');
+        $this->assertEqual($this->FiledDocuments->redirectUrl, $this->FiledDocuments->referer());
+   }
+	
+	function testAdminViewAllDocsNoAjax(){
+	    $this->FiledDocuments->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+		$result = $this->testAction('/admin/filed_documents/view_all_docs', array('return' => 'vars'));	
+		$this->assertEqual($result['title_for_layout'], 'Filed Document Archive');    			
+	} 		
+	
+	function testAdminViewAllDocsAjax(){
+	    $this->FiledDocuments->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$result = json_decode($this->testAction('/admin/filed_documents/view_all_docs'), true);
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);			
+		$this->assertEqual($result['docs'][0]['id'], 1);
+		$this->assertEqual($result['totalCount'], 2);		    			
+	}
+	
+	function testAdminViewAllDocsWithFilters(){
+	    $this->FiledDocuments->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+		$this->__savedGetData['filters'] = 	
+			'{"fromDate":"","toDate":"","searchType":"","cusSearch":"","cat_1":"2","cat_2":"","admin_id":"","filed_location_id":""}';
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$result = json_decode($this->testAction('/admin/filed_documents/view_all_docs'), true);
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+		unset($this->__savedGetData);	
+		$this->assertEqual($result['docs'][0]['id'], 111);
+		$this->assertEqual($result['totalCount'], 1);		    			
+	}
 
-            $this->assertEqual($flashMessage, $expectedFlashMessage);
-        }
+	function testAdminViewAllDocsSorting(){
+	    $this->FiledDocuments->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+		$this->__savedGetData['sort'] = 'id';
+		$this->__savedGetData['direction'] = 'DESC';
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$result = json_decode($this->testAction('/admin/filed_documents/view_all_docs'), true);
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+		unset($this->__savedGetData);
+		$this->assertEqual($result['docs'][0]['id'], 111);
+		$this->assertEqual($result['totalCount'], 2);		    			
+	}
+	
+	function testAdminViewAllDocsNoResults(){
+	    $this->FiledDocuments->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+		$this->__savedGetData['filters'] = 	
+			'{"fromDate":"03/14/2011","toDate":"03/14/2011","searchType":"","cusSearch":"","cat_1":"2","cat_2":"","admin_id":"","filed_location_id":""}';
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$result = json_decode($this->testAction('/admin/filed_documents/view_all_docs'), true);
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+		unset($this->__savedGetData);
+		$this->assertEqual($result['docs'], array());	    			
+	}
 
-        function testAdminDeleteWithNoSpecifiedRecord() {
-            $this->FiledDocuments->admin_delete();
+	function testAdminReport() {
+	    $this->FiledDocuments->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+		$result = $this->testAction('/admin/filed_documents/report');
+		unset($this->__savedGetData);
+		Configure::write('debug', 2);
+		$this->assertEqual($result['data'][0]['id'], 1);			
+	}
+ 	
+	function testAdminReportWithFilters() {
+	    $this->FiledDocuments->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+		$this->__savedGetData['filters'] = 	
+			'{"fromDate":"","toDate":"","searchType":"","cusSearch":"","cat_1":"2","cat_2":"","admin_id":"","filed_location_id":""}';
+		$result = $this->testAction('/admin/filed_documents/report');
+		unset($this->__savedGetData);
+		Configure::write('debug', 2);
+		$this->assertEqual($result['data'][0]['id'], 111);			
+	}
+	
+	function testAdminReportNoResults() {
+	    $this->FiledDocuments->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+		$this->FiledDocuments->params = Router::parse('/admin/filed_documents/report');
+		$this->FiledDocuments->params['url']['filters'] = 	
+			'{"fromDate":"3/14/2011","toDate":"3/14/2011","searchType":"","cusSearch":"","cat_1":"2","cat_2":"6","admin_id":"","filed_location_id":""}';
+		$this->FiledDocuments->params['url']['url'] = '/admin/filed_documents/report';
+   		$this->FiledDocuments->beforeFilter();
+    	$this->FiledDocuments->Component->startup($this->FiledDocuments);			
+        $this->FiledDocuments->admin_report();	
+		$this->assertEqual($this->FiledDocuments->Session->read('Message.flash.element'), 'flash_failure');			
+	}	
 
-                        $flashMessage = $this->FiledDocuments->Session->read('Message.flash');
-            $expectedFlashMessage = array(
-                'message' => 'Chairman report was not deleted',
-                'element' => 'flash_failure',
-                'params' => array()
-            );
-
-            $this->assertEqual($flashMessage, $expectedFlashMessage);
-
-            $this->assertEqual($this->FiledDocuments->redirectUrl, array('action' => 'index'));
-
-
-       }
 }
 ?>

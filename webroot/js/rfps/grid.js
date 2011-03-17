@@ -91,17 +91,28 @@ var rfpForm = new Ext.form.FormPanel({
 			var f = rfpForm.getForm();
 			if (f.isValid()) {
 				var vals = f.getValues();
-				f.reset();
-				console.log(vals);
-				var Rfp = new grid.store.recordType({
-				 	title: vals.title,
-				 	byline: vals.byline,
-				 	description: vals.description,
-				 	deadline: vals.deadline,
-				 	expires: vals.expires,
-				 	contact_email: vals.contact_email
+				f.submit({
+					url: '/admin/rfps/upload',
+					waitMsg: 'uploading',
+					success: function(form,action) {
+
+						f.reset();
+						var Rfp = new grid.store.recordType({
+						 	title: vals.title,
+						 	byline: vals.byline,
+						 	description: vals.description,
+						 	deadline: vals.deadline,
+						 	expires: vals.expires,
+						 	contact_email: vals.contact_email,
+						 	file: action.result.url
+						});
+						store.add(Rfp);
+
+					},
+					failure: function(form, action) {
+						Ext.msg.Alert('Error', 'Your file could not be uploaded, please try again.');
+					}
 				});
-				store.add(Rfp);
 			}
         }
     },{
@@ -129,7 +140,7 @@ var rfpForm = new Ext.form.FormPanel({
 var proxy = new Ext.data.HttpProxy({
 	api: {
 		create:  { url: '/admin/rfps/create',  method: 'POST' },
-		read:    { url: '/admin/rfps/read',    method: 'GET' },
+		read:    { url: '/admin/rfps/read',    method: 'GET'  },
 		update:  { url: '/admin/rfps/update',  method: 'POST' },
 		destroy: { url: '/admin/rfps/destroy', method: 'POST' }
 	},
@@ -200,15 +211,17 @@ var colModel = new Ext.grid.ColumnModel([
 				var rec = store.getAt(rowIndex);
 				Ext.Msg.show({
 					title: 'Remove RFP?',
-					msg: 'Removing the RFP will make it inactive, it will no longer available unless reactivated',
+					msg: 'Are you sure you want to remove the RFP?',
 					buttons: {
 						yes: 'Yes, remove the RFP',
 						no: 'No, don\'t remove the RFP'
 					},
 					animEl: 'elId',
 					icon: Ext.MessageBox.QUESTION,
-					fn: function() {
-						store.remove(rec);
+					fn: function(btn) {
+						if (btn == 'yes') {
+							store.remove(rec);
+						}
 					}
 				});
 			}

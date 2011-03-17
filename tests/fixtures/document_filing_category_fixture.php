@@ -6,9 +6,10 @@ class DocumentFilingCategoryFixture extends CakeTestFixture {
 	var $fields = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 		'parent_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
-		'name' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
-		'order' => array('type' => 'integer', 'null' => true, 'default' => NULL),
-		'deleted' => array('type' => 'boolean', 'null' => true, 'default' => NULL),
+		'name' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100),
+		'lft' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+		'rght' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+		'disabled' => array('type' => 'boolean', 'null' => false, 'default' => NULL),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
@@ -20,17 +21,19 @@ class DocumentFilingCategoryFixture extends CakeTestFixture {
 			'id' => 1,
 			'parent_id' => NULL,
 			'name' => 'Valid Category',
-			'order' => 9999,
-			'deleted' => 0,
+			'disabled' => 0,
+			'lft' => 1,
+			'rght' => 8,
 			'created' => '2010-10-19 15:57:41',
 			'modified' => '2010-10-19 15:57:41'
 		),
 		array(
 			'id' => 2,
 			'parent_id' => NULL,
-			'name' => 'Another Valid Category',
-			'order' => 9999,
-			'deleted' => 0,
+			'name' => 'Disabled Category',
+			'disabled' => 1,
+			'lft' => 9,
+			'rght' => 12,
 			'created' => '2010-10-19 15:57:41',
 			'modified' => '2010-10-19 15:57:41'
 		),
@@ -38,20 +41,52 @@ class DocumentFilingCategoryFixture extends CakeTestFixture {
 			'id' => 3,
 			'parent_id' => 1,
 			'name' => 'A Nested Valid Category',
-			'order' => 9999,
-			'deleted' => 0,
+			'disabled' => 0,
+			'lft' => 2,
+			'rght' => 7,
 			'created' => '2010-10-19 15:57:41',
 			'modified' => '2010-10-19 15:57:41'
 		),
-                array(
+        array(
 			'id' => 4,
 			'parent_id' => 3,
-			'name' => 'A Second Level Nested Valid Category',
-			'order' => 9999,
-			'deleted' => 0,
+			'name' => 'Another Nested Category',
+			'disabled' => 0,
+			'lft' => 3,
+			'rght' => 4,
 			'created' => '2010-10-19 15:57:41',
 			'modified' => '2010-10-19 15:57:41'
-                )
+        ),
+        array(
+			'id' => 5,
+			'parent_id' => NULL,
+			'name' => 'Another Parent Category',
+			'disabled' => 0,
+			'lft' => 3,
+			'rght' => 4,
+			'created' => '2010-10-19 15:57:41',
+			'modified' => '2010-10-19 15:57:41'
+        ) ,
+        array(
+			'id' => 6,
+			'parent_id' => 3,
+			'name' => 'Another Parent Category',
+			'disabled' => 0,
+			'lft' => 5,
+			'rght' => 6,
+			'created' => '2010-10-19 15:57:41',
+			'modified' => '2010-10-19 15:57:41'
+        ),
+        array(
+			'id' => 7,
+			'parent_id' => 2,
+			'name' => 'Disabled Child',
+			'disabled' => 1,
+			'lft' => 10,
+			'rght' => 11,
+			'created' => '2010-10-19 15:57:41',
+			'modified' => '2010-10-19 15:57:41'
+        )
 	);
 }
 ?>
