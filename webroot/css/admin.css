@@ -989,3 +989,11 @@ p.checkbox {
 	width: 250px;
 	line-height: 12px;
 }
+
+.accordionbtn {
+	width: 100% !important;
+}
+
+.accordionbtn .x-btn-text {
+	font-size: 12px;
+}
