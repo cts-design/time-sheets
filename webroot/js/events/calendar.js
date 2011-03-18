@@ -126,7 +126,7 @@ App = function() {
 	                    listeners: {
 	                        'eventclick': {
 	                            fn: function(vw, rec, el){
-	                                console.log('EVENTCLICK');
+	                                //console.log('EVENTCLICK');
 	                                this.showEditWindow(rec, el);
 	                                this.clearMsg();
 	                            },
@@ -140,35 +140,35 @@ App = function() {
 	                        },
 	                        'eventadd': {
 	                            fn: function(cp, rec){
-	                            	console.log('EVENTADD');
+	                            	//console.log('EVENTADD');
 	                                this.showMsg('Event '+ rec.data.Title +' was added');
 	                            },
 	                            scope: this
 	                        },
 	                        'eventupdate': {
 	                            fn: function(cp, rec){
-	                            	console.log('EVENTUPDATE');
+	                            	//console.log('EVENTUPDATE');
 	                                this.showMsg('Event '+ rec.data.Title +' was updated');
 	                            },
 	                            scope: this
 	                        },
 	                        'eventdelete': {
 	                            fn: function(cp, rec){
-	                            	console.log('EVENTDELETE');
+	                            	//console.log('EVENTDELETE');
 	                                this.showMsg('Event '+ rec.data.Title +' was deleted');
 	                            },
 	                            scope: this
 	                        },
 	                        'eventcancel': {
 	                            fn: function(cp, rec){
-	                            	console.log('EVENTCANCEL');
+	                            	//console.log('EVENTCANCEL');
 	                                // edit canceled
 	                            },
 	                            scope: this
 	                        },
 	                        'viewchange': {
 	                            fn: function(p, vw, dateInfo){
-	                            	console.log('VIEWCHANGE');
+	                            	//console.log('VIEWCHANGE');
 	                                if(this.editWin){
 	                                    this.editWin.hide();
 	                                };
@@ -182,7 +182,7 @@ App = function() {
 	                        },
 	                        'dayclick': {
 	                            fn: function(vw, dt, ad, el){
-	                            	console.log('DAYCLICK');
+	                            	//console.log('DAYCLICK');
 	                                this.showEditWindow({
 	                                    StartDate: dt,
 	                                    IsAllDay: ad
@@ -193,7 +193,7 @@ App = function() {
 	                        },
 	                        'rangeselect': {
 	                            fn: function(win, dates, onComplete){
-	                            	console.log('RANGESELECT');
+	                            	//console.log('RANGESELECT');
 	                                this.showEditWindow(dates);
 	                                this.editWin.on('hide', onComplete, this, {single:true});
 	                                this.clearMsg();
@@ -202,7 +202,7 @@ App = function() {
 	                        },
 	                        'eventmove': {
 	                            fn: function(vw, rec){
-	                            	console.log('EVENTMOVE');
+	                            	//console.log('EVENTMOVE');
 	                                rec.commit();
 	                                var time = rec.data.IsAllDay ? '' : ' \\a\\t g:i a';
 	                                this.showMsg('Event '+ rec.data.Title +' was moved to '+rec.data.StartDate.format('F jS'+time));
@@ -211,7 +211,7 @@ App = function() {
 	                        },
 	                        'eventresize': {
 	                            fn: function(vw, rec){
-	                            	console.log('EVENTRESIZE');
+	                            	//console.log('EVENTRESIZE');
 	                                rec.commit();
 	                                this.showMsg('Event '+ rec.data.Title +' was updated');
 	                            },
@@ -219,7 +219,7 @@ App = function() {
 	                        },
 	                        'eventdelete': {
 	                            fn: function(win, rec){
-	                            	console.log('EVENTDELETE');
+	                            	//console.log('EVENTDELETE');
 	                                this.eventStore.remove(rec);
 	                                this.showMsg('Event '+ rec.data.Title +' was deleted');
 	                            },
@@ -227,7 +227,7 @@ App = function() {
 	                        },
 	                        'initdrag': {
 	                            fn: function(vw){
-	                            	console.log('INITDRAG');
+	                            	//console.log('INITDRAG');
 	                                if(this.editWin && this.editWin.isVisible()){
 	                                    this.editWin.hide();
 	                                }
@@ -256,7 +256,7 @@ App = function() {
 					listeners: {
 						'eventadd': {
 							fn: function(win, rec){
-								console.log('EVENTADD');
+								//console.log('EVENTADD');
 								win.hide();
 								rec.data.IsNew = false;
 								this.eventStore.add(rec);
@@ -266,7 +266,7 @@ App = function() {
 						},
 						'eventupdate': {
 							fn: function(win, rec){
-								console.log('EVENTUPDATE');
+								//console.log('EVENTUPDATE');
 								win.hide();
 								rec.commit();
                                 this.showMsg('Event '+ rec.data.Title +' was updated');
@@ -275,7 +275,7 @@ App = function() {
 						},
 						'eventdelete': {
 							fn: function(win, rec){
-								console.log('deleted! from showeditwindow');
+								//console.log('deleted! from showeditwindow');
 								this.eventStore.remove(rec);
 								win.hide();
                                 this.showMsg('Event '+ rec.data.Title +' was deleted');
@@ -284,7 +284,7 @@ App = function() {
 						},
                         'editdetails': {
                             fn: function(win, rec){
-                            	console.log('EVENTDETAILS');
+                            	//console.log('EVENTDETAILS');
                                 win.hide();
                                 App.calendarPanel.showEditForm(rec);
                             }
