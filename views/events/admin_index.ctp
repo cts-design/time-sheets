@@ -1,10 +1,8 @@
 <?php
 	$this->Html->script('ext/adapter/ext/ext-base-debug', array('inline' => FALSE));
 	$this->Html->script('ext-all-debug', array('inline' => FALSE));
-	$this->Html->script('ext/calendar/app/event-list', array('inline' => FALSE));
-	$this->Html->script('ext/calendar/app/calendar-list', array('inline' => FALSE));
 	$this->Html->css('ext/calendar/calendar', null, array('inline' => FALSE));
-	$this->Html->script('ext/calendar/calendar-all-debug', array('inline' => FALSE));
+	$this->Html->script('ext/ux/calendar/calendar-all-debug', array('inline' => FALSE));
 	$this->Html->script('events/calendar', array('inline' => FALSE));
 ?>
 <div id="crumbWrapper">
