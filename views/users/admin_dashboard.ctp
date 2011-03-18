@@ -36,7 +36,8 @@
                             			<li rel="inTheNews"><?php echo $html->link('In the News', array('controller' => 'in_the_news', 'action' => 'index')) ?></li>
                             			<li rel="inTheNews"><?php echo $html->link('Helpful Articles', array('controller' => 'helpful_articles', 'action' => 'index')) ?></li>
                             		</ul>
-                            	</li>     
+                            	</li>
+                            	<li rel="calendar"><?php echo $html->link('Calendar of Events', array('controller' => 'events', 'action' => 'index')); ?></li>
                             	<li rel="hotJobs"><?php echo $html->link('Hot Jobs', array('controller' => 'hot_jobs', 'action' => 'index')); ?></li>
                             	<li rel="rfp"><?php echo $html->link('RFPs & Bids', array('controller' => 'rfps', 'action' => 'index')); ?></li>
                             	<li rel="featured"><?php echo $html->link('Featured Employer', array('controller' => 'featured_employers', 'action' => 'index')); ?></li>
