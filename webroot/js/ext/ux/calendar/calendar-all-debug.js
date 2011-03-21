@@ -1174,7 +1174,7 @@ Ext.calendar.EventMappings = {
     },
     CalendarId: {
         name: 'CalendarId',
-        mapping: 'cid',
+        mapping: 'event_category_id',
         type: 'int'
     },
     Title: {
@@ -1186,22 +1186,22 @@ Ext.calendar.EventMappings = {
         name: 'StartDate',
         mapping: 'start',
         type: 'date',
-        dateFormat: 'c'
+        dateFormat: 'Y-m-d H:i:s'
     },
     EndDate: {
         name: 'EndDate',
         mapping: 'end',
         type: 'date',
-        dateFormat: 'c'
+        dateFormat: 'Y-m-d H:i:s'
     },
     Location: {
         name: 'Location',
-        mapping: 'loc',
+        mapping: 'location',
         type: 'string'
     },
     Notes: {
         name: 'Notes',
-        mapping: 'notes',
+        mapping: 'description',
         type: 'string'
     },
     Url: {
@@ -1211,8 +1211,8 @@ Ext.calendar.EventMappings = {
     },
     IsAllDay: {
         name: 'IsAllDay',
-        mapping: 'ad',
-        type: 'boolean'
+        mapping: 'all_day',
+        type: 'int'
     },
     Reminder: {
         name: 'Reminder',
@@ -4640,7 +4640,7 @@ Ext.extend(Ext.calendar.EventEditWindow, Ext.Window, {
             end = o[M.EndDate.name] || start.add('h', 1);
 
             rec = new Ext.calendar.EventRecord();
-            rec.data[M.EventId.name] = this.newId++;
+            //rec.data[M.EventId.name] = this.newId++;
             rec.data[M.StartDate.name] = start;
             rec.data[M.EndDate.name] = end;
             rec.data[M.IsAllDay.name] = !!o[M.IsAllDay.name] || start.getDate() != end.clone().add(Date.MILLI, 1).getDate();
