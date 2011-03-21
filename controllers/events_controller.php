@@ -17,11 +17,11 @@ class EventsController extends AppController {
 
 		$this->data = array(
 			'Event' => array(
-				'event_category_id' => $params['cid'],
+				'event_category_id' => $params['event_category_id'],
 				'title' => $params['title'],
 				'start' => date('Y-m-d H:i:s', strtotime($params['start'])),
 				'end' => date('Y-m-d H:i:s', strtotime($params['end'])),
-				'all_day' => (!empty($params['ad']) && $params['ad'] == 1) ? 1 : 0
+				'all_day' => $params['all_day']
 			)
 		);
 
