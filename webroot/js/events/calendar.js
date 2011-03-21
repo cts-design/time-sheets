@@ -142,6 +142,7 @@ App = function() {
 	                            fn: function(cp, rec){
 	                            	console.log('EVENTADD');
 	                                this.showMsg('Event '+ rec.data.Title +' was added');
+	                            	rec.commit();
 	                            },
 	                            scope: this
 	                        },
@@ -149,6 +150,7 @@ App = function() {
 	                            fn: function(cp, rec){
 	                            	console.log('EVENTUPDATE');
 	                                this.showMsg('Event '+ rec.data.Title +' was updated');
+	                            	rec.commit();
 	                            },
 	                            scope: this
 	                        },

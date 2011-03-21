@@ -4640,7 +4640,7 @@ Ext.extend(Ext.calendar.EventEditWindow, Ext.Window, {
             end = o[M.EndDate.name] || start.add('h', 1);
 
             rec = new Ext.calendar.EventRecord();
-            rec.data[M.EventId.name] = this.newId++;
+            //rec.data[M.EventId.name] = this.newId++;
             rec.data[M.StartDate.name] = start;
             rec.data[M.EndDate.name] = end;
             rec.data[M.IsAllDay.name] = !!o[M.IsAllDay.name] || start.getDate() != end.clone().add(Date.MILLI, 1).getDate();

@@ -66,7 +66,8 @@ class EventCategoriesController extends AppController {
 			}
 		}
 		
-		$this->set(compact('eventCategories'));
+		$this->set('data', $eventCategories);
+		return $this->render(null, null, '/elements/ajaxreturn');
 	}
 }
 ?>
