@@ -351,7 +351,7 @@ class UsersController extends AppController {
 	    if ($this->User->save($this->data)) {
 		$message = 'Welcome to the Atlas system.' . "\r\n\r\n";
 		$message .= 'Your username is: ' . substr($this->data['User']['firstname'], 0, 1).$this->data['User']['lastname'] . "\r\n\r\n";
-		$message .= 'Your password is: ' . $this->data['User']['pass'] . "\r\n\r\n";;
+		$message .= 'Your password is: ' . $this->data['User']['pass'] . "\r\n\r\n";
 		$message .= 'You can now login at ' . Configure::read('Admin.URL');
 		$this->Email->from = Configure::read('System.email');
 		$this->Email->to = $this->data['User']['firstname']." ".$this->data['User']['lastname']."<".$this->data['User']['email'].">";
@@ -381,8 +381,16 @@ class UsersController extends AppController {
 	}
 	if (!empty($this->data)) {
 	    if ($this->data['User']['pass'] == '') {
-		unset($this->data['User']['pass']);
+			unset($this->data['User']['pass']);
 	    }
+		else {
+			$message = 'Your password has been changed' . "\r\n\r\n";
+			$message .= 'Your new password is: ' . $this->data['User']['pass'] . "\r\n\r\n";			
+			$this->Email->from = Configure::read('System.email');
+			$this->Email->to = $this->data['User']['firstname']." ".$this->data['User']['lastname']."<".$this->data['User']['email'].">";
+			$this->Email->subject = 'Your Atlas password has been changed.';
+			$this->Email->send($message);		
+		}
 	    if ($this->User->save($this->data)) {
 		$this->Transaction->createUserTransaction('Administrator', null, null,
 			'Edited administrator '. $this->data['User']['firstname'] . ' ' . $this->data['User']['lastname']);

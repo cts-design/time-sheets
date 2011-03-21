@@ -225,7 +225,6 @@ class QueuedDocumentsController extends AppController {
 		    date('Y', strtotime($doc['QueuedDocument']['created'])) . '/' .
 		    date('m', strtotime($doc['QueuedDocument']['created'])) . '/'
 		);
-		debug($params);
 		$this->set($params);		
 	}
 
