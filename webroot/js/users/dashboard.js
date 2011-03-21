@@ -110,6 +110,16 @@ $(document).ready(function () {
 	        		image: "/img/icons/location.png"
 	        	}
 	        },
+	        calendar: {
+	        	icon: {
+	        		image: "/img/icons/calendar.png"
+	        	}
+	        },
+	        featured: {
+	        	icon: {
+	        		image: "/img/icons/featured.png"
+	        	}
+	        },
 	        inTheNews: {
 	        	icon: {
 	        		image: "/img/icons/news.png"
