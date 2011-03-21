@@ -8,6 +8,8 @@ class EventsController extends AppController {
 	}
 	
 	function view() {}
+	
+	function admin_index() {}
 
 	function admin_create() {
 		$params = json_decode($this->params['form']['events'], true);

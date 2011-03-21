@@ -2,8 +2,8 @@ App = function() {
     return {
         init : function() {
             Ext.QuickTips.init();
-            Ext.BLANK_IMAGE_URL = '/img/ext/default/s.gif';
-            
+            Ext.BLANK_IMAGE_URL = '/js/ext/resources/images/default/s.gif';
+
             // this will hold the event categories
             this.calendarStore = new Ext.data.JsonStore({
                 url: '/admin/event_categories/get_all_categories',
@@ -20,17 +20,26 @@ App = function() {
                     direction: 'ASC'
                 }
             });
+
+			var eventProxy = new Ext.data.HttpProxy({
+				api: {
+					create:  { url: '/admin/events/create',  method: 'POST' },
+		   			read:    { url: '/admin/events/read',    method: 'GET'  },
+					update:  { url: '/admin/events/update',  method: 'POST' },
+					destroy: { url: '/admin/events/destroy', method: 'POST' }	
+				}
+			});
 			
 			var reader = new Ext.data.JsonReader({
         		totalProperty: 'total_events',
         		root: 'events',
         		fields: [
-        			{name: 'EventId', mapping: 'id'},
-        			{name: 'CalendarId', mapping: 'event_category_id'},
+        			{name: 'EventId', mapping: 'id', type: 'int'},
+        			{name: 'CalendarId', mapping: 'event_category_id', type: 'int'},
         			{name: 'Title', mapping: 'title'},
-        			{name: 'StartDate', mapping: 'start'},
-        			{name: 'EndDate', mapping: 'end'},
-        			{name: 'IsAllDay', mapping: 'all_day'},
+        			{name: 'StartDate', mapping: 'start', type: 'date', dateFormat: 'Y-m-d H:i:s'},
+        			{name: 'EndDate', mapping: 'end', type: 'date', dateFormat: 'Y-m-d H:i:s'},
+        			{name: 'IsAllDay', mapping: 'all_day', type: 'int'},
         			{name: 'Location', mapping: 'location'},
         			{name: 'Notes', mapping: 'description'},
         			{name: 'Url', mapping: 'event_url'}
@@ -38,21 +47,17 @@ App = function() {
             });
 			
 			var writer = new Ext.data.JsonWriter({
-			    encode: true,
-			    writeAllFields: true
+			    encode: true
 			});
 			
             this.eventStore = new Ext.data.Store({
-            	proxy: new Ext.data.HttpProxy({
-            		prettyUrls: true,
-            		url: '/admin/events/get_all_events'
-            	}),
+            	proxy: eventProxy,
             	reader: reader,
             	writer: writer,
             	autoLoad: true,
             	listeners: {
             		write: function(store, action, result, res, rs) {
-            			Ext.Msg.alert('Test', 'Test');
+
             		}
             	}
             });
@@ -141,8 +146,9 @@ App = function() {
 	                        'eventadd': {
 	                            fn: function(cp, rec){
 	                            	console.log('EVENTADD');
-	                                this.showMsg('Event '+ rec.data.Title +' was added');
-	                            	rec.commit();
+	                                rec.commit();
+									this.showMsg('Event '+ rec.data.Title +' was added');
+
 	                            },
 	                            scope: this
 	                        },
@@ -150,7 +156,6 @@ App = function() {
 	                            fn: function(cp, rec){
 	                            	console.log('EVENTUPDATE');
 	                                this.showMsg('Event '+ rec.data.Title +' was updated');
-	                            	rec.commit();
 	                            },
 	                            scope: this
 	                        },
@@ -334,3 +339,4 @@ App = function() {
 }();
 
 Ext.onReady(App.init, App);
+
