@@ -255,7 +255,7 @@ legend {
 }
 
 .altrow {
-    background-color: #eee;
+    background-color: #f9f9f9;
 }
 
 .open td {
@@ -342,12 +342,37 @@ legend {
 }
 
 #administration {
-    width: 400px;
-    margin: 0 25px 0 20px;
+    width: 350px;
+    margin: 10px 175px 0 25px;
+	border: 1px solid #B5D3DF; 
+	padding: 10px; 
+	background-color:#F1F8FB    
+}
+
+#administration h3 {
+	font-weight: bold;
+	margin-bottom: 10px;
 }
 
 #information {
-    width: 500px;
+	margin: 10px 25px 0 0; 
+	width: 350px;
+}
+
+#information #help {	
+	border: 1px solid #B5D3DF;  
+	height: 100px; 
+	padding: 10px; 
+	background-color:#F1F8FB
+}
+
+#help h3 {
+	margin-bottom: 10px; 
+	font-weight: bold;
+}
+
+#help p {
+	margin-bottom: 5px;
 }
 
 #graph {
@@ -745,7 +770,7 @@ div.actions .ui-button-text {
 }
 
 #permissions {margin: 0 auto; width: 750px;}
-#permissions fieldset{height: 105px; width: 150px; margin-bottom: 10px; margin-right: 15px}
+#permissions fieldset{height: 125px; width: 150px; margin-bottom: 10px; margin-right: 15px}
 #permissions legend{font-weight: bold;}
 #permissions .input{margin: 0}
 

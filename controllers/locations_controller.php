@@ -10,6 +10,13 @@ class LocationsController extends AppController {
 
 	var $name = 'Locations';
 	
+	function beforeFilter(){
+		parent::beforeFilter();
+		if($this->Auth->user() && $this->Auth->user('role_id') >= 2){
+			$this->Auth->allow('admin_get_location_list');
+		}
+	}	
+		
 	function index() {
 		$this->Location->recursive = -1;
 		$locations = $this->Location->find('all', array('conditions' => array('hidden' => '0')));
@@ -22,6 +29,7 @@ class LocationsController extends AppController {
 		$location = $this->Location->read(null, $locId);
 		
 		$this->set(compact('location'));
+
 	}
 
 	function admin_index() {
@@ -72,17 +80,23 @@ class LocationsController extends AppController {
 		$this->redirect(array('action' => 'index'));
 	}
 
-	function admin_get_locations_ajax() {
+	function admin_get_location_list() {
 	    if ($this->RequestHandler->isAjax()) {
-			$options = array('locations' => array());
 			$locations = $this->Location->find('all');
 			$i = 0;
 			foreach($locations as $location) {
-			    $options['locations'][$i]['id'] = $location['Location']['id'];
-			    $options['locations'][$i]['name'] = $location['Location']['name'];
+			    $data['locations'][$i]['id'] = $location['Location']['id'];
+			    $data['locations'][$i]['name'] = $location['Location']['name'];
 			    $i++;
 			}
-			$this->set(compact('options'));
+			if(!empty($data)){
+				$data['success'] = true;
+			}
+			else {
+				$data['success'] = false;
+			}
+			$this->set(compact('data'));
+			return $this->render(null, null, '/elements/ajaxreturn');			
 	    }
 	}
 }

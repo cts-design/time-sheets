@@ -22,7 +22,7 @@
 
 	echo $this->Html->css('reset');
 
-	echo $this->Html->css('ui-darkness/jquery-ui-1.8.7.custom');
+	echo $this->Html->css('ui-redmond/jquery-ui-1.8.10.custom');
 
     echo $this->Html->css('ext/ext-all');
 	

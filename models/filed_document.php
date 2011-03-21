@@ -62,10 +62,10 @@ class FiledDocument extends AppModel {
 		    'message' => 'Admin Id required'
 		)
 	    ),
-	    'location_id' => array(
+	    'filed_location_id' => array(
 		'notEmpty' => array(
 		    'rule' => 'notEmpty',
-		    'message' => 'Location is required'
+		    'message' => 'Filed location is required'
 		)
 	    ),
 	    'id' => array(
@@ -78,19 +78,23 @@ class FiledDocument extends AppModel {
 
     function  beforeDelete($cascade = true) {
 	parent::beforeDelete($cascade);
-	$adminId = $this->data['FiledDocument']['last_activity_admin_id'];
-	$reason = $this->data['FiledDocument']['reason'];
-	$deletedLocation = $this->data['FiledDocument']['deleted_location_id'];
+	if(isset($this->data['FiledDocument'])) {
+		$adminId = $this->data['FiledDocument']['last_activity_admin_id'];
+		$reason = $this->data['FiledDocument']['reason'];
+		$deletedLocation = $this->data['FiledDocument']['deleted_location_id'];		
+	}
 	$delDoc = ClassRegistry::init('DeletedDocument');
 	$this->recursive = -1;
 	$doc = $this->read(null, $this->id);
-	foreach($doc as $k => $v) {
-	    $this->data['DeletedDocument'] = $v;
-	    $this->data['DeletedDocument']['last_activity_admin_id'] = $adminId;
-	    $this->data['DeletedDocument']['deleted_reason'] = $reason;
-	    $this->data['DeletedDocument']['deleted_location_id'] = $deletedLocation;
-	    unset($this->data['DeletedDocument']['modified']);
-	    unset($this->data['FiledDocument']);
+	if($doc) {
+		foreach($doc as $k => $v) {
+		    $this->data['DeletedDocument'] = $v;
+		    $this->data['DeletedDocument']['last_activity_admin_id'] = $adminId;
+		    $this->data['DeletedDocument']['deleted_reason'] = $reason;
+		    $this->data['DeletedDocument']['deleted_location_id'] = $deletedLocation;
+		    unset($this->data['DeletedDocument']['modified']);
+		    unset($this->data['FiledDocument']);
+		}		
 	}
 	if($delDoc->save($this->data)) {
 	    return true;

@@ -15,7 +15,7 @@ class DocumentFilingCategoriesController extends AppController {
     function beforeFilter() {
 		parent::beforeFilter();
 		if($this->Auth->user('role_id') > 1) {
-		    $this->Auth->allow('admin_get_child_cats', 'admin_get_grand_child_cats');
+		    $this->Auth->allow('admin_get_child_cats', 'admin_get_grand_child_cats', 'admin_get_cats');
 		}
     }
 
@@ -213,20 +213,52 @@ class DocumentFilingCategoriesController extends AppController {
 			return $this->render(null, null, '/elements/ajaxreturn');
 		}
 	}
-
+	
+    function admin_get_cats() {
+		if($this->RequestHandler->isAjax()) {
+			if($this->params['url']['parentId'] == 'parent') {
+				$parentId = NULL;
+			}
+			else{
+				$parentId = $this->params['url']['parentId'] ;
+			}
+		    $query = $this->DocumentFilingCategory->find('list', array(
+				'conditions' => array(
+					'DocumentFilingCategory.parent_id' => $parentId,
+					'DocumentFilingCategory.disabled' => 0),
+				'fields' => array('DocumentFilingCategory.id', 'DocumentFilingCategory.name')));
+			$i = 0;
+			foreach($query as $k => $v){
+				$data['cats'][$i]['id'] = $k;
+				$data['cats'][$i]['name'] = $v;
+				$i++;
+			}
+			if(!empty($data['cats'])){
+				$data['success'] = true;
+			}
+			else {
+				$data['success'] = true;
+				$data['cats'] = array();
+			}		
+			$this->set(compact('data'));
+			return $this->render(null, null, '/elements/ajaxreturn');
+		}
+    }	
+	
+	// @TODO remove this function when we switch the entire admin area to EXTJS 
     function admin_get_child_cats() {
 		if($this->RequestHandler->isAjax()) {
 		    $data = $this->DocumentFilingCategory->find('list', array(
 				'conditions' => array(
 					'DocumentFilingCategory.parent_id' => $this->params['url']['id'],
 					'DocumentFilingCategory.disabled' => 0),
-				'fields' => array('DocumentFilingCategory.id', 'DocumentFilingCategory.name')));
-				FireCake::log($data);	
+				'fields' => array('DocumentFilingCategory.id', 'DocumentFilingCategory.name')));	
 			$this->set(compact('data'));
 			return $this->render(null, null, '/elements/ajaxreturn');
 		}
     }
 
+	// @TODO remove this function when we switch the entire admin area to EXTJS
     function admin_get_grand_child_cats() {
 		if($this->RequestHandler->isAjax()) {
 		    $data = $this->DocumentFilingCategory->find('list', array(

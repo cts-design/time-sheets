@@ -22,7 +22,9 @@ class UsersController extends AppController {
 		}		
 		if(isset($this->data['User']['username'])) {
 		    if($this->params['action'] == 'admin_login' || $this->params['action'] == 'self_sign_login') {
-				$user = $this->User->findByUsername($this->data['User']['username']);
+				$user = $this->User->find('first', array('conditions' => array(
+					'username' => $this->data['User']['username'],
+					'password' => Security::hash($this->data['User']['password'], null, true))));			
 				if($user['User']['status'] == 1 || $user['User']['deleted'] == 1) {
 				    $this->Session->setFlash(__('Account is inactive or has been deleted', true), 'flash_failure');
 				    $this->redirect($this->referer());
@@ -349,7 +351,7 @@ class UsersController extends AppController {
 	    if ($this->User->save($this->data)) {
 		$message = 'Welcome to the Atlas system.' . "\r\n\r\n";
 		$message .= 'Your username is: ' . substr($this->data['User']['firstname'], 0, 1).$this->data['User']['lastname'] . "\r\n\r\n";
-		$message .= 'Your password is: ' . $this->data['User']['pass'] . "\r\n\r\n";;
+		$message .= 'Your password is: ' . $this->data['User']['pass'] . "\r\n\r\n";
 		$message .= 'You can now login at ' . Configure::read('Admin.URL');
 		$this->Email->from = Configure::read('System.email');
 		$this->Email->to = $this->data['User']['firstname']." ".$this->data['User']['lastname']."<".$this->data['User']['email'].">";
@@ -379,8 +381,16 @@ class UsersController extends AppController {
 	}
 	if (!empty($this->data)) {
 	    if ($this->data['User']['pass'] == '') {
-		unset($this->data['User']['pass']);
+			unset($this->data['User']['pass']);
 	    }
+		else {
+			$message = 'Your password has been changed' . "\r\n\r\n";
+			$message .= 'Your new password is: ' . $this->data['User']['pass'] . "\r\n\r\n";			
+			$this->Email->from = Configure::read('System.email');
+			$this->Email->to = $this->data['User']['firstname']." ".$this->data['User']['lastname']."<".$this->data['User']['email'].">";
+			$this->Email->subject = 'Your Atlas password has been changed.';
+			$this->Email->send($message);		
+		}
 	    if ($this->User->save($this->data)) {
 		$this->Transaction->createUserTransaction('Administrator', null, null,
 			'Edited administrator '. $this->data['User']['firstname'] . ' ' . $this->data['User']['lastname']);
@@ -496,7 +506,7 @@ class UsersController extends AppController {
 				if($this->params['form']['searchType'] == 'ssn') {
 					if($useDate){
 						$conditions = array(
-							'User.ssn LIKE' => '%'.$this->params['form']['search'].'%', 
+							'RIGHT (User.ssn , 4) LIKE' => '%'.$this->params['form']['search'].'%', 
 							'User.role_id' => 1,
 							'User.created BETWEEN ? AND ?' => array($from, $to)
 							);							
