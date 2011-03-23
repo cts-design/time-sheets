@@ -9,16 +9,10 @@ class EmployersSurveysController extends AppController {
 		if (!empty($this->data)) {
 			$data = json_encode($this->data['EmployersSurvey']);
 			$this->data['EmployersSurvey']['answers'] = $data;
-			
-			App::import('Vendor', 'DebugKit.FireCake');
-			FireCake::log($this->data);
-			
-			die();
-			
 			$this->EmployersSurvey->create();
 			if ($this->EmployersSurvey->save($this->data)) {
 				$this->Session->setFlash(__('The employers survey has been saved', true), 'flash_success');
-				$this->redirect(array('action' => 'index'));
+				$this->redirect(array('action' => 'success'));
 			} else {
 				$this->Session->setFlash(__('The employers survey could not be saved. Please, try again.', true), 'flash_failure');
 			}
