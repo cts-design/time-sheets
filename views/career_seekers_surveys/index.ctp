@@ -15,28 +15,29 @@
 														'between' => '</p><p class="left">',
 														'after' => '</p>')) ?>
 			<br class="clear" />
-			<?php echo $form->input('date_you_worked_with_the_'. strtolower(Configure::read('Company.name')) .'_business_services_team_or_the_'.strtolower(Configure::read('Company.name')).'_website', array('type' => 'date', 
+			<?php echo $form->input('date_you_worked_with_the_business_services_team_or_the_website', array('type' => 'date', 
 												  'label' => 'Date you worked with the ' . Configure::read('Company.name') . ' Business Services Team or the ' . Configure::read('Company.name') . ' Website',
 												  'dateFormat' => 'MDY',
+												  'maxYear' => date('Y'),
 												  'before' => '<p class="left">',
 												  'between' => '</p><p class="left date">',
 												  'after' => '</p>',
 												  'div' => 'input date tall')) ?>
 			<br class="clear" />
 			<div class="input select tall">
-				<?php $options = array('WorkNet Pinellas Website' => 'WorkNet Pinellas Website', 
-									   'Tarpon Springs Satellite Center' => 'Tarpon Springs Satellite Center',
-									   'Clearwater One-Stop Center' => 'Clearwater One-Stop Center',
-									   'Gulf-to-Bay One-Stop Center' => 'Gulf-to-Bay One-Stop Center',
-									   'PTEC Clearwater Satellite Center' => 'PTEC Clearwater Satellite Center',
-									   'Gandy Boulevard One-Stop Center' => 'Gandy Boulevard One-Stop Center',
-									   'St. Petersburg One-Stop Center' => 'St. Petersburg One-Stop Center',
-									   'St. Petersburg Satellite Center' => 'St. Petersburg Satellite Center') ?>
+				<?php $options = array('Location 1' => 'Location 1', 
+									   'Location 2' => 'Location 2', 
+									   'Location 3' => 'Location 3', 
+									   'Location 4' => 'Location 4', 
+									   'Location 5' => 'Location 5', 
+									   'Location 6' => 'Location 6', 
+									   'Location 7' => 'Location 7', 
+									   'Location 8' => 'Location 8', ) ?>
 				<p class="left label">
 					<?php echo $form->label(null, 'Are your comments related to the ' . Configure::read('Company.name') . ' Business Services Team or the ' . Configure::read('Company.name') . ' Website?') ?>
 				</p>
 				<p class="left">
-					<?php echo $form->select('are_your_comments_related_to_the_' . strtolower(Configure::read('Company.name')) . '_business_services_team_or_the_' . strtolower(Configure::read('Company.name')) . '_website', $options); ?>
+					<?php echo $form->select('are_your_comments_related_to_the_business_services_team_or_the_website', $options); ?>
 				</p>
 			</div>
 			<br class="clear" />
@@ -45,7 +46,7 @@
 					<?php echo $form->label(null, 'Name(s) of ' . Configure::read('Company.name') . ' Staff (if any) who assisted you') ?>
 				</p>
 				<p class="left">
-					<?php echo $form->textarea('names_of_' . strtolower(Configure::read('Company.name')) . '_staff_(if_any)_who_assisted_you') ?>
+					<?php echo $form->textarea('names_of_staff_who_assisted_you') ?>
 				</p>
 			</div>
 			<br class="clear" />
@@ -54,22 +55,52 @@
 			<div class="input rating tall">
 				<?php echo $form->label(null, '1) Overall, how satisfied are you with the services you received from  ' . Configure::read('Company.name') . '?') ?>
 				<br />
-				<?php $options = array('1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'No Answer/Don\'t Know') ?>
-				<?php echo $form->radio('overall,_how_satisfied_are_you_with_the_services_you_received_from_' . strtolower(Configure::read('Company.name')), $options, array('legend' => false)) ?>
+				<?php $options = array('1' => '1',
+									   '2' => '2', 
+									   '3' => '3', 
+									   '4' => '4', 
+									   '5' => '5', 
+									   '6' => '6', 
+									   '7' => '7', 
+									   '8' => '8', 
+									   '9' => '9', 
+									   '10' => '10', 
+									   'No Answer/Don\'t Know' => 'No Answer/Don\'t Know') ?>
+				<?php echo $form->radio('overall_how_satisfied_are_you_with_the_services_you_received', $options, array('legend' => false)) ?>
 			</div>
 			
 			<div class="input rating tall">
 				<?php echo $form->label(null, '2) Think about what you expected from  ' . Configure::read('Company.name') . '. How well did the services you received meet your expectations?') ?>
 				<br />
-				<?php $options = array('1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'No Answer/Don\'t Know') ?>
-				<?php echo $form->radio('think_about_what_you_expected_from_' . strtolower(Configure::read('Company.name')) . '_how_well_did_the_services_you_received_meet_your_expectations', $options, array('legend' => false)) ?>
+				<?php $options = array('1' => '1',
+									   '2' => '2', 
+									   '3' => '3', 
+									   '4' => '4', 
+									   '5' => '5', 
+									   '6' => '6', 
+									   '7' => '7', 
+									   '8' => '8', 
+									   '9' => '9', 
+									   '10' => '10', 
+									   'No Answer/Don\'t Know' => 'No Answer/Don\'t Know') ?>
+				<?php echo $form->radio('think_about_what_you_expected', $options, array('legend' => false)) ?>
 			</div>
 			
 			<div class="input rating tall">
 				<?php echo $form->label(null, '3) Think about the ideal services for other people in your circumstances. How well did the services you received from ' . Configure::read('Company.name') . '  or the ' . Configure::read('Company.name') . ' website compare to your ideal?') ?>
 				<br />
-				<?php $options = array('1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'No Answer/Don\'t Know') ?>
-				<?php echo $form->radio('think_about_the_ideal_services_for_other_people_in_your_circumstances_how_well_did_the_services_you-received_from_' . strtolower(Configure::read('Company.name')) . '_or_the_' . strtolower(Configure::read('Company.name')) . '_website_compare_to_your_ideal', $options, array('legend' => false)) ?>
+				<?php $options = array('1' => '1',
+									   '2' => '2', 
+									   '3' => '3', 
+									   '4' => '4', 
+									   '5' => '5', 
+									   '6' => '6', 
+									   '7' => '7', 
+									   '8' => '8', 
+									   '9' => '9', 
+									   '10' => '10', 
+									   'No Answer/Don\'t Know' => 'No Answer/Don\'t Know') ?>
+				<?php echo $form->radio('think_about_the_ideal_services_for_other_people', $options, array('legend' => false)) ?>
 			</div>
 			
 			<div class="input supertall">
@@ -77,13 +108,13 @@
 					<?php echo $form->label(null, 'What programs are you currently participating in? (please check all that apply) :') ?><br />
 				</p>
 				<p class="left date">
-					<?php echo $form->checkbox('program_food_stamps') ?><?php echo $form->label(null, 'Food Stamps (FSET)') ?><br />
-					<?php echo $form->checkbox('program_unemployment_comp') ?><?php echo $form->label(null, 'Unemployment Compensation') ?><br />
-					<?php echo $form->checkbox('program_wia') ?><?php echo $form->label(null, 'WIA') ?><br />
-					<?php echo $form->checkbox('program_vocational_rehab') ?><?php echo $form->label(null, 'Vocational Rehabilitation') ?><br />
-					<?php echo $form->checkbox('program_welfare_transition') ?><?php echo $form->label(null, 'Welfare Transition (AFDC/TANF)') ?><br />
-					<?php echo $form->checkbox('program_veterans_services') ?><?php echo $form->label(null, 'Veterans Services') ?><br />
-					<?php echo $form->checkbox('program_universal_services') ?><?php echo $form->label(null, 'Universal Services (Resource Room, Job Search)') ?><br />
+					<?php echo $form->checkbox('food_stamps') ?><?php echo $form->label(null, 'Food Stamps (FSET)') ?><br />
+					<?php echo $form->checkbox('unemployment_comp') ?><?php echo $form->label(null, 'Unemployment Compensation') ?><br />
+					<?php echo $form->checkbox('wia') ?><?php echo $form->label(null, 'WIA') ?><br />
+					<?php echo $form->checkbox('vocational_rehab') ?><?php echo $form->label(null, 'Vocational Rehabilitation') ?><br />
+					<?php echo $form->checkbox('welfare_transition') ?><?php echo $form->label(null, 'Welfare Transition (AFDC/TANF)') ?><br />
+					<?php echo $form->checkbox('veterans_services') ?><?php echo $form->label(null, 'Veterans Services') ?><br />
+					<?php echo $form->checkbox('universal_services') ?><?php echo $form->label(null, 'Universal Services (Resource Room, Job Search)') ?><br />
 				</p>
 			</div>
 			<br class="clear" />
@@ -107,7 +138,7 @@
 					<?php echo $form->label(null, 'How did you learn about ' . Configure::read('Company.name') . ' (Please choose one)') ?>
 				</p>
 				<p class="left">
-					<?php echo $form->select('how_did_you_learn_about_' . strtolower(Configure::read('Company.name')) . '_(please_choose_one)', $options) ?>
+					<?php echo $form->select('how_did_you_learn', $options) ?>
 				</p>
 			</div>
 			<br class="clear" />
@@ -116,7 +147,7 @@
 					<?php echo $form->label(null, 'If you chose "Other" above, please eloborate if possible') ?>
 				</p>
 				<p class="left">
-					<?php echo $form->textarea('if_you_chose_Other_above,_please_eloborate_if_possible') ?>
+					<?php echo $form->textarea('if_you_chose_Other') ?>
 				</p>
 			</div>
 			<div class="input text">
@@ -243,7 +274,7 @@
 					<label>Please share any comments or suggestions you have regarding <?php Configure::read('Company.name') ?>, our Business Services or the <?php Configure::read('Company.name') ?> website. Please enter your name, phone number and email address here, if you would like our staff to contact you.</label>
 				</p>
 				<p class="left">
-					<?php echo $form->textarea('please_share_any_comments_or_suggestions_you_have_regarding_' . strtolower(Configure::read('Company.name')) . ',_our_business_services_or_the_' . strtolower(Configure::read('Company.name')) . '_website_please_enter_your_name,_phone_number_and_email_address_here,_if_you_would_like_our_staff_to_contact_you') ?>
+					<?php echo $form->textarea('please_share_any_comments') ?>
 				</p>
 			</div>
 			<br class="clear" />
