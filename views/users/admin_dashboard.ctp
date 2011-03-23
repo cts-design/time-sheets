@@ -40,8 +40,8 @@
                             	<li rel="surveys" id="surveys">
                             		<a>Surveys</a>
                             		<ul>
-										<li rel="surveys"><?php echo $html->link('Career Seeker Survey', array('controller' => 'press_releases', 'action' => 'index')); ?></li>
-                                		<li rel="surveys"><?php echo $html->link('Employer Survey', array('controller' => 'chairman_reports', 'action' => 'index')); ?></li>                            			
+										<li rel="surveys"><?php echo $html->link('Career Seekers Survey', array('controller' => 'career_seekers_surveys', 'action' => 'index')); ?></li>
+                                		<li rel="surveys"><?php echo $html->link('Employers Survey', array('controller' => 'employers_surveys', 'action' => 'index')); ?></li>                            			
                             		</ul>
                             	</li>
                             	<li rel="calendar"><?php echo $html->link('Calendar of Events', array('controller' => 'events', 'action' => 'index')); ?></li>
