@@ -11,7 +11,6 @@ class TestCareerSeekersSurveysController extends CareerSeekersSurveysController 
 }
 
 class CareerSeekersSurveysControllerTestCase extends AtlasTestCase {
-	var $fixtures = array('app.career_seekers_survey');
 
 	function startTest() {
 		$this->CareerSeekersSurveys =& new TestCareerSeekersSurveysController();
@@ -24,7 +23,10 @@ class CareerSeekersSurveysControllerTestCase extends AtlasTestCase {
 	}
 
 	function testIndex() {
-
+		$result = $this->testAction('/career_seekers_surveys', array('return' => 'view'));
+		//debug($result);
+		$this->assertPattern('/survey careerSeekersSurveys/', $result);
+		$this->assertPattern('/CareerSeekersSurveyIndexForm/', $result);
 	}
 
 	function testAdd() {
@@ -54,6 +56,9 @@ class CareerSeekersSurveysControllerTestCase extends AtlasTestCase {
 	function testAdminDelete() {
 
 	}
-
+	
+	function testAdminDeleteInvalidData() {
+		
+	}
 }
 ?>
