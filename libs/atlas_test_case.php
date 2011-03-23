@@ -13,6 +13,7 @@ class AtlasTestCase extends CakeTestCase {
 	    'app.aco',
 	    'app.aro',
 	    'app.aros_aco',
+	    'career_seekers_survey',
 	    'chairman_report',
 	    'deleted_document',
 	    'document_filing_category',
