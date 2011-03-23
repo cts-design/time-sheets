@@ -3,9 +3,7 @@ class CareerSeekersSurveysController extends AppController {
 
 	var $name = 'CareerSeekersSurveys';
 
-	function index() {
-
-	}
+	function index() {}
 
 	function add() {
 		if (!empty($this->data)) {
