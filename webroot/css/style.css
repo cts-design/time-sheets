@@ -327,3 +327,123 @@ strong {
 	margin: 0 0 18px;
 	padding: 25px 0;
 }
+
+.survey form {
+	margin: 18px 0;
+}
+
+.survey fieldset {
+	border: 1px solid #BBB;
+	padding: 8px 18px;
+}
+.survey fieldset legend {
+	font-style: italic;
+	margin: 0 0 0 15px;
+}
+
+.survey .input {
+	border-bottom: 1px solid #dedede;
+	padding: 0 0 10px;
+}
+
+.survey label {
+	font-weight: bold;
+}
+
+.survey .rating label {
+	display: inline;
+}
+
+.survey .rating input {
+	width: 12px;
+}
+
+fieldset {
+    padding: 10px;
+    border: 1px solid #000;
+}
+
+legend {
+    margin-left: 10px;
+}
+
+.input {
+    height: 18px;
+
+}
+
+.input label {
+    font-weight: bold;
+}
+
+.input input  {
+    width: 200px;
+}
+
+.input input[type=submit] {
+    width: 100px;
+    padding: 2px;
+}
+
+.input input[type=submit]:hover {
+    cursor: pointer;
+}
+
+br.clear {
+	clear: both;
+}
+
+.form .tall {
+	height: 50px;
+}
+
+.form .supertall {
+	padding: 18px 0 0;
+	height: 150px;
+}
+
+.form fieldset {
+    display: inline;
+    min-width: 500px;
+}
+
+.form legend {
+    margin-bottom: 5px;
+}
+.form p{
+    line-height: 25px;
+    margin-right: 10px;
+    width: 250px;
+}
+.form p.date {
+	width: 400px;
+}
+
+.form .wide {
+width: 100%
+}
+
+.form .label {
+    text-align: right;
+}
+
+.form label {
+	line-height: 15px;
+}
+
+.survey p.wide {
+	padding: 0 0 10px;
+	border-bottom: 1px solid #dedede;
+}
+
+.input input[type=radio] {
+	margin: 0 4px 0 18px;
+}
+
+.input input[type=checkbox] {
+	width: 20px;
+}
+
+.survey .rating {
+	padding: 5px 0 0;
+}
