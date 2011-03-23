@@ -7,6 +7,14 @@ class EmployersSurveysController extends AppController {
 
 	function add() {
 		if (!empty($this->data)) {
+			$data = json_encode($this->data['EmployersSurvey']);
+			$this->data['EmployersSurvey']['answers'] = $data;
+			
+			App::import('Vendor', 'DebugKit.FireCake');
+			FireCake::log($this->data);
+			
+			die();
+			
 			$this->EmployersSurvey->create();
 			if ($this->EmployersSurvey->save($this->data)) {
 				$this->Session->setFlash(__('The employers survey has been saved', true), 'flash_success');
@@ -24,7 +32,34 @@ class EmployersSurveysController extends AppController {
 		$this->set('employersSurveys', $this->paginate());
 	}
 
-	function admin_read() {}
-	function admin_destroy() {}
+	function admin_read() {
+		$surveys = $this->EmployersSurvey->find('all');
+		$i = 0;
+		foreach ($surveys as $key => $value) {
+			$value['EmployersSurvey']['answers'] = json_decode($value['EmployersSurvey']['answers'], true);
+			$data['surveys'][] = $value['EmployersSurvey'];
+			debug($value['EmployersSurvey']['answers']);
+			$i++;
+		}
+		
+		debug($data);
+		
+		$this->set('data', $data);
+		return $this->render(null, null, '/elements/ajaxreturn');
+	}
+	
+	function admin_destroy() {
+		$surveyId = str_replace("\"", "", $this->params['form']['surveys']);
+		$surveyId = intval($surveyId);
+
+		if ($this->EmployersSurvey->delete($surveyId)) {
+			$data['success'] = true;
+		} else {
+			$data['success'] = false;
+		}
+		
+		$this->set('data', $data);
+		return $this->render(null, null, '/elements/ajaxreturn');
+	}
 }
 ?>
