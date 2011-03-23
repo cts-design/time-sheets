@@ -107,22 +107,6 @@
 									   'No Answer/Don\'t Know' => 'No Answer/Don\'t Know') ?>
 				<?php echo $form->radio('think_about_the_ideal_services_for_other_people', $options, array('legend' => false)) ?>
 			</div>
-			
-			<div class="input supertall">
-				<p class="left">
-					<?php echo $form->label(null, 'What programs are you currently participating in? (please check all that apply) :') ?><br />
-				</p>
-				<p class="left date">
-					<?php echo $form->checkbox('food_stamps') ?><?php echo $form->label(null, 'Food Stamps (FSET)') ?><br />
-					<?php echo $form->checkbox('unemployment_comp') ?><?php echo $form->label(null, 'Unemployment Compensation') ?><br />
-					<?php echo $form->checkbox('wia') ?><?php echo $form->label(null, 'WIA') ?><br />
-					<?php echo $form->checkbox('vocational_rehab') ?><?php echo $form->label(null, 'Vocational Rehabilitation') ?><br />
-					<?php echo $form->checkbox('welfare_transition') ?><?php echo $form->label(null, 'Welfare Transition (AFDC/TANF)') ?><br />
-					<?php echo $form->checkbox('veterans_services') ?><?php echo $form->label(null, 'Veterans Services') ?><br />
-					<?php echo $form->checkbox('universal_services') ?><?php echo $form->label(null, 'Universal Services (Resource Room, Job Search)') ?><br />
-				</p>
-			</div>
-			<br class="clear" />
 			<div class="input select tall">
 				<?php $options = array('Billboard' => 'Billboard', 
 									   'Brochure' => 'Brochure', 
