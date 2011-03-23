@@ -174,6 +174,9 @@ class AppController extends Controller {
 
     // @TODO remove before production 
 	function build_acl() {
+		$defaultExecutionTime = ini_get('max_execution_time');
+		ini_set('max_execution_time', 300); // 5 minutes
+		
 		if(!Configure::read('debug')) {
 			return $this->_stop();
 		}
@@ -256,6 +259,9 @@ class AppController extends Controller {
 				}
 			}
 		}
+
+		ini_set('max_execution_time', $defaultExecutionTime); // Set max exec. back its original value
+
 		if(count($log) > 0) {
 			debug($log);
 		}
