@@ -23,6 +23,11 @@ class CareerSeekersSurveysController extends AppController {
 	
 	function success() {}
 	
+	function admin_index() {
+		$this->CareerSeekersSurvey->recursive = 0;
+		$this->set('careerSeekersSurveys', $this->paginate());
+	}
+	
 	function admin_read() {
 		$surveys = $this->CareerSeekersSurvey->find('all');
 		$i = 0;
@@ -39,9 +44,19 @@ class CareerSeekersSurveysController extends AppController {
 		return $this->render(null, null, '/elements/ajaxreturn');
 	}
 	
-	function admin_index() {
-		$this->CareerSeekersSurvey->recursive = 0;
-		$this->set('careerSeekersSurveys', $this->paginate());
+	function admin_destroy() {
+		$surveyId = str_replace("\"", "", $this->params['form']['surveys']);
+		$surveyId = intval($surveyId);
+
+		if ($this->CareerSeekersSurvey->delete($surveyId)) {
+			$data['success'] = true;
+		} else {
+			$data['success'] = false;
+		}
+		
+		$this->set('data', $data);
+		return $this->render(null, null, '/elements/ajaxreturn');
 	}
+
 }
 ?>
