@@ -2,14 +2,15 @@
 
 /**
  * @author Daniel Nolan
- * @copyright Complete Technology Solutions 2010
+ * @copyright Complete Technology Solutions 2011
  * @link http://ctsfla.com
  * @package ATLAS V3
  */
+
 class AppController extends Controller {
 	
     var $helpers = array('Html', 'Form', 'Session', 'Js' => array('Jquery'), 'Time', 'Crumb', 'Nav');
-    var $components = array( /*'DebugKit.Toolbar',*/'Session', 'RequestHandler', 'Auth', 'Acl', 'Cookie', 'Transaction');
+    var $components = array('Session', 'RequestHandler', 'Auth', 'Acl', 'Cookie', 'Transaction', 'Security');
 	var $genders = array(
 		'male' => 'Male',
 		'female' => 'Female');
@@ -98,14 +99,17 @@ class AppController extends Controller {
 		}
 		if (isset($this->params['prefix']) && $this->params['prefix'] == 'admin') {
 		    $this->layout = 'admin';
+		   	$this->Security->blackHoleCallback = 'forceSSL';
+		    $this->Security->requireSecure();
 		    if($this->Auth->user('role_id') == 1 ) {
-			$this->Session->destroy();
-			$this->Session->setFlash(__('You are not authorized to access that location', true), 'flash_failure');
-			$this->redirect(array('controller' => 'users', 'action' => 'self_sign_login', 'admin' => false));
+				$this->Session->destroy();
+				$this->Session->setFlash(__('You are not authorized to access that location', true), 'flash_failure');
+				$this->redirect(array('controller' => 'users', 'action' => 'self_sign_login', 'admin' => false));
 		    }
 		    $this->Auth->loginAction = array('admin' => true, 'controller' => 'users', 'action' => 'login');
 	
-		} else {
+		} 
+		else {
 		   $this->Auth->loginAction = array('admin' => false, 'controller' => 'users', 'action' => 'self_sign_login');
 		}
 		$this->Auth->flashElement = 'flash_auth';
@@ -118,34 +122,38 @@ class AppController extends Controller {
 	        }
     }
 
+	function forceSSL() {
+		$this->redirect('https://' . env('SERVER_NAME') . $this->here);
+	}
+
 	function admin_auto_complete_first_ajax() {
-		if($this -> RequestHandler -> isAjax()) {
+		if($this->RequestHandler->isAjax()) {
 			Configure::write('debug', 0);
-			$this -> loadModel('User');
-			$query = $this -> User -> find('all', array('conditions' => array('User.role_id' => 1, 'User.firstname LIKE' => '%' . $this -> params['url']['term'] . '%')));
-			$this -> _setAutoCompleteOptions($query);
-			$this -> render('/elements/app_controller/auto_complete_ajax');
+			$this->loadModel('User');
+			$query = $this->User->find('all', array('conditions' => array('User.role_id' => 1, 'User.firstname LIKE' => '%' . $this->params['url']['term'] . '%')));
+			$this->_setAutoCompleteOptions($query);
+			$this->render('/elements/app_controller/auto_complete_ajax');
 		}
 	}
 
 	function admin_auto_complete_last_ajax() {
-		if($this -> RequestHandler -> isAjax()) {
+		if($this->RequestHandler->isAjax()) {
 			Configure::write('debug', 0);
-			$this -> loadModel('User');
-			$query = $this -> User -> find('all', array('conditions' => array('User.role_id' => 1, 'User.lastname LIKE' => '%' . $this -> params['url']['term'] . '%')));
-			$this -> _setAutoCompleteOptions($query);
-			$this -> render('/elements/app_controller/auto_complete_ajax');
+			$this->loadModel('User');
+			$query = $this->User->find('all', array('conditions' => array('User.role_id' => 1, 'User.lastname LIKE' => '%' . $this->params['url']['term'] . '%')));
+			$this->_setAutoCompleteOptions($query);
+			$this->render('/elements/app_controller/auto_complete_ajax');
 		}
 	}
 
-    function admin_auto_complete_ssn_ajax() {
-		if($this -> RequestHandler -> isAjax()) {
+	function admin_auto_complete_ssn_ajax() {
+		if($this->RequestHandler->isAjax()) {
 			Configure::write('debug', 0);
-			$this -> loadModel('User');
-			$query = $this -> User -> find('all', array('conditions' => array('User.role_id' => 1, 'User.ssn LIKE' => '%' . $this -> params['url']['term'] . '%')));
+			$this->loadModel('User');
+			$query = $this->User->find('all', array('conditions' => array('User.role_id' => 1, 'User.ssn LIKE' => '%' . $this->params['url']['term'] . '%')));
 
-			$this -> _setAutoCompleteOptions($query);
-			$this -> render('/elements/app_controller/auto_complete_ajax');
+			$this->_setAutoCompleteOptions($query);
+			$this->render('/elements/app_controller/auto_complete_ajax');
 		}
 	}
 
@@ -165,27 +173,28 @@ class AppController extends Controller {
 	}
 
     // @TODO remove before production 
-    function build_acl() {
-		if (!Configure::read('debug')) {
+	function build_acl() {
+		if(!Configure::read('debug')) {
 			return $this->_stop();
 		}
 		$log = array();
 
-		$aco =& $this->Acl->Aco;
+		$aco = &$this->Acl->Aco;
 		$root = $aco->node('controllers');
-		if (!$root) {
-			$aco->create(array('parent_id' => null, 'model' => null, 'alias' => 'controllers'));
+		if(!$root) {
+			$aco->create( array('parent_id' => null, 'model' => null, 'alias' => 'controllers'));
 			$root = $aco->save();
 			$root['Aco']['id'] = $aco->id;
 			$log[] = 'Created Aco node for controllers';
-		} else {
+		}
+		else {
 			$root = $root[0];
 		}
 
 		App::import('Core', 'File');
 		$Controllers = Configure::listObjects('controller');
 		$appIndex = array_search('App', $Controllers);
-		if ($appIndex !== false ) {
+		if($appIndex !== false) {
 			unset($Controllers[$appIndex]);
 		}
 		$baseMethods = get_class_methods('Controller');
@@ -195,115 +204,122 @@ class AppController extends Controller {
 		$Controllers = array_merge($Controllers, $Plugins);
 
 		// look at each controller in app/controllers
-		foreach ($Controllers as $ctrlName) {
+		foreach($Controllers as $ctrlName) {
 			$methods = $this->_getClassMethods($this->_getPluginControllerPath($ctrlName));
 
 			// Do all Plugins First
-			if ($this->_isPlugin($ctrlName)){
-				$pluginNode = $aco->node('controllers/'.$this->_getPluginName($ctrlName));
-				if (!$pluginNode) {
-					$aco->create(array('parent_id' => $root['Aco']['id'], 'model' => null, 'alias' => $this->_getPluginName($ctrlName)));
+			if($this->_isPlugin($ctrlName)) {
+				$pluginNode = $aco->node('controllers/' . $this->_getPluginName($ctrlName));
+				if(!$pluginNode) {
+					$aco->create( array('parent_id' => $root['Aco']['id'], 'model' => null, 'alias' => $this->_getPluginName($ctrlName)));
 					$pluginNode = $aco->save();
 					$pluginNode['Aco']['id'] = $aco->id;
 					$log[] = 'Created Aco node for ' . $this->_getPluginName($ctrlName) . ' Plugin';
 				}
 			}
 			// find / make controller node
-			$controllerNode = $aco->node('controllers/'.$ctrlName);
-			if (!$controllerNode) {
-				if ($this->_isPlugin($ctrlName)){
+			$controllerNode = $aco->node('controllers/' . $ctrlName);
+			if(!$controllerNode) {
+				if($this->_isPlugin($ctrlName)) {
 					$pluginNode = $aco->node('controllers/' . $this->_getPluginName($ctrlName));
-					$aco->create(array('parent_id' => $pluginNode['0']['Aco']['id'], 'model' => null, 'alias' => $this->_getPluginControllerName($ctrlName)));
+					$aco->create( array('parent_id' => $pluginNode['0']['Aco']['id'], 'model' => null, 'alias' => $this->_getPluginControllerName($ctrlName)));
 					$controllerNode = $aco->save();
 					$controllerNode['Aco']['id'] = $aco->id;
 					$log[] = 'Created Aco node for ' . $this->_getPluginControllerName($ctrlName) . ' ' . $this->_getPluginName($ctrlName) . ' Plugin Controller';
-				} else {
-					$aco->create(array('parent_id' => $root['Aco']['id'], 'model' => null, 'alias' => $ctrlName));
+				}
+				else {
+					$aco->create( array('parent_id' => $root['Aco']['id'], 'model' => null, 'alias' => $ctrlName));
 					$controllerNode = $aco->save();
 					$controllerNode['Aco']['id'] = $aco->id;
 					$log[] = 'Created Aco node for ' . $ctrlName;
 				}
-			} else {
+			}
+			else {
 				$controllerNode = $controllerNode[0];
 			}
 
 			//clean the methods. to remove those in Controller and private actions.
-			foreach ($methods as $k => $method) {
-				if (strpos($method, '_', 0) === 0) {
+			foreach($methods as $k => $method) {
+				if(strpos($method, '_', 0) === 0) {
 					unset($methods[$k]);
-					continue;
+					continue ;
 				}
-				if (in_array($method, $baseMethods)) {
+				if(in_array($method, $baseMethods)) {
 					unset($methods[$k]);
-					continue;
+					continue ;
 				}
-				$methodNode = $aco->node('controllers/'.$ctrlName.'/'.$method);
-				if (!$methodNode) {
-					$aco->create(array('parent_id' => $controllerNode['Aco']['id'], 'model' => null, 'alias' => $method));
+				$methodNode = $aco->node('controllers/' . $ctrlName . '/' . $method);
+				if(!$methodNode) {
+					$aco->create( array('parent_id' => $controllerNode['Aco']['id'], 'model' => null, 'alias' => $method));
 					$methodNode = $aco->save();
-					$log[] = 'Created Aco node for '. $method;
+					$log[] = 'Created Aco node for ' . $method;
 				}
 			}
 		}
-		if(count($log)>0) {
+		if(count($log) > 0) {
 			debug($log);
 		}
 	}
 
-	function _getClassMethods($ctrlName = null) {
+	function _getClassMethods($ctrlName =null) {
 		App::import('Controller', $ctrlName);
-		if (strlen(strstr($ctrlName, '.')) > 0) {
+		if(strlen(strstr($ctrlName, '.')) > 0) {
 			// plugin's controller
 			$num = strpos($ctrlName, '.');
-			$ctrlName = substr($ctrlName, $num+1);
+			$ctrlName = substr($ctrlName, $num + 1);
 		}
 		$ctrlclass = $ctrlName . 'Controller';
 		$methods = get_class_methods($ctrlclass);
 
 		// Add scaffold defaults if scaffolds are being used
 		$properties = get_class_vars($ctrlclass);
-		if (array_key_exists('scaffold',$properties)) {
+		if(array_key_exists('scaffold', $properties)) {
 			if($properties['scaffold'] == 'admin') {
 				$methods = array_merge($methods, array('admin_add', 'admin_edit', 'admin_index', 'admin_view', 'admin_delete'));
-			} else {
+			}
+			else {
 				$methods = array_merge($methods, array('add', 'edit', 'index', 'view', 'delete'));
 			}
 		}
 		return $methods;
 	}
 
-	function _isPlugin($ctrlName = null) {
+	function _isPlugin($ctrlName =null) {
 		$arr = String::tokenize($ctrlName, '/');
-		if (count($arr) > 1) {
+		if(count($arr) > 1) {
 			return true;
-		} else {
+		}
+		else {
 			return false;
 		}
 	}
 
-	function _getPluginControllerPath($ctrlName = null) {
+	function _getPluginControllerPath($ctrlName =null) {
 		$arr = String::tokenize($ctrlName, '/');
-		if (count($arr) == 2) {
+		if(count($arr) == 2) {
 			return $arr[0] . '.' . $arr[1];
-		} else {
+		}
+		else {
 			return $arr[0];
 		}
 	}
 
-	function _getPluginName($ctrlName = null) {
+	function _getPluginName($ctrlName =null) {
 		$arr = String::tokenize($ctrlName, '/');
-		if (count($arr) == 2) {
+		if(count($arr) == 2) {
 			return $arr[0];
-		} else {
+		}
+		else {
 			return false;
 		}
 	}
 
-	function _getPluginControllerName($ctrlName = null) {
+	function _getPluginControllerName($ctrlName =null) {
 		$arr = String::tokenize($ctrlName, '/');
-		if (count($arr) == 2) {
+		if(count($arr) == 2) {
 			return $arr[1];
-		} else {
+		}
+		else {
 			return false;
 		}
 	}
@@ -357,6 +373,5 @@ class AppController extends Controller {
 		}
 		return $arr;
 	}
-
 
 }
