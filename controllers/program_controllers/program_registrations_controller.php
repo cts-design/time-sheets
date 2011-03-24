@@ -3,10 +3,16 @@
 class ProgramRegistrationsController extends AppController {
 	
 	function beforeFilter() {
-		parent::beforeFilter();	
-		$this->ProgramRegistration->modifyValidate(array(
-		'vpk_program_year' => array('rule' => 'notEmpty')));
-	}
+		parent::beforeFilter();
+		$this->ProgramRegistration->Program->ProgramField->recursive = -1;
+		$query = $this->ProgramRegistration->Program->ProgramField->findAllByProgramId(1);
+		$fields = Set::classicExtract($query, '{n}.ProgramField');
+		foreach($fields as $k => $v) {
+			if(!empty($v['validation'])) 
+				$validate[$v['name']] = json_decode($v['validation'], true); 
+		}
+		$this->ProgramRegistration->modifyValidate($validate);
+	}	
 	
 	function index() {
 		if(!empty($this->data)) {
