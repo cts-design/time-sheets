@@ -1,4 +1,7 @@
 <?php echo $this->Html->script('flowplayer-3.2.6.min', array('inline' => false)) ?>
+
+<?php echo (!empty($program['Program']['instructions']) ? '<p>' . $program['Program']['instructions'] . '</p>' : '' ) ?>
+<br />
 <div id="player" style="width:425px;height:300px;"></div>
 <script>
 flowplayer("player", "/swf/flowplayer-3.2.7.swf", {
