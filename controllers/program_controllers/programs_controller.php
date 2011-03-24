@@ -8,7 +8,8 @@ class ProgramsController extends AppController {
 			$this->redirect('/');
 		}
 		$program = $this->Program->findById('1');
-		$this->set(compact('program'));
+		$title_for_layout = $program['Program']['name'];
+		$this->set(compact('program', 'title_for_layout'));
 	}
 		
 	function admin_index() {
