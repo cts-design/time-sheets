@@ -1,86 +1,121 @@
-<?php
-/**
- * @author Daniel Nolan
- * @copyright Complete Technology Solutions 2010
- * @link http://ctsfla.com
- * @package ATLAS V3
- */
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-	<?php echo $this->Html->charset(); ?>
-	<title>
-	    <?php __('ATLAS V3'); ?>
-	    <?php echo $title_for_layout; ?>
-	</title>
-	<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.2.0/build/cssreset/reset-min.css" />
-	<?php
-	echo $this->Html->meta('icon');
+        <!-- meta -->
+        <?php echo $this->Html->charset(); ?>
+        <meta name="description" content="" />
+        <meta name="KEYWORDS" content="" />
+        <meta name="Copyright" content="" />
+        <meta name="Language" content="English" />
 
-	echo $this->Html->css('ui-darkness/jquery-ui-1.8.5.custom');
+        <!-- css -->
+        <?php
+		    echo $this->Html->css('ui-darkness/jquery-ui-1.8.5.custom');
+			echo $this->Html->css('screen');
+			echo $this->Html->script('jquery');
+			echo $this->Html->script('jquery-ui-1.8.5.custom.min');
+			echo $scripts_for_layout;
+		?>
 
-	echo $this->Html->css('style');
+        <!-- [if IE]>
+            <link rel="stylesheet" type="text/css" href="css/ie.css" />
+        <![endif]-->
 
-	echo $this->Html->script('jquery');
-
-	echo $this->Html->script('jquery-ui-1.8.5.custom.min');
-
-	echo $scripts_for_layout;
-	?>
-	<?php echo $this->Html->scriptBlock(
-		"$(document).ready(function(){
-		$('.message').fadeOut(10000);
-		if($('.actions ul').text() == '') {
-		    $('div.actions').hide();
-		}
-	    });"
+        <!-- js -->   
+        <?php echo $this->Html->scriptBlock(
+			"$(document).ready(function(){
+				$('.message').fadeOut(10000);
+				if($('.actions ul').text() == '') {
+				    $('div.actions').hide();
+				}
+				
+				$('#search_field').focus(function() {
+                    if ($(this).val() == 'KEYWORD SEARCH') {   
+                        $(this).val('');
+                    }
+                    $(this).removeClass('field_blur').addClass('field_focus');
+                }).blur(function() {
+                   if ($(this).val() == '') {
+                       $(this).val('KEYWORD SEARCH');
+                   }
+                   $(this).removeClass('field_focus').addClass('field_blur');
+                });
+		    });"
 	    )?>
+
+        <!-- favicon -->
+		<?php echo $this->Html->meta('icon'); ?>
+
+        <!-- title -->
+		<title>
+		    <?php __('Tampa Bay Workforce Alliance'); ?>
+		    <?php echo $title_for_layout; ?>
+		</title>
     </head>
     <body>
-	<div id="container">
-	    <div id="header">
-		<div id="logo" class="left">
-		    <?php echo $this->Html->link($this->Html->image('/img/admin/admin_header_logo.jpg'),
-				array('controller' => 'pages',
-					'action' => 'home',
-					'admin' => false), array('escape' => false));
-			    ?>
-		</div>
-		<div id="logoLogout" class="right">
-		    <?php echo $this->Html->image('atlas_logo_100.jpg') ?>
-		    <br />
-		   <p>
-		   <?php
-			if ($session->read('Auth.User'))
-			    echo '<strong>Logged in as: ' . $session->read('Auth.User.firstname') . ' ' .
-				$session->read('Auth.User.lastname') . '</strong> | ' .
-				$this->Html->link(__('Logout', true), array('controller' => 'users', 'action' => 'logout', 'admin' => true));
-			?>
-		   </p>
-		</div>
-	    </div>
-            <div id="navigation"><?php echo $this->Nav->links('Top') ?></div>
-	    <div id="content">
-		<h1 class="left"><?php echo $title_for_layout; ?></h1>
-		<?php echo $this->Session->flash(); ?>
-		<?php echo $session->flash('auth'); ?>
-		<br class="clear"/>
-		<?php echo $content_for_layout; ?>
-	    </div>
-            <div id="bottom_navigation"><?php echo $this->Nav->links('Bottom') ?></div>
-	    <div  id="footer">
-		<p>
-		    <?php echo Configure::read('Company.name')?> is an equal opportunity employer/program.
-		    Auxiliary aids and services are available upon request to individuals with disabilities.
-		    All voice telephone numbers listed on this website may be reached by persons using TTY/TDD
-		    equipment via the Florida Relay Service at 711.
-		    Copyright &copy; <?php echo date('Y')?> - <?php echo Configure::read('Company.name')?>.
-		    All Rights Reserved. Developed & Hosted by Complete Technology Solutions
-		</p>
-	    </div>
-	</div>
-	<?php echo $this->Js->writeBuffer(); ?>
+        <div class="container">
+            <div class="header">
+                <h1><a href="/">Tampa Bay Workforce Alliance</a></h1>
+                <ul>
+                    <li><a href="#">User Login</a></li>
+                    <li><a href="#">Register</a></li>
+                </ul>
+                <form action="#" method="post">
+                    <p>
+                        <label for="search_field">Search</label>
+                        <input type="text" class="field_blur" id="search_field" name="search_field" value="KEYWORD SEARCH" />
+                    </p>
+                    <p><input type="submit" id="search_submit" value="Go" /></p>
+                </form>
+            </div> <!-- end .header -->
+            <div class="clear"></div>
+            
+            <div class="content">
+                <div class="topNav">
+                	<?php echo $this->Nav->links('Top') ?>
+                </div> <!-- end .topNav -->
+                <div class="clear"></div>
+                
+                <div class="leftNav">
+                	<?php echo $this->Nav->links('Left') ?>
+                </div> <!-- end .leftNav -->
+            	<?php if ($this->params['action'] == 'display' && $this->params['controller'] == 'pages'): ?>
+                <div class="">
+            	<?php else: ?>
+                <div class="sub_content">
+	            <?php endif; ?>
+	            	<?php echo $this->Session->flash(); ?>
+					<?php echo $session->flash('auth'); ?>
+	            	<?php echo $content_for_layout; ?>
+                </div>
+            </div> <!-- end .content -->
 
+            <div class="footer">
+                <div class="first">
+                    <h4>Main Services</h4>
+					<?php echo $this->Nav->links('bottom') ?>
+                </div> <!-- end .first -->
+
+                <div>
+                    <h4>Useful Links</h4>
+                    <ul>
+                        <li><a href="#">Main Services</a></li>
+                        <li><a href="#">Main Services</a></li>
+                        <li><a href="#">Main Services</a></li>
+                        <li><a href="#">Main Services</a></li>
+                    </ul>
+                </div>
+
+                <div class="last">
+                    <h4>OneStop Locations</h4>
+                    <ul>
+                        <li><a href="#">Workforce Brandon</a></li>
+                        <li><a href="#">Workforce Plant City</a></li>
+                        <li><a href="#">Workforce Tampa</a></li>
+                    </ul>
+                </div> <!-- end .last -->
+            </div> <!-- end .footer -->
+        </div> <!-- end .container -->
     </body>
 </html>
