@@ -23,9 +23,9 @@ class ProgramRegistrationsController extends AppController {
 		} 
 		if(!empty($this->data)) {
 			$this->ProgramRegistration->create();
-			$data['ProgramRegistration']['answers'] = json_encode($this->data['ProgramRegistration']);
-			$data['ProgramRegistration']['program_id'] = $id;
-			if($this->ProgramRegistration->save($data)) {
+			$this->data['ProgramRegistration']['answers'] = json_encode($this->data['ProgramRegistration']);
+			$this->data['ProgramRegistration']['program_id'] = $id;
+			if($this->ProgramRegistration->save($this->data)) {
 				$this->Session->setFlash(__('Saved', true), 'flash_success');
 			}
 			else {
