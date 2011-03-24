@@ -7,10 +7,16 @@
 class AppModel extends Model {
 
     function formatDateAfterFind($date) {
-	return date('m/d/Y', strtotime($date));
+		return date('m/d/Y', strtotime($date));
     }
 
     function formatDateTimeAfterFind($date) {
-	return date('m/d/Y - h:i a', strtotime($date));
+		return date('m/d/Y - h:i a', strtotime($date));
     }
+	
+	function modifyValidate($rules) {
+		if(!empty($rules)) {
+			$this->validate = Set::merge($this->validate, $rules);
+		}		
+	}
 }
