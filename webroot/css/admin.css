@@ -997,3 +997,24 @@ p.checkbox {
 .accordionbtn .x-btn-text {
 	font-size: 12px;
 }
+
+.x-careerseeker-row {
+	padding: 4px 0;
+}
+
+.x-careerseeker-row p {
+	font-size: 12px;
+	width: 250px;
+}
+
+.x-careerseeker-row .label {
+	font-weight: bold;
+	margin: 0 15px 0 0;
+	text-align: right;
+}
+
+.x-careerseeker-row ul {
+	margin: 0 0 0 280px;
+	list-style-type: disc;
+}
+.x-careerseeker-row li {list-style-type: disc;}
