@@ -138,10 +138,10 @@ App = function() {
 	                            scope: this
 	                        },
 	                        'eventover': function(vw, rec, el){
-	                            //console.log('Entered evt rec='+rec.data.Title+', view='+ vw.id +', el='+el.id);
+	                            ////console.log('Entered evt rec='+rec.data.Title+', view='+ vw.id +', el='+el.id);
 	                        },
 	                        'eventout': function(vw, rec, el){
-	                            //console.log('Leaving evt rec='+rec.data.Title+', view='+ vw.id +', el='+el.id);
+	                            ////console.log('Leaving evt rec='+rec.data.Title+', view='+ vw.id +', el='+el.id);
 	                        },
 	                        'eventadd': {
 	                            fn: function(cp, rec){
