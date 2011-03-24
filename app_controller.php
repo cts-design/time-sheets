@@ -10,7 +10,7 @@
 class AppController extends Controller {
 	
     var $helpers = array('Html', 'Form', 'Session', 'Js' => array('Jquery'), 'Time', 'Crumb', 'Nav');
-    var $components = array('Session', 'RequestHandler', 'Auth', 'Acl', 'Cookie', 'Transaction', 'Security');
+    var $components = array('DebugKit.Toolbar', 'Session', 'RequestHandler', 'Auth', 'Acl', 'Cookie', 'Transaction', 'Security');
 	var $genders = array(
 		'male' => 'Male',
 		'female' => 'Female');
@@ -72,8 +72,7 @@ class AppController extends Controller {
 		'WY'=>"Wyoming");
 		
     function beforeFilter() {
-		parent::beforeFilter();
-		
+		parent::beforeFilter();		
 		if ($this->RequestHandler->isAjax()) {
 			Configure::write('debug', 0);
 		}
@@ -95,7 +94,7 @@ class AppController extends Controller {
 		}
 		// Disable caching of pages that require authentication
 		if($this->Auth->user()) {
-		    $this->disableCache();
+		    //$this->disableCache();
 		}
 		if (isset($this->params['prefix']) && $this->params['prefix'] == 'admin') {
 		    $this->layout = 'admin';

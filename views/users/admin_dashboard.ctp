@@ -37,6 +37,13 @@
                             			<li rel="inTheNews"><?php echo $html->link('Helpful Articles', array('controller' => 'helpful_articles', 'action' => 'index')) ?></li>
                             		</ul>
                             	</li>
+                            	<li rel="surveys" id="surveys">
+                            		<a>Surveys</a>
+                            		<ul>
+										<li rel="surveys"><?php echo $html->link('Career Seekers Survey', array('controller' => 'career_seekers_surveys', 'action' => 'index')); ?></li>
+                                		<li rel="surveys"><?php echo $html->link('Employers Survey', array('controller' => 'employers_surveys', 'action' => 'index')); ?></li>                            			
+                            		</ul>
+                            	</li>
                             	<li rel="calendar"><?php echo $html->link('Calendar of Events', array('controller' => 'events', 'action' => 'index')); ?></li>
                             	<li rel="hotJobs"><?php echo $html->link('Hot Jobs', array('controller' => 'hot_jobs', 'action' => 'index')); ?></li>
                             	<li rel="rfp"><?php echo $html->link('RFPs & Bids', array('controller' => 'rfps', 'action' => 'index')); ?></li>
