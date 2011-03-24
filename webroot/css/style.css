@@ -1,140 +1,459 @@
-/*
-    Document   : style
-    Created on : Dec 13, 2010, 3:06:41 PM
-    Author     : Daniel Nolan
-    Description: main site style sheet
-    Copyright  : Complete Technology Solutions
-
-*/
+/** 
+ * @author Brandon Cordell
+ * @copyright Complete Technology Solutions 2011
+ * @link http://ctsfla.com
+ */
 
 /* HTML Elements */
-
-html {
-	background: #1875BB;
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-size: 100%;
+	vertical-align: baseline;
+	background: transparent;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
 }
 
+/* remember to define focus styles! */
+:focus {
+	outline: 0;
+}
+
+/* remember to highlight inserts somehow! */
+ins {
+	text-decoration: none;
+}
+del {
+	text-decoration: line-through;
+}
+
+/* tables still need 'cellspacing="0"' in the markup */
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+/* END RESET */
 
 body {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 13px;
-    overflow-y: scroll;
+    background: #dcdddf url(../img/shadow_bg.png) center 90px no-repeat;
+    color: #006699;
+    font: normal normal normal 14px/18px Tahoma, Arial, sans-serif;
+    text-align: center;
 }
 
+p {
+	margin: 0 0 18px;
+}
 
 a {
-    color: #3B71A0;
+    color: #006699;
+}
+
+.container {
+    text-align: left;
+    width: 800px;
+	min-height: 100%;
+	height: auto !important;
+	height: 100%;
+	margin: 20px auto -4em;
+}
+
+.header {
+    height: 49px;
+    line-height: 49px;
+    margin: 0 0 12px;
+    padding: 0 0 0 29px;
+}
+
+.header h1, ul, form {
+    float: left;
+}
+
+.header h1 {
+    background: url(../img/tbwa_logo.png) 0 0 no-repeat;
+    height: 49px;
+    margin: 0 108px 0 0;
+    width: 184px;
+}
+
+.header h1 a {
+    display: block;
+    height: 49px;
+    overflow: hidden;
+    text-indent: -9999px;
+    width: 184px;
+}
+
+.header ul {
+    list-style: none;
+}
+
+.header ul li {
+    float: left;
+    margin: 0 20px 0 0;
+}
+.header form {
+    margin: 0 0 0 37px;
+}
+.header form #search_field {
+    background: transparent url(../img/search_bg.png) 0 0 no-repeat;
+    border: 0;
+    height: 19px;
+    padding: 5px 10px 5px 10px;
+    width: 207px;
+}
+.header form label {
+    display: none;
+}
+.header form p {
+    float: left;
+}
+.header form input[type=text] {
+    width: 225px;
+}
+.content {
+    background: #fff url(../img/gradient_bg.png) 0 0 repeat-x;
+    padding: 25px 0 0;
+    min-height: 558px;
+    overflow: auto;
+}
+
+.content .topNav {
+	float: left;
+	width: 576px;
+    height: 40px;
+    line-height: 40px;
+    padding-left: 224px;
+}
+
+.content .topNav ul {
+	float: right;
+    margin: 0 35px 0 0;
+    padding: 0;
+    list-style: none;
+}
+.content .topNav li {
+	background: url(../img/nav_left.png) no-repeat left top;
+    float: left;
+    padding: 0;
+    margin: 0;
+}
+
+.topNav a {
+	background: url(../img/nav_right.png) no-repeat right top;
+	float: left;
+	color: #fff;
+	text-transform: uppercase;
+	font-weight: bold;
+/*	margin: 0 0 0 5px;*/
+	padding: 1px 15px 0 10px;
+	display: block;
+	text-decoration: none;
+}
+
+.topNav li:hover {background-position: 0 -40px}
+.topNav a:hover {background-position: right -40px}
+
+.content .leftNav {
+    float: left;
+    width: 175px;
+}
+
+.content .leftNav a {
+    font-weight: 500;
     text-decoration: none;
 }
 
-a:hover {
+.content .leftNav ul {
+    width: 100%;
+}
+
+.content .leftNav ul li{
+    border-bottom: 1px solid #cdd5de;
+    padding: 3px 15px;
+}
+
+.content .leftNav ul li.last {
+    border: 0;
+}
+
+.secondary .content .leftNav {
+    margin-top: 40px !important;
+}
+
+.content .testimonial {
+    background: transparent url(../img/testimonial_bg.png) 0 0 no-repeat;
+    float: left;
+    height: 166px;
+    padding: 25px 0 0 25px;
+    width: 579px;
+}
+
+.content .testimonial p {
+    color: #006699;
+    font-family: "Times New Roman";
+    font-style: italic;
+    margin: 0 0 8px;
+    width: 300px;
+}
+
+.content .testimonial p.signed {
+    font-family: Tahoma;
+    font-style: normal;
+    font-weight: bold;
+    text-align: right;
+    width: 275px;
+}
+.content .testimonial p.signed span {
+    display: block;
+    font-weight: normal;
+}
+
+.content .feedback {
+    float: left;
+    font-size: 11px;
+    margin: 50px 10px 0;
+    width: 155px;
+}
+.content .feedback p {
+    margin: 0 0 8px;
+}
+.content .feedback form p {
+    margin: 0 !important;
+}
+.content .feedback form input[type=submit] {
+    margin: 8px 0 0;
+}
+
+.content .sub_content {
+    background: #fff;
+    margin: 0 25px 0 177px;
+    padding: 18px 20px;
+    min-height: 600px;
+    height: auto !important;
+    height: 600px;
+
+    behavior:url(/css/ie-css3.htc);
+    border-radius: 8px;
+    -moz-border-radius-topleft: 8px;
+    -moz-border-radius-topright: 8px;
+    -webkit-border-top-left-radius: 8px;
+    -webkit-border-top-right-radius: 8px;
+    z-index: 999;
+    position: relative;
+}
+
+.content .sub_content h1 {
+    font-size: 16px;
+    margin-bottom: 18px;
+}
+
+.content .sub_content p {
+    color: #454545;
+    font-size: 13px;
+    line-height: 20px;
+}
+
+.content .sub_content h2,
+.content .sub_content p {
+    margin-bottom: 18px;
+}
+
+.content div.employers,
+.content .career_seekers,
+.content div.programs {
+    background: transparent url(../img/blue_bg.png) 0 0 no-repeat;
+    color: #fff;
+    height: 112px;
+    float: left;
+    margin: 25px 0 0;
+    width: 195px;
+}
+.content div.employers ul,
+.content .career_seekers ul,
+.content div.programs ul {
+    width: 180px;
+}
+.content div.employers li,
+.content .career_seekers li,
+.content div.programs li {
+    font-size: 12px;
+    text-align: right;
+}
+.content div.employers a,
+.content .career_seekers a,
+.content div.programs a {
+    color: #fff;
+    text-decoration: none;
+}
+.content div.employers a:hover,
+.content .career_seekers a:hover,
+.content div.programs a:hover {
     text-decoration: underline;
 }
-
-h1 {
-    color: orange;
-    font-size: 15px;
-    font-weight: bold;
+.content div.employers,
+.content .career_seekers {
+    margin-right: 11px;
+}
+.content div.employers h3,
+.content .career_seekers h3,
+.content div.programs h3 {
+    margin: 4px 0 0 8px;
 }
 
-h2 {
-    color: orange;
-    font-size: 12px;
-    font-weight: bold;
-}
-
-strong {
-    font-weight: bold;
-}
-
-
-/* Text */
-.small {
-    font-size: 11px;
-}
-
-.normal {
-    font-weight: normal;
-}
-
-/* Margin Classes */
-.bot-mar-10 {
-    margin-bottom: 10px;
-}
-
-.right-mar-10 {
-    margin-right: 10px;
-}
-
-.left-mar-10 {
-    margin-left: 10px;
-}
-
-/* Structure Elements */
-
-#container {
-    margin: 0 auto;
-    width: 977px;
-}
-
-#header {
-    width: 970px;
-    color: #333;
-    padding: 0 0 0 0;
-    height: 90px;
-    margin: 0;
-    background: #FFF;
-}
-
-#nav {
-    color: white;
-    background-color: #333;
-    height: 30px;
-
-}
-
-#nav li {
+.content .links ul li {
+    border-right: 1px solid #ccc;
+    display: block;
+    height: 52px;
     float: left;
-    margin: 8px 10px 0 ;
-
+    margin: 25px 0 0;
+    padding: 30px 10px;
+    text-align: center;
+    width: 180px;
+}
+.content .links ul li a {
+    font-weight: bold;
+}
+.content .links .last {
+    border: 0;
 }
 
-#nav a {
-    color: white;
-
-}
-
-#content {
-    width: 950px;
-    color: #333;
-    background: #fff;
-    margin: 0px 0px 5px 0px;
-    padding: 10px;
-    min-height: 400px;
-    overflow: hidden;
-}
-
-#footer {
-    background-color: #fff;
+.content .terms {
     font-size: 10px;
-    font-weight: normal;
-    color: #000;
-    width: 950px;
-    border: none;
-    margin: 0px 0px 10px 0px;
-    padding: 10px;
+    line-height: 12px;
+    margin: 20px 25px 0 175px;
+    padding: 0 0 18px 0;
 }
-
-.left {
+.footer {
+    background: #598cbf url(../img/footer_bg.jpg) center bottom no-repeat;
+    color: #fff;
+    font-size: 10px;
+    height: 100px;
+    line-height: 16px;
+}
+.footer a {
+	color: #342;
+}
+.footer a {
+    color: #fff;
+}
+.footer h4 {
+    font-size: 12px;
+}
+.footer div {
     float: left;
+    margin-top: 8px!important;
 }
 
-.right {
-    float: right;
+.footer div.first {
+    margin: 0 50px 0 40px;
+}
+.footer div.last {
+    margin-left: 400px;
+    text-align: right;
+}
+.footer div.last ul {
+width: 100%;
+}
+.active_nav {
+    background: #ff3333;
+}
+
+.field_focus {
+    color: #006699;
+}
+
+.field_blur {
+    color: #888;
 }
 
 .clear {
     clear: both;
+    display: block;
+    overflow: hidden;
+    visibility: hidden;
+    width: 0;
+    height: 0;
 }
+
+#search_submit {
+    background: transparent url(../img/go_button.png) 0 0 no-repeat;
+    border: 0;
+    cursor: pointer;
+    height: 29px;
+    margin: 0 0 0 5px;
+    padding: 0 0 0 0;
+    text-indent: -9999px;
+    width:35px;
+    overflow: hidden;
+}
+
+#feedback_submit {
+    background: transparent url(../img/survey_button.png) 0 0 no-repeat;
+    border: 0;
+    cursor: pointer;
+    height: 29px;
+    margin: 12px 0 0 5px;
+    padding: 0 0 0 0;
+    text-indent: -9999px;
+    width:94px;
+    overflow: hidden;
+}
+
+a:focus {
+    outline: 1px dotted #006699;
+}
+
+.pressReleases table,
+.chairmanReports table {width: 100%;}
+
+.pressReleases table tr th,
+.chairmanReports table tr th,
+.pressReleases table tr td,
+.chairmanReports table tr td {padding: 4px 8px;}
+
+.pressReleases table tr th,
+.chairmanReports table tr th {
+	border-bottom: 1px solid #263240;
+	padding: 4px 8px 8px;
+	margin: 0 0 8px 0;
+}
+
+.pressReleases table tr td,
+.chairmanReports table tr td {
+	border-bottom: 1px solid #AAAAAA;
+	padding: 8px;
+}
+.pressReleases table .created,
+.chairmanReports table .created {
+	text-align: right;
+}
+.pressReleases .counter,
+.chairmanReports .counter {
+	color: #777 !important;
+	margin: 8px 0 0 0;
+}
+
+
 
 /*Specific Styles */
 

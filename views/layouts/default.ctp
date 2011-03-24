@@ -1,3 +1,10 @@
+<?php
+/** 
+ * @author Brandon Cordell
+ * @copyright Complete Technology Solutions 2011
+ * @link http://ctsfla.com
+ */
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -12,7 +19,7 @@
         <!-- css -->
         <?php
 		    echo $this->Html->css('ui-darkness/jquery-ui-1.8.5.custom');
-			echo $this->Html->css('screen');
+			echo $this->Html->css('style');
 			echo $this->Html->script('jquery');
 			echo $this->Html->script('jquery-ui-1.8.5.custom.min');
 			echo $scripts_for_layout;
@@ -58,8 +65,8 @@
             <div class="header">
                 <h1><a href="/">Tampa Bay Workforce Alliance</a></h1>
                 <ul>
-                    <li><a href="#">User Login</a></li>
-                    <li><a href="#">Register</a></li>
+                    <li style="visibility: hidden"><a href="#">User Login</a></li>
+                    <li style="visibility: hidden"><a href="#">Register</a></li>
                 </ul>
                 <form action="#" method="post">
                     <p>
