@@ -162,7 +162,6 @@ tree.on('movenode', function(tree, node, oldParent, newParent, position) {
 				Ext.Msg.alert('Error','Unable to move category, please try again.');
 				return;
 			}
-			console.log(o);
 			if(o.success == true) {
 				tree.enable();
 			} else {
