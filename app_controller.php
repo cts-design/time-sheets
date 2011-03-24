@@ -94,7 +94,7 @@ class AppController extends Controller {
 		}
 		// Disable caching of pages that require authentication
 		if($this->Auth->user()) {
-		    //$this->disableCache();
+		    $this->disableCache();
 		}
 		if (isset($this->params['prefix']) && $this->params['prefix'] == 'admin') {
 		    $this->layout = 'admin';
