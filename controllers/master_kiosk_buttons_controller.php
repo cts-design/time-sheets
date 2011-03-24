@@ -9,6 +9,11 @@ class MasterKioskButtonsController extends AppController {
 
     var $name = 'MasterKioskButtons';
     var $helpers = array('Tree');
+	
+	function beforeFilter() {
+		parent::beforeFilter();
+		$this->Security->disabledFields = array('MasterKioskButton.parent_id');
+	}
 
     function admin_index($id = null) {
 	$this->_setTreeData($id);
