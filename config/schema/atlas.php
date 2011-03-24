@@ -1,9 +1,6 @@
 <?php 
-<<<<<<< HEAD
 /* atlas schema generated on: 2011-03-24 12:33:20 : 1300970000*/
-=======
-/* atlas schema generated on: 2011-03-23 15:44:26 : 1300909466*/
->>>>>>> e0130924839d8c146c3a2dce883dc8a2e2bf00db
+
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -124,7 +121,7 @@ class atlasSchema extends CakeSchema {
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
 		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MyISAM')
 	);
-<<<<<<< HEAD
+
 	var $document_transactions = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 		'doc_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
@@ -137,7 +134,7 @@ class atlasSchema extends CakeSchema {
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
 		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MyISAM')
-=======
+	);
 	var $employers_surveys = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 		'answers' => array('type' => 'text', 'null' => false, 'default' => NULL, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
@@ -145,7 +142,7 @@ class atlasSchema extends CakeSchema {
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
 		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'InnoDB')
->>>>>>> e0130924839d8c146c3a2dce883dc8a2e2bf00db
+
 	);
 	var $event_categories = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
