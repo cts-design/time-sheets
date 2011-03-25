@@ -65,7 +65,7 @@
 			'between' => '</p><p class="left">',
 			'after' => '</p>'
 		));		
-	    echo $this->Form->hidden('mini_registration', array('value' => 'mini'));
+	    echo $this->Form->hidden('mini_registration', array('value' => 'kiosk'));
 	    ?>
 	</fieldset>
 	<?php echo $this->Form->end(array('label' => __('Submit', true), 'class' => 'self-sign-kiosk-button')); ?>
