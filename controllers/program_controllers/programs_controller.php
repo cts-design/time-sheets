@@ -13,6 +13,6 @@ class ProgramsController extends AppController {
 	}
 		
 	function admin_index() {
-		
+		$title_for_layout = 'Programs';
 	}
 }
