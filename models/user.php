@@ -275,7 +275,7 @@ class User extends AppModel {
 	    'location_id' => 'notempty'
 	);
 	if (isset($this->data['User']['mini_registration']) &&
-		$this->data['User']['mini_registration'] == 'mini') {
+		$this->data['User']['mini_registration'] == 'kiosk' || $this->data['User']['mini_registration'] == 'website') {
 	    $this->pauseValidation($miniRules);
 	}
 	if (isset($this->data['User']['self_sign_edit']) &&
