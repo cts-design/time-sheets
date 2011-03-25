@@ -32,7 +32,7 @@ class UsersController extends AppController {
 				}
 	    	}
 		}
-		$this->Auth->allow('mini_registration', 'add', 'admin_password_reset', 'build_acl', 'admin_login', 'admin_logout', 'self_sign_login');
+		$this->Auth->allow('kiosk_mini_registration', 'add', 'admin_password_reset', 'build_acl', 'admin_login', 'admin_logout', 'kiosk_self_sign_login', 'login');
 
 		if (isset($this->data['User']['username'], $this->data['User']['password'],$this->data['User']['self_sign'] ) &&
 			$this->data['User']['username'] != '' && $this->data['User']['password'] != '') {
@@ -180,7 +180,7 @@ class UsersController extends AppController {
 		$this->redirect(array('action' => 'index'));
     }
 
-    function self_sign_login() {
+    function kiosk_self_sign_login() {
 		if (isset($this->data['User']['self_sign']) && $this->data['User']['self_sign'] == 'self') {
 		    if ($this->Auth->user()) {
 			$this->Transaction->createUserTransaction('Self Sign', 
@@ -191,6 +191,10 @@ class UsersController extends AppController {
 		$this->set('title_for_layout', 'Self Sign Kiosk');
 		$this->layout = 'kiosk';
     }
+	
+	function login() {
+		
+	}
 
     function logout($type=null, $logoutMsg=null) {
 		if ($this->Auth->user('role_id') == '1') {
@@ -207,20 +211,20 @@ class UsersController extends AppController {
 		    }
 		    $this->Session->destroy();
 		    $this->Session->setFlash($msg, 'flash_success_modal');
-		    $this->redirect(array('action' => 'self_sign_login'));
+		    $this->redirect(array('action' => 'self_sign_login', 'kiosk' => true));
 		}
 		if ($this->Auth->user('role_id') != 1) {
 		    $this->redirect(array('action' => 'login', 'admin' => true));
 		}
     }
 
-    function auto_logout() {
+    function kiosk_auto_logout() {
 		$this->Session->destroy();
 		$this->Session->setFlash(__('You have been logged out due to inactivity.', true), 'flash_failure');
 		$this->redirect(array('action' => 'self_sign_login'));   
     }
 
-    function mini_registration($lastname=null, $dob=null) {
+    function kiosk_mini_registration($lastname=null) {
 		if (!empty($this->data)) {	
 		    $this->User->create();
 		    if ($this->User->save($this->data)) {
@@ -239,8 +243,6 @@ class UsersController extends AppController {
 		    }
 		}
 		if (empty($this->data)) {
-		    $dob = str_replace('_', '/', $dob);
-		    $this->data['User']['dob'] = $dob;
 		    $this->data['User']['lastname'] = $lastname;
 		}
 		$this->set('title_for_layout', 'Self Sign Kiosk');
