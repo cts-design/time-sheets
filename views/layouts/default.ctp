@@ -88,7 +88,7 @@
                 	<?php echo $this->Nav->links('Left') ?>
                 </div> <!-- end .leftNav -->
             	<?php if ($this->params['action'] == 'display' && $this->params['controller'] == 'pages'): ?>
-                <div class="">
+                <div>
             	<?php else: ?>
                 <div class="sub_content">
 	            <?php endif; ?>
