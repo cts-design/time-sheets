@@ -35,7 +35,7 @@
 	    echo $scripts_for_layout;
 	   ?>
 	<?php
-	    $exclude = array('self_sign_login', 'self_scan_document');
+	    $exclude = array('kiosk_self_sign_login', 'kiosk_self_scan_document');
 	    if (!in_array($this->params['action'], $exclude)) {
 		echo $this->Html->scriptBlock(
 			"$(document).ready(function(){
@@ -44,7 +44,7 @@
 			  noconfirm: 10000,
 			  sessionAlive: false,
 			  logout_url: '/',
-			  redirect_url: '/users/auto_logout'
+			  redirect_url: '/kiosk/users/auto_logout'
 			})
 		});");
 	    }
