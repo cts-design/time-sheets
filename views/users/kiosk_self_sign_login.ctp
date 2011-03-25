@@ -6,7 +6,6 @@
  * @package ATLAS V3
  */
 ?>
-<?php echo $this->Html->script('users/self.sign.login', array('inline' => false)) ?>
 
 <div class="self-sign-wrapper">
     <h1>Welcome to <?php echo Configure::read('Company.name').'.'; ?> Please sign in here.</h1>
