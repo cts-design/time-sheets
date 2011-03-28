@@ -3,10 +3,6 @@
     <span>You are here > </span>
     <?php echo $crumb->getHtml('Career Seekers Surveys', null, 'unique'); ?></div>
 <div class="careerSeekersSurveys">
-<<<<<<< HEAD
+
 	<div id="surveys"></div>
 </div>
-=======
-        <div id="surveys"></div>
-</div>
->>>>>>> staging
