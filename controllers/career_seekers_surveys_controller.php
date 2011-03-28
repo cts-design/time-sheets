@@ -45,9 +45,13 @@ class CareerSeekersSurveysController extends AppController {
     function admin_destroy() {
             $surveyId = str_replace("\"", "", $this->params['form']['surveys']);
             $surveyId = intval($surveyId);
+			
+			
 
             if ($this->CareerSeekersSurvey->delete($surveyId)) {
                     $data['success'] = true;
+					$this->CareerSeekersSurvey->createUserTransaction('CareerSeekersSurvey', null, null,
+	                                        'Delete survey ID ' . $surveyId);
             } else {
                     $data['success'] = false;
             }

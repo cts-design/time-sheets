@@ -48,6 +48,8 @@ class EmployersSurveysController extends AppController {
 
             if ($this->EmployersSurvey->delete($surveyId)) {
                     $data['success'] = true;
+					$this->EmployersSurvey->createUserTransaction('EmployersSurvey', null, null,
+	                                        'Delete survey ID ' . $surveyId);
             } else {
                     $data['success'] = false;
             }

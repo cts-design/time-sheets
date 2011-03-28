@@ -11,8 +11,6 @@ class TestHelpfulArticlesController extends HelpfulArticlesController {
 }
 
 class HelpfulArticlesControllerTestCase extends AtlasTestCase {
-	var $fixtures = array('app.helpful_article');
-
 	function startTest() {
 		$this->HelpfulArticles =& new TestHelpfulArticlesController();
 		$this->HelpfulArticles->constructClasses();
@@ -24,32 +22,62 @@ class HelpfulArticlesControllerTestCase extends AtlasTestCase {
 	}
 
 	function testIndex() {
-
+        $result = $this->testAction('/helpful_articles/index', array('return' => 'vars'));
+        $result = Set::extract('/helpfulArticles/.[1]', $result);
+		$expected = array(
+	        'id' => 1,
+	        'title' => 'A Helpful Article From Some Publication',
+	        'reporter' => 'Sally Beard - WSJ.com',
+	        'summary' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
+	        'link' => 'http://www.wsj.com/sally.beard/a-helpful-article',
+	        'posted_date' => '2011-03-07',
+	        'created' => '2011-03-07 20:29:20',
+	        'modified' => '2011-03-07 20:29:20',
+		);
+		$this->assertEqual($result[0]['HelpfulArticle'], $expected);
 	}
 
 	function testAdminEditWithValidData() {
+		$this->HelpfulArticles->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));	
+		
         $this->HelpfulArticles->data = array(
             'HelpfulArticle' => array(
                 'title' => 'Valid Title'
             )
         );
 
-        $this->HelpfulArticles->admin_edit(1);
-        $this->assertEqual($this->HelpfulArticles->redirectUrl, array('action' => 'index'));
-
-		$this->assertFlashMessage($this->HelpfulArticles, 'The helpful article has been saved', 'flash_success');
+	    $this->HelpfulArticles->params = Router::parse('/admin/chairman_reports/edit/1');
+	    $this->HelpfulArticles->beforeFilter();
+	    $this->HelpfulArticles->Component->startup($this->HelpfulArticles);
+		$this->HelpfulArticles->admin_edit(1);	
+		$this->assertEqual($this->HelpfulArticles->Session->read('Message.flash.element'), 'flash_success');
 	}
 
     function testAdminEditWithInvalidData() {
-        $this->HelpfulArticles->data = array(
+		$this->HelpfulArticles->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));	
+		
+       $this->HelpfulArticles->data = array(
             'HelpfulArticle' => array(
                 'title' => ''
             )
         );
 
-        $this->HelpfulArticles->admin_edit(1);
-		$this->assertFlashMessage($this->HelpfulArticles, 'The helpful article could not be saved. Please, try again.', 'flash_failure');
-    }
+	    $this->HelpfulArticles->params = Router::parse('/admin/chairman_reports/edit/1');
+	    $this->HelpfulArticles->beforeFilter();
+	    $this->HelpfulArticles->Component->startup($this->HelpfulArticles);
+		$this->HelpfulArticles->admin_edit(1);	
+		$this->assertEqual($this->HelpfulArticles->Session->read('Message.flash.element'), 'flash_failure');
+	}
 
     function testAdminEditInvalidRecord() {
         $this->HelpfulArticles->admin_edit();
