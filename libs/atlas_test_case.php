@@ -25,6 +25,7 @@ class AtlasTestCase extends CakeTestCase {
 	    'hot_job',
 	    'kiosk',
 	    'kiosk_button',
+	    'in_the_news',
 	    'location',
 	    'master_kiosk_button',
 	    'module_access_control',

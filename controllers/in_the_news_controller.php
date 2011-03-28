@@ -57,9 +57,10 @@ class InTheNewsController extends AppController {
                                         'Deleted news article ID ' . $id);
 			$this->Session->setFlash(__('In the news article deleted', true), 'flash_success');
 			$this->redirect(array('action'=>'index'));
+		} else {
+			$this->Session->setFlash(__('In the news article was not deleted', true), 'flash_failure');
+			$this->redirect(array('action' => 'index'));	
 		}
-		$this->Session->setFlash(__('In the news article was not deleted', true), 'flash_failure');
-		$this->redirect(array('action' => 'index'));
 	}
 }
 ?>
