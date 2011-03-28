@@ -9,7 +9,29 @@ class EventsController extends AppController {
 	
 	function view() {}
 	
-	function admin_index() {}
+	function index($dateRange = null) {
+		$title_for_layout = 'Calendar of Events';
+		
+		FireCake::log($this->params);
+		FireCake::log($this->passedArgs);
+		
+		if (!$dateRange) {
+			$from = date('Y-m-d H:i:s');
+			$to   = date('Y-m-d H:i:s', strtotime('+6 months 23:59:59'));
+			$conditions = array('Event.start BETWEEN ? AND ?' => array($from, $to));
+			$events = $this->paginate = array('conditions' => $conditions, 'order' => 'Event.start ASC');
+		} else {
+			
+		}
+		
+		FireCake::log($events);
+		
+		$this->set(compact('title_for_layout'));
+		$this->set('events', $this->paginate());
+	}
+	
+	function admin_index() {
+	}
 
 	function admin_create() {
 		$params = json_decode($this->params['form']['events'], true);
