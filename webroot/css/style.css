@@ -659,7 +659,7 @@ a:focus {
     text-decoration: none;
 }
 
-.hotJobs .job, .featuredEmployers .featuredEmployer,
+.featuredEmployers .featuredEmployer,
 .rfps .rfp {
 	border-bottom: 1px solid #3366CC;
 	margin: 8px 0 18px;
@@ -678,7 +678,10 @@ a:focus {
 	margin: 0 0 12px;
 }
 
-.hotJobs .job ul,
+.hotJobs .job ul {
+	float: none;
+}
+
 .featuredEmployers .featuredEmployer ul, 
 .rfps .rfp ul{
 	margin: 0 0 12px 10px;
@@ -756,7 +759,7 @@ a:focus {
 	padding: 25px 0;
 }
 
-.event {
+.event, .job {
 	background: #E6EBF1;
 	border: 1px solid #D0E0EE;
 	margin: 0 0 16px;
