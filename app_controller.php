@@ -92,10 +92,11 @@ class AppController extends Controller {
 		else {
 		    $this->Auth->allow('display');
 		}
-		// Disable caching of pages that require authentication
+		
 		if($this->Auth->user()) {
+			// Disable caching of pages that require authentication
 		    $this->disableCache();
-		}
+		}				    
 		if (isset($this->params['prefix']) && $this->params['prefix'] == 'admin') {
 		    $this->layout = 'admin';
 		   	$this->Security->blackHoleCallback = 'forceSSL';
@@ -103,13 +104,16 @@ class AppController extends Controller {
 		    if($this->Auth->user('role_id') == 1 ) {
 				$this->Session->destroy();
 				$this->Session->setFlash(__('You are not authorized to access that location', true), 'flash_failure');
-				$this->redirect(array('controller' => 'users', 'action' => 'self_sign_login', 'admin' => false));
+				$this->redirect(array('controller' => 'users', 'action' => 'login', 'admin' => false));
 		    }
 		    $this->Auth->loginAction = array('admin' => true, 'controller' => 'users', 'action' => 'login');
 	
 		} 
+		elseif(isset($this->params['prefix']) && $this->params['prefix'] == 'kiosk') {
+		   $this->Auth->loginAction = array('admin' => false, 'kiosk' => true, 'controller' => 'users', 'action' => 'self_sign_login');
+		}
 		else {
-		   $this->Auth->loginAction = array('admin' => false, 'controller' => 'users', 'action' => 'self_sign_login');
+			$this->Auth->loginAction = array('admin' => false, 'controller' => 'users', 'action' => 'login');
 		}
 		$this->Auth->flashElement = 'flash_auth';
 	        $this->loadModel('ModuleAccessControl');
@@ -177,7 +181,7 @@ class AppController extends Controller {
 			return $this->_stop();
 		}
 		$log = array();
-
+		ini_set('max_execution_time', 300);
 		$aco = &$this->Acl->Aco;
 		$root = $aco->node('controllers');
 		if(!$root) {
