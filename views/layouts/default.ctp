@@ -20,8 +20,11 @@
         <?php
 		    echo $this->Html->css('ui-darkness/jquery-ui-1.8.5.custom');
 			echo $this->Html->css('style');
+			echo $this->Html->css('superfish');
 			echo $this->Html->script('jquery');
 			echo $this->Html->script('jquery-ui-1.8.5.custom.min');
+			echo $this->Html->script('superfish/hoverIntent.js');
+			echo $this->Html->script('superfish/superfish.js');
 			echo $scripts_for_layout;
 		?>
 
@@ -81,6 +84,32 @@
             <div class="content">
                 <div class="topNav">
                 	<?php echo $this->Nav->links('Top') ?>
+                	<!-- <ul class="sf-menu">
+                		<li class="current"><a href="#a">Sunfishes</a>
+                			<ul>
+                				<li><a href="#aa">Blackbanded Sunfish</a></li>
+                				<li><a href="#ab">Shadow Bass</a></li>
+                				<li><a href="#ac">Ozark Bass</a></li>
+                				<li><a href="#ad">White Crappie</a></li>
+                			</ul>
+                		</li>
+                		<li><a href="#b">Grunts</a>
+                			<ul>
+                 				<li><a href="#ba">Smallmouth Grunt</a></li>
+                				<li><a href="#bb">Burrito</a></li>
+                				<li><a href="#bc">Pigfish</a></li>               				
+                			</ul>	
+                		</li>
+                		<li><a href="#c">Remoras</a>
+                			<ul>
+                				<li><a href="#ca">Whalesucker</a></li>
+                				<li><a href="#cb">Marlinsucker</a></li>
+                				<li><a href="#cc">Ceylonese remora</a></li>
+                				<li><a href="#cd">Spearfish remora</a></li>
+                				<li><a href="#ce">Slender suckerfish</a></li>
+                			</ul>
+                		</li>
+                	</ul> -->
                 </div> <!-- end .topNav -->
                 <div class="clear"></div>
                 
@@ -92,6 +121,7 @@
             	<?php else: ?>
                 <div class="sub_content">
 	            <?php endif; ?>
+	            	<h2><?php echo $title_for_layout ?></h2>
 	            	<?php echo $this->Session->flash(); ?>
 					<?php echo $session->flash('auth'); ?>
 	            	<?php echo $content_for_layout; ?>
