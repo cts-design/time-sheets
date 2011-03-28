@@ -55,7 +55,7 @@
 			if ($session->read('Auth.User'))
 			    echo '<strong>Logged in as: ' . $session->read('Auth.User.firstname') . ' ' .
 				$session->read('Auth.User.lastname') . '</strong> | ' .
-				$this->Html->link(__('Logout', true), array('controller' => 'users', 'action' => 'logout', 'admin' => true));
+				$this->Html->link(__('Logout', true), array('controller' => 'users', 'action' => 'logout', 'kiosk' => false, 'web'));
 			?>
 		   </p>
 		</div>
