@@ -47,6 +47,85 @@ Ext.onReady(function() {
 	    	}
 	    }
 	});
+	
+	// form for adding a parent node
+	var parentFormPanel = new Ext.FormPanel({
+		defaultType: 'field',
+		labelWidth: 150,
+		autoScroll: true,
+		id: 'parentformpanel',
+		frame: true,
+		items: [{
+			xtype: 'textfield',
+			vtype: 'alpha',
+			allowBlank: false,
+			fieldLabel: 'Name',
+			name: 'name'
+		}],
+		buttons: [{
+			text: 'Save',
+			handler: function(b, e) {
+				var f = parentFormPanel.getForm();
+				var vals = f.getValues();
+
+				if (f.isValid()) {
+					f.submit({
+						url: '/admin/navigations/add_parent',
+						params: {},
+						success: function(form, action) {
+							//console.log(action);
+						
+							if (action.result.success !== true) {
+								action.options.failure();
+							} else {
+								var newNode = new Ext.tree.TreeNode({
+									id: action.result.navigation.id, 
+									text: action.result.navigation.title,
+									leaf: false
+								});
+								
+								var parentNode = tree.root;
+			                     
+								if (!parentNode.expanded) {
+									parentNode.expand;
+								}
+								parentNode.appendChild(newNode);
+							}
+							
+							parentWin.hide();
+							parentFormPanel.getForm().setValues({
+								cmscombo: '',
+								name: '',
+								link: ''
+							});
+						},
+						failure: function(form, action) {
+							switch (action.failureType) {
+								case Ext.form.Action.CLIENT_INVALID:
+									Ext.Msg.alert('Failure', 'Form fields may not be submitted with invalid keys');
+									break;
+								case Ext.form.Action.CONNECT_FAILURE:
+									Ext.Msg.alert('Failure', 'Ajax Communication Failed');
+									break;
+								case Ext.form.Action.SERVER_INVALID:
+									Ext.Msg.alert('Failure', action.result.msg);
+									break;
+							}
+						}
+					});	
+				}
+			}
+		},{
+			text: 'Cancel',
+			handler: function(b, e) {
+				parentWin.hide();
+				parentFormPanel.getForm().setValues({
+					name: ''
+				});
+			}			
+		}],
+		buttonAlign: 'right'
+	});
     
 	// form to place on the window
 	var formPanel = new Ext.FormPanel({
@@ -158,6 +237,30 @@ Ext.onReady(function() {
 			}			
 		}],
 		buttonAlign: 'right'
+	});
+	
+	var addParentNode = new Ext.Button({
+		text: 'Add Parent Node',
+		hidden: true,
+		handler: function() {
+    		parentWin = new Ext.Window({
+    			title: 'Add Parent Node',
+    			width: 315,
+    			modal: true,
+    			closeAction: 'hide',
+        		items: [parentFormPanel],
+        		listeners: {
+        			beforehide: function(c) {
+        				var f = parentFormPanel.getForm();
+		        		f.setValues({
+							name: ''
+						});
+        			}
+        		}
+        	});
+
+        	parentWin.show();
+		}
 	});
 
     var addLinkButton = new Ext.Button({
@@ -316,12 +419,18 @@ Ext.onReady(function() {
         			Ext.getCmp('expandall').setVisible(true);
         		}
         	},
+        		addParentNode,
         		addLinkButton,
         		editLinkButton,
 				removeLinkButton
         	]
         }),
         listeners: {
+        	beforerender: function(tb) {
+        		if (role == 2) {
+        			addParentNode.show();
+        		}
+        	},
         	click: function(node, e) {
         		if (!node.parentNode || node.parentNode.isRoot == true) {
         			editLinkButton.disable();
