@@ -137,15 +137,19 @@ a {
     overflow: auto;
 }
 
+/**
+ * START: Top Navigation **************************************************************
+ */
+
 .content .topNav {
 	float: left;
 	width: 576px;
-    height: 40px;
+    height: 41px;
     line-height: 40px;
     padding-left: 224px;
 }
 
-.content .topNav ul {
+.content .topNav + ul {
 	float: right;
     margin: 0 35px 0 0;
     padding: 0;
@@ -154,8 +158,37 @@ a {
 .content .topNav li {
 	background: url(../img/nav_left.png) no-repeat left top;
     float: left;
+    position: relative;
     padding: 0;
     margin: 0;
+}
+
+.content .topNav li ul {
+	background: #006699;
+	display: none;
+	position: absolute;
+	top: 4em;
+	left: 0;
+}
+
+.content .topNav li ul a {
+	background: #006699;
+	color: #fff;
+	display: block;
+}
+
+.content .topNav li ul li:hover,
+.content .topNav li ul a:hover {
+	background-image: none;
+}
+
+
+.content .topNav li > ul {
+	left: auto;
+}
+
+.content .topNav li:hover ul {
+	display: block;
 }
 
 .topNav a {
@@ -170,8 +203,84 @@ a {
 	text-decoration: none;
 }
 
-.topNav li:hover {background-position: 0 -40px}
-.topNav a:hover {background-position: right -40px}
+/*.topNav li:hover {background-position: 0 -40px}
+.topNav a:hover {background-position: right -40px}*/
+
+/**
+ * START: Superfish styles
+ */
+
+/*** ESSENTIAL STYLES ***/
+/*.sf-menu, .sf-menu * {
+	margin:	0;
+	padding: 0;
+	list-style:	none;
+}*/
+
+.sf-menu ul {
+	position: absolute;
+	top: -999em;
+	width: 10em;
+	/* left offset of submenus need to match (see below) */
+}
+.sf-menu ul li {
+	width: 100%;
+}
+.sf-menu li:hover {
+	visibility: inherit;
+	/* fixes IE7 'sticky bug' */
+}
+.sf-menu li {
+	float: left;
+	position: relative;
+}
+.sf-menu a {
+	display: block;
+	position: relative;
+}
+.sf-menu li:hover ul, .sf-menu li.sfHover ul {
+	left:			1px;
+	top:			40px;
+	/* match top ul list item height */
+	z-index:		99;
+}
+ul.sf-menu li:hover li ul, ul.sf-menu li.sfHover li ul {
+	top:			-999em;
+}
+ul.sf-menu li li:hover ul, ul.sf-menu li li.sfHover ul {
+	left:			40px;
+	/* match ul width */
+	top:			0;
+}
+ul.sf-menu li li:hover li ul, ul.sf-menu li li.sfHover li ul {
+	top:			-999em;
+}
+ul.sf-menu li li li:hover ul, ul.sf-menu li li li.sfHover ul {
+	left:			40px;
+	/* match ul width */
+	top:			0;
+}
+
+/*** shadows for all but IE6 ***/
+.sf-shadow ul {
+	background:	url('../img/shadow.png') no-repeat bottom right;
+	padding: 0 8px 9px 0;
+	-moz-border-radius-bottomleft: 17px;
+	-moz-border-radius-topright: 17px;
+	-webkit-border-top-right-radius: 17px;
+	-webkit-border-bottom-left-radius: 17px;
+}
+.sf-shadow ul.sf-shadow-off {
+	background: transparent;
+}
+
+/**
+ * END: Superfish styles
+ */
+
+/**
+ * END: Top Navigation **************************************************************
+ */
 
 .content .leftNav {
     float: left;
@@ -645,4 +754,42 @@ a:focus {
 	border-top: 1px solid #D0E0EE;
 	margin: 0 0 18px;
 	padding: 25px 0;
+}
+
+.event {
+	background: #E6EBF1;
+	border: 1px solid #D0E0EE;
+	margin: 0 0 16px;
+	padding: 8px 20px;
+}
+
+.event .description {
+	padding: 10px 0 0;
+}
+
+.event .location,
+.event .event_url,
+.event .event_links {
+	margin: 0 !important;
+}
+
+.event .datetime {
+	color: #676767;
+	font-size: 13px;
+}
+
+.event .sponsor {
+	font-style: italic;
+}
+
+.event .event_links a {
+	margin-right: 8px;
+}
+
+.event .location .label {
+	color: #000;
+}
+
+form.event_categories {
+	float: none;
 }
