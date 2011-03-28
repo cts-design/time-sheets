@@ -27,6 +27,8 @@ class FeaturedEmployersController extends AppController {
 			}
 			$this->FeaturedEmployer->create();
 			if ($this->FeaturedEmployer->save($this->data)) {
+				$this->Transaction->createUserTransaction('Featured Employers', null, null,
+                                        'Created featured employer ID ' . $this->FeaturedEmployer->id);
 				$this->Session->setFlash(__('The featured employer has been saved', true), 'flash_success');
 				$this->redirect(array('action' => 'index'));
 			} else {
@@ -42,6 +44,8 @@ class FeaturedEmployersController extends AppController {
 		}
 		if (!empty($this->data)) {
 			if ($this->FeaturedEmployer->save($this->data)) {
+				$this->Transaction->createUserTransaction('Featured Employers', null, null,
+                                        'Edited featured employer ID ' . $id);
 				$this->Session->setFlash(__('The featured employer has been saved', true), 'flash_success');
 				$this->redirect(array('action' => 'index'));
 			} else {
@@ -59,6 +63,8 @@ class FeaturedEmployersController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 		if ($this->FeaturedEmployer->delete($id)) {
+			$this->Transaction->createUserTransaction('Featured Employers', null, null,
+                                        'Deleted featured employer ID ' . $id);
 			$this->Session->setFlash(__('Featured employer deleted', true), 'flash_success');
 			$this->redirect(array('action'=>'index'));
 		} else {

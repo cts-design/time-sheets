@@ -22,6 +22,8 @@ class HelpfulArticlesController extends AppController {
 		if (!empty($this->data)) {
 			$this->HelpfulArticle->create();
 			if ($this->HelpfulArticle->save($this->data)) {
+				$this->Transaction->createUserTransaction('HelpfulArticles', null, null,
+                                        'Created article ID ' . $this->HelpfulArticle->id);
 				$this->Session->setFlash(__('The helpful article has been saved', true), 'flash_success');
 				$this->redirect(array('action' => 'index'));
 			} else {
@@ -37,6 +39,8 @@ class HelpfulArticlesController extends AppController {
 		}
 		if (!empty($this->data)) {
 			if ($this->HelpfulArticle->save($this->data)) {
+				$this->Transaction->createUserTransaction('HelpfulArticles', null, null,
+                                        'Edited article ID ' . $id);
 				$this->Session->setFlash(__('The helpful article has been saved', true), 'flash_success');
 				$this->redirect(array('action' => 'index'));
 			} else {
@@ -54,6 +58,8 @@ class HelpfulArticlesController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 		if ($this->HelpfulArticle->delete($id)) {
+			$this->Transaction->createUserTransaction('HelpfulArticles', null, null,
+                                        'Deleted article ID ' . $id);
 			$this->Session->setFlash(__('Helpful article deleted', true), 'flash_success');
 			$this->redirect(array('action'=>'index'));
 		}

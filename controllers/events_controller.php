@@ -29,6 +29,8 @@ class EventsController extends AppController {
 		$event = $this->Event->save($this->data);
 
 		if ($event) {
+            $this->Transaction->createUserTransaction('Events', null, null,
+                    'Created event ID ' . $this->Event->id);
 			$newEvent['success'] = true;
 			$newEvent['events'] = $event['Event'];
 			$newEvent['events']['id'] = $this->Event->getLastInsertId();	
@@ -74,6 +76,8 @@ class EventsController extends AppController {
 		$updatedEvent = $this->Event->save($this->data);
 		
 		if ($updatedEvent) {
+            $this->Transaction->createUserTransaction('Events', null, null,
+                    'Updated event ID ' . $this->Event->id);
 			$events['success'] = true;
 		} else {
 			$events['success'] = false;
@@ -90,6 +94,8 @@ class EventsController extends AppController {
 		
 		if ($this->Event->delete($event['id'])) {
 			$events['success'] = true;
+			$this->Transaction->createUserTransaction('Events', null, null,
+                                        'Deleted event ID ' . $event['id']);
 		} else {
 			$events['success'] = false;
 		}
