@@ -40,8 +40,28 @@ class ChairmanReportsControllerTestCase extends AtlasTestCase {
     }
 
 	function testAdminIndex() {
-            //$result = $this->testAction('/admin/chairman_reports/index', array('return' => 'vars'));
-            //debug($result);
+		$this->ChairmanReports->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'username' => 'dnolan',
+	        'role_id' => 2
+	    ));
+		// EVERYTIME THIS TEST IS RUN, IT JUST REDIRECTS TO THE REAL PAGE
+        $result = $this->testAction('/admin/chairman_reports/index', array('return' => 'vars'));
+        $result = Set::extract('/chairmanReports/.[1]', $result);
+		$expected = array(
+			'id' => 1,
+            'title' => 'Lorem ipsum dolor sit amet',
+            'file' => 'http://atlas.dev/files/public/file.pdf',
+            'created' => '2011-02-09 15:20:21',
+            'modified' => '2011-02-09 15:20:21'
+		);
+		$this->assertEqual($result[0]['ChairmanReport'], $expected);
+       	
+        //$this->ChairmanReports->params = Router::parse('/admin/chairman_reports/index');
+	    //$this->ChairmanReports->beforeFilter();
+	    //$this->ChairmanReports->Component->startup($this->ChairmanReports);
+		//$this->ChairmanReports->admin_index();
+		//debug($this->ChairmanReports->viewVars);
 	}
 
 	function testAdminEditWithValidData() {
