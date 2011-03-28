@@ -41,7 +41,7 @@
 
                 <div class="career_seekers">
                     <h3>Career Seekers</h3>
-                    <?php echo $this->Nav->links('Career Seekers'); ?>
+                    <?php echo $this->Nav->links('CareerSeekers'); ?>
                 </div> <!-- end .career_seekers -->
 
                 <div class="programs">
