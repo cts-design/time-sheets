@@ -6,6 +6,7 @@
  * @link http://ctsfla.com
  * @package ATLAS V3
  */
+ 
 class UsersController extends AppController {
 
     var $name = 'Users';
@@ -32,9 +33,9 @@ class UsersController extends AppController {
 				}
 	    	}
 		}
-		$this->Auth->allow('kiosk_mini_registration', 'add', 'admin_password_reset', 'build_acl', 'admin_login', 'admin_logout', 'kiosk_self_sign_login', 'login');
+		$this->Auth->allow('kiosk_mini_registration', 'add', 'admin_password_reset', 'build_acl', 'admin_login', 'admin_logout', 'kiosk_self_sign_login', 'login', 'mini_registration');
 
-		if (isset($this->data['User']['username'], $this->data['User']['password'],$this->data['User']['self_sign'] ) &&
+		if (isset($this->data['User']['username'], $this->data['User']['password'],$this->data['User']['login_type'] ) &&
 			$this->data['User']['username'] != '' && $this->data['User']['password'] != '') {
 		    $count = $this->User->find('count', array(
 				'conditions' => array(
@@ -42,9 +43,13 @@ class UsersController extends AppController {
 				    'and' => array(
 					'User.password' => $this->Auth->password($this->data['User']['password'])))));
 		    if ($count === 0) {
-				if ($this->data['User']['self_sign'] == 'self') {
+				if ($this->data['User']['login_type'] == 'kiosk') {
 				    $this->redirect(array('action' => 'mini_registration',
-					$this->data['User']['username'], str_replace('/', '_', $this->data['User']['dob'])));
+					$this->data['User']['username'], 'kiosk' => true));
+				}
+				elseif($this->data['User']['login_type'] == 'website') {
+				    $this->redirect(array('action' => 'mini_registration',
+					$this->data['User']['username'], 'kiosk' => false));					
 				}
 				else
 				    $this->redirect(array('action' => 'add'));
@@ -181,7 +186,7 @@ class UsersController extends AppController {
     }
 
     function kiosk_self_sign_login() {
-		if (isset($this->data['User']['self_sign']) && $this->data['User']['self_sign'] == 'self') {
+		if (isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'kiosk') {
 		    if ($this->Auth->user()) {
 			$this->Transaction->createUserTransaction('Self Sign', 
 				null, $this->User->SelfSignLog->Kiosk->getKioskLocationId(), 'Logged in at self sign kiosk' );
@@ -193,11 +198,25 @@ class UsersController extends AppController {
     }
 	
 	function login() {
-		
+		if($this->Auth->user()){
+			if($this->Session->read('Auth.redirect') != '') {
+				$this->redirect($this->Session->read('Auth.redirect'));
+			}
+			else {
+				$this->redirect('/');
+			}
+			
+		}
 	}
 
     function logout($type=null, $logoutMsg=null) {
 		if ($this->Auth->user('role_id') == '1') {
+			
+			if($type == 'web') {
+				$this->Session->destroy();
+				$this->redirect('/');
+			}
+			
 		    if($type == 'selfSign') {
 			    if(!empty($logoutMsg)) {
 			    	$msg = $logoutMsg;
@@ -216,6 +235,35 @@ class UsersController extends AppController {
 		if ($this->Auth->user('role_id') != 1) {
 		    $this->redirect(array('action' => 'login', 'admin' => true));
 		}
+    }
+	
+    function mini_registration($lastname=null) {
+		if (!empty($this->data)) {	
+		    $this->User->create();
+		    if ($this->User->save($this->data)) {
+				$userId = $this->User->getInsertId();
+				$last4 = substr($this->data['User']['ssn'], -4);
+				$this->data['User']['password'] = Security::hash($last4, null, true);
+				$this->data['User']['username'] = $this->data['User']['lastname'];
+				$this->Auth->login($this->data);
+				$this->Transaction->createUserTransaction('Web Site',
+					$userId, $this->User->SelfSignLog->Kiosk->getKioskLocationId(), 'User self registered using the website.');
+				$this->Session->setFlash(__('Your account has been created.', true), 'flash_success');
+				if($this->Session->read('Auth.redirect') != '') {
+					$this->redirect($this->Session->read('Auth.redirect'));
+				}
+				else{
+					$this->redirect('/');
+				} 				
+		    } 
+		    else {
+				$this->Session->setFlash(__('The information could not be saved. Please, try again.', true), 'flash_failure');
+		    }
+		}
+		if (empty($this->data)) {
+		    $this->data['User']['lastname'] = $lastname;
+		}
+		$this->set('title_for_layout', 'Registration');
     }
 
     function kiosk_auto_logout() {
