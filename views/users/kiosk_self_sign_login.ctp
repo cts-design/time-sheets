@@ -25,7 +25,7 @@
 			'between' => '</p><p class="left">',
 			'after' => '</p><br class="clear"/>',
 			'maxlength' => 4));
-	    echo $form->hidden('User.self_sign', array('value' => 'self'));
+	    echo $form->hidden('User.login_type', array('value' => 'kiosk'));
 	    echo $form->end(array('label' => 'Login', 'class' => 'self-sign-kiosk-button'));
     ?>
 </div>
