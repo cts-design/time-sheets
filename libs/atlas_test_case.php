@@ -21,6 +21,7 @@ class AtlasTestCase extends CakeTestCase {
 	    'featured_employer',
 	    'filed_document',
 	    'ftp_document_scanner',
+	    'helpful_article',
 	    'hot_job',
 	    'kiosk',
 	    'kiosk_button',

@@ -2,6 +2,11 @@
 class HelpfulArticlesController extends AppController {
 
 	var $name = 'HelpfulArticles';
+	
+	function beforeFilter() {
+		parent::beforeFilter();
+		$this->Auth->allow('index');
+	}
 
 	function index() {
 		$this->HelpfulArticle->recursive = 0;
