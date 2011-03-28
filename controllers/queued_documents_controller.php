@@ -221,6 +221,7 @@ class QueuedDocumentsController extends AppController {
 		    'name' => str_replace('.pdf', '', $doc['QueuedDocument']['filename']),
 		    'extension' => 'jpg',
 		    'download' => false,
+		    'cache' => true,
 		    'mimeType' => array('jpg' => 'image/jpeg'),
 		    'path' =>  Configure::read('Document.jpeg.path') .
 		    date('Y', strtotime($doc['QueuedDocument']['created'])) . '/' .

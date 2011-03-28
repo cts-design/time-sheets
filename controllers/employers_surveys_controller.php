@@ -55,5 +55,6 @@ class EmployersSurveysController extends AppController {
 		$this->set('data', $data);
 		return $this->render(null, null, '/elements/ajaxreturn');
 	}
+
 }
 ?>

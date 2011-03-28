@@ -1,6 +1,7 @@
 <?php
 /* CareerSeekersSurvey Fixture generated on: 2011-03-21 16:24:29 : 1300724669 */
 class CareerSeekersSurveyFixture extends CakeTestFixture {
+
 	var $name = 'CareerSeekersSurvey';
 
 	var $fields = array(
@@ -20,5 +21,6 @@ class CareerSeekersSurveyFixture extends CakeTestFixture {
 			'modified' => '2011-03-21 16:24:29'
 		),
 	);
+
 }
 ?>

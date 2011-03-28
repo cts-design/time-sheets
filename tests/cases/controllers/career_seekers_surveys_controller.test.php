@@ -3,62 +3,66 @@
 App::import('Controller', 'CareerSeekersSurveys');
 App::import('Lib', 'AtlasTestCase');
 class TestCareerSeekersSurveysController extends CareerSeekersSurveysController {
+
 	var $autoRender = false;
 
 	function redirect($url, $status = null, $exit = true) {
 		$this->redirectUrl = $url;
 	}
+
 }
 
 class CareerSeekersSurveysControllerTestCase extends AtlasTestCase {
 
-	function startTest() {
-		$this->CareerSeekersSurveys =& new TestCareerSeekersSurveysController();
-		$this->CareerSeekersSurveys->constructClasses();
-	}
 
-	function endTest() {
-		unset($this->CareerSeekersSurveys);
-		ClassRegistry::flush();
-	}
+    function startTest() {
+            $this->CareerSeekersSurveys =& new TestCareerSeekersSurveysController();
+            $this->CareerSeekersSurveys->constructClasses();
+    }
 
-	function testIndex() {
-		$result = $this->testAction('/career_seekers_surveys', array('return' => 'view'));
-		//debug($result);
-		$this->assertPattern('/survey careerSeekersSurveys/', $result);
-		$this->assertPattern('/CareerSeekersSurveyIndexForm/', $result);
-	}
+    function endTest() {
+            unset($this->CareerSeekersSurveys);
+            ClassRegistry::flush();
+    }
 
-	function testAdd() {
+    function testIndex() {
+            $result = $this->testAction('/career_seekers_surveys', array('return' => 'view'));
+            //debug($result);
+            $this->assertPattern('/survey careerSeekersSurveys/', $result);
+            $this->assertPattern('/CareerSeekersSurveyIndexForm/', $result);
+    }
 
-	}
+    function testAdd() {
 
-	function testEdit() {
+    }
 
-	}
+    function testEdit() {
 
-	function testDelete() {
+    }
 
-	}
+    function testDelete() {
 
-	function testAdminIndex() {
+    }
 
-	}
+    function testAdminIndex() {
 
-	function testAdminAdd() {
+    }
 
-	}
+    function testAdminAdd() {
 
-	function testAdminEdit() {
+    }
 
-	}
+    function testAdminEdit() {
 
-	function testAdminDelete() {
+    }
 
-	}
-	
-	function testAdminDeleteInvalidData() {
-		
-	}
+    function testAdminDelete() {
+
+    }
+    
+    function testAdminDeleteInvalidData() {
+            
+    }
+
 }
 ?>

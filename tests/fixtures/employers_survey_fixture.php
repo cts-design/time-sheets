@@ -1,6 +1,7 @@
 <?php
 /* EmployersSurvey Fixture generated on: 2011-03-23 15:46:08 : 1300909568 */
 class EmployersSurveyFixture extends CakeTestFixture {
+
 	var $name = 'EmployersSurvey';
 
 	var $fields = array(

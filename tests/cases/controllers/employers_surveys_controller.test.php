@@ -54,6 +54,10 @@ class EmployersSurveysControllerTestCase extends AtlasTestCase {
 	function testAdminDelete() {
 
 	}
+        var $autoRender = false;
 
+        function redirect($url, $status = null, $exit = true) {
+                $this->redirectUrl = $url;
+        }
 }
 ?>

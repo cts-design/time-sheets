@@ -3,16 +3,18 @@
 App::import('Model', 'EmployersSurvey');
 App::import('Lib', 'AtlasTestCase');
 class EmployersSurveyTestCase extends AtlasTestCase {
-	var $fixtures = array('app.employers_survey');
 
-	function startTest() {
-		$this->EmployersSurvey =& ClassRegistry::init('EmployersSurvey');
-	}
+    var $fixtures = array('app.employers_survey');
 
-	function endTest() {
-		unset($this->EmployersSurvey);
-		ClassRegistry::flush();
-	}
+    function startTest() {
+            $this->EmployersSurvey =& ClassRegistry::init('EmployersSurvey');
+    }
+
+    function endTest() {
+            unset($this->EmployersSurvey);
+            ClassRegistry::flush();
+    }
+
 
 }
 ?>
