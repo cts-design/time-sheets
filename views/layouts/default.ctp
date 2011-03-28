@@ -121,7 +121,6 @@
             	<?php else: ?>
                 <div class="sub_content">
 	            <?php endif; ?>
-	            	<h2><?php echo $title_for_layout ?></h2>
 	            	<?php echo $this->Session->flash(); ?>
 					<?php echo $session->flash('auth'); ?>
 	            	<?php echo $content_for_layout; ?>
