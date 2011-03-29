@@ -4,6 +4,12 @@
  * @link http://ctsfla.com
  * @package ATLAS V3
  */
+if (typeof console == "undefined") {
+    window.console = {
+        log: function () {}
+    };
+}
+
 Ext.onReady(function() {
 	Ext.QuickTips.init();
 	Ext.BLANK_IMAGE_URL = "/img/ext/default/s.gif";
@@ -81,11 +87,19 @@ Ext.onReady(function() {
 	            if (!selectedNode || !selectedNode.parentNode) {
 	            	parentId = tree.root.firstChild.attributes.id;
 	            } else if (selectedNode.leaf) {
-	            	parentId = selectedNode.parentNode.attributes.id;
+	            	//console.log(selectedNode);
+	            	// check to see if we're nesting too deep
+	            	if (selectedNode.parentNode.parentNode.parentNode && selectedNode.parentNode.parentNode.parentNode.isRoot) {
+	            		Ext.Msg.alert('Cannot add link', 'You may only nest one link deep');
+	            		return;
+	            	} else {
+	            		parentId = selectedNode.id;
+	            	}
 	            } else if (selectedNode.parentNode.isRoot) {
 	            	parentId = selectedNode.attributes.id;
 	            }
 	            
+	            //throw ('got to the end of the if');
 	            //console.log(parentId);
 				
 				f.submit({
@@ -113,13 +127,14 @@ Ext.onReady(function() {
 							if (!selectedNode || !selectedNode.parentNode) {
 								parentNode = tree.root.firstChild;
 							} else if (selectedNode.leaf) {
-								parentNode = selectedNode.parentNode;
+								parentNode = selectedNode;
+								parentNode.leaf = false;
 							} else if (selectedNode.parentNode.isRoot) {
 								parentNode = selectedNode;
 							}
-		                     
+		                    
 							if (!parentNode.expanded) {
-								parentNode.expand;
+								parentNode.expand();
 							}
 							parentNode.appendChild(newNode);
 						}
