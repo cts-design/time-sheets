@@ -391,7 +391,7 @@ a {
 
 .content .sub_content {
     background: #fff;
-    margin: 0 25px 0 177px;
+	margin: 0 8px 0 0;
     padding: 18px 20px;
     min-height: 600px;
     height: auto !important;
