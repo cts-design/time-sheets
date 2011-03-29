@@ -4,7 +4,7 @@
  * @copyright Complete Technology Solutions 2010
  * @link http://ctsfla.com
  * @package ATLAS V3
- */
+ */App::import('Vendor', 'DebugKit.FireCake');
 class NavHelper extends AppHelper {
 
     var $helpers = array('Html');
@@ -12,27 +12,45 @@ class NavHelper extends AppHelper {
     /**
      * Retreives the navigation links from the database and outputs the html
      *
-     * @param string $position
+     * @param string $position position your calling from (should match the title of a parent in the database)
+	 * @param bool $dropDown if true, any grandchildren will be inserted in a nested unordered list for a dropdown menu
      * @return mixed returns the html output or false
      */
-    function links($position = NULL) {
+    function links($position = NULL, $dropDown = false) {
         if (!$position)
             return FALSE;
 
-        // load the navigation model
-        $Navigation = ClassRegistry::init('Navigation');
-
-        // grab all the children is a one dimensional array
-        // array keys will be link title, values will be relative urls
+        $Navigation = ClassRegistry::init('Navigation'); // load the navigation model
         $links = $Navigation->findChildrenByPosition($position);
 
-        $output = "<ul>";
-        foreach ($links as $k => $v) {
-            $link = $this->Html->link($k, $v);
-            $output .= "<li>{$link}</li>";
+        $output = "<ul class=\"sf-menu\">";
+        foreach ($links as $key => $value) {
+        	$link = $this->Html->link($value['Navigation']['title'], $value['Navigation']['link']);
+
+			if ($dropDown) {
+				if (isset($value['Navigation']['children']) && !empty($value['Navigation']['children'])) {
+					$output .= 
+					"<li>{$link}
+						<ul>";
+					
+					foreach ($value['Navigation']['children'] as $k => $v) {
+						$lnk = $this->Html->link($v['Navigation']['title'], $v['Navigation']['link']);
+						$output .= "<li>{$lnk}</li>";
+					}
+					
+					$output .=
+					"	</ul>
+					</li>";
+				} else {
+					$output .= "<li>{$link}</li>";
+				}
+			} else {
+				$output .= "<li>{$link}</li>";
+			}
         }
         $output .= "</ul>";
-
+		
+		FireCake::log($output);
         return $output;
     }
 
