@@ -119,7 +119,35 @@ class UserFixture extends CakeTestFixture {
 			'signature_modified' => '2010-09-22 15:02:21',
 			'created' => '2010-09-22 15:02:21',
 			'modified' => '2010-09-22 15:02:21'		
-		)
+		),
+		array(
+			'id' => 9,
+			'role_id' => 1,
+			'firstname' => 'Daniel',
+			'lastname' => 'Smith',
+			'middle_initial' => 'A',
+			'ssn' => '123441234',
+                        'username' => 'test',
+			'password' => '1234',
+			'address_1' => '123 main st',
+			'address_2' => '',
+			'city' => 'spring hill',
+			'state' => 'fl',
+			'zip' => '34609',
+			'phone' => '3525551234',
+			'alt_phone' => '',
+			'gender' => 'Male',
+			'dob' => '2010-09-22',
+			'email' => 'danieltest@teststuff.com',
+			'status' => 1,
+			'deleted' => 0,
+			'signature' => 1,
+			'location_id' => '1',
+			'signature_created' => '2010-09-22 15:02:21',
+			'signature_modified' => '2010-09-22 15:02:21',
+			'created' => '2010-09-22 15:02:21',
+			'modified' => '2010-09-22 15:02:21'		
+		)		
 	);
 }
 ?>
