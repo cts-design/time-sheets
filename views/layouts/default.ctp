@@ -1,7 +1,7 @@
 <?php
 /**
  * @author Daniel Nolan
- * @copyright Complete Technology Solutions 2010
+ * @copyright Complete Technology Solutions 2011
  * @link http://ctsfla.com
  * @package ATLAS V3
  */
@@ -14,10 +14,11 @@
 	    <?php __('ATLAS V3'); ?>
 	    <?php echo $title_for_layout; ?>
 	</title>
-	<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.2.0/build/cssreset/reset-min.css" />
 	<?php
 	echo $this->Html->meta('icon');
-
+	
+	echo $this->Html->css('reset');
+	
 	echo $this->Html->css('ui-darkness/jquery-ui-1.8.5.custom');
 
 	echo $this->Html->css('style');
