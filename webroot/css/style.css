@@ -748,7 +748,6 @@ a:focus {
 
 .locations .location {
 	border-top: 1px solid #D0E0EE;
-	height: 200px;
 	margin: 0 0 18px;
 	padding: 25px 0;
 }
@@ -795,4 +794,24 @@ a:focus {
 
 form.event_categories {
 	float: none;
+}
+
+form p.label {
+	margin-bottom: 0 !important;
+}
+
+form .rating {
+
+}
+
+form .rating label {
+	color: #454545;
+}
+
+form .rating input {
+	margin: 18px 7px !important;
+}
+
+#EmployersSurveyAddForm, #CareerSeekersSurveyAddForm {
+	margin-top: 18px;
 }
