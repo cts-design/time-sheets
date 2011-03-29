@@ -84,61 +84,12 @@
             <div class="content">
                 <div class="topNav">
                 	<?php echo $this->Nav->links('Top', true) ?>
-                	<!-- <ul class="sf-menu">
-                		<li class="current"><a href="#a">Sunfishes</a>
-                			<ul>
-                				<li><a href="#aa">Blackbanded Sunfish</a></li>
-                				<li><a href="#ab">Shadow Bass</a></li>
-                				<li><a href="#ac">Ozark Bass</a></li>
-                				<li><a href="#ad">White Crappie</a></li>
-                			</ul>
-                		</li>
-                		<li><a href="#b">Grunts</a>
-                			<ul>
-                 				<li><a href="#ba">Smallmouth Grunt</a></li>
-                				<li><a href="#bb">Burrito</a></li>
-                				<li><a href="#bc">Pigfish</a></li>               				
-                			</ul>	
-                		</li>
-                		<li><a href="#c">Remoras</a>
-                			<ul>
-                				<li><a href="#ca">Whalesucker</a></li>
-                				<li><a href="#cb">Marlinsucker</a></li>
-                				<li><a href="#cc">Ceylonese remora</a></li>
-                				<li><a href="#cd">Spearfish remora</a></li>
-                				<li><a href="#ce">Slender suckerfish</a></li>
-                			</ul>
-                		</li>
-                	</ul> -->
                 </div> <!-- end .topNav -->
                 <div class="clear"></div>
                 
                 <div id="aside">
 	                <div class="leftNav">
-	                	<?php //echo $this->Nav->links('Left') ?>
-						<ul class="sf-menu">
-	                		<li><a href="#b">Grunts</a></li>
-	                		<li><a href="#c">Remoras</a></li>
-	                		<li class="current"><a href="#b">Grunts</a>
-	                			<ul>
-	                				<li><a href="#aa">Blackbanded Sunfish</a></li>
-	                				<li><a href="#ab">Shadow Bass</a></li>
-	                				<li><a href="#ac">Ozark Bass</a></li>
-	                				<li><a href="#ad">White Crappie</a></li>
-	                			</ul>
-	                		</li>
-	                		<li><a href="#a">Sunfishes</a>
-	                			<ul>
-	                				<li><a href="#aa">Blackbanded Sunfish</a></li>
-	                				<li><a href="#ab">Shadow Bass</a></li>
-	                				<li><a href="#ac">Ozark Bass</a></li>
-	                				<li><a href="#ad">White Crappie</a></li>
-	                			</ul>
-	                		</li>
-	                		<li><a href="#c">Remoras</a></li>
-	                		<li><a href="#b">Grunts</a></li>
-	                		<li><a href="#c">Remoras</a></li>
-	                	</ul>
+	                	<?php echo $this->Nav->links('Left', true, true) ?>
 	                </div> <!-- end .leftNav -->
 	                
 	                <div class="feedback">
