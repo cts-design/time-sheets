@@ -8,7 +8,7 @@
  */
 
 class AppController extends Controller {
-	
+		
     var $helpers = array('Html', 'Form', 'Session', 'Js' => array('Jquery'), 'Time', 'Crumb', 'Nav');
     var $components = array('DebugKit.Toolbar', 'Session', 'RequestHandler', 'Auth', 'Acl', 'Cookie', 'Transaction', 'Security');
 	var $genders = array(
@@ -72,7 +72,10 @@ class AppController extends Controller {
 		'WY'=>"Wyoming");
 		
     function beforeFilter() {
-		parent::beforeFilter();		
+		parent::beforeFilter();
+		if(! defined('CAKEPHP_TEST_SUITE')) {
+			define('CAKEPHP_TEST_SUITE', false);
+		}
 		if ($this->RequestHandler->isAjax()) {
 			Configure::write('debug', 0);
 		}
@@ -126,7 +129,9 @@ class AppController extends Controller {
     }
 
 	function forceSSL() {
-		$this->redirect('https://' . env('SERVER_NAME') . $this->here);
+		if(!CAKEPHP_TEST_SUITE) {
+			$this->redirect('https://' . env('SERVER_NAME') . $this->here);
+		}		
 	}
 
 	function admin_auto_complete_first_ajax() {
