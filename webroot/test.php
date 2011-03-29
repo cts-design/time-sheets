@@ -44,7 +44,7 @@ ini_set('display_errors', 1);
  *
  */
 	if (!defined('CAKE_CORE_INCLUDE_PATH')) {
-		define('CAKE_CORE_INCLUDE_PATH', 'C:' . DS . 'wamp' . DS . 'bin' . DS . 'libraries' . DS . 'cakephp-1.3.7');
+		define('CAKE_CORE_INCLUDE_PATH', 'C:' . DS . 'cakephp');
 	}
 
 
@@ -84,6 +84,8 @@ if (Configure::read('debug') < 1) {
 }
 
 require_once CAKE_TESTS_LIB . 'cake_test_suite_dispatcher.php';
+
+define('CAKEPHP_TEST_SUITE', true);
 
 $Dispatcher = new CakeTestSuiteDispatcher();
 $Dispatcher->dispatch();
