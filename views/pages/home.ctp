@@ -12,27 +12,6 @@
                     <p class="signed">- Paul Thompson <span>UC Davis, Inc</span></p>
                 </div> <!-- end .testimonial -->
                 <div class="clear"></div>
-                
-                <div class="feedback">
-                    <h3>Tell Us What You Think</h3>
-                    <p>Overall, in terms of resources and information, how effective is this website in meeting your employment
-                    needs?</p>
-                    <form action="#" method="post">
-                        <p>
-                            <input type="radio" value="Very Effective" name="very_effective" />
-                            <label for="very_effective">Very Effective</label>
-                        </p>
-                        <p>
-                            <input type="radio" value="Somewhat Effective" name="somewhat_effective" />
-                            <label for="somewhat_effective">Somewhat Effective</label>
-                        </p>
-                        <p>
-                            <input type="radio" value="not_very_effective" name="not_very_effective" />
-                            <label for="very_effetive">Not Very Effective</label>
-                        </p>
-                        <p><input type="submit" id="feedback_submit" value="Select" /></p>
-                    </form>
-                </div> <!-- end .feedback -->
 				
                 <div class="employers">
                     <h3>Employers</h3>

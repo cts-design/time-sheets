@@ -113,18 +113,67 @@
                 </div> <!-- end .topNav -->
                 <div class="clear"></div>
                 
-                <div class="leftNav">
-                	<?php echo $this->Nav->links('Left') ?>
-                </div> <!-- end .leftNav -->
-            	<?php if ($this->params['action'] == 'display' && $this->params['controller'] == 'pages'): ?>
-                <div>
-            	<?php else: ?>
-                <div class="sub_content">
-	            <?php endif; ?>
-	            	<?php echo $this->Session->flash(); ?>
-					<?php echo $session->flash('auth'); ?>
-	            	<?php echo $content_for_layout; ?>
-                </div>
+                <div id="aside">
+	                <div class="leftNav">
+	                	<?php //echo $this->Nav->links('Left') ?>
+						<ul class="sf-menu">
+	                		<li><a href="#b">Grunts</a></li>
+	                		<li><a href="#c">Remoras</a></li>
+	                		<li class="current"><a href="#b">Grunts</a>
+	                			<ul>
+	                				<li><a href="#aa">Blackbanded Sunfish</a></li>
+	                				<li><a href="#ab">Shadow Bass</a></li>
+	                				<li><a href="#ac">Ozark Bass</a></li>
+	                				<li><a href="#ad">White Crappie</a></li>
+	                			</ul>
+	                		</li>
+	                		<li><a href="#a">Sunfishes</a>
+	                			<ul>
+	                				<li><a href="#aa">Blackbanded Sunfish</a></li>
+	                				<li><a href="#ab">Shadow Bass</a></li>
+	                				<li><a href="#ac">Ozark Bass</a></li>
+	                				<li><a href="#ad">White Crappie</a></li>
+	                			</ul>
+	                		</li>
+	                		<li><a href="#c">Remoras</a></li>
+	                		<li><a href="#b">Grunts</a></li>
+	                		<li><a href="#c">Remoras</a></li>
+	                	</ul>
+	                </div> <!-- end .leftNav -->
+	                
+	                <div class="feedback">
+	                    <h3>Tell Us What You Think</h3>
+	                    <p>Overall, in terms of resources and information, how effective is this website in meeting your employment
+	                    needs?</p>
+	                    <form action="#" method="post">
+	                        <p>
+	                            <input type="radio" value="Very Effective" name="very_effective" />
+	                            <label for="very_effective">Very Effective</label>
+	                        </p>
+	                        <p>
+	                            <input type="radio" value="Somewhat Effective" name="somewhat_effective" />
+	                            <label for="somewhat_effective">Somewhat Effective</label>
+	                        </p>
+	                        <p>
+	                            <input type="radio" value="not_very_effective" name="not_very_effective" />
+	                            <label for="very_effetive">Not Very Effective</label>
+	                        </p>
+	                        <p><input type="submit" id="feedback_submit" value="Select" /></p>
+	                    </form>
+	                </div> <!-- end .feedback -->
+	            </div> <!-- end #aside -->
+	            
+	            <div id="maincontent">
+	            	<?php if ($this->params['action'] == 'display' && $this->params['controller'] == 'pages'): ?>
+	                <div>
+	            	<?php else: ?>
+	                <div class="sub_content">
+		            <?php endif; ?>
+		            	<?php echo $this->Session->flash(); ?>
+						<?php echo $session->flash('auth'); ?>
+		            	<?php echo $content_for_layout; ?>
+	                </div>
+                </div> <!-- end #maincontent -->
             </div> <!-- end .content -->
 
             <div class="footer">

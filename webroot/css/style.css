@@ -285,10 +285,20 @@ a {
 /**
  * END: Top Navigation **************************************************************
  */
-
-.content .leftNav {
+ 
+.content #aside {
     float: left;
     width: 175px;
+}
+
+.content #maincontent {
+	float: left;
+	margin: 0 0 0 9px;
+	width: 607px;
+}
+
+.content .leftNav {
+
 }
 
 .content .leftNav a {
@@ -307,6 +317,28 @@ a {
 
 .content .leftNav ul li.last {
     border: 0;
+}
+
+.content .leftNav ul li ul {
+	display: none;
+}
+
+.content .leftNav ul li.current ul {
+	display: block;
+}
+
+.content .leftNav ul li ul li{
+	border: 0;
+	margin: 5px 0;
+}
+
+.content .leftNav ul li ul li a {
+	color: #454545;
+	font-size:12px;
+}
+
+.content .leftNav ul li.current ul li a:hover {
+	text-decoration: underline;
 }
 
 .secondary .content .leftNav {
@@ -453,7 +485,7 @@ a {
 .content .terms {
     font-size: 10px;
     line-height: 12px;
-    margin: 20px 25px 0 175px;
+    margin: 20px 25px 0 0;
     padding: 0 0 18px 0;
 }
 .footer {
