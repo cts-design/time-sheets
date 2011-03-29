@@ -1,7 +1,7 @@
 <div class="locations">
 	<?php foreach ($locations as $location): ?>
 	<div class="location">
-		<div class="left">
+		<div class="meta">
 			<address>
 			<strong><?php echo $location['Location']['public_name'] ?><br /></strong>
 			<?php echo $location['Location']['address_1']; ?><br />
@@ -18,10 +18,9 @@
 			<?php if (!empty($location['Location']['facilities'])): ?>
 			<?php echo $this->Html->link('Facilities', array('controller' => 'locations', 'action' => 'facilities', $location['Location']['id'])) ?>
 			<?php endif; ?>
-			
 		</div>
 		
-		<div class="right">
+		<div class="map">
 			<?php
 				$addressString = '';
 				$addressString .= $location['Location']['address_1'];
