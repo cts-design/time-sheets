@@ -83,7 +83,7 @@
             
             <div class="content">
                 <div class="topNav">
-                	<?php echo $this->Nav->links('Top') ?>
+                	<?php echo $this->Nav->links('Top', true) ?>
                 	<!-- <ul class="sf-menu">
                 		<li class="current"><a href="#a">Sunfishes</a>
                 			<ul>
