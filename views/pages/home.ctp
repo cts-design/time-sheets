@@ -51,9 +51,9 @@
 
                 <div class="links">
                     <ul>
-                        <li><a href="#">Click here</a> for our Calendar of Events</li>
+                        <li><a href="/events">Click here</a> for our Calendar of Events</li>
                         <li><a href="#">Click here</a> to view your nearest OneStop Center</li>
-                        <li class="last"><a href="#">Click here</a> for our Calendar of Events</li>
+                        <li class="last"><a href="/events">Click here</a> for our Calendar of Events</li>
                     </ul>
                 </div> <!-- end .links -->
                 <div class="clear"></div>
