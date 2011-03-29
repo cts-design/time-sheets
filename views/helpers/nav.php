@@ -13,10 +13,13 @@ class NavHelper extends AppHelper {
      * Retreives the navigation links from the database and outputs the html
      *
      * @param string $position position your calling from (should match the title of a parent in the database)
-	 * @param bool $dropDown if true, any grandchildren will be inserted in a nested unordered list for a dropdown menu
-     * @return mixed returns the html output or false
+	 * @param bool $nested if true, any grandchildren will be inserted in a nested unordered list for a dropdown menu
+     * @param bool $trackCurrent if true, this function will check each link against the current page and insert a class of current to the list item
+	 * @return mixed returns the html output or false
      */
-    function links($position = NULL, $dropDown = false) {
+    function links($position = NULL, $nested = false, $trackCurrent = false) {
+        $class = null; 
+			
         if (!$position)
             return FALSE;
 
@@ -26,11 +29,25 @@ class NavHelper extends AppHelper {
         $output = "<ul class=\"sf-menu\">";
         foreach ($links as $key => $value) {
         	$link = $this->Html->link($value['Navigation']['title'], $value['Navigation']['link']);
+			
+			if ($trackCurrent) {
+				if ($value['Navigation']['title'] == 'Homepage' || $value['Navigation']['title'] == 'Home') {
+					if ($this->here == '/') {
+						$class = ' class="current"';
+					}
+				} else if (strpos($this->here, $value['Navigation']['link']) !== false) {
+					$class = ' class="current"';
+				} else {
+					$class = null;
+				}
+			} else {
+				$class = null;
+			}
 
-			if ($dropDown) {
+			if ($nested) {
 				if (isset($value['Navigation']['children']) && !empty($value['Navigation']['children'])) {
 					$output .= 
-					"<li>{$link}
+					"<li{$class}>{$link}
 						<ul>";
 					
 					foreach ($value['Navigation']['children'] as $k => $v) {
@@ -42,10 +59,10 @@ class NavHelper extends AppHelper {
 					"	</ul>
 					</li>";
 				} else {
-					$output .= "<li>{$link}</li>";
+					$output .= "<li{$class}>{$link}</li>";
 				}
 			} else {
-				$output .= "<li>{$link}</li>";
+				$output .= "<li{$class}>{$link}</li>";
 			}
         }
         $output .= "</ul>";
