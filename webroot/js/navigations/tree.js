@@ -159,28 +159,24 @@ Ext.onReady(function() {
 				var vals = f.getValues();
 				
 				var selectedNode = tree.selModel.selNode;
-				var parentId;
-	            
-	            //console.log('Selected Node:', selectedNode);
-	            
+				var parentId, parent;
+
 	            if (!selectedNode || !selectedNode.parentNode) {
-	            	parentId = tree.root.firstChild.attributes.id;
+	            	parent = tree.root.firstChild;
 	            } else if (selectedNode.leaf) {
-	            	//console.log(selectedNode);
 	            	// check to see if we're nesting too deep
 	            	if (selectedNode.parentNode.parentNode.parentNode && selectedNode.parentNode.parentNode.parentNode.isRoot) {
 	            		Ext.Msg.alert('Cannot add link', 'You may only nest one link deep');
 	            		return;
 	            	} else {
-	            		parentId = selectedNode.id;
+	            		parent = selectedNode;
 	            	}
-	            } else if (selectedNode.parentNode.isRoot) {
-	            	parentId = selectedNode.attributes.id;
+	            } else {
+	            	parent = selectedNode;
 	            }
 	            
-	            //throw ('got to the end of the if');
-	            //console.log(parentId);
-				
+	            parentId = parent.id;
+
 				f.submit({
 					url: submitUrl,
 					params: {
@@ -198,24 +194,11 @@ Ext.onReady(function() {
 								linkUrl: action.result.navigation.link,
 								leaf: true
 							});
-							
-							//console.log("Tree:", tree);
-							
-							var parentNode;
-							
-							if (!selectedNode || !selectedNode.parentNode) {
-								parentNode = tree.root.firstChild;
-							} else if (selectedNode.leaf) {
-								parentNode = selectedNode;
-								parentNode.leaf = false;
-							} else if (selectedNode.parentNode.isRoot) {
-								parentNode = selectedNode;
+
+							if (!parent.expanded) {
+								parent.expand();
 							}
-		                    
-							if (!parentNode.expanded) {
-								parentNode.expand();
-							}
-							parentNode.appendChild(newNode);
+							parent.appendChild(newNode);
 						}
 						
 						win.hide();
