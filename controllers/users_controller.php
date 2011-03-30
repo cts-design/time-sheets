@@ -35,24 +35,29 @@ class UsersController extends AppController {
 		}
 		$this->Auth->allow('kiosk_mini_registration', 'add', 'admin_password_reset', 'build_acl', 'admin_login', 'admin_logout', 'kiosk_self_sign_login', 'login', 'mini_registration');
 
-		if (isset($this->data['User']['username'], $this->data['User']['password'],$this->data['User']['login_type'] ) &&
+		if(isset($this->data['User']['username'], $this->data['User']['password'],$this->data['User']['login_type'] ) &&
 			$this->data['User']['username'] != '' && $this->data['User']['password'] != '') {
 		    $count = $this->User->find('count', array(
 				'conditions' => array(
 				    'User.username' => $this->data['User']['username'],
 				    'and' => array(
 					'User.password' => $this->Auth->password($this->data['User']['password'])))));
-		    if ($count === 0) {
-				if ($this->data['User']['login_type'] == 'kiosk') {
+		    if($count === 0) {
+				if($this->data['User']['login_type'] == 'kiosk') {
 				    $this->redirect(array('action' => 'mini_registration',
 					$this->data['User']['username'], 'kiosk' => true));
 				}
 				elseif($this->data['User']['login_type'] == 'website') {
-				    $this->redirect(array('action' => 'mini_registration',
+				    $this->redirect(array('action' => 'mini_registration', 'regular',
 					$this->data['User']['username'], 'kiosk' => false));					
 				}
-				else
-				    $this->redirect(array('action' => 'add'));
+				elseif($this->data['User']['login_type'] == 'child_website') {
+					$this->redirect(array('action' => 'mini_registration', 'child',
+					$this->data['User']['username'], 'kiosk' => false));
+				}
+				else {
+					$this->redirect(array('action' => 'add'));
+				}		    
 		    }
 		}
 		if($this->Auth->user() &&  $this->params['action'] == 'admin_dashboard' ) {
@@ -197,7 +202,7 @@ class UsersController extends AppController {
 		$this->layout = 'kiosk';
     }
 	
-	function login() {
+	function login($type=null) {
 		if($this->Auth->user()){
 			if($this->Session->read('Auth.redirect') != '') {
 				$this->redirect($this->Session->read('Auth.redirect'));
@@ -205,8 +210,11 @@ class UsersController extends AppController {
 			else {
 				$this->redirect('/');
 			}
-			
 		}
+		if(isset($type) && $type == 'child' || 
+			isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'child_website') {
+			$this->render('child_login');
+		}		
 	}
 
     function logout($type=null, $logoutMsg=null) {
@@ -237,7 +245,7 @@ class UsersController extends AppController {
 		}
     }
 	
-    function mini_registration($lastname=null) {
+    function mini_registration($type=null, $lastname=null) {
 		if (!empty($this->data)) {	
 		    $this->User->create();
 		    if ($this->User->save($this->data)) {
@@ -261,9 +269,16 @@ class UsersController extends AppController {
 		    }
 		}
 		if (empty($this->data)) {
-		    $this->data['User']['lastname'] = $lastname;
+			if($lastname) {
+				$this->data['User']['lastname'] = $lastname;
+			}    
 		}
 		$this->set('title_for_layout', 'Registration');
+		if(isset($type) && $type == 'child' || 
+			isset($this->data['User']['mini_registration']) && $this->data['User']['mini_registration'] == 'child_website') {
+			$this->render('child_mini_registration');
+		}		
+		
     }
 
     function kiosk_auto_logout() {
