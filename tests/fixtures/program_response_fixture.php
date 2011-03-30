@@ -1,7 +1,7 @@
 <?php
-/* ProgramRegistration Fixture generated on: 2011-03-29 17:26:26 : 1301419586 */
-class ProgramRegistrationFixture extends CakeTestFixture {
-	var $name = 'ProgramRegistration';
+/* ProgramResponse Fixture generated on: 2011-03-29 17:26:26 : 1301419586 */
+class ProgramResponseFixture extends CakeTestFixture {
+	var $name = 'ProgramResponse';
 
 	var $fields = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),

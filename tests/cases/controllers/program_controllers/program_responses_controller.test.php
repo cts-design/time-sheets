@@ -1,8 +1,8 @@
 <?php
-/* ProgramRegistrations Test cases generated on: 2011-03-28 21:10:55 : 1301346655*/
-App::Import('Controller', 'ProgramRegistrations');
+/* ProgramResponses Test cases generated on: 2011-03-28 21:10:55 : 1301346655*/
+App::Import('Controller', 'ProgramResponses');
 
-class TestProgramRegistrationsController extends ProgramRegistrationsController {
+class TestProgramResponsesController extends ProgramResponsesController {
 	var $autoRender = false;
 
 	function redirect($url, $status = null, $exit = true) {
@@ -10,7 +10,7 @@ class TestProgramRegistrationsController extends ProgramRegistrationsController 
 	}
 }
 
-class ProgramRegistrationsControllerTestCase extends CakeTestCase {
+class ProgramResponsesControllerTestCase extends CakeTestCase {
 	var $fixtures = array(
             'app.aco',
             'app.aro',
@@ -31,7 +31,7 @@ class ProgramRegistrationsControllerTestCase extends CakeTestCase {
             'app.page',
             'app.press_release',
             'app.program',
-            'app.program_registration',
+            'app.program_response',
             'app.program_field',
             'app.queued_document',
             'app.role',
@@ -44,17 +44,17 @@ class ProgramRegistrationsControllerTestCase extends CakeTestCase {
 
 
 	function startTest() {
-		$this->ProgramRegistrations =& new TestProgramRegistrationsController();
-		$this->ProgramRegistrations->constructClasses();
+		$this->ProgramResponses =& new TestProgramResponsesController();
+		$this->ProgramResponses->constructClasses();
 	}
 
 	function endTest() {
-		unset($this->ProgramRegistrations);
+		unset($this->ProgramResponses);
 		ClassRegistry::flush();
 	}
 	
 	function testIndex() {
-		$this->ProgramRegistrations->Session->write('Auth.User', array(
+		$this->ProgramResponses->Session->write('Auth.User', array(
 	        'id' => 9,
 	        'role_id' => 1,
 	        'username' => 'smith'
@@ -87,21 +87,21 @@ class ProgramRegistrationsControllerTestCase extends CakeTestCase {
 			),
 		);
 		
-		$result = $this->testAction('/program_registrations/index/1', array('return' => 'vars'));
+		$result = $this->testAction('/program_responses/index/1', array('return' => 'vars'));
 		$result = Set::extract('ProgramField', $result['program']);
 		$this->assertEqual($result, $expectedResult);
 	}
 	
 	function testIndexNoId() {
-		$this->ProgramRegistrations->Session->write('Auth.User', array(
+		$this->ProgramResponses->Session->write('Auth.User', array(
 	        'id' => 9,
 	        'role_id' => 1,
 	        'username' => 'smith'
 	    ));
-	    $this->ProgramRegistrations->params = Router::parse('/program_registrations/index');
-	    $this->ProgramRegistrations->Component->startup($this->ProgramRegistrations);
-		$this->ProgramRegistrations->index();	
-		$this->assertEqual($this->ProgramRegistrations->Session->read('Message.flash.element'), 'flash_failure');		
+	    $this->ProgramResponses->params = Router::parse('/program_responses/index');
+	    $this->ProgramResponses->Component->startup($this->ProgramResponses);
+		$this->ProgramResponses->index();	
+		$this->assertEqual($this->ProgramResponses->Session->read('Message.flash.element'), 'flash_failure');		
 	}
 
 }

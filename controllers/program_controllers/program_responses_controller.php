@@ -1,20 +1,20 @@
 <?php 
 
-class ProgramRegistrationsController extends AppController {
+class ProgramResponsesController extends AppController {
 	
-	var $name = 'ProgramRegistrations';
+	var $name = 'ProgramResponses';
 	
 	function beforeFilter() {
 		parent::beforeFilter();
-		$this->ProgramRegistration->Program->ProgramField->recursive = -1;
+		$this->ProgramResponse->Program->ProgramField->recursive = -1;
 		if(!empty($this->params['pass'][0])) {
-			$query = $this->ProgramRegistration->Program->ProgramField->findAllByProgramId($this->params['pass'][0]);			
+			$query = $this->ProgramResponse->Program->ProgramField->findAllByProgramId($this->params['pass'][0]);			
 			$fields = Set::classicExtract($query, '{n}.ProgramField');
 			foreach($fields as $k => $v) {
 				if(!empty($v['validation'])) 
 					$validate[$v['name']] = json_decode($v['validation'], true); 
 			}
-			$this->ProgramRegistration->modifyValidate($validate);
+			$this->ProgramResponse->modifyValidate($validate);
 		}
 	}	
 	
@@ -24,17 +24,17 @@ class ProgramRegistrationsController extends AppController {
 			$this->redirect($this->referer());
 		} 
 		if(!empty($this->data)) {
-			$this->ProgramRegistration->create();
-			$this->data['ProgramRegistration']['answers'] = json_encode($this->data['ProgramRegistration']);
-			$this->data['ProgramRegistration']['program_id'] = $id;
-			if($this->ProgramRegistration->save($this->data)) {
+			$this->ProgramResponse->create();
+			$this->data['ProgramResponse']['answers'] = json_encode($this->data['ProgramResponse']);
+			$this->data['ProgramResponse']['program_id'] = $id;
+			if($this->ProgramResponse->save($this->data)) {
 				$this->Session->setFlash(__('Saved', true), 'flash_success');
 			}
 			else {
 				$this->Session->setFlash(__('Unable to save', true), 'flash_failure');
 			}			
 		}
-		$program = $this->ProgramRegistration->Program->findById($id);
+		$program = $this->ProgramResponse->Program->findById($id);
 		$title_for_layout = $program['Program']['name'] . ' Registration Form' ;
 		$this->set(compact('program', 'title_for_layout'));	
 	}

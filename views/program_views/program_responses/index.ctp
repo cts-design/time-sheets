@@ -1,5 +1,5 @@
 <?php if(!empty($program['ProgramField'])) : ?>
-	<?php echo $form->create('ProgramRegistration', array('action' => 'index/' . $program['Program']['id'])); ?>	
+	<?php echo $form->create('ProgramResponse', array('action' => 'index/' . $program['Program']['id'])); ?>	
 	<?php foreach($program['ProgramField'] as $k => $v) : ?>
 		<?php $options = json_decode($v['options'], true); ?>
 		<?php $attributes = array(
