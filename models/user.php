@@ -223,7 +223,7 @@ class User extends AppModel {
 	    'email' => array(
 		'rule' => array('email'),
 		'message' => 'Must be a vaild email like bob@test.com.',
-	    'allowEmpty' => true,
+	    //'allowEmpty' => false,
 	    //'required' => false,
 	    //'last' => false, // Stop validation after this rule
 	    //'on' => 'create', // Limit validation to 'create' or 'update' operations
@@ -271,13 +271,17 @@ class User extends AppModel {
 	    'state' => 'notempty',
 	    'phone' => 'notempty',
 	    'gender' => 'notempty',
-	    'email' => 'notempty',
+
 	    'location_id' => 'notempty'
 	);
 	if (isset($this->data['User']['mini_registration']) &&
 		$this->data['User']['mini_registration'] == 'kiosk' || $this->data['User']['mini_registration'] == 'website') {
 	    $this->pauseValidation($miniRules);
 	}
+	if(isset($this->data['User']['mini_registration']) && $this->data['User']['mini_registration'] == 'child_website') {
+		unset($miniRules['email']);
+		$this->pauseValidation($miniRules);
+	}	
 	if (isset($this->data['User']['self_sign_edit']) &&
 		$this->data['User']['self_sign_edit'] == 'edit') {
 	    $miniRules['ssn'] = 'notempty';
