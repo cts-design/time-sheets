@@ -6,9 +6,11 @@
  * @package ATLAS V3
  */
 ?>
+<?php echo $this->Html->script('jquery.dPassword', array('inline' => 'false')); ?>
+<?php echo $this->Html->script('users/mini.registration', array('inline' => 'false')) ?>
+
 <p>We do not have a record for you please register below.</p>
 <br />
-<?php echo $this->Html->script('users/mini.registration', array('inline' => 'false')) ?>
   <div>
 	<?php echo $this->Form->create('User', array('action' => 'mini_registration')); ?>
 	<fieldset>
