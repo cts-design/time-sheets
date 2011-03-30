@@ -12,8 +12,8 @@ class EventsController extends AppController {
 	function index($dateRange = null) {
 		$title_for_layout = 'Calendar of Events';
 		
-		FireCake::log($this->params);
-		FireCake::log($this->passedArgs);
+		//FireCake::log($this->params);
+		//FireCake::log($this->passedArgs);
 		
 		if (!$dateRange) {
 			$from = date('Y-m-d H:i:s');
@@ -24,7 +24,7 @@ class EventsController extends AppController {
 			
 		}
 		
-		FireCake::log($events);
+		//FireCake::log($events);
 		
 		$this->set(compact('title_for_layout'));
 		$this->set('events', $this->paginate());
