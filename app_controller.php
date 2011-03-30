@@ -115,7 +115,13 @@ class AppController extends Controller {
 		elseif(isset($this->params['prefix']) && $this->params['prefix'] == 'kiosk') {
 		   $this->Auth->loginAction = array('admin' => false, 'kiosk' => true, 'controller' => 'users', 'action' => 'self_sign_login');
 		}
+		elseif(isset($this->params['controller'], $this->params['pass'][1]) && $this->params['controller'] == 'programs' 
+			&& $this->params['pass'][1] == 'child'){
+			$this->Auth->authError = "You must login to access that location.";	
+			$this->Auth->loginAction = array('admin' => false, 'controller' => 'users', 'action' => 'login', 'child');
+		}
 		else {
+			$this->Auth->authError = "You must login to access that location.";	
 			$this->Auth->loginAction = array('admin' => false, 'controller' => 'users', 'action' => 'login');
 		}
 		$this->Auth->flashElement = 'flash_auth';
