@@ -25,16 +25,20 @@
 			echo $this->Html->script('jquery-ui-1.8.5.custom.min');
 			echo $this->Html->script('superfish/hoverIntent.js');
 			echo $this->Html->script('superfish/superfish.js');
+			echo $this->Html->script('dd_roundies');
 			echo $scripts_for_layout;
 		?>
 
-        <!-- [if IE]>
-            <link rel="stylesheet" type="text/css" href="css/ie.css" />
+        <!--[if IE]>
+            <link rel="stylesheet" type="text/css" href="/css/ie.css" />
         <![endif]-->
 
         <!-- js -->   
         <?php echo $this->Html->scriptBlock(
 			"$(document).ready(function(){
+				
+				DD_roundies.addRule('#maincontent', 8, true);
+				
 				$('.message').fadeOut(10000);
 				if($('.actions ul').text() == '') {
 				    $('div.actions').hide();
@@ -114,10 +118,11 @@
 	                </div> <!-- end .feedback -->
 	            </div> <!-- end #aside -->
 	            
-	            <div id="maincontent">
-	            	<?php if ($this->params['action'] == 'display' && $this->params['controller'] == 'pages'): ?>
+	            <?php if ($this->params['action'] == 'display' && $this->params['controller'] == 'pages'): ?>
+	            <div id="maincontent" class="homebg">
 	                <div>
 	            	<?php else: ?>
+	            <div id="maincontent">
 	                <div class="sub_content">
 		            <?php endif; ?>
 		            	<?php echo $this->Session->flash(); ?>
