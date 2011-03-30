@@ -1199,6 +1199,21 @@ Ext.calendar.EventMappings = {
         mapping: 'location',
         type: 'string'
     },
+    Address: {
+    	name: 'Address',
+    	mapping: 'address',
+    	type: 'string'
+    },
+    Sponsor: {
+    	name: 'Sponsor',
+    	mapping: 'sponsor',
+    	type: 'string'
+    },
+    SponsorUrl: {
+    	name: 'SponsorUrl',
+    	mapping: 'sponsor_url',
+    	type: 'string'
+    },
     Notes: {
         name: 'Notes',
         mapping: 'description',
@@ -1274,6 +1289,9 @@ rec.data[M.Notes.name] = 'Some notes';
     M.StartDate,
     M.EndDate,
     M.Location,
+    M.Address,
+    M.Sponsor,
+    M.SponsorUrl,
     M.Notes,
     M.Url,
     M.IsAllDay,
@@ -1292,6 +1310,9 @@ rec.data[M.Notes.name] = 'Some notes';
         M.StartDate,
         M.EndDate,
         M.Location,
+	    M.Address,
+	    M.Sponsor,
+	    M.SponsorUrl,
         M.Notes,
         M.Url,
         M.IsAllDay,
@@ -4307,12 +4328,27 @@ Ext.calendar.EventEditForm = Ext.extend(Ext.form.FormPanel, {
             name: Ext.calendar.EventMappings.Notes.name,
             grow: true,
             growMax: 150,
-            anchor: '100%'
+            anchor: '90%'
         });
         this.locationField = new Ext.form.TextField({
             fieldLabel: 'Location',
             name: Ext.calendar.EventMappings.Location.name,
             anchor: '100%'
+        });
+        this.addressField = new Ext.form.TextField({
+        	fieldLabel: 'Address',
+        	name: Ext.calendar.EventMappings.Address.name,
+        	anchor: '100%'
+        });
+        this.sponsorField = new Ext.form.TextField({
+         	fieldLabel: 'Sponsor',
+        	name: Ext.calendar.EventMappings.Sponsor.name,
+        	anchor: '100%'       	
+        });
+        this.sponsorUrlField = new Ext.form.TextField({
+         	fieldLabel: 'Sponsor Web Link',
+        	name: Ext.calendar.EventMappings.SponsorUrl.name,
+        	anchor: '100%'       	
         });
         this.urlField = new Ext.form.TextField({
             fieldLabel: 'Web Link',
@@ -4320,8 +4356,8 @@ Ext.calendar.EventEditForm = Ext.extend(Ext.form.FormPanel, {
             anchor: '100%'
         });
 
-        var leftFields = [this.titleField, this.dateRangeField, this.reminderField],
-        rightFields = [this.notesField, this.locationField, this.urlField];
+        var leftFields = [this.titleField, this.dateRangeField, this.notesField],
+        rightFields = [this.locationField, this.addressField, this.urlField, this.sponsorField, this.sponsorUrlField];
 
         if (this.calendarStore) {
             this.calendarField = new Ext.calendar.CalendarPicker({
