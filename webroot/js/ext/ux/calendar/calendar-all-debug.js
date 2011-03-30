@@ -3916,7 +3916,7 @@ Ext.calendar.DateRangeField = Ext.extend(Ext.form.Field, {
             this.startDate = new Ext.form.DateField({
                 id: this.id + '-start-date',
                 format: 'n/j/Y',
-                width: 100,
+                width: 88,
                 listeners: {
                     'change': {
                         fn: function() {
@@ -3931,7 +3931,7 @@ Ext.calendar.DateRangeField = Ext.extend(Ext.form.Field, {
                 hidden: this.showTimes === false,
                 labelWidth: 0,
                 hideLabel: true,
-                width: 90,
+                width: 80,
                 listeners: {
                     'select': {
                         fn: function() {
@@ -3946,7 +3946,7 @@ Ext.calendar.DateRangeField = Ext.extend(Ext.form.Field, {
                 hidden: this.showTimes === false,
                 labelWidth: 0,
                 hideLabel: true,
-                width: 90,
+                width: 80,
                 listeners: {
                     'select': {
                         fn: function() {
@@ -3960,7 +3960,7 @@ Ext.calendar.DateRangeField = Ext.extend(Ext.form.Field, {
                 id: this.id + '-end-date',
                 format: 'n/j/Y',
                 hideLabel: true,
-                width: 100,
+                width: 88,
                 listeners: {
                     'change': {
                         fn: function() {
@@ -4262,11 +4262,11 @@ Ext.reg('reminderfield', Ext.calendar.ReminderField);
  * @param {Object} config The config object
  */
 Ext.calendar.EventEditForm = Ext.extend(Ext.form.FormPanel, {
-    labelWidth: 65,
+    labelWidth: 50,
     title: 'Event Form',
     titleTextAdd: 'Add Event',
     titleTextEdit: 'Edit Event',
-    bodyStyle: 'background:transparent;padding:20px 20px 10px;',
+    bodyStyle: 'background:transparent;padding:20px 10px 10px;',
     border: false,
     buttonAlign: 'center',
     autoHeight: true,
