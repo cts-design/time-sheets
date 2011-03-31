@@ -6,4 +6,5 @@ class ProgramResponse extends AppModel {
 	var $belongsTo = array('Program');
 	
 	var $validate = array();
+	
 }
