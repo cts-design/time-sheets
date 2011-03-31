@@ -6,6 +6,9 @@
  * @package ATLAS V3
  */
 ?>
+<?php echo $this->Html->script('ckeditor/ckeditor', array('inline' => FALSE)); ?>
+<?php echo $this->Html->script('ckfinder/ckfinder', array('inline' => FALSE)); ?>
+<?php echo $this->Html->script('locations/wysiwyg', array('inline' => FALSE)); ?>
 <div id="crumbWrapper">
     <span>You are here > </span>
     <?php echo $crumb->getHtml('Add Location', null, 'unique'); ?>
