@@ -48,7 +48,7 @@ Ext.onReady(function() {
 	    		var f = formPanel.getForm();
 	    		f.setValues({
 	    			name: record.data.title,
-	    			link: record.data.slug
+	    			link: '/pages/' + record.data.slug
 	    		});
 	    	}
 	    }
