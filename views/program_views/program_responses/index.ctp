@@ -1,3 +1,24 @@
+<script>
+	$(document).ready(function(){
+		$('#toggle').show();
+		$('#toggle').toggle(function(){
+			$('#instructions').show();
+			$('#toggle').html('Hide Instructions');
+		},
+		function() {
+			$('#instructions').hide();
+			$('#toggle').html('Show Instructions');
+		}
+		)
+	})
+</script>
+<a id="toggle" class="small" style="display: none">View Instructions</a>
+<p id="instructions" style="display: none"><?php echo $instructions ?></p>
+<noscript>
+	<p id="instructions"><?php echo $instructions ?></p>
+</noscript>
+
+<br />
 <?php if(!empty($program['ProgramField'])) : ?>
 	<?php echo $form->create('ProgramResponse', array('action' => 'index/' . $program['Program']['id'])); ?>	
 	<?php foreach($program['ProgramField'] as $k => $v) : ?>
