@@ -291,6 +291,10 @@ a {
     width: 175px;
 }
 
+.content #aside li ul li.current a {
+	font-weight: bold;
+}
+
 .content #maincontent {
 	float: left;
 	margin: 0 0 0 9px;
