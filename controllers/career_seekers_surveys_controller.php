@@ -2,6 +2,11 @@
 class CareerSeekersSurveysController extends AppController {
 
     var $name = 'CareerSeekersSurveys';
+	
+	function beforeFilter() {
+		parent::beforeFilter();
+		$this->Auth->allow('index', 'success');
+	}
 
     function index() {}
 

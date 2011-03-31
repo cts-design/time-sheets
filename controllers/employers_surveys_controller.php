@@ -3,6 +3,11 @@ class EmployersSurveysController extends AppController {
 
     var $name = 'EmployersSurveys';
 
+	function beforeFilter() {
+		parent::beforeFilter();
+		$this->Auth->allow('index', 'success');
+	}
+
     function index() {}
 
     function add() {

@@ -3,6 +3,11 @@ App::import('Vendor', 'DebugKit.FireCake');
 class RfpsController extends AppController {
 
 	var $name = 'Rfps';
+	
+	function beforeFilter() {
+		parent::beforeFilter();
+		$this->Auth->allow('index');
+	}
 
 	function index() {
 		$this->Rfp->recursive = 0;

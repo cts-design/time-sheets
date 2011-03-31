@@ -4,7 +4,7 @@ class EventsController extends AppController {
 	
 	function beforeFilter() {
 		parent::beforeFilter();
-		$this->Auth->allow('view');
+		$this->Auth->allow('view', 'index');
 	}
 	
 	function view() {}
