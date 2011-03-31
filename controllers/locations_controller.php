@@ -15,6 +15,7 @@ class LocationsController extends AppController {
 		if($this->Auth->user() && $this->Auth->user('role_id') >= 2){
 			$this->Auth->allow('admin_get_location_list', 'index', 'facilities');
 		}
+		$this->Security->validatePost = false;
 	}	
 		
 	function index() {
@@ -38,8 +39,6 @@ class LocationsController extends AppController {
 	}
 
 	function admin_add() {
-		$this->Security->validatePost = false;
-		
 		if (!empty($this->data)) {
 			$this->Location->create();
 			if ($this->Location->save($this->data)) {
@@ -52,8 +51,6 @@ class LocationsController extends AppController {
 	}
 
 	function admin_edit($id = null) {
-		$this->Security->validatePost = false;
-		
 		if (!$id && empty($this->data)) {
 			$this->Session->setFlash(__('Invalid location', true));
 			$this->redirect(array('action' => 'index'));
