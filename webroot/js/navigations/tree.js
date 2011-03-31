@@ -48,7 +48,7 @@ Ext.onReady(function() {
 	    		var f = formPanel.getForm();
 	    		f.setValues({
 	    			name: record.data.title,
-	    			link: record.data.slug
+	    			link: '/pages/' + record.data.slug
 	    		});
 	    	}
 	    }
@@ -152,9 +152,10 @@ Ext.onReady(function() {
 			name: 'link'
 		}],
 		buttons: [{
+			id: 'savebtn',
 			text: 'Save',
 			handler: function(b, e) {
-				var submitUrl = (win.title == 'Edit Link' ? '/admin/navigations/update' : '/admin/navigations/create');
+				var submitUrl = '/admin/navigations/create';
 				var f = formPanel.getForm();
 				var vals = f.getValues();
 				
@@ -183,8 +184,6 @@ Ext.onReady(function() {
 						parentId: parentId
 					},
 					success: function(form, action) {
-						//console.log(action);
-					
 						if (action.result.success !== true) {
 							action.options.failure();
 						} else {
@@ -198,6 +197,12 @@ Ext.onReady(function() {
 							if (!parent.expanded) {
 								parent.expand();
 							}
+							
+							if (parent.isLeaf) {
+								parent.leaf = false;
+								parent.attributes.leaf = false;
+							}
+							
 							parent.appendChild(newNode);
 						}
 						
@@ -223,6 +228,58 @@ Ext.onReady(function() {
 					}
 				});
 			}
+		},{
+			id: 'updatebtn',
+			text: 'Update',
+			hidden: true,
+			handler: function(b, e) {
+				var submitUrl = '/admin/navigations/update';
+				var f = formPanel.getForm();
+				var vals = f.getValues();
+				
+				var selectedNode = tree.selModel.selNode;
+				var nodeId = selectedNode.id;
+
+				console.log(selectedNode);
+		
+
+				f.submit({
+					url: submitUrl,
+					params: {
+						id: nodeId
+					},
+					success: function(form, action) {
+						//console.log(action);
+					
+						if (action.result.success !== true) {
+							action.options.failure();
+						} else {
+							selectedNode.setText(action.result.navigation.title);
+							selectedNode.attributes.linkUrl = action.result.navigation.link;
+						}
+						
+						win.hide();
+						formPanel.getForm().setValues({
+							cmscombo: '',
+							name: '',
+							link: ''
+						});
+					},
+					failure: function(form, action) {
+						switch (action.failureType) {
+							case Ext.form.Action.CLIENT_INVALID:
+								Ext.Msg.alert('Failure', 'Form fields may not be submitted with invalid keys');
+								break;
+							case Ext.form.Action.CONNECT_FAILURE:
+								Ext.Msg.alert('Failure', 'Ajax Communication Failed');
+								break;
+							case Ext.form.Action.SERVER_INVALID:
+								Ext.Msg.alert('Failure', action.result.msg);
+								break;
+						}
+					}
+				});
+			}			
 		},{
 			text: 'Cancel',
 			handler: function(b, e) {
@@ -263,7 +320,7 @@ Ext.onReady(function() {
 
     var addLinkButton = new Ext.Button({
         text: 'Add Link',
-        handler: function() {
+        handler: function() {        	
     		win = new Ext.Window({
     			title: 'Add Link',
     			width: 350,
@@ -299,6 +356,9 @@ Ext.onReady(function() {
                 	link: selectedNode.attributes.linkUrl
                 });
                 
+                Ext.getCmp('savebtn').hide();
+                Ext.getCmp('updatebtn').show();
+                
 	    		win = new Ext.Window({
 	    			title: 'Edit Link',
 	    			width: 350,
@@ -313,6 +373,9 @@ Ext.onReady(function() {
 								name: '',
 								link: ''
 							});
+							
+							Ext.getCmp('savebtn').show();
+            				Ext.getCmp('updatebtn').hide();
 	        			}
 	        		}
 	        	});
@@ -354,7 +417,14 @@ Ext.onReady(function() {
                         if (response.responseText.charAt(0) != 1){
                             request.failure();
                         } else {
+                        	var parent = selectedNode.parentNode;
                             selectedNode.destroy();
+                            
+                            if (!parent.hasChildNodes()) {
+                            	parent.leaf = false;
+                            	parent.attributes.leaf = false;
+                            }
+                            
                             tree.enable();
                             editLinkButton.disable();
                             removeLinkButton.disable();

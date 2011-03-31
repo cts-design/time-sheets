@@ -87,11 +87,39 @@ class NavigationsController extends AppController {
         }
 		
 		function admin_update() {
-   			FireCake::log($this->params);
+			$params = $this->params;
+			
+			if (substr($params['form']['link'], 0, 1) !== '/') {
+				$params['form']['link'] = '/' . $params['form']['link'];
+			}
+			
+			$this->Navigation->read(null, $params['form']['id']);
+			$this->Navigation->set(array(
+				'title' => $params['form']['name'],
+				'link' => $params['form']['link']
+			));
+			
+			$record = $this->Navigation->save();
+			
+			if ($record) {
+				$data['success'] = true;
+				$data['navigation'] = $record['Navigation'];
+				$data['navigation']['id'] = $params['form']['id'];
+			} else {
+				$data['success'] = false;
+			}
+			
+			$this->set(compact('data'));
+			return $this->render(null, null, '/elements/ajaxreturn');
 		}
 		
 		function admin_create() {			
 			$params = $this->params;
+			
+			if (substr($params['form']['link'], 0, 1) !== '/') {
+				$params['form']['link'] = '/' . $params['form']['link'];
+			}
+			
 			$this->data = array(
 				'Navigation' => array(
 					'title' => $params['form']['name'],

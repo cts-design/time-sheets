@@ -2,6 +2,11 @@
 class FeaturedEmployersController extends AppController {
 
 	var $name = 'FeaturedEmployers';
+	
+	function beforeFilter() {
+		parent::beforeFilter();
+		$this->Auth->allow('index');
+	}
 
 	function index() {
 		$this->FeaturedEmployer->recursive = 0;

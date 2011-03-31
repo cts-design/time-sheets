@@ -3,6 +3,11 @@ class InTheNewsController extends AppController {
 
 	var $name = 'InTheNews';
 
+	function beforeFilter() {
+		parent::beforeFilter();
+		$this->Auth->allow('index');
+	}
+
 	function index() {
 		$this->InTheNews->recursive = 0;
 		$this->set('inTheNews', $this->paginate());
