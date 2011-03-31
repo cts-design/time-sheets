@@ -62,8 +62,4 @@ class ProgramResponsesController extends AppController {
 	function submission_received() {
 		
 	}
-	
-	function document_uploaded() {
-		
-	}
 }
