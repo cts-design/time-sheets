@@ -105,8 +105,6 @@ Ext.onReady(function() {
 						parentId: parentId
 					},
 					success: function(form, action) {
-						//console.log(action);
-					
 						if (action.result.success !== true) {
 							action.options.failure();
 						} else {
@@ -120,6 +118,12 @@ Ext.onReady(function() {
 							if (!parent.expanded) {
 								parent.expand();
 							}
+							
+							if (parent.isLeaf) {
+								parent.leaf = false;
+								parent.attributes.leaf = false;
+							}
+							
 							parent.appendChild(newNode);
 						}
 						
@@ -310,7 +314,14 @@ Ext.onReady(function() {
                         if (response.responseText.charAt(0) != 1){
                             request.failure();
                         } else {
+                        	var parent = selectedNode.parentNode;
                             selectedNode.destroy();
+                            
+                            if (!parent.hasChildNodes()) {
+                            	parent.leaf = false;
+                            	parent.attributes.leaf = false;
+                            }
+                            
                             tree.enable();
                             editLinkButton.disable();
                             removeLinkButton.disable();
