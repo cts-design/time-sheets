@@ -15,17 +15,17 @@
 				
                 <div class="employers">
                     <h3>Employers</h3>
-                    <?php echo $this->Nav->links('Employers'); ?>
+                    <?php echo $this->Nav->links('Employers Middle'); ?>
                 </div> <!-- end .employers -->
 
                 <div class="career_seekers">
                     <h3>Career Seekers</h3>
-                    <?php echo $this->Nav->links('CareerSeekers'); ?>
+                    <?php echo $this->Nav->links('Career Seekers Middle'); ?>
                 </div> <!-- end .career_seekers -->
 
                 <div class="programs">
                     <h3>Programs</h3>
-					<?php echo $this->Nav->links('Programs');?>
+					<?php echo $this->Nav->links('Programs Middle');?>
                 </div> <!-- end .programs -->
 
                 <div class="links">
