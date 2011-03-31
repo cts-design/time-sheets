@@ -19,13 +19,13 @@
 	
 	echo $this->Html->css('reset');
 	
-	echo $this->Html->css('ui-darkness/jquery-ui-1.8.5.custom');
+	echo $this->Html->css('ui-redmond/jquery-ui-1.8.10.custom');
 
 	echo $this->Html->css('style');
 
-	echo $this->Html->script('jquery');
-
-	echo $this->Html->script('jquery-ui-1.8.5.custom.min');
+	echo $this->Html->script('https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js');
+	
+	echo $this->Html->script('https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js');
 
 	echo $scripts_for_layout;
 	?>
