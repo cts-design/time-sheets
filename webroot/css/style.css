@@ -447,3 +447,27 @@ width: 100%
 .survey .rating {
 	padding: 5px 0 0;
 }
+
+.error-message {
+    color: red;
+    font-size: 11px;
+    margin-left: 120px;
+    margin-top: 2px;
+    float: left;
+}
+
+.message {
+    background-color: #fff;
+    margin: 0 0 0 0;
+    padding: 2px 5px 2px 5px;
+    font-size: 20px;
+    float: left;
+}
+
+.flash-failure .ui-icon{
+    margin: 5px 10px 0 0;
+}
+
+.flash-success .ui-icon{
+    margin: 5px 10px 0 0;
+}
