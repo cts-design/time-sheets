@@ -93,7 +93,7 @@
                 
                 <div id="aside">
 	                <div class="leftNav">
-	                	<?php echo $this->Nav->links('Left', true, true) ?>
+	                	<?php echo $this->Nav->links('Left', true) ?>
 	                </div> <!-- end .leftNav -->
 	                
 	                <div class="feedback">
