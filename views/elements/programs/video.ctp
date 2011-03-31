@@ -1,3 +1,4 @@
+<?php echo $this->Html->script('flowplayer-3.2.6.min', array('inline' => false)) ?>
 <noscript>
 	You must have Javascript enabled to view this video. 
 </noscript>
@@ -5,12 +6,9 @@
 <script>
 flowplayer("player", "/swf/flowplayer-3.2.7.swf", {
 	clip: {
-		url: "http://pseudo01.hddn.com/vod/demo.flowplayervod/flowplayer-700.flv",
+		url: '<?php echo $media ?>',
 		autoBuffering: true,
-		autoPlay: false,
-		onFinish: function() {
-			window.location = '/program_responses/index/1'
-		}
+		autoPlay: false
 	}
 });
 </script>
