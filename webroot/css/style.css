@@ -707,9 +707,9 @@ a:focus {
 
 .featuredEmployers .featuredEmployer,
 .rfps .rfp {
-	border-bottom: 1px solid #3366CC;
-	margin: 8px 0 18px;
-	padding: 0 0 12px;
+	border-bottom: 1px solid #D0E0EE;
+	margin: 0 0 16px;
+	padding: 8px 0 22px;
 }
 
 .hotJobs .job h2,
@@ -731,6 +731,7 @@ a:focus {
 .featuredEmployers .featuredEmployer ul, 
 .rfps .rfp ul{
 	margin: 0 0 12px 10px;
+	float: none;
 }
 
 .rfp_download {
@@ -738,7 +739,7 @@ a:focus {
 	margin-left: 10px;
 	width: 96px;
 }
-.rfp_download:hover {
+.rfp_download {
 	text-decoration: none;
 }
 .rfp_download img {
