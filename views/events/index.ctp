@@ -72,7 +72,7 @@
 					<p>No events to display</p>
 				</div>		
 		<?php endif; ?>
-	</div> <!-- end .allEvents -->
+		
 	<p>
 	<?php
 	echo $this->Paginator->counter(array(
@@ -86,4 +86,5 @@
  |
 		<?php echo $this->Paginator->next(__('next', true) . ' >>', array(), null, array('class' => 'disabled'));?>
 	</div>
+	</div> <!-- end .allEvents -->
 </div>
