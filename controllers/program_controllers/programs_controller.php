@@ -16,6 +16,13 @@ class ProgramsController extends AppController {
 			$this->redirect('/');
 		}
 		$program = $this->Program->findById($id);
+		$programResponse = $this->Program->ProgramResponse->findByUserId($this->Auth->user('id'));
+		if($programResponse) {
+			if($programResponse['ProgramResponse']['complete'] == 1) {
+				$this->Session->setFlash(__('You have already completed this program', true), 'flash_failure');
+				$this->redirect('/');
+			}
+		}
 		if($program['Program']['disabled'] == 1){
 			$this->Session->setFlash(__('This program is disabled', true), 'flash_failure');
 			$this->redirect('/');
@@ -53,6 +60,16 @@ class ProgramsController extends AppController {
 				$element = '/programs/video';
 				break;				
 			case "video_form_docs":
+				if($programResponse) {
+					if($programResponse['ProgramResponse']['viewed_media'] == 1 && 
+						$programResponse['ProgramResponse']['answers'] == null)  {
+						$this->redirect(array('controller' => 'program_responses', 'action' => 'index', $id));
+					}
+					if($programResponse['ProgramResponse']['viewed_media'] == 1 && 
+						$programResponse['ProgramResponse']['answers'] != null) {
+							$this->redirect(array('controller' => 'program_responses', 'action' => 'required_docs', $id));	
+					}	
+				}
 				$data['redirect'] = '/programs/view_media/' . $program['Program']['id'];
 				$this->Session->write('step2', 'form');
 				break;					
@@ -78,7 +95,8 @@ class ProgramsController extends AppController {
 			$this->redirect('/');
 		}
 		if(!empty($this->data)) {
-			$this->Program->ProgramResponse->create();
+			$programResponse = $this->Program->ProgramResponse->findByUserId($this->Auth->user('id'));
+			$this->data['ProgramResponse']['id'] = $programResponse['ProgramResponse']['id'];
 			$this->data['ProgramResponse']['user_id'] =	$this->Auth->user('id');
 			if($this->Program->ProgramResponse->save($this->data, true)) {
 				$this->Session->setFlash(__('Saved', true), 'flash_success');
