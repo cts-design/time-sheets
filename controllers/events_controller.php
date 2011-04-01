@@ -30,6 +30,8 @@ class EventsController extends AppController {
 			$year = date('Y');
 		}
 		
+		FireCake::log($categories);
+		
 		if (!$month) {
 			$date = date('Y-m-d H:i:s');
 			$month = date('m', strtotime($date));	

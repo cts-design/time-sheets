@@ -839,6 +839,8 @@ a:focus {
 	font-size: 13px;
 }
 
+body.js #category_submit { display: none; }
+
 .event .sponsor {
 	font-style: italic;
 }
@@ -903,6 +905,19 @@ form .rating input {
 	color: #454545;
 	font-size: 12px;
 	font-weight: bold;
+}
+
+.no-events {
+	background: #E6EBF1;
+	border: 1px solid #D0E0EE;
+	margin: 0 0 16px;
+	padding: 18px 20px;
+	text-align: center;
+}
+
+.no-events p {
+	font-size: 15px;
+	margin: 10px 0 0;
 }
 
 .left {
