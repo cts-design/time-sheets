@@ -98,4 +98,43 @@ class QueuedDocument extends AppModel {
 	}
     }
 
+	function uploadDocument($data, $entryMethod, $id){
+		// get the document relative path to the inital storage folder
+		$path = Configure::read('Document.storage.uploadPath');
+		// check to see if the directory for the current year exists
+		if(!file_exists($path . date('Y') . '/')) {
+		    // if directory does not exist, create it
+		    mkdir($path . date('Y'), 0755);
+		}
+		// add the current year to our path string
+		$path .= date('Y') . '/';
+		// check to see if the directory for the current month exists
+		if(!file_exists($path . date('m') . '/')) {
+		    // if directory does not exist, create it
+		    mkdir($path . date('m'), 0755);
+		}
+		// add the current month to our path string
+		$path .= date('m') . '/';
+		// build our fancy unique filename
+		$docName = date('YmdHis') . rand(0, pow(10, 7)) . '.pdf';
+		$data['QueuedDocument']['filename'] = $docName;
+		if($entryMethod == 'Desktop Scan') {
+			$data['QueuedDocument']['last_activity_admin_id'] = $id;		
+		}
+		else {
+			$data['QueuedDocument']['user_id'] = $id;			
+		}
+		$data['QueuedDocument']['entry_method'] = $entryMethod;	
+
+		if(!move_uploaded_file($data['QueuedDocument']['submittedfile']['tmp_name'], $path . $docName)) {
+		    return false;
+		}
+		if($this->save($data)) {
+		    return $this->getLastInsertId();
+		}
+		else {
+		    return false;
+		}
+	}
+
 }
