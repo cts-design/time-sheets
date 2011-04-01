@@ -29,16 +29,19 @@
 			echo $scripts_for_layout;
 		?>
 
-        <!--[if IE]>
+        <!--[if lte IE 7]>
             <link rel="stylesheet" type="text/css" href="/css/ie.css" />
         <![endif]-->
-
+        
+        <!--[if IE 8]>
+            <?php echo $this->Html->scriptBlock(
+            	"DD_roundies.addRule('#maincontent', 8, true);"
+            ) ?>
+		<![endif]-->
+		
         <!-- js -->   
         <?php echo $this->Html->scriptBlock(
 			"$(document).ready(function(){
-				
-				DD_roundies.addRule('#maincontent', 8, true);
-				
 				$('.message').fadeOut(10000);
 				if($('.actions ul').text() == '') {
 				    $('div.actions').hide();

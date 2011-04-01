@@ -1,6 +1,9 @@
 <?php
+
+App::import('Vendor', 'DebugKit.FireCake');
 class EventsController extends AppController {
 	var $name = 'Events';
+	var $paginate = array('order' => array('Event.start' => 'asc'), 'limit' => 2);
 	
 	function beforeFilter() {
 		parent::beforeFilter();
@@ -9,38 +12,45 @@ class EventsController extends AppController {
 	
 	function view() {}
 	
-	function index($month = null) {
+	function index($month = null, $year = null, $category = null) {
 		$title_for_layout = 'Calendar of Events';
+		$categories = $this->Event->EventCategory->find('list', 
+														array('fields' => array('EventCategory.id', 'EventCategory.name'),
+														'recursive' => -1));
+		array_unshift($categories, 'All Categories');
 		
-		$nextmonth = date();
-		$lastmonth = mktime(0, 0, 0, date("m")-1, date("d"),   date("Y"));
-		
-		debug($nextmonth);
-		debug($lastmonth);
-		
-		die();
+		if (isset($this->params['form']['event_categories_dropdown']) && !empty($this->params['form']['event_categories_dropdown'])) {
+			$categoryConditions = array('Event.event_category_id' => $this->params['form']['event_categories_dropdown']);
+			$categories['selected'] = $this->params['form']['event_categories_dropdown'];
+		} else {
+			$categoryConditions = null;
+		}
+
+		if ($month && !$year) {
+			$year = date('Y');
+		}
 		
 		if (!$month) {
-			$currentDate = date('Y-m-d');
-		}
-		
-		
-		//FireCake::log($this->params);
-		//FireCake::log($this->passedArgs);
-		
-		if (!$dateRange) {
-			$from = date('Y-m-d H:i:s');
-			$to   = date('Y-m-d H:i:s', strtotime('+6 months 23:59:59'));
-			$conditions = array('Event.start BETWEEN ? AND ?' => array($from, $to));
-			$events = $this->paginate = array('conditions' => $conditions, 'order' => 'Event.start ASC');
+			$date = date('Y-m-d H:i:s');
+			$month = date('m', strtotime($date));	
+			$lastDayOfMonth = date('t', strtotime($date));
+			$year = date('Y', strtotime($date));
+			$endDate = date('Y-m-d H:i:s', strtotime("$month/$lastDayOfMonth/$year 23:59:59"));
 		} else {
-			
+			$date = date('Y-m-d H:i:s', strtotime("$month/1/$year 00:00:01"));
+			$lastDayOfMonth = date('t', strtotime($date));
+			$endDate = date('Y-m-d H:i:s', strtotime("$month/$lastDayOfMonth/$year 23:59:59"));
 		}
 		
-		//FireCake::log($events);
+		$events = $this->paginate('Event', array('start BETWEEN ? AND ?' => array($date, $endDate), $categoryConditions));
 		
-		$this->set(compact('title_for_layout'));
-		$this->set('events', $this->paginate());
+		FireCake::log($events);
+		
+		$curMonth = date('F Y', strtotime($date));
+		$prevMonth = date('m/Y', strtotime("-1 month", strtotime($date)));
+		$nextMonth = date('m/Y', strtotime("+1 month", strtotime($date)));
+		
+		$this->set(compact('title_for_layout', 'categories', 'prevMonth', 'nextMonth', 'curMonth', 'events'));
 	}
 	
 	function admin_index() {

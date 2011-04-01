@@ -1,26 +1,25 @@
 <div class="events">
 	
-	<form class="event_categories">
+	<form class="event_categories" action="<?php echo $this->here; ?>" method="post">
 		<ol>
 			<li class="top">
 				<label class="event_categories_label" for="event_categories_dropdown">Select an event type</label>
 				<select id="event_categories_dropdown" name="event_categories_dropdown">
-					<option>Board Meetings</option>
-					<option>Business Seminars</option>
-					<option>Job Fairs</option>
-					<option>Networking Events</option>
-					<option>Workshops</option>
+				<?php foreach($categories as $id => $category): ?>
+					<option value="<?php echo $id ?>"><?php echo $category ?></option>
+				<?php endforeach; ?>
 				</select>
+				<input type="submit" id="category_submit" value="Go" />
 			</li>
 			<li class="bottom">
 				<span>
-					<a href=""> < </a>
+					<a href="/events/index/<?php echo $prevMonth ?>"> < </a>
 				</span>
 				<span>
-					<a href="">March</a>
+					<a href=""><?php echo $curMonth ?></a>
 				</span>
 				<span>
-					<a href=""> > </a>
+					<a href="/events/index/<?php echo $nextMonth ?>"> > </a>
 				</span>
 			</li>
 		</ol>
@@ -29,6 +28,7 @@
 	<?php foreach ($events as $event): ?>
 		<div class="event">
 			<h3><?php echo $event['Event']['title'] ?></h3>
+			<span class="category"><?php echo $event['EventCategory']['name'] ?></span>
 			<?php if ($event['Event']['all_day'] == '0'): ?>
 			<span class="datetime"><?php echo date('F d, Y h:iA', strtotime($event['Event']['start'])) ?>&mdash;<?php echo date('h:iA', strtotime($event['Event']['end'])) ?></span>	
 			<?php else: ?>	
@@ -54,7 +54,9 @@
 				<?php if (!empty($event['Event']['event_url'])): ?>
 				<a href="<?php echo $event['Event']['event_url'] ?>">Visit Website</a>
 				<?php endif; ?>
+				<?php if (!empty($event['Event']['address'])): ?>
 				<a href="http://maps.google.com/maps?q=<?php echo urlencode($event['Event']['address']) ?>">Map It</a>
+				<?php endif; ?>
 			</p>
 		</div>
 	<?php endforeach; ?>

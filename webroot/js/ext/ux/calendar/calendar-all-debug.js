@@ -1444,7 +1444,7 @@ Ext.reg('monthdaydetailview', Ext.calendar.MonthDayDetailView);
  * @param {Object} config The config object
  */
 Ext.calendar.CalendarPicker = Ext.extend(Ext.form.ComboBox, {
-    fieldLabel: 'Calendar',
+    fieldLabel: 'Category',
     valueField: 'id',
     displayField: 'title',
     triggerAction: 'all',

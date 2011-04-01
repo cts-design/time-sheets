@@ -805,6 +805,18 @@ a:focus {
 	padding: 25px 0;
 }
 
+.event {
+	position: relative;
+}
+
+.event .category {
+	position: absolute;
+	right: 10px;
+	top: 6px;
+	font-size: 12px;
+	color: #86898C;
+}
+
 .event, .job {
 	background: #E6EBF1;
 	border: 1px solid #D0E0EE;

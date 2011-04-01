@@ -66,8 +66,6 @@ class NavHelper extends AppHelper {
     }
     
     function checkCurrentPage($navigationLink) {
-    	App::import('Vendor', 'DebugKit.FireCake');
-    	FireCake::log($navigationLink);
 		if ($navigationLink == '/' || $navigationLink == '/home' || $navigationLink == '/homepage') {
             if ($this->here == '/') {
            		return true;
