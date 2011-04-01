@@ -891,12 +891,16 @@ form .rating input {
 }
 
 .events .event_categories ol li.bottom {
-	font-size: 16px;
+
+}
+
+p.calnav {
+	font-size: 16px !important;
 	margin: 0 0 18px;
 	text-align: center;
 }
 
-.events .event_categories ol li.bottom a {
+p.calnav  a {
 	text-decoration: none;
 }
 

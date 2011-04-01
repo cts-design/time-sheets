@@ -20,8 +20,13 @@ class EventsController extends AppController {
 		array_unshift($categories, 'All Categories');
 		
 		if (isset($this->params['form']['event_categories_dropdown']) && !empty($this->params['form']['event_categories_dropdown'])) {
-			$categoryConditions = array('Event.event_category_id' => $this->params['form']['event_categories_dropdown']);
-			$categories['selected'] = $this->params['form']['event_categories_dropdown'];
+			if ($this->params['form']['event_categories_dropdown'] == 0) {
+				$categories['selected'] = 0;
+				$categoryConditions = null;
+			} else {
+				$categoryConditions = array('Event.event_category_id' => $this->params['form']['event_categories_dropdown']);
+				$categories['selected'] = $this->params['form']['event_categories_dropdown'];	
+			}
 		} else {
 			$categoryConditions = null;
 		}
@@ -29,8 +34,6 @@ class EventsController extends AppController {
 		if ($month && !$year) {
 			$year = date('Y');
 		}
-		
-		FireCake::log($categories);
 		
 		if (!$month) {
 			$date = date('Y-m-d H:i:s');
@@ -45,8 +48,6 @@ class EventsController extends AppController {
 		}
 		
 		$events = $this->paginate('Event', array('start BETWEEN ? AND ?' => array($date, $endDate), $categoryConditions));
-		
-		FireCake::log($events);
 		
 		$curMonth = date('F Y', strtotime($date));
 		$prevMonth = date('m/Y', strtotime("-1 month", strtotime($date)));
