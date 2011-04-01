@@ -6,7 +6,7 @@
  * @link http://ctsfla.com
  * @package ATLAS V3
  */
-
+App::import('vendor', 'DebugKit.FireCake');
 class AppController extends Controller {
 		
     var $helpers = array('Html', 'Form', 'Session', 'Js' => array('Jquery'), 'Time', 'Crumb', 'Nav');
@@ -103,7 +103,7 @@ class AppController extends Controller {
 		if (isset($this->params['prefix']) && $this->params['prefix'] == 'admin') {
 		    $this->layout = 'admin';
 		   	$this->Security->blackHoleCallback = 'forceSSL';
-		    $this->Security->requireSecure();
+		   	$this->Security->requireSecure();
 		    if($this->Auth->user('role_id') == 1 ) {
 				$this->Session->destroy();
 				$this->Session->setFlash(__('You are not authorized to access that location', true), 'flash_failure');
