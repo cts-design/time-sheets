@@ -1,14 +1,31 @@
 <div class="events">
 	
 	<form class="event_categories">
-		<select>
-			<option>Board Meetings</option>
-			<option>Business Seminars</option>
-			<option>Job Fairs</option>
-			<option>Networking Events</option>
-			<option>Workshops</option>
-		</select>
+		<ol>
+			<li class="top">
+				<label class="event_categories_label" for="event_categories_dropdown">Select an event type</label>
+				<select id="event_categories_dropdown" name="event_categories_dropdown">
+					<option>Board Meetings</option>
+					<option>Business Seminars</option>
+					<option>Job Fairs</option>
+					<option>Networking Events</option>
+					<option>Workshops</option>
+				</select>
+			</li>
+			<li class="bottom">
+				<span>
+					<a href=""> < </a>
+				</span>
+				<span>
+					<a href="">March</a>
+				</span>
+				<span>
+					<a href=""> > </a>
+				</span>
+			</li>
+		</ol>
 	</form>
+	<br class="clear" />
 	<?php foreach ($events as $event): ?>
 		<div class="event">
 			<h3><?php echo $event['Event']['title'] ?></h3>

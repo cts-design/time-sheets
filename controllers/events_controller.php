@@ -9,8 +9,21 @@ class EventsController extends AppController {
 	
 	function view() {}
 	
-	function index($dateRange = null) {
+	function index($month = null) {
 		$title_for_layout = 'Calendar of Events';
+		
+		$nextmonth = date();
+		$lastmonth = mktime(0, 0, 0, date("m")-1, date("d"),   date("Y"));
+		
+		debug($nextmonth);
+		debug($lastmonth);
+		
+		die();
+		
+		if (!$month) {
+			$currentDate = date('Y-m-d');
+		}
+		
 		
 		//FireCake::log($this->params);
 		//FireCake::log($this->passedArgs);
