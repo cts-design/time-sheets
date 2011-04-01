@@ -21,16 +21,17 @@ class QueuedDocumentsController extends AppController {
     );
 
     function beforeFilter() {
-	parent::beforeFilter();
-	$this->Cookie->name = 'docQueueSearch';
-	$this->Cookie->time = 0;
-	if($this->Auth->user()) {
-	    if($this->Acl->check(array(
-			'model' => 'Role',
-			'foreign_key' => $this->Auth->user('role_id')), 'QueuedDocuments/admin_index', '*')){
-		$this->Auth->allow('admin_view');
-	    }
-	}
+		parent::beforeFilter();
+		$this->Cookie->name = 'docQueueSearch';
+		$this->Cookie->time = 0;
+		$this->Security->validatePost = false;
+		if($this->Auth->user()) {
+		    if($this->Acl->check(array(
+				'model' => 'Role',
+				'foreign_key' => $this->Auth->user('role_id')), 'QueuedDocuments/admin_index', '*')){
+			$this->Auth->allow('admin_view');
+		    }
+		}
     }
 
     function admin_index($action=null, $docId=null, $active=null) {
@@ -286,61 +287,28 @@ class QueuedDocumentsController extends AppController {
 	}
     }
 
-    function admin_desktop_scan_document(){
-
-	if(!empty($this->data)) {
-	    $id = $this->_uploadDocument('Desktop Scan');
-	    if($id) {
-		$this->Transaction->createUserTransaction('Storage', null, null,
-			trim('Scanned document ID ' . $id . ' to ' . $user['User']['lastname'] .
-				', ' . $user['User']['firstname'] . ' - ' . substr($user['User']['ssn'], 5), ' -'));
-		$this->Session->setFlash(__('Scanned document was filed successfully.', true), 'flash_success');
-		$this->autoRender = false;
-		exit;
-	    }
-	    else {
-		$this->Session->setFlash(__('Unable to save scanned document.', true), 'flash_failure');
-		$this->autoRender = false;
-		exit;
-	    }
-	}
-	$locations = $this->QueuedDocument->Location->find('list');
-	$queueCats = $this->QueuedDocument->DocumentQueueCategory->find('list');
-	$title_for_layout = 'Desktop Scan Document';
-	$this->set(compact('title_for_layout', 'queueCats', 'locations'));
-    }
-
-        function _uploadDocument() {
-	// get the document relative path to the inital storage folder
-	$path = Configure::read('Document.storage.uploadPath');
-	// check to see if the directory for the current year exists
-	if(!file_exists($path . date('Y') . '/')) {
-	    // if directory does not exist, create it
-	    mkdir($path . date('Y'), 0755);
-	}
-	// add the current year to our path string
-	$path .= date('Y') . '/';
-	// check to see if the directory for the current month exists
-	if(!file_exists($path . date('m') . '/')) {
-	    // if directory does not exist, create it
-	    mkdir($path . date('m'), 0755);
-	}
-	// add the current month to our path string
-	$path .= date('m') . '/';
-	// build our fancy unique filename
-	$docName = date('YmdHis') . rand(0, pow(10, 7)) . '.pdf';
-	$this->data['QueuedDocument']['filename'] = $docName;
-	$this->data['QueuedDocument']['last_activity_admin_id'] = $this->Auth->user('id');
-	$this->data['QueuedDocument']['entry_method'] = 'Desktop Scan';
-	if(!move_uploaded_file($this->data['QueuedDocument']['submittedfile']['tmp_name'], $path . $docName)) {
-	    return false;
-	}
-	if($this->QueuedDocument->save($this->data)) {
-	    return $this->QueuedDocument->getLastInsertId();
-	}
-	else {
-	    return false;
-	}
+    function admin_desktop_scan_document() {
+		if(!empty($this->data)) {
+		    $id = $this->QueuedDocument->uploadDocument($this->data, 'Desktop Scan', $this->Auth->User('id'));
+			$this->log($id, 'debug');
+		    if($id) {
+				$this->Transaction->createUserTransaction('Storage', null, null,
+					trim('Scanned document ID ' . $id . ' to ' . $user['User']['lastname'] .
+						', ' . $user['User']['firstname'] . ' - ' . substr($user['User']['ssn'], 5), ' -'));
+				$this->Session->setFlash(__('Scanned document was filed successfully.', true), 'flash_success');
+				$this->autoRender = false;
+				exit;
+		    }
+		    else {
+				$this->Session->setFlash(__('Unable to save scanned document.', true), 'flash_failure');
+				$this->autoRender = false;
+				exit;
+		    }
+		}
+		$locations = $this->QueuedDocument->Location->find('list');
+		$queueCats = $this->QueuedDocument->DocumentQueueCategory->find('list');
+		$title_for_layout = 'Desktop Scan Document';
+		$this->set(compact('title_for_layout', 'queueCats', 'locations'));
     }
 
     function _resetFilters() {
