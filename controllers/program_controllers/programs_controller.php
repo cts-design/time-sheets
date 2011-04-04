@@ -3,6 +3,7 @@
 class ProgramsController extends AppController {
 	
 	var $name = 'Programs';
+	var $components = array('Email');
 	
 	function beforeFilter() {
 		parent::beforeFilter();
@@ -98,7 +99,16 @@ class ProgramsController extends AppController {
 			$programResponse = $this->Program->ProgramResponse->findByUserId($this->Auth->user('id'));
 			$this->data['ProgramResponse']['id'] = $programResponse['ProgramResponse']['id'];
 			$this->data['ProgramResponse']['user_id'] =	$this->Auth->user('id');
-			if($this->Program->ProgramResponse->save($this->data, true)) {
+			if($this->Program->ProgramResponse->save($this->data, true)) {							
+				$email = $this->Program->ProgramEmail->find('first', array('conditions' => array(
+					'ProgramEmail.program_id' => $id,
+					'ProgramEmail.type' => 'media')));
+				if($email) {
+					$this->Email->to = $this->Auth->user('firstname') . ' ' . $this->Auth->user('lastname') .' <'. $this->Auth->user('email'). '>';
+					$this->Email->from = Configure::read('System.email');
+					$this->Email->subject = $email['ProgramEmail']['subject'];
+					$this->Email->send($email['ProgramEmail']['body']);								
+				}								
 				$this->Session->setFlash(__('Saved', true), 'flash_success');
 				switch($this->Session->read('step2')) {
 					case "form":
@@ -111,7 +121,6 @@ class ProgramsController extends AppController {
 						$this->redirect(array('controller' => 'program_responses', 'action' => 'submission_recieved', $id));		
 						break;
 				}
-				$this->redirect($this->data['Program']['redirect']);
 			}
 			else {
 				$this->Session->setFlash(__('You must check the I agree box.', true), 'flash_failure');		
