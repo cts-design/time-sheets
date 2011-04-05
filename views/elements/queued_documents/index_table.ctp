@@ -64,12 +64,9 @@ $this->Paginator->options(array(
 	<td><?php echo trim($queuedDocument['LastActAdmin']['lastname'] . ', ' . $queuedDocument['LastActAdmin']['firstname'], ' ,'); ?>&nbsp;</td>
 	<td><?php echo $this->Time->format('m/d/Y h:i a', $queuedDocument['QueuedDocument']['created']); ?>&nbsp;</td>
 	<td>
-	    <?php echo $this->Html->link($this->Html->image('/icons/pdf.png'),
-		Configure::read('Document.jpeg.path') .
-		    date('Y', strtotime($queuedDocument['QueuedDocument']['created'])) . '/' .
-		    date('m', strtotime($queuedDocument['QueuedDocument']['created'])) . '/' .
-		    str_replace('.pdf', '.jpg', $queuedDocument['QueuedDocument']['filename'] ),
+	    <?php echo $this->Html->link($this->Html->image('icons/pdf.png'),'/admin/queued_documents/view_thumbnail/'. $queuedDocument['QueuedDocument']['id'] . '.jpg',
 		array('escape' => false, 'class' => 'quick-view-pdf'))?>
+		
 	</td>
 	<td class="actions">
 	    <?php echo $this->Html->link(__('View', true), array('action' => 'index', 'view', $queuedDocument['QueuedDocument']['id'], 'page:' . $this->Paginator->counter(array('format' => __('%page%', true)))), array('class' => 'view')); ?>

@@ -68,9 +68,10 @@ class ChairmanReportsController extends AppController {
                                         'Deleted chairman report ID ' . $id);
 			$this->Session->setFlash(__('Chairman report deleted', true), 'flash_success');
 			$this->redirect(array('action'=>'index'));
+		} else {
+			$this->Session->setFlash(__('Chairman report was not deleted', true), 'flash_failure');
+			$this->redirect(array('action' => 'index'));			
 		}
-		$this->Session->setFlash(__('Chairman report was not deleted', true), 'flash_failure');
-		$this->redirect(array('action' => 'index'));
 	}
 
         function _uploadChairmanReport() {

@@ -21,9 +21,11 @@ class AtlasTestCase extends CakeTestCase {
 	    'featured_employer',
 	    'filed_document',
 	    'ftp_document_scanner',
+	    'helpful_article',
 	    'hot_job',
 	    'kiosk',
 	    'kiosk_button',
+	    'in_the_news',
 	    'location',
 	    'master_kiosk_button',
 	    'module_access_control',
@@ -36,6 +38,8 @@ class AtlasTestCase extends CakeTestCase {
 	    'self_scan_category',
 	    'self_sign_log',
 	    'self_sign_log_archive',
+	    'survey',
+	    'survey_question',
 	    'user',
 	    'user_transaction'
 	);

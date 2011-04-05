@@ -19,6 +19,7 @@ body {
     overflow-y: scroll;
 }
 
+a {
     color: #3B71A0;
     text-decoration: none;
 }
@@ -360,7 +361,7 @@ legend {
 
 #information #help {	
 	border: 1px solid #B5D3DF;  
-	height: 75px; 
+	height: 100px; 
 	padding: 10px; 
 	background-color:#F1F8FB
 }
@@ -988,3 +989,33 @@ p.checkbox {
 	width: 250px;
 	line-height: 12px;
 }
+
+.accordionbtn {
+	width: 100% !important;
+}
+
+.accordionbtn .x-btn-text {
+	font-size: 12px;
+}
+
+.x-careerseeker-row {
+	padding: 4px 0;
+}
+
+.x-careerseeker-row p {
+	font-size: 12px;
+	width: 250px;
+}
+
+.x-careerseeker-row .label {
+	font-weight: bold;
+	margin: 0 15px 0 0;
+	text-align: right;
+}
+
+.x-careerseeker-row ul {
+	margin: 0 0 0 280px;
+	list-style-type: disc;
+}
+
+.x-careerseeker-row li {list-style-type: disc;}
