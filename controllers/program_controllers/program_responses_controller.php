@@ -57,7 +57,8 @@ class ProgramResponsesController extends AppController {
 			$this->redirect($this->referer());
 		}
 		if(!empty($this->data)) {
-			$this->loadModel('QueuedDocument');	
+			$this->loadModel('QueuedDocument');
+			$this->data['QueuedDocument']['req_program_doc'] = 1;	
 			if($this->QueuedDocument->uploadDocument($this->data, 'Program Upload', $this->Auth->user('id'))) {
 				$this->_emailCustomer($id, 'docUpload');
 				$this->Session->setFlash(__('Document uploaded successfully.', true), 'flash_success');
