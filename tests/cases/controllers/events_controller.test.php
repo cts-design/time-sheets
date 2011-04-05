@@ -188,5 +188,82 @@ class EventsControllerTestCase extends AtlasTestCase {
 		$this->assertEqual($result['prevMonth'], '03/2011');
 		$this->assertEqual($result['nextMonth'], '05/2011');
 	}
+
+	function testIndexWithAllCategories() {
+		
+		$this->Events->params = Router::parse('/events/index');
+		$this->Events->params['form']['event_categories_dropdown'] = 0;
+		$this->Events->params['url']['url'] = '/events/index';
+		$this->Events->beforeFilter();
+		$this->Events->Component->startup($this->Events);			
+	    $this->Events->index();
+		
+		$expectedEvent = array(
+			'Event' => array(
+				'id' => 2,
+				'event_category_id' => 3,
+				'title' => 'TBWA Career Fair',
+				'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse volutpat gravida sapien id accumsan. Donec ultricies est et enim consectetur cursus. Morbi metus leo, lobortis a aliquam vel, accumsan ut velit.',
+				'start' => '2011-04-07 12:00:00',
+				'end' => '2011-04-07 12:45:00',
+				'all_day' => 0,
+				'location' => 'Workforce Tampa Career Center',
+				'address' => '9215 N. Florida Ave.Tampa, FL 33612',
+				'event_url' => 'http://checkitout.com/tbwa',
+				'sponsor' => 'TBWA',
+				'sponsor_url' => 'http://www.workforcetampa.com/',
+				'created' => '2011-03-21 15:03:10',
+				'modified' => '2011-03-31 16:12:09'
+			),
+			'EventCategory' => array(
+				'id' => 3,
+				'name' => 'Job Fairs',
+				'created' => '2011-02-23 20:05:28',
+				'modified' => '2011-02-23 20:05:28'
+			)
+		);		
+		
+		$this->assertEqual($this->Events->viewVars['events'][1], $expectedEvent);
+
+	}
+
+	function testIndexWithCategory() {
+		
+		$this->Events->params = Router::parse('/events/index');
+		$this->Events->params['form']['event_categories_dropdown'] = 2;
+		$this->Events->params['url']['url'] = '/events/index';
+		$this->Events->beforeFilter();
+		$this->Events->Component->startup($this->Events);			
+	    $this->Events->index();			    	
+
+		$expectedEvent = array(
+			array(
+				'Event' => array(
+					'id' => 5,
+					'event_category_id' => 2,
+					'title' => 'asdfasdf',
+					'description' => '',
+					'start' => '2011-04-07 00:00:00',
+					'end' => '2011-04-07 01:00:00',
+					'all_day' => 0,
+					'location' => '',
+					'address' => '',
+					'event_url' => '',
+					'sponsor' => '',
+					'sponsor_url' => '',
+					'created' => '2011-04-01 08:23:32',
+					'modified' => '2011-04-01 08:23:32'
+				),
+				'EventCategory' => array(
+					'id' => 2,
+					'name' => 'Business Seminars',
+					'created' => '2011-02-23 20:04:22',
+					'modified' => '2011-02-23 20:04:22'
+				)
+			)
+		);
+		
+		$this->assertEqual($this->Events->viewVars['events'], $expectedEvent);
+	}
 }
 ?>

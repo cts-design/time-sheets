@@ -19,7 +19,8 @@ class HotJobsControllerTestCase extends AtlasTestCase {
 		// set up the session
 		$this->HotJobs->Session->write('Auth.User', array(
 			'id' => 1,
-			'username' => 'bcordell'
+			'username' => 'bcordell',
+			'location_id' => 1
 		));
 	}
 
@@ -65,6 +66,43 @@ class HotJobsControllerTestCase extends AtlasTestCase {
 		$this->assertEqual($return, $expected);
 	}
 
+	function testAdminIndex() {
+		$return = $this->testAction('/admin/hot_jobs', array('return' => 'vars'));
+		debug($return);
+		$expected = array(
+			'hotJobs' => array(
+				array(
+					'HotJob' => array(
+						'id' => 1,
+						'employer' => 'CNCists',
+						'title' => 'CNC Swiss Lathe 7 Axis Operator',
+						'description' => 'Must have HS/GED w/5 yrs exp in CNC lathe machinery & familiar w/ISO 9001 requirements. Will set-up, program & operate 2 CNC Swiss CNC lathe 7 axis machines. Pay: $15-25/hr.',
+						'location' => 'Pinellas County',
+						'url' => 'http://cncists.com',
+						'reference_number' => '9509835',
+						'contact' => 'Email resume in Word wit Ref # to hloeun@worknetpinellas.org',
+						'file' => ''
+					)
+				),
+				array(
+					'HotJob' => array(
+						'id' => 2,
+						'employer' => 'Test Pests',
+						'title' => 'Pest Control Tech/Sales',
+						'description' => 'No exp necessary, willing to train. Must be min 18 yrs old, have a valid driver’s license w/clean driving record, must pass a drug test & be physically fit w/ability to crawl under houses & in attics. Background checks will be perform. Unemployment compensation recipients encouraged to apply. Pay: $10/hr plus comm.',
+						'location' => 'Pinellas County',
+						'url' => 'http://cncists.com',
+						'reference_number' => '9544375',
+						'contact' => 'Email resume in Word wit Ref # to hloeun@worknetpinellas.org',
+						'file' => ''
+					)
+				),
+			)
+		);
+		
+		$this->assertEqual($return, $expected);
+	}
+
 	function testAdminAddWithValidRecord() {
 		$this->HotJobs->data = array(
 			'HotJob' => array(
@@ -75,7 +113,9 @@ class HotJobsControllerTestCase extends AtlasTestCase {
 				'url' => 'http://new-employer.com',
 				'reference_number' => '1234567',
 				'contact' => 'Email resume in Word wit Ref # to hloeun@worknetpinellas.org',
-				'file' => ''				
+				'file' => array(
+					'error' => 4
+				)
 			)
 		);
 		
@@ -97,7 +137,9 @@ class HotJobsControllerTestCase extends AtlasTestCase {
 				'url' => 'http://new-employer.com',
 				'reference_number' => '1234567',
 				'contact' => 'Email resume in Word wit Ref # to hloeun@worknetpinellas.org',
-				'file' => ''				
+				'file' => array(
+					'error' => 4
+				)				
 			)
 		);
 		
@@ -129,7 +171,9 @@ class HotJobsControllerTestCase extends AtlasTestCase {
 				'url' => 'http://cncists.com',
 				'reference_number' => '9544375',
 				'contact' => 'Email resume in Word wit Ref # to hloeun@worknetpinellas.org',
-				'file' => ''			
+				'file' => array(
+					'error' => 4
+				)			
 			)
 		);
 		
@@ -153,6 +197,15 @@ class HotJobsControllerTestCase extends AtlasTestCase {
 		// was the record changed?
 		$this->assertFalse($this->HotJobs->HotJob->read(null, 2));	
 	}
+	
+//	function testAdminDeleteWithNoId() {
+//		$this->HotJobs->params = Router::parse('/admin/hot_jobs/delete');
+//		$this->HotJobs->beforeFilter();
+//		$this->HotJobs->Component->startup($this->HotJobs);
+//		$this->HotJobs->admin_delete();
+
+//		$this->assertEqual($this->HotJobs->Session->read('Message.flash.element'), 'flash_failure');
+//	}
 
 }
 ?>

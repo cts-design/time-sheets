@@ -35,8 +35,47 @@ class PressReleasesControllerTestCase extends AtlasTestCase {
     }
 
 	function testAdminIndex() {
-            //$result = $this->testAction('/admin/press_releases/index', array('return' => 'vars'));
-            //debug($result);
+        $result = $this->testAction('/admin/press_releases/index', array('return' => 'vars'));
+        $result = Set::extract('/pressReleases/.[1]', $result);
+		$expected = array(
+			'id' => 1,
+            'title' => 'Lorem ipsum dolor sit amet',
+            'file' => 'http://atlas.dev/files/public/file.pdf',
+            'created' => '2011-02-09 15:20:21',
+            'modified' => '2011-02-09 15:20:21'
+		);
+		$this->assertEqual($result[0]['PressRelease'], $expected);
+	}
+	
+	function testAdminAdd() {
+		// cant test add because it requires you to
+		// upload a file
+	}
+	
+	function testAdminAddWithInvalidData() {
+		$this->PressReleases->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));	
+			
+		$this->PressReleases->data = array(
+			'PressRelease' => array(
+				'title' => '',
+				'file' => array(
+					'error' => 0,
+					'type' => 'doctype',
+					'tmp_name' => 'asdf'
+				)
+			)
+		);	
+		
+	    $this->PressReleases->params = Router::parse('/admin/press_releases/add');
+	    $this->PressReleases->beforeFilter();
+	    $this->PressReleases->Component->startup($this->PressReleases);
+		$this->PressReleases->admin_add();	
+		$this->assertEqual($this->PressReleases->Session->read('Message.flash.element'), 'flash_failure');
 	}
 
 	function testAdminEditWithValidData() {

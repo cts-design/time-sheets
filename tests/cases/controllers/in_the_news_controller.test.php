@@ -38,6 +38,70 @@ class InTheNewsControllerTestCase extends AtlasTestCase {
 		);
 		$this->assertEqual($result[0]['InTheNews'], $expected);
 	}
+	
+	function testAdminIndex() {
+        $result = $this->testAction('/admin/in_the_news/index', array('return' => 'vars'));
+        $result = Set::extract('/inTheNews/.[1]', $result);
+		$expected = array(
+			'id' => 1,
+			'title' => 'we were in the news!!',
+			'reporter' => 'WSJ.com',
+			'summary' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
+			'link' => 'http://www.wsj.com/sally.beard/a-helpful-article',
+			'posted_date' => '2011-03-07',
+			'created' => '2011-03-07 20:29:20',
+			'modified' => '2011-03-07 20:29:20'
+		);
+		$this->assertEqual($result[0]['InTheNews'], $expected);		
+	}
+
+	function testAdminAddWithValidData() {
+		$this->InTheNews->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+		
+		$this->InTheNews->data = array(
+			'id' => 1,
+			'title' => 'A Helpful Article From Some Publication',
+			'reporter' => 'Sally Beard - WSJ.com',
+			'summary' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
+			'link' => 'http://www.wsj.com/sally.beard/a-helpful-article',
+			'posted_date' => '2011-03-07'
+		);
+		
+	    $this->InTheNews->params = Router::parse('/admin/in_the_news/add');
+	    $this->InTheNews->beforeFilter();
+	    $this->InTheNews->Component->startup($this->InTheNews);
+		$this->InTheNews->admin_add();	
+		$this->assertEqual($this->InTheNews->Session->read('Message.flash.element'), 'flash_success');
+	}
+
+	function testAdminAddWithInvalidData() {
+		$this->InTheNews->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+		
+		$this->InTheNews->data = array(
+			'id' => 1,
+			'title' => '',
+			'reporter' => 'Sally Beard - WSJ.com',
+			'summary' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
+			'link' => 'http://www.wsj.com/sally.beard/a-helpful-article',
+			'posted_date' => '2011-03-07'
+		);
+		
+	    $this->InTheNews->params = Router::parse('/admin/in_the_news/add');
+	    $this->InTheNews->beforeFilter();
+	    $this->InTheNews->Component->startup($this->InTheNews);
+		$this->InTheNews->admin_add();	
+		$this->assertEqual($this->InTheNews->Session->read('Message.flash.element'), 'flash_failure');
+	}
 
 	function testAdminEditWithValidData() {
 			$this->InTheNews->Session->write('Auth.User', array(
@@ -74,7 +138,7 @@ class InTheNewsControllerTestCase extends AtlasTestCase {
                 )
             );
 			
-		    $this->InTheNews->params = Router::parse('/admin/chairman_reports/edit/1');
+		    $this->InTheNews->params = Router::parse('/admin/in_the_news/edit/1');
 		    $this->InTheNews->beforeFilter();
 		    $this->InTheNews->Component->startup($this->InTheNews);
 			$this->InTheNews->admin_edit(1);	
@@ -100,6 +164,21 @@ class InTheNewsControllerTestCase extends AtlasTestCase {
 		$this->InTheNews->admin_edit(1);	
 		$this->assertEqual($this->InTheNews->Session->read('Message.flash.element'), 'flash_success');
     }
+
+	function testAdminEditWithNoRecord() {
+		$this->InTheNews->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));	
+
+	    $this->InTheNews->params = Router::parse('/admin/in_the_news/edit');
+	    $this->InTheNews->beforeFilter();
+	    $this->InTheNews->Component->startup($this->InTheNews);
+		$this->InTheNews->admin_edit();	
+		$this->assertEqual($this->InTheNews->Session->read('Message.flash.element'), 'flash_failure');		
+	}
 
 	function testAdminDeleteValidRecord() {
 	    $this->InTheNews->Session->write('Auth.User', array(
