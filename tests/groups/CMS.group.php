@@ -21,13 +21,15 @@ class CmsGroupTest extends TestSuite {
  * @return void
  */
 	function CmsGroupTest() {
+		TestManager::addTestFile($this, TESTS . 'cases' . DS . 'controllers' . DS . 'career_seekers_surveys_controller');
 		TestManager::addTestFile($this, TESTS . 'cases' . DS . 'controllers' . DS . 'chairman_reports_controller');
+		TestManager::addTestFile($this, TESTS . 'cases' . DS . 'controllers' . DS . 'employers_surveys_controller');
+		TestManager::addTestFile($this, TESTS . 'cases' . DS . 'controllers' . DS . 'featured_employers_controller');
+		TestManager::addTestFile($this, TESTS . 'cases' . DS . 'controllers' . DS . 'helpful_articles_controller');
+		TestManager::addTestFile($this, TESTS . 'cases' . DS . 'controllers' . DS . 'in_the_news_controller');
+		TestManager::addTestFile($this, TESTS . 'cases' . DS . 'controllers' . DS . 'press_releases_controller');
+		
         TestManager::addTestFile($this, TESTS . 'cases' . DS . 'models' . DS . 'chairman_report');
-		TestManager::addTestFile($this, TESTS . 'cases' . DS . 'controllers' . DS . 'hot_jobs_controller');
-        TestManager::addTestFile($this, TESTS . 'cases' . DS . 'models' . DS . 'hot_job');		
-        TestManager::addTestFile($this, TESTS . 'cases' . DS . 'controllers' . DS . 'press_releases_controller');
         TestManager::addTestFile($this, TESTS . 'cases' . DS . 'models' . DS . 'press_release');
-        TestManager::addTestFile($this, TESTS . 'cases' . DS . 'controllers' . DS . 'pages_controller');
-        TestManager::addTestFile($this, TESTS . 'cases' . DS . 'models' . DS . 'page');
 	}
 }

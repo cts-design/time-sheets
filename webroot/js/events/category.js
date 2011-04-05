@@ -4,7 +4,6 @@
  * @link http://ctsfla.com
  * @package ATLAS V3
  */
- 
 $(function() {
 	var eventCategory = 0;
 	var currentUrl    = '/events/';

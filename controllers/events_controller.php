@@ -1,9 +1,13 @@
 <?php
-
-App::import('Vendor', 'DebugKit.FireCake');
+/**
+ * @author Brandon Cordell
+ * @copyright Complete Technology Solutions 2011
+ * @link http://ctsfla.com
+ * @package ATLAS V3
+ */
 class EventsController extends AppController {
 	var $name = 'Events';
-	var $paginate = array('order' => array('Event.start' => 'asc'), 'limit' => 2);
+	var $paginate = array('order' => array('Event.start' => 'asc'), 'limit' => 5);
 	
 	function beforeFilter() {
 		parent::beforeFilter();
@@ -12,7 +16,7 @@ class EventsController extends AppController {
 	
 	function view() {}
 	
-	function index($month = null, $year = null, $category = null) {
+	function index($month = null, $year = null) {
 		$title_for_layout = 'Calendar of Events';
 		$categories = $this->Event->EventCategory->find('list', 
 														array('fields' => array('EventCategory.id', 'EventCategory.name'),
@@ -47,7 +51,7 @@ class EventsController extends AppController {
 			$endDate = date('Y-m-d H:i:s', strtotime("$month/$lastDayOfMonth/$year 23:59:59"));
 		}
 		
-		$events = $this->paginate('Event', array('start BETWEEN ? AND ?' => array($date, $endDate), $categoryConditions));
+		$events = $this->paginate('Event', array('Event.start BETWEEN ? AND ?' => array($date, $endDate), $categoryConditions));
 		
 		$curMonth = date('F Y', strtotime($date));
 		$prevMonth = date('m/Y', strtotime("-1 month", strtotime($date)));

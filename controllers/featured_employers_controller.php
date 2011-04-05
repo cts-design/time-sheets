@@ -21,7 +21,7 @@ class FeaturedEmployersController extends AppController {
 	function admin_add() {
 		if (!empty($this->data)) {
 			if ($this->data['FeaturedEmployer']['image']['error'] === 4) {
-				unset($this->data['FeaturedEmployer']['file']);
+				unset($this->data['FeaturedEmployer']['image']);
 			} else {
 				$file = $this->_uploadFile();
 	            if (!$file) {
@@ -35,7 +35,7 @@ class FeaturedEmployersController extends AppController {
 				$this->Transaction->createUserTransaction('Featured Employers', null, null,
                                         'Created featured employer ID ' . $this->FeaturedEmployer->id);
 				$this->Session->setFlash(__('The featured employer has been saved', true), 'flash_success');
-				$this->redirect(array('action' => 'index'));
+				$this->redirect(array('action' => 'admin_index'));
 			} else {
 				$this->Session->setFlash(__('The featured employer could not be saved. Please, try again.', true), 'flash_failure');
 			}

@@ -5,7 +5,7 @@ class EmployersSurveysController extends AppController {
 
 	function beforeFilter() {
 		parent::beforeFilter();
-		$this->Auth->allow('index', 'success');
+		$this->Auth->allow('index', 'success', 'add');
 	}
 
     function index() {}
@@ -53,7 +53,7 @@ class EmployersSurveysController extends AppController {
 
             if ($this->EmployersSurvey->delete($surveyId)) {
                     $data['success'] = true;
-					$this->EmployersSurvey->createUserTransaction('EmployersSurvey', null, null,
+					$this->Transaction->createUserTransaction('EmployersSurvey', null, null,
 	                                        'Delete survey ID ' . $surveyId);
             } else {
                     $data['success'] = false;

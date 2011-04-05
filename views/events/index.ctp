@@ -1,4 +1,4 @@
-<?php echo $this->Html->script('event_categories/category.js', array('inline' => false)) ?>
+<?php echo $this->Html->script('events/category.js', array('inline' => false)) ?>
 <div class="events">
 	
 	<form class="event_categories" action="<?php echo $this->here; ?>" method="post">

@@ -35,8 +35,23 @@ class FeaturedEmployersControllerTestCase extends AtlasTestCase {
     }
 
 	function testAdminIndex() {
-            //$result = $this->testAction('/admin/featured_employers/index', array('return' => 'vars'));
-            //debug($result);
+		$this->FeaturedEmployers->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+			
+        $result = $this->testAction('/admin/featured_employers/index', array('return' => 'vars'));
+        $result = Set::extract('/featuredEmployers/.[1]', $result);
+		$expected = array(
+			'id' => 1,
+	        'name' => 'Lorem ipsum dolor sit amet',
+	        'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
+	        'image' => 'Lorem ipsum dolor sit amet',
+	        'url' => 'Lorem ipsum dolor sit amet'
+		);
+		$this->assertEqual($result[0]['FeaturedEmployer'], $expected);
 	}
 
 	function testAdminEditWithValidData() {
@@ -119,12 +134,38 @@ class FeaturedEmployersControllerTestCase extends AtlasTestCase {
 		        'username' => 'dnolan',
 		        'location_id' => 1
 		    ));
-			$this->FeaturedEmployers->params = Router::parse('/admin/filed_documents/delete');
+			$this->FeaturedEmployers->params = Router::parse('/admin/featured_employers/delete');
 	   		$this->FeaturedEmployers->beforeFilter();
 	    	$this->FeaturedEmployers->Component->startup($this->FeaturedEmployers);			
 	        $this->FeaturedEmployers->admin_delete();			    	
 	        $this->assertEqual($this->FeaturedEmployers->Session->read('Message.flash.element'), 'flash_failure');
 	   }
+		
+		function testAdminAddWithoutUpload() {
+			$this->FeaturedEmployers->Session->write('Auth.User', array(
+		        'id' => 2,
+		        'role_id' => 2,
+		        'username' => 'dnolan',
+		        'location_id' => 1
+		    ));
+			
+			$this->FeaturedEmployers->data = array(
+				'FeaturedEmployer' => array(
+					'name' => 'New Featured Employer',
+					'description' => 'lorem ipsum...',
+					'image' => array(
+						'error' => 4
+					),
+					'url' => 'http://featuredemployerurl.com'
+				)
+			);
+			
+			$this->FeaturedEmployers->params = Router::parse('/admin/featured_employers/add');
+	   		$this->FeaturedEmployers->beforeFilter();
+	    	$this->FeaturedEmployers->Component->startup($this->FeaturedEmployers);			
+	        $this->FeaturedEmployers->admin_add();			    	
+	        $this->assertEqual($this->FeaturedEmployers->Session->read('Message.flash.element'), 'flash_success');
+		}
 
 }
 ?>
