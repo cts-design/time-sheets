@@ -159,6 +159,8 @@ $this->Paginator->options(array(
 		    'options' => $queueCategories,
 		    'selected' => $lockedDoc['QueuedDocument']['queue_category_id']
 		    ))?>
+		<br />
+		<?php echo $this->Form->input('QueuedDocument.req_program_doc', array('type' => 'checkbox', 'checked' => $lockedDoc['QueuedDocument']['req_program_doc']))?>    
 	    <?php echo $this->Form->input('id', array('type' => 'hidden', 'value' => $lockedDoc['QueuedDocument']['id'])); ?>
 	    <?php echo $this->Form->end(array('label' => 'Re-Assign')) ?>
 	    <?php echo $this->Form->create(array('action' => 'delete'))?>
@@ -197,8 +199,14 @@ $this->Paginator->options(array(
 		<?php echo $this->Form->input('FiledDocument.filename', array('type' => 'hidden', 'value' => $lockedDoc['QueuedDocument']['filename']))?>
 		<?php echo $this->Form->input('FiledDocument.scanned_location_id', array('type' => 'hidden', 'value' => $lockedDoc['QueuedDocument']['scanned_location_id']))?>
 		<?php echo $this->Form->input('FiledDocument.admin_id', array('type' => 'hidden', 'value' => $this->Session->read('Auth.User.id')))?>
+		<?php echo $this->Form->input('FiledDocument.entry_method', array('type' => 'hidden', 'value' => $lockedDoc['QueuedDocument']['entry_method']));?>
 		<?php echo $this->Form->input('FiledDocument.created', array('type' => 'hidden', 'value' => $lockedDoc['QueuedDocument']['created']))?>
-		<?php echo $this->Form->end('Save Record')?>
+		<?php echo $this->Form->input('QueuedDocument.queue_category_id', array('type' => 'hidden', 'value' => $lockedDoc['QueuedDocument']['queue_category_id']));?>
+	
+		<?php echo $this->Form->submit('File Record')?>
+		<?php echo $this->Form->submit('File & Re-Queue', array('name' => 'data[FiledDocument][requeue]'))?>
+		<?php echo $this->Form->end(); ?>
+		
 		<p id="cusNotfound" class="right">If customer was not found via auto-complete, <?php echo $this->Html->link('click here',
 			array('action' => '', 'admin' => true ), array('class' => 'add-customer'))?> to add them.
 		</p>
