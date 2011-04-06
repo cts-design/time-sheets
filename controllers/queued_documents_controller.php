@@ -249,7 +249,11 @@ class QueuedDocumentsController extends AppController {
 		$this->data['FiledDocument']['last_activity_admin_id'] = $this->data['FiledDocument']['admin_id'];
 		$this->data['FiledDocument']['filed_location_id'] = $this->Auth->user('location_id');
 		if($this->QueuedDocument->User->FiledDocument->save($this->data)) {
-			$this->QueuedDocument->delete($this->data['FiledDocument']['id']);			
+			$this->QueuedDocument->delete($this->data['FiledDocument']['id']);
+			$watchedCat = $this->WatchedQueueCat->findByCatId($this->data['FiledDocument']['cat3']);
+			if($this->data['FiledDocument']['cat3']) {
+				
+			}			
 			if(key_exists('requeue', $this->data['FiledDocument'])) {
 				$this->data['QueuedDocument']['filename'] = $this->data['FiledDocument']['filename'];
 				$this->data['QueuedDocument']['locked_by'] = $this->Auth->user('id');
