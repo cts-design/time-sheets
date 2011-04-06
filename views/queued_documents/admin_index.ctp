@@ -159,8 +159,7 @@ $this->Paginator->options(array(
 		    'options' => $queueCategories,
 		    'selected' => $lockedDoc['QueuedDocument']['queue_category_id']
 		    ))?>
-		<br />
-		<?php echo $this->Form->input('QueuedDocument.req_program_doc', array('type' => 'checkbox', 'checked' => $lockedDoc['QueuedDocument']['req_program_doc']))?>    
+		<br />    
 	    <?php echo $this->Form->input('id', array('type' => 'hidden', 'value' => $lockedDoc['QueuedDocument']['id'])); ?>
 	    <?php echo $this->Form->end(array('label' => 'Re-Assign')) ?>
 	    <?php echo $this->Form->create(array('action' => 'delete'))?>
