@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2011-04-05 18:26:00 : 1302027960*/
+/* atlas schema generated on: 2011-04-06 15:13:05 : 1302102785*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -93,7 +93,6 @@ class atlasSchema extends CakeSchema {
 		'entry_method' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'deleted_reason' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'last_activity_admin_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
-		'req_program_doc' => array('type' => 'integer', 'null' => false, 'default' => '0'),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
@@ -189,7 +188,6 @@ class atlasSchema extends CakeSchema {
 		'description' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'entry_method' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'last_activity_admin_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
-		'req_program_doc' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
@@ -402,7 +400,6 @@ class atlasSchema extends CakeSchema {
 		'entry_method' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'last_activity_admin_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'user_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
-		'req_program_doc' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
