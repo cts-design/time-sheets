@@ -25,7 +25,7 @@ $(document).ready(function(){
 	    }
 	}
     });
-    $.getJSON('/admin/document_filing_categories/get_child_cats_ajax',{
+    $.getJSON('/admin/document_filing_categories/get_child_cats',{
 	id: $("#FiledDocumentCat1").val()
     },
     function(childCats) {
@@ -37,7 +37,7 @@ $(document).ready(function(){
 	}
     });
     $("#FiledDocumentCat1").change(function(){
-	$.getJSON('/admin/document_filing_categories/get_child_cats_ajax',{
+	$.getJSON('/admin/document_filing_categories/get_child_cats',{
 	    id: $(this).val()
 	},
 	function(childCats) {
@@ -53,7 +53,7 @@ $(document).ready(function(){
 	});
     });
     $("#FiledDocumentCat2").change(function(){
-	$.getJSON('/admin/document_filing_categories/get_grand_child_cats_ajax',{
+	$.getJSON('/admin/document_filing_categories/get_grand_child_cats',{
 	    id: $(this).val()
 	},
 	function(grandCats) {
@@ -67,21 +67,21 @@ $(document).ready(function(){
 	});
     });
     $('#UserFirstname').autocomplete({
-	source: '/admin/filed_documents/auto_complete_first_ajax',
+	source: '/admin/filed_documents/auto_complete_first',
 	minLength: 2,
 	close: function(){
 	    populateUserInfo($('#UserFirstname').val());
 	}
     });
     $('#UserLastname').autocomplete({
-	source: '/admin/filed_documents/auto_complete_last_ajax',
+	source: '/admin/filed_documents/auto_complete_last',
 	minLength: 2,
 	close: function(){
 	    populateUserInfo($('#UserLastname').val());
        }
     });
     $('#UserSsn').autocomplete({
-	source: '/admin/filed_documents/auto_complete_ssn_ajax',
+	source: '/admin/filed_documents/auto_complete_ssn',
 	minLength: 2,
 	close: function(){
 	    populateUserInfo($('#UserSsn').val());
