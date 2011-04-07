@@ -1,0 +1,16 @@
+#search_submit {
+    *display: block;
+    *text-transform: capitalize;
+    *float: left;
+    *margin: 10px 0 0;
+}
+
+.search {
+    *width: 289px;
+}
+
+#feedback_submit {
+    *display: block;
+    *text-transform: capitalize;
+    *margin: 10px 0 0;
+}

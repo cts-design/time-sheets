@@ -164,5 +164,38 @@ class NavigationsController extends AppController {
 
             $this->set(compact('success'));
         }
+
+		function admin_add_parent() {
+			$data = array();
+			$newParentName = $this->params['form']['name'];
+			
+			App::import('Vendor', 'DebugKit.FireCake');
+			FireCake::log($this->params);
+			
+			$this->data = array(
+				'Navigation' => array(
+					'title' => $newParentName
+				)
+			);
+			
+			FireCake::log($this->data);
+			
+			$newRecord = $this->Navigation->save($this->data);
+			
+			FireCake::log($newRecord);
+			
+			if ($newRecord) {
+				$data['success'] = true;
+				$data['navigation'] = $newRecord['Navigation'];
+				$data['navigation']['id'] = $this->Navigation->getLastInsertId();
+			} else {
+				$data['success'] = false;
+			}
+			
+			FireCake::log($data);
+			
+			$this->set('data', $data);
+			return $this->render(null, null, '/elements/ajaxreturn');
+		}
 }
 ?>

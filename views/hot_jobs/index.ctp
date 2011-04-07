@@ -10,8 +10,8 @@
 			<li><strong>Reference #:</strong> <?php echo $hotJob['HotJob']['reference_number'] ?></li>
 			<li><strong>Contact:</strong> <?php echo $hotJob['HotJob']['contact'] ?></li>
 		</ul>
-		
-		<?php echo $this->Html->link('Apply for this job', array('controller' => 'hot_jobs', 'action' => 'apply', $hotJob['HotJob']['id'])) ?>
+		<br />
+		<p><?php echo $this->Html->link('Apply for this job', array('controller' => 'hot_jobs', 'action' => 'apply', $hotJob['HotJob']['id'])) ?></p>
 	</div>
 	<?php endforeach; ?>
 	
