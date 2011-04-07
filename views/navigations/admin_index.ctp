@@ -1,10 +1,4 @@
 <?php
-	if ($session->read('Auth.User.role_id') == 2) {
-		echo $this->Html->scriptBlock(
-			"var role = 2;"
-		);
-	}
-
     // @TODO add these to the head of the layout when we integrate ExtJS throughout the project
     $this->Html->script('ext/adapter/ext/ext-base-debug', array('inline' => FALSE));
     $this->Html->script('ext-all-debug', array('inline' => FALSE));

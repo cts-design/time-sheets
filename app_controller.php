@@ -74,10 +74,6 @@ class AppController extends Controller {
     function beforeFilter() {
 		parent::beforeFilter();
 		
-		if (!defined('CAKE_UNIT_TEST')) {
-			define('CAKE_UNIT_TEST', false);
-		}
-		
 		if ($this->RequestHandler->isAjax()) {
 			Configure::write('debug', 0);
 		}
@@ -103,12 +99,8 @@ class AppController extends Controller {
 		}
 		if (isset($this->params['prefix']) && $this->params['prefix'] == 'admin') {
 		    $this->layout = 'admin';
-		    
-		    if (!CAKE_UNIT_TEST) {
-				$this->Security->blackHoleCallback = 'forceSSL';
-		    	$this->Security->requireSecure();
-			}
-
+		   	$this->Security->blackHoleCallback = 'forceSSL';
+		    $this->Security->requireSecure();
 		    if($this->Auth->user('role_id') == 1 ) {
 				$this->Session->destroy();
 				$this->Session->setFlash(__('You are not authorized to access that location', true), 'flash_failure');

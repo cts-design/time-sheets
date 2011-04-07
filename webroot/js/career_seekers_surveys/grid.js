@@ -127,7 +127,7 @@ CareerSeekers.prototype = {
                 });
         },
         initWindow: function(rec) {
-                //console.log(rec.data);
+                console.log(rec.data);
                 
                 var windowTpl = new Ext.XTemplate(
                         '<div class="x-careerseeker">',
@@ -264,7 +264,7 @@ CareerSeekers.prototype = {
         },
         showWindow: function() {
                 var rec = this.selectedRecord;
-                //console.log(rec);
+                console.log(rec);
                 this.initWindow(rec);
                 this.surveyWindow.show();
         }

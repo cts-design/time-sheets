@@ -8,15 +8,13 @@
  * @package ATLAS V3
  */
 
-
-$config['URL'] = 'http://tbwa.ctsfla.com/';
-$config['Admin']['URL'] = 'http://tbwa.ctsfla.com/admin';
+$config['URL'] = 'http://development.ctsfla.com/';
+$config['Admin']['URL'] = 'http://development.ctsfla.com/admin';
 //domain for use with cookies
-$config['domain'] = 'tbwa.ctsfla.com';
-
+$config['domain'] = 'development.ctsfla.com';
 
 // Company Name
-$config['Company']['name'] = 'Tampa Bay Workforce Alliance';
+$config['Company']['name'] = 'ATLAS';
 
 // System Email From Address
 $config['System']['email'] = 'noreply@atlasforworkforce.com';

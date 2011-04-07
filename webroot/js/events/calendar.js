@@ -167,6 +167,7 @@ App = function() {
 	                            	//console.log('EVENTADD');
 	                                rec.commit();
 									this.showMsg('Event '+ rec.data.Title +' was added');
+
 	                            },
 	                            scope: this
 	                        },

@@ -70,7 +70,7 @@ class NavHelper extends AppHelper {
             if ($this->here == '/') {
            		return true;
             }
-        } else if (!empty($navigationLink) && strpos($this->here, $navigationLink) !== false) {
+        } else if (strpos($this->here, $navigationLink) !== false) {
             return true;
         } else {
         	return false;

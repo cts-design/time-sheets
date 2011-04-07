@@ -3,23 +3,21 @@ require 'capcake'
 
 set :application, 'atlas' # Your app's location (domain or sub-domain name)
 set :repository, "git@git.assembla.com:CTSATLAS.git"
-
-set :branch, 'tbwa_staging'
+set :branch, 'staging'
 set :deploy_via, :export
 
 set :default_shell, '/bin/bash'
 
-set :deploy_to, "/var/www/vhosts/tbwa.ctsfla.com/atlas"
+set :deploy_to, "/var/www/vhosts/development.ctsfla.com/atlas"
 
-server "tbwa.ctsfla.com", :app, :web, :db, :primary => true
+server "development.ctsfla.com", :app, :web, :db, :primary => true
 
-set :user, 'tbwaftp'
+set :user, 'dev4cts'
 
 # Cake Settings
 set :cake_branch, "master"
 
 set :shared_children,       %w(config system tmp webroot/public/files webroot/public/img storage storage/thumbnails)
-
 
 namespace :deploy do
 	desc "Updates symlinks needed to make application work"
