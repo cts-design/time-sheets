@@ -10,7 +10,7 @@ class FiledDocumentsController extends AppController {
 
     var $name = 'FiledDocuments';
 	
-	var $components = array('RequestHandler');
+	var $components = array('RequestHandler', 'Notifications');
 	var $helpers = array('Excel');
 
     var $reasons = array(
@@ -89,6 +89,7 @@ class FiledDocumentsController extends AppController {
 		    $this->redirect(array('action' => 'index'));
 		}
 		if(!empty($this->data)) {
+			$this->FiledDocument->User->recursive = -1;
 		    $user = $this->FiledDocument->User->find('first', array('conditions' => array(
 				    'User.role_id' => 1,
 				    'User.firstname' => $this->data['User']['firstname'],
@@ -97,9 +98,11 @@ class FiledDocumentsController extends AppController {
 				    )));
 		    $this->data['FiledDocument']['user_id'] = $user['User']['id'];
 		    $this->data['FiledDocument']['last_activity_admin_id'] = $this->Auth->user('id');
-		    $this->data['FiledDocument']['location_id'] = $this->Auth->user('location_id');
-	
+		    $this->data['FiledDocument']['location_id'] = $this->Auth->user('location_id');	
 		    if($this->FiledDocument->save($this->data)) {
+	    		if($this->isModuleEnabled('Programs')) {	
+					$this->_processResponseDoc($user);
+				}	
 				$this->Transaction->createUserTransaction('Storage', null, null,
 					'Edited filed document ID ' . $id . ' for ' . $user['User']['lastname'] .
 					', ' . $user['User']['firstname'] . ' - ' . substr($user['User']['ssn'], 5));
@@ -212,6 +215,10 @@ class FiledDocumentsController extends AppController {
 		$this->FiledDocument->User->QueuedDocument->delete($this->data['FiledDocument']['id']);
 	
 		if($this->FiledDocument->save($this->data)) {
+			if($this->isModuleEnabled('Programs')) {
+				$user = $this->FiledDocument->User->findById($this->data['User']['id']);	
+    			$this->_processResponseDoc($user);
+			}	
 		    return $this->data['FiledDocument']['id'];
 		}
 		else {
@@ -375,5 +382,24 @@ class FiledDocumentsController extends AppController {
 		return $this->DocumentFilingCategory->find('list',
 			array('conditions' => array('DocumentFilingCategory.parent_id' => null)));
     }
+	
+	function _processResponseDoc($user) {
+		$this->log($this->data, 'debug');
+		$this->log($user, 'debug');
+		$this->loadModel('ProgramResponse');
+		$processedDoc = $this->ProgramResponse->processResponseDoc($this->data, $user);	
+		if($processedDoc['processed'] == 1){								
+			$programEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array(
+				'conditions' => array(
+					'ProgramEmail.program_id' => $processedDoc['program_id'],
+					'ProgramEmail.cat_id' => $processedDoc['cat_id'])));				
+			if($programEmail['ProgramEmail']['type'] == 'rejected') {				
+				$programEmail['ProgramEmail']['body'] = $programEmail['ProgramEmail']['body'] . 
+				 "\r\n" . $this->data['FiledDocument']['description'];
+			}
+			$this->Notifications->sendProgramEmail($programEmail, $user);		
+		}
+    }		
+
 	
 }
