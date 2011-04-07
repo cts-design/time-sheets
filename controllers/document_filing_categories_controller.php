@@ -14,6 +14,7 @@ class DocumentFilingCategoriesController extends AppController {
 	
     function beforeFilter() {
 		parent::beforeFilter();
+		$this->Security->validatePost = false;
 		if($this->Auth->user('role_id') > 1) {
 		    $this->Auth->allow('admin_get_child_cats', 'admin_get_grand_child_cats', 'admin_get_cats');
 		}
