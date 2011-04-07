@@ -4,13 +4,6 @@
  * @link http://ctsfla.com
  * @package ATLAS V3
  */
-
-if (typeof console == "undefined") {
-    window.console = {
-        log: function () {}
-    };
-}
-
 FormBuilder = function() {};
 
 FormBuilder.prototype = {
@@ -31,6 +24,7 @@ FormBuilder.prototype = {
 		});
 	},
 	initDataStores: function() {
+		// this will hold the temporary data of Combo boxes, Checkbox groups, and Radio groups
 		this.tempOptionsStore = new Ext.data.ArrayStore({
 			idIndex: 0,
 			storeId: 'FBOptionsStore',
@@ -38,6 +32,43 @@ FormBuilder.prototype = {
 				'options'
 			]
 		});
+		
+		var ProgramField = Ext.data.Record.create([
+			{ name: 'id', type: 'int' },
+			{ name: 'program_id', type: 'int' },
+			'label',
+			'type',
+			'name',
+			'attributes',
+			'options',
+			'validation',
+			{ name: 'created', type: 'date', dateFormat: 'Y-m-d H:i:s' },
+			{ name: 'modified', type: 'date', dateFormat: 'Y-m-d H:i:s' }
+		]);
+		
+		var proxy = new Ext.data.HttpProxy({
+			api: {
+				create:  { url: '/admin/program_fields/create',  method: 'POST' },
+				read:    { url: '/admin/program_fields/read',    method: 'GET'  },
+				update:  { url: '/admin/program_fields/update',  method: 'POST' },
+				destroy: { url: '/admin/program_fields/destroy', method: 'POST' }
+			}
+		});
+		
+		var reader = new Ext.data.JsonReader({
+			root: 'ProgramFields'
+		}, ProgramField);
+		
+		var writer = new Ext.data.JsonWriter({
+			encode: true
+		});
+		
+		this.fieldStore = new Ext.data.Store({
+			autoSave: false,
+			proxy: proxy,
+			reader: reader,
+			writer: writer
+		});	
 	},
 	initPanels: function() {		
 		var tb = new Ext.Toolbar({
@@ -46,6 +77,7 @@ FormBuilder.prototype = {
 				text: 'Save Form',
 				icon: '/img/icons/save.png',
 				tooltip: 'Save the form',
+				disabled: true,
 				scope: this,
 				handler: function() {
 					this.saveForm();
@@ -57,6 +89,7 @@ FormBuilder.prototype = {
 				text: 'Reset Form',
 				icon: '/img/icons/reset.png',
 				tooltip: 'Reset the form fields',
+				disabled: true,
 				scope: this,
 				handler: function() {
 					this.resetForm();
@@ -104,7 +137,7 @@ FormBuilder.prototype = {
 			overCls: 'x-btn-hover',
 			scale: 'medium',
 			handler: function() {
-				this.addField('textarea');
+				this.addField('radiogroup');
 			}
 		},{
 			xtype: 'button',
@@ -115,7 +148,7 @@ FormBuilder.prototype = {
 			overCls: 'x-btn-hover',
 			scale: 'medium',
 			handler: function() {
-				this.addField('textarea');
+				this.addField('checkboxgroup');
 			}
 		},{
 			xtype: 'button',
@@ -126,7 +159,7 @@ FormBuilder.prototype = {
 			overCls: 'x-btn-hover',
 			scale: 'medium',
 			handler: function() {
-				this.addField('textarea');
+				this.addField('button');
 			}
 		}];
 		
@@ -205,40 +238,52 @@ FormBuilder.prototype = {
 					border: false,
 					autoHeight: true,
 					autoScroll: true,
+					propertyNames: {
+						'class': 'Class',
+						cols: 'Cols',
+						dateFormat: 'Date Format',
+						'default': 'Default Value',
+						label: 'Label',
+						maxLength: 'Max Length',
+						maxYear: 'Max Year',
+						minYear: 'Min Year',
+						multiple: 'Multiple',
+						options: 'Options',
+						rows: 'Rows',
+						selected: 'Selected'
+					},
 					view: new Ext.grid.GridView({
-				   		forceFit: true
-				   	}),
-				   	listeners: {
-				   		afteredit: {
-				   			fn: function(e) {
-				   				var store = this.tempOptionsStore;
-				   				console.log(e);
-				   				
-				   				switch (e.record.id) {
-				   					case 'Label':
-				   						this.selectedElement.label.dom.textContent = e.value + ":";
-				   						break;
-				   					case 'Default Value':
-				   						this.selectedElement.el.dom.defaultValue = e.value;
-				   						break;
-				   					case 'Options':
-				   						var records = [],
-				   						values = e.value.split(',');
-				   						store.removeAll();
-				   						
-				   						Ext.each(values, function(item, index) {
-				   							store.insert(index, new store.recordType({options: item.trim()}));
-				   						}, this);
+						forceFit: true
+					}),
+					listeners: {
+						afteredit: {
+							fn: function(e) {
+								var store = this.tempOptionsStore;
+								
+								switch (e.record.id) {
+									case 'label':
+										this.selectedElement.label.dom.textContent = e.value + ":";
 										break;
-				   				}
-				   			},
-				   			scope: this
-				   		},
-				   		validateedit: {
-				   			fn: function(e) {
-				   				if (e.record.id === 'Selected') {
-									var options = this.selectedElement.attributes['Options'].split(',');
-									
+									case 'defaultValue':
+										this.selectedElement.el.dom.defaultValue = e.value;
+										break;
+									case 'options':
+										values = e.value.split(',');
+										store.removeAll();
+										
+										Ext.each(values, function(item, index) {
+											store.insert(index, new store.recordType({options: item.trim()}));
+										}, this);
+										break;
+								}
+							},
+							scope: this
+						},
+						validateedit: {
+							fn: function(e) {
+								if (e.record.id === 'selected') {
+									var options = this.selectedElement.exportData.options.options.split(',');
+
 									Ext.each(options, function(item, index) {
 										options[index] = item.trim();
 									}, this);
@@ -247,19 +292,31 @@ FormBuilder.prototype = {
 										Ext.Msg.alert('Invalid Value For Selected', 'The selected value must be in your options');
 										return false;
 									}
-				   				}
-				   			},
-				   			scope: this
-				   		}
-				   }
+								}
+							},
+							scope: this
+						}
+					}
 				}]
 			},{
-				id: 'FBFormPanel',
 				region: 'center',
-				xtype: 'form',
-				bodyStyle: 'padding: 20px',
-				height: 400,
-				autoScroll: true
+				layout: 'border',
+				items: [{
+					id: 'FBFormPanel',
+					region: 'center',
+					xtype: 'form',
+					bodyStyle: 'padding: 20px',
+					height: 400,
+					autoScroll: true
+				},{
+					region: 'south',
+					xtype: 'form',
+					height: 100,
+					items: [{
+						xtype: 'textfield',
+						fieldLabel: 'Label'
+					}]
+				}]
 			}]
 		});
 		
@@ -268,69 +325,111 @@ FormBuilder.prototype = {
 		this.formPanel.el.on('click', function(e, el) {
 			var formElement = Ext.getCmp(e.target.id);
 			
+			console.log(e);
+			
 			if (formElement) {				
 				this.selectedElement = formElement;
-				this.properties.setSource(formElement.attributes);
-				this.selectedElement.on('change', function() {
-					console.log('changed');
-				}, this);
-				console.log(formElement);
+				this.properties.setSource(formElement.exportData.attributes);
+				this.properties.setSource(formElement.exportData.options);
+			} else {
+				this.selectedElement = null;
+				this.properties.setSource({});
 			}
 		}, this);
 		
 		this.formPanel.el.on('contextmenu', function(e) {
 			e.preventDefault();
+			console.log(e);
 			this.contextMenu.showAt(e.getXY());
 		}, this);
 	},
 	addField: function(fieldType) {
+		var resetbtn = Ext.getCmp('FBResetBtn');
+		var savebtn = Ext.getCmp('FBSaveBtn');
+		
+		if (resetbtn.disabled) {
+			resetbtn.enable();
+		}
+		
+		if (savebtn.disabled) {
+			savebtn.enable();
+		}
+		
 		var config = {
 			xtype: fieldType,
 			fieldLabel: 'Field Label'
 		};
 		
-		var attributes = {
-			'Label': 'Field Label',
-			'Class': ''			
+		var exportData = {
+			label: 'Field Label',
+			attributes: {
+				'class': ''
+			},
+			options: {},
+			validation: {}
 		};
 		
 		switch (fieldType) {
 			case 'textfield':
-				attributes['Default Value'] = '';
-				attributes['Max Length'] = '';
-				attributes['Class'] = '';
+				exportData.options['default'] = '';
+				exportData.options.maxLength = '';
 				break;
 				
 			case 'textarea':
-				attributes['Cols'] = '';
-				attributes['Rows'] = '';
+				exportData.options.cols = '';
+				exportData.options.rows = '';
 				
 				config.height = 75;
 				config.width = 250;
 				break;
 				
-			case 'datefield':
-				attributes['Date Format'] = ['m/d/y','d/m/y', 'y/m/d'];
-				attributes['Min Year'] = '';
-				attributes['Max Year'] = '';
-				attributes['Class'] = '';
-				break;
-				
 			case 'combo':
-				attributes['Selected'] = '';
-			   	attributes['Options'] = '';
+				exportData.options.selected = '';
+				exportData.options.options = '';
 				
 				config.typeAhead = false;
 				config.triggerAction = 'all';
 				config.mode = 'local';
 				config.store = this.tempOptionsStore;
-			   	config.valueField = 'options';
-			   	config.displayField = 'options';
-			   	break;
+				config.valueField = 'options';
+				config.displayField = 'options';
+				break;
+				
+			case 'radiogroup':
+				config.columns = 1;
+				config.items = [{
+					boxLabel: 'Item 1',
+					name: 'radio'
+				},{
+					boxLabel: 'Item 2',
+					name: 'radio'
+				}];
+				break;
+			
+			case 'checkboxgroup':
+				config.itemCls = 'x-check-group-alt';
+				config.columns = 1;
+				config.items = [
+					{ boxLabel: 'Item 1', name: 'cb-col-1' },
+					{ boxLabel: 'Item 2', name: 'cb-col-1' }
+				];
+				break;
+			
+			case 'datefield':
+				exportData.options.dateFormat = ['m/d/y','d/m/y', 'y/m/d'];
+				exportData.options.minYear = '';
+				exportData.options.maxYear = '';
+				break;
+			
+			case 'button':
+				delete config.fieldLabel;
+				config.text = 'Submit';
+				break;
+
 		}
 		
 		var newField = this.formPanel.add(config);
-		newField.attributes = attributes;
+		newField.exportData = exportData;
 		
 		this.formPanel.doLayout();
 	},
@@ -345,16 +444,36 @@ FormBuilder.prototype = {
 			fn: function(btn) {
 				if (btn === 'yes') {
 					this.formPanel.removeAll();
+					Ext.getCmp('FBSaveBtn').disable();
+					Ext.getCmp('FBResetBtn').disable();
+					this.properties.setSource({});
 				}
 			}
 		});
 	},
 	saveForm: function() {
+		var newRecord;
+		this.selectedRecord = null;
+		this.properties.setSource({});
+		
 		Ext.each(this.formPanel.items.items, function(item, index, allItems) {
-			console.log(item.attributes);
-		}, this)
+			newRecord = new this.fieldStore.recordType({
+				program_id: 1,
+				label: item.exportData.label,
+				type: 'select',
+				name: item.exportData.label.underscore().lowercase(),
+				attributes: Ext.util.JSON.encode(item.exportData.attributes),
+				options: Ext.util.JSON.encode(item.exportData.options),
+				validation: Ext.util.JSON.encode(item.exportData.validation)
+			});
+			
+			this.fieldStore.add(newRecord);
+		}, this);
+		
+		this.fieldStore.save();
+		Ext.getCmp('FBSaveBtn').disable();
 	}
-}
+};
 
-var formBuilder = new FormBuilder;
+var formBuilder = new FormBuilder();
 Ext.onReady(formBuilder.init, formBuilder);
