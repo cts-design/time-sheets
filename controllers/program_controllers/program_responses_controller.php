@@ -4,7 +4,7 @@ class ProgramResponsesController extends AppController {
 	
 	var $name = 'ProgramResponses';
 	
-	var	$components = array('Email');
+	var	$components = array('Notifications');
 	
 	function beforeFilter() {
 		parent::beforeFilter();
@@ -31,7 +31,11 @@ class ProgramResponsesController extends AppController {
 			$this->data['ProgramResponse']['answers'] = json_encode($this->data['ProgramResponse']);
 			$this->data['ProgramResponse']['program_id'] = $id;
 			if($this->ProgramResponse->save($this->data)) {
-				$this->_emailCustomer($id, 'form');
+				$programEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array('conditions' => array(
+					'ProgramEmail.program_id' => $id,
+					'ProgramEmail.type' => 'form'
+				)));
+				$this->Notifications->sendProgramEmail($programEmail);
 				$this->Session->setFlash(__('Saved', true), 'flash_success');
 				$program = $this->ProgramResponse->Program->findById($id);
 				if(strpos($program['Program']['type'], 'docs', 0)) {
@@ -60,7 +64,6 @@ class ProgramResponsesController extends AppController {
 			$this->loadModel('QueuedDocument');
 			$this->data['QueuedDocument']['req_program_doc'] = 1;	
 			if($this->QueuedDocument->uploadDocument($this->data, 'Program Upload', $this->Auth->user('id'))) {
-				$this->_emailCustomer($id, 'docUpload');
 				$this->Session->setFlash(__('Document uploaded successfully.', true), 'flash_success');
 				$this->redirect(array('action' => 'doc_upload_success', $id));
 			}
@@ -85,18 +88,5 @@ class ProgramResponsesController extends AppController {
 		
 	}
 	
-	function _emailCustomer($id = null, $type) {
-		if($id) {
-			$email = $this->ProgramResponse->Program->ProgramEmail->find('first', array('conditions' => array(
-			'ProgramEmail.program_id' => $id,
-			'ProgramEmail.type' => $type )));
-		}
-		if($email) {
-			$this->Email->to = $this->Auth->user('firstname') . ' ' . $this->Auth->user('lastname') .' <'. $this->Auth->user('email'). '>';
-			$this->Email->from = Configure::read('System.email');
-			$this->Email->subject = $email['ProgramEmail']['subject'];
-			return $this->Email->send($email['ProgramEmail']['body']);			
-		}
-		return false;
-	}
+
 }
