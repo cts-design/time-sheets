@@ -35,6 +35,8 @@
 	echo $this->Html->script('ext/adapter/ext/ext-base-debug');
 	
 	echo $this->Html->script('ext-all-debug');
+	
+	echo $this->Html->script('atlas');
 
 	echo $this->Html->script('https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js');
 	
