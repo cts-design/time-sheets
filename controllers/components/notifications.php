@@ -7,7 +7,7 @@
 
 class NotificationsComponent extends Object {
 	
-	var $components = array('Email');
+	var $components = array('Email', 'Auth');
 	
 	function sendProgramEmail($programEmail=null, $user=null) {
 		if($programEmail) {
