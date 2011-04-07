@@ -139,6 +139,19 @@ class AppController extends Controller {
 			$this->redirect('https://' . env('SERVER_NAME') . $this->here);
 		}		
 	}
+	
+	function isModuleEnabled($controller){
+		$this->loadModel('ModuleAccessControl');
+		$Controllers = Configure::listObjects('controller');
+		if(in_array($controller, $Controllers)) {
+		$module = $this->ModuleAccessControl->findByName($controller);
+			if($module['ModuleAccessControl']['permission'] == 1) {
+				return false;
+			}
+			return true;			
+		}
+		else return false;
+	}
 
 	function admin_auto_complete_first_ajax() {
 		if($this->RequestHandler->isAjax()) {
