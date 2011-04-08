@@ -250,24 +250,19 @@ class QueuedDocumentsController extends AppController {
 		$this->data['FiledDocument']['user_id'] = $user['User']['id'];
 		$this->data['FiledDocument']['last_activity_admin_id'] = $this->data['FiledDocument']['admin_id'];
 		$this->data['FiledDocument']['filed_location_id'] = $this->Auth->user('location_id');
-		
-
 				
 		if($this->QueuedDocument->User->FiledDocument->save($this->data['FiledDocument'])) {
 			$this->QueuedDocument->delete($this->data['FiledDocument']['id']);		
-			$this->loadModel('ProgramResponse');
+			
+			$this->loadModel('ProgramResponse');							
 			$processedDoc = $this->ProgramResponse->processResponseDoc($this->data, $user);	
-			if($processedDoc['processed'] == 1){								
-				$programEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array(
-					'conditions' => array(
-						'ProgramEmail.program_id' => $processedDoc['program_id'],
-						'ProgramEmail.cat_id' => $processedDoc['cat_id'])));				
-				if($programEmail['ProgramEmail']['type'] == 'rejected') {				
-					$programEmail['ProgramEmail']['body'] = $programEmail['ProgramEmail']['body'] . 
-					 "\r\n" . $this->data['FiledDocument']['description'];
-				}
-				$this->Notifications->sendProgramEmail($programEmail, $user);		
-			}		
+			if(isset($processedDoc['docFiledEmail'])) {
+				$this->Notifications->sendProgramEmail($processedDoc['docFiledEmail'], $user);
+			}				
+			if(isset($processedDoc['finalEmail'])) {
+				$this->Notifications->sendProgramEmail($processedDoc['finalEmail'], $user);
+			}
+	
 			if(key_exists('requeue', $this->data['FiledDocument'])) {
 				$this->data['QueuedDocument']['filename'] = $this->data['FiledDocument']['filename'];
 				$this->data['QueuedDocument']['locked_by'] = $this->Auth->user('id');
