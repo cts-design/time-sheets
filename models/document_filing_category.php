@@ -10,6 +10,12 @@ class DocumentFilingCategory extends AppModel {
 	
 	var $actsAs = array('Tree');
 	
+	var $hasMany = array(
+		'WatchedFilingCat' => array(
+			'className' => 'WatchedFilingCat'
+		)
+	);
+	
 	var $validate = array(
 	    'name' => array(
 		'notEmpty' => array(
