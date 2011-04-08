@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2011-04-07 13:30:17 : 1302183017*/
+/* atlas schema generated on: 2011-04-08 18:23:03 : 1302286983*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -289,11 +289,11 @@ class atlasSchema extends CakeSchema {
 	);
 	var $module_access_controls = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
-		'name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 50, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+		'name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 50, 'key' => 'index', 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'permission' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
-		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'name' => array('column' => 'name', 'unique' => 0)),
 		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'InnoDB')
 	);
 	var $navigations = array(
@@ -374,6 +374,7 @@ class atlasSchema extends CakeSchema {
 		'user_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
 		'viewed_media' => array('type' => 'boolean', 'null' => false, 'default' => NULL),
 		'complete' => array('type' => 'boolean', 'null' => false, 'default' => NULL),
+		'needs_approval' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'expires' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
