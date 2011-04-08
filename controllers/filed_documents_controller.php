@@ -384,22 +384,14 @@ class FiledDocumentsController extends AppController {
     }
 	
 	function _processResponseDoc($user) {
-		$this->log($this->data, 'debug');
-		$this->log($user, 'debug');
-		$this->loadModel('ProgramResponse');
+		$this->loadModel('ProgramResponse');							
 		$processedDoc = $this->ProgramResponse->processResponseDoc($this->data, $user);	
-		if($processedDoc['processed'] == 1){								
-			$programEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array(
-				'conditions' => array(
-					'ProgramEmail.program_id' => $processedDoc['program_id'],
-					'ProgramEmail.cat_id' => $processedDoc['cat_id'])));				
-			if($programEmail['ProgramEmail']['type'] == 'rejected') {				
-				$programEmail['ProgramEmail']['body'] = $programEmail['ProgramEmail']['body'] . 
-				 "\r\n" . $this->data['FiledDocument']['description'];
-			}
-			$this->Notifications->sendProgramEmail($programEmail, $user);		
+		if(isset($processedDoc['docFiledEmail'])) {
+			$this->Notifications->sendProgramEmail($processedDoc['docFiledEmail'], $user);
+		}				
+		if(isset($processedDoc['finalEmail'])) {
+			$this->Notifications->sendProgramEmail($processedDoc['finalEmail'], $user);
 		}
     }		
 
-	
 }
