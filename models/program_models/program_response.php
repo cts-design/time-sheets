@@ -60,7 +60,6 @@ class ProgramResponse extends AppModel {
 								$finalEmail['ProgramEmail']['body'] = $finalEmail['ProgramEmail']['body'] .
 								"\r\n" . $response['ProgramResponse']['cert_link'];																				
 							}
-							$return['complete'] = true;
 							if($finalEmail) {
 								$return['finalEmail'] = $finalEmail;
 							}						
