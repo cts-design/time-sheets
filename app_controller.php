@@ -97,10 +97,12 @@ class AppController extends Controller {
 		if($this->Auth->user()) {
 		    $this->disableCache();
 		}
+		if(isset($this->params['prefix']) && ($this->params['prefix'] == 'admin' || $this->params['prefix'] == 'kiosk')){	
+			$this->Security->blackHoleCallback = 'forceSSL';
+		    $this->Security->requireSecure();
+		}	
 		if (isset($this->params['prefix']) && $this->params['prefix'] == 'admin') {
 		    $this->layout = 'admin';
-		   	$this->Security->blackHoleCallback = 'forceSSL';
-		    $this->Security->requireSecure();
 		    if($this->Auth->user('role_id') == 1 ) {
 				$this->Session->destroy();
 				$this->Session->setFlash(__('You are not authorized to access that location', true), 'flash_failure');
@@ -119,7 +121,7 @@ class AppController extends Controller {
 	                $this->Session->setFlash(__('This module needs to be activated, please contact CTS', true), 'flash_failure');
 	                $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => true));
 	            }
-	        }
+	        }	
     }
 
 	function forceSSL() {
