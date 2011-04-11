@@ -104,9 +104,9 @@ class SelfSignLogsController extends AppController {
     function admin_get_logs_ajax_json(){
 	if($this->RequestHandler->isAjax()) {   	    
 	    $date = date('Y-m-d') . ' 00:01:00';
-	    if (isset($this->params['form']['location'], $this->params['form']['services']) &&
-		    $this->params['form']['location'] != '' && $this->params['form']['services'] != '') {
-		$serviceArr = explode(',', $this->params['form']['services']);
+	    if (isset($this->params['url']['location'], $this->params['url']['services']) &&
+		    $this->params['url']['location'] != '' && $this->params['url']['services'] != '') {
+		$serviceArr = explode(',', $this->params['url']['services']);
 		$i = 0;
 		foreach ($serviceArr as $key => $value) {
 		    $ids[$i] = $value;
@@ -114,7 +114,7 @@ class SelfSignLogsController extends AppController {
 		}
 		$conditions = array(
 		    'SelfSignLog.created >' => $date,
-		    'SelfSignLog.location_id' => $this->params['form']['location'],
+		    'SelfSignLog.location_id' => $this->params['url']['location'],
 		    'SelfSignLog.level_1' => $ids
 		);
 		$order = array('SelfSignLog.id' => 'DESC');
@@ -187,9 +187,9 @@ class SelfSignLogsController extends AppController {
 	if ($this->RequestHandler->isAjax()) {
 	    $this->loadModel('KioskButton');
 	    $masterParentButtonNameList = $this->_getParentMasterButtonNames();
-	    if (isset($this->params['form']['id']) && $this->params['form']['id'] != '' ) {
+	    if (isset($this->params['url']['id']) && $this->params['url']['id'] != '' ) {
 		$kiosks = $this->SelfSignLog->Kiosk->find('list',
-			array('conditions' => array('Kiosk.location_id' => $this->params['form']['id'])));
+			array('conditions' => array('Kiosk.location_id' => $this->params['url']['id'])));
 		$options = array('services' => array());
 		$buttons = $this->KioskButton->find('all', array(
 		    'conditions' =>array(
