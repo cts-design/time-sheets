@@ -125,7 +125,9 @@ class AppController extends Controller {
     }
 
 	function forceSSL() {
-		$this->redirect('https://' . env('SERVER_NAME') . $this->here);
+		if (defined('CAKE_UNIT_TEST') && CAKE_UNIT_TEST === false) {
+			$this->redirect('https://' . env('SERVER_NAME') . $this->here);
+		}
 	}
 
 	function admin_auto_complete_first_ajax() {

@@ -2,54 +2,17 @@
 class FeaturedEmployersController extends AppController {
 
 	var $name = 'FeaturedEmployers';
+	
+	function beforeFilter() {
+		parent::beforeFilter();
+		$this->Auth->allow('index');
+	}
 
 	function index() {
 		$this->FeaturedEmployer->recursive = 0;
 		$this->set('featuredEmployers', $this->paginate());
 	}
 
-	function add() {
-		if (!empty($this->data)) {
-			$this->FeaturedEmployer->create();
-			if ($this->FeaturedEmployer->save($this->data)) {
-				$this->Session->setFlash(__('The featured employer has been saved', true), 'flash_success');
-				$this->redirect(array('action' => 'index'));
-			} else {
-				$this->Session->setFlash(__('The featured employer could not be saved. Please, try again.', true), 'flash_failure');
-			}
-		}
-	}
-
-	function edit($id = null) {
-		if (!$id && empty($this->data)) {
-			$this->Session->setFlash(__('Invalid featured employer', true), 'flash_failure');
-			$this->redirect(array('action' => 'index'));
-		}
-		if (!empty($this->data)) {
-			if ($this->FeaturedEmployer->save($this->data)) {
-				$this->Session->setFlash(__('The featured employer has been saved', true), 'flash_success');
-				$this->redirect(array('action' => 'index'));
-			} else {
-				$this->Session->setFlash(__('The featured employer could not be saved. Please, try again.', true), 'flash_failure');
-			}
-		}
-		if (empty($this->data)) {
-			$this->data = $this->FeaturedEmployer->read(null, $id);
-		}
-	}
-
-	function delete($id = null) {
-		if (!$id) {
-			$this->Session->setFlash(__('Invalid id for featured employer', true), 'flash_failure');
-			$this->redirect(array('action'=>'index'));
-		}
-		if ($this->FeaturedEmployer->delete($id)) {
-			$this->Session->setFlash(__('Featured employer deleted', true), 'flash_success');
-			$this->redirect(array('action'=>'index'));
-		}
-		$this->Session->setFlash(__('Featured employer was not deleted', true), 'flash_failure');
-		$this->redirect(array('action' => 'index'));
-	}
 	function admin_index() {
 		$this->FeaturedEmployer->recursive = 0;
 		$this->set('featuredEmployers', $this->paginate());
@@ -58,7 +21,7 @@ class FeaturedEmployersController extends AppController {
 	function admin_add() {
 		if (!empty($this->data)) {
 			if ($this->data['FeaturedEmployer']['image']['error'] === 4) {
-				unset($this->data['FeaturedEmployer']['file']);
+				unset($this->data['FeaturedEmployer']['image']);
 			} else {
 				$file = $this->_uploadFile();
 	            if (!$file) {
@@ -69,8 +32,10 @@ class FeaturedEmployersController extends AppController {
 			}
 			$this->FeaturedEmployer->create();
 			if ($this->FeaturedEmployer->save($this->data)) {
+				$this->Transaction->createUserTransaction('Featured Employers', null, null,
+                                        'Created featured employer ID ' . $this->FeaturedEmployer->id);
 				$this->Session->setFlash(__('The featured employer has been saved', true), 'flash_success');
-				$this->redirect(array('action' => 'index'));
+				$this->redirect(array('action' => 'admin_index'));
 			} else {
 				$this->Session->setFlash(__('The featured employer could not be saved. Please, try again.', true), 'flash_failure');
 			}
@@ -84,6 +49,8 @@ class FeaturedEmployersController extends AppController {
 		}
 		if (!empty($this->data)) {
 			if ($this->FeaturedEmployer->save($this->data)) {
+				$this->Transaction->createUserTransaction('Featured Employers', null, null,
+                                        'Edited featured employer ID ' . $id);
 				$this->Session->setFlash(__('The featured employer has been saved', true), 'flash_success');
 				$this->redirect(array('action' => 'index'));
 			} else {
@@ -101,11 +68,14 @@ class FeaturedEmployersController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 		if ($this->FeaturedEmployer->delete($id)) {
+			$this->Transaction->createUserTransaction('Featured Employers', null, null,
+                                        'Deleted featured employer ID ' . $id);
 			$this->Session->setFlash(__('Featured employer deleted', true), 'flash_success');
 			$this->redirect(array('action'=>'index'));
+		} else {
+			$this->Session->setFlash(__('Featured employer was not deleted', true), 'flash_failure');
+			$this->redirect(array('action' => 'index'));	
 		}
-		$this->Session->setFlash(__('Featured employer was not deleted', true), 'flash_failure');
-		$this->redirect(array('action' => 'index'));
 	}
 	
 	function _uploadFile() {

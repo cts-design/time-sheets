@@ -2,6 +2,11 @@
 class CareerSeekersSurveysController extends AppController {
 
     var $name = 'CareerSeekersSurveys';
+	
+	function beforeFilter() {
+		parent::beforeFilter();
+		$this->Auth->allow('index', 'success', 'add');
+	}
 
     function index() {}
 
@@ -32,11 +37,8 @@ class CareerSeekersSurveysController extends AppController {
             foreach ($surveys as $key => $value) {
                     $value['CareerSeekersSurvey']['answers'] = json_decode($value['CareerSeekersSurvey']['answers'], true);
                     $data['surveys'][] = $value['CareerSeekersSurvey'];
-                    debug($value['CareerSeekersSurvey']['answers']);
                     $i++;
             }
-            
-            debug($data);
             
             $this->set('data', $data);
             return $this->render(null, null, '/elements/ajaxreturn');
@@ -45,9 +47,13 @@ class CareerSeekersSurveysController extends AppController {
     function admin_destroy() {
             $surveyId = str_replace("\"", "", $this->params['form']['surveys']);
             $surveyId = intval($surveyId);
+			
+			
 
             if ($this->CareerSeekersSurvey->delete($surveyId)) {
                     $data['success'] = true;
+					$this->Transaction->createUserTransaction('CareerSeekersSurvey', null, null,
+	                                        'Delete survey ID ' . $surveyId);
             } else {
                     $data['success'] = false;
             }

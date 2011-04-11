@@ -991,11 +991,46 @@ p.checkbox {
 }
 
 .accordionbtn {
+	margin: 0 0 4px !important;
 	width: 100% !important;
 }
 
+.accordionbtn .x-btn-tl, 
+.accordionbtn .x-btn-tr, 
+.accordionbtn .x-btn-tc, 
+.accordionbtn .x-btn-ml, 
+.accordionbtn .x-btn-mr, 
+.accordionbtn .x-btn-mc, 
+.accordionbtn .x-btn-bl, 
+.accordionbtn .x-btn-br, 
+.accordionbtn .x-btn-bc{
+	background-image:none;
+}
+
+.x-btn-hover .x-btn-tl, 
+.x-btn-hover .x-btn-tr, 
+.x-btn-hover .x-btn-tc, 
+.x-btn-hover .x-btn-ml, 
+.x-btn-hover .x-btn-mr, 
+.x-btn-hover .x-btn-mc, 
+.x-btn-hover .x-btn-bl, 
+.x-btn-hover .x-btn-br, 
+.x-btn-hover .x-btn-bc {
+	background-image: url(../../img/ext/default/button/btn.gif);
+	background-position: 0 -2168px;
+}
+
 .accordionbtn .x-btn-text {
-	font-size: 12px;
+	font-size: 13px;
+	padding-left: 30px !important;
+}
+
+.accordionbtn .x-btn-mc {
+	text-align: left;
+}
+
+.accordionbtn .x-btn-mc em {
+	margin-left: 8px;
 }
 
 .x-careerseeker-row {

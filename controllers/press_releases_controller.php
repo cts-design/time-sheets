@@ -69,9 +69,10 @@ class PressReleasesController extends AppController {
                                         'Deleted press release ID ' . $id);
 			$this->Session->setFlash(__('Press release deleted', true), 'flash_success');
 			$this->redirect(array('action'=>'index'));
+		} else {
+			$this->Session->setFlash(__('Press release was not deleted', true), 'flash_failure');
+			$this->redirect(array('action' => 'index'));	
 		}
-		$this->Session->setFlash(__('Press release was not deleted', true), 'flash_failure');
-		$this->redirect(array('action' => 'index'));
 	}
 
         function _uploadPressRelease() {

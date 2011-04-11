@@ -3,6 +3,11 @@ class EmployersSurveysController extends AppController {
 
     var $name = 'EmployersSurveys';
 
+	function beforeFilter() {
+		parent::beforeFilter();
+		$this->Auth->allow('index', 'success', 'add');
+	}
+
     function index() {}
 
     function add() {
@@ -48,6 +53,8 @@ class EmployersSurveysController extends AppController {
 
             if ($this->EmployersSurvey->delete($surveyId)) {
                     $data['success'] = true;
+					$this->Transaction->createUserTransaction('EmployersSurvey', null, null,
+	                                        'Delete survey ID ' . $surveyId);
             } else {
                     $data['success'] = false;
             }

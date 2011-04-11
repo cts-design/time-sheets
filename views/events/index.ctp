@@ -1,58 +1,78 @@
-<div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Events', null, 'unique'); ?></div>
-<div class="events admin">
-<div class="actions ui-widget-header">
-	<ul>
-		<li><?php echo $this->Html->link(__('New Event', true), array('action' => 'add')); ?></li>
-	</ul>
-</div>
-	<table cellpadding="0" cellspacing="0">
-	    <thead class="ui-widget-header">
-		<tr>
-					<th class="ui-state-default"><?php echo $this->Paginator->sort('id');?></th>
-					<th class="ui-state-default"><?php echo $this->Paginator->sort('title');?></th>
-					<th class="ui-state-default"><?php echo $this->Paginator->sort('description');?></th>
-					<th class="ui-state-default"><?php echo $this->Paginator->sort('category');?></th>
-					<th class="ui-state-default"><?php echo $this->Paginator->sort('start');?></th>
-					<th class="ui-state-default"><?php echo $this->Paginator->sort('end');?></th>
-					<th class="ui-state-default"><?php echo $this->Paginator->sort('location');?></th>
-					<th class="ui-state-default"><?php echo $this->Paginator->sort('event_url');?></th>
-					<th class="ui-state-default"><?php echo $this->Paginator->sort('sponsor');?></th>
-					<th class="ui-state-default"><?php echo $this->Paginator->sort('sponsor_url');?></th>
-					<th class="ui-state-default"><?php echo $this->Paginator->sort('created');?></th>
-					<th class="ui-state-default"><?php echo $this->Paginator->sort('modified');?></th>
-					<th class="actions ui-state-default"><?php __('Actions');?></th>
-		</tr>
-	    </thead>
-	<?php
-	$i = 0;
-	foreach ($events as $event):
-		$class = null;
-		if ($i++ % 2 == 0) {
-			$class = ' class="altrow"';
-		}
-	?>
-	<tr<?php echo $class;?>>
-		<td><?php echo $event['Event']['id']; ?>&nbsp;</td>
-		<td><?php echo $event['Event']['title']; ?>&nbsp;</td>
-		<td><?php echo $event['Event']['description']; ?>&nbsp;</td>
-		<td><?php echo $event['Event']['category']; ?>&nbsp;</td>
-		<td><?php echo $event['Event']['start']; ?>&nbsp;</td>
-		<td><?php echo $event['Event']['end']; ?>&nbsp;</td>
-		<td><?php echo $event['Event']['location']; ?>&nbsp;</td>
-		<td><?php echo $event['Event']['event_url']; ?>&nbsp;</td>
-		<td><?php echo $event['Event']['sponsor']; ?>&nbsp;</td>
-		<td><?php echo $event['Event']['sponsor_url']; ?>&nbsp;</td>
-		<td><?php echo $event['Event']['created']; ?>&nbsp;</td>
-		<td><?php echo $event['Event']['modified']; ?>&nbsp;</td>
-		<td class="actions">
-			<?php echo $this->Html->link(__('Edit', true), array('action' => 'edit', $event['Event']['id']), array('class'=>'edit')); ?>
-			<?php echo $this->Html->link(__('Delete', true), array('action' => 'delete', $event['Event']['id']), array('class'=>'delete'), sprintf(__('Are you sure you want to delete # %s?', true), $event['Event']['id'])); ?>
-		</td>
-	</tr>
-<?php endforeach; ?>
-	</table>
+<?php echo $this->Html->script('events/category.js', array('inline' => false)) ?>
+<div class="events">
+	
+	<form class="event_categories" action="<?php echo $this->here; ?>" method="post">
+		<ol>
+			<li class="top">
+				<label class="event_categories_label" for="event_categories_dropdown">Select an event type</label>
+				<select id="event_categories_dropdown" name="event_categories_dropdown">
+				<?php
+					$selected = $categories['selected'];
+					unset($categories['selected']);
+				?>
+				<?php foreach($categories as $id => $category): ?>
+					<option value="<?php echo $id ?>"<?php echo ($id === $selected) ? ' selected="selected"' : '' ?>><?php echo $category ?></option>
+				<?php endforeach; ?>
+				</select>
+				<input type="submit" id="category_submit" value="Go" />
+			</li>
+		</ol>
+	</form>
+	<br class="clear" />
+	<div class="allEvents">
+		<p class="calnav">
+			<span>
+				<a class="previousMonth" href="/events/index/<?php echo $prevMonth ?>"> < </a>
+			</span>
+			<span>
+				<a class="currentMonth" href=""><?php echo $curMonth ?></a>
+			</span>
+			<span>
+				<a class="nextMonth" href="/events/index/<?php echo $nextMonth ?>"> > </a>
+			</span>
+		</p>
+		<?php if (!empty($events)): ?>
+			<?php foreach ($events as $event): ?>
+				<div class="event">
+					<h3><?php echo $event['Event']['title'] ?></h3>
+					<span class="category"><?php echo $event['EventCategory']['name'] ?></span>
+					<?php if ($event['Event']['all_day'] == '0'): ?>
+					<span class="datetime"><?php echo date('F d, Y h:iA', strtotime($event['Event']['start'])) ?>&mdash;<?php echo date('h:iA', strtotime($event['Event']['end'])) ?></span>	
+					<?php else: ?>	
+					<span class="datetime"><?php echo date('F d, Y', strtotime($event['Event']['start'])) ?></span>
+					<?php endif; ?>	
+					<p class="location"><span class="label">Location:</span> <?php echo $event['Event']['location'] ?></p>
+					<p class="address"><span class="label">Address: <?php echo $event['Event']['address'] ?></span></p>
+					
+					<p class="description"><?php echo $event['Event']['description'] ?></p>
+					
+					<?php if (!empty($event['Event']['sponsor'])): ?>
+					<p class="sponsor">
+						This Event is Sponsored By
+						<?php if (!empty($event['Event']['sponsor_url'])): ?>
+						<a href="<?php echo $event['Event']['sponsor_url'] ?>"><?php echo $event['Event']['sponsor'] ?></a>
+						<?php else: ?>
+						<?php echo $event['Event']['sponsor'] ?>
+						<?php endif ?>
+					</p>
+					<?php endif; ?>
+					
+					<p class="event_links">
+						<?php if (!empty($event['Event']['event_url'])): ?>
+						<a href="<?php echo $event['Event']['event_url'] ?>">Visit Website</a>
+						<?php endif; ?>
+						<?php if (!empty($event['Event']['address'])): ?>
+						<a href="http://maps.google.com/maps?q=<?php echo urlencode($event['Event']['address']) ?>">Map It</a>
+						<?php endif; ?>
+					</p>
+				</div>
+			<?php endforeach; ?>
+		<?php else: ?>
+				<div class="no-events">
+					<p>No events to display</p>
+				</div>		
+		<?php endif; ?>
+		
 	<p>
 	<?php
 	echo $this->Paginator->counter(array(
@@ -66,4 +86,5 @@
  |
 		<?php echo $this->Paginator->next(__('next', true) . ' >>', array(), null, array('class' => 'disabled'));?>
 	</div>
+	</div> <!-- end .allEvents -->
 </div>

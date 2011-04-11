@@ -13,8 +13,9 @@ class LocationsController extends AppController {
 	function beforeFilter(){
 		parent::beforeFilter();
 		if($this->Auth->user() && $this->Auth->user('role_id') >= 2){
-			$this->Auth->allow('admin_get_location_list');
+			$this->Auth->allow('admin_get_location_list', 'index', 'facilities');
 		}
+		$this->Security->validatePost = false;
 	}	
 		
 	function index() {

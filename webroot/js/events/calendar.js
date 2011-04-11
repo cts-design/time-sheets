@@ -3,22 +3,38 @@ App = function() {
         init : function() {
             Ext.QuickTips.init();
             Ext.BLANK_IMAGE_URL = '/js/ext/resources/images/default/s.gif';
-
-            // this will hold the event categories
-            this.calendarStore = new Ext.data.JsonStore({
-                url: '/admin/event_categories/get_all_categories',
-                storeId: 'calendarStore',
-                idProperty: 'id',
-                root: 'eventCategories',
-                autoLoad: true,
-                fields: [
-                    {name:'CalendarId', mapping: 'id', type: 'int'},
-                    {name:'Title', mapping: 'name', type: 'string'}
-                ],
-                sortInfo: {
-                    field: 'CalendarId',
-                    direction: 'ASC'
-                }
+            
+            var CalendarRecord = Ext.data.Record.create([
+        		{ name: 'id', type: 'int' },
+            	{ name: 'title', mapping: 'name', type: 'string' },
+            	{ name: 'created', type: 'date', dateFormat: 'Y-m-d H:i:s' },
+            	{ name: 'modified', type: 'date', dateFormat: 'Y-m-d H:i:s' }
+            ]);
+            
+            var calendarProxy = new Ext.data.HttpProxy({
+            	api: {
+            		create:  { url: '/admin/event_categories/create',  method: 'POST' },
+            		read:    { url: '/admin/event_categories/read',    method: 'GET'  },
+            		update:  { url: '/admin/event_categories/update',  method: 'POST' },
+            		destroy: { url: '/admin/event_categories/destroy', method: 'POST' }
+            	}
+            });
+            
+            var calendarWriter = new Ext.data.JsonWriter({
+            	encode: true
+            });
+            
+            var calendarReader = new Ext.data.JsonReader({
+            	total_property: 'total_event_categories',
+            	root: 'event_categories'
+            }, CalendarRecord);
+            
+            this.calendarStore = new Ext.data.Store({
+            	proxy: calendarProxy,
+            	reader: calendarReader,
+            	writer: calendarWriter,
+            	storeId: 'calendarStore',
+            	autoLoad: true
             });
 
 			var eventProxy = new Ext.data.HttpProxy({
@@ -41,6 +57,9 @@ App = function() {
         			{name: 'EndDate', mapping: 'end', type: 'date', dateFormat: 'Y-m-d H:i:s'},
         			{name: 'IsAllDay', mapping: 'all_day', type: 'int'},
         			{name: 'Location', mapping: 'location'},
+        			{name: 'Address', mapping: 'address'},
+        			{name: 'Sponsor', mapping: 'sponsor'},
+        			{name: 'SponsorUrl', mapping: 'sponsor_url'},
         			{name: 'Notes', mapping: 'description'},
         			{name: 'Url', mapping: 'event_url'}
         		]

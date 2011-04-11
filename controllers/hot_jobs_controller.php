@@ -33,7 +33,7 @@ class HotJobsController extends AppController {
 			$this->HotJob->create();
 			
 			if ($this->HotJob->save($this->data)) {
-				$this->HotJob->createUserTransaction('CMS', null, null,
+				$this->Transaction->createUserTransaction('CMS', null, null,
                                         'Created hot job ID ' . $this->HotJob->id);
 				$this->Session->setFlash(__('The hot job has been saved', true), 'flash_success');
 				$this->redirect(array('action' => 'index'));
@@ -54,7 +54,7 @@ class HotJobsController extends AppController {
 			}
 
 			if ($this->HotJob->save($this->data)) {
-				$this->HotJob->createUserTransaction('CMS', null, null,
+				$this->Transaction->createUserTransaction('CMS', null, null,
                                         'Edited hot job ID ' . $id);
 				$this->Session->setFlash(__('The hot job has been saved', true), 'flash_success');
 				$this->redirect(array('action' => 'index'));
@@ -73,7 +73,7 @@ class HotJobsController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 		if ($this->HotJob->delete($id)) {
-			$this->HotJob->createUserTransaction('CMS', null, null,
+			$this->Transaction->createUserTransaction('CMS', null, null,
                                         'Deleted hot job ID ' . $id);
 			$this->Session->setFlash(__('Hot job deleted', true), 'flash_success');
 			$this->redirect(array('action'=>'index'));

@@ -3,6 +3,11 @@ App::import('Vendor', 'DebugKit.FireCake');
 class RfpsController extends AppController {
 
 	var $name = 'Rfps';
+	
+	function beforeFilter() {
+		parent::beforeFilter();
+		$this->Auth->allow('index');
+	}
 
 	function index() {
 		$this->Rfp->recursive = 0;
@@ -35,6 +40,8 @@ class RfpsController extends AppController {
 				if ($this->Rfp->save($this->data)) {
 					$id = $this->Rfp->getLastInsertId();
 					$rfp = $this->Rfp->read(null, $id);
+					$this->Transaction->createUserTransaction('Rfp', null, null,
+                                        'Created rfp ID ' . $this->Rfp->id);
 					$rfp['Rfp']['deadline'] = date('m/d/Y', strtotime($rfp['Rfp']['deadline']));
 					$rfp['Rfp']['expires'] = date('m/d/Y', strtotime($rfp['Rfp']['expires']));
 					$data['rfps'][] = $rfp['Rfp'];
@@ -93,6 +100,8 @@ class RfpsController extends AppController {
 				}
 				
 				if ($this->Rfp->save($this->data)) {
+					$this->Transaction->createUserTransaction('Rfp', null, null,
+                                        'Updated rfp ID ' . $this->Rfp->id);
 					$rfp = $this->Rfp->read(null, $this->data['Rfp']['id']);
 					$rfp['Rfp']['deadline'] = date('m/d/Y', strtotime($rfp['Rfp']['deadline']));
 					$rfp['Rfp']['expires'] = date('m/d/Y', strtotime($rfp['Rfp']['expires']));
@@ -115,6 +124,8 @@ class RfpsController extends AppController {
 			$rfpId = json_decode($this->params['form']['rfps'], true);
 
 			if ($this->Rfp->delete($rfpId)) {
+				$this->Transaction->createUserTransaction('Rfp', null, null,
+                                        'Deleted rfp ID ' . $this->Rfp->id);
 				$data['success'] = true;
 			} else {
 				$data['success'] = false;
