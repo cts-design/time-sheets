@@ -253,7 +253,6 @@ class UsersController extends AppController {
     
     function admin_login() {
 		if($this->RequestHandler->isAjax()) {
-			$this->log($this->params, 'debug');
 		    $this->Auth->login($this->data);
 		    if($this->Auth->user()) {
 				$response = array('success' => true, 'sessId' => $this->Session->id());
