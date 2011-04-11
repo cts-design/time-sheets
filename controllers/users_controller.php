@@ -20,7 +20,7 @@ class UsersController extends AppController {
 			foreach($this->data['User'] as $k => $v) {
 				$this->data['User'][$k] = trim($v, ' ');
 			}		
-		}		
+		}				
 		if(isset($this->data['User']['username'])) {
 		    if($this->params['action'] == 'admin_login' || $this->params['action'] == 'self_sign_login') {
 				$user = $this->User->find('first', array('conditions' => array(
@@ -59,6 +59,10 @@ class UsersController extends AppController {
 		if($this->Auth->user() && $this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Users/admin_resolve_login_issues', '*') == true) {
 			$this->Auth->allow('admin_request_ssn_change', 'admin_get_admin_list');
 		}
+
+		if($this->params['action'] == 'admin_login' && $this->RequestHandler->isAjax()) {
+			$this->Security->validatePost = false;
+		}			
     }
 
     function admin_index() {
@@ -249,6 +253,7 @@ class UsersController extends AppController {
     
     function admin_login() {
 		if($this->RequestHandler->isAjax()) {
+			$this->log($this->params, 'debug');
 		    $this->Auth->login($this->data);
 		    if($this->Auth->user()) {
 				$response = array('success' => true, 'sessId' => $this->Session->id());
