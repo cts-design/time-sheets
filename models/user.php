@@ -27,7 +27,7 @@ class User extends AppModel {
 	    'foreignKey' => 'user_id'
 	),
 	'ProgramResponse' => array(
-		'className' => 'ProgramReponse', 
+		'className' => 'ProgramResponse', 
 		'foreignKey' => 'user_id'
 	)
     );
