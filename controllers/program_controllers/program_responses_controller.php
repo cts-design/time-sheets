@@ -88,5 +88,54 @@ class ProgramResponsesController extends AppController {
 		
 	}
 	
-
+	function admin_index($id = null) {
+		if($id){
+			if($this->RequestHandler->isAjax()){
+				$conditions = array('ProgramResponse.program_id' => $id);
+				if(isset($this->params['url']['filter'])) {
+					switch($this->params['url']['filter']) {
+						case 'open':
+							$conditions['ProgramResponse.complete'] = 0; 
+							break;
+						case 'closed':
+							$conditions['ProgramResponse.complete'] = 1;
+							break;
+						case 'unapproved':
+							$conditions['ProgramResponse.needs_approval'] = 1;
+							break;		 
+					}
+				}
+				$responses = $this->ProgramResponse->find('all', array('conditions' => $conditions));
+				FireCake::log($responses);
+				if($responses) {
+					foreach($responses as $response) {
+						if($response['ProgramResponse']['complete'] == 1) {
+							$status = 'Closed';
+						}
+						else {
+							$status = 'Open';
+						} 
+						$data['responses'][] = array(
+							'id' => $response['ProgramResponse']['id'],
+							'customer' => $response['User']['lastname'] . ', ' . 
+								$response['User']['firstname'] . ' - ' . substr($response['User']['ssn'], -4),
+							'created' => $response['ProgramResponse']['created'],
+							'modified' => $response['ProgramResponse']['modified'],
+							'status' => $status,	
+							'actions' => '<a href="/admin/program_responses/view/'. 
+								$response['ProgramResponse']['id'].'">View</a>'
+						);
+					}				
+				}
+				else {
+					$data['responses'] = array();
+					$data['message'] = 'No results at this time.';
+				}
+				$data['success'] = true;
+				$this->set('data', $data);
+				$this->render('/elements/ajaxreturn');				
+			}			
+		}
+	}
+	
 }
