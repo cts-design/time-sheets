@@ -6,7 +6,7 @@ class ProgramResponse extends AppModel {
 	
 	var $hasMany = array('ProgramResponseDoc');
 	
-	var $belongsTo = array('Program');
+	var $belongsTo = array('Program', 'User');
 	
 	var $validate = array();
 	
