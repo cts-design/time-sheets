@@ -25,6 +25,10 @@ class User extends AppModel {
 	'FiledDocument' => array(
 	    'className' => 'FiledDocument',
 	    'foreignKey' => 'user_id'
+	),
+	'ProgramResponse' => array(
+		'className' => 'ProgramReponse', 
+		'foreignKey' => 'user_id'
 	)
     );
     var $hasOne = array(
