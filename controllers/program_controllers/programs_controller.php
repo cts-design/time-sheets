@@ -154,7 +154,29 @@ class ProgramsController extends AppController {
     }
 				
 	function admin_index() {
-		$title_for_layout = 'Programs';
+		if($this->RequestHandler->isAjax()) {
+			$programs = $this->Program->find('all');
+			if($programs) {
+				foreach($programs as $program){
+					$data['programs'][] = array(
+						'id' => $program['Program']['id'],
+						'name' => $program['Program']['name'],
+						'actions' => '<a href="/admin/program_responses/index/'.
+							$program['Program']['id'].'">View Responses</a> | 
+							<a class="edit" href="/admin/programs/edit_instructions/'.
+							$program['Program']['id'].'">Edit Instructions</a>');
+				}
+				$data['success'] = true;
+			}
+			else {
+				$data['success'] = false;
+				$data['message'] = 'No programs were found.';
+			} 		
+			$this->set('data', $data);
+			$this->render('/elements/ajaxreturn');	
+		}	
+		$title_for_layout = 'Programs';		
+		$this->set(compact('title_for_layout'));
 	}
 	
 	
