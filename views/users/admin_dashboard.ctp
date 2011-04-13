@@ -88,6 +88,9 @@
 			    <li rel="trash"><?php echo $html->link('Deleted Documents', array('controller' => 'deleted_documents', 'action' => 'index')) ?></li>
 			</ul>
 		    </li>
+		    <li>
+		    	<?php echo $html->link('Programs', array('controller' => 'programs', 'action' => 'index')) ?>
+		    </li>
 		    <li rel="tools" id="tools">
 			<a>Tools</a>
 			<ul>
