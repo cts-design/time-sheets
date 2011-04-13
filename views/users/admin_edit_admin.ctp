@@ -18,7 +18,6 @@
 	<?php echo $this->Form->create('User', array('action' => 'edit_admin')); ?>
 	<fieldset>
 	    <legend><?php __('Edit Admin'); ?></legend>
-	    <?php echo $this->Form->hidden('role_id', array('value' => '2')); ?>
 	    <?php echo $this->Form->input('id'); ?>
 	    <?php echo $this->Form->input('firstname', array(
 		    'before' => '<p class="left">',
