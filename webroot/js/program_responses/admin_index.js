@@ -1,10 +1,31 @@
 Ext.onReady(function(){
 	Ext.QuickTips.init()
+		
+	var programResponseProxy = new Ext.data.HttpProxy({
+		url: '/admin/program_responses/index/'+ progId,
+		method: 'GET'
+	});
+	
+	var programResponseStore = new Ext.data.JsonStore({
+		proxy: programResponseProxy,
+		storeId: 'programResponseStore',
+		root: 'responses',
+		idProperty: 'id',
+		fields: [
+			'id', 
+			'customer', 
+			{name: 'created', type: 'date', dateFormat: 'Y-m-d H:i:s'}, 
+			{name: 'modified', type: 'date', dateFormat: 'Y-m-d H:i:s'},
+			'status', 
+			'actions'
+		]
+	});
 	
 	Ext.ns('Atlas.grid');
 	
 	Atlas.grid.ProgramResponseGrid = Ext.extend(Ext.grid.GridPanel, {	
 		loadMask: true,
+		store: programResponseStore,
 		height: 300,	
 		width: 375,
 		frame: true,
@@ -45,43 +66,19 @@ Ext.onReady(function(){
 	});
 	Ext.reg('gridpanel', Atlas.grid.ProgramResponseGrid);
 	
-	var programResponseProxy = new Ext.data.HttpProxy({
-		url: '/admin/program_responses/index/'+ progId,
-		method: 'GET'
-	});
-	
-	var programResponseStore = new Ext.data.JsonStore({
-		proxy: programResponseProxy,
-		storeId: 'programResponseStore',
-		root: 'responses',
-		idProperty: 'id',
-		fields: [
-			'id', 
-			'customer', 
-			{name: 'created', type: 'date', dateFormat: 'Y-m-d H:i:s'}, 
-			{name: 'modified', type: 'date', dateFormat: 'Y-m-d H:i:s'},
-			'status', 
-			'actions'
-		]
-	});
-	
 	var allProgramResponsesGrid = new Atlas.grid.ProgramResponseGrid({
-		title: 'All',
-		store: programResponseStore
+		title: 'All'
 	});
 	
 	var openProgramResponsesGrid = new Atlas.grid.ProgramResponseGrid({
-		store: programResponseStore,
 		title: 'Open'		
 	});
 	
 	var closedProgramResponsesGrid = new Atlas.grid.ProgramResponseGrid({
-		store: programResponseStore,
 		title: 'Closed'
 	});
 	
 	var unapprovedProgramResponsesGrid = new Atlas.grid.ProgramResponseGrid({
-		store: programResponseStore,
 		title: 'Un-Approved'		
 	});		
 	
