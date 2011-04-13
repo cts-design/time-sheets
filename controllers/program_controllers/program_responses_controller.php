@@ -115,6 +115,7 @@ class ProgramResponsesController extends AppController {
 						else {
 							$status = 'Open';
 						} 
+	
 						$data['responses'][] = array(
 							'id' => $response['ProgramResponse']['id'],
 							'customer' => $response['User']['lastname'] . ', ' . 
@@ -134,8 +135,19 @@ class ProgramResponsesController extends AppController {
 				$data['success'] = true;
 				$this->set('data', $data);
 				$this->render('/elements/ajaxreturn');				
+			}
+			$this->ProgramResponse->Program->recursive = -1;
+			$program = $this->ProgramResponse->Program->findById($id);
+			if($program['Program']['approval_required'] == 1){
+				$approvalPermission = $this->Acl->check(array(
+					'model' => 'User', 
+					'foreign_key' => $this->Auth->user('id')), 'ProgramResponses/admin_approve', '*');
+				$this->set(compact('approvalPermission'));
 			}			
-		}
+		}	
+	}
+	function admin_approve() {
+		
 	}
 	
 }
