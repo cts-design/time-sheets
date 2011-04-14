@@ -254,16 +254,12 @@ class FiledDocumentsController extends AppController {
 
 	function admin_view_all_docs(){
 		if($this->RequestHandler->isAjax()){
-
 			if(!empty($this->params['url']['filters'])) {
 				$conditions = $this->_setFilters();
 				if($conditions) {
 					$this->paginate = array('conditions' => $conditions);	
 				}
-			}			
-			if(isset($this->params['url']['sort'])) {
-				$this->params['url']['sort'] = str_replace('-', '.', $this->params['url']['sort']);
-			}			
+			}				
 			$query = $this->Paginate('FiledDocument');
 			$data['docs'] = array();
 			if(!empty($conditions)) {
