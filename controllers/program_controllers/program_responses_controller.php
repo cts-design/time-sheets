@@ -92,7 +92,7 @@ class ProgramResponsesController extends AppController {
 		if($id){
 			if($this->RequestHandler->isAjax()){
 				$conditions = array('ProgramResponse.program_id' => $id);
-				if(isset($this->params['url']['filter'])) {
+				if(!empty($this->params['url']['filter'])) {
 					switch($this->params['url']['filter']) {
 						case 'open':
 							$conditions['ProgramResponse.complete'] = 0; 
@@ -100,14 +100,24 @@ class ProgramResponsesController extends AppController {
 						case 'closed':
 							$conditions['ProgramResponse.complete'] = 1;
 							break;
+						case 'expired':
+							$conditions['ProgramResponse.expired'] = 1;
+							break;							
 						case 'unapproved':
 							$conditions['ProgramResponse.needs_approval'] = 1;
 							break;		 
 					}
 				}
-				$responses = $this->ProgramResponse->find('all', array('conditions' => $conditions));
-				FireCake::log($responses);
+				if(!empty($conditions)) {
+					$data['totalCount'] = $this->ProgramResponse->find('count', array('conditions' => $conditions));	
+				}
+				else{
+					$data['totalCount'] = $this->ProgramResponse->find('count');	
+				}
+				$this->paginate = array('conditions' => $conditions);
+				$responses =  $this->Paginate('ProgramResponse');
 				if($responses) {
+					$i = 0;
 					foreach($responses as $response) {
 						if($response['ProgramResponse']['complete'] == 1) {
 							$status = 'Closed';
@@ -116,16 +126,35 @@ class ProgramResponsesController extends AppController {
 							$status = 'Open';
 						} 
 	
-						$data['responses'][] = array(
+						$data['responses'][$i] = array(
 							'id' => $response['ProgramResponse']['id'],
-							'customer' => $response['User']['lastname'] . ', ' . 
+							'User-lastname' => $response['User']['lastname'] . ', ' . 
 								$response['User']['firstname'] . ' - ' . substr($response['User']['ssn'], -4),
 							'created' => $response['ProgramResponse']['created'],
 							'modified' => $response['ProgramResponse']['modified'],
-							'status' => $status,	
-							'actions' => '<a href="/admin/program_responses/view/'. 
-								$response['ProgramResponse']['id'].'">View</a>'
+							'status' => $status
 						);
+						if($this->params['url']['filter'] == 'closed'){
+							$data['responses'][$i]['actions'] = 
+								'<a href="/admin/program_responses/view/'. 
+									$response['ProgramResponse']['id'].'">View</a>';							
+						}
+						elseif($this->params['url']['filter'] == 'expired'){
+							$data['responses'][$i]['actions'] = 
+								'<a href="/admin/program_responses/view/'. 
+									$response['ProgramResponse']['id'].'">View</a> | <a>Mark Un-Expired</a>';							
+						}
+						elseif($this->params['url']['filter'] == 'unapproved'){
+							$data['responses'][$i]['actions'] = 
+								'<a href="/admin/program_responses/view/'. 
+									$response['ProgramResponse']['id'].'">View</a> | <a>Approve</a>';							
+						}							
+						else {
+							$data['responses'][$i]['actions'] = 
+								'<a href="/admin/program_responses/view/'. 
+									$response['ProgramResponse']['id'].'">View</a> | <a>Mark Expired</a>';
+						}
+						$i++;		
 					}				
 				}
 				else {
@@ -146,6 +175,32 @@ class ProgramResponsesController extends AppController {
 			}			
 		}	
 	}
+
+	function admin_view($id, $type=null) {
+		$title_for_layout = 'Program Response';
+		if($this->RequestHandler->isAjax()){
+			$programResponse = $this->ProgramResponse->findById($id);
+			if($type == 'user') {
+				FireCake::log($programResponse);
+				$user = $programResponse['User'];
+				$this->set(compact('user'));
+ 				$this->render('/elements/program_responses/user_info');
+			}
+			if($type == 'answers') {
+				$yesNo = array('No', 'Yes');
+				$data['answers'] = json_decode($programResponse['ProgramResponse']['answers'], true);
+				$data['viewedMedia'] = $yesNo[$programResponse['ProgramResponse']['viewed_media']];
+				if($programResponse['ProgramResponse']['answers'] != null) {
+					$data['completedForm'] = 'Yes';
+				}
+				else $data['completedForm'] = 'No';
+				$this->set($data);
+				$this->render('/elements/program_responses/answers');
+			}
+			
+		}
+	}
+
 	function admin_approve() {
 		
 	}
