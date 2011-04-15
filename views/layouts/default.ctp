@@ -43,8 +43,9 @@
 		<div id="logo" class="left">
 		    <?php echo $this->Html->link($this->Html->image('/img/admin/admin_header_logo.jpg'),
 				array('controller' => 'pages',
-					'action' => 'home',
-					'admin' => false), array('escape' => false));
+					'action' => 'display',
+					'admin' => false,
+					'home'), array('escape' => false));
 			    ?>
 		</div>
 		<div id="logoLogout" class="right">
