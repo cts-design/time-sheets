@@ -364,10 +364,15 @@ class UsersController extends AppController {
 				$this->Session->setFlash(__('The admin could not be saved. Please, try again.', true), 'flash_failure');
 		    }
 		}
+		if($this->Auth->user('role_id') == 2) {
+			$conditions = array("NOT" => array(array('Role.id' => array(1))));
+		}
+		else $conditions = array("NOT" => array(array('Role.id' => array(1,2))));
+		
 		$data = array(
 		    'roles' => $this->User->Role->find('list', array(
-			'conditions' => array("NOT" => array(array('Role.id' => array(1,2)))))),
-		    'locations' => $this->User->Location->find('list')
+				'conditions' => $conditions)),
+		    	'locations' => $this->User->Location->find('list')
 		);
 		$this->set($data);
     }
@@ -403,9 +408,13 @@ class UsersController extends AppController {
 		if (empty($this->data)) {
 		    $this->data = $this->User->read(null, $id);
 		}
+		if($this->Auth->user('role_id') == 2) {
+			$conditions = array("NOT" => array(array('Role.id' => array(1))));
+		}
+		else $conditions = array("NOT" => array(array('Role.id' => array(1,2))));		
 		$data = array(
 		    'roles' => $this->User->Role->find('list', array(
-			'conditions' => array("NOT" => array(array('Role.id' => array(1,2)))))),
+			'conditions' => $conditions)),
 		    'locations' => $this->User->Location->find('list')
 		);
 		$this->set($data);
