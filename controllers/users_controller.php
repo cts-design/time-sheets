@@ -301,7 +301,7 @@ class UsersController extends AppController {
 					'User.deleted !=' => 1, 
 					$this->data['User']['search_by'] . ' LIKE' => '%' . $this->data['User']['search_term'] . '%'), 
 				'limit' => Configure::read('Pagination.admin.limit'), 'order' => array('User.lastname' => 'asc'));
-			if($this->Auth->user('role.id') == 2) {
+			if($this->Auth->user('role_id') == 2) {
 				$this->paginate['conditions']['User.role_id >'] = 1;
 			}			
 			$data = array('users' => $this->paginate('User'), 'perms' => $filteredPerms, 'title_for_layout' => 'Administrators');
@@ -317,7 +317,7 @@ class UsersController extends AppController {
 					'User.deleted !=' => 1, 
 					$this->passedArgs['search_by'] . ' LIKE' => '%' . $this->passedArgs['search_term'] . '%'), 
 				'limit' => Configure::read('Pagination.admin.limit'), 'order' => array('User.lastname' => 'asc'));
-			if($this->Auth->user('role.id') == 2) {
+			if($this->Auth->user('role_id') == 2) {
 				$this->paginate['conditions']['User.role_id >'] = 1;
 			}			
 			$data = array('users' => $this->paginate('User'), 'perms' => $filteredPerms, 'title_for_layout' => 'Administrators');
@@ -330,7 +330,7 @@ class UsersController extends AppController {
 					'User.status !=' => 1, 
 					'User.deleted !=' => 1), 
 				'limit' => Configure::read('Pagination.admin.limit'), 'order' => array('User.lastname' => 'asc'));
-			if($this->Auth->user('role.id') == 2) {
+			if($this->Auth->user('role_id') == 2) {
 				$this->paginate['conditions']['User.role_id >'] = 1;
 			}			
 			$data = array('users' => $this->paginate('User'), 'perms' => $filteredPerms, 'title_for_layout' => 'Administrators');
