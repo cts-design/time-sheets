@@ -22,84 +22,81 @@ class PressReleasesControllerTestCase extends AtlasTestCase {
 	}
 
 	function testIndex() {
-            $result = $this->testAction('/press_releases/index', array('return' => 'view'));
-            //debug(htmlentities($result));
-        }
+        $result = $this->testAction('/press_releases/index', array('return' => 'vars'));
+        $result = Set::extract('/pressReleases/.[1]', $result);
+		$expected = array(
+			'id' => 1,
+            'title' => 'Lorem ipsum dolor sit amet',
+            'file' => 'http://atlas.dev/files/public/file.pdf',
+            'created' => '2011-02-09 15:20:21',
+            'modified' => '2011-02-09 15:20:21'
+		);
+		$this->assertEqual($result[0]['PressRelease'], $expected);
+    }
 
 	function testAdminIndex() {
-            $result = $this->testAction('/admin/press_releases/index', array('return' => 'view'));
-//            debug(htmlentities($result));
+        $result = $this->testAction('/admin/press_releases/index', array('return' => 'vars'));
+        $result = Set::extract('/pressReleases/.[1]', $result);
+		$expected = array(
+			'id' => 1,
+            'title' => 'Lorem ipsum dolor sit amet',
+            'file' => 'http://atlas.dev/files/public/file.pdf',
+            'created' => '2011-02-09 15:20:21',
+            'modified' => '2011-02-09 15:20:21'
+		);
+		$this->assertEqual($result[0]['PressRelease'], $expected);
 	}
-
-	function testAdminAddPdf() {
-            $this->PressReleases->data = array(
-                'PressRelease' => array(
-                    'title' => 'Valid Title',
-                    'file'  => array(
-                        'name' => 'filename.pdf',
-                        'type' => 'application/pdf',
-                        'size' => 3600,
-                        'tmp_name' => 'C:\tmp\tmp-file.pdf',
-                        'error' => 0
-                    )
-                )
-            );
-
-           $this->PressReleases->admin_add();
+	
+	function testAdminAdd() {
+		// cant test add because it requires you to
+		// upload a file
 	}
-
-        function testAdminAddDoc() {
-            $this->PressReleases->data = array(
-                'PressRelease' => array(
-                    'title' => 'Valid Title',
-                    'file'  => array(
-                        'name' => 'filename.doc',
-                        'type' => 'application/msword',
-                        'size' => 3600,
-                        'tmp_name' => 'C:\tmp\tmp-file.pdf',
-                        'error' => 0
-                    )
-                )
-            );
-
-            ///debug($this->PressReleases->admin_add());
-	}
-
-        function testAdminAddDocx() {
-            $this->PressReleases->data = array(
-                'PressRelease' => array(
-                    'title' => 'Valid Title',
-                    'file'  => array(
-                        'name' => 'filename.docx',
-                        'type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                        'size' => 3600,
-                        'tmp_name' => 'C:\tmp\tmp-file.pdf',
-                        'error' => 0
-                    )
-                )
-            );
-
-            //debug($this->PressReleases->admin_add());
+	
+	function testAdminAddWithInvalidData() {
+		$this->PressReleases->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));	
+			
+		$this->PressReleases->data = array(
+			'PressRelease' => array(
+				'title' => '',
+				'file' => array(
+					'error' => 0,
+					'type' => 'doctype',
+					'tmp_name' => 'asdf'
+				)
+			)
+		);	
+		
+	    $this->PressReleases->params = Router::parse('/admin/press_releases/add');
+	    $this->PressReleases->beforeFilter();
+	    $this->PressReleases->Component->startup($this->PressReleases);
+		$this->PressReleases->admin_add();	
+		$this->assertEqual($this->PressReleases->Session->read('Message.flash.element'), 'flash_failure');
 	}
 
 	function testAdminEditWithValidData() {
+			$this->PressReleases->Session->write('Auth.User', array(
+		        'id' => 2,
+		        'role_id' => 2,
+		        'username' => 'dnolan',
+		        'location_id' => 1
+		    ));	
+			
             $this->PressReleases->data = array(
                 'PressRelease' => array(
                     'title' => 'Valid Title'
                 )
             );
-
-            $this->PressReleases->admin_edit(1);
-            $this->assertEqual($this->PressReleases->redirectUrl, array('action' => 'index'));
-
-            $flashMessage = $this->PressReleases->Session->read('Message.flash');
-            $expectedFlashMessage = array(
-                'message' => 'The press release has been saved',
-                'element' => 'flash_success',
-                'params' => array()
-            );
-
-            $this->assertEqual($flashMessage, $expectedFlashMessage);
+			
+		    $this->PressReleases->params = Router::parse('/admin/press_releases/edit/1');
+		    $this->PressReleases->beforeFilter();
+		    $this->PressReleases->Component->startup($this->PressReleases);
+			$this->PressReleases->admin_edit(1);	
+			$this->assertEqual($this->PressReleases->Session->read('Message.flash.element'), 'flash_success');
 	}
 
         function testAdminEditWithInvalidData() {
@@ -109,65 +106,77 @@ class PressReleasesControllerTestCase extends AtlasTestCase {
                 )
             );
 
-            $this->PressReleases->admin_edit(1);
-
-            $flashMessage = $this->PressReleases->Session->read('Message.flash');
-            $expectedFlashMessage = array(
-                'message' => 'The press release could not be saved. Please, try again.',
-                'element' => 'flash_failure',
-                'params' => array()
-            );
-
-            $this->assertEqual($flashMessage, $expectedFlashMessage);
+		    $this->PressReleases->params = Router::parse('/admin/press_releases/edit/1');
+		    $this->PressReleases->beforeFilter();
+		    $this->PressReleases->Component->startup($this->PressReleases);
+			$this->PressReleases->admin_edit(1);	
+			$this->assertEqual($this->PressReleases->Session->read('Message.flash.element'), 'flash_failure');
         }
 
         function testAdminEditInvalidRecord() {
-            $this->PressReleases->admin_edit();
-            $this->assertEqual($this->PressReleases->redirectUrl, array('action' => 'index'));
-
-            $flashMessage = $this->PressReleases->Session->read('Message.flash');
-            $expectedFlashMessage = array(
-                'message' => 'Invalid press release',
-                'element' => 'flash_failure',
-                'params' => array()
-            );
-
-            $this->assertEqual($flashMessage, $expectedFlashMessage);
-        }
+		    $this->PressReleases->Session->write('Auth.User', array(
+		        'id' => 2,
+		        'role_id' => 2,
+		        'username' => 'dnolan',
+		        'location_id' => 1
+		    ));	
+			$this->PressReleases->params = Router::parse('/admin/press_releases/edit');
+	   		$this->PressReleases->beforeFilter();
+	    	$this->PressReleases->Component->startup($this->PressReleases);
+	        $this->PressReleases->admin_edit();	
+			$this->assertEqual($this->PressReleases->Session->read('Message.flash.element'), 'flash_failure');
+	    }
 
 	function testAdminDeleteValidRecord() {
-            $this->PressReleases->admin_delete(1);
-            $this->assertEqual($this->PressReleases->redirectUrl, array('action' => 'index'));
-            $this->assertFalse($this->PressReleases->PressRelease->read(null, 1));
+	    $this->PressReleases->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'username' => 'dnolan',
+	        'role_id' => 2,
+	        'location_id' => 1
+	    ));			
+
+		$this->PressReleases->params = Router::parse('/admin/press_releases/delete/1');
+   		$this->PressReleases->beforeFilter();
+    	$this->PressReleases->Component->startup($this->PressReleases);		
+        $this->PressReleases->admin_delete(1);
+		$this->assertEqual($this->PressReleases->Session->read('Message.flash.element'), 'flash_success');		
+		$this->assertFalse($this->PressReleases->PressRelease->read(null, 1));
 	}
 
         function testAdminDeleteInvalidRecord() {
-            $this->PressReleases->admin_delete(100);
-            $this->assertEqual($this->PressReleases->redirectUrl, array('action' => 'index'));
+		    $this->PressReleases->Session->write('Auth.User', array(
+		        'id' => 2,
+		        'username' => 'dnolan',
+		        'role_id' => 2,
+		        'location_id' => 1
+		    ));			
+	
+			$this->PressReleases->params = Router::parse('/admin/press_releases/delete/100');
+	   		$this->PressReleases->beforeFilter();
+	    	$this->PressReleases->Component->startup($this->PressReleases);		
+	        $this->PressReleases->admin_delete(100);
+			$this->assertEqual($this->PressReleases->Session->read('Message.flash.element'), 'flash_failure');		
+	    }
 
-            $flashMessage = $this->PressReleases->Session->read('Message.flash');
-            $expectedFlashMessage = array(
-                'message' => 'Press release was not deleted',
-                'element' => 'flash_failure',
-                'params' => array()
-            );
-
-            $this->assertEqual($flashMessage, $expectedFlashMessage);
-        }
-
-        function testAdminDeleteWithNoSpecifiedRecord() {
-            $this->PressReleases->admin_delete();
-
-                        $flashMessage = $this->PressReleases->Session->read('Message.flash');
-            $expectedFlashMessage = array(
-                'message' => 'Press release was not deleted',
-                'element' => 'flash_failure',
-                'params' => array()
-            );
-
-            $this->assertEqual($flashMessage, $expectedFlashMessage);
-
-            $this->assertEqual($this->PressReleases->redirectUrl, array('action' => 'index'));
-        }
+	    function testAdminDeleteWithNoSpecifiedRecord() {
+		    $this->PressReleases->Session->write('Auth.User', array(
+		        'id' => 2,
+		        'username' => 'dnolan',
+		        'role_id' => 2,
+		        'location_id' => 1
+		    ));			
+			
+		    $this->PressReleases->Session->write('Auth.User', array(
+		        'id' => 2,
+		        'role_id' => 2,
+		        'username' => 'dnolan',
+		        'location_id' => 1
+		    ));
+			$this->PressReleases->params = Router::parse('/admin/filed_documents/delete');
+	   		$this->PressReleases->beforeFilter();
+	    	$this->PressReleases->Component->startup($this->PressReleases);			
+	        $this->PressReleases->admin_delete();			    	
+	        $this->assertEqual($this->PressReleases->Session->read('Message.flash.element'), 'flash_failure');
+	   }
 }
 ?>

@@ -14,6 +14,11 @@ class ChairmanReportsControllerTestCase extends AtlasTestCase {
 	function startTest() {
 		$this->ChairmanReports =& new TestChairmanReportsController();
 		$this->ChairmanReports->constructClasses();
+		$this->ChairmanReports->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'username' => 'dnolan',
+	        'role_id' => 2
+	    ));
 	}
 
 	function endTest() {
@@ -21,88 +26,63 @@ class ChairmanReportsControllerTestCase extends AtlasTestCase {
 		ClassRegistry::flush();
 	}
 
-		function testIndex() {
-            $result = $this->testAction('/chairman_reports/index', array('return' => 'view'));
-            //debug(htmlentities($result));
-        }
+	function testIndex() {
+        $result = $this->testAction('/chairman_reports/index', array('return' => 'vars'));
+        $result = Set::extract('/chairmanReports/.[1]', $result);
+		$expected = array(
+			'id' => 1,
+            'title' => 'Lorem ipsum dolor sit amet',
+            'file' => 'http://atlas.dev/files/public/file.pdf',
+            'created' => '2011-02-09 15:20:21',
+            'modified' => '2011-02-09 15:20:21'
+		);
+		$this->assertEqual($result[0]['ChairmanReport'], $expected);
+    }
 
 	function testAdminIndex() {
-            $result = $this->testAction('/admin/chairman_reports/index', array('return' => 'view'));
-//            debug(htmlentities($result));
-	}
-
-	function testAdminAddPdf() {
-            $this->ChairmanReports->data = array(
-                'ChairmanReport' => array(
-                    'title' => 'Valid Title',
-                    'file'  => array(
-                        'name' => 'filename.pdf',
-                        'type' => 'application/pdf',
-                        'size' => 3600,
-                        'tmp_name' => 'C:\tmp\tmp-file.pdf',
-                        'error' => 0
-                    )
-                )
-            );
-
-           $this->ChairmanReports->admin_add();
-
-	}
-
-        function testAdminAddDoc() {
-            $this->ChairmanReports->data = array(
-                'ChairmanReport' => array(
-                    'title' => 'Valid Title',
-                    'file'  => array(
-                        'name' => 'filename.doc',
-                        'type' => 'application/msword',
-                        'size' => 3600,
-                        'tmp_name' => 'C:\tmp\tmp-file.pdf',
-                        'error' => 0
-                    )
-                )
-            );
-
-            ///debug($this->ChairmanReports->admin_add());
-
-	}
-
-        function testAdminAddDocx() {
-            $this->ChairmanReports->data = array(
-                'ChairmanReport' => array(
-                    'title' => 'Valid Title',
-                    'file'  => array(
-                        'name' => 'filename.docx',
-                        'type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                        'size' => 3600,
-                        'tmp_name' => 'C:\tmp\tmp-file.pdf',
-                        'error' => 0
-                    )
-                )
-            );
-
-            //debug($this->ChairmanReports->admin_add());
-
+		$this->ChairmanReports->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'username' => 'dnolan',
+	        'role_id' => 2
+	    ));
+		// EVERYTIME THIS TEST IS RUN, IT JUST REDIRECTS TO THE REAL PAGE
+        $result = $this->testAction('/admin/chairman_reports/index', array('return' => 'vars'));
+        $result = Set::extract('/chairmanReports/.[1]', $result);
+		$expected = array(
+			'id' => 1,
+            'title' => 'Lorem ipsum dolor sit amet',
+            'file' => 'http://atlas.dev/files/public/file.pdf',
+            'created' => '2011-02-09 15:20:21',
+            'modified' => '2011-02-09 15:20:21'
+		);
+		$this->assertEqual($result[0]['ChairmanReport'], $expected);
+       	
+        //$this->ChairmanReports->params = Router::parse('/admin/chairman_reports/index');
+	    //$this->ChairmanReports->beforeFilter();
+	    //$this->ChairmanReports->Component->startup($this->ChairmanReports);
+		//$this->ChairmanReports->admin_index();
+		//debug($this->ChairmanReports->viewVars);
 	}
 
 	function testAdminEditWithValidData() {
+			$this->ChairmanReports->Session->write('Auth.User', array(
+		        'id' => 2,
+		        'role_id' => 2,
+		        'username' => 'dnolan',
+		        'location_id' => 1
+		    ));	
+			
             $this->ChairmanReports->data = array(
                 'ChairmanReport' => array(
                     'title' => 'Valid Title'
                 )
             );
-
-            $this->ChairmanReports->admin_edit(1);
-            $this->assertEqual($this->ChairmanReports->redirectUrl, array('action' => 'index'));
-
-            $flashMessage = $this->ChairmanReports->Session->read('Message.flash');
-            $expectedFlashMessage = array(
-                'message' => 'The chairman report has been saved',
-                'element' => 'flash_success',
-                'params' => array()
-            );
-
-            $this->assertEqual($flashMessage, $expectedFlashMessage);
+			
+		    $this->ChairmanReports->params = Router::parse('/admin/chairman_reports/edit/1');
+		    $this->ChairmanReports->beforeFilter();
+		    $this->ChairmanReports->Component->startup($this->ChairmanReports);
+			$this->ChairmanReports->admin_edit(1);	
+			$this->assertEqual($this->ChairmanReports->Session->read('Message.flash.element'), 'flash_success');
 	}
 
         function testAdminEditWithInvalidData() {
@@ -112,67 +92,77 @@ class ChairmanReportsControllerTestCase extends AtlasTestCase {
                 )
             );
 
-            $this->ChairmanReports->admin_edit(1);
-
-            $flashMessage = $this->ChairmanReports->Session->read('Message.flash');
-            $expectedFlashMessage = array(
-                'message' => 'The chairman report could not be saved. Please, try again.',
-                'element' => 'flash_failure',
-                'params' => array()
-            );
-
-            $this->assertEqual($flashMessage, $expectedFlashMessage);
+		    $this->ChairmanReports->params = Router::parse('/admin/chairman_reports/edit/1');
+		    $this->ChairmanReports->beforeFilter();
+		    $this->ChairmanReports->Component->startup($this->ChairmanReports);
+			$this->ChairmanReports->admin_edit(1);	
+			$this->assertEqual($this->ChairmanReports->Session->read('Message.flash.element'), 'flash_failure');
         }
 
         function testAdminEditInvalidRecord() {
-            $this->ChairmanReports->admin_edit();
-            $this->assertEqual($this->ChairmanReports->redirectUrl, array('action' => 'index'));
-
-            $flashMessage = $this->ChairmanReports->Session->read('Message.flash');
-            $expectedFlashMessage = array(
-                'message' => 'Invalid chairman report',
-                'element' => 'flash_failure',
-                'params' => array()
-            );
-
-            $this->assertEqual($flashMessage, $expectedFlashMessage);
-        }
+		    $this->ChairmanReports->Session->write('Auth.User', array(
+		        'id' => 2,
+		        'role_id' => 2,
+		        'username' => 'dnolan',
+		        'location_id' => 1
+		    ));	
+			$this->ChairmanReports->params = Router::parse('/admin/chairman_reports/edit');
+	   		$this->ChairmanReports->beforeFilter();
+	    	$this->ChairmanReports->Component->startup($this->ChairmanReports);
+	        $this->ChairmanReports->admin_edit();	
+			$this->assertEqual($this->ChairmanReports->Session->read('Message.flash.element'), 'flash_failure');
+	    }
 
 	function testAdminDeleteValidRecord() {
-            $this->ChairmanReports->admin_delete(1);
-            $this->assertEqual($this->ChairmanReports->redirectUrl, array('action' => 'index'));
-            $this->assertFalse($this->ChairmanReports->ChairmanReport->read(null, 1));
+	    $this->ChairmanReports->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'username' => 'dnolan',
+	        'role_id' => 2,
+	        'location_id' => 1
+	    ));			
+
+		$this->ChairmanReports->params = Router::parse('/admin/chairman_reports/delete/1');
+   		$this->ChairmanReports->beforeFilter();
+    	$this->ChairmanReports->Component->startup($this->ChairmanReports);		
+        $this->ChairmanReports->admin_delete(1);
+		$this->assertEqual($this->ChairmanReports->Session->read('Message.flash.element'), 'flash_success');		
+		$this->assertFalse($this->ChairmanReports->ChairmanReport->read(null, 1));
 	}
 
         function testAdminDeleteInvalidRecord() {
-            $this->ChairmanReports->admin_delete(100);
-            $this->assertEqual($this->ChairmanReports->redirectUrl, array('action' => 'index'));
+		    $this->ChairmanReports->Session->write('Auth.User', array(
+		        'id' => 2,
+		        'username' => 'dnolan',
+		        'role_id' => 2,
+		        'location_id' => 1
+		    ));			
+	
+			$this->ChairmanReports->params = Router::parse('/admin/chairman_reports/delete/100');
+	   		$this->ChairmanReports->beforeFilter();
+	    	$this->ChairmanReports->Component->startup($this->ChairmanReports);		
+	        $this->ChairmanReports->admin_delete(100);
+			$this->assertEqual($this->ChairmanReports->Session->read('Message.flash.element'), 'flash_failure');		
+	    }
 
-            $flashMessage = $this->ChairmanReports->Session->read('Message.flash');
-            $expectedFlashMessage = array(
-                'message' => 'Chairman report was not deleted',
-                'element' => 'flash_failure',
-                'params' => array()
-            );
-
-            $this->assertEqual($flashMessage, $expectedFlashMessage);
-        }
-
-        function testAdminDeleteWithNoSpecifiedRecord() {
-            $this->ChairmanReports->admin_delete();
-
-                        $flashMessage = $this->ChairmanReports->Session->read('Message.flash');
-            $expectedFlashMessage = array(
-                'message' => 'Chairman report was not deleted',
-                'element' => 'flash_failure',
-                'params' => array()
-            );
-
-            $this->assertEqual($flashMessage, $expectedFlashMessage);
-
-            $this->assertEqual($this->ChairmanReports->redirectUrl, array('action' => 'index'));
-
-
-       }
+	    function testAdminDeleteWithNoSpecifiedRecord() {
+		    $this->ChairmanReports->Session->write('Auth.User', array(
+		        'id' => 2,
+		        'username' => 'dnolan',
+		        'role_id' => 2,
+		        'location_id' => 1
+		    ));			
+			
+		    $this->ChairmanReports->Session->write('Auth.User', array(
+		        'id' => 2,
+		        'role_id' => 2,
+		        'username' => 'dnolan',
+		        'location_id' => 1
+		    ));
+			$this->ChairmanReports->params = Router::parse('/admin/filed_documents/delete');
+	   		$this->ChairmanReports->beforeFilter();
+	    	$this->ChairmanReports->Component->startup($this->ChairmanReports);			
+	        $this->ChairmanReports->admin_delete();			    	
+	        $this->assertEqual($this->ChairmanReports->Session->read('Message.flash.element'), 'flash_failure');
+	   }
 }
 ?>

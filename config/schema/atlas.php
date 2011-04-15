@@ -1,5 +1,6 @@
 <?php 
-/* atlas schema generated on: 2011-04-08 18:23:03 : 1302286983*/
+/* atlas schema generated on: 2011-04-15 17:33:26 : 1302888806*/
+
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -120,19 +121,7 @@ class atlasSchema extends CakeSchema {
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
 		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MyISAM')
 	);
-	var $document_transactions = array(
-		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
-		'doc_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
-		'location' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
-		'entry_method' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
-		'action' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
-		'admin_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
-		'user_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
-		'details' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
-		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
-		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
-		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MyISAM')
-	);
+
 	var $employers_surveys = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 		'answers' => array('type' => 'text', 'null' => false, 'default' => NULL, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
@@ -244,7 +233,7 @@ class atlasSchema extends CakeSchema {
 		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'InnoDB')
 	);
 	var $kiosk_buttons = array(
-		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'parent_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'kiosk_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'status' => array('type' => 'boolean', 'null' => false, 'default' => NULL),

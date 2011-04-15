@@ -1,5 +1,6 @@
 <?php
-/* ProgramField Fixture generated on: 2011-03-29 17:40:59 : 1301420459 */
+/* ProgramField Fixture generated on: 2011-04-05 09:31:16 : 1302010276 */
+
 class ProgramFieldFixture extends CakeTestFixture {
 	var $name = 'ProgramField';
 
@@ -22,6 +23,7 @@ class ProgramFieldFixture extends CakeTestFixture {
 		array(
 			'id' => 1,
 			'program_id' => 1,
+
 			'label' => 'Preferred program schedule',
 			'type' => 'select',
 			'name' => 'preferred_program_schedule',
@@ -42,6 +44,7 @@ class ProgramFieldFixture extends CakeTestFixture {
 			'validation' => '{\"rule\":\"notEmpty\"}',
 			'created' => '2011-03-24 15:01:17',
 			'modified' => '2011-03-24 15:01:22'
+
 		),
 	);
 }

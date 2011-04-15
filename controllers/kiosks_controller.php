@@ -13,8 +13,7 @@ class KiosksController extends AppController {
 
     function beforeFilter() {
 		parent::beforeFilter();
-		$this->Security->blackHoleCallback = 'forceSSL';
-		$this->Security->requireSecure();
+
 		$this->Cookie->name = 'self_sign';
 	}
 

@@ -19,6 +19,11 @@
  */
 set_time_limit(0);
 ini_set('display_errors', 1);
+
+if (!defined('CAKE_UNIT_TEST')) {
+ 	define('CAKE_UNIT_TEST', true);
+}
+
 /**
  * Use the DS to separate the directories in other defines
  */

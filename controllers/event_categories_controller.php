@@ -2,59 +2,31 @@
 class EventCategoriesController extends AppController {
 	var $name = 'EventCategories';
 	
-	function admin_index() {
-		$this->EventCategories->recursive = 0;
-		$this->set('eventCategories', $this->paginate());
+	function beforeFilter() {
+		parent::beforeFilter();
+		$this->EventCategory->recursive = -1;
 	}
+
+	function admin_create() {}
+	function admin_read() {
+		$eventCategories = $this->EventCategory->find('all');
+		$data = array();
 		
-	function admin_add() {
-		if (!empty($this->data)) {
-			$this->EventCategory->create();
-			if ($this->EventCategory->save($this->data)) {
-                $this->Transaction->createUserTransaction('CMS', null, null,
-                                        'Created event category named ' . $this->data['EventCategory']['name']);
-				$this->Session->setFlash(__('The event category has been saved', true), 'flash_success');
-				$this->redirect(array('action' => 'index'));
-			} else {
-				$this->Session->setFlash(__('The event category could not be saved. Please, try again.', true), 'flash_failure');
+		if (!empty($eventCategories)) {
+			$data['total_event_categories'] = count($eventCategories);
+			$data['success'] = true;
+			foreach ($eventCategories as $key => $value) {
+				$data['event_categories'][] = $value['EventCategory'];
 			}
+		} else {
+			$data['success'] = false;
 		}
+		
+		$this->set('data', $data);
+		return $this->render(null, null, '/elements/ajaxreturn');
 	}
-
-	function admin_edit($id = null) {
-		if (!$id && empty($this->data)) {
-			$this->Session->setFlash(__('Invalid event category', true), 'flash_failure');
-			$this->redirect(array('action' => 'index'));
-		}
-		if (!empty($this->data)) {
-			if ($this->EventCategory->save($this->data)) {
-                                $this->Transaction->createUserTransaction('CMS', null, null,
-                                        'Edited event category ID ' . $id);
-				$this->Session->setFlash(__('The event category has been saved', true), 'flash_success');
-				$this->redirect(array('action' => 'index'));
-			} else {
-				$this->Session->setFlash(__('The event category could not be saved. Please, try again.', true), 'flash_failure');
-			}
-		}
-		if (empty($this->data)) {
-			$this->data = $this->EventCategory->read(null, $id);
-		}
-	}
-
-	function admin_delete($id = null) {
-		if (!$id) {
-			$this->Session->setFlash(__('Invalid id for event category', true), 'flash_failure');
-			$this->redirect(array('action'=>'index'));
-		}
-		if ($this->EventCategory->delete($id)) {
-                        $this->Transaction->createUserTransaction('CMS', null, null,
-                                        'Deleted event category ID ' . $id);
-			$this->Session->setFlash(__('Event category deleted', true), 'flash_success');
-			$this->redirect(array('action'=>'index'));
-		}
-		$this->Session->setFlash(__('Event category was not deleted', true), 'flash_failure');
-		$this->redirect(array('action' => 'index'));
-	}
+	function admin_update() {}
+	function admin_destroy() {}
 
 	function admin_get_all_categories() {
 		$allCategories = $this->EventCategory->find('all');
@@ -69,5 +41,7 @@ class EventCategoriesController extends AppController {
 		$this->set('data', $eventCategories);
 		return $this->render(null, null, '/elements/ajaxreturn');
 	}
+	
+
 }
 ?>

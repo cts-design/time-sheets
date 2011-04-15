@@ -21,7 +21,7 @@ class UsersController extends AppController {
 			foreach($this->data['User'] as $k => $v) {
 				$this->data['User'][$k] = trim($v, ' ');
 			}		
-		}		
+		}				
 		if(isset($this->data['User']['username'])) {
 		    if($this->params['action'] == 'admin_login' || $this->params['action'] == 'self_sign_login') {
 				$user = $this->User->find('first', array('conditions' => array(
@@ -69,6 +69,10 @@ class UsersController extends AppController {
 		if($this->Auth->user() && $this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Users/admin_resolve_login_issues', '*') == true) {
 			$this->Auth->allow('admin_request_ssn_change', 'admin_get_admin_list');
 		}
+
+		if($this->params['action'] == 'admin_login' && $this->RequestHandler->isAjax()) {
+			$this->Security->validatePost = false;
+		}			
     }
 
     function admin_index() {
@@ -357,11 +361,14 @@ class UsersController extends AppController {
 		if(! empty($this->data) && $this->data['User']['search_term'] != '') {
 			$this->paginate = array(
 				'conditions' => array(
-					'User.role_id !=' => 1, 
+					'User.role_id >' => 2, 
 					'User.status !=' => 1, 
 					'User.deleted !=' => 1, 
 					$this->data['User']['search_by'] . ' LIKE' => '%' . $this->data['User']['search_term'] . '%'), 
 				'limit' => Configure::read('Pagination.admin.limit'), 'order' => array('User.lastname' => 'asc'));
+			if($this->Auth->user('role_id') == 2) {
+				$this->paginate['conditions']['User.role_id >'] = 1;
+			}			
 			$data = array('users' => $this->paginate('User'), 'perms' => $filteredPerms, 'title_for_layout' => 'Administrators');
 			$this->set($data);
 			$this->passedArgs['search_by'] = $this->data['User']['search_by'];
@@ -370,21 +377,27 @@ class UsersController extends AppController {
 		elseif(isset($this->passedArgs['search_term'], $this->passedArgs['search_by'])) {
 			$this->paginate = array(
 				'conditions' => array(
-					'User.role_id !=' => 1, 
+					'User.role_id >' => 2, 
 					'User.status !=' => 1, 
 					'User.deleted !=' => 1, 
 					$this->passedArgs['search_by'] . ' LIKE' => '%' . $this->passedArgs['search_term'] . '%'), 
 				'limit' => Configure::read('Pagination.admin.limit'), 'order' => array('User.lastname' => 'asc'));
+			if($this->Auth->user('role_id') == 2) {
+				$this->paginate['conditions']['User.role_id >'] = 1;
+			}			
 			$data = array('users' => $this->paginate('User'), 'perms' => $filteredPerms, 'title_for_layout' => 'Administrators');
 			$this->set($data);
 		}
 		else {
 			$this->paginate = array(
 				'conditions' => array(
-					'User.role_id !=' => 1, 
+					'User.role_id >' => 2, 
 					'User.status !=' => 1, 
 					'User.deleted !=' => 1), 
 				'limit' => Configure::read('Pagination.admin.limit'), 'order' => array('User.lastname' => 'asc'));
+			if($this->Auth->user('role_id') == 2) {
+				$this->paginate['conditions']['User.role_id >'] = 1;
+			}			
 			$data = array('users' => $this->paginate('User'), 'perms' => $filteredPerms, 'title_for_layout' => 'Administrators');
 			$this->set($data);
 		}
@@ -416,10 +429,15 @@ class UsersController extends AppController {
 				$this->Session->setFlash(__('The admin could not be saved. Please, try again.', true), 'flash_failure');
 		    }
 		}
+		if($this->Auth->user('role_id') == 2) {
+			$conditions = array("NOT" => array(array('Role.id' => array(1))));
+		}
+		else $conditions = array("NOT" => array(array('Role.id' => array(1,2))));
+		
 		$data = array(
 		    'roles' => $this->User->Role->find('list', array(
-			'conditions' => array("NOT" => array(array('Role.id' => array(1,2)))))),
-		    'locations' => $this->User->Location->find('list')
+				'conditions' => $conditions)),
+		    	'locations' => $this->User->Location->find('list')
 		);
 		$this->set($data);
     }
@@ -455,9 +473,13 @@ class UsersController extends AppController {
 		if (empty($this->data)) {
 		    $this->data = $this->User->read(null, $id);
 		}
+		if($this->Auth->user('role_id') == 2) {
+			$conditions = array("NOT" => array(array('Role.id' => array(1))));
+		}
+		else $conditions = array("NOT" => array(array('Role.id' => array(1,2))));		
 		$data = array(
 		    'roles' => $this->User->Role->find('list', array(
-			'conditions' => array("NOT" => array(array('Role.id' => array(1,2)))))),
+			'conditions' => $conditions)),
 		    'locations' => $this->User->Location->find('list')
 		);
 		$this->set($data);
