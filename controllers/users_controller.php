@@ -277,7 +277,9 @@ class UsersController extends AppController {
 				$this->data['User']['lastname'] = $lastname;
 			}    
 		}
-		$this->set('title_for_layout', 'Registration');
+		$title_for_layout = 'Registration';
+		$states = $this->states;
+		$this->set(compact('title_for_layout', 'states'));
 		if(isset($type) && $type == 'child' || 
 			isset($this->data['User']['registration']) && $this->data['User']['registration'] == 'child_website') {
 			$this->render('child_registration');
