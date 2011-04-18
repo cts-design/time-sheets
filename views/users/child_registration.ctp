@@ -12,7 +12,7 @@
 <p>We do not have a record for you please register below.</p>
 <br />
   <div>
-	<?php echo $this->Form->create('User', array('action' => 'mini_registration/child')); ?>
+	<?php echo $this->Form->create('User', array('action' => 'registration/child')); ?>
 	<fieldset>
 		<legend>Register</legend>
 	    <?php
