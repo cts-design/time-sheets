@@ -1,6 +1,5 @@
 <?php 
-/* atlas schema generated on: 2011-04-15 17:33:26 : 1302888806*/
-
+/* atlas schema generated on: 2011-04-18 12:58:31 : 1303131511*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -121,7 +120,6 @@ class atlasSchema extends CakeSchema {
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
 		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MyISAM')
 	);
-
 	var $employers_surveys = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 		'answers' => array('type' => 'text', 'null' => false, 'default' => NULL, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
@@ -361,12 +359,13 @@ class atlasSchema extends CakeSchema {
 		'program_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
 		'answers' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'user_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
-		'viewed_media' => array('type' => 'boolean', 'null' => false, 'default' => NULL),
-		'complete' => array('type' => 'boolean', 'null' => false, 'default' => NULL),
+		'viewed_media' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'complete' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'needs_approval' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'cert_link' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
-		'expires' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+		'expired' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'prog_id' => array('column' => 'program_id', 'unique' => 0), 'user_id' => array('column' => 'user_id', 'unique' => 0)),
 		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'InnoDB')
 	);
@@ -495,12 +494,14 @@ class atlasSchema extends CakeSchema {
 		'firstname' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 50, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'lastname' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 50, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'middle_initial' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 3, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+		'surname' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 10, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'ssn' => array('type' => 'string', 'null' => false, 'default' => '0', 'length' => 9, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'username' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 25, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'password' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 40, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'address_1' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'address_2' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'city' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 50, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+		'county' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'state' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 30, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'zip' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 5, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'phone' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 20, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
@@ -508,6 +509,9 @@ class atlasSchema extends CakeSchema {
 		'gender' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 6, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'dob' => array('type' => 'date', 'null' => true, 'default' => NULL),
 		'email' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+		'language' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+		'ethnicity' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+		'race' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'status' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 1),
 		'deleted' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 1),
 		'signature' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 1),
