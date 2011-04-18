@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2011-04-18 12:58:31 : 1303131511*/
+/* atlas schema generated on: 2011-04-18 20:28:25 : 1303158505*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -360,6 +360,7 @@ class atlasSchema extends CakeSchema {
 		'answers' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'user_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
 		'viewed_media' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'form_esignature' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'complete' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'needs_approval' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'cert_link' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
@@ -385,6 +386,7 @@ class atlasSchema extends CakeSchema {
 		'queue_category_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'cert_type' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 15, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'approval_required' => array('type' => 'boolean', 'null' => false, 'default' => NULL),
+		'form_esign_required' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'expires' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
