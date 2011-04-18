@@ -29,6 +29,30 @@
 		'between' => '</p><p class="left">',
 		'after' => '</p>'));
 	    echo '<br class="clear"/>';
+	    echo $this->Form->input('middle_initial', array(
+		'label' => __('Child\'s Middle Initial', true),
+		'before' => '<p class="left">',
+		'between' => '</p><p class="left">',
+		'after' => '</p>'));
+	    echo '<br class="clear"/>';
+		echo $this->Form->input('surname', array(
+		'label' => __('Child\'s Surname', true),
+		'type' => 'select',
+		'empty' => 'None',
+		'options' => array('Jr' => 'Jr', 'Sr' => 'Sr', 'III' => 'III'),
+		'before' => '<p class="left">',
+		'between' => '</p><p class="left">',
+		'after' => '</p>'));
+	    echo '<br class="clear"/>';	
+		echo $this->Form->input('gender', array(
+		'label' => __('Child\'s Gender', true),
+		'type' => 'select',
+		'empty' => 'Please Select',
+		'options' => array('Male' => 'Male', 'Female' => 'Female'),
+		'before' => '<p class="left">',
+		'between' => '</p><p class="left">',
+		'after' => '</p>'));
+	    echo '<br class="clear"/>';
 	    echo $this->Form->input('ssn', array(
 		'label' => __('Child\'s SSN', true),
 		'before' => '<p class="left">',
@@ -50,6 +74,30 @@
 		'between' => '</p><p class="left">',
 		'after' => '</p>'));
 	    echo '<br class="clear"/>';
+		echo $this->Form->input('address_1', array(
+		'label' => __('Child\'s Address', true),
+		'before' => '<p class="left">',
+		'between' => '</p><p class="left">',
+		'after' => '</p>'));
+		echo '<br class="clear"/>';
+		echo $this->Form->input('city', array(
+		'label' => __('Child\'s City', true),
+		'before' => '<p class="left">',
+		'between' => '</p><p class="left">',
+		'after' => '</p>'));
+		echo '<br class="clear"/>';		
+		echo $this->Form->input('county', array(
+		'label' => __('Child\'s County', true),
+		'before' => '<p class="left">',
+		'between' => '</p><p class="left">',
+		'after' => '</p>'));
+		echo '<br class="clear"/>';			
+		echo $this->Form->input('state', array(
+		'label' => __('Child\'s State', true),
+		'before' => '<p class="left">',
+		'between' => '</p><p class="left">',
+		'after' => '</p>'));
+		echo '<br class="clear"/>';				
 	    echo $this->Form->input('zip', array(
 		'label' => __('Child\'s Zip Code', true),
 		'before' => '<p class="left">',
@@ -69,6 +117,39 @@
 			'between' => '</p><p class="left">',
 			'after' => '</p>'
 		));	
+		echo '<br class="clear"/>';
+		echo $this->Form->input('language', array(
+			'label' => __('Child\'s Primary Spoken Language', true),
+			'before' => '<p class="left">',
+			'between' => '</p><p class="left">',
+			'after' => '</p>'
+		));
+		echo '<br class="clear"/>';			
+		echo $this->Form->input('ethnicity', array(
+			'label' => __('Child\'s Ethnicity', true),
+			'type' => 'select',
+			'options' => array(
+				'Hispanic or Latino' => 'Hispanic or Latino',
+				'Not Hispanic or Latino' => 'Not Hispanic or Latino'), 
+			'before' => '<p class="left">',
+			'between' => '</p><p class="left">',
+			'after' => '</p>'
+		));
+		echo '<br class="clear"/>';
+		echo $this->Form->input('race', array(
+			'label' => __('Child\'s Race', true),
+			'type' => 'select',
+			'options' => array(
+				'American Indian or Alaksa Native' => 'American Indian or Alaksa Native',
+				'Asian' => 'Asian',
+				'Black or African American' => 'Black or African American',
+				'Hawaiian or Other Pacific Islander' => 'Hawaiian or Other Pacific Islander',
+				'White' => 'White'),
+			'before' => '<p class="left">',
+			'between' => '</p><p class="left">',
+			'after' => '</p>'
+		));		
+		echo '<br class="clear"/>';	
 		echo $html->link('Click here to get an email address if you don not have one.', 
 			'https://www.google.com/accounts/NewAccount?service=mail&continue=
 			http://mail.google.com/mail/e-11-149ff52bbc80936376c01275ce56c7-f2297e1257c13b74d3ba16b09f1177fc98da2414&type=2',

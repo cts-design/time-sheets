@@ -33,7 +33,7 @@ class UsersController extends AppController {
 				}
 	    	}
 		}
-		$this->Auth->allow('kiosk_mini_registration', 'add', 'admin_password_reset', 'build_acl', 'admin_login', 'admin_logout', 'kiosk_self_sign_login', 'login', 'mini_registration');
+		$this->Auth->allow('kiosk_mini_registration', 'add', 'admin_password_reset', 'build_acl', 'admin_login', 'admin_logout', 'kiosk_self_sign_login', 'login', 'registration');
 
 		if(isset($this->data['User']['username'], $this->data['User']['password'],$this->data['User']['login_type'] ) &&
 			$this->data['User']['username'] != '' && $this->data['User']['password'] != '') {
@@ -48,11 +48,11 @@ class UsersController extends AppController {
 					$this->data['User']['username'], 'kiosk' => true));
 				}
 				elseif($this->data['User']['login_type'] == 'website') {
-				    $this->redirect(array('action' => 'mini_registration', 'regular',
+				    $this->redirect(array('action' => 'registration', 'regular',
 					$this->data['User']['username'], 'kiosk' => false));					
 				}
 				elseif($this->data['User']['login_type'] == 'child_website') {
-					$this->redirect(array('action' => 'mini_registration', 'child',
+					$this->redirect(array('action' => 'registration', 'child',
 					$this->data['User']['username'], 'kiosk' => false));
 				}
 				else {
@@ -249,7 +249,7 @@ class UsersController extends AppController {
 		}
     }
 	
-    function mini_registration($type=null, $lastname=null) {
+    function registration($type=null, $lastname=null) {
 		if (!empty($this->data)) {	
 		    $this->User->create();
 		    if ($this->User->save($this->data)) {
@@ -279,8 +279,8 @@ class UsersController extends AppController {
 		}
 		$this->set('title_for_layout', 'Registration');
 		if(isset($type) && $type == 'child' || 
-			isset($this->data['User']['mini_registration']) && $this->data['User']['mini_registration'] == 'child_website') {
-			$this->render('child_mini_registration');
+			isset($this->data['User']['registration']) && $this->data['User']['registration'] == 'child_website') {
+			$this->render('child_registration');
 		}		
 		
     }
