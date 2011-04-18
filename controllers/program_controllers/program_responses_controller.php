@@ -8,7 +8,7 @@ class ProgramResponsesController extends AppController {
 	
 	function beforeFilter() {
 		parent::beforeFilter();
-		$this->ProgramResponse->Program->ProgramField->recursive = -1;
+		$this->ProgramResponse->Program->ProgramField->recursive = 0;
 		if(!empty($this->params['pass'][0]) && $this->params['action'] == 'index') {
 			$query = $this->ProgramResponse->Program->ProgramField->findAllByProgramId($this->params['pass'][0]); 
 			$fields = Set::classicExtract($query, '{n}.ProgramField');
@@ -16,6 +16,11 @@ class ProgramResponsesController extends AppController {
 				if(!empty($v['validation'])) 
 					$validate[$v['name']] = json_decode($v['validation'], true); 
 				}
+			if($query[0]['Program']['form_esign_required']) {
+				$validate['form_esignature'] = array(
+					'rule' => 'notempty',
+					'message' => 'You must put you last name in the box.');
+			}			
 			$this->ProgramResponse->modifyValidate($validate);
 		}
 	}	
@@ -26,9 +31,10 @@ class ProgramResponsesController extends AppController {
 			$this->redirect($this->referer());
 		} 
 		if(!empty($this->data)) {
-			$response = $this->ProgramResponse->findByUserId($this->Auth->user('id'));
-			$this->data['ProgramResponse']['id'] = $response['ProgramResponse']['id'];
+			$response = $this->ProgramResponse->findByUserId($this->Auth->user('id'));		
+			$this->data['ProgramResponse']['form_completed'] = date('m/d/y');		
 			$this->data['ProgramResponse']['answers'] = json_encode($this->data['ProgramResponse']);
+			$this->data['ProgramResponse']['id'] = $response['ProgramResponse']['id'];
 			$this->data['ProgramResponse']['program_id'] = $id;
 			if($this->ProgramResponse->save($this->data)) {
 				$programEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array('conditions' => array(
