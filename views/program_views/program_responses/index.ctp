@@ -31,7 +31,15 @@
 			<?php $attributes = Set::merge($attributes, json_decode($v['attributes'])); ?>
 		<?php endif; ?>						    
 		<?php echo $form->input($v['name'], $attributes); ?>
-		<?php echo '<br />'; ?>																				
-	<?php endforeach; ?>	
+		<?php echo '<br />'; ?>																					
+	<?php endforeach; ?>
+	<?php if($program['Program']['form_esign_required']) : ?>
+		<fieldset>
+			<legend>E-Sign</legend>
+			<span>Please put your last name in the box to agree.</span>
+			<?php echo $form->input('form_esignature', array('label' => 'I agree')) ?>	
+		</fieldset>
+		<br />
+	<?php endif ?>		
 	<?php echo $form->end('Submit'); ?>										
 <?php endif; ?>
