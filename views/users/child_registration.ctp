@@ -154,7 +154,7 @@
 			'https://www.google.com/accounts/NewAccount?service=mail&continue=
 			http://mail.google.com/mail/e-11-149ff52bbc80936376c01275ce56c7-f2297e1257c13b74d3ba16b09f1177fc98da2414&type=2',
 		array('target' => '_blank'));
-	    echo $this->Form->hidden('mini_registration', array('value' => 'child_website'));
+	    echo $this->Form->hidden('registration', array('value' => 'child_website'));
 	    ?>
 	    <br />
 	    <?php echo $this->Form->end(array('label' => __('Submit', true), 'class' => 'self-sign-kiosk-button')); ?>
