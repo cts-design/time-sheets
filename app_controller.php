@@ -74,6 +74,10 @@ class AppController extends Controller {
     function beforeFilter() {
 		parent::beforeFilter();
 		
+		if (!defined('CAKE_UNIT_TEST')) {
+			define('CAKE_UNIT_TEST', false);
+		}
+		
 		if ($this->RequestHandler->isAjax()) {
 			Configure::write('debug', 0);
 		}
