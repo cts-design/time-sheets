@@ -9,14 +9,16 @@ Ext.onReady(function(){
 		layout: 'accordion',
 		items: [{
 			title: 'Customer Info',
-			autoLoad: '/admin/program_responses/view/1/user',
+			autoLoad: '/admin/program_responses/view/'+programResponseId+'/user',
 			autoHeight: true	
 		},{
 			title: 'Program Response',
-			autoLoad: '/admin/program_responses/view/1/answers',
+			autoLoad: '/admin/program_responses/view/'+programResponseId+'/answers',
 			autoHeight: true
 		},{
-			title: 'Documents'
+			title: 'Documents',
+			autoLoad: '/admin/program_responses/view/'+programResponseId+'/documents',
+			autoHeight: true			
 		}]
 	});
 });
