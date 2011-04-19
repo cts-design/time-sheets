@@ -203,6 +203,26 @@ class ProgramResponsesController extends AppController {
 				$this->set($data);
 				$this->render('/elements/program_responses/answers');
 			}
+			if($type == 'documents') {
+				if(!empty($programResponse['ProgramResponseDoc'])) {
+					$this->loadModel('DocumentFilingCategory');
+					$filingCatList = $this->DocumentFilingCategory->find('list');
+					$docs = $programResponse['ProgramResponseDoc'];
+					$i = 0;
+					foreach($docs as $doc) {
+						$data['docs'][$i]['name'] = $filingCatList[$doc['cat_id']];
+						$data['docs'][$i]['filedDate'] = $doc['created'];
+						$data['docs'][$i]['link'] = '/admin/filed_documents/view/'.$doc['doc_id'];
+						$data['docs'][$i]['id'] = $doc['doc_id'];
+						firecake::log($doc['cat_id']);
+						$i++;
+					}
+								
+				}
+				else $data['docs'] = 'No program response documents filed for this user.';	
+				$this->set($data);
+				$this->render('/elements/program_responses/documents');
+			}			
 			
 		}
 	}
