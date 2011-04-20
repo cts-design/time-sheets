@@ -1,3 +1,13 @@
+<style>
+#programResponseDocs {
+	padding: 10px;
+}
+.response-doc {
+	border-bottom: 1px solid #666666;
+	margin-bottom: 10px;
+}
+</style>
+
 <div id="programResponseDocs">
 	<?php if(isset($docs)) : ?>
 		<?php if(is_array($docs)) :?>
