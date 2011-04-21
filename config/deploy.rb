@@ -52,6 +52,7 @@ task :finalize_deploy, :roles => [:web] do
 	run "mv #{release_path}/webroot/index.default.php #{release_path}/webroot/index.php"
 	run "mv #{release_path}/config/atlas.default.php #{release_path}/config/atlas.php"
 	run "mv #{release_path}/config/core.default.php #{release_path}/config/core.php"
+	run "mv #{release_path}/webroot/js/ckfinder/config.default.php #{release_path}/webroot/js/ckfinder/config.php"
 end	
 
 after "deploy:update_code", :finalize_deploy
