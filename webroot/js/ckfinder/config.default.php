@@ -60,7 +60,7 @@ Examples:
 
 ATTENTION: The trailing slash is required.
 */
-$baseUrl = 'http://atlas.dev/';
+$baseUrl = 'http://development.ctsfla.com/';
 
 /*
 $baseDir : the path to the local directory (in the server) which points to the
@@ -79,7 +79,7 @@ Examples:
 
 ATTENTION: The trailing slash is required.
 */
-$baseDir = '/wamp/www/atlas_v3/htdocs/app/webroot/';
+$baseDir = '/var/www/vhosts/development.ctsfla.com/atlas/current/webroot/';
 
 /*
  * ### Advanced Settings
