@@ -39,6 +39,10 @@ class LocationsController extends AppController {
 	}
 
 	function admin_add() {
+		if($this->Acl->check(array('model' => 'User',
+								   'foreign_key' => $this->Auth->user('id')), 'Locations/admin_add', '*')){
+			$_SESSION['ck_authorized'] = true;
+	    }		
 		if (!empty($this->data)) {
 			$this->Location->create();
 			if ($this->Location->save($this->data)) {
@@ -51,6 +55,10 @@ class LocationsController extends AppController {
 	}
 
 	function admin_edit($id = null) {
+		if($this->Acl->check(array('model' => 'User',
+								   'foreign_key' => $this->Auth->user('id')), 'Locations/admin_edit', '*')){
+			$_SESSION['ck_authorized'] = true;
+	    }
 		if (!$id && empty($this->data)) {
 			$this->Session->setFlash(__('Invalid location', true));
 			$this->redirect(array('action' => 'index'));
