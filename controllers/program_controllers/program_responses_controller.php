@@ -1,5 +1,6 @@
 <?php 
 
+
 class ProgramResponsesController extends AppController {
 	
 	var $name = 'ProgramResponses';
@@ -227,8 +228,148 @@ class ProgramResponsesController extends AppController {
 		}
 	}
 
-	function admin_approve() {
+	function admin_approve($id) {
+
+		$programResponse = $this->ProgramResponse->findById($id);
 		
+		$programPaperForms = $this->ProgramResponse->Program->ProgramPaperForm->findAllByProgramId($programResponse['Program']['id']);	
+		debug($programPaperForms);
+	
+		$answers = json_decode($programResponse['ProgramResponse']['answers'], true);
+		
+		foreach($answers as $k => $v) {
+			$data[$k] = $v;
+		}
+			
+		$user = $programResponse['User'];
+		
+		$data['user_id'] =  $user['id'];		
+		$data['firstname'] = $user['firstname'];
+		$data['middle_initial'] = $user['middle_initial'];
+		$data['lastname'] = $user['lastname'];
+		$data['surname'] = $user['surname'];
+		$data['address_1'] = $user['address_1']; 
+		$data['address_2'] = $user['address_2'];
+		$data['city'] = $user['city'];
+		$data['county'] = $user['county'];
+		$data['state'] = $user['state'];
+		$data['zip'] = $user['zip']; 
+		$data['ssn'] = $user['ssn'];
+		$data['dob'] = date('m/d/Y', strtotime($user['dob']));
+		$data['gender'] = $user['gender'];
+		$data['race'] = $user['race'];
+		$data['ethnicity'] = $user['ethnicity'];
+		$data['language'] = $user['language'];
+		$data['phone'] = $user['phone']; 
+		$data['email'] = $user['email'];
+		
+		$data['admin'] = $this->Auth->user('firstname') . ' ' . $this->Auth->user('lastname');
+		$data['todays_date'] = date('m/d/Y');
+		
+		debug($data);
+		if($programPaperForms) {
+			$programPaperForms = Set::extract($programPaperForms, '{n}.ProgramPaperForm');
+			foreach($programPaperForms as $programPaperForm) {
+				if(!$this->_createPDF($data, $template=$programPaperForm['template'])) {
+					$err[] = $programPaperForm['template'];
+					// @TODO finish error handling. if error template exists in array, alert admin an error
+					// occured while creating the pdf for that templete. 
+				}
+			}
+		}
+		
+		// @TODO mark program response complete and send end user a email to let them know they can 
+		// login and view thier certificate. 
+		
+	}
+
+	function _createFDF($file,$info){
+	    $data="%FDF-1.2\n%����\n1 0 obj\n<< \n/FDF << /Fields [ ";
+	    foreach($info as $field => $val){
+	        if(is_array($val)){
+	            $data.='<</T('.$field.')/V[';
+	            foreach($val as $opt)
+	                $data.='('.trim($opt).')';
+	            $data.=']>>';
+	        }else{
+	            $data.='<</T('.$field.')/V('.trim($val).')>>';
+	        }
+	    }
+	    $data.="] \n/F (".$file.") /ID [ <".md5(time()).">\n] >>".
+	        " \n>> \nendobj\ntrailer\n".
+	        "<<\n/Root 1 0 R \n\n>>\n%%EOF\n";
+	    return $data;
+	}
+	
+	function _createPDF($data, $template){
+		
+		// get the document relative path to the inital storage folder
+		$path = Configure::read('Document.storage.uploadPath');
+		// check to see if the directory for the current year exists
+		if(!file_exists($path . date('Y') . '/')) {
+		    // if directory does not exist, create it
+		    mkdir($path . date('Y'), 0755);
+		}
+		// add the current year to our path string
+		$path .= date('Y') . '/';
+		// check to see if the directory for the current month exists
+		if(!file_exists($path . date('m') . '/')) {
+		    // if directory does not exist, create it
+		    mkdir($path . date('m'), 0755);
+		}
+		// add the current month to our path string
+		$path .= date('m') . '/';
+			
+	    // build our fancy unique filename
+		$fdfFile = date('YmdHis') . rand(0, pow(10, 7)) . '.fdf';	
+		// pdf 	file named the same as the fdf file 
+		$pdfFile = str_replace('.fdf', '.pdf', $fdfFile);
+	   
+	    // the temp location to write the fdf file to
+	    $fdfDir = TMP . 'fdf';
+	    
+	    // need to know what file the data will go into
+	    $pdfTemplate = APP . 'storage' . DS . 'program_forms' . DS . $template;
+	    
+	    // generate the file content
+	    $fdfData = $this->_createFDF($pdfTemplate,$data);
+	
+	    // write the file out
+	    if($fp=fopen($fdfDir.DS.$fdfFile,'w')){
+	        fwrite($fp,$fdfData,strlen($fdfData));
+	        echo $fdfFile,' written successfully.';
+			// continue if file was written
+	    }
+	    else{
+	    	// will need to return false if fdf was not written
+	        die('Unable to create file: '.$fdfDir.DS.$fdfFile);
+	    }
+	    fclose($fp);
+		
+		$pdftkCommandString = WWW_ROOT . 'files' . DS . 'pdftk ' . APP . 'storage' . DS . 'program_forms' . DS . 
+			$template . ' fill_form ' . TMP . 'fdf' . DS . $fdfFile . ' output ' . $path . DS . $pdfFile . ' flatten';	
+				
+		passthru($pdftkCommandString, $return);
+		
+		if($return == 0) {
+			// delete fdf if pdf was created and filed successfully 
+			unlink($fdfDir . DS . $fdfFile);
+			
+			/*
+			$this->loadModel('FiledDocument');
+			// save an empty record to queued documents to generate unique doc id
+			$this->FiledDocument->User->QueuedDocument->create();
+			$this->FiledDocument->User->QueuedDocument->save();
+			$this->data['FiledDocument']['id'] = $this->FiledDocument->User->QueuedDocument->getLastInsertId();
+			// delete the empty record so it does not show up in the queue
+			$this->FiledDocument->User->QueuedDocument->delete($this->data['FiledDocument']['id']);					
+			$this->data['FiledDocument']['filename'] = $pdfFile;
+			$this->data['FiledDocument']['admin_id'] = $this->Auth->user('id');
+			$this->data['FiledDocument']['user_id'] = $data['user_id'];
+			*/
+			return true;		
+		}
+		else return false;				
 	}
 	
 }
