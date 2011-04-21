@@ -12,3 +12,4 @@ webroot/img/public/*
 webroot/img/_thumbs/*
 config/atlas.php
 webroot/index.php
+webroot/js/ckfinder/config.php
