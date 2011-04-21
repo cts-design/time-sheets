@@ -15,7 +15,7 @@ $(function() {
  	['Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
  	['NumberedList','BulletedList','-','Outdent','Indent','Blockquote'],
  	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
- 	['Link','Unlink','Image','Table','HorizontalRule','SpecialChar'],
+ 	['Anchor','Link','Unlink','Image','Table','HorizontalRule','SpecialChar'],
  	'/',
  	['Styles','Format','Font','FontSize'],
  	['TextColor','BGColor'],
