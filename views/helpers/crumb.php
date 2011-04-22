@@ -4,7 +4,7 @@ class CrumbHelper extends Helper
 var $link_class    = 'crumb_link'    ;    // css class for anchor tags.
 var $span_class    = 'crumb_span'    ;    // css class for the span element .(last label).
 var $separator    = ' > '            ;    // separator between links.
-var $protocol    = 'http'            ;
+var $protocol    = 'https'            ;
 var $helpers     = Array("Session");
 
 function addThisPage($title = null, $what_to_do = null , $level = null )    // add the calling page
