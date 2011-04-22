@@ -6,6 +6,13 @@
 	border-bottom: 1px solid #666666;
 	margin-bottom: 10px;
 }
+#programPaperForms {
+	padding: 10px;
+}
+.paper-form {
+	border-bottom: 1px solid #666666;
+	margin-bottom: 10px;
+}
 </style>
 
 <div id="programResponseDocs">
@@ -22,5 +29,17 @@
 		<?php else : ?>
 			<?php echo $docs ?>	
 		<?php endif ?>
+	<?php endif ?>
+</div>
+<div id="programPaperForms">
+	<?php if(isset($forms)) : ?>
+		<?php foreach($forms as $form) :?>
+			<div class="paper-form">
+				<p><strong>Form:</strong> <?php echo $form['name']; ?></p>
+				<?php echo $html->link('Generate', 
+					array('action' => 'generate', $form['id'], $form['programResponseId'])) ?>
+			</div>
+			
+		<?php endforeach ?>
 	<?php endif ?>
 </div>
