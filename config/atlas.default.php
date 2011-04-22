@@ -9,7 +9,7 @@
  */
 
 $config['URL'] = 'http://development.ctsfla.com/';
-$config['Admin']['URL'] = 'http://development.ctsfla.com/admin';
+$config['Admin']['URL'] = 'https://development.ctsfla.com/admin';
 //domain for use with cookies
 $config['domain'] = 'development.ctsfla.com';
 
