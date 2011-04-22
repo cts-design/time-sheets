@@ -208,19 +208,30 @@ class ProgramResponsesController extends AppController {
 				if(!empty($programResponse['ProgramResponseDoc'])) {
 					$this->loadModel('DocumentFilingCategory');
 					$filingCatList = $this->DocumentFilingCategory->find('list');
-					$docs = $programResponse['ProgramResponseDoc'];
+					$docs = Set::extract('/ProgramResponseDoc[paper_form<1]',  $programResponse);
 					$i = 0;
 					foreach($docs as $doc) {
-						$data['docs'][$i]['name'] = $filingCatList[$doc['cat_id']];
-						$data['docs'][$i]['filedDate'] = $doc['created'];
-						$data['docs'][$i]['link'] = '/admin/filed_documents/view/'.$doc['doc_id'];
-						$data['docs'][$i]['id'] = $doc['doc_id'];
-						firecake::log($doc['cat_id']);
+						$data['docs'][$i]['name'] = $filingCatList[$doc['ProgramResponseDoc']['cat_id']];
+						$data['docs'][$i]['filedDate'] = $doc['ProgramResponseDoc']['created'];
+						$data['docs'][$i]['link'] = '/admin/filed_documents/view/'.$doc['ProgramResponseDoc']['doc_id'];
+						$data['docs'][$i]['id'] = $doc['ProgramResponseDoc']['doc_id'];
 						$i++;
-					}
-								
+					}							
 				}
 				else $data['docs'] = 'No program response documents filed for this user.';	
+				
+				$forms = $this->ProgramResponse->
+					Program->ProgramPaperForm->findAllByProgramId($programResponse['Program']['id']);
+				if($forms) {
+					$i = 0;	
+					foreach($forms as $form) {
+						$data['forms'][$i]['name'] = $form['ProgramPaperForm']['name'];
+						$data['forms'][$i]['cat_3'] = $form['ProgramPaperForm']['cat_3'];
+						$data['forms'][$i]['programResponseId'] = $programResponse['ProgramResponse']['id'];
+						$data['forms'][$i]['id'] = $form['ProgramPaperForm']['id'];
+						$i++;
+					}					
+				}							
 				$this->set($data);
 				$this->render('/elements/program_responses/documents');
 			}			
@@ -230,10 +241,17 @@ class ProgramResponsesController extends AppController {
 
 	function admin_approve($id) {
 
-		$programResponse = $this->ProgramResponse->findById($id);
+
+		// @TODO mark program response complete and send end user a email to let them know they can 
+		// login and view thier certificate. 		
+	}
+
+	function admin_generate_form($formId, $programResponseId) {
+
+		$programResponse = $this->ProgramResponse->findById($programResponseId);
 		
-		$programPaperForms = $this->ProgramResponse->Program->ProgramPaperForm->findAllByProgramId($programResponse['Program']['id']);	
-		debug($programPaperForms);
+		$programPaperForm = $this->ProgramResponse->Program->ProgramPaperForm->findById($formId);	
+		debug($programPaperForm);
 	
 		$answers = json_decode($programResponse['ProgramResponse']['answers'], true);
 		
@@ -267,20 +285,12 @@ class ProgramResponsesController extends AppController {
 		$data['todays_date'] = date('m/d/Y');
 		
 		debug($data);
-		if($programPaperForms) {
-			$programPaperForms = Set::extract($programPaperForms, '{n}.ProgramPaperForm');
-			foreach($programPaperForms as $programPaperForm) {
-				if(!$this->_createPDF($data, $template=$programPaperForm['template'])) {
-					$err[] = $programPaperForm['template'];
-					// @TODO finish error handling. if error template exists in array, alert admin an error
-					// occured while creating the pdf for that templete. 
-				}
+		if($programPaperForm) {
+			if($this->_createPDF($data, $programPaperForm['template'])) {
+				// TODO finish success logic
 			}
 		}
-		
-		// @TODO mark program response complete and send end user a email to let them know they can 
-		// login and view thier certificate. 
-		
+				
 	}
 
 	function _createFDF($file,$info){
