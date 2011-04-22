@@ -91,6 +91,10 @@ class PagesController extends AppController {
 	}
 
 	function admin_add() {
+		if($this->Acl->check(array('model' => 'User',
+								   'foreign_key' => $this->Auth->user('id')), 'Pages/admin_add', '*')){
+			$_SESSION['ck_authorized'] = true;
+	    }
 		if (!empty($this->data)) {
 			$this->Page->create();
 			if ($this->Page->save($this->data)) {
@@ -105,6 +109,10 @@ class PagesController extends AppController {
 	}
 
 	function admin_edit($id = null) {
+		if($this->Acl->check(array('model' => 'User',
+								   'foreign_key' => $this->Auth->user('id')), 'Pages/admin_edit', '*')){
+			$_SESSION['ck_authorized'] = true;
+	    }
 		if (!$id && empty($this->data)) {
 			$this->Session->setFlash(__('Invalid page', true), 'flash_failure');
 			$this->redirect(array('action' => 'index'));
