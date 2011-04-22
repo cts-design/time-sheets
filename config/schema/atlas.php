@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2011-04-21 20:11:16 : 1303416676*/
+/* atlas schema generated on: 2011-04-22 20:14:29 : 1303503269*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -59,6 +59,13 @@ class atlasSchema extends CakeSchema {
 		'auto_lock_status' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 3),
 		'indexes' => array('PRIMARY' => array('column' => 'auto_lock_id', 'unique' => 1)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
+	);
+	var $cake_sessions = array(
+		'id' => array('type' => 'string', 'null' => false, 'default' => NULL, 'key' => 'primary', 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+		'data' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+		'expires' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
+		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'InnoDB')
 	);
 	var $career_seekers_surveys = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
@@ -349,6 +356,9 @@ class atlasSchema extends CakeSchema {
 		'program_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'template' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+		'cat_1' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+		'cat_2' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+		'cat_3' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
@@ -359,6 +369,7 @@ class atlasSchema extends CakeSchema {
 		'cat_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
 		'program_response_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'doc_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+		'paper_form' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'cat_id' => array('column' => 'cat_id', 'unique' => 0)),
