@@ -209,6 +209,8 @@ class ProgramResponsesController extends AppController {
 					$this->loadModel('DocumentFilingCategory');
 					$filingCatList = $this->DocumentFilingCategory->find('list');
 					$docs = Set::extract('/ProgramResponseDoc[paper_form<1]',  $programResponse);
+					$filedForms = Set::extract('/ProgramResponseDoc[paper_form=1]',  $programResponse);
+					firecake::log($filedForms);
 					$i = 0;
 					foreach($docs as $doc) {
 						$data['docs'][$i]['name'] = $filingCatList[$doc['ProgramResponseDoc']['cat_id']];
@@ -247,50 +249,87 @@ class ProgramResponsesController extends AppController {
 	}
 
 	function admin_generate_form($formId, $programResponseId) {
-
-		$programResponse = $this->ProgramResponse->findById($programResponseId);
-		
-		$programPaperForm = $this->ProgramResponse->Program->ProgramPaperForm->findById($formId);	
-		debug($programPaperForm);
-	
-		$answers = json_decode($programResponse['ProgramResponse']['answers'], true);
-		
-		foreach($answers as $k => $v) {
-			$data[$k] = $v;
-		}
-			
-		$user = $programResponse['User'];
-		
-		$data['user_id'] =  $user['id'];		
-		$data['firstname'] = $user['firstname'];
-		$data['middle_initial'] = $user['middle_initial'];
-		$data['lastname'] = $user['lastname'];
-		$data['surname'] = $user['surname'];
-		$data['address_1'] = $user['address_1']; 
-		$data['address_2'] = $user['address_2'];
-		$data['city'] = $user['city'];
-		$data['county'] = $user['county'];
-		$data['state'] = $user['state'];
-		$data['zip'] = $user['zip']; 
-		$data['ssn'] = $user['ssn'];
-		$data['dob'] = date('m/d/Y', strtotime($user['dob']));
-		$data['gender'] = $user['gender'];
-		$data['race'] = $user['race'];
-		$data['ethnicity'] = $user['ethnicity'];
-		$data['language'] = $user['language'];
-		$data['phone'] = $user['phone']; 
-		$data['email'] = $user['email'];
-		
-		$data['admin'] = $this->Auth->user('firstname') . ' ' . $this->Auth->user('lastname');
-		$data['todays_date'] = date('m/d/Y');
-		
-		debug($data);
-		if($programPaperForm) {
-			if($this->_createPDF($data, $programPaperForm['template'])) {
-				// TODO finish success logic
-			}
-		}
+		if($this->RequestHandler->isAjax()) {
 				
+			$programResponse = $this->ProgramResponse->findById($programResponseId);
+			
+			$programPaperForm = $this->ProgramResponse->Program->ProgramPaperForm->findById($formId);	
+		
+			$answers = json_decode($programResponse['ProgramResponse']['answers'], true);
+			
+			foreach($answers as $k => $v) {
+				$data[$k] = $v;
+			}
+				
+			$user = $programResponse['User'];
+			
+			$data['user_id'] =  $user['id'];		
+			$data['firstname'] = $user['firstname'];
+			$data['middle_initial'] = $user['middle_initial'];
+			$data['lastname'] = $user['lastname'];
+			$data['surname'] = $user['surname'];
+			$data['address_1'] = $user['address_1']; 
+			$data['address_2'] = $user['address_2'];
+			$data['city'] = $user['city'];
+			$data['county'] = $user['county'];
+			$data['state'] = $user['state'];
+			$data['zip'] = $user['zip']; 
+			$data['ssn'] = $user['ssn'];
+			$data['dob'] = date('m/d/Y', strtotime($user['dob']));
+			$data['gender'] = $user['gender'];
+			$data['race'] = $user['race'];
+			$data['ethnicity'] = $user['ethnicity'];
+			$data['language'] = $user['language'];
+			$data['phone'] = $user['phone']; 
+			$data['email'] = $user['email'];
+			
+			$data['admin'] = $this->Auth->user('firstname') . ' ' . $this->Auth->user('lastname');
+			$data['todays_date'] = date('m/d/Y');
+			
+			if($programPaperForm) {
+				
+				$pdf = $this->_createPDF($data, $programPaperForm['ProgramPaperForm']['template']);
+				if($pdf) {
+					debug('got here');
+					$this->loadModel('FiledDocument');
+					$this->FiledDocument->User->QueuedDocument->create();
+					$this->FiledDocument->User->QueuedDocument->save();
+					$this->data['FiledDocument']['id'] = $this->FiledDocument->User->QueuedDocument->getLastInsertId();
+					// delete the empty record so it does not show up in the queue
+					$this->FiledDocument->User->QueuedDocument->delete($this->data['FiledDocument']['id']);
+					$this->data['FiledDocument']['filename'] = $pdf;
+					$this->data['FiledDocument']['admin_id'] = $this->Auth->user('id');
+					$this->data['FiledDocument']['user_id'] = $user['id'];
+					$this->data['FiledDocument']['filed_location_id'] = $this->Auth->user('location_id');
+					$this->data['FiledDocument']['cat_1'] = $programPaperForm['ProgramPaperForm']['cat_1'];
+					$this->data['FiledDocument']['cat_2'] = $programPaperForm['ProgramPaperForm']['cat_2'];
+					$this->data['FiledDocument']['cat_3'] = $programPaperForm['ProgramPaperForm']['cat_3'];
+					$this->data['FiledDocument']['entry_method'] = 'Program Generated';
+					
+					$this->data['ProgramResponseDoc']['cat_id'] = $programPaperForm['ProgramPaperForm']['cat_3'];
+					$this->data['ProgramResponseDoc']['program_response_id'] =  $programResponseId;
+					$this->data['ProgramResponseDoc']['doc_id'] = $this->data['FiledDocument']['id'];
+					$this->data['ProgramResponseDoc']['paper_form'] = 1;
+					
+					$this->data['FiledDocument']['last_activity_admin_id'] = $this->Auth->user('id');
+					if($this->FiledDocument->save($this->data['FiledDocument']) && 
+					$this->ProgramResponse->ProgramResponseDoc->save($this->data['ProgramResponseDoc'])) {
+						$data['success'] = true;
+						$data['message'] = 'Form generated and filed successfully.';
+					}
+					else {
+						$data['success'] = false;
+						$data['message'] = 'Unable to file form at this time.';				
+					}			
+				}
+				else {
+					$data['success'] = false;
+					$data['message'] = 'Unable to create pdf form at this time.';						
+				}	
+			}
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}		
 	}
 
 	function _createFDF($file,$info){
@@ -347,12 +386,6 @@ class ProgramResponsesController extends AppController {
 	    // write the file out
 	    if($fp=fopen($fdfDir.DS.$fdfFile,'w')){
 	        fwrite($fp,$fdfData,strlen($fdfData));
-	        echo $fdfFile,' written successfully.';
-			// continue if file was written
-	    }
-	    else{
-	    	// will need to return false if fdf was not written
-	        die('Unable to create file: '.$fdfDir.DS.$fdfFile);
 	    }
 	    fclose($fp);
 		
@@ -364,20 +397,7 @@ class ProgramResponsesController extends AppController {
 		if($return == 0) {
 			// delete fdf if pdf was created and filed successfully 
 			unlink($fdfDir . DS . $fdfFile);
-			
-			/*
-			$this->loadModel('FiledDocument');
-			// save an empty record to queued documents to generate unique doc id
-			$this->FiledDocument->User->QueuedDocument->create();
-			$this->FiledDocument->User->QueuedDocument->save();
-			$this->data['FiledDocument']['id'] = $this->FiledDocument->User->QueuedDocument->getLastInsertId();
-			// delete the empty record so it does not show up in the queue
-			$this->FiledDocument->User->QueuedDocument->delete($this->data['FiledDocument']['id']);					
-			$this->data['FiledDocument']['filename'] = $pdfFile;
-			$this->data['FiledDocument']['admin_id'] = $this->Auth->user('id');
-			$this->data['FiledDocument']['user_id'] = $data['user_id'];
-			*/
-			return true;		
+			return $pdfFile;		
 		}
 		else return false;				
 	}

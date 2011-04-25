@@ -36,8 +36,7 @@
 		<?php foreach($forms as $form) :?>
 			<div class="paper-form">
 				<p><strong>Form:</strong> <?php echo $form['name']; ?></p>
-				<?php echo $html->link('Generate', 
-					array('action' => 'generate', $form['id'], $form['programResponseId'])) ?>
+				<a class="generate" id="<?php echo $form['id'] ?>">Generate</a>
 			</div>
 			
 		<?php endforeach ?>
