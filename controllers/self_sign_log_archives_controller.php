@@ -10,6 +10,11 @@ class SelfSignLogArchivesController extends AppController {
 
     var $name = 'SelfSignLogArchives';
     var $helpers = array('Excel');
+	
+	function beforeFilter(){
+		parent::beforeFilter();
+		$this->Security->validatePost = false;
+	}
 
     function admin_index() {
 		$this -> SelfSignLogArchive -> recursive = 0;
@@ -66,75 +71,83 @@ class SelfSignLogArchivesController extends AppController {
 	}
 
     function admin_report() {
-	if(!empty($this->data['SelfSignLogArchive']['locations'])
-		&& $this->data['SelfSignLogArchive']['locations'] != 'null') {
-	    $this->data['SelfSignLogArchive']['locations'] = explode(',', $this->data['SelfSignLogArchive']['locations']);
-	}
-	if(!empty($this->data['SelfSignLogArchive']['search'])) {
-	    $conditions = $this->_setConditions($this->data);
-	}
-	$this->SelfSignLogArchive->recursive = 0;
+		if(!empty($this->data['SelfSignLogArchive']['locations'])
+			&& $this->data['SelfSignLogArchive']['locations'] != 'null') {
+		    $this->data['SelfSignLogArchive']['locations'] = explode(',', $this->data['SelfSignLogArchive']['locations']);
+		}
+		if(!empty($this->data['SelfSignLogArchive']['search'])) {
+		    $conditions = $this->_setConditions($this->data);
+		}
+		$this->SelfSignLogArchive->recursive = 0;
 
-	if(isset($conditions)) {
+		if(isset($conditions)) {
+			
+			$count = $this->SelfSignLogArchive->find('count', array('conditions' => $conditions));
+			
+			if($count <= 5000) {
+				$data = $this->SelfSignLogArchive->find('all', array('conditions' => $conditions));
+			}
+			else {
+			 $this->Session->setFlash('Your results exceed 5000 records, please filter results further.', 'flash_failure');
+		   	 $this->redirect(array('action' => 'index'));	
+			}
+		}
+		else {
+		    $this->Session->setFlash('You must filter results to generate a report.', 'flash_failure');
+		    $this->redirect(array('action' => 'index'));		
+		}
+	    
+		$statuses = array('Open', 'Closed');
+		$locations = $this->SelfSignLogArchive->Kiosk->Location->find('list');
+		$buttons = $this->SelfSignLogArchive->Kiosk->KioskButton->MasterKioskButton->find('list');
 
-	    $data = $this->SelfSignLogArchive->find('all', array('conditions' => $conditions));
-	}
-	else
-	    $data = $this->SelfSignLogArchive->find('all');
+		foreach($data as $k => $v) {
+		    $report[$k]['Name'] = $v['User']['firstname'] . ' ' . $v['User']['lastname'];
+		    $report[$k]['Location'] = $v['Location']['name'];
+		    if(!empty($v['SelfSignLogArchive']['level_1'])) {
+				$report[$k]['Button 1'] = $buttons[$v['SelfSignLogArchive']['level_1']];
+		    }
+		    else $report[$k]['Button 1'] = '';
+			
+		    if(!empty($v['SelfSignLogArchive']['level_2'])) {
+				$report[$k]['Button 2'] = $buttons[$v['SelfSignLogArchive']['level_2']];
+		    }
+		    else $report[$k]['Button 2'] = '';
+			
+		    if(!empty($v['SelfSignLogArchive']['level_3'])) {
+			$report[$k]['Button 3'] = $buttons[$v['SelfSignLogArchive']['level_3']];
+		    }
+		    else $report[$k]['Button 3'] = '';
+		    $report[$k]['Other'] = $v['SelfSignLogArchive']['other'];
+		    $report[$k]['Status'] = $statuses[$v['SelfSignLogArchive']['status']];
+		    $report[$k]['Created'] = $v['SelfSignLogArchive']['created'];
+		    $report[$k]['Closed'] = $v['SelfSignLogArchive']['closed'];
+		    $report[$k]['Closed In'] = $v['SelfSignLogArchive']['closed_in'];
+		}
+		if(empty($report[0])) {
+		    $this->Session->setFlash('There are no results to generate a report', 'flash_failure');
+		    $this->redirect(array('action' => 'index'));
+		}
+		$title = "Self Sign Report for ";
 
-	$statuses = array('Open', 'Closed');
-	$locations = $this->SelfSignLogArchive->Kiosk->Location->find('list');
-	$buttons = $this->SelfSignLogArchive->Kiosk->KioskButton->MasterKioskButton->find('list');
+		if(empty($this->data['SelfSignLogArchive']['locations']) ||
+			$this->data['SelfSignLogArchive']['locations'] == 'null') {
+		    $title .= 'All Locations' . ' ' . date('m-d-Y');
+		}
+		else {
+		    foreach($this->data['SelfSignLogArchive']['locations'] as $k => $v) {
+			$title .= $locations[$v] . ', ';
+		    }
+		    $title .= ' ' . date('m-d-Y');
+		}
 
-	foreach($data as $k => $v) {
-	    $report[$k]['Name'] = $v['User']['firstname'] . ' ' . $v['User']['lastname'];
-	    $report[$k]['Location'] = $v['Location']['name'];
-	    if(!empty($v['SelfSignLogArchive']['level_1'])) {
-		$report[$k]['Button 1'] = $buttons[$v['SelfSignLogArchive']['level_1']];
-	    }
-	    else
-		$report[$k]['Button 1'] = '';
-	    if(!empty($v['SelfSignLogArchive']['level_2'])) {
-		$report[$k]['Button 2'] = $buttons[$v['SelfSignLogArchive']['level_2']];
-	    }
-	    else {
-		$report[$k]['Button 2'] = '';
-	    }
-	    if(!empty($v['SelfSignLogArchive']['level_3'])) {
-		$report[$k]['Button 3'] = $buttons[$v['SelfSignLogArchive']['level_3']];
-	    }
-	    else
-		$report[$k]['Button 3'] = '';
-	    $report[$k]['Other'] = $v['SelfSignLogArchive']['other'];
-	    $report[$k]['Status'] = $statuses[$v['SelfSignLogArchive']['status']];
-	    $report[$k]['Created'] = $v['SelfSignLogArchive']['created'];
-	    $report[$k]['Closed'] = $v['SelfSignLogArchive']['closed'];
-	    $report[$k]['Closed In'] = $v['SelfSignLogArchive']['closed_in'];
-	}
-	if(empty($report[0])) {
-	    $this->Session->setFlash('There are no results to generate a report', 'flash_failure');
-	    $this->redirect(array('action' => 'index'));
-	}
-	$title = "Self Sign Report for ";
-
-	if(empty($this->data['SelfSignLogArchive']['locations']) ||
-		$this->data['SelfSignLogArchive']['locations'] == 'null') {
-	    $title .= 'All Locations' . ' ' . date('m-d-Y');
-	}
-	else {
-	    foreach($this->data['SelfSignLogArchive']['locations'] as $k => $v) {
-		$title .= $locations[$v] . ', ';
-	    }
-	    $title .= ' ' . date('m-d-Y');
-	}
-
-	$data = array(
-	    'data' => $report,
-	    'title' => $title
-	);
-	Configure::write('debug', 0);
-	$this->layout = 'ajax';
-	$this->set($data);
+		$data = array(
+		    'data' => $report,
+		    'title' => $title
+		);
+		Configure::write('debug', 0);
+		$this->layout = 'ajax';
+		$this->set($data);
     }
 
     function admin_get_parent_buttons_ajax() {
