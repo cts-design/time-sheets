@@ -102,7 +102,8 @@ class ProgramResponsesController extends AppController {
 				if(!empty($this->params['url']['filter'])) {
 					switch($this->params['url']['filter']) {
 						case 'open':
-							$conditions['ProgramResponse.complete'] = 0; 
+							$conditions['ProgramResponse.complete'] = 0;
+							$conditions['ProgramResponse.expired'] = 0; 
 							break;
 						case 'closed':
 							$conditions['ProgramResponse.complete'] = 1;
@@ -115,12 +116,9 @@ class ProgramResponsesController extends AppController {
 							break;		 
 					}
 				}
-				if(!empty($conditions)) {
-					$data['totalCount'] = $this->ProgramResponse->find('count', array('conditions' => $conditions));	
-				}
-				else{
-					$data['totalCount'] = $this->ProgramResponse->find('count');	
-				}
+
+				$data['totalCount'] = $this->ProgramResponse->find('count', array('conditions' => $conditions));	
+
 				$this->paginate = array('conditions' => $conditions);
 				$responses =  $this->Paginate('ProgramResponse');
 				if($responses) {
@@ -149,7 +147,9 @@ class ProgramResponsesController extends AppController {
 						elseif($this->params['url']['filter'] == 'expired'){
 							$data['responses'][$i]['actions'] = 
 								'<a href="/admin/program_responses/view/'. 
-									$response['ProgramResponse']['id'].'">View</a> | <a>Mark Un-Expired</a>';							
+									$response['ProgramResponse']['id'].'">View</a> | ' . 
+									'<a href="/admin/program_responses/toggle_expired/' . 
+									$response['ProgramResponse']['id'] . '/0'.'" class="expire">Mark Un-Expired</a>';							
 						}
 						elseif($this->params['url']['filter'] == 'unapproved'){
 							$data['responses'][$i]['actions'] = 
@@ -159,7 +159,9 @@ class ProgramResponsesController extends AppController {
 						else {
 							$data['responses'][$i]['actions'] = 
 								'<a href="/admin/program_responses/view/'. 
-									$response['ProgramResponse']['id'].'">View</a> | <a>Mark Expired</a>';
+									$response['ProgramResponse']['id'].'">View</a> | ' .
+									'<a href="/admin/program_responses/toggle_expired/' . 
+									$response['ProgramResponse']['id'] . '/1'.'" class="expire">Mark Expired</a>';
 						}
 						$i++;		
 					}				
@@ -364,6 +366,30 @@ class ProgramResponsesController extends AppController {
 			$this->set(compact('data'));
 			$this->render(null, null, '/elements/ajaxreturn');
 		}		
+	}
+
+	function admin_toggle_expired($programResponseId, $expired) {
+		if($this->RequestHandler->isAjax()) {
+			$this->data['ProgramResponse']['id'] = $programResponseId;
+			$this->data['ProgramResponse']['expired'] = $expired;	
+			if($this->ProgramResponse->save($this->data)) {
+				$data['success'] = true;
+				switch($expired) {
+					case 0:
+						$data['message'] = 'Response marked un-expired successfully.';
+						break;
+					case 1:
+						$data['message'] = 'Response marked expired successfully.';
+						break;	
+				}
+			}
+			else {
+				$data['success'] = false;
+				$data['message'] = 'An error has occured, please try again.';
+			}
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');			
+		}
 	}
 
 	function _createFDF($file,$info){
