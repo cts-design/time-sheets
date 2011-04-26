@@ -188,7 +188,6 @@ class ProgramResponsesController extends AppController {
 		if($this->RequestHandler->isAjax()){
 			$programResponse = $this->ProgramResponse->findById($id);
 			if($type == 'user') {
-				FireCake::log($programResponse);
 				$user = $programResponse['User'];
 				$this->set(compact('user'));
  				$this->render('/elements/program_responses/user_info');
@@ -210,23 +209,41 @@ class ProgramResponsesController extends AppController {
 					$filingCatList = $this->DocumentFilingCategory->find('list');
 					$docs = Set::extract('/ProgramResponseDoc[paper_form<1]',  $programResponse);
 					$filedForms = Set::extract('/ProgramResponseDoc[paper_form=1]',  $programResponse);
-					firecake::log($filedForms);
 					$i = 0;
 					foreach($docs as $doc) {
 						$data['docs'][$i]['name'] = $filingCatList[$doc['ProgramResponseDoc']['cat_id']];
 						$data['docs'][$i]['filedDate'] = $doc['ProgramResponseDoc']['created'];
-						$data['docs'][$i]['link'] = '/admin/filed_documents/view/'.$doc['ProgramResponseDoc']['doc_id'];
+						$data['docs'][$i]['link'] = '<a href="/admin/filed_documents/view/'.
+							$doc['ProgramResponseDoc']['doc_id'] . '" target="_blank">View Doc</a>';
 						$data['docs'][$i]['id'] = $doc['ProgramResponseDoc']['doc_id'];
 						$i++;
 					}							
 				}
 				else $data['docs'] = 'No program response documents filed for this user.';	
-				
+				firecake::log($docs);		
 				$forms = $this->ProgramResponse->
 					Program->ProgramPaperForm->findAllByProgramId($programResponse['Program']['id']);
 				if($forms) {
 					$i = 0;	
 					foreach($forms as $form) {
+						if($filedForms) {
+							foreach($filedForms as $filedForm) {
+								if($filedForm['ProgramResponseDoc']['cat_id'] == $form['ProgramPaperForm']['cat_3']) {
+									$data['forms'][$i]['link'] = '<a href="/admin/program_responses/regenerate_form/'. 
+										$filedForm['ProgramResponseDoc']['doc_id'] .'">Regenerate</a>';
+									$data['forms'][$i]['view'] = '<a href="/admin/filed_documents/view/' . 
+										$filedForm['ProgramResponseDoc']['doc_id'].'" target="_blank">View Doc</a>';
+									$data['forms'][$i]['doc_id'] = $filedForm['ProgramResponseDoc']['doc_id'];
+									$data['forms'][$i]['filed_on'] = $filedForm['ProgramResponseDoc']['created'];
+								}
+							}							
+						}
+
+						if(!isset($data['forms'][$i]['link'])) {
+							$data['forms'][$i]['link'] = '<a class="generate" href="/admin/program_responses/generate_form/'. 
+								$form['ProgramPaperForm']['id'] . '/' . 
+								$programResponse['ProgramResponse']['id'] .'">Generate</a>';
+						}
 						$data['forms'][$i]['name'] = $form['ProgramPaperForm']['name'];
 						$data['forms'][$i]['cat_3'] = $form['ProgramPaperForm']['cat_3'];
 						$data['forms'][$i]['programResponseId'] = $programResponse['ProgramResponse']['id'];
@@ -286,11 +303,9 @@ class ProgramResponsesController extends AppController {
 			$data['admin'] = $this->Auth->user('firstname') . ' ' . $this->Auth->user('lastname');
 			$data['todays_date'] = date('m/d/Y');
 			
-			if($programPaperForm) {
-				
+			if($programPaperForm) {				
 				$pdf = $this->_createPDF($data, $programPaperForm['ProgramPaperForm']['template']);
 				if($pdf) {
-					debug('got here');
 					$this->loadModel('FiledDocument');
 					$this->FiledDocument->User->QueuedDocument->create();
 					$this->FiledDocument->User->QueuedDocument->save();
@@ -319,7 +334,12 @@ class ProgramResponsesController extends AppController {
 					}
 					else {
 						$data['success'] = false;
-						$data['message'] = 'Unable to file form at this time.';				
+						$data['message'] = 'Unable to file form at this time.';
+						$path = Configure::read('Document.storage.uploadPath');
+						$path .= substr($pdf, 0, 4) . DS;
+						$path .= substr($pdf, 4, 2) . DS;
+						$file = $path . $pdf;
+						unlink($file);
 					}			
 				}
 				else {
