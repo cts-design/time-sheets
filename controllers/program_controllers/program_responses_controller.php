@@ -229,12 +229,15 @@ class ProgramResponsesController extends AppController {
 						if($filedForms) {
 							foreach($filedForms as $filedForm) {
 								if($filedForm['ProgramResponseDoc']['cat_id'] == $form['ProgramPaperForm']['cat_3']) {
-									$data['forms'][$i]['link'] = '<a href="/admin/program_responses/regenerate_form/'. 
-										$filedForm['ProgramResponseDoc']['doc_id'] .'">Regenerate</a>';
+									$data['forms'][$i]['link'] = 
+										'<a class="generate" href="/admin/program_responses/generate_form/'. 
+										$form['ProgramPaperForm']['id'] . '/' . 
+										$programResponse['ProgramResponse']['id'] .'/'. 
+										$filedForm['ProgramResponseDoc']['doc_id'] . '">Re-Generate</a>';
 									$data['forms'][$i]['view'] = '<a href="/admin/filed_documents/view/' . 
 										$filedForm['ProgramResponseDoc']['doc_id'].'" target="_blank">View Doc</a>';
 									$data['forms'][$i]['doc_id'] = $filedForm['ProgramResponseDoc']['doc_id'];
-									$data['forms'][$i]['filed_on'] = $filedForm['ProgramResponseDoc']['created'];
+									$data['forms'][$i]['filed_on'] = $filedForm['ProgramResponseDoc']['created'];	
 								}
 							}							
 						}
@@ -265,7 +268,7 @@ class ProgramResponsesController extends AppController {
 		// login and view thier certificate. 		
 	}
 
-	function admin_generate_form($formId, $programResponseId) {
+	function admin_generate_form($formId, $programResponseId, $docId=null) {
 		if($this->RequestHandler->isAjax()) {
 				
 			$programResponse = $this->ProgramResponse->findById($programResponseId);
@@ -307,11 +310,21 @@ class ProgramResponsesController extends AppController {
 				$pdf = $this->_createPDF($data, $programPaperForm['ProgramPaperForm']['template']);
 				if($pdf) {
 					$this->loadModel('FiledDocument');
-					$this->FiledDocument->User->QueuedDocument->create();
-					$this->FiledDocument->User->QueuedDocument->save();
-					$this->data['FiledDocument']['id'] = $this->FiledDocument->User->QueuedDocument->getLastInsertId();
-					// delete the empty record so it does not show up in the queue
-					$this->FiledDocument->User->QueuedDocument->delete($this->data['FiledDocument']['id']);
+					if(!$docId) {
+						$this->FiledDocument->User->QueuedDocument->create();
+						$this->FiledDocument->User->QueuedDocument->save();
+						$docId = $this->FiledDocument->User->QueuedDocument->getLastInsertId();
+						// delete the empty record so it does not show up in the queue
+						$this->FiledDocument->User->QueuedDocument->delete($docId);						
+					}
+					else {
+						$this->data['ProgramResponseDoc']['id'] = 
+						$this->ProgramResponse->ProgramResponseDoc->field('id', array(
+								'ProgramResponseDoc.doc_id' => $docId,
+								'ProgramResponseDoc.program_response_id' => $programResponseId));
+					}
+									
+					$this->data['FiledDocument']['id'] = $docId;
 					$this->data['FiledDocument']['filename'] = $pdf;
 					$this->data['FiledDocument']['admin_id'] = $this->Auth->user('id');
 					$this->data['FiledDocument']['user_id'] = $user['id'];
@@ -320,13 +333,14 @@ class ProgramResponsesController extends AppController {
 					$this->data['FiledDocument']['cat_2'] = $programPaperForm['ProgramPaperForm']['cat_2'];
 					$this->data['FiledDocument']['cat_3'] = $programPaperForm['ProgramPaperForm']['cat_3'];
 					$this->data['FiledDocument']['entry_method'] = 'Program Generated';
+					$this->data['FiledDocument']['last_activity_admin_id'] = $this->Auth->user('id');
 					
 					$this->data['ProgramResponseDoc']['cat_id'] = $programPaperForm['ProgramPaperForm']['cat_3'];
 					$this->data['ProgramResponseDoc']['program_response_id'] =  $programResponseId;
-					$this->data['ProgramResponseDoc']['doc_id'] = $this->data['FiledDocument']['id'];
+					$this->data['ProgramResponseDoc']['doc_id'] = $docId;
 					$this->data['ProgramResponseDoc']['paper_form'] = 1;
 					
-					$this->data['FiledDocument']['last_activity_admin_id'] = $this->Auth->user('id');
+					
 					if($this->FiledDocument->save($this->data['FiledDocument']) && 
 					$this->ProgramResponse->ProgramResponseDoc->save($this->data['ProgramResponseDoc'])) {
 						$data['success'] = true;
