@@ -65,11 +65,6 @@ Ext.onReady(function(){
 										else {
 											Ext.Msg.alert('Status', 'An error has occured');
 										}
-									},
-									listeners: {
-										beforerequest: function() {
-											this.showSpinner();
-										}
 									}
 								})
 							}
@@ -80,8 +75,4 @@ Ext.onReady(function(){
 			}			
 		}]
 	});
-
-
-		
-	
 });
