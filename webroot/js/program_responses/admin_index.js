@@ -92,41 +92,6 @@ Ext.onReady(function(){
 	
 	Ext.reg('gridpanel', Atlas.grid.ProgramResponseGrid);
 	
-	var allProgramResponsesGrid = new Atlas.grid.ProgramResponseGrid({
-		title: 'All',
-		columns: [{
-			id: 'id',
-			header: 'Id',
-			dataIndex: 'id',
-			width: 30,
-			sortable: true	
-		},{
-			header: 'Customer',
-			dataIndex: 'User-lastname',
-			width: 150,
-			sortable: true	
-		},{
-			header: 'Created',
-			dataIndex: 'created',
-			xtype: 'datecolumn',
-			format: 'm/d/Y g:i a',
-			sortable: true	
-		},{
-			header: 'Modified',
-			dataIndex: 'modified',
-			xtype: 'datecolumn',
-			format: 'm/d/Y g:i a',
-			sortable: true	
-		},{
-			header: 'Status', 
-			dataIndex: 'status',
-			width: 70
-		},{
-			header: 'Actions',
-			dataIndex: 'actions'
-		}]		
-	});
-	
 	var openProgramResponsesGrid = new Atlas.grid.ProgramResponseGrid({
 		title: 'Open'		
 	});
@@ -150,7 +115,6 @@ Ext.onReady(function(){
 	    frame: true,
 	    defaults: {autoHeight: true},
 	    items: [
-	    	allProgramResponsesGrid, 
 	    	openProgramResponsesGrid, 
 	    	closedProgramResponsesGrid,
 	    	expiredProgramResponsesGrid
@@ -158,9 +122,6 @@ Ext.onReady(function(){
 	    listeners: {
 	    	tabchange: function(TabPanel, Panel) {
 	    		switch(Panel.title) {
-	    			case 'All':
-	    				programResponseStore.setBaseParam('filter','');
-	    				break;
 	    			case 'Open':
 	    				programResponseStore.setBaseParam('filter','open');
 	    				break;
@@ -187,5 +148,35 @@ Ext.onReady(function(){
 	    		
 	    	}
 	    }
+	});
+	Ext.get('programResponseTabs').on('click', function(e, t){
+		t = Ext.get(t);
+		var url = '';
+		if(t.hasClass('expire')) {
+			Ext.Msg.wait('Please wait', 'Status');
+			e.preventDefault();
+			Ext.Ajax.request({
+				url: t.getAttribute('href'),
+				success: function(response, opts) {
+					var obj = Ext.decode(response.responseText);
+					if(obj.success) {
+						Ext.Msg.show({
+							title: 'Status',
+							msg: obj.message,
+							buttons: Ext.Msg.OK,
+							fn: function() {
+								programResponseStore.reload();
+							}						
+						});
+					}	
+					else {
+						opts.failure(response, opts, obj);
+					}								
+				},
+				failure: function(response, opts, obj) {
+					Ext.Msg.alert('Status', obj.message)
+				}
+			});
+		}
 	});
 });    
