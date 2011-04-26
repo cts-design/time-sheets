@@ -3,6 +3,11 @@
  */
 
 Ext.onReady(function(){
+	
+	var hideProgress = new Ext.util.DelayedTask(function(){
+	    progress.hide();
+	});
+	
 	var programResponsePanel = new Ext.Panel({
 		title: 'Program Response',
 		renderTo: 'programResponsePanel',
@@ -24,6 +29,7 @@ Ext.onReady(function(){
 			}				
 		},{
 			title: 'Documents',
+			id: 'documents',
 			autoHeight: true,
 			listeners: {
 				beforeexpand: updateDoc = function() {
@@ -31,20 +37,39 @@ Ext.onReady(function(){
 						url: '/admin/program_responses/view/'+programResponseId+'/documents'
 					});
 					this.getUpdater().on('update', function(){
-						Ext.get('programPaperForms').on('click', function(e, t){
+						Ext.get('programPaperForms').on('click', function(e, t){						
 							t = Ext.get(t);
-							if(t.hasClass('generate')) {
-								console.log(t);
-								var url = '/admin/program_responses/generate_form/'+t.id+'/'+programResponseId; 
-								console.log(url);
+							if(t.hasClass('generate') || t.hasClass('regenerate')) {
+								e.preventDefault();
+								Ext.Msg.progress('Status', 'Generating Form');					
 								Ext.Ajax.request({
-									url: url,
+									url: t.getAttribute('href'),
 									success: function(response, opts) {
 										var obj = Ext.decode(response.responseText);
-										Ext.Msg.alert('Status', obj.message);
+										if(obj.success) {
+											progress = Ext.Msg.updateProgress(1, 'Complete', obj.message);
+											hideProgress.delay(2000);
+											Ext.getCmp('documents').getUpdater().update({
+												url: '/admin/program_responses/view/'+programResponseId+'/documents'
+											});											
+										}
+										else {
+											opts.failure(response, opts);
+										}
 									},
-									failure: function() {
-										
+									failure: function(response, opts) {
+										var obj = Ext.decode(response.responseText);
+										if(!obj.success) {
+											Ext.Msg.alert('Status', obj.message);
+										}
+										else {
+											Ext.Msg.alert('Status', 'An error has occured');
+										}
+									},
+									listeners: {
+										beforerequest: function() {
+											this.showSpinner();
+										}
 									}
 								})
 							}
@@ -55,6 +80,7 @@ Ext.onReady(function(){
 			}			
 		}]
 	});
+
 
 		
 	
