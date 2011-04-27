@@ -287,13 +287,13 @@ class User extends AppModel {
 		);
 		if (isset($this->data['User']['mini_registration']) &&
 			$this->data['User']['mini_registration'] == 'kiosk') {
-		    $this->pauseValidation($miniRules);
+			    $this->pauseValidation($miniRules);
 		}
-		
+
 		if (isset($this->data['User']['self_sign_edit']) &&
 			$this->data['User']['self_sign_edit'] == 'edit') {
-		    $miniRules['ssn'] = 'notempty';
-		    $this->pauseValidation($miniRules);
+			    $miniRules['ssn'] = 'notempty';
+			    $this->pauseValidation($miniRules);
 		}
 		if (isset($this->data['User']['admin_registration'])) {
 		    $rules = array(
@@ -312,6 +312,13 @@ class User extends AppModel {
 			'race' => 'notempty'
 		    );
 		    $this->pauseValidation($rules);
+		}
+		if(isset($this->data['User']['registration']) && 
+			$this->data['User']['registration'] == 'child_website') {
+			    $rules = array(
+					'email' => 'unique'
+			    );
+				$this->pauseValidation($rules);					
 		}
 		if (isset($this->data['User']['role_id']) && $this->data['User']['role_id'] == 1) {
 		    $rules = array(
