@@ -8,19 +8,19 @@
  * @package ATLAS V3
  */
 
-$config['URL'] = 'http://development.ctsfla.com/';
-$config['Admin']['URL'] = 'http://development.ctsfla.com/admin';
+$config['URL'] = 'http://ccc.atlasforworkforce.com/';
+$config['Admin']['URL'] = 'http://ccc.atlasforworkforce.com/admin';
 //domain for use with cookies
-$config['domain'] = 'development.ctsfla.com';
+$config['domain'] = 'ccc.atlasforworkforce.com';
 
 // Company Name
 $config['Company']['name'] = 'ATLAS';
 
 // System Email From Address
-$config['System']['email'] = 'noreply@atlasforworkforce.com';
+$config['System']['email'] = 'noreply@ccc.atlasforworkforce.com';
 
 // Pre Pop Email
-$config['PrePop']['email'] = '@atlasforworkforce.com';
+$config['PrePop']['email'] = '@ccc.atlasforworkforce.com';
 
 // Document Storage location
 $config['Document']['storage']['path'] = '/storage/';

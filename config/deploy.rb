@@ -3,16 +3,16 @@ require 'capcake'
 
 set :application, 'atlas' # Your app's location (domain or sub-domain name)
 set :repository, "git@git.assembla.com:CTSATLAS.git"
-set :branch, 'staging'
+set :branch, 'cccp_staging'
 set :deploy_via, :export
 
 set :default_shell, '/bin/bash'
 
-set :deploy_to, "/var/www/vhosts/development.ctsfla.com/atlas"
+set :deploy_to, "/var/www/vhosts/ccc.atlasforworkforce.com/atlas"
 
-server "development.ctsfla.com", :app, :web, :db, :primary => true
+server "ccc.atlasforworkforce.com", :app, :web, :db, :primary => true
 
-set :user, 'dev4cts'
+set :user, 'b78ghfp6y'
 
 # Cake Settings
 set :cake_branch, "master"
