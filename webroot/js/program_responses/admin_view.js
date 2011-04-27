@@ -8,10 +8,40 @@ Ext.onReady(function(){
 	    progress.hide();
 	});
 	
+	var tb = new Ext.Toolbar({
+		hidden: true,
+		buttonAlign: 'right',
+		items: [{
+			text: 'Approve',
+			icon: '/img/icons/accept.png',
+			handler: function() {
+				Ext.Msg.wait('Please wait', 'Status');
+				Ext.Ajax.request({
+					url: '/admin/program_responses/approve/'+programResponseId,
+					success: function(response, opts) {
+						var obj = Ext.decode(response.responseText);
+						if(obj.success) {
+							tb.hide();
+							Ext.Msg.alert('Status', obj.message);						
+						}
+					},
+					failure: function() {
+						
+					}
+				})
+			}
+		}]
+	})
+	
+	if(requiresApproval) {
+		tb.show();
+	}
+		
 	var programResponsePanel = new Ext.Panel({
 		title: 'Program Response',
 		renderTo: 'programResponsePanel',
 		layout: 'accordion',
+		tbar: tb,
 		items: [{
 			title: 'Customer Info',
 			autoLoad: '/admin/program_responses/view/'+programResponseId+'/user',
