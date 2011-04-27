@@ -90,10 +90,10 @@ class ProgramResponsesController extends AppController {
 		$title_for_layout = 'Document Upload Success';
 		$this->set(compact('title_for_layout'));
 	}
-	
-	function submission_received() {
 		
-	}
+	function view_cert() {
+		
+	} 
 	
 	function admin_index($id = null) {
 		if($id){
@@ -154,7 +154,7 @@ class ProgramResponsesController extends AppController {
 						elseif($this->params['url']['filter'] == 'unapproved'){
 							$data['responses'][$i]['actions'] = 
 								'<a href="/admin/program_responses/view/'. 
-									$response['ProgramResponse']['id'].'">View</a> | <a>Approve</a>';							
+									$response['ProgramResponse']['id'].'">View</a>';							
 						}							
 						else {
 							$data['responses'][$i]['actions'] = 
@@ -186,9 +186,8 @@ class ProgramResponsesController extends AppController {
 	}
 
 	function admin_view($id, $type=null) {
-		$title_for_layout = 'Program Response';
-		if($this->RequestHandler->isAjax()){
-			$programResponse = $this->ProgramResponse->findById($id);
+		$programResponse = $this->ProgramResponse->findById($id);
+		if($this->RequestHandler->isAjax()){			
 			if($type == 'user') {
 				$user = $programResponse['User'];
 				$this->set(compact('user'));
@@ -256,15 +255,52 @@ class ProgramResponsesController extends AppController {
 						$i++;
 					}					
 				}							
-				$this->set($data);
+				$this->set($data);			
 				$this->render('/elements/program_responses/documents');
 			}			
-			
 		}
+		if($programResponse['Program']['approval_required'] && 
+		$programResponse['ProgramResponse']['needs_approval'] == 1) {
+			$approval = true;
+		}
+		else {
+			$approval = 'false';
+		}
+		$title_for_layout = 'Program Response';
+		$this->set(compact('title_for_layout', 'approval'));
 	}
 
-	function admin_approve($id) {
-
+	function admin_approve($programResponseId=null) {
+		if($this->RequestHandler->isAjax()) {
+			if(!$programResponseId) {
+				$data['success'] = false;
+				$data['message'] = 'Invalid program response id.';
+			}
+			else {
+				$programResponse = $this->ProgramResponse->findById($programResponseId);
+				firecake::log($programResponse);
+				$this->data['ProgramResponse']['id'] = $programResponseId;
+				$this->data['ProgramResponse']['needs_approval'] = 0;
+				$this->data['ProgramResponse']['complete'] = 1;
+				if($this->ProgramResponse->save($this->data)) {
+					$data['success'] = true;
+					$data['message'] = 'Program response was approved successfully.';
+					$programEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', 
+						array('conditions' => array(
+							'ProgramEmail.program_id' => $programResponse['Program']['id'],
+							'ProgramEmail.type' => 'final'
+					)));
+					$user['User'] = $programResponse['User'];
+					$this->Notifications->sendProgramEmail($programEmail, $user);					
+				}
+				else {
+					$data['success'] = false;
+					$data['message'] = 'An error occured, please try again.'; 
+				}
+				$this->set(compact('data'));
+				$this->render(null, null, '/elements/ajaxreturn');
+			}
+		}
 
 		// @TODO mark program response complete and send end user a email to let them know they can 
 		// login and view thier certificate. 		
@@ -275,6 +311,8 @@ class ProgramResponsesController extends AppController {
 				
 			$programResponse = $this->ProgramResponse->findById($programResponseId);
 			
+			$data = $programResponse['User'];
+			
 			$programPaperForm = $this->ProgramResponse->Program->ProgramPaperForm->findById($formId);	
 		
 			$answers = json_decode($programResponse['ProgramResponse']['answers'], true);
@@ -282,29 +320,8 @@ class ProgramResponsesController extends AppController {
 			foreach($answers as $k => $v) {
 				$data[$k] = $v;
 			}
-				
-			$user = $programResponse['User'];
-			
-			$data['user_id'] =  $user['id'];		
-			$data['firstname'] = $user['firstname'];
-			$data['middle_initial'] = $user['middle_initial'];
-			$data['lastname'] = $user['lastname'];
-			$data['surname'] = $user['surname'];
-			$data['address_1'] = $user['address_1']; 
-			$data['address_2'] = $user['address_2'];
-			$data['city'] = $user['city'];
-			$data['county'] = $user['county'];
-			$data['state'] = $user['state'];
-			$data['zip'] = $user['zip']; 
-			$data['ssn'] = $user['ssn'];
-			$data['dob'] = date('m/d/Y', strtotime($user['dob']));
-			$data['gender'] = $user['gender'];
-			$data['race'] = $user['race'];
-			$data['ethnicity'] = $user['ethnicity'];
-			$data['language'] = $user['language'];
-			$data['phone'] = $user['phone']; 
-			$data['email'] = $user['email'];
-			
+						
+			$data['dob'] = date('m/d/Y', strtotime($data['dob']));		
 			$data['admin'] = $this->Auth->user('firstname') . ' ' . $this->Auth->user('lastname');
 			$data['todays_date'] = date('m/d/Y');
 			
@@ -329,7 +346,7 @@ class ProgramResponsesController extends AppController {
 					$this->data['FiledDocument']['id'] = $docId;
 					$this->data['FiledDocument']['filename'] = $pdf;
 					$this->data['FiledDocument']['admin_id'] = $this->Auth->user('id');
-					$this->data['FiledDocument']['user_id'] = $user['id'];
+					$this->data['FiledDocument']['user_id'] = $data['id'];
 					$this->data['FiledDocument']['filed_location_id'] = $this->Auth->user('location_id');
 					$this->data['FiledDocument']['cat_1'] = $programPaperForm['ProgramPaperForm']['cat_1'];
 					$this->data['FiledDocument']['cat_2'] = $programPaperForm['ProgramPaperForm']['cat_2'];
