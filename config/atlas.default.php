@@ -31,6 +31,9 @@ $config['Document']['storage']['uploadPath'] = '../storage/';
 // Document Jpeg location
 $config['Document']['jpeg']['path'] = '/storage/thumbnails/';
 
+// Program storage path
+$config['Program']['media']['path'] = '/storage/program_media/';
+
 // Pagination Limits
 $config['Pagination']['customer']['limit'] = 10 ;
 $config['Pagination']['admin']['limit'] = 10 ;
