@@ -181,7 +181,7 @@ class ProgramResponsesController extends AppController {
 	}
 
 	function admin_view($id, $type=null) {
-		$programResponse = $this->ProgramResponse->findById($id);
+		$programResponse = $this->ProgramResponse->findById($id);	
 		if($this->RequestHandler->isAjax()){			
 			if($type == 'user') {
 				$user = $programResponse['User'];
@@ -200,6 +200,7 @@ class ProgramResponsesController extends AppController {
 				$this->render('/elements/program_responses/answers');
 			}
 			if($type == 'documents') {
+				firecake::log($programResponse);
 				if(!empty($programResponse['ProgramResponseDoc'])) {
 					$this->loadModel('DocumentFilingCategory');
 					$filingCatList = $this->DocumentFilingCategory->find('list');
@@ -215,14 +216,13 @@ class ProgramResponsesController extends AppController {
 						$i++;
 					}							
 				}
-				else $data['docs'] = 'No program response documents filed for this user.';	
-				firecake::log($docs);		
+				else $data['docs'] = 'No program response documents filed for this user.';			
 				$forms = $this->ProgramResponse->
-					Program->ProgramPaperForm->findAllByProgramId($programResponse['Program']['id']);
+					Program->ProgramPaperForm->findAllByProgramId($programResponse['Program']['id']);	
 				if($forms) {
 					$i = 0;	
 					foreach($forms as $form) {
-						if($filedForms) {
+						if(isset($filedForms)) {
 							foreach($filedForms as $filedForm) {
 								if($filedForm['ProgramResponseDoc']['cat_id'] == $form['ProgramPaperForm']['cat_3']) {
 									$data['forms'][$i]['link'] = 
@@ -255,8 +255,8 @@ class ProgramResponsesController extends AppController {
 			}			
 		}
 		if($programResponse['Program']['approval_required'] && 
-		$programResponse['ProgramResponse']['needs_approval'] == 1) {
-			$approval = true;
+			$programResponse['ProgramResponse']['needs_approval'] == 1) {
+				$approval = true;				
 		}
 		else {
 			$approval = 'false';
@@ -273,7 +273,24 @@ class ProgramResponsesController extends AppController {
 			}
 			else {
 				$programResponse = $this->ProgramResponse->findById($programResponseId);
-				firecake::log($programResponse);
+				$forms = $this->ProgramResponse->
+					Program->ProgramPaperForm->findAllByProgramId($programResponse['Program']['id']);					
+				if(!empty($programResponse['ProgramResponseDoc']) && !empty($forms)) {
+					
+					$catIds = Set::extract('/ProgramResponseDoc[paper_form=1]/cat_id', $programResponse);
+					
+					$formCatIds = Set::extract('/ProgramPaperForm/cat_3', $forms);
+					
+					if(!empty($formCatIds)) {
+						$result = array_diff($formCatIds, $catIds);
+						if(!empty($result)) {
+							$data['success'] = false;
+							$data['message'] = 'You must genertate all program forms before approving response.';
+							$this->set(compact('data'));
+							return $this->render(null, null, '/elements/ajaxreturn');						
+						}
+					}
+				}				
 				$this->data['ProgramResponse']['id'] = $programResponseId;
 				$this->data['ProgramResponse']['needs_approval'] = 0;
 				$this->data['ProgramResponse']['complete'] = 1;
