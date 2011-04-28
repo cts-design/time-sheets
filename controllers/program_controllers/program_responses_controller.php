@@ -99,6 +99,7 @@ class ProgramResponsesController extends AppController {
 						case 'open':
 							$conditions['ProgramResponse.complete'] = 0;
 							$conditions['ProgramResponse.expired'] = 0; 
+							$conditions['ProgramResponse.needs_approval'] = 0; 
 							break;
 						case 'closed':
 							$conditions['ProgramResponse.complete'] = 1;
