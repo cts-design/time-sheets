@@ -72,7 +72,7 @@ class ProgramResponsesController extends AppController {
 			$this->data['QueuedDocument']['req_program_doc'] = 1;	
 			if($this->QueuedDocument->uploadDocument($this->data, 'Program Upload', $this->Auth->user('id'))) {
 				$this->Session->setFlash(__('Document uploaded successfully.', true), 'flash_success');
-				$this->redirect(array('action' => 'doc_upload_success', $id));
+				$this->redirect(array('action' => 'required_docs', $id));
 			}
 			else {
 				$this->Session->setFlash(__('Unable to upload document, please try again', true), 'flash_failure');
@@ -85,12 +85,7 @@ class ProgramResponsesController extends AppController {
 		$data['queueCategoryId'] = $program['Program']['queue_category_id'];
 		$this->set($data);
 	}
-	
-	function doc_upload_success() {
-		$title_for_layout = 'Document Upload Success';
-		$this->set(compact('title_for_layout'));
-	}
-		
+			
 	function view_cert() {
 		
 	} 
