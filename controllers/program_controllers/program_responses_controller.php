@@ -200,7 +200,6 @@ class ProgramResponsesController extends AppController {
 				$this->render('/elements/program_responses/answers');
 			}
 			if($type == 'documents') {
-				firecake::log($programResponse);
 				if(!empty($programResponse['ProgramResponseDoc'])) {
 					$this->loadModel('DocumentFilingCategory');
 					$filingCatList = $this->DocumentFilingCategory->find('list');
