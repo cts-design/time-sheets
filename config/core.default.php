@@ -85,7 +85,7 @@
  *
  * [Note Routing.admin is deprecated in 1.3.  Use Routing.prefixes instead]
  */
-	Configure::write('Routing.prefixes', array('admin'));
+	Configure::write('Routing.prefixes', array('admin', 'kiosk'));
 
 /**
  * Turn off all caching application-wide.
@@ -124,7 +124,7 @@
  * the cake shell command: cake schema run create Sessions
  *
  */
-	Configure::write('Session.save', 'php');
+	Configure::write('Session.save', 'database');
 
 /**
  * The model name to be used for the session model.
@@ -133,7 +133,7 @@
  *
  * The model name set here should *not* be used elsewhere in your application.
  */
-	//Configure::write('Session.model', 'Session');
+	Configure::write('Session.model', 'Session');
 
 /**
  * The name of the table used to store CakePHP database sessions.
@@ -154,7 +154,7 @@
  *
  * 'Session.save' must be set to 'database' in order to utilize this constant.
  */
-	//Configure::write('Session.database', 'default');
+	Configure::write('Session.database', 'default');
 
 /**
  * The name of CakePHP's session cookie.

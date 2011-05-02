@@ -9,8 +9,8 @@
 <script type="text/javascript">
 	var progId = <?php echo $this->params['pass'][0]?>;
 	var approvalPermission = false;
-	<?php if(isset($approvalPermission)) : ?>
-		var approvalPermission = true;
+	<?php if($approvalPermission) : ?>
+		approvalPermission = <?php echo $approvalPermission ?>;
 	<?php endif ?>
 </script>
 <?php echo $this->Html->script('program_responses/admin_index', array('inline' => FALSE));?>

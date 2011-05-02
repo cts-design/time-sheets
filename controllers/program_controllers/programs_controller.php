@@ -165,7 +165,7 @@ class ProgramsController extends AppController {
 						'name' => $program['Program']['name'],
 						'actions' => '<a href="/admin/program_responses/index/'.
 							$program['Program']['id'].'">View Responses</a> | 
-							<a class="edit" href="/admin/programs/edit_instructions/'.
+							<a class="edit" href="/admin/programs/instructions_index/'.
 							$program['Program']['id'].'">Edit Instructions</a>');
 				}
 				$data['success'] = true;
@@ -181,5 +181,56 @@ class ProgramsController extends AppController {
 		$this->set(compact('title_for_layout'));
 	}
 	
+	function admin_instructions_index() {
+		$title_for_layout = 'Program Instructions';
+	}
 	
+	function admin_edit_instructions($id, $type) {
+		if($this->RequestHandler->isAjax()) {
+			firecake::log($this->data);
+			switch($type) {
+				case 'media':
+					$this->data['Program']['media_instructions'] = $this->data['Program']['instructions'];
+					unset($this->data['Program']['instructions']);
+					break;
+				case 'form':
+					$this->data['Program']['form_instructions'] = $this->data['Program']['instructions'];
+					unset($this->data['Program']['instructions']);
+					break;
+				case 'document':
+					$this->data['Program']['doc_instructions'] = $this->data['Program']['instructions'];
+					unset($this->data['Program']['instructions']);
+					break;
+			}
+			$this->Program->id = $id;
+			if($this->Program->save($this->data)) {
+				$data['success'] = true;
+				$data['message'] = 'Instructions saved successfully.';
+			}
+			else {
+				$data['success'] = false;
+				$data['message'] = 'An error has occured please try again.';
+			}
+			$this->set(compact('data'));
+			return $this->render(null, null, '/elements/ajaxreturn');
+		}
+		else {
+			$program = $this->Program->findById($id);
+			switch($type) {
+				case 'general': 
+					$instructions = trim($program['Program']['instructions']);
+					break;
+				case 'media':
+					$instructions = trim($program['Program']['media_instructions']);
+					break;
+				case 'form':
+					$instructions = trim($program['Program']['form_instructions']);
+					break;
+				case 'document':
+					$instructions = trim($program['Program']['doc_instructions']);
+			}
+			$this->set(compact('instructions'));			
+		}
+	}
+		
 }

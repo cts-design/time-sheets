@@ -3,6 +3,7 @@
  */
 
 Ext.onReady(function(){
+	Ext.QuickTips.init()
 	
 	var hideProgress = new Ext.util.DelayedTask(function(){
 	    progress.hide();
@@ -24,9 +25,19 @@ Ext.onReady(function(){
 							tb.hide();
 							Ext.Msg.alert('Status', obj.message);						
 						}
+						else {
+							opts.failure(response, opts, obj); 						
+						}
 					},
-					failure: function() {
-						
+					failure: function(repsonse, opts, obj) {
+						var msg = '';
+						if(obj.message) {
+							msg = obj.message
+						}
+						else {
+							msg = "An error has occurd";
+						}
+						Ext.Msg.alert('Status', msg);
 					}
 				})
 			}

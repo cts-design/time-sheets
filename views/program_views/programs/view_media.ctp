@@ -10,6 +10,9 @@
 			$('#toggle').html('Show Instructions');
 		}
 		)
+		<?php if(empty($this->validationErrors)) : ?>
+			$('#aknowledge').hide();
+		<?php endif ?>
 	})
 </script>
 <div><a id="toggle" class="small" style="display: none">View Instructions</a></div>
@@ -20,12 +23,14 @@
 <br />
 <?php echo $this->element($element) ?>
 
-<?php echo $form->create('Program', array('action' => 'view_media/' . $this->params['pass'][0])) ?>
-<br />
-<p>
-	By checking the box below I agree that I have reviewed the instructions and/or media above.
-</p>
-<br />
-<?php echo $form->input('ProgramResponse.viewed_media', array('type' => 'checkbox', 'label' => 'I agree')) ?>
-<?php echo $form->input('ProgramResponse.program_id',  array('type' => 'hidden', 'value' => $this->params['pass'][0]));?>
-<?php echo $form->end('Submit') ?>
+<div id="aknowledge">
+	<?php echo $form->create('Program', array('action' => 'view_media/' . $this->params['pass'][0])) ?>
+	<br />
+	<p>
+		By checking the box below I agree that I have reviewed the instructions and/or media above.
+	</p>
+	<br />
+	<?php echo $form->input('ProgramResponse.viewed_media', array('type' => 'checkbox', 'label' => 'I agree')) ?>
+	<?php echo $form->input('ProgramResponse.program_id',  array('type' => 'hidden', 'value' => $this->params['pass'][0]));?>
+	<?php echo $form->end('Submit') ?>
+</div>
