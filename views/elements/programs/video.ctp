@@ -8,7 +8,10 @@ flowplayer("player", "/swf/flowplayer-3.2.7.swf", {
 	clip: {
 		url: '<?php echo $media ?>',
 		autoBuffering: true,
-		autoPlay: false
+		autoPlay: false,
+		onFinish: function() {
+			$('#aknowledge').show();
+		}
 	}
 });
 </script>
