@@ -3,6 +3,7 @@
  */
 
 Ext.onReady(function(){
+	Ext.QuickTips.init()
 	
 	var hideProgress = new Ext.util.DelayedTask(function(){
 	    progress.hide();
