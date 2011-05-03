@@ -85,9 +85,36 @@ class ProgramResponsesController extends AppController {
 		$data['queueCategoryId'] = $program['Program']['queue_category_id'];
 		$this->set($data);
 	}
+
+	function response_complete($id=null) {
+		$title_for_layout = 'Program Certificate';
+		$this->set(compact('title_for_layout'));
+	}
 			
-	function view_cert() {
-		
+	function view_cert($id=null) {
+		if(!$id) {
+		    $this->Session->setFlash(__('Invalid Program', true), 'flash_failure');
+		    $this->redirect(array('action' => 'index'));
+		}
+		$programResponse = $this->ProgramResponse->find('first', array('conditions' => array(
+			'ProgramResponse.user_id' => $this->Auth->user('id'),
+			'ProgramResponse.program_id' => $id 
+		)));
+		$docId = Set::extract('/ProgramResponseDoc[cert=1]/doc_id', $programResponse);
+		$this->view = 'Media';
+		$this->loadModel('FiledDocument');
+		$doc = $this->FiledDocument->read(null, $docId[0]);
+		$params = array(
+		    'id' => $doc['FiledDocument']['filename'],
+		    'name' => str_replace('.pdf', '', $doc['FiledDocument']['filename']),
+		    'extension' => 'pdf',
+		    'cache' => true,
+		    'path' => Configure::read('Document.storage.path') .
+		    date('Y', strtotime($doc['FiledDocument']['created'])) . '/' .
+		    date('m', strtotime($doc['FiledDocument']['created'])) . '/'
+		);
+		$this->set($params);
+		return $params;		
 	} 
 	
 	function admin_index($id = null) {
@@ -312,10 +339,7 @@ class ProgramResponsesController extends AppController {
 				$this->set(compact('data'));
 				$this->render(null, null, '/elements/ajaxreturn');
 			}
-		}
-
-		// @TODO mark program response complete and send end user a email to let them know they can 
-		// login and view thier certificate. 		
+		}	
 	}
 
 	function admin_generate_form($formId, $programResponseId, $docId=null) {
@@ -364,14 +388,14 @@ class ProgramResponsesController extends AppController {
 					$this->data['FiledDocument']['cat_2'] = $programPaperForm['ProgramPaperForm']['cat_2'];
 					$this->data['FiledDocument']['cat_3'] = $programPaperForm['ProgramPaperForm']['cat_3'];
 					$this->data['FiledDocument']['entry_method'] = 'Program Generated';
-					$this->data['FiledDocument']['last_activity_admin_id'] = $this->Auth->user('id');
-					
+					$this->data['FiledDocument']['last_activity_admin_id'] = $this->Auth->user('id');					
 					$this->data['ProgramResponseDoc']['cat_id'] = $programPaperForm['ProgramPaperForm']['cat_3'];
 					$this->data['ProgramResponseDoc']['program_response_id'] =  $programResponseId;
 					$this->data['ProgramResponseDoc']['doc_id'] = $docId;
 					$this->data['ProgramResponseDoc']['paper_form'] = 1;
-					
-					
+					if($programPaperForm['ProgramPaperForm']['cert']) {
+						$this->data['ProgramResponseDoc']['cert'] = 1;
+					}									
 					if($this->FiledDocument->save($this->data['FiledDocument']) && 
 					$this->ProgramResponse->ProgramResponseDoc->save($this->data['ProgramResponseDoc'])) {
 						$data['success'] = true;
