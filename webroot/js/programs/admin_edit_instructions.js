@@ -18,6 +18,7 @@ Ext.onReady(function(){
 			handler: function() {
 				var form = editForm.getForm();
 				form.submit({
+					url: window.location,
 					success: function(form, action){
 						Ext.Msg.alert('Success', action.result.message);
 					},
