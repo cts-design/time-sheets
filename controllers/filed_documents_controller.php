@@ -181,51 +181,6 @@ class FiledDocumentsController extends AppController {
 		$this->set(compact('user', 'cat1', 'title_for_layout'));
     }
 
-    function _uploadDocument($entryMethod='Upload') {
-		// get the document relative path to the inital storage folder
-		$path = Configure::read('Document.storage.uploadPath');
-		// check to see if the directory for the current year exists
-		if(!file_exists($path . date('Y') . '/')) {
-		    // if directory does not exist, create it
-		    mkdir($path . date('Y'), 0755);
-		}
-		// add the current year to our path string
-		$path .= date('Y') . '/';
-		// check to see if the directory for the current month exists
-		if(!file_exists($path . date('m') . '/')) {
-		    // if directory does not exist, create it
-		    mkdir($path . date('m'), 0755);
-		}
-		// add the current month to our path string
-		$path .= date('m') . '/';
-		// build our fancy unique filename
-		$docName = date('YmdHis') . rand(0, pow(10, 7)) . '.pdf';
-		$this->data['FiledDocument']['filename'] = $docName;
-		$this->data['FiledDocument']['user_id'] = $this->data['User']['id'];
-		$this->data['FiledDocument']['last_activity_admin_id'] = $this->data['FiledDocument']['admin_id'];
-		$this->data['FiledDocument']['entry_method'] = $entryMethod;
-		if(!move_uploaded_file($this->data['FiledDocument']['submittedfile']['tmp_name'], $path . $docName)) {
-		    return false;
-		}
-		// save an empty record to queued documents to generate unique doc id
-		$this->FiledDocument->User->QueuedDocument->create();
-		$this->FiledDocument->User->QueuedDocument->save();
-		$this->data['FiledDocument']['id'] = $this->FiledDocument->User->QueuedDocument->getLastInsertId();
-		// delete the empty record so it does not show up in the queue
-		$this->FiledDocument->User->QueuedDocument->delete($this->data['FiledDocument']['id']);
-	
-		if($this->FiledDocument->save($this->data)) {
-			if($this->isModuleEnabled('Programs')) {
-				$user = $this->FiledDocument->User->findById($this->data['User']['id']);	
-    			$this->_processResponseDoc($user);
-			}	
-		    return $this->data['FiledDocument']['id'];
-		}
-		else {
-		    return false;
-		}
-    }
-
     function admin_scan_document($userId=null) {
 		$cat1 = $this->_getParentDocumentFilingCats();
 		if(!empty($this->data)) {
@@ -339,6 +294,51 @@ class FiledDocumentsController extends AppController {
 		$this->set($data);
 		$this->render('/elements/excelreport');		
 	}
+
+    function _uploadDocument($entryMethod='Upload') {
+		// get the document relative path to the inital storage folder
+		$path = Configure::read('Document.storage.uploadPath');
+		// check to see if the directory for the current year exists
+		if(!file_exists($path . date('Y') . '/')) {
+		    // if directory does not exist, create it
+		    mkdir($path . date('Y'), 0755);
+		}
+		// add the current year to our path string
+		$path .= date('Y') . '/';
+		// check to see if the directory for the current month exists
+		if(!file_exists($path . date('m') . '/')) {
+		    // if directory does not exist, create it
+		    mkdir($path . date('m'), 0755);
+		}
+		// add the current month to our path string
+		$path .= date('m') . '/';
+		// build our fancy unique filename
+		$docName = date('YmdHis') . rand(0, pow(10, 7)) . '.pdf';
+		$this->data['FiledDocument']['filename'] = $docName;
+		$this->data['FiledDocument']['user_id'] = $this->data['User']['id'];
+		$this->data['FiledDocument']['last_activity_admin_id'] = $this->data['FiledDocument']['admin_id'];
+		$this->data['FiledDocument']['entry_method'] = $entryMethod;
+		if(!move_uploaded_file($this->data['FiledDocument']['submittedfile']['tmp_name'], $path . $docName)) {
+		    return false;
+		}
+		// save an empty record to queued documents to generate unique doc id
+		$this->FiledDocument->User->QueuedDocument->create();
+		$this->FiledDocument->User->QueuedDocument->save();
+		$this->data['FiledDocument']['id'] = $this->FiledDocument->User->QueuedDocument->getLastInsertId();
+		// delete the empty record so it does not show up in the queue
+		$this->FiledDocument->User->QueuedDocument->delete($this->data['FiledDocument']['id']);
+	
+		if($this->FiledDocument->save($this->data)) {
+			if($this->isModuleEnabled('Programs')) {
+				$user = $this->FiledDocument->User->findById($this->data['User']['id']);	
+    			$this->_processResponseDoc($user);
+			}	
+		    return $this->data['FiledDocument']['id'];
+		}
+		else {
+		    return false;
+		}
+    }
 		
 	function _setFilters() {
 		if(isset($this->params['url']['filters'])){
