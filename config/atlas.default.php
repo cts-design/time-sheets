@@ -9,7 +9,7 @@
  */
 
 $config['URL'] = 'http://ccc.atlasforworkforce.com/';
-$config['Admin']['URL'] = 'http://ccc.atlasforworkforce.com/admin';
+$config['Admin']['URL'] = 'https://ccc.atlasforworkforce.com/admin';
 //domain for use with cookies
 $config['domain'] = 'ccc.atlasforworkforce.com';
 
