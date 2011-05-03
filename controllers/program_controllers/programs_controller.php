@@ -201,7 +201,6 @@ class ProgramsController extends AppController {
 	
 	function admin_edit_instructions($id, $type) {
 		if($this->RequestHandler->isAjax()) {
-			firecake::log($this->data);
 			switch($type) {
 				case 'media':
 					$this->data['Program']['media_instructions'] = $this->data['Program']['instructions'];
