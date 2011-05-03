@@ -10,7 +10,16 @@ App::import('vendor', 'DebugKit.FireCake');
 class AppController extends Controller {
 		
     var $helpers = array('Html', 'Form', 'Session', 'Js' => array('Jquery'), 'Time', 'Crumb', 'Nav');
-    var $components = array('DebugKit.Toolbar', 'Session', 'RequestHandler', 'Auth', 'Acl', 'Cookie', 'Transaction', 'Security');
+    var $components = array(
+    	'Session', 
+    	'RequestHandler',
+    	'Auth',
+    	'Acl',
+    	'Cookie',
+    	'Transaction',
+    	'Security',
+		'DebugKit.Toolbar' => array('autoRun' => false)
+		);
 	var $genders = array(
 		'male' => 'Male',
 		'female' => 'Female');
