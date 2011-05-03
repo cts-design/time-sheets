@@ -17,7 +17,10 @@ class ProgramsController extends AppController {
 			$this->redirect('/');
 		}
 		$program = $this->Program->findById($id);
-		$programResponse = $this->Program->ProgramResponse->findByUserId($this->Auth->user('id'));
+		$programResponse = $this->Program->ProgramResponse->find('first', array('conditions' => array(
+			'ProgramResponse.user_id' => $this->Auth->user('id'),
+			'ProgramResponse.program_id' => $id 
+		)));
 
 		if($program['Program']['disabled'] == 1){
 			$this->Session->setFlash(__('This program is disabled', true), 'flash_failure');
@@ -70,7 +73,9 @@ class ProgramsController extends AppController {
 								'action' => 'required_docs', $id));	
 					}
 					if($programResponse['ProgramResponse']['complete']) {
-						$this->redirect(array('controller' => 'program_responses', 'action' => 'view_cert'));
+						$this->redirect(array(
+							'controller' => 'program_responses', 
+							'action' => 'response_complete', $id));
 					}		
 				}
 				$data['redirect'] = '/programs/view_media/' . $program['Program']['id'];
@@ -98,7 +103,10 @@ class ProgramsController extends AppController {
 			$this->redirect('/');
 		}
 		if(!empty($this->data)) {
-			$programResponse = $this->Program->ProgramResponse->findByUserId($this->Auth->user('id'));
+			$programResponse = $this->Program->ProgramResponse->find('first', array('conditions' => array(
+				'ProgramResponse.user_id' => $this->Auth->user('id'),
+				'ProgramResponse.program_id' => $id 
+			)));
 			$this->data['ProgramResponse']['id'] = $programResponse['ProgramResponse']['id'];
 			$this->data['ProgramResponse']['user_id'] =	$this->Auth->user('id');
 			if($this->Program->ProgramResponse->save($this->data, true)) {							
@@ -114,13 +122,19 @@ class ProgramsController extends AppController {
 				$this->Session->setFlash(__('Saved', true), 'flash_success');
 				switch($this->Session->read('step2')) {
 					case "form":
-						$this->redirect(array('controller' => 'program_responses', 'action' => 'index', $id));
+						$this->redirect(array(
+							'controller' => 'program_responses',
+							'action' => 'index', $id));
 						break;
 					case "docs":
-						$this->redirect(array('controller' => 'program_responses', 'action' => 'required_docs', $id));
+						$this->redirect(array(
+							'controller' => 'program_responses',
+							'action' => 'required_docs', $id));
 						break;
 					case "complete":
-						$this->redirect(array('controller' => 'program_responses', 'action' => 'submission_recieved', $id));		
+						$this->redirect(array(
+							'controller' => 'program_responses',
+							'action' => 'submission_recieved', $id));		
 						break;
 				}
 			}
@@ -187,7 +201,6 @@ class ProgramsController extends AppController {
 	
 	function admin_edit_instructions($id, $type) {
 		if($this->RequestHandler->isAjax()) {
-			firecake::log($this->data);
 			switch($type) {
 				case 'media':
 					$this->data['Program']['media_instructions'] = $this->data['Program']['instructions'];
