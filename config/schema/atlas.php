@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2011-05-05 09:09:50 : 1304600990*/
+/* atlas schema generated on: 2011-05-05 09:41:41 : 1304602901*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -386,7 +386,7 @@ class atlasSchema extends CakeSchema {
 		'form_esignature' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'complete' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'needs_approval' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
-		'cert_conformation_id' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 12, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'conformation_id' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 12, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'expired' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
@@ -409,7 +409,7 @@ class atlasSchema extends CakeSchema {
 		'cert_type' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 15, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'approval_required' => array('type' => 'boolean', 'null' => false, 'default' => NULL),
 		'form_esign_required' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
-		'cert_random_id_length' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+		'conformation_id_length' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 2),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'expires' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
