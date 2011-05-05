@@ -38,10 +38,11 @@ class ProgramResponsesController extends AppController {
 			$this->data['ProgramResponse']['id'] = $response['ProgramResponse']['id'];
 			$this->data['ProgramResponse']['program_id'] = $id;
 			if($this->ProgramResponse->save($this->data)) {
-				$programEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array('conditions' => array(
-					'ProgramEmail.program_id' => $id,
-					'ProgramEmail.type' => 'form'
-				)));
+				$programEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array(
+					'conditions' => array(
+						'ProgramEmail.program_id' => $id,
+						'ProgramEmail.type' => 'form'
+					)));
 				$this->Notifications->sendProgramEmail($programEmail);
 				$this->Session->setFlash(__('Saved', true), 'flash_success');
 				$program = $this->ProgramResponse->Program->findById($id);
@@ -87,8 +88,15 @@ class ProgramResponsesController extends AppController {
 	}
 
 	function response_complete($id=null) {
+		$programResponse = $this->ProgramResponse->find('first', array('conditions' => array(
+			'ProgramResponse.user_id' => $this->Auth->user('id'),
+			'ProgramResponse.program_id' => $id 
+		)));
+		if(!$programResponse) {
+			$this->Session->setFlash(__('An eroor has occured.', true), 'flash_failure');
+		}
 		$title_for_layout = 'Program Certificate';
-		$this->set(compact('title_for_layout'));
+		$this->set(compact('title_for_layout', 'programResponse'));
 	}
 			
 	function view_cert($id=null) {
@@ -156,8 +164,10 @@ class ProgramResponsesController extends AppController {
 	
 						$data['responses'][$i] = array(
 							'id' => $response['ProgramResponse']['id'],
-							'User-lastname' => $response['User']['lastname'] . ', ' . 
-								$response['User']['firstname'] . ' - ' . substr($response['User']['ssn'], -4),
+							'User-lastname' => trim(ucwords($response['User']['lastname'] . ', ' . 
+								$response['User']['firstname']) . ' - ' . 
+								substr($response['User']['ssn'], -4), ' , -'),
+							'conformation_id' => $response['ProgramResponse']['conformation_id'],	
 							'created' => $response['ProgramResponse']['created'],
 							'modified' => $response['ProgramResponse']['modified'],
 							'status' => $status
