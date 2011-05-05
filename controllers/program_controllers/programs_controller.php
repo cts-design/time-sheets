@@ -91,6 +91,12 @@ class ProgramsController extends AppController {
 	function get_started() {
 		if(!empty($this->data)) {
 			$this->data['ProgramResponse']['user_id'] = $this->Auth->user('id');
+			$program = $this->Program->findById($this->data['ProgramResponse']['program_id']);
+			if($program) {
+				$string = sha1(date('ymdhisu'));
+				$this->data['ProgramResponse']['conformation_id'] = 
+					substr($string, 0, $program['Program']['conformation_id_length']);				
+			}
 			if($this->Program->ProgramResponse->save($this->data)){
 				$this->redirect($this->data['Program']['redirect']);
 			}
