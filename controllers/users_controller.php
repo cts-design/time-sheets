@@ -173,27 +173,6 @@ class UsersController extends AppController {
 		$this->set($data);
     }
 
-    function admin_delete($id = null) {
-		if (!$id) {
-		    $this->Session->setFlash(__('Invalid id for customer', true), 'flash_failure');
-		    $this->redirect(array('action' => 'index'));
-		}
-		$user = $this->User->read(null, $id);
-		if($user['User']['role_id'] != 1) {
-		    $this->Session->setFlash(__('Invalid customer', true), 'flash_failure');
-		    $this->redirect($this->referer());
-		}
-		if ($this->User->delete($id)) {
-			$this->Transaction->createUserTransaction('Customer',
-				null, null, 'Deleted customer '. $this->data['User']['firstname'] . 
-				' ' . $this->data['User']['lastname'] . ' - ' . substr($this->data['User']['ssn'],'5'));
-		    $this->Session->setFlash(__('Customer deleted', true), 'flash_success');
-		    $this->redirect(array('action' => 'index'));
-		}
-		$this->Session->setFlash(__('Customer was not deleted', true), 'flash_failure');
-		$this->redirect(array('action' => 'index'));
-    }
-
     function kiosk_self_sign_login() {
 		if (isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'kiosk') {
 		    if ($this->Auth->user()) {
@@ -485,23 +464,6 @@ class UsersController extends AppController {
 		    'locations' => $this->User->Location->find('list')
 		);
 		$this->set($data);
-    }
-
-    function admin_delete_admin($id = null) {
-		if (!$id) {
-		    $this->Session->setFlash(__('Invalid id for admin', true), 'flash_failure');
-		    $this->redirect(array('action' => 'index_admin'));
-		}
-		if ($this->User->delete($id)) {
-			$this->Transaction->createUserTransaction('Administrator', null, null,
-				'Deleted administrator '. $this->data['User']['firstname'] . ' ' . $this->data['User']['lastname']);
-		    $this->Session->setFlash(__('admin deleted', true), 'flash_success');
-		    $this->redirect(array('action' => 'index_admin'));
-		}
-		else {
-		    $this->Session->setFlash(__('Admin was not deleted', true), 'flash_failure');
-		    $this->redirect(array('action' => 'index_admin'));
-		}
     }
 
     function admin_dashboard() {
