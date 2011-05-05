@@ -41,7 +41,7 @@ class PermissionsController extends AppController {
 			    $aco['Aco']['Permission']['_update'] && $aco['Aco']['Permission']['_delete'] == 1) {
 	
 			if($aco['Aco']['parent_id'] == '' || $aco['Aco']['parent_id'] == 1) {
-			    $data['controllers'][$aco['Aco']['alias']]['All'] = true;
+			    $data['controllers'][$aco['Aco']['alias']]['all'] = true;
 			}
 			else {
 			   $parent = $this->Acl->Aco->find('first', array('conditions' => array('Aco.id' => $aco['Aco']['parent_id'])));
@@ -52,7 +52,7 @@ class PermissionsController extends AppController {
 			    $aco['Aco']['Permission']['_update'] && $aco['Aco']['Permission']['_delete'] == '-1') {
 	
 			if($aco['Aco']['parent_id'] == '' || $aco['Aco']['parent_id'] == 1) {
-			    $data['controllers'][$aco['Aco']['alias']]['All'] = false;
+			    $data['controllers'][$aco['Aco']['alias']]['all'] = false;
 			}
 			else {
 			   $parent = $this->Acl->Aco->find('first', array('conditions' => array('Aco.id' => $aco['Aco']['parent_id'])));
