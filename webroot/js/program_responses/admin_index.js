@@ -25,7 +25,7 @@ Ext.onReady(function(){
 			'User-lastname', 
 			{name: 'created', type: 'date', dateFormat: 'Y-m-d H:i:s'}, 
 			{name: 'modified', type: 'date', dateFormat: 'Y-m-d H:i:s'},
-			'status', 
+			'conformation_id', 
 			'actions'
 		]
 	});
@@ -97,7 +97,38 @@ Ext.onReady(function(){
 	});
 	
 	var closedProgramResponsesGrid = new Atlas.grid.ProgramResponseGrid({
-		title: 'Closed'
+		title: 'Closed',
+		columns: [{
+			id: 'id',
+			header: 'Id',
+			dataIndex: 'id',
+			width: 30,
+			sortable: true	
+		},{
+			header: 'Customer',
+			dataIndex: 'User-lastname',
+			width: 150,
+			sortable: true
+		},{
+			header: 'Conformation Id',
+			dataIndex: 'conformation_id',
+			sortable: false
+		},{
+			header: 'Created',
+			dataIndex: 'created',
+			xtype: 'datecolumn',
+			format: 'm/d/Y g:i a',
+			sortable: true			
+		},{
+			header: 'Modified',
+			dataIndex: 'modified',
+			xtype: 'datecolumn',
+			format: 'm/d/Y g:i a',
+			sortable: true
+		},{
+			header: 'Actions',
+			dataIndex: 'actions'
+		}]		
 	});
 	
 	var expiredProgramResponsesGrid = new Atlas.grid.ProgramResponseGrid({
