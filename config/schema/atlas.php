@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2011-05-03 14:16:45 : 1304446605*/
+/* atlas schema generated on: 2011-05-05 09:09:50 : 1304600990*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -386,6 +386,7 @@ class atlasSchema extends CakeSchema {
 		'form_esignature' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'complete' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'needs_approval' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'cert_conformation_id' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 12, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'expired' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
