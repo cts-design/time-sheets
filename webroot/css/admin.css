@@ -769,10 +769,9 @@ div.actions .ui-button-text {
     margin-right: 10px;
 }
 
-#permissions {margin: 0 auto; width: 750px;}
-#permissions fieldset{height: 125px; width: 150px; margin-bottom: 10px; margin-right: 15px}
-#permissions legend{font-weight: bold;}
-#permissions .input{margin: 0}
+#permissionTabs fieldset{height: 125px; width: 150px; margin-bottom: 10px; margin-right: 10px;}
+#permissionTabs legend{font-weight: bold;}
+#permissionTabs .input{margin: 0}
 
 #deletedDoumentsSerach{margin: 0 0 5px 0}
 #deletedDoumentsSerach .input {float: left; margin: 0 10px 0 0;}
@@ -1054,3 +1053,4 @@ p.checkbox {
 }
 
 .x-careerseeker-row li {list-style-type: disc;}
+
