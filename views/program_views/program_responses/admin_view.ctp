@@ -8,4 +8,4 @@
     <span>You are here > </span>
     <?php echo $crumb->getHtml('Program Response', null, 'unique');?>
 </div>
-<div id="programResponsePanel"></div>
+<div id="ProgramResponsePanel"></div>
