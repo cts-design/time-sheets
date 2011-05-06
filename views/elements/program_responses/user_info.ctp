@@ -1,4 +1,4 @@
-<div id="ProgramResponseUserInfo" style="padding: 10px; width: 500px;">
+<div id="ProgramResponseUserInfo">
 <?php if(isset($user)) :?>
 	<p class="left label"><strong>First Name:</strong></p><p class="left"><?php echo $user['firstname']?></p>
 	<br class="clear" />
