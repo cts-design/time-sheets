@@ -32,8 +32,11 @@ class ProgramResponsesController extends AppController {
 			$this->redirect($this->referer());
 		} 
 		if(!empty($this->data)) {
-			$response = $this->ProgramResponse->findByUserId($this->Auth->user('id'));		
-			$this->data['ProgramResponse']['form_completed'] = date('m/d/y');		
+			$response = $this->ProgramResponse->find('first', array('conditions' => array(
+				'ProgramResponse.user_id' => $this->Auth->user('id'),
+				'ProgramResponse.program_id' => $id,
+				'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s') 
+			)));	
 			$this->data['ProgramResponse']['answers'] = json_encode($this->data['ProgramResponse']);
 			$this->data['ProgramResponse']['id'] = $response['ProgramResponse']['id'];
 			$this->data['ProgramResponse']['program_id'] = $id;
@@ -88,9 +91,10 @@ class ProgramResponsesController extends AppController {
 	}
 
 	function response_complete($id=null) {
-		$programResponse = $this->ProgramResponse->find('first', array('conditions' => array(
+		$response = $this->ProgramResponse->find('first', array('conditions' => array(
 			'ProgramResponse.user_id' => $this->Auth->user('id'),
-			'ProgramResponse.program_id' => $id 
+			'ProgramResponse.program_id' => $id,
+			'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s') 
 		)));
 		if(!$programResponse) {
 			$this->Session->setFlash(__('An eroor has occured.', true), 'flash_failure');
@@ -104,9 +108,10 @@ class ProgramResponsesController extends AppController {
 		    $this->Session->setFlash(__('Invalid Program', true), 'flash_failure');
 		    $this->redirect(array('action' => 'index'));
 		}
-		$programResponse = $this->ProgramResponse->find('first', array('conditions' => array(
+		$response = $this->ProgramResponse->find('first', array('conditions' => array(
 			'ProgramResponse.user_id' => $this->Auth->user('id'),
-			'ProgramResponse.program_id' => $id 
+			'ProgramResponse.program_id' => $id,
+			'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s') 
 		)));
 		$docId = Set::extract('/ProgramResponseDoc[cert=1]/doc_id', $programResponse);
 		$this->view = 'Media';
@@ -127,22 +132,33 @@ class ProgramResponsesController extends AppController {
 	
 	function admin_index($id = null) {
 		if($id){
+			$this->ProgramResponse->Program->recursive = -1;
+			$program = $this->ProgramResponse->Program->findById($id);
 			if($this->RequestHandler->isAjax()){
+			$response = $this->ProgramResponse->find('first', array('conditions' => array(
+				'ProgramResponse.user_id' => $this->Auth->user('id'),
+				'ProgramResponse.program_id' => $id,
+				'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s') 
+			)));
 				$conditions = array('ProgramResponse.program_id' => $id);
 				if(!empty($this->params['url']['filter'])) {
 					switch($this->params['url']['filter']) {
 						case 'open':
 							$conditions['ProgramResponse.complete'] = 0;
-							$conditions['ProgramResponse.expired'] = 0; 
-							$conditions['ProgramResponse.needs_approval'] = 0; 
+							$conditions['ProgramResponse.needs_approval'] = 0;
+							$conditions['ProgramResponse.expires_on >'] = date('Y-m-d H:i:s');  
 							break;
 						case 'closed':
 							$conditions['ProgramResponse.complete'] = 1;
+							$conditions['ProgramResponse.needs_approval'] = 0;
+							$conditions['ProgramResponse.expires_on >'] = date('Y-m-d H:i:s'); 							
 							break;
 						case 'expired':
-							$conditions['ProgramResponse.expired'] = 1;
+							$conditions['ProgramResponse.expires_on <'] = date('Y-m-d H:i:s');  
 							break;							
 						case 'unapproved':
+							$conditions['ProgramResponse.complete'] = 0;
+							$conditions['ProgramResponse.expires_on >'] = date('Y-m-d H:i:s');  
 							$conditions['ProgramResponse.needs_approval'] = 1;
 							break;		 
 					}
@@ -170,6 +186,7 @@ class ProgramResponsesController extends AppController {
 							'conformation_id' => $response['ProgramResponse']['conformation_id'],	
 							'created' => $response['ProgramResponse']['created'],
 							'modified' => $response['ProgramResponse']['modified'],
+							'expires_on' => $response['ProgramResponse']['expires_on'],
 							'status' => $status
 						);
 						if($this->params['url']['filter'] == 'closed'){
@@ -182,7 +199,7 @@ class ProgramResponsesController extends AppController {
 								'<a href="/admin/program_responses/view/'. 
 									$response['ProgramResponse']['id'].'">View</a> | ' . 
 									'<a href="/admin/program_responses/toggle_expired/' . 
-									$response['ProgramResponse']['id'] . '/0'.'" class="expire">Mark Un-Expired</a>';							
+									$response['ProgramResponse']['id'] . '/unexpire'.'" class="expire">Mark Un-Expired</a>';							
 						}
 						elseif($this->params['url']['filter'] == 'unapproved'){
 							$data['responses'][$i]['actions'] = 
@@ -194,7 +211,7 @@ class ProgramResponsesController extends AppController {
 								'<a href="/admin/program_responses/view/'. 
 									$response['ProgramResponse']['id'].'">View</a> | ' .
 									'<a href="/admin/program_responses/toggle_expired/' . 
-									$response['ProgramResponse']['id'] . '/1'.'" class="expire">Mark Expired</a>';
+									$response['ProgramResponse']['id'] . '/expired'.'" class="expire">Mark Expired</a>';
 						}
 						$i++;		
 					}				
@@ -207,8 +224,7 @@ class ProgramResponsesController extends AppController {
 				$this->set('data', $data);
 				$this->render('/elements/ajaxreturn');				
 			}
-			$this->ProgramResponse->Program->recursive = -1;
-			$program = $this->ProgramResponse->Program->findById($id);
+
 			if($program['Program']['approval_required'] == 1){
 				$approvalPermission = $this->Acl->check(array(
 					'model' => 'User', 
@@ -431,17 +447,24 @@ class ProgramResponsesController extends AppController {
 		}		
 	}
 
-	function admin_toggle_expired($programResponseId, $expired) {
+	function admin_toggle_expired($programResponseId, $toggle) {
 		if($this->RequestHandler->isAjax()) {
-			$this->data['ProgramResponse']['id'] = $programResponseId;
-			$this->data['ProgramResponse']['expired'] = $expired;	
+			$programResponse = $this->ProgramResponse->findById($programResponseId);
+			if($toggle == 'expired') {
+				$this->data['ProgramResponse']['expires_on'] = 
+					date('Y-m-d H:i:s', strtotime('-' . ($programResponse['Program']['response_expires_in']+1) . ' days'));	
+			}
+			elseif($toggle == 'unexpire') {
+				$this->data['ProgramResponse']['expires_on'] = date('Y-m-d H:i:s', strtotime('+' . ($programResponse['Program']['response_expires_in']) . ' days'));	
+			}
+			$this->data['ProgramResponse']['id'] = $programResponseId;		
 			if($this->ProgramResponse->save($this->data)) {
 				$data['success'] = true;
-				switch($expired) {
-					case 0:
+				switch($toggle) {
+					case 'unexpire':
 						$data['message'] = 'Response marked un-expired successfully.';
 						break;
-					case 1:
+					case 'expired':
 						$data['message'] = 'Response marked expired successfully.';
 						break;	
 				}

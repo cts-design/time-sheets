@@ -17,12 +17,12 @@ class ProgramsController extends AppController {
 			$this->redirect('/');
 		}
 		$program = $this->Program->findById($id);
+		
 		$programResponse = $this->Program->ProgramResponse->find('first', array('conditions' => array(
 			'ProgramResponse.user_id' => $this->Auth->user('id'),
 			'ProgramResponse.program_id' => $id,
-			'ProgramResponse.expired' => 0 
+			'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s') 
 		)));
-
 		if($program['Program']['disabled'] == 1){
 			$this->Session->setFlash(__('This program is disabled', true), 'flash_failure');
 			$this->redirect('/');
@@ -98,6 +98,8 @@ class ProgramsController extends AppController {
 				$this->data['ProgramResponse']['conformation_id'] = 
 					substr($string, 0, $program['Program']['conformation_id_length']);				
 			}
+			$this->data['ProgramResponse']['expires_on'] = 
+				date('Y-m-d H:i:s', strtotime('+' . $program['Program']['response_expires_in'] . ' days'));
 			if($this->Program->ProgramResponse->save($this->data)){
 				$this->redirect($this->data['Program']['redirect']);
 			}
@@ -110,10 +112,11 @@ class ProgramsController extends AppController {
 			$this->redirect('/');
 		}
 		if(!empty($this->data)) {
-			$programResponse = $this->Program->ProgramResponse->find('first', array('conditions' => array(
-				'ProgramResponse.user_id' => $this->Auth->user('id'),
-				'ProgramResponse.program_id' => $id 
-			)));
+		$programResponse = $this->Program->ProgramResponse->find('first', array('conditions' => array(
+			'ProgramResponse.user_id' => $this->Auth->user('id'),
+			'ProgramResponse.program_id' => $id,
+			'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s') 
+		)));
 			$this->data['ProgramResponse']['id'] = $programResponse['ProgramResponse']['id'];
 			$this->data['ProgramResponse']['user_id'] =	$this->Auth->user('id');
 			if($this->Program->ProgramResponse->save($this->data, true)) {							

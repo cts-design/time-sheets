@@ -25,6 +25,7 @@ Ext.onReady(function(){
 			'User-lastname', 
 			{name: 'created', type: 'date', dateFormat: 'Y-m-d H:i:s'}, 
 			{name: 'modified', type: 'date', dateFormat: 'Y-m-d H:i:s'},
+			{name: 'expires_on', type: 'date', dateFormat: 'Y-m-d H:i:s'},
 			'conformation_id', 
 			'actions'
 		]
@@ -36,7 +37,7 @@ Ext.onReady(function(){
 		loadMask: true,
 		store: programResponseStore,
 		height: 300,	
-		width: 375,
+		width: 500,
 		frame: true,
 		columns: [{
 			id: 'id',
@@ -61,6 +62,12 @@ Ext.onReady(function(){
 			xtype: 'datecolumn',
 			format: 'm/d/Y g:i a',
 			sortable: true
+		},{
+			header: 'Expires on',
+			dataIndex: 'expires_on',
+			xtype: 'datecolumn',
+			format: 'm/d/Y g:i a',
+			sortable: true			
 		},{
 			header: 'Actions',
 			dataIndex: 'actions'
@@ -141,7 +148,7 @@ Ext.onReady(function(){
 		
 	var programResponseTabs = new Ext.TabPanel({
 		renderTo: 'programResponseTabs',
-	    width: 700,
+	    width: 800,
 	    activeTab: 0,
 	    frame: true,
 	    defaults: {autoHeight: true},
