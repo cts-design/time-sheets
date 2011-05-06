@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2011-05-05 09:41:41 : 1304602901*/
+/* atlas schema generated on: 2011-05-06 15:53:53 : 1304711633*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -389,7 +389,7 @@ class atlasSchema extends CakeSchema {
 		'conformation_id' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 12, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
-		'expired' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'expires_on' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'prog_id' => array('column' => 'program_id', 'unique' => 0), 'user_id' => array('column' => 'user_id', 'unique' => 0)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
@@ -410,6 +410,7 @@ class atlasSchema extends CakeSchema {
 		'approval_required' => array('type' => 'boolean', 'null' => false, 'default' => NULL),
 		'form_esign_required' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'conformation_id_length' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 2),
+		'response_expires_in' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'expires' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
