@@ -19,7 +19,8 @@ class ProgramsController extends AppController {
 		$program = $this->Program->findById($id);
 		$programResponse = $this->Program->ProgramResponse->find('first', array('conditions' => array(
 			'ProgramResponse.user_id' => $this->Auth->user('id'),
-			'ProgramResponse.program_id' => $id 
+			'ProgramResponse.program_id' => $id,
+			'ProgramResponse.expired' => 0 
 		)));
 
 		if($program['Program']['disabled'] == 1){
