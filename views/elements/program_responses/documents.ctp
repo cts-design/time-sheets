@@ -1,20 +1,8 @@
 <style>
-#programResponseDocs {
-	padding: 10px;
-}
-.response-doc {
-	border-bottom: 1px solid #666666;
-	margin-bottom: 10px;
-}
-#programPaperForms {
-	padding: 10px;
-}
-.paper-form {
-	border-bottom: 1px solid #666666;
-	margin-bottom: 10px;
+
 }
 </style>
-<div id="programResponseDocs">
+<div id="ProgramResponseDocs">
 	<?php if(isset($docs)) : ?>
 		<?php if(is_array($docs)) :?>
 			<?php foreach($docs as $doc) : ?>
@@ -30,7 +18,7 @@
 		<?php endif ?>
 	<?php endif ?>
 </div>
-<div id="programPaperForms">
+<div id="ProgramPaperForms">
 	<?php if(isset($forms)) : ?>
 		<?php foreach($forms as $form) :?>
 			<div class="paper-form">
