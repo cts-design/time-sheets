@@ -50,7 +50,7 @@ Ext.onReady(function(){
 		
 	var programResponsePanel = new Ext.Panel({
 		title: 'Program Response',
-		renderTo: 'programResponsePanel',
+		renderTo: 'ProgramResponsePanel',
 		layout: 'accordion',
 		tbar: tb,
 		items: [{
@@ -78,7 +78,7 @@ Ext.onReady(function(){
 						url: '/admin/program_responses/view/'+programResponseId+'/documents'
 					});
 					this.getUpdater().on('update', function(){
-						Ext.get('programPaperForms').on('click', function(e, t){						
+						Ext.get('ProgramPaperForms').on('click', function(e, t){						
 							t = Ext.get(t);
 							if(t.hasClass('generate') || t.hasClass('regenerate')) {
 								e.preventDefault();
