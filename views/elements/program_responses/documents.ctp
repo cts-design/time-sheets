@@ -1,7 +1,3 @@
-<style>
-
-}
-</style>
 <div id="ProgramResponseDocs">
 	<?php if(isset($docs)) : ?>
 		<?php if(is_array($docs)) :?>
