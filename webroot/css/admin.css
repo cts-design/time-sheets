@@ -833,6 +833,31 @@ div.actions .ui-button-text {
     width: 150px;
 }
 
+/* Programs  */
+
+#ProgramResponseUserInfo p {margin-bottom: 5px}
+#ProgramResponseUserInfo .label {width: 100px; text-align: right; margin-right: 10px;}
+	
+#ProgramAnswers p {margin-bottom: 5px;}
+#ProgramAnswers .label {width: 500px; text-align: right; margin-right: 10px; font-weight: bold}
+
+#ProgramResponseDocs {
+	padding: 10px;
+}
+
+.response-doc {
+	border-bottom: 1px solid #666666;
+	margin-bottom: 10px;
+}
+
+#ProgramPaperForms {
+	padding: 10px;
+}
+
+.paper-form {
+	border-bottom: 1px solid #666666;
+	margin-bottom: 10px;
+}
 
 /* jQuery UI overrides */
 .ui-autocomplete {
