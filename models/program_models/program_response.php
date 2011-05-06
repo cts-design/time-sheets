@@ -25,7 +25,8 @@ class ProgramResponse extends AppModel {
 			$this->data['ProgramResponseDoc']['program_response_id'] = $userResponse['ProgramResponse']['id'];
 			$allWatchedCats = $this->Program->WatchedFilingCat->find('all', array('conditions' => array(
 				'WatchedFilingCat.program_id' => $watchedCat['Program']['id'],
-				'DocumentFilingCategory.name !=' => 'rejected')));
+				'DocumentFilingCategory.name !=' => 'rejected',
+				'DocumentFilingCategory.name !=' => 'Rejected')));
 			$watchedCats = Set::classicExtract($allWatchedCats, '{n}.WatchedFilingCat.cat_id');
 			$filedResponseDocCats = $this->getFiledResponseDocCats($watchedCat['Program']['id'], $user['User']['id']);	
 			if(!in_array($this->data['FiledDocument']['cat_3'], $filedResponseDocCats))	{
@@ -42,7 +43,8 @@ class ProgramResponse extends AppModel {
 						$return['docFiledEmail'] = $docFiledEmail;	
 					}														
 					$filedResponseDocCats = $this->getFiledResponseDocCats($watchedCat['Program']['id'], $user['User']['id']);	
-					if(Set::contains($watchedCats, $filedResponseDocCats)){
+					$result = array_diff($watchedCats, $filedResponseDocCats);
+					if(empty($result)){
 						$this->id = $userResponse['ProgramResponse']['id'];					
 						if($watchedCat['Program']['approval_required'] == 1) {
 							$this->saveField('needs_approval', 1);
