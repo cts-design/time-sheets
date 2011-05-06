@@ -1,9 +1,4 @@
-<style>
-	p {margin-bottom: 5px}
-	.label {width: 100px; text-align: right; margin-right: 10px;}
-</style>
-
-<div style="padding: 10px; width: 500px;">
+<div id="ProgramResponseUserInfo" style="padding: 10px; width: 500px;">
 <?php if(isset($user)) :?>
 	<p class="left label"><strong>First Name:</strong></p><p class="left"><?php echo $user['firstname']?></p>
 	<br class="clear" />
