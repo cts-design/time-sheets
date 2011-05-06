@@ -368,18 +368,5 @@
 		<?php echo $this->Html->link('Reset User Permissions', array(
 			'action' => 'delete_permissions', 'admin' => true, $aroId, $id));?>
 	</p>	
-<?php endif ?>rs']['admin_resolve_login_issues'])) ? $controllers['Users']['admin_resolve_login_issues'] : '' ));?>
-		    </fieldset>
-		    <br class="clear" />
-			<?php echo $this->Form->end('Submit')?>    
-	    <?php endif; ?>	
-	</div>
-</div>
-<br class="clear" />
-<?php if($model == 'User') : ?>
-	<p>
-		<?php echo $this->Html->link('Reset User Permissions', array(
-			'action' => 'delete_permissions', 'admin' => true, $aroId, $id));?>
-	</p>	
 <?php endif ?>
     
