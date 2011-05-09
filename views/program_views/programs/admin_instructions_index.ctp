@@ -6,11 +6,11 @@
  * @package ATLAS V3
  */
 ?>
-<script type="text/javascript">
+<?php $html->scriptStart(array('inline' => false)); ?>
 	var programId = <?php echo $this->params['pass'][0] ?>;
-</script>
+<?php $html->scriptEnd() ?>
 
-<?php echo $this->Html->script('programs/admin_instructions_index', array('inline' => FALSE));?>
+<?php echo $html->script('programs/admin_instructions_index', array('inline' => false));?>
 
 <div id="crumbWrapper">
     <span>You are here > </span>

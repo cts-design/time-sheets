@@ -5,9 +5,7 @@
  * @link http://ctsfla.com
  */
 ?>
-<?php echo $this->Html->script('jquery.cookie', array('inline' => false)) ?>
-<?php echo $this->Html->script('jquery.jstree', array('inline' => false)) ?>
-<?php echo $this->Html->script('users/dashboard', array('inline' => false)) ?>
+<?php echo $this->Html->script(array('jquery.cookie', 'jquery.jstree', 'users/dashboard'), array('inline' => false)) ?>
 <div id="crumbWrapper">
     <span>You are here > </span>
     <?php echo $crumb->getHtml('Dashboard', 'reset', 'unique') ; ?>
