@@ -1,18 +1,5 @@
-<script>
-	$(document).ready(function(){
-		$('#Toggle').show();
-		$('#Toggle').toggle(function(){
-			$('#Instructions').show();
-			$('#Toggle').html('Hide Instructions');
-		},
-		function() {
-			$('#Instructions').hide();
-			$('#Toggle').html('Show Instructions');
-		}
-		)
-	})
-</script>
-<a id="Toggle" class="small" style="display: none">View Instructions</a>
+<?php echo $html->script('program_responses/toggle_instructions', array('inline' => false)) ?>
+<a id="Toggle" class="small" style="display: none">Show Instructions</a>
 <p id="Instructions" style="display: none"><?php echo $instructions ?></p>
 <noscript>
 	<p id="Instructions"><?php echo $instructions ?></p>
