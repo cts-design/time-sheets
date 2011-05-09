@@ -386,7 +386,9 @@ class ProgramResponsesController extends AppController {
 			$answers = json_decode($programResponse['ProgramResponse']['answers'], true);
 			
 			foreach($answers as $k => $v) {
-				$data[$k] = ucwords($v);
+				if(!preg_match('[\@]', $v)) {
+					$data[$k] = ucwords($v);
+				}
 			}
 						
 			$data['dob'] = date('m/d/Y', strtotime($data['dob']));		
