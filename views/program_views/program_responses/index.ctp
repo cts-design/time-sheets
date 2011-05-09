@@ -1,45 +1,49 @@
 <script>
 	$(document).ready(function(){
-		$('#toggle').show();
-		$('#toggle').toggle(function(){
-			$('#instructions').show();
-			$('#toggle').html('Hide Instructions');
+		$('#Toggle').show();
+		$('#Toggle').toggle(function(){
+			$('#Instructions').show();
+			$('#Toggle').html('Hide Instructions');
 		},
 		function() {
-			$('#instructions').hide();
-			$('#toggle').html('Show Instructions');
+			$('#Instructions').hide();
+			$('#Toggle').html('Show Instructions');
 		}
 		)
 	})
 </script>
-<a id="toggle" class="small" style="display: none">View Instructions</a>
-<p id="instructions" style="display: none"><?php echo $instructions ?></p>
+<a id="Toggle" class="small" style="display: none">View Instructions</a>
+<p id="Instructions" style="display: none"><?php echo $instructions ?></p>
 <noscript>
-	<p id="instructions"><?php echo $instructions ?></p>
+	<p id="Instructions"><?php echo $instructions ?></p>
 </noscript>
 
 <br />
-<?php if(!empty($program['ProgramField'])) : ?>
-	<?php echo $form->create('ProgramResponse', array('action' => 'index/' . $program['Program']['id'])); ?>	
-	<?php foreach($program['ProgramField'] as $k => $v) : ?>
-		<?php $options = json_decode($v['options'], true); ?>
-		<?php $attributes = array(
-							    'label' => $v['label'],
-							    'type' => $v['type'],
-							    'options' => $options); ?>
-		<?php if(!empty($v['attributes'])) : ?>
-			<?php $attributes = Set::merge($attributes, json_decode($v['attributes'])); ?>
-		<?php endif; ?>						    
-		<?php echo $form->input($v['name'], $attributes); ?>
-		<?php echo '<br />'; ?>																					
-	<?php endforeach; ?>
-	<?php if($program['Program']['form_esign_required']) : ?>
-		<fieldset>
-			<legend>E-Sign</legend>
-			<span>Please put your last name in the box to agree.</span>
-			<?php echo $form->input('form_esignature', array('label' => 'I agree')) ?>	
-		</fieldset>
-		<br />
-	<?php endif ?>		
-	<?php echo $form->end('Submit'); ?>										
-<?php endif; ?>
+<div id="ProgramForm">
+	<?php if(!empty($program['ProgramField'])) : ?>
+		<?php echo $form->create('ProgramResponse', array('action' => 'index/' . $program['Program']['id'])); ?>	
+		<?php foreach($program['ProgramField'] as $k => $v) : ?>
+			<?php $options = json_decode($v['options'], true); ?>
+			<?php $attributes = array(
+								    'label' => $v['label'],
+								    'type' => $v['type'],
+								    'between' => '<p class="field-instructions">' . $v['instructions'] . '</p>',
+								    'after' => '<br />',
+								    'options' => $options); ?>
+			<?php if(!empty($v['attributes'])) : ?>
+				<?php $attributes = Set::merge($attributes, json_decode($v['attributes'])); ?>
+			<?php endif; ?>						    
+			<?php echo $form->input($v['name'], $attributes); ?>
+			<?php echo '<br />'; ?>																					
+		<?php endforeach; ?>
+		<?php if($program['Program']['form_esign_required']) : ?>
+			<fieldset>
+				<legend>E-Sign</legend>
+				<span>Please put your last name in the box to agree.</span>
+				<?php echo $form->input('form_esignature', array('label' => 'I agree')) ?>	
+			</fieldset>
+			<br />
+		<?php endif ?>		
+		<?php echo $form->end('Submit'); ?>										
+	<?php endif; ?>
+</div>
