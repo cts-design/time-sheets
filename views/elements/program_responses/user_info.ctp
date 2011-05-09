@@ -20,7 +20,7 @@
 	<br class="clear" />
 	<p class="left label"><strong>Phone:</strong></p><p class="left"><?php echo $user['phone']?></p>
 	<br class="clear" />
-	<p class="left label"><strong>Alt Phone:</strong></p><p class="left"><?php echo $user['alt_phone']?></p>
+	<p class="left label"><strong>Email:</strong></p><p class="left"><?php echo $user['email']?></p>
 	<br class="clear" />
 	<p class="left label"><strong>Gender:</strong></p><p class="left"><?php echo ucfirst($user['gender'])?></p>
 	<br class="clear" />
