@@ -837,9 +837,18 @@ div.actions .ui-button-text {
 #ProgramResponseUserInfo {padding: 10px; width: 500px;}
 #ProgramResponseUserInfo p {margin-bottom: 5px;}
 #ProgramResponseUserInfo .label {width: 100px; text-align: right; margin-right: 10px;}
-	
-#ProgramAnswers p {margin-bottom: 5px;}
-#ProgramAnswers .label {width: 500px; text-align: right; margin-right: 10px; font-weight: bold}
+
+#ProgramAnswers table {
+	margin: 10px 0 5px 5px
+}	
+
+#ProgramAnswers table tr {
+	width: 100%;
+	float: left;
+	margin-bottom: 5px;
+}
+
+#ProgramAnswers .label {width: 200px; text-align: right; font-weight: bold}
 
 #ProgramResponseDocs {
 	padding: 10px;

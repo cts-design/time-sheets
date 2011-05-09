@@ -1,6 +1,10 @@
 <div id="ProgramAnswers">
+	<table>
 	<?php foreach($answers as $k => $v) : ?>
-		<p class="left label"><?php echo Inflector::humanize($k)?>:</p><p class="left"><?php echo ucwords($v)?></p>
-		<br class="clear" />
+		<tr>
+			<td class="label" style="padding-right: 10px;"><?php echo Inflector::humanize($k)?>:</td>
+			<td><?php echo ucwords($v)?></td>
+		</tr>
 	<?php endforeach ?>	
+	</table>
 </div>
