@@ -373,6 +373,12 @@ class ProgramResponsesController extends AppController {
 				
 			$programResponse = $this->ProgramResponse->findById($programResponseId);
 			
+			foreach($programResponse['User'] as $k => $v) {
+				if(!preg_match('[\@]', $v)) {
+					$programResponse['User'][$k] = ucwords($v);
+				}				
+			}
+			
 			$data = $programResponse['User'];
 			
 			$programPaperForm = $this->ProgramResponse->Program->ProgramPaperForm->findById($formId);	
@@ -380,7 +386,7 @@ class ProgramResponsesController extends AppController {
 			$answers = json_decode($programResponse['ProgramResponse']['answers'], true);
 			
 			foreach($answers as $k => $v) {
-				$data[$k] = $v;
+				$data[$k] = ucwords($v);
 			}
 						
 			$data['dob'] = date('m/d/Y', strtotime($data['dob']));		
