@@ -1,29 +1,13 @@
-<script>
-	$(document).ready(function(){
-		$('#toggle').show();
-		$('#toggle').toggle(function(){
-			$('#instructions').show();
-			$('#toggle').html('Hide Instructions');
-		},
-		function() {
-			$('#instructions').hide();
-			$('#toggle').html('Show Instructions');
-		}
-		)
-		<?php if(empty($this->validationErrors)) : ?>
-			$('#aknowledge').hide();
-		<?php endif ?>
-	})
-</script>
-<div><a id="toggle" class="small" style="display: none">View Instructions</a></div>
-<p id="instructions" style="display: none"><?php echo $instructions ?></p>
+<?php echo $html->script('program_responses/toggle_instructions', array('inline' => false)) ?>
+<div><a id="Toggle" class="small" style="display: none">Show Instructions</a></div>
+<p id="Instructions" style="display: none"><?php echo $instructions ?></p>
 <noscript>
-	<p id="instructions"><?php echo $instructions ?></p>
+	<p id="Instructions"><?php echo $instructions ?></p>
 </noscript>
 <br />
 <?php echo $this->element($element) ?>
 
-<div id="aknowledge">
+<div id="Aknowledge">
 	<?php echo $form->create('Program', array('action' => 'view_media/' . $this->params['pass'][0])) ?>
 	<br />
 	<p>
