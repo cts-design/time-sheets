@@ -471,3 +471,16 @@ width: 100%
 .flash-success .ui-icon{
     margin: 5px 10px 0 0;
 }
+
+ /* Programs */
+#ProgramForm .input {
+	height: auto;
+	margin-bottom: 5px;
+}
+#ProgramForm .error-message {
+	margin-left: 0;
+}
+#ProgramForm .field-instructions {
+	width: 550px;
+	margin: 5px;
+}
