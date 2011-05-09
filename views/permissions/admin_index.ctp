@@ -11,13 +11,13 @@
 		var permissionTabs = new Ext.TabPanel({
 			activeTab: 0,
 			bodyStyle: 'padding: 10px',
-			renderTo: 'permissionTabs',
+			renderTo: 'PermissionTabs',
 			items:[
-				{contentEl: 'users', title: 'Users'},
-				{contentEl: 'website', title: 'Website'},
-				{contentEl: 'storage', title: 'Storage'},
-				{contentEl: 'self_sign', title: 'Self Sign'},
-				{contentEl: 'tools', title: 'Tools'}
+				{contentEl: 'Users', title: 'Users'},
+				{contentEl: 'Website', title: 'Website'},
+				{contentEl: 'Storage', title: 'Storage'},
+				{contentEl: 'SelfSign', title: 'Self Sign'},
+				{contentEl: 'Tools', title: 'Tools'}
 			]
 		})
 	});
@@ -27,9 +27,8 @@
     <span>You are here > </span>
     <?php echo $crumb->getHtml('Edit Permissions', null, 'unique'); ?>
 </div>
-<div id="permissionTabs">
-	<div id="users" class="x-hide-display">
-	    <?php if(isset($controllers)) :?>
+<div id="PermissionTabs">
+	<div id="Users" class="x-hide-display">
 		    <?php echo $this->Form->create('permission', array('action' => 'set_permissions')) ?>
 		    <?php echo $this->Form->hidden('id', array('value' => $id));?>
 		    <?php echo $this->Form->hidden('model', array('value' => $model));?>		
@@ -69,11 +68,9 @@
 			    </fieldset>
 		    <?php endif; ?>
 		    <br class="clear" />
-		    <?php echo $this->Form->end('Submit')?>
-	    <?php endif; ?>	    		
+		    <?php echo $this->Form->end('Submit')?>  		
 	</div>
-	<div id="website" class="x-hide-display">
-	    <?php if(isset($controllers)) :?>
+	<div id="Website" class="x-hide-display">
 		    <?php echo $this->Form->create('permission', array('action' => 'set_permissions')) ?>
 		    <?php echo $this->Form->hidden('id', array('value' => $id));?>
 		    <?php echo $this->Form->hidden('model', array('value' => $model));?>			
@@ -207,11 +204,9 @@
 			    </fieldset>
 		    <?php endif; ?>	
 		    <br class="clear" />
-		    <?php echo $this->Form->end('Submit')?>
-	    <?php endif; ?>		
+		    <?php echo $this->Form->end('Submit')?>	
 	</div>
-	<div id="storage" class="x-hide-display">
-		<?php if(isset($controllers)) :?>
+	<div id="Storage" class="x-hide-display">
 		    <?php echo $this->Form->create('permission', array('action' => 'set_permissions')) ?>
 		    <?php echo $this->Form->hidden('id', array('value' => $id));?>
 		    <?php echo $this->Form->hidden('model', array('value' => $model));?>	
@@ -286,9 +281,8 @@
 		    <?php endif; ?>
 		    <br class="clear" />
 		    <?php echo $this->Form->end('Submit')?>
-		<?php endif; ?>	
 	</div>
-	<div id="self_sign" class="x-hide-display">
+	<div id="SelfSign" class="x-hide-display">
 		<?php if(isset($controllers)) :?>
 		    <?php echo $this->Form->create('permission', array('action' => 'set_permissions')) ?>
 		    <?php echo $this->Form->hidden('id', array('value' => $id));?>
@@ -316,8 +310,7 @@
 			<?php echo $this->Form->end('Submit')?>    
 	    <?php endif; ?>		
 	</div>
-	<div id="tools" class="x-hide-display">
-		<?php if(isset($controllers)) :?>
+	<div id="Tools" class="x-hide-display">
 		    <?php echo $this->Form->create('permission', array('action' => 'set_permissions')) ?>
 		    <?php echo $this->Form->hidden('id', array('value' => $id));?>
 		    <?php echo $this->Form->hidden('model', array('value' => $model));?>		
@@ -330,7 +323,6 @@
 		    </fieldset>
 		    <br class="clear" />
 			<?php echo $this->Form->end('Submit')?>    
-	    <?php endif; ?>	
 	</div>
 </div>
 <br class="clear" />
