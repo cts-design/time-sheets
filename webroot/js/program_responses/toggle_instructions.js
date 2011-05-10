@@ -1,12 +1,12 @@
 $(document).ready(function(){
 	$('#Toggle').show();
 	$('#Toggle').toggle(function(){
-		$('#Instructions').show();
-		$('#Toggle').html('Hide Instructions');
+		$('#Instructions').hide();
+		$('#Toggle').html('Show Instructions');	
 	},
 	function() {
-		$('#Instructions').hide();
-		$('#Toggle').html('Show Instructions');
+		$('#Instructions').show();
+		$('#Toggle').html('Hide Instructions');
 	}
 	)
 })
