@@ -26,7 +26,7 @@
 		<?php if($program['Program']['form_esign_required']) : ?>
 			<fieldset>
 				<legend>E-Sign</legend>
-				<span>Please put your last name in the box to agree.</span>
+				<span>Please put your first and last name in the box to agree.</span>
 				<?php echo $form->input('form_esignature', array('label' => 'I agree')) ?>	
 			</fieldset>
 			<br />
