@@ -10,7 +10,7 @@ Ext.onReady(function(){
 		frame: true,
 		items: [{
 			id: 'htmlEditor',
-			name: 'data[Program][instructions]',
+			name: 'data[ProgramInstruction][text]',
 			xtype: 'htmleditor'
 		}],
 		buttons: [{
