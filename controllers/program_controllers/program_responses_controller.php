@@ -61,7 +61,8 @@ class ProgramResponsesController extends AppController {
 			}			
 		}
 		$program = $this->ProgramResponse->Program->findById($id);
-		$instructions = $program['Program']['form_instructions'];
+		$instructions = Set::extract('/ProgramInstruction[type=form]/text', $program);
+		$instructions = $instructions[0];
 		$title_for_layout = $program['Program']['name'] . ' Registration Form' ;
 		$this->set(compact('program', 'title_for_layout', 'instructions'));	
 	}
@@ -84,7 +85,8 @@ class ProgramResponsesController extends AppController {
 			}				
 		}
 		$program = $this->ProgramResponse->Program->findById($id);
-		$data['instructions'] = $program['Program']['doc_instructions'];
+		$instructions = Set::extract('/ProgramInstruction[type=document]/text', $program);
+		$data['instructions'] = $instructions[0];
 		$data['title_for_layout'] = 'Required Documentation';
 		$data['queueCategoryId'] = $program['Program']['queue_category_id'];
 		$this->set($data);
