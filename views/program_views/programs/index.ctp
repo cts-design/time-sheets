@@ -1,4 +1,4 @@
-<?php echo (!empty($program['Program']['instructions']) ? '<p>' . $program['Program']['instructions'] . '</p>' : '' ) ?>
+<?php echo (!empty($instructions) ? '<p>' . $instructions . '</p>' : '' ) ?>
 <br />
 <?php echo $form->create('Program', array('action' => 'get_started')); ?>
 <?php echo $form->input('redirect', array('type' => 'hidden', 'value' => $redirect)); ?>
