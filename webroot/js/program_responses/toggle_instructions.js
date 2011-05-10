@@ -7,6 +7,5 @@ $(document).ready(function(){
 	function() {
 		$('#Instructions').show();
 		$('#Toggle').html('Hide Instructions');
-	}
-	)
+	})
 })
