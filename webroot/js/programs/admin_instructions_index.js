@@ -4,8 +4,8 @@
 Ext.onReady(function(){  
 	var instructions = [
 		[
-			'Program General Instructions', 
-			'<a href="/admin/programs/edit_instructions/' + programId + '/general">Edit</a>'
+			'Program Main Instructions', 
+			'<a href="/admin/programs/edit_instructions/' + programId + '/main">Edit</a>'
 		],
 		[
 			'Program Media Instructions', 
@@ -18,7 +18,12 @@ Ext.onReady(function(){
 		[
 			'Program Document Instructions', 
 			'<a href="/admin/programs/edit_instructions/' + programId + '/document">Edit</a>'
-		]
+		],
+		[
+			'Program E-Sign Instructions', 
+			'<a href="/admin/programs/edit_instructions/' + programId + '/esign">Edit</a>'
+		]		
+		
 	];
 	
 	var instructionStore = new Ext.data.ArrayStore({
@@ -31,7 +36,7 @@ Ext.onReady(function(){
 	
 	var instructionGrid = new Ext.grid.GridPanel({
 		store: instructionStore,
-		height: 150,
+		height: 175,
 		title: 'Program Instructions',
 		width: 375,
 		frame: true,
