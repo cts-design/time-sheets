@@ -473,14 +473,23 @@ width: 100%
 }
 
  /* Programs */
+
+#ProgramForm fieldset {
+	width: 600px
+}
+
 #ProgramForm .input {
 	height: auto;
 	margin-bottom: 5px;
 }
+
 #ProgramForm .error-message {
 	margin-left: 0;
 }
+
 #ProgramForm .field-instructions {
-	width: 550px;
+	width: 600px;
 	margin: 5px;
 }
+
+
