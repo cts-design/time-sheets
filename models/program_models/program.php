@@ -8,6 +8,7 @@ class Program extends AppModel {
 		'ProgramResponse',
 		'ProgramEmail',
 		'ProgramPaperForm',
-		'WatchedFilingCat'
+		'WatchedFilingCat',
+		'ProgramInstruction'
 		);
 }
