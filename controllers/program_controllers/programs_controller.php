@@ -86,6 +86,8 @@ class ProgramsController extends AppController {
 
 		$data['title_for_layout'] = $program['Program']['name'];
 		$data['program'] = $program;
+		$instructions = Set::extract('/ProgramInstruction[type=main]/text', $program);
+		$data['instructions'] = $instructions[0];
 		$this->set($data);
 	}
 
@@ -153,9 +155,10 @@ class ProgramsController extends AppController {
 			}
 		}		
 		$program = $this->Program->findById($id);
+		$instructions = Set::extract('/ProgramInstruction[type=media]/text', $program);		
 		$data['element'] = '/programs/video'; 
 		$data['media'] = '/programs/load_media/' . $program['Program']['id'];
-		$data['instructions'] = $program['Program']['media_instructions'];
+		$data['instructions'] = $instructions[0];
 		$data['title_for_layout'] = $program['Program']['name'];
 		$this->set($data);		
 	}
@@ -210,23 +213,30 @@ class ProgramsController extends AppController {
 	}
 	
 	function admin_edit_instructions($id, $type) {
+		$program = $this->Program->findById($id);
 		if($this->RequestHandler->isAjax()) {
 			switch($type) {
+				case 'main':
+					$instructionId = Set::extract('/ProgramInstruction[type=main]/id', $program);
+					break;
 				case 'media':
-					$this->data['Program']['media_instructions'] = $this->data['Program']['instructions'];
-					unset($this->data['Program']['instructions']);
+					$instructionId = Set::extract('/ProgramInstruction[type=media]/id', $program);
 					break;
 				case 'form':
-					$this->data['Program']['form_instructions'] = $this->data['Program']['instructions'];
-					unset($this->data['Program']['instructions']);
+					$instructionId = Set::extract('/ProgramInstruction[type=form]/id', $program);
 					break;
 				case 'document':
-					$this->data['Program']['doc_instructions'] = $this->data['Program']['instructions'];
-					unset($this->data['Program']['instructions']);
+					$instructionId = Set::extract('/ProgramInstruction[type=document]/id', $program);
 					break;
+				case 'esign':
+					$instructionId = Set::extract('/ProgramInstruction[type=esign]/id', $program);
+					break;					
 			}
-			$this->Program->id = $id;
-			if($this->Program->save($this->data)) {
+			$this->data['ProgramInstruction']['id'] = $instructionId[0];
+			$this->data['ProgramInstruction']['type'] = $type;
+			$this->data['ProgramInstruction']['program_id'] = $id;
+
+			if($this->Program->ProgramInstruction->save($this->data)) {
 				$data['success'] = true;
 				$data['message'] = 'Instructions saved successfully.';
 			}
@@ -238,20 +248,25 @@ class ProgramsController extends AppController {
 			return $this->render(null, null, '/elements/ajaxreturn');
 		}
 		else {
-			$program = $this->Program->findById($id);
+			
 			switch($type) {
-				case 'general': 
-					$instructions = trim($program['Program']['instructions']);
+				case 'main': 
+					$instructions = Set::extract('/ProgramInstruction[type=main]/text', $program);	
 					break;
 				case 'media':
-					$instructions = trim($program['Program']['media_instructions']);
+					$instructions = Set::extract('/ProgramInstruction[type=media]/text', $program);			
 					break;
 				case 'form':
-					$instructions = trim($program['Program']['form_instructions']);
+					$instructions = Set::extract('/ProgramInstruction[type=form]/text', $program);	
 					break;
 				case 'document':
-					$instructions = trim($program['Program']['doc_instructions']);
+					$instructions = Set::extract('/ProgramInstruction[type=document]/text', $program);
+					break;
+				case 'esign':
+					$instructions = Set::extract('/ProgramInstruction[type=esign]/text', $program);
+					break;
 			}
+			$instructions = trim($instructions[0]);
 			$this->set(compact('instructions'));			
 		}
 	}
