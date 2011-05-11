@@ -68,7 +68,6 @@
 		    <?php echo $this->Html->link(__('Permissions', true), array('controller' => 'permissions', 'action' => 'index', $user['User']['id'], 'User'), array('class'=>'permissions')); ?>
 		<?php } ?>
 		<?php echo $this->Html->link(__('Edit', true), array('action' => 'edit_admin', $user['User']['id'], 'admin' => true), array('class' => 'edit')); ?>
-		<?php echo $this->Html->link(__('Delete', true),array('action' => 'delete_admin', $user['User']['id']), array('class' => 'delete'), sprintf(__('Are you sure you want to delete this admin?', true), $user['User']['id']), array('class' => 'delete')); ?>
 	    </td>
 	</tr>
 	<?php endforeach; ?>
