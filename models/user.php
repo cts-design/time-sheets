@@ -109,7 +109,7 @@ class User extends AppModel {
 		'county' => array(
 			'notEmpty' => array(
 				'rule' => 'notEmpty',
-				'messsage' => 'Please provide a county.',
+				'message' => 'Please provide a county.',
 				'on' => 'create'
 			)
 		),
