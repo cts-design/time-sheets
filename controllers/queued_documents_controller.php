@@ -155,7 +155,8 @@ class QueuedDocumentsController extends AppController {
 		    array('conditions' => array('DocumentFilingCategory.parent_id' => null, 'DocumentFilingCategory.disabled' => 0))),
 	    'locations' => $locations,
 	    'reasons' => $this->reasons,
-	    'queueCategories' => $this->QueuedDocument->DocumentQueueCategory->find('list', array('conditions')),
+	    'queueCategories' => $this->QueuedDocument->DocumentQueueCategory->find('list', array(
+	    	'conditions' => array('DocumentQueueCategory.deleted'))),
 	    'locationId' => $locationId,
 	    'queuedDocId' => $queuedDocId,
 	    'from' => $from,
@@ -184,7 +185,8 @@ class QueuedDocumentsController extends AppController {
 	}
 	$this->data['QueuedDocument']['last_activity_admin_id'] = $this->Auth->user('id');
 	if($this->QueuedDocument->save($this->data)) {
-	    $queueCatList = $this->QueuedDocument->DocumentQueueCategory->find('list');
+	    $queueCatList = $this->QueuedDocument->DocumentQueueCategory->find('list', array(
+	    	'conditions' => array('DocumentQueueCategory.deleted' => 0)));
 	    $queueCatId = $this->data['QueuedDocument']['queue_category_id'];
 	    $this->Transaction->createUserTransaction('Storage', null, null , 
 		    'Reassigned document ID '. $this->data['QueuedDocument']['id'] .
@@ -304,7 +306,8 @@ class QueuedDocumentsController extends AppController {
 	    }
 	}
 	$locations = $this->QueuedDocument->Location->find('list');
-	$queueCats = $this->QueuedDocument->DocumentQueueCategory->find('list');
+	$queueCats = $this->QueuedDocument->DocumentQueueCategory->find('list', array('conditions' => array(
+		'DocumentQueueCategory.deleted' => 0)));
 	$title_for_layout = 'Desktop Scan Document';
 	$this->set(compact('title_for_layout', 'queueCats', 'locations'));
     }
