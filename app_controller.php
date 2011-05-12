@@ -106,6 +106,7 @@ class AppController extends Controller {
 		    $this->Security->requireSecure();
 		}	
 		if (isset($this->params['prefix']) && $this->params['prefix'] == 'admin') {
+			$this->Security->validatePost = false;
 		    $this->layout = 'admin';
 		    if($this->Auth->user('role_id') == 1 ) {
 				$this->Session->destroy();
