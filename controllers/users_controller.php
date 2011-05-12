@@ -275,7 +275,6 @@ class UsersController extends AppController {
     function kiosk_mini_registration($lastname=null) {
 		if (!empty($this->data)) {	
 		    $this->User->create();
-			$this->User->setValidation('miniRegistration');
 		    if ($this->User->save($this->data)) {
 				$userId = $this->User->getInsertId();
 				$last4 = substr($this->data['User']['ssn'], -4);
