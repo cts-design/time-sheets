@@ -10,26 +10,22 @@ class User extends AppModel {
 
     var $name = 'User';
     var $hasMany = array(
-	'SelfSignLog' => array(
-	    'className' => 'SelfSignLog',
-	    'foreignKey' => 'user_id'
-	),
-	'SelfSignLogArchive' => array(
-	    'className' => 'SelfSignLogArchive',
-	    'foreignKey' => 'user_id'
-	),
-	'UserTransaction' => array(
-	    'className' => 'UserTransaction',
-	    'foreignKey' => 'user_id'
-	),
-	'FiledDocument' => array(
-	    'className' => 'FiledDocument',
-	    'foreignKey' => 'user_id'
-	),
-	'ProgramResponse' => array(
-		'className' => 'ProgramResponse', 
-		'foreignKey' => 'user_id'
-	)
+		'SelfSignLog' => array(
+		    'className' => 'SelfSignLog',
+		    'foreignKey' => 'user_id'
+		),
+		'SelfSignLogArchive' => array(
+		    'className' => 'SelfSignLogArchive',
+		    'foreignKey' => 'user_id'
+		),
+		'UserTransaction' => array(
+		    'className' => 'UserTransaction',
+		    'foreignKey' => 'user_id'
+		),
+		'FiledDocument' => array(
+		    'className' => 'FiledDocument',
+		    'foreignKey' => 'user_id'
+		)
     );
     var $hasOne = array(
 		'QueuedDocument' => array(
@@ -41,71 +37,33 @@ class User extends AppModel {
     var $actsAs = array('Acl' => 'requester', 'Multivalidatable');
     var $validate = array(
 		'firstname' => array(
-		    'notempty' => array(
-				'rule' => 'notempty',
+		    'notEmpty' => array(
+				'rule' => 'notEmpty',
 				'message' => 'Please provide a first name.'
-			),
+		    ),
 		    'maxlength' => array(
 				'rule' => array('maxlength', 50),
-				'message' => 'This field cannot excced 50 characters.',
-		    )
+				'message' => 'This field cannot excced 50 characters.'
+		    ),
 		),
 		'lastname' => array(
-		    'notempty' => array(
-				'rule' => 'notempty',
-				'message' => 'Please provide a last name.',
+		    'notEmpty' => array(
+				'rule' => 'notEmpty',
+				'message' => 'Please provide a last name.'
 		    ),
 		    'maxlength' => array(
 				'rule' => array('maxlength', 50),
-				'message' => 'This field cannot excced 50 characters.',
-		    )
-		),
-		'username' => array(
-		    'notempty' => array(
-				'rule' => 'notempty',
-				'message' => 'Please provide a username',
-				'on' => 'create'
+				'message' => 'This field cannot excced 50 characters.'
 		    ),
-		    'minlength' => array(
-				'rule' => array('minlength', 5),
-				'message' => 'Username must be at least 5 characters.',
-				'on' => 'create'
-		    ),
-		    'maxlength' => array(
-				'rule' => array('maxlength', 25),
-				'message' => 'This username cannot excced 25 characters.',
-				'on' => 'create'
-		    ),
-		    'unique' => array(
-				'rule' => 'isUnique',
-				'message' => 'The username entered already exists in the system.',
-				'on' => 'create'
-		    )
-		),
-		'pass' => array(
-		    'notempty' => array(
-				'rule' => 'notempty',
-				'message' => 'Please provide a password',
-				'on' => 'create', 
-		    ),
-		    'minlength' => array(
-				'rule' => array('minlength', 6),
-				'message' => 'Password must be atleast 6 characters.',
-				'required' => false,
-		    ),
-		    'maxlength' => array(
-				'rule' => array('maxlength', 25),
-				'message' => 'This username cannot excced 25 characters.',
-		    )
 		),
 		'ssn' => array(
-		    'notempty' => array(
-				'rule' => 'notempty',
-				'message' => 'Please provide a SSN.',
+		    'notEmpty' => array(
+				'rule' => 'notEmpty',
+				'message' => 'Please provide a SSN.'
 		    ),
 		    'numeric' => array(
 				'rule' => 'numeric',
-				'message' => 'Please provide only numbers, no spaces or dashes.',
+				'message' => 'Please provide only numbers, no spaces or dashes.'
 		    ),
 		    'unique' => array(
 				'rule' => 'isUnique',
@@ -117,8 +75,8 @@ class User extends AppModel {
 		    )
 		),
 		'ssn_confirm' => array(
-		    'notempty' => array(
-				'rule' => 'notempty',
+		    'notEmpty' => array(
+				'rule' => 'notEmpty',
 				'message' => 'Please confirm the SSN.',
 		    ),
 		    'numeric' => array(
@@ -135,33 +93,37 @@ class User extends AppModel {
 		    )
 		),
 		'address_1' => array(
-			'notempty' => array(
-				'rule' => 'notempty',
-				'message' => 'Please provide an address (number and street).'
+			'notEmpty' => array(
+				'rule' => 'notEmpty',
+				'message' => 'Please provide a street address.',
+				'on' => 'create'
 			)
 		),
 		'city' => array(
-			'notempty' => array(
-				'rule' => 'notempty',
-				'message' => 'Please provide a city.'
+			'notEmpty' => array(
+				'rule' => 'notEmpty',
+				'message' => 'Please provide a city.',
+				'on' => 'create'
 			)
 		),
 		'county' => array(
-			'notempty' => array(
-				'rule' => 'notempty',
-				'message' => 'Please provide a county.'
+			'notEmpty' => array(
+				'rule' => 'notEmpty',
+				'message' => 'Please provide a county.',
+				'on' => 'create'
 			)
 		),
 		'state' => array(
-			'notempty' => array(
-				'rule' => 'notempty', 
-				'message' => 'Please provide a state.' 
+			'notEmpty' => array(
+				'rule' => 'notEmpty',
+				'message' => 'Please provide a state',
+				'on' => 'create'
 			)
-		),	
+		),
 		'zip' => array(
 		    'numeric' => array(
 				'rule' => 'numeric',
-				'message' => 'Please provide only numbers, no spaces or dashes.',
+				'message' => 'Please provide only numbers, no spaces or dashes.'
 		    ),
 		    'minLength' => array(
 				'rule' => array('minLength', 5),
@@ -173,162 +135,274 @@ class User extends AppModel {
 		    )
 		),
 		'phone' => array(
-		    'maxLength' => array(
+		    'notEmpty' => array(
+				'rule' => 'notEmpty',
+				'message' => 'Please provide a phone number',
+				'on' => 'create'
+			),
+		    'phone' => array(
 				'rule' => array('maxLength', 20),
-				'message' => 'Please no more than 20 characters.'
-		    ),
-		    'notempty' => array(
-				'rule' => 'notempty',
-				'message' => 'Please provide a phone number.' 
-			)
+				'message' => 'Please no more than 20 characters.',
+				'allowEmpty' => true
+		    )
 		),
 		'alt_phone' => array(
-		    'maxLength' => array(
+		    'phone' => array(
 				'rule' => array('maxLength', 20),
 				'message' => 'Please no more than 20 characters.',
 				'allowEmpty' => true
 		    )
 		),
 		'gender' => array(
-		    'notempty' => array(
-				'rule' => 'notempty',
-				'message' => 'Please select gender.',
-				'required' => true
+		    'notEmpty' => array(
+				'rule' => 'notEmpty',
+				'message' => 'Please select a gender.',
+				'on' => 'create'
 		    )
 		),
-		'language' => array(
-			'notempty' => array(
-				'rule' => 'notempty',
-				'message' => 'Please provide primary spoken language.'
-			)
-		),
 		'dob' => array(
-		    'notempty' => array(
-				'rule' => 'notempty',
+		    'notEmpty' => array(
+				'rule' => 'notEmpty',
 				'message' => 'Please provide date of birth.'
 		    ),
 		    'date' => array(
 				'rule' => array('date', 'mdy'),
-				'message' => 'Please provide a valid date in this format mm/dd/yyyy'
+				'message' => 'Please provide a valid date in this format mm/dd/yyyy.'
 		    )
 		),
 		'email' => array(
-		    'notempty' => array(
+		    'notEmpty' => array(
 				'rule' => 'notEmpty',
 				'message' => 'Please provide an email address.',
-		    ),
+				'on' => 'create'
+			),
 		    'email' => array(
 				'rule' => 'email',
 				'message' => 'Must be a vaild email like bob@test.com.',
-		    ),
+			    'allowEmpty' => true
+			),
 		    'unique' => array(
 				'rule' => 'isUnique',
 				'message' => 'The email address already exists in the system.'
 		    )
 		),
-		'location_id' => array(
-		    'notempty' => array(
-				'rule' => 'notempty',
-				'message' => 'Please select a location.'
-		    )
-		),
-		'role_id' => array(
-		    'notempty' => array(
-				'rule' => 'notempty',
-				'message' => 'Please select a role.'
-		    )
+		'language' => array(
+			'notEmpty' => array(
+				'rule' => 'notEmpty',
+				'message' => 'Please provide a language.',
+				'on' => 'create'
+			)
 		),
 		'ethnicity' => array(
-			'notempty' => array(
-				'rule' => 'notempty',
-				'message' => 'Please select ethnicity.'
+			'notEmpty' => array(
+				'rule' => 'notEmpty',
+				'message' => 'Please select a ethnicity.',
+				'on' => 'create'
 			)
 		),
 		'race' => array(
-			'notempty' => array(
-				'rule' => 'notempty',
-				'message' => 'Please select race.'
+			'notEmpty' => array(
+				'rule' => 'notEmpty',
+				'message' => 'Please select race.',
+				'on' => 'create'
 			)
-		)
+		) 
+
     );
-
-    function parentNode() {
-		if (!$this->id && empty($this->data)) {
-		    return null;
-		}
-		$data = $this->data;
-		if (empty($this->data)) {
-		    $data = $this->read();
-		}
-		if (empty($data['User']['role_id'])) {
-		    return null;
-		} else {
-		    return array('Role' => array('id' => $data['User']['role_id']));
-		}
-    }
-
-
-    function beforeValidate($options = array()) {
-		parent::beforeValidate($options);
-		$miniRules = array(
-		    'address_1' => 'notempty',
-		    'city' => 'notempty',
-		    'state' => 'notempty',
-		    'phone' => 'notempty',
-		    'gender' => 'notempty',
-		    'location_id' => 'notempty',
-			'language' => 'notempty',
-			'ethnicity' => 'notempty',
-			'race' => 'notempty',
-			'email' => array('notempty', 'email', 'unique'),
-			'language' => 'notempty',
-			'ethnicity' => 'notempty',
-			'race' => 'notempty'
-		);
-		if (isset($this->data['User']['mini_registration']) &&
-			$this->data['User']['mini_registration'] == 'kiosk') {
-			    $this->pauseValidation($miniRules);
-		}
-
-		if (isset($this->data['User']['self_sign_edit']) &&
-			$this->data['User']['self_sign_edit'] == 'edit') {
-			    $miniRules['ssn'] = 'notempty';
-			    $this->pauseValidation($miniRules);
-		}
-		if (isset($this->data['User']['admin_registration'])) {
-		    $rules = array(
-			'address_1' => 'notempty',
-			'city' => 'notempty',
-			'county' => 'notempty',
-			'phone' => 'notempty',
-			'state' => 'notempty',
-			'zip' => array('notempty', 'numeric', 'minLength', 'maxLength'),
-			'gender' => 'notempty',
-			'ssn' => array('notempty', 'numeric', 'minLength', 'unique' ),
-			'ssn_confirm' => array('notempty', 'numeric', 'minLength'),
-			'dob' => array('notempty', 'date'),
-			'language' => 'notempty',
-			'ethnicity' => 'notempty',
-			'race' => 'notempty'
-		    );
-		    $this->pauseValidation($rules);
-		}
-		if(isset($this->data['User']['registration']) && 
-			$this->data['User']['registration'] == 'child_website') {
-			    $rules = array(
-					'email' => 'unique'
-			    );
-				$this->pauseValidation($rules);					
-		}
-		if (isset($this->data['User']['role_id']) && $this->data['User']['role_id'] == 1) {
-		    $rules = array(
-				'username' => 'unique',
-				'email' => 'notempty'
-		    );
-		    $this->pauseValidation($rules);
-		}
-    }
-
+	
+	var $validationSets = array(
+		'miniRegistration' => array(
+			'firstname' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a first name.'
+			    ),
+			    'maxlength' => array(
+					'rule' => array('maxlength', 50),
+					'message' => 'This field cannot excced 50 characters.'
+			    ),
+			),
+			'lastname' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a last name.'
+			    ),
+			    'maxlength' => array(
+					'rule' => array('maxlength', 50),
+					'message' => 'This field cannot excced 50 characters.'
+			    ),
+			),
+			'ssn' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a SSN.'
+			    ),
+			    'numeric' => array(
+					'rule' => 'numeric',
+					'message' => 'Please provide only numbers, no spaces or dashes.'
+			    ),
+			    'unique' => array(
+					'rule' => 'isUnique',
+					'message' => 'The SSN entered already exists in the system.'
+			    ),
+			    'minLength' => array(
+					'rule' => array('minLength', 9),
+					'message' => 'SSN must be 9 characters.',
+			    )
+			),
+			'ssn_confirm' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please confirm the SSN.',
+			    ),
+			    'numeric' => array(
+					'rule' => 'numeric',
+					'message' => 'Please provide only numbers, no spaces or dashes.',
+			    ),
+			    'verify' => array(
+					'rule' => array('verifies', 'ssn'),
+					'message' => 'SSNs do not match.'
+			    ),
+			    'minLength' => array(
+					'rule' => array('minLength', 9),
+					'message' => 'SSN must be 9 characters.'
+			    )
+			),
+			'dob' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide date of birth.'
+			    ),
+			    'date' => array(
+					'rule' => array('date', 'mdy'),
+					'message' => 'Please provide a valid date in this format mm/dd/yyyy.'
+			    )
+			),
+			'zip' => array(
+			    'numeric' => array(
+					'rule' => 'numeric',
+					'message' => 'Please provide only numbers, no spaces or dashes.'
+			    ),
+			    'minLength' => array(
+					'rule' => array('minLength', 5),
+					'message' => 'Please enter 5 digit zip code.'
+			    ),
+			    'maxLength' => array(
+					'rule' => array('maxLength', 5),
+					'message' => 'Please enter 5 digit zip code.'
+			    )
+			)		
+		),
+		'selfSignEdit' => array(
+			'firstname' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a first name.'
+			    ),
+			    'maxlength' => array(
+					'rule' => array('maxlength', 50),
+					'message' => 'This field cannot excced 50 characters.'
+			    ),
+			),
+			'lastname' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a last name.'
+			    ),
+			    'maxlength' => array(
+					'rule' => array('maxlength', 50),
+					'message' => 'This field cannot excced 50 characters.'
+			    ),
+			),
+			'zip' => array(
+			    'numeric' => array(
+					'rule' => 'numeric',
+					'message' => 'Please provide only numbers, no spaces or dashes.'
+			    ),
+			    'minLength' => array(
+					'rule' => array('minLength', 5),
+					'message' => 'Please enter 5 digit zip code.'
+			    ),
+			    'maxLength' => array(
+					'rule' => array('maxLength', 5),
+					'message' => 'Please enter 5 digit zip code.'
+			    )
+			)			
+		),
+		'admin' => array(
+			'firstname' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a first name.'
+			    ),
+			    'maxlength' => array(
+					'rule' => array('maxlength', 50),
+					'message' => 'This field cannot excced 50 characters.'
+			    ),
+			),
+			'lastname' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a last name.'
+			    ),
+			    'maxlength' => array(
+					'rule' => array('maxlength', 50),
+					'message' => 'This field cannot excced 50 characters.'
+			    ),
+			),		
+			'username' => array(
+			    'unique' => array(
+					'rule' => 'isUnique',
+					'message' => 'The username entered already exists in the system.',
+					'on' => 'create'
+			    ),
+			),
+			'pass' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a password',
+					'on' => 'create'
+			    ),
+			    'minlength' => array(
+					'rule' => array('minlength', 6),
+						'message' => 'Password must be atleast 6 characters.',
+						'required' => false
+			    ),
+			    'maxlength' => array(
+					'rule' => array('maxlength', 25),
+					'message' => 'This username cannot excced 25 characters.'
+			    )
+			),
+			'email' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide an email address.',
+					'on' => 'create'
+				),
+			    'email' => array(
+					'rule' => 'email',
+					'message' => 'Must be a vaild email like bob@test.com.',
+				    'allowEmpty' => true
+				),
+			    'unique' => array(
+					'rule' => 'isUnique',
+					'message' => 'The email address already exists in the system.'
+			    )
+			),
+			'location_id' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please select a location.'
+			    )
+			),		
+			'role_id' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please select a role.'
+			    )
+			)						
+		)	
+	);
 
     function parentNode() {
 		if (!$this->id && empty($this->data)) {
@@ -347,30 +421,30 @@ class User extends AppModel {
     }
 
     function beforeSave($options = array()) {
-		if (isset($this->data['User']['pass'])) {
-		    $this->data['User']['password'] = Security::hash($this->data['User']['pass'], null, true);
-		}
-		if (!empty($this->data['User']['ssn'])) {
-		    $last4 = substr($this->data['User']['ssn'], -4);
-		    $this->data['User']['password'] = Security::hash($last4, null, true);
-		}
-		if(!empty($this->data['User']['firstname']) && !empty($this->data['User']['lastname'])) {
-		    if(!empty($this->data['User']['role_id']) && $this->data['User']['role_id'] > 1) {
-				$this->data['User']['username'] = substr($this->data['User']['firstname'], 0, 1) . $this->data['User']['lastname'];
-		    }
-		    else {
-				$this->data['User']['username'] = $this->data['User']['lastname'];
-		    }
-		    
-		}
-		if (isset($this->data['User']['dob'])) {
-		    $this->data['User']['dob'] = date('Y-m-d', strtotime($this->data['User']['dob']));
-		}
-	
-		return true;
+	if (isset($this->data['User']['pass'])) {
+	    $this->data['User']['password'] = Security::hash($this->data['User']['pass'], null, true);
+	}
+	if (!empty($this->data['User']['ssn'])) {
+	    $last4 = substr($this->data['User']['ssn'], -4);
+	    $this->data['User']['password'] = Security::hash($last4, null, true);
+	}
+	if(!empty($this->data['User']['firstname']) && !empty($this->data['User']['lastname'])) {
+	    if(!empty($this->data['User']['role_id']) && $this->data['User']['role_id'] > 1) {
+			$this->data['User']['username'] = substr($this->data['User']['firstname'], 0, 1) . $this->data['User']['lastname'];
+	    }
+	    else {
+			$this->data['User']['username'] = $this->data['User']['lastname'];
+	    }
+	    
+	}
+	if (isset($this->data['User']['dob'])) {
+	    $this->data['User']['dob'] = date('Y-m-d', strtotime($this->data['User']['dob']));
+	}
+
+	return true;
     }
 
-     function afterSave($created) {
+    function afterSave($created) {
 		if (!$created) {
 		    $parent = $this->parentNode();
 		    $parent = $this->node($parent);
@@ -381,7 +455,7 @@ class User extends AppModel {
 		}
     }
    
-    function afterFind($results, $primary = false) {
+    function  afterFind($results, $primary = false) {
 		parent::afterFind($results, $primary);
 		foreach ($results as $key => $value) {
 		    if(isset($value['User']['created'])) {
@@ -400,12 +474,6 @@ class User extends AppModel {
     function verifies($data, $field) {
 		$value = Set::extract($data, "{s}");
 		return ($value[0] == $this->data[$this->name][$field]);
-    }
-
-    function delete($id = null) {
-		if ($this->saveField('deleted', 1)) {
-		    return true;
-		}
-		return false;
-    }
+	}
+	
 }
