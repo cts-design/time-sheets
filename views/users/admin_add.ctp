@@ -38,6 +38,15 @@
 		    'after' => '</p>'
 	    ));
 	    echo '<br class="clear" />' ;
+		echo $this->Form->input('surname', array(
+			'type' => 'select',
+			'empty' => 'Please Select',
+			'options' => array('Sr' => 'Sr', 'Jr' => 'Jr', 'III' => 'III'),
+		    'before' => '<p class="left">',
+		    'between' => '</p><p class="left">',
+		    'after' => '</p>'
+	    ));
+	    echo '<br class="clear" />' ;		
 	    echo $this->Form->input('ssn', array(
 		    'type' => 'password',
 		    'label' => __('SSN', true),
@@ -55,12 +64,7 @@
 	    ));
 	    echo '<br class="clear" />' ;
 	    echo $this->Form->input('address_1', array(
-		    'before' => '<p class="left">',
-		    'between' => '</p><p class="left">',
-		    'after' => '</p>'
-	    ));
-	    echo '<br class="clear" />' ;
-	    echo $this->Form->input('address_2', array(
+		    'label' => 'Address',
 		    'before' => '<p class="left">',
 		    'between' => '</p><p class="left">',
 		    'after' => '</p>'
@@ -71,6 +75,12 @@
 		    'between' => '</p><p class="left">',
 		    'after' => '</p>'
 	    ));
+	    echo '<br class="clear" />' ;
+	    echo $this->Form->input('county', array(
+		    'before' => '<p class="left">',
+		    'between' => '</p><p class="left">',
+		    'after' => '</p>'
+	    ));		
 	    echo '<br class="clear" />' ;
 	    echo $this->Form->input('state', array(
 		    'empty' => 'Select State',
@@ -117,7 +127,41 @@
 		    'between' => '</p><p class="left">',
 		    'after' => '</p>'
 	    ));
+	    echo '<br class="clear" />' ;
+	    echo $this->Form->input('language', array(
+		    'before' => '<p class="left">',
+		    'between' => '</p><p class="left">',
+		    'after' => '</p>'
+	    ));
+	    echo '<br class="clear" />' ;		
+	    echo $this->Form->input('race', array(
+	    	'type' => 'select',
+	    	'empty' => 'Please Select',
+	    	'options' => array(
+	    		'American Indian or Alaska Native' => 'American Indian or Alaska Native',
+				'Asian' => 'Asian',
+				'Black or African American' => 'Black or African American',
+				'Hawaiian or Other Pacific Islander' => 'Hawaiian or Other Pacific Islader',
+				'White' => 'White'
+				),
+		    'before' => '<p class="left">',
+		    'between' => '</p><p class="left">',
+		    'after' => '</p>'
+	    ));
+		echo '<br class="clear" />' ;
+	    echo $this->Form->input('ethnicity', array(
+	    	'type' => 'select',
+	    	'empty' => 'Please Select',
+	    	'options' => array(
+	    		'Hispanic or Latino' => 'Hispanic or Latino',
+				'Not Hispanic or Latino'
+				),
+		    'before' => '<p class="left">',
+		    'between' => '</p><p class="left">',
+		    'after' => '</p>'
+	    ));				
 	    ?>
+	    
 	</fieldset>
 	<?php echo $this->Form->end(__('Submit', true)); ?>
     </div>

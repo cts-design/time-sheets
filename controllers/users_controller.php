@@ -275,6 +275,7 @@ class UsersController extends AppController {
     function kiosk_mini_registration($lastname=null) {
 		if (!empty($this->data)) {	
 		    $this->User->create();
+			$this->User->setValidation('miniRegistration');
 		    if ($this->User->save($this->data)) {
 				$userId = $this->User->getInsertId();
 				$last4 = substr($this->data['User']['ssn'], -4);
@@ -388,6 +389,7 @@ class UsersController extends AppController {
 		$this->set('title_for_layout', 'Add Administrator');
 		if (!empty($this->data)) {
 		    $this->User->create();
+			$this->User->setValidation('admin');
             if ($this->data['User']['email'] != Configure::read('PrePop.email')) {
                 $userEmail = $this->data['User']['email'];
                 $this->set(compact('userEmail'));
@@ -441,6 +443,7 @@ class UsersController extends AppController {
 				$this->Email->subject = 'Your Atlas password has been changed.';
 				$this->Email->send($message);		
 			}
+			$this->User->setValidation('admin');
 		    if ($this->User->save($this->data)) {
 				$this->Transaction->createUserTransaction('Administrator', null, null,
 					'Edited administrator '. $this->data['User']['firstname'] . ' ' . $this->data['User']['lastname']);

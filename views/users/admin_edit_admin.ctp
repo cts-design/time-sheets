@@ -45,6 +45,12 @@
 		    'after' => '</p>'
 		)); ?>
 	    <?php echo  '<br class="clear"/>' ?>
+	    <?php echo $this->Form->input('phone', array(
+		    'before' => '<p class="left">',
+		    'between' => '</p><p class="left">',
+		    'after' => '</p>'
+		)); ?>
+	    <?php echo  '<br class="clear"/>' ?>	    
 	    <?php echo $this->Form->input('location_id', array(
 		    'type' => 'select',
 		    'before' => '<p class="left">',

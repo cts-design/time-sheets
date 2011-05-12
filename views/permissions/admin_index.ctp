@@ -350,7 +350,6 @@
 	</div>
  
 	    <?php endif; ?>		
-
 	<div id="Tools" class="x-hide-display">
 		    <?php echo $this->Form->create('permission', array('action' => 'set_permissions')) ?>
 		    <?php echo $this->Form->hidden('id', array('value' => $id));?>

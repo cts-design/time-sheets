@@ -32,13 +32,13 @@ class User extends AppModel {
 	)
     );
     var $hasOne = array(
-	'QueuedDocument' => array(
-	    'className' => 'QueuedDocument',
-	    'foreignKey' => 'locked_by'
-	)
+		'QueuedDocument' => array(
+		    'className' => 'QueuedDocument',
+		    'foreignKey' => 'locked_by'
+		)
     );
     var $belongsTo = array('Role', 'Location');
-    var $actsAs = array('Acl' => 'requester');
+    var $actsAs = array('Acl' => 'requester', 'Multivalidatable');
     var $validate = array(
 		'firstname' => array(
 		    'notempty' => array(
@@ -329,17 +329,21 @@ class User extends AppModel {
 		}
     }
 
-    function pauseValidation($rules) {
-        foreach ($rules as $key => $value) {
-            if(is_array($value)) {
-                foreach ($value as $k => $v){
-                    unset($this->validate[$key][$v]);
-                }
-            }
-            else {
-                unset($this->validate[$key][$value]);
-            }
-        }
+
+    function parentNode() {
+		if (!$this->id && empty($this->data)) {
+		    return null;
+		}
+		$data = $this->data;
+		if (empty($this->data)) {
+		    $data = $this->read();
+		}
+		if (empty($data['User']['role_id'])) {
+		    return null;
+		} 
+		else {
+		    return array('Role' => array('id' => $data['User']['role_id']));
+		}
     }
 
     function beforeSave($options = array()) {
@@ -404,5 +408,4 @@ class User extends AppModel {
 		}
 		return false;
     }
-
 }
