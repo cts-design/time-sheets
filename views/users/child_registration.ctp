@@ -88,16 +88,21 @@
 		echo '<br class="clear"/>';		
 		echo $this->Form->input('county', array(
 			'label' => __('Child\'s County', true),
+			'type' => 'select',
+			'empty' => 'Please Select',
+			'options' => Configure::read('Company.counties'), 
 			'before' => '<p class="left">',
 			'between' => '</p><p class="left">',
 			'after' => '</p>'));
 		echo '<br class="clear"/>';			
 		echo $this->Form->input('state', array(
-			'empty' => 'Please Select',
+			'type' => 'text',
+			'readonly' => 'readonly',
 			'label' => __('Child\'s State', true),
 			'before' => '<p class="left">',
 			'between' => '</p><p class="left">',
-			'after' => '</p>'));
+			'after' => '</p>',
+			'value' => Configure::read('Company.state')));
 		echo '<br class="clear"/>';				
 	    echo $this->Form->input('zip', array(
 			'label' => __('Child\'s Zip Code', true),
