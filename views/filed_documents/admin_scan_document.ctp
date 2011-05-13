@@ -61,11 +61,11 @@
 	    Eztwain.UploadExtraField "data[FiledDocument][filed_location_id]", getLocationId()
 	    Eztwain.UploadExtraField "data[User][id]", getUserId()
 	    Eztwain.UploadAddCookie ("PHPSESSID=<?php echo $this->Session->id()?>")
-	    if not Eztwain.UploadToURL("<?php echo Configure::read('URL')?>/admin/filed_documents/scan_document", "file.pdf", "data[FiledDocument][submittedfile]") then
-		newURL = "<?php echo Configure::read('URL')?>/admin/filed_documents/scan_document/" & getUserId()
+	    if not Eztwain.UploadToURL("<?php echo $html->url('/admin/filed_documents/scan_document', true)?>", "file.pdf", "data[FiledDocument][submittedfile]") then
+		newURL = "<?php echo $html->url('/admin/filed_documents/scan_document/', true)?>" & getUserId()
 		location.href = newURL
 	    else
-		newURL = "<?php echo Configure::read('URL')?>/admin/filed_documents/index/" & getUserId()
+		newURL = "<?php echo $html->url('/admin/filed_documents/index/', true)?>" & getUserId()
 		location.href = newURL
 	    end if
 	End Sub
