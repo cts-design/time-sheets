@@ -8,12 +8,6 @@
  * @package ATLAS V3
  */
 
-// Site URL (include trailing slash)
-$config['URL'] = 'http://development.ctsfla.com/';
-
-// Admin URL (include trailing slash)
-$config['Admin']['URL'] = 'https://development.ctsfla.com/admin/';
-
 //domain for use with cookies
 $config['domain'] = 'development.ctsfla.com';
 

@@ -25,7 +25,7 @@
 		echo $this->Form->input('slug', array(
 							'before' => '<p class="left">',
 							'between' => '</p><p class="left url_label">'
-                                                        . Configure::read('URL') .
+                                                        . $html->url('/', true) .
                                                         '</p><p class="left">',
 							'after' => '</p>'));
 		echo '<br class="clear" />';

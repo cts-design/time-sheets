@@ -25,7 +25,7 @@ class PressReleasesController extends AppController {
                         $this->Session->setFlash(__('The press release could not be uploaded. Please, try again.', true), 'flash_failure');
                         $this->redirect(array('action' => 'index'));
                     }
-                    $this->data['PressRelease']['file'] = Configure::read('URL') . $file;
+                    $this->data['PressRelease']['file'] = Router::url('/', true) . $file;
                     $this->PressRelease->create();
                     
                     if ($this->PressRelease->save($this->data)) {

@@ -25,7 +25,7 @@ class ChairmanReportsController extends AppController {
                             $this->Session->setFlash(__('The chairman report could not be uploaded. Please, try again.', true), 'flash_failure');
                             $this->redirect(array('action' => 'index'));
                         }
-                        $this->data['ChairmanReport']['file'] = Configure::read('URL') . $file;
+                        $this->data['ChairmanReport']['file'] = Router::url('/', true) . $file;
 			$this->ChairmanReport->create();
 			if ($this->ChairmanReport->save($this->data)) {
                                 $this->Transaction->createUserTransaction('CMS', null, null,
