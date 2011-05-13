@@ -34,9 +34,9 @@
 	    	    <td>
 			    <?php
 			    if ($selfSignLog['SelfSignLog']['status'] == 0) {
-				echo $this->Html->link($statuses[$selfSignLog['SelfSignLog']['status']], Configure::read('Admin.URL') . '/self_sign_logs/toggle_status/' . $selfSignLog['SelfSignLog']['id'] .'/' . 1, array('class' => 'toggle'));
+				echo $this->Html->link($statuses[$selfSignLog['SelfSignLog']['status']], '/admin/self_sign_logs/toggle_status/' . $selfSignLog['SelfSignLog']['id'] .'/' . 1, array('class' => 'toggle'));
 			    } elseif ($selfSignLog['SelfSignLog']['status'] == 1) {
-				echo $this->Html->link($statuses[$selfSignLog['SelfSignLog']['status']],Configure::read('Admin.URL') . '/self_sign_logs/toggle_status/' . $selfSignLog['SelfSignLog']['id'] .'/' . 0, array('class' => 'toggle'));
+				echo $this->Html->link($statuses[$selfSignLog['SelfSignLog']['status']], '/admin/self_sign_logs/toggle_status/' . $selfSignLog['SelfSignLog']['id'] .'/' . 0, array('class' => 'toggle'));
 			    }
 			    ?>&nbsp;
 	    	    </td>

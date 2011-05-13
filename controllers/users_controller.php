@@ -566,7 +566,7 @@ class UsersController extends AppController {
 				$message = 'A Social Security Number edit has been requested by ' . 
 					$this->Auth->user('firstname'). ' ' . $this->Auth->user('lastname') . '.' .  "\r\n" .
 					'Please edit the following customers record accordingly' . "\r\n" . 
-					Configure::read('Admin.URL') . '/users/edit/' . $this->params['form']['userId']. "\r\n";					
+					Configure::read('Admin.URL') . 'users/edit/' . $this->params['form']['userId']. "\r\n";					
 				if($this->Email->send($message)){
 					$this->data = $this->User->read(null, $this->params['form']['userId']);
 						$this->Transaction->createUserTransaction('Customer', null, null,
