@@ -37,6 +37,7 @@ class ProgramResponsesController extends AppController {
 				'ProgramResponse.program_id' => $id,
 				'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s') 
 			)));	
+			$this->data['ProgramResponse']['form_completed'] = date('m/d/y');
 			$this->data['ProgramResponse']['answers'] = json_encode($this->data['ProgramResponse']);
 			$this->data['ProgramResponse']['id'] = $response['ProgramResponse']['id'];
 			$this->data['ProgramResponse']['program_id'] = $id;
@@ -392,7 +393,8 @@ class ProgramResponsesController extends AppController {
 					$data[$k] = ucwords($v);
 				}
 			}
-						
+			
+			$data['conformation_id'] = $programResponse['ProgramResponse']['conformation_id'];			
 			$data['dob'] = date('m/d/Y', strtotime($data['dob']));		
 			$data['admin'] = $this->Auth->user('firstname') . ' ' . $this->Auth->user('lastname');
 			$data['todays_date'] = date('m/d/Y');
