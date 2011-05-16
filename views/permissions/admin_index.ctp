@@ -53,10 +53,6 @@
 				    'type' => 'checkbox',
 				    'label' => 'Edit',
 				    'checked' => (isset($controllers['Users']['admin_edit']) ? $controllers['Users']['admin_edit'] : '' )));?>
-				<?php echo $this->Form->input('Users.admin_delete', array(
-				    'type' => 'checkbox',
-				    'label' => 'Delete',
-				    'checked' => (isset($controllers['Users']['admin_delete'])) ? $controllers['Users']['admin_delete'] : ''));?>
 			    </fieldset>
 			    <?php if (!in_array('UserTransactions', $disabledModules)): ?>
 			    <fieldset class="left right-mar-10">
