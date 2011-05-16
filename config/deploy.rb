@@ -4,7 +4,7 @@ require 'capcake'
 set :application, 'atlas' # Your app's location (domain or sub-domain name)
 set :repository, "git@git.assembla.com:CTSATLAS.git"
 set :branch, 'staging'
-set :deploy_via, :export
+set :deploy_via, :remote_cache
 
 set :default_shell, '/bin/bash'
 
