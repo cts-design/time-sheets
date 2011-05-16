@@ -397,7 +397,7 @@ class UsersController extends AppController {
 			$message = 'Welcome to the Atlas system.' . "\r\n\r\n";
 			$message .= 'Your username is: ' . substr($this->data['User']['firstname'], 0, 1).$this->data['User']['lastname'] . "\r\n\r\n";
 			$message .= 'Your password is: ' . $this->data['User']['pass'] . "\r\n\r\n";
-			$message .= 'You can now login at ' . Configure::read('Admin.URL');
+			$message .= 'You can now login at ' . Router::url('/admin', true);
 			$this->Email->from = Configure::read('System.email');
 			$this->Email->to = $this->data['User']['firstname']." ".$this->data['User']['lastname']."<".$this->data['User']['email'].">";
 			$this->Email->subject = 'Welcome to Atlas.';
@@ -485,7 +485,7 @@ class UsersController extends AppController {
 			unset($this->data['User']['email']);
 			if ($this->User->save($this->data, array('validate' => false))) {
 			    // Fire off the E-Mail
-			    $message = Configure::read('Admin.URL') . "\n\n" . 'Temp Password: ' . $tempPassword ;
+			    $message = Router::url('/admin', true) . "\n\n" . 'Temp Password: ' . $tempPassword ;
 			    $this->Email->from = Configure::read('System.email');
 			    $this->Email->to = $user['User']['firstname']." ".$user['User']['lastname']."<".$user['User']['email'].">";
 			    $this->Email->subject = 'Password Reset Request';
@@ -632,7 +632,7 @@ class UsersController extends AppController {
 				$message = 'A Social Security Number edit has been requested by ' . 
 					$this->Auth->user('firstname'). ' ' . $this->Auth->user('lastname') . '.' .  "\r\n" .
 					'Please edit the following customers record accordingly' . "\r\n" . 
-					Configure::read('Admin.URL') . '/users/edit/' . $this->params['form']['userId']. "\r\n";					
+					Router::url('/admin/', true) . 'users/edit/' . $this->params['form']['userId']. "\r\n";					
 				if($this->Email->send($message)){
 					$this->data = $this->User->read(null, $this->params['form']['userId']);
 						$this->Transaction->createUserTransaction('Customer', null, null,

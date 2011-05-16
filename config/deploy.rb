@@ -45,6 +45,11 @@ end
 desc "Update database schema update tables"
 task :migrate_database_update, roles => [:web] do
 	run "cd #{current_release} && yes y | cake schema update atlas"
+end
+
+desc "Update ACL Access Control Object Table" 
+task :aco_update, roles => [:web] do
+  run "cd #{current_release} && cake acl_extras aco_update"
 end  
 
 task :finalize_deploy, :roles => [:web] do

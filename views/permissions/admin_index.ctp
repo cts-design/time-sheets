@@ -30,46 +30,42 @@
 </div>
 <div id="PermissionTabs">
 	<div id="Users" class="x-hide-display">
-		<?php echo $this->Form->create('permission', array('action' => 'set_permissions')) ?>
-		<?php echo $this->Form->hidden('id', array('value' => $id));?>
-		<?php echo $this->Form->hidden('model', array('value' => $model));?>		
-		<fieldset class="left right-mar-10">
-		<legend>Administration</legend>
-		 <?php echo $this->Form->input('Users.admin_dashboard', array(
-		     'label' => 'Dashboard',
-		     'type' => 'checkbox',
-		    'checked' => (isset($controllers['Users']['admin_dashboard'])) ? $controllers['Users']['admin_dashboard'] : '' ));?>
-	    </fieldset>
-	    <fieldset class="left right-mar-10">
-		<legend>Customers</legend>
-		<?php echo $this->Form->input('Users.admin_index', array(
-		    'type' => 'checkbox',
-		    'label' => 'Index',
-		    'checked' => (isset($controllers['Users']['admin_index'])) ? $controllers['Users']['admin_index'] : '' ));?>
-		<?php echo $this->Form->input('Users.admin_add', array(
-		    'type' => 'checkbox',
-		    'label' => 'Add',
-		    'checked' => (isset($controllers['Users']['admin_add'])) ? $controllers['Users']['admin_add'] : ''));?>
-		<?php echo $this->Form->input('Users.admin_edit', array(
-		    'type' => 'checkbox',
-		    'label' => 'Edit',
-		    'checked' => (isset($controllers['Users']['admin_edit']) ? $controllers['Users']['admin_edit'] : '' )));?>
-		<?php echo $this->Form->input('Users.admin_delete', array(
-		    'type' => 'checkbox',
-		    'label' => 'Delete',
-		    'checked' => (isset($controllers['Users']['admin_delete'])) ? $controllers['Users']['admin_delete'] : ''));?>
-	    </fieldset>
-	    <?php if (!in_array('UserTransactions', $disabledModules)): ?>
-	    <fieldset class="left right-mar-10">
-		<legend>Activity</legend>
-	       <?php echo $this->Form->input('UserTransactions.all', array(
-		    'type' => 'checkbox',
-		   'label' => 'Index',
-		    'checked' => (isset($controllers['UserTransactions']['all'])) ? $controllers['UserTransactions']['all'] : '' ));?>
-	    </fieldset>
-		<?php endif; ?>
-		<br class="clear" />
-		<?php echo $this->Form->end('Submit')?>  		
+		    <?php echo $this->Form->create('permission', array('action' => 'set_permissions')) ?>
+		    <?php echo $this->Form->hidden('id', array('value' => $id));?>
+		    <?php echo $this->Form->hidden('model', array('value' => $model));?>		
+		  <fieldset class="left right-mar-10">
+				<legend>Administration</legend>
+				 <?php echo $this->Form->input('Users.admin_dashboard', array(
+				     'label' => 'Dashboard',
+				     'type' => 'checkbox',
+				    'checked' => (isset($controllers['Users']['admin_dashboard'])) ? $controllers['Users']['admin_dashboard'] : '' ));?>
+			    </fieldset>
+			    <fieldset class="left right-mar-10">
+				<legend>Customers</legend>
+				<?php echo $this->Form->input('Users.admin_index', array(
+				    'type' => 'checkbox',
+				    'label' => 'Index',
+				    'checked' => (isset($controllers['Users']['admin_index'])) ? $controllers['Users']['admin_index'] : '' ));?>
+				<?php echo $this->Form->input('Users.admin_add', array(
+				    'type' => 'checkbox',
+				    'label' => 'Add',
+				    'checked' => (isset($controllers['Users']['admin_add'])) ? $controllers['Users']['admin_add'] : ''));?>
+				<?php echo $this->Form->input('Users.admin_edit', array(
+				    'type' => 'checkbox',
+				    'label' => 'Edit',
+				    'checked' => (isset($controllers['Users']['admin_edit']) ? $controllers['Users']['admin_edit'] : '' )));?>
+			    </fieldset>
+			    <?php if (!in_array('UserTransactions', $disabledModules)): ?>
+			    <fieldset class="left right-mar-10">
+				<legend>Activity</legend>
+			       <?php echo $this->Form->input('UserTransactions.all', array(
+				    'type' => 'checkbox',
+				   'label' => 'Index',
+				    'checked' => (isset($controllers['UserTransactions']['all'])) ? $controllers['UserTransactions']['all'] : '' ));?>
+			    </fieldset>
+		    <?php endif; ?>
+		    <br class="clear" />
+		    <?php echo $this->Form->end('Submit')?>  		
 	</div>
 	<div id="Website" class="x-hide-display">
 		    <?php echo $this->Form->create('permission', array('action' => 'set_permissions')) ?>

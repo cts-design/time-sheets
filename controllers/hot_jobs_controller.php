@@ -28,7 +28,7 @@ class HotJobsController extends AppController {
 	                $this->Session->setFlash(__('The file could not be uploaded. Please, try again.', true), 'flash_failure');
 	                $this->redirect(array('action' => 'index'));
 	            }
-	            $this->data['HotJob']['file'] = Configure::read('URL') . $file;	
+	            $this->data['HotJob']['file'] = Router::url('/', true) . $file;	
 			}
 			$this->HotJob->create();
 			

@@ -59,11 +59,11 @@
 	    Eztwain.UploadExtraField "data[QueuedDocument][queue_category_id]", <?php echo $queueCatId . "\r\n"?>
 	    Eztwain.UploadExtraField "data[QueuedDocument][user_id]", <?php echo $session->read('Auth.User.id') . "\r\n"?>
 	    Eztwain.UploadAddCookie ("PHPSESSID=<?php echo $this->Session->id()?>")
-	    if not Eztwain.UploadToURL("<?php echo Configure::read('URL')?>/kiosks/self_scan_document", "file.pdf", "data[QueuedDocument][submittedfile]") then
-		newURL = "<?php echo Configure::read('URL')?>/kiosks/self_scan_document/<?php echo $selfScanCatId . '/' . $queueCatId . '/' ?>"
+	    if not Eztwain.UploadToURL("<?php echo $html->url('/', true)?>kiosks/self_scan_document", "file.pdf", "data[QueuedDocument][submittedfile]") then
+		newURL = "<?php echo $html->url('/', true)?>kiosks/self_scan_document/<?php echo $selfScanCatId . '/' . $queueCatId . '/' ?>"
 		location.href = newURL
 	    else
-		newURL = "<?php echo Configure::read('URL')?>/kiosks/self_scan_another_document/"
+		newURL = "<?php echo $html->url('/', true)?>kiosks/self_scan_another_document/"
 		location.href = newURL
 	    end if
 	End Sub

@@ -50,11 +50,11 @@
 	    Eztwain.UploadExtraField "data[QueuedDocument][queue_category_id]", getQueueCat()
 	    Eztwain.UploadExtraField "data[QueuedDocument][scanned_location_id]", getLocationId()
 	    Eztwain.UploadAddCookie ("PHPSESSID=<?php echo $this->Session->id()?>")
-	    if not Eztwain.UploadToURL("<?php echo Configure::read('URL')?>/admin/queued_documents/desktop_scan_document", "file.pdf", "data[QueuedDocument][submittedfile]") then
-		newURL = "<?php echo Configure::read('URL')?>/admin/queued_documents/desktop_scan_document/"
+	    if not Eztwain.UploadToURL("<?php echo $html->url('/admin/queued_documents/desktop_scan_document', true)?>", "file.pdf", "data[QueuedDocument][submittedfile]") then
+		newURL = "<?php echo $html->url('/admin/queued_documents/desktop_scan_document', true)?>"
 		location.href = newURL
 	    else
-		newURL = "<?php echo Configure::read('URL')?>/admin/queued_documents/desktop_scan_document/"
+		newURL = "<?php echo $html->url('/admin/queued_documents/desktop_scan_document/', true)?>"
 		location.href = newURL
 	    end if
 	End Sub

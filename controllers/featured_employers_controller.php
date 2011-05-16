@@ -28,7 +28,7 @@ class FeaturedEmployersController extends AppController {
 	                $this->Session->setFlash(__('The image could not be uploaded. Please, try again.', true), 'flash_failure');
 	                $this->redirect(array('action' => 'index'));
 	            }
-	            $this->data['FeaturedEmployer']['image'] = Configure::read('URL') . $file;	
+	            $this->data['FeaturedEmployer']['image'] = Router::url('/', true) . $file;	
 			}
 			$this->FeaturedEmployer->create();
 			if ($this->FeaturedEmployer->save($this->data)) {
