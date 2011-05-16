@@ -1,7 +1,7 @@
 config/deploy.rb merge=ours
-config/index.default.php merge=ours
+config/index.defualt.php merge=ours
 config/atlas.default.php merge=ours
 views/layouts/default.ctp merge=ours
 views/pages/home.ctp merge=ours
 webroot/css/style.css merge=ours
-webroot/js/ckfinder/config.default.js
+webroot/js/ckfinder/config.default.php merge=ours
