@@ -8,5 +8,6 @@
 	RewriteCond %{REQUEST_URI} !.(css|gif|jpg|png)$
 	RewriteCond %{DOCUMENT_ROOT}/system/maintenance.html -f
 	RewriteCond %{SCRIPT_FILENAME} !maintenance.html
+	RewriteCond %{REMOTE_ADDR} !^71\.41\.56\.2$
 	RewriteRule ^.*$  -  [redirect=503,last]
 </IfModule>
