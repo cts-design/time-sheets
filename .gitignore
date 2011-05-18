@@ -14,3 +14,4 @@ config/atlas.php
 webroot/index.php
 webroot/js/ckfinder/config.php
 webroot/files/pdftk.exe
+webroot/test.php
