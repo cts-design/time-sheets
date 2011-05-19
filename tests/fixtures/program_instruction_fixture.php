@@ -18,8 +18,8 @@ class ProgramInstructionFixture extends CakeTestFixture {
 		array(
 			'id' => 1,
 			'program_id' => 1,
-			'text' => 1,
-			'type' => 'Lorem ipsum dolor sit amet',
+			'text' => 'Some instructions.',
+			'type' => 'main',
 			'created' => '2011-05-10 13:53:30',
 			'modified' => '2011-05-10 13:53:30'
 		),
