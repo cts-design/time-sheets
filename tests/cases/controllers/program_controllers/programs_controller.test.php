@@ -14,7 +14,7 @@ class ProgramsControllerTestCase extends CakeTestCase {
 	var $fixtures = array(
             'app.aco',
             'app.aro',
-            'app.aro_aco',
+            'app.aros_aco',
             'app.chairman_report',
             'app.deleted_document',
             'app.document_filing_category',
@@ -32,7 +32,14 @@ class ProgramsControllerTestCase extends CakeTestCase {
             'app.press_release',
             'app.program',
             'app.program_registration',
-            'app.program_field',
+            'app.program_response',
+            'app.watched_filing_cat',
+            'app.program_instruction',
+            'app.program_response_doc',
+            'app.program_paper_form',
+            'app.program_email',
+            'app.module_access_control',
+          	'app.program_field',
             'app.queued_document',
             'app.role',
             'app.self_scan_category',
@@ -49,7 +56,6 @@ class ProgramsControllerTestCase extends CakeTestCase {
 	}
 
 	function endTest() {
-		$this->Programs->Session->destroy();
 		unset($this->Programs);
 		ClassRegistry::flush();
 	}
@@ -85,7 +91,8 @@ class ProgramsControllerTestCase extends CakeTestCase {
 	    $this->Programs->params = Router::parse('/programs/index/2');		
 	    $this->Programs->Component->startup($this->Programs);
 		$this->Programs->index(2);	
-		$this->assertEqual($this->Programs->Session->read('Message.flash.element'), 'flash_failure');		
+		$this->assertEqual($this->Programs->Session->read('Message.flash.element'), 'flash_failure');
+		$this->Programs->Session->destroy();	
 	}
 	
 	function testIndexNoId() {
@@ -96,8 +103,9 @@ class ProgramsControllerTestCase extends CakeTestCase {
 	    ));
 	    $this->Programs->params = Router::parse('/programs/index');
 	    $this->Programs->Component->startup($this->Programs);
-		$this->Programs->index();	
-		$this->assertEqual($this->Programs->Session->read('Message.flash.element'), 'flash_failure');		
+		$this->Programs->index();
+		$this->assertEqual($this->Programs->Session->read('Message.flash.element'), 'flash_failure');
+		$this->Programs->Session->destroy();			
 	}
 }
 ?>
