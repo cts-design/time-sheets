@@ -87,7 +87,10 @@ class ProgramsController extends AppController {
 		$data['title_for_layout'] = $program['Program']['name'];
 		$data['program'] = $program;
 		$instructions = Set::extract('/ProgramInstruction[type=main]/text', $program);
-		$data['instructions'] = $instructions[0];
+		if($instructions) {
+			$data['instructions'] = $instructions[0];
+		}
+		
 		$this->set($data);
 	}
 
