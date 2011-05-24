@@ -734,6 +734,17 @@ class User extends AppModel {
 				    'allowEmpty' => true
 				)
 			),
+			'email_confirm' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please confirm the email address',
+					'on' => 'create'
+				),
+			    'verify' => array(
+					'rule' => array('verifies', 'email'),
+					'message' => 'Email addresses do not match.'
+			    ),
+			),
 			'language' => array(
 				'notEmpty' => array(
 					'rule' => 'notEmpty',
