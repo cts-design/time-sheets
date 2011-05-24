@@ -3,14 +3,10 @@
  * Configuration file for Atlas 
  *
  * @author dnolan
- * @copyright Complete Technology Solutions 2010
+ * @copyright Complete Technology Solutions 2011
  * @link http://ctsfla.com
  * @package ATLAS V3
  */
-
-
-$config['URL'] = 'http://ccc.atlasforworkforce.com/';
-$config['Admin']['URL'] = 'https://ccc.atlasforworkforce.com/admin';
 
 // domain for use with cookies
 $config['domain'] = 'ccc.atlasforworkforce.com';
@@ -29,16 +25,14 @@ $config['Company']['counties'] = array(
 	'Manatee' => 'Manatee', 
 	'Other' => 'Other');
 
-
 // System Email From Address
 $config['System']['email'] = 'noreply@ccc.atlasforworkforce.com';
 
 // Pre Pop Email
 $config['PrePop']['email'] = '@ccc.atlasforworkforce.com';
 
-
-// Registraion (options are 9 or 4)
-$config['Registration']['ssn'] = 4;
+// Registration SSN requirement (options are 'full' or 'last4')
+$config['Registration']['ssn'] = 'last4';
 
 // Document Storage location
 $config['Document']['storage']['path'] = '/storage/';
