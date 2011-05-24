@@ -1,3 +1,8 @@
+<style>
+	.checkbox input { float: left}
+	.checkbox label {margin-left: 10px}
+</style>
+
 <?php echo $html->script('program_responses/toggle_instructions', array('inline' => false)) ?>
 <a id="Toggle" class="small" style="display: none">Hide Instructions</a>
 <p id="Instructions"><?php echo $instructions ?></p>
