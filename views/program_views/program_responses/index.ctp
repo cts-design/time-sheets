@@ -27,7 +27,7 @@
 		<?php if($program['Program']['form_esign_required']) : ?>
 			<?php $esignInstructions = Set::extract('/ProgramInstruction[type=esign]/text', $program); ?>
 			<fieldset>
-				<legend>E-Sign</legend>
+				<legend>Electronic Signature</legend>
 				<p class="bot-mar-10"><?php echo $esignInstructions[0] ?></p>
 				<p class="bot-mar-10">Please put your first and last name in the box to agree.</p>
 				<?php echo $form->input('form_esignature', array('label' => 'I agree', 'after' => '<br />')) ?>	
