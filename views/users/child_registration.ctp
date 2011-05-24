@@ -183,7 +183,13 @@
 			'after' => '</p>'
 		));	
 		echo '<br class="clear"/>';
-		
+		echo $this->Form->input('email_confirm', array(
+			'label' => __('Confirm Parent\'s Email', true),
+			'before' => '<p class="left">',
+			'between' => '</p><p class="left">',
+			'after' => '</p>'
+		));	
+		echo '<br class="clear"/>';
 		echo '<p class="small">' . $html->link('Click here to get a free email address if you do not have one.', 
 			'https://www.google.com/accounts/NewAccount?service=mail&continue=
 			http://mail.google.com/mail/e-11-149ff52bbc80936376c01275ce56c7-f2297e1257c13b74d3ba16b09f1177fc98da2414&type=2',
