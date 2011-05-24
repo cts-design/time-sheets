@@ -7,7 +7,11 @@ class ProgramsController extends AppController {
 	
 	function beforeFilter() {
 		parent::beforeFilter();
-		$validate = array('viewed_media' => array('rule' => array('comparison', '>', 0), 'message' => 'You must agree'));	
+		$validate = array('viewed_media' => array(
+			'rule' => array('comparison', '>', 0), 
+			'message' => 'You must check the box to continue the online process. 
+				If you do not completely understand the information please review the instructions
+				at the top of this page.'));	
 		$this->Program->ProgramResponse->modifyValidate($validate);
 	}
 			
@@ -154,7 +158,7 @@ class ProgramsController extends AppController {
 				}
 			}
 			else {
-				$this->Session->setFlash(__('You must check the I agree box.', true), 'flash_failure');		
+				$this->Session->setFlash(__('You must check the I acknowledge box.', true), 'flash_failure');		
 			}
 		}		
 		$program = $this->Program->findById($id);
