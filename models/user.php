@@ -9,6 +9,7 @@
 class User extends AppModel {
 
     var $name = 'User';
+	
     var $hasMany = array(
 		'SelfSignLog' => array(
 		    'className' => 'SelfSignLog',
@@ -27,6 +28,7 @@ class User extends AppModel {
 		    'foreignKey' => 'user_id'
 		)
     );
+	
     var $hasOne = array(
 		'QueuedDocument' => array(
 		    'className' => 'QueuedDocument',
@@ -34,7 +36,9 @@ class User extends AppModel {
 		)
     );
     var $belongsTo = array('Role', 'Location');
+	
     var $actsAs = array('Acl' => 'requester', 'Multivalidatable');
+	
     var $validate = array(
 		'firstname' => array(
 		    'notEmpty' => array(
@@ -71,8 +75,8 @@ class User extends AppModel {
 		    ),
 		    'minLength' => array(
 				'rule' => array('minLength', 9),
-				'message' => 'SSN must be 9 characters.',
-		    )
+				'message' => 'SSN must be full 9 digits.'
+			)
 		),
 		'ssn_confirm' => array(
 		    'notEmpty' => array(
@@ -89,8 +93,8 @@ class User extends AppModel {
 		    ),
 		    'minLength' => array(
 				'rule' => array('minLength', 9),
-				'message' => 'SSN must be 9 characters.'
-		    )
+				'message' => 'SSN must be full 9 digits.'
+			)		    
 		),
 		'address_1' => array(
 			'notEmpty' => array(
@@ -220,7 +224,7 @@ class User extends AppModel {
 			    'maxlength' => array(
 					'rule' => array('maxlength', 50),
 					'message' => 'This field cannot excced 50 characters.'
-			    ),
+			    )
 			),
 			'lastname' => array(
 			    'notEmpty' => array(
@@ -230,7 +234,7 @@ class User extends AppModel {
 			    'maxlength' => array(
 					'rule' => array('maxlength', 50),
 					'message' => 'This field cannot excced 50 characters.'
-			    ),
+			    )
 			),
 			'ssn' => array(
 			    'notEmpty' => array(
@@ -401,8 +405,359 @@ class User extends AppModel {
 					'message' => 'Please select a role.'
 			    )
 			)						
-		)	
+		),
+		'last4Rules' => array(
+			'firstname' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a first name.'
+			    ),
+			    'maxlength' => array(
+					'rule' => array('maxlength', 50),
+					'message' => 'This field cannot excced 50 characters.'
+			    ),
+			),
+			'lastname' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a last name.'
+			    ),
+			    'maxlength' => array(
+					'rule' => array('maxlength', 50),
+					'message' => 'This field cannot excced 50 characters.'
+			    ),
+			),
+			'ssn' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a SSN.'
+			    ),
+			    'numeric' => array(
+					'rule' => 'numeric',
+					'message' => 'Please provide only numbers, no spaces or dashes.'
+			    ),
+			    'unique' => array(
+					'rule' => 'lastNameSSNUnique',
+					'message' => 'The SSN entered already exists in the system.'
+			    ),
+			    '4or9' => array(
+					'rule' => 'ssn4or9',
+					'message' => 
+						'SSN must either be full 9 digits using all three boxes, 
+						or last 4 digits using only the last box.'
+				)
+			),
+			'ssn_confirm' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please confirm the SSN.',
+			    ),
+			    'numeric' => array(
+					'rule' => 'numeric',
+					'message' => 'Please provide only numbers, no spaces or dashes.',
+			    ),
+			    'verify' => array(
+					'rule' => array('verifies', 'ssn'),
+					'message' => 'SSNs do not match.'
+			    ),
+			    '4or9' => array(
+					'rule' => 'ssn4or9',
+					'message' => 					
+						'SSN must either be full 9 digits using all three boxes, 
+						or last 4 digits using only the last box.'
+				)		    
+			),
+			'address_1' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a street address.',
+					'on' => 'create'
+				)
+			),
+			'city' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a city.',
+					'on' => 'create'
+				)
+			),
+			'county' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a county.',
+					'on' => 'create'
+				)
+			),
+			'state' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a state',
+					'on' => 'create'
+				)
+			),
+			'zip' => array(
+			    'numeric' => array(
+					'rule' => 'numeric',
+					'message' => 'Please provide only numbers, no spaces or dashes.'
+			    ),
+			    'minLength' => array(
+					'rule' => array('minLength', 5),
+					'message' => 'Please enter 5 digit zip code.'
+			    ),
+			    'maxLength' => array(
+					'rule' => array('maxLength', 5),
+					'message' => 'Please enter 5 digit zip code.'
+			    )
+			),
+			'phone' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a phone number',
+					'on' => 'create'
+				),
+			    'phone' => array(
+					'rule' => array('maxLength', 20),
+					'message' => 'Please no more than 20 characters.',
+					'allowEmpty' => true
+			    )
+			),
+			'alt_phone' => array(
+			    'phone' => array(
+					'rule' => array('maxLength', 20),
+					'message' => 'Please no more than 20 characters.',
+					'allowEmpty' => true
+			    )
+			),
+			'gender' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please select a gender.',
+					'on' => 'create'
+			    )
+			),
+			'dob' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide date of birth.'
+			    ),
+			    'date' => array(
+					'rule' => array('date', 'mdy'),
+					'message' => 'Please provide a valid date in this format mm/dd/yyyy.'
+			    )
+			),
+			'email' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide an email address.',
+					'on' => 'create'
+				),
+			    'email' => array(
+					'rule' => 'email',
+					'message' => 'Must be a vaild email like bob@test.com.',
+				    'allowEmpty' => true
+				),
+			    'unique' => array(
+					'rule' => 'isUnique',
+					'message' => 'The email address already exists in the system.'
+			    )
+			),
+			'language' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a language.',
+					'on' => 'create'
+				)
+			),
+			'ethnicity' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please select a ethnicity.',
+					'on' => 'create'
+				)
+			),
+			'race' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please select race.',
+					'on' => 'create'
+				)
+			) 		
+		),
+		'childLast4Rules' => array(
+			'firstname' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a first name.'
+			    ),
+			    'maxlength' => array(
+					'rule' => array('maxlength', 50),
+					'message' => 'This field cannot excced 50 characters.'
+			    ),
+			),
+			'lastname' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a last name.'
+			    ),
+			    'maxlength' => array(
+					'rule' => array('maxlength', 50),
+					'message' => 'This field cannot excced 50 characters.'
+			    ),
+			),
+			'ssn' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a SSN.'
+			    ),
+			    'numeric' => array(
+					'rule' => 'numeric',
+					'message' => 'Please provide only numbers, no spaces or dashes.'
+			    ),
+			    'unique' => array(
+					'rule' => 'lastNameSSNUnique',
+					'message' => 'The SSN entered already exists in the system.'
+			    ),
+			    '4or9' => array(
+					'rule' => 'ssn4or9',
+					'message' => 
+						'SSN must either be full 9 digits using all three boxes, 
+						or last 4 digits using only the last box.'
+				)
+			),
+			'ssn_confirm' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please confirm the SSN.',
+			    ),
+			    'numeric' => array(
+					'rule' => 'numeric',
+					'message' => 'Please provide only numbers, no spaces or dashes.',
+			    ),
+			    'verify' => array(
+					'rule' => array('verifies', 'ssn'),
+					'message' => 'SSNs do not match.'
+			    ),
+			    '4or9' => array(
+					'rule' => 'ssn4or9',
+					'message' => 					
+						'SSN must either be full 9 digits using all three boxes, 
+						or last 4 digits using only the last box.'
+				)		    
+			),
+			'address_1' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a street address.',
+					'on' => 'create'
+				)
+			),
+			'city' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a city.',
+					'on' => 'create'
+				)
+			),
+			'county' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a county.',
+					'on' => 'create'
+				)
+			),
+			'state' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a state',
+					'on' => 'create'
+				)
+			),
+			'zip' => array(
+			    'numeric' => array(
+					'rule' => 'numeric',
+					'message' => 'Please provide only numbers, no spaces or dashes.'
+			    ),
+			    'minLength' => array(
+					'rule' => array('minLength', 5),
+					'message' => 'Please enter 5 digit zip code.'
+			    ),
+			    'maxLength' => array(
+					'rule' => array('maxLength', 5),
+					'message' => 'Please enter 5 digit zip code.'
+			    )
+			),
+			'phone' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a phone number',
+					'on' => 'create'
+				),
+			    'phone' => array(
+					'rule' => array('maxLength', 20),
+					'message' => 'Please no more than 20 characters.',
+					'allowEmpty' => true
+			    )
+			),
+			'alt_phone' => array(
+			    'phone' => array(
+					'rule' => array('maxLength', 20),
+					'message' => 'Please no more than 20 characters.',
+					'allowEmpty' => true
+			    )
+			),
+			'gender' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please select a gender.',
+					'on' => 'create'
+			    )
+			),
+			'dob' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide date of birth.'
+			    ),
+			    'date' => array(
+					'rule' => array('date', 'mdy'),
+					'message' => 'Please provide a valid date in this format mm/dd/yyyy.'
+			    )
+			),
+			'email' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide an email address.',
+					'on' => 'create'
+				),
+			    'email' => array(
+					'rule' => 'email',
+					'message' => 'Must be a vaild email like bob@test.com.',
+				    'allowEmpty' => true
+				)
+			),
+			'language' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a language.',
+					'on' => 'create'
+				)
+			),
+			'ethnicity' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please select a ethnicity.',
+					'on' => 'create'
+				)
+			),
+			'race' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please select race.',
+					'on' => 'create'
+				)
+			) 		
+		)
 	);
+
 
     function parentNode() {
 		if (!$this->id && empty($this->data)) {
@@ -474,6 +829,31 @@ class User extends AppModel {
     function verifies($data, $field) {
 		$value = Set::extract($data, "{s}");
 		return ($value[0] == $this->data[$this->name][$field]);
+	}
+	
+	function ssn4or9() {
+		if(strlen($this->data['User']['ssn_3']) < 4) {
+			return false;
+		}
+		$length = strlen($this->data['User']['ssn']);
+		if($length < 4 ) {
+			return false;
+		}
+		if($length > 4 && $length < 9) {
+			return false;
+		}
+		return true;
+	}
+	
+	function lastNameSSNUnique() {
+		$user = $this->find('first', array(
+			'conditions' => array(
+				'User.lastname' => $this->data['User']['lastname'],
+				'User.ssn' => $this->data['User']['ssn'])));
+		if($user) {
+			return false;	
+		}
+		return true;	
 	}
 	
 }

@@ -231,6 +231,24 @@ class UsersController extends AppController {
     function registration($type=null, $lastname=null) {
 		if (!empty($this->data)) {	
 		    $this->User->create();
+			if(Configure::read('Registration.ssn') == 'last4') {
+				if($this->data['User']['registration'] == 'child_website') {
+					$this->User->setValidation('childLast4Rules');
+				}	
+				else {
+					$this->User->setValidation('last4Rules');
+				}
+				if(Configure::read('Registration.ssn') == 'last4'){
+					$this->data['User']['ssn'] = 
+						$this->data['User']['ssn_1'] . 
+						$this->data['User']['ssn_2'] . 
+						$this->data['User']['ssn_3'];
+					$this->data['User']['ssn_confirm'] = 
+						$this->data['User']['ssn_1_confirm'] . 
+						$this->data['User']['ssn_2_confirm'] . 
+						$this->data['User']['ssn_3_confirm']; 
+				}				
+			}
 		    if ($this->User->save($this->data)) {
 				$userId = $this->User->getInsertId();
 				$last4 = substr($this->data['User']['ssn'], -4);
@@ -275,6 +293,7 @@ class UsersController extends AppController {
     function kiosk_mini_registration($lastname=null) {
 		if (!empty($this->data)) {	
 		    $this->User->create();
+			$this->User->setValidation('miniRegistration');
 		    if ($this->User->save($this->data)) {
 				$userId = $this->User->getInsertId();
 				$last4 = substr($this->data['User']['ssn'], -4);

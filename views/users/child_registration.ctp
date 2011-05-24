@@ -6,6 +6,24 @@
  * @package ATLAS V3
  */
 ?>
+<style>
+	#UserSsn1, #UserSsn1Confirm  {
+		width: 25px;
+	}
+	
+	#UserSsn2Confirm, #UserSsn2 {
+		width: 20px;
+	}
+	
+	#UserSsn3, #UserSsn3Confirm {
+		width: 30px;
+	}
+	
+	.error-message {
+		margin: 0;
+	}
+	
+</style>
 <?php echo $this->Html->script('jquery.dPassword', array('inline' => 'false')); ?>
 <?php echo $this->Html->script('users/mini.registration', array('inline' => 'false')) ?>
 
@@ -53,19 +71,60 @@
 			'between' => '</p><p class="left">',
 			'after' => '</p>'));
 	    echo '<br class="clear"/>';
-	    echo $this->Form->input('ssn', array(
-			'label' => __('Child\'s SSN', true),
-			'before' => '<p class="left">',
-			'between' => '</p><p class="left">',
-			'after' => '</p>'));
-	    echo '<br class="clear"/>';
-	    echo $this->Form->input('ssn_confirm', array(
-			'label' => __('Child\'s SSN Confirm', true),
-			'maxlength' => 9,
-			'before' => '<p class="left">',
-			'between' => '</p><p class="left">',
-			'after' => '</p>'));
-	    echo '<br class="clear"/>';
+		if(Configure::read('Registration.ssn') == 'full') {
+		    echo $this->Form->input('ssn', array(
+				'label' => __('Child\'s SSN', true),
+				'before' => '<p class="left">',
+				'between' => '</p><p class="left">',
+				'after' => '</p>'));
+		    echo '<br class="clear"/>';
+		    echo $this->Form->input('ssn_confirm', array(
+				'label' => __('Child\'s SSN Confirm', true),
+				'maxlength' => 9,
+				'before' => '<p class="left">',
+				'between' => '</p><p class="left">',
+				'after' => '</p>'));
+		    echo '<br class="clear"/>';
+		}
+		elseif(Configure::read('Registration.ssn') == 'last4') {
+			echo $this->Form->input('ssn_1', array(
+				'type' => 'text',
+				'maxlength' => 3, 
+				'label' => __('Child\'s SSN', true),
+				'div' => 'left input'));
+			echo $this->Form->input('ssn_2', array(
+				'type' => 'text',
+				'maxlength' => 2,
+				'label' => false,
+				'div' => 'left'));
+			echo $this->Form->input('ssn_3', array(
+				'type' => 'text',
+				'maxLength' => 4,
+				'label' => false,
+				'div' => 'left',
+				'after' => '<br />'));
+			echo $this->Form->error('ssn');
+			echo "<br class='clear' />";
+			echo "<br class='clear' />";
+			echo $this->Form->input('ssn_1_confirm', array(
+				'type' => 'text',
+				'maxlength' => 3,
+				'label' => __('Child\'s SSN Confirm', true),
+				'div' => 'left input'));
+			echo $this->Form->input('ssn_2_confirm', array(
+				'type' => 'text',
+				'label' => false,
+				'div' => 'left'));
+			echo $this->Form->input('ssn_3_confirm', array(
+				'type' => 'text',
+				'maxlength' => 4,
+				'label' => false,
+				'div' => 'left',
+				'after' => '<br />'));
+				echo $this->Form->error('ssn_confirm');
+			echo "<br class='clear' />";			
+		}	
+		echo "<br class='clear' />";
 	    echo $this->Form->input('dob', array(
 			'label' => __('Child\'s Birth Date <span class="small gray">(mm/dd/yyyy)</span>', true),
 			'type' => 'text',
@@ -124,6 +183,12 @@
 			'after' => '</p>'
 		));	
 		echo '<br class="clear"/>';
+		
+		echo '<p class="small">' . $html->link('Click here to get a free email address if you do not have one.', 
+			'https://www.google.com/accounts/NewAccount?service=mail&continue=
+			http://mail.google.com/mail/e-11-149ff52bbc80936376c01275ce56c7-f2297e1257c13b74d3ba16b09f1177fc98da2414&type=2',
+			array('target' => '_blank')) . '</p>';	
+		echo '<br class="clear"/>';	
 		echo $this->Form->input('language', array(
 			'label' => __('Child\'s Primary Spoken Language', true),
 			'before' => '<p class="left">',
@@ -158,10 +223,7 @@
 			'after' => '</p>'
 		));		
 		echo '<br class="clear"/>';	
-		echo $html->link('Click here to get an email address if you don not have one.', 
-			'https://www.google.com/accounts/NewAccount?service=mail&continue=
-			http://mail.google.com/mail/e-11-149ff52bbc80936376c01275ce56c7-f2297e1257c13b74d3ba16b09f1177fc98da2414&type=2',
-		array('target' => '_blank'));
+
 	    echo $this->Form->hidden('registration', array('value' => 'child_website'));
 	    ?>
 	    <br />
