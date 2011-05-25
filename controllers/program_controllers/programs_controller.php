@@ -274,7 +274,7 @@ class ProgramsController extends AppController {
 					$instructions = Set::extract('/ProgramInstruction[type=esign]/text', $program);
 					break;
 			}
-			$instructions = trim(addslashes($istructions[0]));
+			$instructions = trim(addslashes($instructions[0]));
 			$this->set(compact('instructions'));			
 		}
 	}
