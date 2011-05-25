@@ -524,4 +524,11 @@ width: 100%
 	height: auto;
 	margin-bottom: 20px;
 }
-	
+
+#Acknowledge label {
+	margin-left: 10px
+}
+
+#Acknowledge .error-message {
+	margin-left: 0;
+}

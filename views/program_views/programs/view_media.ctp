@@ -1,9 +1,3 @@
-<style>
-	label {margin-left: 10px}
-	.error-message {
-		margin-left: 0;
-	}
-</style>
 <?php echo $html->script('program_responses/toggle_instructions', array('inline' => false)) ?>
 <div><a id="Toggle" class="small" style="display: none">Hide Instructions</a></div>
 <p id="Instructions"><?php echo $instructions ?></p>
@@ -13,7 +7,7 @@
 <br />
 <?php echo $this->element($element) ?>
 
-<div id="Aknowledge">
+<div id="Acknowledge">
 	<?php echo $form->create('Program', array('action' => 'view_media/' . $this->params['pass'][0])) ?>
 	<br />
 	<br />
