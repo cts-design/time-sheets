@@ -18,7 +18,7 @@ set :user, 'b78ghfp6y'
 # Cake Settings
 set :cake_branch, "master"
 
-set :shared_children,       %w(config system tmp webroot/public/files webroot/public/img storage storage/thumbnails)
+set :shared_children,       %w(config system tmp webroot/files/public webroot/img/public storage storage/thumbnails)
 
 namespace :deploy do
 	desc "Updates symlinks needed to make application work"
