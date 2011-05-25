@@ -1,5 +1,5 @@
 <?php
-
+App::import('Sanitize');
 class ProgramsController extends AppController {
 	
 	var $name = 'Programs';
@@ -239,6 +239,7 @@ class ProgramsController extends AppController {
 					$instructionId = Set::extract('/ProgramInstruction[type=esign]/id', $program);
 					break;					
 			}
+    		$this->data = Sanitize::clean($this->data, array('encode' => false));
 			$this->data['ProgramInstruction']['id'] = $instructionId[0];
 			$this->data['ProgramInstruction']['type'] = $type;
 			$this->data['ProgramInstruction']['program_id'] = $id;
