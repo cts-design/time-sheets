@@ -492,4 +492,36 @@ width: 100%
 	margin: 5px;
 }
 
+#ProgramForm .checkbox input { float: left}
 
+#ProgramForm .checkbox label {margin-left: 10px}
+
+#UserSsn1, #UserSsn1Confirm  {
+	width: 25px;
+}
+
+#UserSsn2Confirm, #UserSsn2 {
+	width: 20px;
+}
+
+#UserSsn3, #UserSsn3Confirm {
+	width: 30px;
+}
+
+#ChildRegistrationForm form {
+	margin-top: 10px;
+}
+
+#ChildRegistrationForm fieldset {
+	width: 600px;
+}
+
+#ChildRegistrationForm .error-message{
+	margin: 0;
+}
+
+#ChildRegistrationForm .input {
+	height: auto;
+	margin-bottom: 20px;
+}
+	
