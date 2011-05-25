@@ -1,7 +1,9 @@
 <style>
 	#UserPassword {width: 30px}
+	#ChildLoginForm { width: 350px;}
+	#ChildLoginForm label { margin-right: 10px;}
 </style>
-<div>
+<div id="ChildLoginForm">
 	<fieldset>
 		<legend>Login</legend>
 		<?php
@@ -14,7 +16,9 @@
 		    ));
 			echo $form->hidden('User.login_type', array('value' => 'child_website'));
 		    echo '<br class="clear"/>';
-		    echo $form->end('Login');
+		    
 		  ?>
 	  </fieldset>
+	  <br />
+	 <?php echo $form->end('Login'); ?>
 </div>
