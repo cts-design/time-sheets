@@ -196,8 +196,10 @@ class UsersController extends AppController {
 		}
 		if(isset($type) && $type == 'child' || 
 			isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'child_website') {
+			$this->set('title_for_layout', 'Child Login');	
 			$this->render('child_login');
-		}		
+		}
+					
 	}
 
     function logout($type=null, $logoutMsg=null) {
