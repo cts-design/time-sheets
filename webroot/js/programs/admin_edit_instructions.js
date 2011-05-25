@@ -17,6 +17,7 @@ Ext.onReady(function(){
 			text: 'Submit',
 			handler: function() {
 				var form = editForm.getForm();
+				var vals = form.getFieldValues();
 				form.submit({
 					url: window.location,
 					success: function(form, action){
