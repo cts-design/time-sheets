@@ -239,7 +239,7 @@ class ProgramsController extends AppController {
 					$instructionId = Set::extract('/ProgramInstruction[type=esign]/id', $program);
 					break;					
 			}
-    		$this->data = Sanitize::clean($this->data, array('encode' => false));
+			
 			$this->data['ProgramInstruction']['id'] = $instructionId[0];
 			$this->data['ProgramInstruction']['type'] = $type;
 			$this->data['ProgramInstruction']['program_id'] = $id;
@@ -274,7 +274,7 @@ class ProgramsController extends AppController {
 					$instructions = Set::extract('/ProgramInstruction[type=esign]/text', $program);
 					break;
 			}
-			$instructions = trim($instructions[0]);
+			$instructions = trim(addslashes($istructions[0]));
 			$this->set(compact('instructions'));			
 		}
 	}
