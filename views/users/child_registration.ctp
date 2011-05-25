@@ -10,7 +10,14 @@
 <?php echo $this->Html->script('jquery.dPassword', array('inline' => 'false')); ?>
 <?php echo $this->Html->script('users/mini.registration', array('inline' => 'false')) ?>
 
-<p>We do not have a record for your child, please complete the information below.</p>
+<p>
+	We currenltly do not have a record for your child.
+	<br />	 
+	Please register your your child's information using the following form.
+	<br />	
+	If you feel you have reached this page in error, please <?php echo $html->link('click here', array('controller' => 'users', 'action' => 'login', 'child')) ?> to return
+	to the login page.
+</p>
 <br />
   <div id="ChildRegistrationForm">
 	<?php echo $this->Form->create('User', array('url' => '/users/registration/child')); ?>
