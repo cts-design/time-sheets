@@ -472,33 +472,8 @@ width: 100%
     margin: 5px 10px 0 0;
 }
 
- /* Programs */
 
-#Instructions {
-	width: 600px;
-} 
-
-#ProgramForm fieldset {
-	width: 600px
-}
-
-#ProgramForm .input {
-	height: auto;
-	margin-bottom: 5px;
-}
-
-#ProgramForm .error-message {
-	margin-left: 0;
-}
-
-#ProgramForm .field-instructions {
-	width: 600px;
-	margin: 5px;
-}
-
-#ProgramForm .checkbox input { float: left}
-
-#ProgramForm .checkbox label {margin-left: 10px}
+/* Registration */
 
 #UserSsn1, #UserSsn1Confirm  {
 	width: 25px;
@@ -529,10 +504,45 @@ width: 100%
 	margin-bottom: 20px;
 }
 
+
+ /* Programs */
+
+#Instructions {
+	width: 600px;
+	margin-bottom: 10px;
+} 
+
+#ProgramForm fieldset {
+	width: 600px
+}
+
+#ProgramForm .input {
+	height: auto;
+	margin-bottom: 5px;
+}
+
+#ProgramForm .error-message {
+	margin-left: 0;
+}
+
+#ProgramForm .field-instructions {
+	width: 600px;
+	margin: 5px;
+}
+
+#ProgramForm .checkbox input { float: left}
+
+#ProgramForm .checkbox label {margin-left: 10px}
+
+
 #Acknowledge label {
 	margin-left: 10px
 }
 
 #Acknowledge .error-message {
+	margin-left: 0;
+}
+
+#RequiredDocs .error-message {
 	margin-left: 0;
 }
