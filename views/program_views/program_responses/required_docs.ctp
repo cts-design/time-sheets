@@ -1,8 +1,8 @@
 <?php echo $html->script('program_responses/toggle_instructions', array('inline' => false)) ?>
 <a id="Toggle" class="small" style="display: none">Hide Instructions</a>
-<p id="Instructions"><?php echo $instructions ?></p>
+<div id="Instructions"><?php echo $instructions ?></div>
 <noscript>
-	<p id="Instructions"><?php echo $instructions ?></p>
+	<div id="Instructions"><?php echo $instructions ?></div>
 </noscript>
 
 <?php echo $form->create('ProgramResponse', array('action' => 'required_docs/'.$this->params['pass'][0], 'type' => 'file')) ?>

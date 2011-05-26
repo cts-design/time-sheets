@@ -1,8 +1,8 @@
 <?php echo $html->script('program_responses/toggle_instructions', array('inline' => false)) ?>
 <div><a id="Toggle" class="small" style="display: none">Hide Instructions</a></div>
-<p id="Instructions"><?php echo $instructions ?></p>
+<div id="Instructions"><?php echo $instructions ?></div>
 <noscript>
-	<p id="Instructions"><?php echo $instructions ?></p>
+	<div id="Instructions"><?php echo $instructions ?></div>
 </noscript>
 <br />
 <?php echo $this->element($element) ?>
