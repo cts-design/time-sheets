@@ -76,14 +76,22 @@ class ProgramResponsesController extends AppController {
 		if(!empty($this->data)) {
 			$this->loadModel('QueuedDocument');
 			$this->data['QueuedDocument']['req_program_doc'] = 1;	
-			if($this->QueuedDocument->uploadDocument($this->data, 'Program Upload', $this->Auth->user('id'))) {
-				$this->Session->setFlash(__('Document uploaded successfully.', true), 'flash_success');
-				$this->redirect(array('action' => 'required_docs', $id));
+			$this->QueuedDocument->set($this->data);
+			if($this->QueuedDocument->validates()) {
+				if($this->QueuedDocument->uploadDocument($this->data, 'Program Upload', $this->Auth->user('id'))) {
+					$this->Session->setFlash(__('Document uploaded successfully.', true), 'flash_success');
+					$this->redirect(array('action' => 'required_docs', $id));
+				}
+				else {
+					$this->Session->setFlash(__('Unable to upload document, please try again', true), 'flash_failure');
+					$this->redirect(array('action' => 'required_docs', $id));
+				}
 			}
 			else {
 				$this->Session->setFlash(__('Unable to upload document, please try again', true), 'flash_failure');
-				$this->redirect(array('action' => 'required_docs', $id));
-			}				
+				$this->validationErrors['QueuedDocument'] = $this->QueuedDocument->invalidFields();
+			}
+				
 		}
 		$program = $this->ProgramResponse->Program->findById($id);
 		$instructions = Set::extract('/ProgramInstruction[type=document]/text', $program);
