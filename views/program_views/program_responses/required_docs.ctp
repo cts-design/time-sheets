@@ -4,13 +4,16 @@
 <noscript>
 	<div id="Instructions"><?php echo $instructions ?></div>
 </noscript>
-
-<?php echo $form->create('ProgramResponse', array('action' => 'required_docs/'.$this->params['pass'][0], 'type' => 'file')) ?>
-
-<?php echo $form->file('QueuedDocument.submittedfile', array('label' => 'Document')) ?>
-
-<?php echo $form->input('QueuedDocument.queue_category_id', array('type' => 'hidden', 'value' => $queueCategoryId)) ?>
-
-<?php echo $form->input('program_id', array('type' => 'hidden', 'value' => $this->params['pass'][0])) ?>
-
-<?php echo $form->end('Upload') ?>
+<div id="RequiredDocs">
+	<?php echo $form->create('ProgramResponse', array('action' => 'required_docs/'.$this->params['pass'][0], 'type' => 'file')) ?>
+	
+	<?php echo $form->file('QueuedDocument.submittedfile', array('label' => 'Document')) ?>
+	<br />
+	<?php echo $form->error('QueuedDocument.submittedfile') ?>
+	<br />
+	<?php echo $form->input('QueuedDocument.queue_category_id', array('type' => 'hidden', 'value' => $queueCategoryId)) ?>
+	
+	<?php echo $form->input('program_id', array('type' => 'hidden', 'value' => $this->params['pass'][0])) ?>
+	
+	<?php echo $form->end('Upload') ?>	
+</div>
