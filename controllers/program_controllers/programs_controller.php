@@ -220,66 +220,31 @@ class ProgramsController extends AppController {
 	
 	function admin_instructions_index() {
 		$title_for_layout = 'Program Instructions';
+		$this->set(compact('title_for_layout'));
 	}
 	
-	function admin_edit_instructions($id, $type) {
-		$program = $this->Program->findById($id);
-		if($this->RequestHandler->isAjax()) {
-			switch($type) {
-				case 'main':
-					$instructionId = Set::extract('/ProgramInstruction[type=main]/id', $program);
-					break;
-				case 'media':
-					$instructionId = Set::extract('/ProgramInstruction[type=media]/id', $program);
-					break;
-				case 'form':
-					$instructionId = Set::extract('/ProgramInstruction[type=form]/id', $program);
-					break;
-				case 'document':
-					$instructionId = Set::extract('/ProgramInstruction[type=document]/id', $program);
-					break;
-				case 'esign':
-					$instructionId = Set::extract('/ProgramInstruction[type=esign]/id', $program);
-					break;					
-			}
-			
-			$this->data['ProgramInstruction']['id'] = $instructionId[0];
-			$this->data['ProgramInstruction']['type'] = $type;
-			$this->data['ProgramInstruction']['program_id'] = $id;
-
+	function admin_edit_instructions($id) {
+		if(!$id && empty($this->data)){
+		    $this->Session->setFlash(__('Invalid instructions', true), 'flash_failure');
+		    $this->redirect(array('action' => 'instructions_index', 'admin' => true));
+		}
+		if(!empty($this->data)) {
 			if($this->Program->ProgramInstruction->save($this->data)) {
-				$data['success'] = true;
-				$data['message'] = 'Instructions saved successfully.';
+			    $this->Session->setFlash(__('Instructions updated successfully', true), 'flash_success');
+			    $this->redirect(array('action' => 'instructions_index', 'admin' => true));				
 			}
 			else {
-				$data['success'] = false;
-				$data['message'] = 'An error has occured please try again.';
+			    $this->Session->setFlash(__('Instructions updated successfully', true), 'flash_failure');
+			    $this->redirect(array(
+			    	'action' => 'edit_instructions', 
+			    	$this->data['ProgramInstruction']['id'], 
+			    	'admin' => true));					
 			}
-			$this->set(compact('data'));
-			return $this->render(null, null, '/elements/ajaxreturn');
 		}
-		else {
-			
-			switch($type) {
-				case 'main': 
-					$instructions = Set::extract('/ProgramInstruction[type=main]/text', $program);	
-					break;
-				case 'media':
-					$instructions = Set::extract('/ProgramInstruction[type=media]/text', $program);			
-					break;
-				case 'form':
-					$instructions = Set::extract('/ProgramInstruction[type=form]/text', $program);	
-					break;
-				case 'document':
-					$instructions = Set::extract('/ProgramInstruction[type=document]/text', $program);
-					break;
-				case 'esign':
-					$instructions = Set::extract('/ProgramInstruction[type=esign]/text', $program);
-					break;
-			}
-			$instructions = trim(addslashes($instructions[0]));
-			$this->set(compact('instructions'));			
+		if(empty($this->data)) {
+			$this->data = $this->Program->ProgramInstruction->read(null, $id);
 		}
+		$this->set('title_for_layout', 'Edit ' . ucfirst($this->data['ProgramInstruction']['type']) . ' Program Instructions');
 	}
 		
 }
