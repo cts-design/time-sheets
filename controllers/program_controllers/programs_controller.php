@@ -1,5 +1,5 @@
 <?php
-App::import('Sanitize');
+
 class ProgramsController extends AppController {
 	
 	var $name = 'Programs';
