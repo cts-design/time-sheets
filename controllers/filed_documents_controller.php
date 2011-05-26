@@ -105,7 +105,7 @@ class FiledDocumentsController extends AppController {
 				}	
 				$this->Transaction->createUserTransaction('Storage', null, null,
 					'Edited filed document ID ' . $id . ' for ' . $user['User']['lastname'] .
-					', ' . $user['User']['firstname'] . ' - ' . substr($user['User']['ssn'], 5));
+					', ' . $user['User']['firstname'] . ' - ' . substr($user['User']['ssn'], -4));
 				$this->Session->setFlash(__('The filed document has been saved', true), 'flash_success');
 				$this->redirect(array('action' => 'index', ($this->data['FiledDocument']['edit_type'] == 'user') ? $user['User']['id'] : ''));
 		    }
@@ -164,7 +164,7 @@ class FiledDocumentsController extends AppController {
 		    if($id) {
 			$this->Transaction->createUserTransaction('Storage', null, null,
 				trim('Uploaded document ID ' . $id . ' to ' . $this->data['User']['lastname'] .
-					', ' . $this->data['User']['firstname'] . ' - ' . substr($this->data['User']['ssn'], 5), ' -'));
+					', ' . $this->data['User']['firstname'] . ' - ' . substr($this->data['User']['ssn'], -4), ' -'));
 			$this->Session->setFlash(__('The document has been filed.', true), 'flash_success');
 			$this->redirect(array('action' => 'index', $this->data['User']['id']));
 		    }
@@ -189,7 +189,7 @@ class FiledDocumentsController extends AppController {
 			$user = $this->FiledDocument->User->read(null, $this->data['User']['id']);
 			$this->Transaction->createUserTransaction('Storage', null, null,
 				trim('Scanned document ID ' . $id . ' to ' . $user['User']['lastname'] .
-					', ' . $user['User']['firstname'] . ' - ' . substr($user['User']['ssn'], 5), ' -'));
+					', ' . $user['User']['firstname'] . ' - ' . substr($user['User']['ssn'], -4), ' -'));
 			$this->Session->setFlash(__('Scanned document was filed successfully.', true), 'flash_success');
 			$this->autoRender = false;
 			exit;

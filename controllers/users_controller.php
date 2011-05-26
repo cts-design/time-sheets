@@ -124,7 +124,7 @@ class UsersController extends AppController {
 		    if ($this->User->save($this->data)) {
 				$this->Transaction->createUserTransaction('Customer', 
 					null, null, 'Added customer '. $this->data['User']['firstname'] . 
-					' ' . $this->data['User']['lastname'] . ' - ' . substr($this->data['User']['ssn'],'5'));
+					' ' . $this->data['User']['lastname'] . ' - ' . substr($this->data['User']['ssn'], -4));
 				$this->Session->setFlash(__('The customer has been saved', true), 'flash_success');
 				$this->redirect(array('action' => 'index'));
 		    }
@@ -150,7 +150,7 @@ class UsersController extends AppController {
 		    if ($this->User->save($this->data)) {
 				$this->Transaction->createUserTransaction('Customer',
 					null, null, 'Edited customer '. $this->data['User']['firstname'] . 
-					' ' . $this->data['User']['lastname'] . ' - ' . substr($this->data['User']['ssn'],'5'));
+					' ' . $this->data['User']['lastname'] . ' - ' . substr($this->data['User']['ssn'],-4));
 				$this->Session->setFlash(__('The customer has been saved', true), 'flash_success');
 				$this->redirect(array('action' => 'index'));
 		    } 

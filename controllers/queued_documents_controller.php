@@ -275,14 +275,14 @@ class QueuedDocumentsController extends AppController {
 				$id = $this->QueuedDocument->getLastInsertId();
 			    $this->Transaction->createUserTransaction('Storage', null, null ,
 				    'Filed document ID '. $this->data['FiledDocument']['id'] .
-				    ' to ' . $user['User']['lastname'] . ', ' . $user['User']['firstname'] . ' - '. substr($user['User']['ssn'],'5'). '.' .
+				    ' to ' . $user['User']['lastname'] . ', ' . $user['User']['firstname'] . ' - '. substr($user['User']['ssn'], -4). '.' .
 					'and re-queued document as doc Id# '.$id);
 			    $this->Session->setFlash(__('The document was filed and re-queued successfully', true), 'flash_success' );
 			    $this->redirect(array('action' => 'index', 'view', $id));				
 			}	    
 		    $this->Transaction->createUserTransaction('Storage', null, null ,
 			    'Filed document ID '. $this->data['FiledDocument']['id'] .
-			    ' to ' . $user['User']['lastname'] . ', ' . $user['User']['firstname'] . ' - '. substr($user['User']['ssn'],'5'));
+			    ' to ' . $user['User']['lastname'] . ', ' . $user['User']['firstname'] . ' - '. substr($user['User']['ssn'],-4));
 		    $this->Session->setFlash(__('The document was filed successfully', true), 'flash_success' );
 		    $this->redirect(array('action' => 'index'));
 		}
@@ -325,7 +325,7 @@ class QueuedDocumentsController extends AppController {
 		    if($id) {
 				$this->Transaction->createUserTransaction('Storage', null, null,
 					trim('Scanned document ID ' . $id . ' to ' . $user['User']['lastname'] .
-						', ' . $user['User']['firstname'] . ' - ' . substr($user['User']['ssn'], 5), ' -'));
+						', ' . $user['User']['firstname'] . ' - ' . substr($user['User']['ssn'], -4), ' -'));
 				$this->Session->setFlash(__('Scanned document was filed successfully.', true), 'flash_success');
 				$this->autoRender = false;
 				exit;
@@ -354,7 +354,7 @@ class QueuedDocumentsController extends AppController {
 		    if($this->User->save($this->data)) {
 				$this->Transaction->createUserTransaction('Customer',
 					null, null, 'Added customer ' . $this->data['User']['firstname'] .
-					' ' . $this->data['User']['lastname']) . ' - ' . substr($this->data['User']['ssn'],'5');
+					' ' . $this->data['User']['lastname']) . ' - ' . substr($this->data['User']['ssn'], -4);
 				$this->Session->setFlash(__('The customer has been saved', true), 'flash_success');
 				$this->redirect(array('action' => 'index'));
 		    }

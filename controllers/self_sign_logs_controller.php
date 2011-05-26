@@ -230,11 +230,11 @@ class SelfSignLogsController extends AppController {
 		    $log = $this->SelfSignLog->findById($id);
 		    if($status == 1) {
 			$details = 'Closed self sign queue record for ' .
-				$log['User']['lastname'] . ', ' . substr($log['User']['ssn'],'5');
+				$log['User']['lastname'] . ', ' . substr($log['User']['ssn'], -4);
 		    }
 		    else {
 			$details = 'Opened self sign queue record for '.
-			    $log['User']['lastname'] . ', ' . substr($log['User']['ssn'],'5');
+			    $log['User']['lastname'] . ', ' . substr($log['User']['ssn'], -4);
 		    }
 		    $this->Transaction->createUserTransaction('Self Sign', null, null, $details);
 		}
