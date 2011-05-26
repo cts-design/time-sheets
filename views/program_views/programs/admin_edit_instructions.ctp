@@ -21,5 +21,10 @@
     <span>You are here > </span>
     <?php echo $crumb->getHtml('Edit Program Instructions', null, 'unique') ; ?>
 </div>
-
-<div id="editForm"></div>
+<div id="editForm">
+	<?php echo $form->create('Program', array('action' => 'edit_instructions')) ?>
+	<?php echo $form->input('ProgramInstruction.text', array('type' => 'textarea', 'label' => false)) ?>
+	<?php echo $form->input('ProgramInstruction.id', array('type' => 'hidden')); ?>
+	<?php echo $form->end('Submit') ?>
+	
+</div>
