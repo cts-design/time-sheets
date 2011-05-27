@@ -1,9 +1,3 @@
-<style>
-	#UserPassword {width: 30px}
-	#ChildLoginForm { width: 350px;}
-	#ChildLoginForm label { margin-right: 10px;}
-	#ChildLoginForm .input {margin-bottom: 10px;}
-</style>
 <div id="ChildLoginForm">
 	<p>
 		Welcome to the <?php Configure::read('Company.name') ?> Online Services System. To
@@ -15,12 +9,16 @@
 		<legend>Login</legend>
 		<?php
 		    echo $form->create('User', array('action' => 'login'));
-		    echo $form->input('username', array('label' => 'Child\'s Lastname', 'between' => '<br />'));
+		    echo $form->input('username', array(
+		    	'label' => 'Child\'s Lastname', 
+		    	'between' => '<br />',
+				'after' => '<br />'));
 		    echo '<br class="clear"/>';
 		    echo $form->input('password', array(
 		    	'label' => 'Child\'s Last 4 SSN',
 		    	'maxlength' => 4,
-		    	'between' => '<br />'
+		    	'between' => '<br />',
+		    	'after' => '<br />'
 		    ));
 			echo $form->hidden('User.login_type', array('value' => 'child_website', ));
 		    echo '<br class="clear"/>';
