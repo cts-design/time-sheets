@@ -75,10 +75,32 @@ class ProgramsController extends AppController {
 					}
 					if($programResponse['ProgramResponse']['viewed_media'] == 1 && 
 					$programResponse['ProgramResponse']['answers'] != null &&
+					$programResponse['ProgramResponse']['uploaded_docs'] != 1 &&
+					$programResponse['ProgramResponse']['dropping_off_docs'] != 1 &&
 					$programResponse['ProgramResponse']['complete'] != 1) {
 							$this->redirect(array(
 								'controller' => 'program_responses', 
 								'action' => 'required_docs', $id));	
+					}
+					if($programResponse['ProgramResponse']['viewed_media'] == 1 && 
+					$programResponse['ProgramResponse']['answers'] != null &&
+					$programResponse['ProgramResponse']['dropping_off_docs'] != 1 &&
+					$programResponse['ProgramResponse']['uploaded_docs'] == 1 &&
+					$programResponse['ProgramResponse']['complete'] != 1
+					) {
+						$this->redirect(array(
+							'controller' => 'program_responses', 
+							'action' => 'provided_docs', $id, 'uploaded_docs'));	
+					}
+					if($programResponse['ProgramResponse']['viewed_media'] == 1 && 
+					$programResponse['ProgramResponse']['answers'] != null &&
+					$programResponse['ProgramResponse']['dropping_off_docs'] == 1 &&
+					$programResponse['ProgramResponse']['uploaded_docs'] != 1 &&
+					$programResponse['ProgramResponse']['complete'] != 1
+					) {
+						$this->redirect(array(
+							'controller' => 'program_responses', 
+							'action' => 'provided_docs', $id, 'dropping_off_docs'));	
 					}
 					if($programResponse['ProgramResponse']['complete']) {
 						$this->redirect(array(
