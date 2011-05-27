@@ -215,6 +215,25 @@ class User extends AppModel {
     );
 	
 	var $validationSets = array(
+		'customerLogin' => array(
+			'username' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Last name field is required.'
+				)
+			),
+			'password' => array(
+				'numeric' => array(
+					'rule' => 'numeric',
+					'message' => 'Last 4 SSN must only be numbers'
+				),
+				'minLength' => array(
+					'rule' => array('minLength', 4),
+					'message' => 'Last 4 SSN must be 4 digits',
+					'required' => true
+				)
+			)
+		),
 		'miniRegistration' => array(
 			'firstname' => array(
 			    'notEmpty' => array(
