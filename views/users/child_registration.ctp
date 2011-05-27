@@ -53,10 +53,10 @@
 			'after' => '<br />'));
 		if(Configure::read('Registration.ssn') == 'full') {
 		    echo $this->Form->input('ssn', array(
-				'label' => __('Child\'s SSN', true),
+				'label' => __('Child\'s Social Security Number', true),
 				'between' => '<br />'));
 		    echo $this->Form->input('ssn_confirm', array(
-				'label' => __('Child\'s SSN Confirm', true),
+				'label' => __('Please confirm child\'s Social Security Number', true),
 				'maxlength' => 9,
 				'between' => '<br />',
 				'after' => '<br />'));
