@@ -5,15 +5,29 @@
 	<div id="Instructions"><?php echo $instructions ?></div>
 </noscript>
 <div id="RequiredDocs">
-	<?php echo $form->create('ProgramResponse', array('action' => 'required_docs/'.$this->params['pass'][0], 'type' => 'file')) ?>
 	
+	<p class="bot-mar-10">
+		<?php echo $html->link('I am going to mail, fax, or drop of my documents.', 
+			'/program_responses/provided_docs/' . $this->params['pass'][0] .'/dropping_off_docs') ?>
+	</p>
+	
+	<?php echo $form->create('ProgramResponse', array('action' => 'required_docs/'.$this->params['pass'][0], 'type' => 'file')) ?>
+	<fieldset>
+		<legend>Upload Documents</legend>
 	<?php echo $form->file('QueuedDocument.submittedfile', array('label' => 'Document')) ?>
-	<br />
+	<p class="bot-mar-10">After uploading a document you will be returned to this page so you can upload additional documents as nessesary.</p>
 	<?php echo $form->error('QueuedDocument.submittedfile') ?>
-	<br />
 	<?php echo $form->input('QueuedDocument.queue_category_id', array('type' => 'hidden', 'value' => $queueCategoryId)) ?>
 	
-	<?php echo $form->input('program_id', array('type' => 'hidden', 'value' => $this->params['pass'][0])) ?>
 	
-	<?php echo $form->end('Upload') ?>	
+	<?php echo $form->input('program_id', array('type' => 'hidden', 'value' => $this->params['pass'][0])) ?>
+	<?php echo $form->end('Upload') ?>
+	<br />
+	<p>
+		<?php echo $html->link('I am finished uploading my documents', 
+			'/program_responses/provided_docs/' . $this->params['pass'][0] .'/uploaded_docs'); ?>	
+	</p>
+	
+	</fieldset>
+		
 </div>
