@@ -7,8 +7,16 @@
  */
 ?>
 
-<?php echo $this->Html->script('jquery.dPassword', array('inline' => 'false')); ?>
-<?php echo $this->Html->script('users/mini.registration', array('inline' => 'false')) ?>
+<?php echo $this->Html->script('jquery.dPassword', array('inline' => false)); ?>
+<?php echo $this->Html->script('users/mini.registration', array('inline' => false)) ?>
+<?php echo $this->Html->script('jquery.autotab-1.1b', array('inline' => false)) ?>
+<?php echo $this->Html->scriptStart(array('inline' => false)) ?>
+$(document).ready(function() {
+	$('#UserSsn1, #UserSsn2, #UserSsn3').autotab_magic().autotab_filter('numeric');
+	$('#UserSsn1Confirm, #UserSsn2Confirm, #UserSsn3Confirm').autotab_magic().autotab_filter('numeric');
+});
+<?php echo $this->Html->scriptEnd() ?>
+
 
 <p>
 	We currenltly do not have a record for your child.
@@ -62,8 +70,8 @@
 				'after' => '<br />'));
 		}
 		elseif(Configure::read('Registration.ssn') == 'last4') {
-			echo '<div class="input">';
-				echo $this->Form->label(__('Child\'s SSN', true));
+			echo '<div class="input required">';
+				echo $this->Form->label(__('Child\'s Social Security Number', true));
 				echo '<br />';	
 				echo $this->Form->input('ssn_1', array(
 					'type' => 'text',
@@ -83,8 +91,8 @@
 				echo "<br class='clear' />";	
 				echo $this->Form->error('ssn');
 			echo '</div>';
-			echo '<div class="input">';
-				echo $this->Form->label(__('Child\'s SSN Confirm', true));
+			echo '<div class="input required">';
+				echo $this->Form->label(__('Please confirm child\'s Social Security Number', true));
 				echo '<br />';			
 				echo $this->Form->input('ssn_1_confirm', array(
 					'type' => 'text',
@@ -93,6 +101,7 @@
 					'div' => false));
 				echo $this->Form->input('ssn_2_confirm', array(
 					'type' => 'text',
+					'maxlength' => 2,
 					'label' => false,
 					'div' => false));
 				echo $this->Form->input('ssn_3_confirm', array(
