@@ -20,6 +20,14 @@ Ext.onReady(function(){
 			'<a href="/admin/programs/edit_instructions/4">Edit</a>'
 		],
 		[
+			'Uploaded Documents Instructions', 
+			'<a href="/admin/programs/edit_instructions/6">Edit</a>'
+		],
+		[
+			'Dropping Off Documents Instructions', 
+			'<a href="/admin/programs/edit_instructions/7">Edit</a>'
+		],					
+		[
 			'Program E-Sign Instructions', 
 			'<a href="/admin/programs/edit_instructions/5">Edit</a>'
 		]		
@@ -36,7 +44,7 @@ Ext.onReady(function(){
 	
 	var instructionGrid = new Ext.grid.GridPanel({
 		store: instructionStore,
-		height: 175,
+		height: 210,
 		title: 'Program Instructions',
 		width: 375,
 		frame: true,
