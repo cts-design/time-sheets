@@ -14,7 +14,7 @@
 	<?php echo $form->input('ProgramResponse.viewed_media', array(
 		'type' => 'checkbox', 
 		'label' => 'I acknowledge that I have viewed the presentation and completely understand its content. 
-		I futher Understand that it is my responsibility to abide by the rules and regulations. 
+		I futher understand that it is my responsibility to abide by the rules and regulations. 
 		I also understand clearly that my failure to comply with the conditions may result in the loss of
 		services.')) ?>
 	<br class="clear" />
