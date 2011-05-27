@@ -108,7 +108,7 @@ class ProgramResponsesController extends AppController {
 			'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s') 
 		)));
 		if(!$programResponse) {
-			$this->Session->setFlash(__('An eroor has occured.', true), 'flash_failure');
+			$this->Session->setFlash(__('An error has occured.', true), 'flash_failure');
 		}
 		$title_for_layout = 'Program Certificate';
 		$this->set(compact('title_for_layout', 'programResponse'));
