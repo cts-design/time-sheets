@@ -29,7 +29,7 @@
 			<fieldset>
 				<legend>Electronic Signature</legend>
 				<p class="bot-mar-10"><?php echo $esignInstructions[0] ?></p>
-				<p class="bot-mar-10">Please put your first and last name in the box to agree.</p>
+				<p class="bot-mar-10">Please enter your first and last name in the box below.</p>
 				<?php echo $form->input('form_esignature', array('label' => 'I agree', 'after' => '<br />')) ?>	
 			</fieldset>
 			<br />
