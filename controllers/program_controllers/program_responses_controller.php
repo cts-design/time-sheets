@@ -139,6 +139,37 @@ class ProgramResponsesController extends AppController {
 		);
 		$this->set($params);
 		return $params;		
+	}
+
+	function provided_docs($id, $type) {
+		$programResponse = $this->ProgramResponse->find('first', array(
+			'conditions' => array(
+				'ProgramResponse.user_id' => $this->Auth->user('id'),
+				'ProgramResponse.program_id' => $id
+			)
+		));
+		$this->ProgramResponse->Program->ProgramInstruction->recursive = -1;
+		if($programResponse['ProgramResponse']['uploaded_docs'] == 0 && 
+			$programResponse['ProgramResponse']['dropping_off_docs'] == 0) {
+				if($type == 'uploaded_docs') {
+					$this->ProgramResponse->id = $programResponse['ProgramResponse']['id'];
+					$this->ProgramResponse->saveField('uploaded_docs', 1);
+				}
+				elseif($type == 'dropping_off_docs') {
+					$this->ProgramResponse->id = $programResponse['ProgramResponse']['id'];
+					$this->ProgramResponse->saveField('dropping_off_docs', 1);
+				}					
+			}
+	
+		$instructions = $this->ProgramResponse->Program->ProgramInstruction->find('first', array(
+			'conditions' => array(
+				'ProgramInstruction.program_id' => $id,
+				'ProgramInstruction.type' => $type
+			)
+		));
+		$data['instructions'] = $instructions['ProgramInstruction']['text'];
+		$data['title_for_layout'] = 'Program Response Documents';
+		$this->set($data);
 	} 
 	
 	function admin_index($id = null) {
