@@ -35,30 +35,30 @@ class UsersController extends AppController {
 		}
 		$this->Auth->allow('kiosk_mini_registration', 'add', 'admin_password_reset', 'build_acl', 'admin_login', 'admin_logout', 'kiosk_self_sign_login', 'login', 'registration');
 
-		if(isset($this->data['User']['username'], $this->data['User']['password'],$this->data['User']['login_type'] ) &&
-			$this->data['User']['username'] != '' && $this->data['User']['password'] != '') {
-		    $count = $this->User->find('count', array(
-				'conditions' => array(
-				    'User.username' => $this->data['User']['username'],
-				    'and' => array(
-					'User.password' => $this->Auth->password($this->data['User']['password'])))));
-		    if($count === 0) {
-				if($this->data['User']['login_type'] == 'kiosk') {
-				    $this->redirect(array('action' => 'mini_registration',
-					$this->data['User']['username'], 'kiosk' => true));
-				}
-				elseif($this->data['User']['login_type'] == 'website') {
-				    $this->redirect(array('action' => 'registration', 'regular',
-					$this->data['User']['username'], 'kiosk' => false));					
-				}
-				elseif($this->data['User']['login_type'] == 'child_website') {
-					$this->redirect(array('action' => 'registration', 'child',
-					$this->data['User']['username'], 'kiosk' => false));
-				}
-				else {
-					$this->redirect(array('action' => 'add'));
-				}		    
-		    }
+		if(!empty($this->data)) {
+			$this->User->setValidation('customerLogin');
+			$this->User->set($this->data);
+			if($this->User->validates()) {
+			    $count = $this->User->find('count', array(
+					'conditions' => array(
+					    'User.username' => $this->data['User']['username'],
+					    'and' => array(
+						'User.password' => $this->Auth->password($this->data['User']['password'])))));		
+			    if($count === 0) {
+					if($this->data['User']['login_type'] == 'kiosk') {
+					    $this->redirect(array('action' => 'mini_registration',
+						$this->data['User']['username'], 'kiosk' => true));
+					}
+					elseif($this->data['User']['login_type'] == 'website') {
+					    $this->redirect(array('action' => 'registration', 'regular',
+						$this->data['User']['username'], 'kiosk' => false));					
+					}
+					elseif($this->data['User']['login_type'] == 'child_website') {
+						$this->redirect(array('action' => 'registration', 'child',
+						$this->data['User']['username'], 'kiosk' => false));
+					}		    
+			    }
+			}
 		}
 		if($this->Auth->user() &&  $this->params['action'] == 'admin_dashboard' ) {
 		    if(! $this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Users/admin_dashboard', '*')) {
@@ -185,7 +185,8 @@ class UsersController extends AppController {
 		$this->layout = 'kiosk';
     }
 	
-	function login($type=null) {
+	function login($type=null) {		
+
 		if($this->Auth->user()){
 			if($this->Session->read('Auth.redirect') != '') {
 				$this->redirect($this->Session->read('Auth.redirect'));
