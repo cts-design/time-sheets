@@ -472,6 +472,13 @@ width: 100%
     margin: 5px 10px 0 0;
 }
 
+/* Login */
+
+#ChildLoginForm #UserPassword {width: 30px}
+#ChildLoginForm { width: 350px;}
+#ChildLoginForm label { margin-right: 10px;}
+#ChildLoginForm .input {margin-bottom: 10px;}
+#ChildLoginForm .error-message {margin: 0}
 
 /* Registration */
 
