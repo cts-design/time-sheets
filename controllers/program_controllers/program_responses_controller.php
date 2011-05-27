@@ -102,7 +102,7 @@ class ProgramResponsesController extends AppController {
 	}
 
 	function response_complete($id=null) {
-		$response = $this->ProgramResponse->find('first', array('conditions' => array(
+		$programResponse = $this->ProgramResponse->find('first', array('conditions' => array(
 			'ProgramResponse.user_id' => $this->Auth->user('id'),
 			'ProgramResponse.program_id' => $id,
 			'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s') 
@@ -119,7 +119,7 @@ class ProgramResponsesController extends AppController {
 		    $this->Session->setFlash(__('Invalid Program', true), 'flash_failure');
 		    $this->redirect(array('action' => 'index'));
 		}
-		$response = $this->ProgramResponse->find('first', array('conditions' => array(
+		$programResponse = $this->ProgramResponse->find('first', array('conditions' => array(
 			'ProgramResponse.user_id' => $this->Auth->user('id'),
 			'ProgramResponse.program_id' => $id,
 			'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s') 
