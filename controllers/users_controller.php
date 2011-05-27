@@ -186,7 +186,7 @@ class UsersController extends AppController {
     }
 	
 	function login($type=null) {		
-
+		$this->User->setValidation('customerLogin');
 		if($this->Auth->user()){
 			if($this->Session->read('Auth.redirect') != '') {
 				$this->redirect($this->Session->read('Auth.redirect'));
