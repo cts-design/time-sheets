@@ -68,10 +68,19 @@ class ProgramResponsesController extends AppController {
 		$this->set(compact('program', 'title_for_layout', 'instructions'));	
 	}
 		
-	function required_docs($id = null) {
+	function required_docs($id = null, $reset = null) {
 		if(!$id){
 			$this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');
 			$this->redirect($this->referer());
+		}
+		if($reset == 1) {
+		$programResponse = $this->ProgramResponse->find('first', array('conditions' => array(
+				'ProgramResponse.user_id' => $this->Auth->user('id'),
+				'ProgramResponse.program_id' => $id)));
+			$this->ProgramResponse->id = $programResponse['ProgramResponse']['id'];
+			$this->ProgramResponse->saveField('uploaded_docs', 0);
+			$this->ProgramResponse->saveField('dropping_off_docs', 0);
+				
 		}
 		if(!empty($this->data)) {
 			$this->loadModel('QueuedDocument');
