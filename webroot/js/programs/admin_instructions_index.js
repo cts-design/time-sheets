@@ -4,31 +4,31 @@
 Ext.onReady(function(){  
 	var instructions = [
 		[
-			'Program Main Instructions', 
+			'Main Instructions', 
 			'<a href="/admin/programs/edit_instructions/1">Edit</a>'
 		],
 		[
-			'Program Media Instructions', 
+			'Media Instructions', 
 			'<a href="/admin/programs/edit_instructions/2">Edit</a>'
 		],
 		[
-			'Program Form Instructions', 
+			'Form Instructions', 
 			'<a href="/admin/programs/edit_instructions/3">Edit</a>'
 		],
 		[
-			'Program Document Instructions', 
+			'Required Document Instructions', 
 			'<a href="/admin/programs/edit_instructions/4">Edit</a>'
 		],
 		[
-			'Uploaded Documents Instructions', 
+			'Uploaded Document Instructions', 
 			'<a href="/admin/programs/edit_instructions/6">Edit</a>'
 		],
 		[
-			'Dropping Off Documents Instructions', 
+			'Dropping Off Document Instructions', 
 			'<a href="/admin/programs/edit_instructions/7">Edit</a>'
 		],					
 		[
-			'Program E-Sign Instructions', 
+			'E-Sign Instructions', 
 			'<a href="/admin/programs/edit_instructions/5">Edit</a>'
 		]		
 		
