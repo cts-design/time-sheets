@@ -90,7 +90,8 @@ $(document).ready(function() {
 					'maxLength' => 4,
 					'label' => false,
 					'div' => false));
-				echo "<br class='clear' />";	
+				echo "<br class='clear' />";
+				echo '<div class="small">Please see the <a href="#">privacy act</a> statement concerning social security numbers.</div>';	
 				echo $this->Form->error('ssn');
 			echo '</div>';
 			echo '<div class="input required">';
