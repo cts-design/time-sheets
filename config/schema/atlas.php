@@ -1,6 +1,5 @@
-<?php
-/* atlas schema generated on: 2011-05-10 15:21:01 : 1305055261*/
-
+<?php 
+/* atlas schema generated on: 2011-05-31 10:49:15 : 1306853355*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -399,6 +398,8 @@ class atlasSchema extends CakeSchema {
 		'complete' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'needs_approval' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'conformation_id' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 12, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'uploaded_docs' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'dropping_off_docs' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'expires_on' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
