@@ -266,7 +266,7 @@ class ProgramsController extends AppController {
 		if(empty($this->data)) {
 			$this->data = $this->Program->ProgramInstruction->read(null, $id);
 		}
-		$this->set('title_for_layout', 'Edit ' . ucfirst($this->data['ProgramInstruction']['type']) . ' Program Instructions');
+		$this->set('title_for_layout', 'Edit ' . Inflector::humanize($this->data['ProgramInstruction']['type']) . ' Instructions');
 	}
 		
 }
