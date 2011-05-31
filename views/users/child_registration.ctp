@@ -19,13 +19,15 @@ $(document).ready(function() {
 
 
 <p>
-	We currenltly do not have a record for your child.
+	We currently do not have a record for your child.
 	<br />	 
 	Please register your your child's information using the following form.
 	<br />	
-	If you feel you have reached this page in error, please <?php echo $html->link('click here', array('controller' => 'users', 'action' => 'login', 'child')) ?> to return
-	to the login page.
+	If you have already created a login, please <?php echo $html->link('click here', array('controller' => 'users', 'action' => 'login', 'child')) ?> to return
+	to the login page and try your login information again.
 </p>
+<br />
+<div class="required"><label></label> indicates required fields.</div>
 <br />
   <div id="ChildRegistrationForm">
 	<?php echo $this->Form->create('User', array('url' => '/users/registration/child')); ?>
