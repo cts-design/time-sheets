@@ -6,11 +6,12 @@
 </noscript>
 <div id="RequiredDocs">
 	
-	<p class="bot-mar-10">
-		<?php echo $html->link('I am going to mail, fax, or drop of my documents.', 
-			'/program_responses/provided_docs/' . $this->params['pass'][0] .'/dropping_off_docs') ?>
-	</p>
-	
+	<strong>
+		<p class="bot-mar-10">
+			<?php echo $html->link('I am going to mail, fax, or drop of my documents.', 
+				'/program_responses/provided_docs/' . $this->params['pass'][0] .'/dropping_off_docs') ?>
+		</p>
+	</strong>	
 	<?php echo $form->create('ProgramResponse', array('action' => 'required_docs/'.$this->params['pass'][0], 'type' => 'file')) ?>
 	<fieldset>
 		<legend>Upload Documents</legend>
@@ -21,13 +22,16 @@
 	
 	
 	<?php echo $form->input('program_id', array('type' => 'hidden', 'value' => $this->params['pass'][0])) ?>
-	<?php echo $form->end('Upload') ?>
-	<br />
-	<p>
-		<?php echo $html->link('I am finished uploading my documents', 
-			'/program_responses/provided_docs/' . $this->params['pass'][0] .'/uploaded_docs'); ?>	
-	</p>
 	
 	</fieldset>
-		
+	<?php echo $form->end('Upload') ?>	
+	<br />	
+	<p>
+		<strong>
+			<?php echo $html->link('I am finished uploading my documents.', 
+			'/program_responses/provided_docs/' . $this->params['pass'][0] .'/uploaded_docs'); ?>
+		</strong>		
+	</p>
+	
+
 </div>
