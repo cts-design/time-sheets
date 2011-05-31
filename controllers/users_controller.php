@@ -187,6 +187,9 @@ class UsersController extends AppController {
 	
 	function login($type=null) {		
 		$this->User->setValidation('customerLogin');
+		if(isset($this->params['pass'][1], $this->params['pass'][2]) && $this->params['pass'][1] == 'programs') {
+			$this->Session->write('Auth.redirect', '/' . $this->params['pass'][1] . '/index/' . $this->params['pass'][2]); 
+		}
 		if($this->Auth->user()){
 			if($this->Session->read('Auth.redirect') != '') {
 				$this->redirect($this->Session->read('Auth.redirect'));
