@@ -59,27 +59,49 @@ class ProgramsControllerTestCase extends CakeTestCase {
 		unset($this->Programs);
 		ClassRegistry::flush();
 	}
+	
+	function testIndexNoResponse() {
+		$this->Programs->Session->write('Auth.User', array(
+	        'id' => 10,
+	        'role_id' => 1,
+	        'username' => 'test'
+	    ));
+		$expectedResult = array(
+			'id' => 1,
+			'name' => 'VPK',
+			'type' => 'video_form_docs',
+			'media' => 'vpk.flv',
+			'atlas_registration_type' => '',
+			'media_expires' => 0,
+			'disabled' => 0,
+			'queue_category_id' => 6,
+			'cert_type' => 'coe',
+			'approval_required' => 1,
+			'form_esign_required' => 1,
+			'conformation_id_length' => 9,
+			'response_expires_in' => 30,
+			'created' => '2011-03-23 00:00:00',
+			'modified' => '2011-05-03 12:36:22',
+			'expires' => '2011-04-23 00:00:00'
+		);		
+		$result = $this->testAction('/programs/index/1', array('return' => 'vars'));
+		$program = $result['program']['Program'];
+		$this->assertEqual($result['title_for_layout'], 'VPK');
+		$this->assertEqual($expectedResult, $program);	
+	}	
 
-	function testIndex() {
+	function testIndexWithResponse() {
 		$this->Programs->Session->write('Auth.User', array(
 	        'id' => 9,
 	        'role_id' => 1,
 	        'username' => 'smith'
 	    ));
-		$expectedResult = array(
-			'id' => 1,
-			'name' => 'VPK',
-			'type' => 'video_registration_docs',
-			'media' => '/programs/vpk/vpk.flv',
-			'instructions' => 'Please watch the video below. You will be taken to the registration page automatically when the video is over. ',
-			'disabled' => 0,
-			'created' => '2011-03-23 00:00:00',
-			'modified' => '2011-03-23 00:00:00',
-			'expires' => '2011-04-23 00:00:00'
-		);		
-		$result = $this->testAction('/programs/index/1', array('return' => 'vars'));
-		$result = Set::Extract('Program', $result['program']);
-		$this->assertEqual($result, $expectedResult);			
+	    $this->Programs->params = Router::parse('/programs/index/1');
+	    $this->Programs->Component->startup($this->Programs);
+		$this->Programs->index(1);
+		$expectedResult = array('controller' => 'programs', 'action' => 'view_media', 0 => 1);
+		$this->assertEqual($this->Programs->redirectUrl, $expectedResult );
+		$this->Programs->Session->destroy();			
 	}
 	
 	function testIndexDisabledProgram() {
@@ -104,8 +126,119 @@ class ProgramsControllerTestCase extends CakeTestCase {
 	    $this->Programs->params = Router::parse('/programs/index');
 	    $this->Programs->Component->startup($this->Programs);
 		$this->Programs->index();
+		$this->assertEqual($this->Programs->redirectUrl, '/');
 		$this->assertEqual($this->Programs->Session->read('Message.flash.element'), 'flash_failure');
 		$this->Programs->Session->destroy();			
+	}
+	
+	function testIndexViewedMedia() {
+		$this->Programs->Session->write('Auth.User', array(
+	        'id' => 11,
+	        'role_id' => 1,
+	        'username' => 'dduck'
+	    ));
+	    $this->Programs->params = Router::parse('/programs/index/1');
+	    $this->Programs->Component->startup($this->Programs);
+		$this->Programs->index(1);
+		$expectedResult = array('controller' => 'program_responses', 'action' => 'index', 0 => 1);
+		$this->assertEqual($this->Programs->redirectUrl, $expectedResult);
+		$this->Programs->Session->destroy();			
+	}
+	
+	function testIndexCompletedForm() {
+		$this->Programs->Session->write('Auth.User', array(
+	        'id' => 12,
+	        'role_id' => 1,
+	        'username' => 'rrabbit'
+	    ));
+	    $this->Programs->params = Router::parse('/programs/index/1');
+	    $this->Programs->Component->startup($this->Programs);
+		$this->Programs->index(1);
+		$expectedResult = array('controller' => 'program_responses', 'action' => 'required_docs', 0 => 1);	
+		$this->assertEqual($this->Programs->redirectUrl, $expectedResult);
+		$this->Programs->Session->destroy();		
+	}
+	
+	function testIndexUploadedDocs() {
+		$this->Programs->Session->write('Auth.User', array(
+	        'id' => 13,
+	        'role_id' => 1,
+	        'username' => 'bmarley'
+	    ));
+	    $this->Programs->params = Router::parse('/programs/index/1');
+	    $this->Programs->Component->startup($this->Programs);
+		$this->Programs->index(1);
+		$expectedResult = array(
+			'controller' => 'program_responses', 
+			'action' => 'provided_docs', 
+			0 => 1,
+			1 => 'uploaded_docs');	
+		$this->assertEqual($this->Programs->redirectUrl, $expectedResult);
+		$this->Programs->Session->destroy();		
+	}
+	
+	function testIndexDroppingOffDocs() {
+		$this->Programs->Session->write('Auth.User', array(
+	        'id' => 14,
+	        'role_id' => 1,
+	        'username' => 'bush'
+	    ));
+	    $this->Programs->params = Router::parse('/programs/index/1');
+	    $this->Programs->Component->startup($this->Programs);
+		$this->Programs->index(1);
+		$expectedResult = array(
+			'controller' => 'program_responses', 
+			'action' => 'provided_docs', 
+			0 => 1,
+			1 => 'dropping_off_docs');	
+		$this->assertEqual($this->Programs->redirectUrl, $expectedResult);
+		$this->Programs->Session->destroy();		
+	}
+	
+	function testIndexResponseComplete() {
+		$this->Programs->Session->write('Auth.User', array(
+	        'id' => 15,
+	        'role_id' => 1,
+	        'username' => 'jim'
+	    ));
+	    $this->Programs->params = Router::parse('/programs/index/1');
+	    $this->Programs->Component->startup($this->Programs);
+		$this->Programs->index(1);
+		$expectedResult = array(
+			'controller' => 'program_responses', 
+			'action' => 'response_complete', 
+			0 => 1);	
+		$this->assertEqual($this->Programs->redirectUrl, $expectedResult);
+		$this->Programs->Session->destroy();		
+	}
+
+	function testGetStarted() {
+		$this->Programs->Session->write('Auth.User', array(
+	        'id' => 10,
+	        'role_id' => 1,
+	        'username' => 'test'
+	    ));
+		$this->Programs->data = array(
+			'ProgramResponse' => array(
+				'program_id' => 1
+			),
+			'Program' => array(
+				'redirect' => '/programs/view_media/1'
+			)
+		);
+		$this->Programs->params = Router::parse('/programs/get_started');
+	    $this->Programs->Component->startup($this->Programs);
+		$this->Programs->get_started();
+		
+		$result = $this->Programs->Program->ProgramResponse->find('first', array('conditions' => array(
+			'ProgramResponse.program_id' => 1,
+			'ProgramResponse.user_id' => 10)));
+
+		$this->assertEqual($result['ProgramResponse']['id'], 7);
+		$this->assertEqual($result['ProgramResponse']['user_id'], 10);
+		$this->assertEqual($this->Programs->redirectUrl, '/programs/view_media/1');
+		$this->Programs->Session->destroy();	
+		
 	}
 }
 ?>
