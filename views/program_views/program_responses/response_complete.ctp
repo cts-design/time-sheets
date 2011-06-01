@@ -8,8 +8,8 @@
 ?>
 <?php if(!empty($programResponse) ) : ?>
 	<p>
-		Congratulations your certificate for <?php echo $programResponse['Program']['name'] ?> 
-		has been issued. Please download certificate below.
+		Congratulations! Your <?php echo $programResponse['Program']['name'] ?> certificate 
+		has been issued. Please download the certificate below.
 	</p>
 	<p class="left"><strong>Program: </strong></p> 
 	<p class="left"><?php echo $programResponse['Program']['name'] ?></p>
@@ -22,10 +22,14 @@
 	<p class="left"><strong>Approved on: </strong></p>
 	<p class="left"><?php echo date('m/d/Y', strtotime($programResponse['ProgramResponse']['modified'])) ?></p>
 	<br class="clear" />
-	<p>
+	<p class="top-mar-10">
 		<?php 
-			echo $html->link('Download Cert', 
+			echo $html->link('Download Certificate', 
 				array('action' => 'view_cert', $this->params['pass'][0]), array('target' => '_blank'));
 		?>
 	</p>
 <?php endif ?>
+<div class="top-mar-10">
+<?php echo $html->link($html->image('get_adobe_reader.png'), 'http://get.adobe.com/reader/', 
+	array('escape' => false, 'target' => '_blank')) ?>
+</div>
