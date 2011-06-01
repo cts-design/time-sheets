@@ -6,6 +6,7 @@
 </noscript>
 
 <br />
+<div class="required bot-mar-10"><label></label> indicates required fields.</div>
 <div id="ProgramForm">
 	<?php if(!empty($program['ProgramField'])) : ?>
 		<?php echo $form->create('ProgramResponse', array('action' => 'index/' . $program['Program']['id'])); ?>	
