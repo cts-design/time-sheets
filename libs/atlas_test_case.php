@@ -108,8 +108,8 @@ class AtlasTestCase extends CakeTestCase {
         if (isset($Controller->Auth)) {
             $Controller->Auth->initialize($Controller);
             if (!$Controller->Session->check('Auth.User') && !$Controller->Session->check('User')) {
-                $Controller->Session->write('Auth.User', array('id' => 1, 'username' => 'testadmin'));
-                $Controller->Session->write('User', array('Group' => array('id' => 1, 'lft' => 1)));
+                $Controller->Session->write('Auth.User', array(
+                	'id' => 2, 'username' => 'dnolan', 'role_id' => 2));
             }
         }
         // configure acl
