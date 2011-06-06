@@ -57,7 +57,6 @@ class ProgramsControllerTestCase extends AtlasTestCase {
 		$program = $result['program']['Program'];
 		$this->assertEqual($result['title_for_layout'], 'VPK');
 		$this->assertEqual($expectedResult, $program);	
-		$result = $this->testAction('/programs/index/1', array('return' => 'vars'));
 	}	
 	
 	
@@ -317,7 +316,40 @@ class ProgramsControllerTestCase extends AtlasTestCase {
 		
 		$this->assertEqual($this->Programs->Session->read('Message.flash.element'), 'flash_failure');		
 		$this->Programs->Session->destroy();		
-	}	
+	}
+	
+	public function testLoadMedia() {
+		$this->Programs->Component->initialize($this->Programs);
+		$this->Programs->Session->write('Auth.User', array(
+	        'id' => 9,
+	        'role_id' => 1,
+	        'username' => 'smith'
+	    ));		
+		$result = $this->testAction('programs/load_media/1', array('return' => 'vars'));
+		$expectedResult = array(
+			'id' => 'vpk.flv', 
+			'name' => 'vpk',
+			'extension' => 'flv',
+			'path' => '/storage/program_media/'
+		);
+		$this->assertEqual($result, $expectedResult);
+	}
+	
+	public function testLoadMediaNoId() {
+		$this->Programs->params = Router::parse('/programs/load_media');
+		$this->Programs->Component->initialize($this->Programs);
+		$this->Programs->Session->write('Auth.User', array(
+	        'id' => 9,
+	        'role_id' => 1,
+	        'username' => 'smith'
+	    ));
+		$this->mockAcl($this->Programs);		
+		$this->Programs->beforeFilter();		
+	    $this->Programs->Component->startup($this->Programs);			
+		$this->Programs->load_media();
+		$this->assertEqual($this->Programs->Session->read('Message.flash.element'), 'flash_failure');		
+		$this->Programs->Session->destroy();			
+	}
 	
 	public function endTest() {
 		unset($this->Programs);
