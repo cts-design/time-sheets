@@ -190,7 +190,9 @@ class ProgramsController extends AppController {
 		$instructions = Set::extract('/ProgramInstruction[type=media]/text', $program);		
 		$data['element'] = '/programs/video'; 
 		$data['media'] = '/programs/load_media/' . $program['Program']['id'];
-		$data['instructions'] = $instructions[0];
+		if($instructions) {
+			$data['instructions'] = $instructions[0];	
+		}
 		$data['title_for_layout'] = $program['Program']['name'];
 		$this->set($data);		
 	}
