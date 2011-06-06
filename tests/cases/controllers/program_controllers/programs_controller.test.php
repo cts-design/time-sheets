@@ -3,22 +3,73 @@
 App::import('Controller', 'Programs');
 App::import('Lib', 'AtlasTestCase');
 class TestProgramsController extends ProgramsController {
-	var $autoRender = false;
+	
+	public $name = 'Programs';
+	
+	public $autoRender = false;
+	
+	public $testView = false;
 
-	function redirect($url, $status = null, $exit = true) {
+	public function redirect($url, $status = null, $exit = true) {
 		$this->redirectUrl = $url;
 	}
+	
+    public function render($action = null, $layout = null, $file = null) {
+        if (!$this->testView) {
+            $this->renderedAction = $action;
+        } else {
+            return parent::render($action, $layout, $file);
+        }
+    }
+
+  	public function _stop($status = 0) {
+        $this->stopped = $status;
+    }	
 }
 
 class ProgramsControllerTestCase extends AtlasTestCase {
 	
 	function startTest() {
-		$this->Programs = new TestProgramsController();
+		$this->Programs =& new TestProgramsController();
 		$this->Programs->constructClasses();	
         $this->Programs->params['controller'] = 'programs';
         $this->Programs->params['pass'] = array();
         $this->Programs->params['named'] = array();	
+		$this->testController = $this->Programs;
 	}
+	
+	function testIndexNoResponse() {
+		$this->Programs->Component->initialize($this->Programs);
+		$this->Programs->Session->write('Auth.User', array(
+	        'id' => 10,
+	        'role_id' => 1,
+	        'username' => 'test'
+	    ));
+		$expectedResult = array(
+			'id' => 1,
+			'name' => 'VPK',
+			'type' => 'video_form_docs',
+			'media' => 'vpk.flv',
+			'atlas_registration_type' => '',
+			'media_expires' => 0,
+			'disabled' => 0,
+			'queue_category_id' => 6,
+			'cert_type' => 'coe',
+			'approval_required' => 1,
+			'form_esign_required' => 1,
+			'conformation_id_length' => 9,
+			'response_expires_in' => 30,
+			'created' => '2011-03-23 00:00:00',
+			'modified' => '2011-05-03 12:36:22',
+			'expires' => '2011-04-23 00:00:00'
+		);		
+		$result = $this->testAction('/programs/index/1', array('return' => 'vars'));
+		$program = $result['program']['Program'];
+		$this->assertEqual($result['title_for_layout'], 'VPK');
+		$this->assertEqual($expectedResult, $program);	
+		$result = $this->testAction('/programs/index/1', array('return' => 'vars'));
+	}	
+	
 	
 	function testIndexWithResponse() {
 		$this->Programs->params['action'] = 'index';
@@ -39,6 +90,7 @@ class ProgramsControllerTestCase extends AtlasTestCase {
 	
 	function testIndexDisabledProgram() {
 		$this->Programs->params = Router::parse('/programs/index/2');
+		
 		$this->Programs->Component->initialize($this->Programs);
 		$this->Programs->Session->write('Auth.User', array(
 	        'id' => 9,
@@ -214,7 +266,7 @@ class ProgramsControllerTestCase extends AtlasTestCase {
 	}	
 	
 	function endTest() {
-		$this->Programs->Session->destroy();
+		//$this->Programs->Session->destroy();
 		unset($this->Programs);
 		ClassRegistry::flush();
 	}	
