@@ -204,16 +204,18 @@ class ProgramsController extends AppController {
 		} 
 		$this->view = 'Media';
 		$this->Program->id = $id;
-		$path = $this->Program->field('media');		
-		$explode = explode('.', $path);
-		$params = array(
-		    'id' => $path,
-		    'name' => $explode[0],
-		    'extension' => $explode[1],
-		    'path' => Configure::read('Program.media.path')
-		);
-		$this->set($params);
-		return $params;
+		$path = $this->Program->field('media');
+		if($path) {
+			$explode = explode('.', $path);
+			$params = array(
+			    'id' => $path,
+			    'name' => $explode[0],
+			    'extension' => $explode[1],
+			    'path' => Configure::read('Program.media.path')
+			);
+			$this->set($params);
+			return $params;			
+		}		
     }
 				
 	function admin_index() {
