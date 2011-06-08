@@ -24,7 +24,7 @@ class ArosAcoFixture extends CakeTestFixture {
         array(
             'id' => 4,
             'aro_id' => 67,
-            'aco_id' => 318,
+            'aco_id' => 1,
             '_create' => 1,
             '_read' => 1,
             '_update' => 1,
@@ -33,7 +33,7 @@ class ArosAcoFixture extends CakeTestFixture {
         array(
             'id' => 5,
             'aro_id' => 68,
-            'aco_id' => 318,
+            'aco_id' => 1,
             '_create' => 1,
             '_read' => 1,
             '_update' => 1,
@@ -42,7 +42,7 @@ class ArosAcoFixture extends CakeTestFixture {
         array(
             'id' => 6,
             'aro_id' => 69,
-            'aco_id' => 318,
+            'aco_id' => 1,
             '_create' => 1,
             '_read' => 1,
             '_update' => 1,
