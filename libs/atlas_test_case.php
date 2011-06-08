@@ -5,6 +5,8 @@
  * @link http://ctsfla.com
  * @package ATLAS V3
  */
+require_once APP.'config'.DS.'routes.php';
+ 
 App::import('Vendor', 'DebugKit.FireCake');
 
 App::import('Component', 'Acl');
@@ -53,6 +55,10 @@ class AtlasTestCase extends CakeTestCase {
             'user_transaction'
         );
 		
+	var $_componentsInitialized = false;
+	
+	var $testController = null;	
+		
 	function mockAcl($Controller) {
 		if (isset($Controller->Acl)) {
             $Controller->Acl = new MockAclComponent();
@@ -61,13 +67,13 @@ class AtlasTestCase extends CakeTestCase {
         }		
 	}			
 		
-    var $testController = null;
+    
  
     function testAction($url = '', $options = array()) {
         if (is_null($this->testController)) {
             return parent::testAction($url, $options);
         }
- 
+
         $Controller = $this->testController;
  
         // reset parameters
@@ -77,9 +83,13 @@ class AtlasTestCase extends CakeTestCase {
         $Controller->url = null;
         $Controller->action = null;
         $Controller->viewVars = array();
-        $Controller->{$Controller->modelClass}->create();
+		$keys = ClassRegistry::keys();
+		foreach ($keys as $key) {
+			if (is_a(ClassRegistry::getObject(Inflector::camelize($key)), 'Model')) {
+				ClassRegistry::getObject(Inflector::camelize($key))->create(false);
+			}
+		}		
         $Controller->Session->delete('Message');
-        $Controller->activeUser = null;
  
         $default = array(
             'data' => array(),
@@ -89,27 +99,35 @@ class AtlasTestCase extends CakeTestCase {
  
         // set up the controller based on the url
         $urlParams = Router::parse($url);
+		$action = $urlParams['action'];
+		$prefix = null;
+		$urlParams['url']['url'] = $url;
         if (strtolower($options['method']) == 'get') {
             $urlParams['url'] = array_merge($options['data'], $urlParams['url']);
         } else {
             $Controller->data = $options['data'];
         }
+		if (isset($urlParams['prefix'])) {
+			$action = $urlParams['prefix'].'_'.$action;
+			$prefix = $urlParams['prefix'].'/';
+		}		
         $Controller->passedArgs = $urlParams['named'];
         $Controller->params = $urlParams;
         $Controller->url = $urlParams;
-        $Controller->action = $urlParams['plugin'].'/'.$urlParams['controller'].'/'.$urlParams['action'];
+        $Controller->action = $prefix.$urlParams['plugin'].'/'.$urlParams['controller'].'/'.$urlParams['action'];
  
-        // only initialize the components once
-        if (empty($Controller->Component->_loaded)) {
-            $Controller->Component->initialize($Controller);
-        }
+		// only initialize the components once
+		if ($this->_componentsInitialized === false) {
+			$this->_componentsInitialized = true;
+			$Controller->Component->initialize($Controller);
+		}
  
         // configure auth
         if (isset($Controller->Auth)) {
             $Controller->Auth->initialize($Controller);
             if (!$Controller->Session->check('Auth.User') && !$Controller->Session->check('User')) {
                 $Controller->Session->write('Auth.User', array(
-                	'id' => 2, 'username' => 'dnolan', 'role_id' => 2));
+                	'id' => 2, 'username' => 'dnolan', 'role_id' => 2, 'location_id' => 1));
             }
         }
         // configure acl
@@ -118,17 +136,20 @@ class AtlasTestCase extends CakeTestCase {
             $Controller->Acl->enabled = true;
             $Controller->Acl->setReturnValue('check', true);
         }
- 
+		
         $Controller->beforeFilter();
+		
         $Controller->Component->startup($Controller);
  
-        call_user_func_array(array(&$Controller, $urlParams['action']), $urlParams['pass']);
+        call_user_func_array(array(&$Controller, $action), $urlParams['pass']);
  
         $Controller->beforeRender();
         $Controller->Component->triggerCallback('beforeRender', $Controller);
  
         return $Controller->viewVars;
     }
+
+
    /**
     * Will return true if a matching flashMessage is in the Session
     *
