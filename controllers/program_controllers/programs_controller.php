@@ -135,6 +135,8 @@ class ProgramsController extends AppController {
 			$this->data['ProgramResponse']['expires_on'] = 
 				date('Y-m-d H:i:s', strtotime('+' . $program['Program']['response_expires_in'] . ' days'));
 			if($this->Program->ProgramResponse->save($this->data)){
+			$this->Transaction->createUserTransaction('Programs', null, null,
+				'Initiated program' . $program['Program']['name']);				
 				$this->redirect($this->data['Program']['redirect']);
 			}
 		}
@@ -145,6 +147,7 @@ class ProgramsController extends AppController {
 			$this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');
 			$this->redirect('/');
 		}
+		$program = $this->Program->findById($id);
 		if(!empty($this->data)) {
 		$programResponse = $this->Program->ProgramResponse->find('first', array('conditions' => array(
 			'ProgramResponse.user_id' => $this->Auth->user('id'),
@@ -153,7 +156,9 @@ class ProgramsController extends AppController {
 		)));
 			$this->data['ProgramResponse']['id'] = $programResponse['ProgramResponse']['id'];
 			$this->data['ProgramResponse']['user_id'] =	$this->Auth->user('id');
-			if($this->Program->ProgramResponse->save($this->data, true)) {							
+			if($this->Program->ProgramResponse->save($this->data, true)) {
+				$this->Transaction->createUserTransaction('Programs', null, null,
+					'Completed media for ' . $program['Program']['name']);	
 				$email = $this->Program->ProgramEmail->find('first', array('conditions' => array(
 					'ProgramEmail.program_id' => $id,
 					'ProgramEmail.type' => 'media')));
@@ -186,7 +191,7 @@ class ProgramsController extends AppController {
 				$this->Session->setFlash(__('You must check the I acknowledge box.', true), 'flash_failure');		
 			}
 		}		
-		$program = $this->Program->findById($id);
+
 		$instructions = Set::extract('/ProgramInstruction[type=media]/text', $program);		
 		$data['element'] = '/programs/video'; 
 		$data['media'] = '/programs/load_media/' . $program['Program']['id'];
