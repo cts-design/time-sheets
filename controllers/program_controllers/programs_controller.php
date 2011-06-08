@@ -254,7 +254,7 @@ class ProgramsController extends AppController {
 		$this->set(compact('title_for_layout'));
 	}
 	
-	function admin_edit_instructions($id) {
+	function admin_edit_instructions($id=null) {
 		if(!$id && empty($this->data)){
 		    $this->Session->setFlash(__('Invalid instructions', true), 'flash_failure');
 		    $this->redirect(array('action' => 'instructions_index', 'admin' => true));
@@ -265,7 +265,7 @@ class ProgramsController extends AppController {
 			    $this->redirect(array('action' => 'instructions_index', 'admin' => true));				
 			}
 			else {
-			    $this->Session->setFlash(__('Instructions updated successfully', true), 'flash_failure');
+			    $this->Session->setFlash(__('Unable to save, please try again.', true), 'flash_failure');
 			    $this->redirect(array(
 			    	'action' => 'edit_instructions', 
 			    	$this->data['ProgramInstruction']['id'], 
