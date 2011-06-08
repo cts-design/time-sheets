@@ -13,10 +13,10 @@
 	<br />
 	<?php echo $form->input('ProgramResponse.viewed_media', array(
 		'type' => 'checkbox', 
-		'label' => 'I acknowledge that I have viewed the presentation and completely understand its content. 
-		I futher understand that it is my responsibility to abide by the rules and regulations. 
+		'label' => 'I acknowledge that I have viewed the orientation and completely understand its content. 
+		I futher understand that it is my responsibility to abide by the rules and requirements. 
 		I also understand clearly that my failure to comply with the conditions may result in the loss of
-		services.')) ?>
+		' . $title_for_layout . ' services.')) ?>
 	<br class="clear" />
 	<?php echo $form->input('ProgramResponse.program_id',  array('type' => 'hidden', 'value' => $this->params['pass'][0]));?>
 	<?php echo $form->end('Submit') ?>
