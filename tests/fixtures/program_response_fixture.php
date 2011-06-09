@@ -37,7 +37,7 @@ class ProgramResponseFixture extends CakeTestFixture {
 			'dropping_off_docs' => 0,
 			'created' => '2011-05-04 09:09:08',
 			'modified' => '2011-05-12 11:12:24',
-			'expires_on' => '2011-06-08 16:13:30'
+			'expires_on' => '2120-06-10 16:13:30'
 		),
 		array(
 			'id' => 2,
@@ -53,7 +53,7 @@ class ProgramResponseFixture extends CakeTestFixture {
 			'dropping_off_docs' => 0,
 			'created' => '2011-05-04 09:09:08',
 			'modified' => '2011-05-12 11:12:24',
-			'expires_on' => '2011-06-08 16:13:30'
+			'expires_on' => '2120-06-08 16:13:30'
 		),
 		array(
 			'id' => 3,
@@ -69,7 +69,7 @@ class ProgramResponseFixture extends CakeTestFixture {
 			'dropping_off_docs' => 0,
 			'created' => '2011-05-04 09:09:08',
 			'modified' => '2011-05-12 11:12:24',
-			'expires_on' => '2011-06-08 16:13:30'
+			'expires_on' => '2120-06-08 16:13:30'
 		),
 		array(
 			'id' => 4,
@@ -85,7 +85,7 @@ class ProgramResponseFixture extends CakeTestFixture {
 			'dropping_off_docs' => 0,
 			'created' => '2011-05-04 09:09:08',
 			'modified' => '2011-05-12 11:12:24',
-			'expires_on' => '2011-06-08 16:13:30'
+			'expires_on' => '2120-06-08 16:13:30'
 		),
 		array(
 			'id' => 5,
@@ -101,7 +101,7 @@ class ProgramResponseFixture extends CakeTestFixture {
 			'dropping_off_docs' => 1,
 			'created' => '2011-05-04 09:09:08',
 			'modified' => '2011-05-12 11:12:24',
-			'expires_on' => '2011-06-08 16:13:30'
+			'expires_on' => '2120-06-08 16:13:30'
 		),
 		array(
 			'id' => 6,
@@ -117,7 +117,7 @@ class ProgramResponseFixture extends CakeTestFixture {
 			'dropping_off_docs' => 1,
 			'created' => '2011-05-04 09:09:08',
 			'modified' => '2011-05-12 11:12:24',
-			'expires_on' => '2011-06-08 16:13:30'
+			'expires_on' => '2120-06-08 16:13:30'
 		)	
 	);
 }
