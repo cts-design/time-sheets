@@ -11,18 +11,21 @@ class ProgramResponsesController extends AppController {
 		parent::beforeFilter();
 		$this->ProgramResponse->Program->ProgramField->recursive = 0;
 		if(!empty($this->params['pass'][0]) && $this->params['action'] == 'index') {
-			$query = $this->ProgramResponse->Program->ProgramField->findAllByProgramId($this->params['pass'][0]); 
-			$fields = Set::classicExtract($query, '{n}.ProgramField');
-			foreach($fields as $k => $v) {
-				if(!empty($v['validation'])) 
-					$validate[$v['name']] = json_decode($v['validation'], true); 
-				}
-			if($query[0]['Program']['form_esign_required']) {
-				$validate['form_esignature'] = array(
-					'rule' => 'notempty',
-					'message' => 'You must put your first & last name in the box.');
-			}			
-			$this->ProgramResponse->modifyValidate($validate);
+			$query = $this->ProgramResponse->Program->ProgramField->findAllByProgramId($this->params['pass'][0]);		
+			if($query){
+				$fields = Set::classicExtract($query, '{n}.ProgramField');
+				foreach($fields as $k => $v) {
+					if(!empty($v['validation'])) 
+						$validate[$v['name']] = json_decode($v['validation'], true); 
+					}
+				if($query[0]['Program']['form_esign_required']) {
+					$validate['form_esignature'] = array(
+						'rule' => 'notempty',
+						'message' => 'You must put your first & last name in the box.');
+				}			
+				$this->ProgramResponse->modifyValidate($validate);
+			}
+
 		}
 	}	
 	
@@ -200,11 +203,6 @@ class ProgramResponsesController extends AppController {
 			$this->ProgramResponse->Program->recursive = -1;
 			$program = $this->ProgramResponse->Program->findById($id);
 			if($this->RequestHandler->isAjax()){
-			$response = $this->ProgramResponse->find('first', array('conditions' => array(
-				'ProgramResponse.user_id' => $this->Auth->user('id'),
-				'ProgramResponse.program_id' => $id,
-				'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s') 
-			)));
 				$conditions = array('ProgramResponse.program_id' => $id);
 				if(!empty($this->params['url']['filter'])) {
 					switch($this->params['url']['filter']) {
@@ -305,6 +303,10 @@ class ProgramResponsesController extends AppController {
 			if($type == 'user') {
 				$user = $programResponse['User'];
 				$this->set(compact('user'));
+				$this->Transaction->createUserTransaction('Programs', null, null,
+					'Viewed Program Response for ' . $programResponse['Program']['name'] . ' for customer ' . 
+					ucfirst($user['firstname']). ' ' . ucfirst($user['lastname']) . ' - '. 
+					substr($user['ssn'], '-4'));					
  				$this->render('/elements/program_responses/user_info');
 			}
 			if($type == 'answers') {
@@ -372,6 +374,7 @@ class ProgramResponsesController extends AppController {
 				$this->render('/elements/program_responses/documents');
 			}			
 		}
+
 		if($programResponse['Program']['approval_required'] && 
 			$programResponse['ProgramResponse']['needs_approval'] == 1) {
 				$approval = true;				
@@ -385,6 +388,7 @@ class ProgramResponsesController extends AppController {
 
 	function admin_approve($programResponseId=null) {
 		if($this->RequestHandler->isAjax()) {
+			
 			if(!$programResponseId) {
 				$data['success'] = false;
 				$data['message'] = 'Invalid program response id.';
@@ -427,9 +431,11 @@ class ProgramResponsesController extends AppController {
 					$data['success'] = false;
 					$data['message'] = 'An error occured, please try again.'; 
 				}
-				$this->set(compact('data'));
-				$this->render(null, null, '/elements/ajaxreturn');
-			}
+				
+			}	
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+
 		}	
 	}
 
