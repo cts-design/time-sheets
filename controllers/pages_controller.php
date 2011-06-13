@@ -67,32 +67,27 @@ class PagesController extends AppController {
  * @access public
  */
         function dynamicDisplay() {
-            // can't explode $this->params['url'] because its an array
-            $request = explode('/', $this->params['url']['url']);
-            $slug = $request[1];
-            
-            $page = $this->Page->findPublishedBySlug($slug);
+            if (!empty($this->params['requested'])) {
+                return $this->Page->findPublishedBySlug('homepage');
+            } else {
+                // can't explode $this->params['url'] because its an array
+                $request = explode('/', $this->params['url']['url']);
+                $slug = $request[1];
+                
+                $page = $this->Page->findPublishedBySlug($slug);
 
-            if (!$page) {
-                $this->cakeError('error404');
-            }
-            else {
-                $data = array(
-                    'title_for_layout' => $page['Page']['title'],
-                    'content' => $page['Page']['content']
-                );
-                $this->set($data);
+                if (!$page) {
+                    $this->cakeError('error404');
+                }
+                else {
+                    $data = array(
+                        'title_for_layout' => $page['Page']['title'],
+                        'content' => $page['Page']['content']
+                    );
+                    $this->set($data);
+                }
             }
         }
-    /**
-     * retreives the homepage middle content from the database
-     * which gets requested from the homepage element
-     */
-    function homepage() {
-        $content = $this->Page->findBySlug('homepage');
-
-        return $content;
-    }
 
 	function admin_index() {
 		$this->Page->recursive = 0;
