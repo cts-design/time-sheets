@@ -36,12 +36,13 @@ class ProgramResponsesController extends AppController {
 				'ProgramResponse.user_id' => $this->Auth->user('id'),
 				'ProgramResponse.program_id' => $id,
 				'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s') 
-			)));	
-			$this->data['ProgramResponse']['form_completed'] = date('m/d/y');
+			)));
 			$this->data['ProgramResponse']['answers'] = json_encode($this->data['ProgramResponse']);
 			$this->data['ProgramResponse']['id'] = $response['ProgramResponse']['id'];
 			$this->data['ProgramResponse']['program_id'] = $id;
 			if($this->ProgramResponse->save($this->data)) {
+				$this->Transaction->createUserTransaction('Programs', null, null,
+					'Completed form for ' . $response['Program']['name']);				
 				$programEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array(
 					'conditions' => array(
 						'ProgramEmail.program_id' => $id,
@@ -53,9 +54,7 @@ class ProgramResponsesController extends AppController {
 				if(strpos($program['Program']['type'], 'docs', 0)) {
 					$this->redirect(array('action' => 'required_docs', $id));
 				}
-				else{
-					$this->redirect(array('action' => 'submission_received'));
-				}
+			//	@TODO Redirect to a thank you page if the program does not require documents 
 			}
 			else {
 				$this->Session->setFlash(__('Unable to save', true), 'flash_failure');
@@ -63,9 +62,12 @@ class ProgramResponsesController extends AppController {
 		}
 		$program = $this->ProgramResponse->Program->findById($id);
 		$instructions = Set::extract('/ProgramInstruction[type=form]/text', $program);
-		$instructions = $instructions[0];
-		$title_for_layout = $program['Program']['name'] . ' Registration Form' ;
-		$this->set(compact('program', 'title_for_layout', 'instructions'));	
+		if($instructions) {
+			$data['instructions'] = $instructions[0];
+		}	
+		$data['title_for_layout'] = $program['Program']['name'] . ' Registration Form' ;
+		$data['program'] = $program;
+		$this->set($data);	
 	}
 		
 	function required_docs($id = null, $reset = null) {
@@ -88,6 +90,8 @@ class ProgramResponsesController extends AppController {
 			$this->QueuedDocument->set($this->data);
 			if($this->QueuedDocument->validates()) {
 				if($this->QueuedDocument->uploadDocument($this->data, 'Program Upload', $this->Auth->user('id'))) {
+					$this->Transaction->createUserTransaction('Programs', null, null,
+						'Uploaded document for ' . $response['Program']['name']);							
 					$this->Session->setFlash(__('Document uploaded successfully.', true), 'flash_success');
 					$this->redirect(array('action' => 'required_docs', $id));
 				}
@@ -104,7 +108,9 @@ class ProgramResponsesController extends AppController {
 		}
 		$program = $this->ProgramResponse->Program->findById($id);
 		$instructions = Set::extract('/ProgramInstruction[type=document]/text', $program);
-		$data['instructions'] = $instructions[0];
+		if($instructions) {
+			$data['instructions'] = $instructions[0];	
+		}
 		$data['title_for_layout'] = 'Required Documentation';
 		$data['queueCategoryId'] = $program['Program']['queue_category_id'];
 		$this->set($data);
@@ -136,18 +142,22 @@ class ProgramResponsesController extends AppController {
 		$docId = Set::extract('/ProgramResponseDoc[cert=1]/doc_id', $programResponse);
 		$this->view = 'Media';
 		$this->loadModel('FiledDocument');
-		$doc = $this->FiledDocument->read(null, $docId[0]);
-		$params = array(
-		    'id' => $doc['FiledDocument']['filename'],
-		    'name' => str_replace('.pdf', '', $doc['FiledDocument']['filename']),
-		    'extension' => 'pdf',
-		    'cache' => true,
-		    'path' => Configure::read('Document.storage.path') .
-		    date('Y', strtotime($doc['FiledDocument']['created'])) . '/' .
-		    date('m', strtotime($doc['FiledDocument']['created'])) . '/'
-		);
-		$this->set($params);
-		return $params;		
+		if($docId) {
+			$doc = $this->FiledDocument->read(null, $docId[0]);	
+			$params = array(
+			    'id' => $doc['FiledDocument']['filename'],
+			    'name' => str_replace('.pdf', '', $doc['FiledDocument']['filename']),
+			    'extension' => 'pdf',
+			    'cache' => true,
+			    'path' => Configure::read('Document.storage.path') .
+			    date('Y', strtotime($doc['FiledDocument']['created'])) . '/' .
+			    date('m', strtotime($doc['FiledDocument']['created'])) . '/'
+			);
+			$this->Transaction->createUserTransaction('Programs', null, null,
+				'Viewed certificate for ' . $programResponse['Program']['name']);				
+			$this->set($params);
+			return $params;	
+		}
 	}
 
 	function provided_docs($id, $type) {
