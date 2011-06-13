@@ -173,10 +173,14 @@ class ProgramResponsesController extends AppController {
 				if($type == 'uploaded_docs') {
 					$this->ProgramResponse->id = $programResponse['ProgramResponse']['id'];
 					$this->ProgramResponse->saveField('uploaded_docs', 1);
+					$this->Transaction->createUserTransaction('Programs', null, null,
+						'Selected I am done uploading documents for ' . $programResponse['Program']['name']);					
 				}
 				elseif($type == 'dropping_off_docs') {
 					$this->ProgramResponse->id = $programResponse['ProgramResponse']['id'];
 					$this->ProgramResponse->saveField('dropping_off_docs', 1);
+					$this->Transaction->createUserTransaction('Programs', null, null,
+						'Selected dropping off documents for ' . $programResponse['Program']['name']);					
 				}					
 			}
 	
