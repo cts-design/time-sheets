@@ -138,7 +138,7 @@ class QueuedDocument extends AppModel {
 		}
 		$data['QueuedDocument']['entry_method'] = $entryMethod;	
 
-		if(!move_uploaded_file($data['QueuedDocument']['submittedfile']['tmp_name'], $path . $docName)) {
+		if(!isset($data['QueuedDocument']['submittedfile']) || !move_uploaded_file($data['QueuedDocument']['submittedfile']['tmp_name'], $path . $docName)) {
 		    return false;
 		}
 		if($this->save($data)) {
