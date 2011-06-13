@@ -84,6 +84,15 @@ class PagesController extends AppController {
                 $this->set($data);
             }
         }
+    /**
+     * retreives the homepage middle content from the database
+     * which gets requested from the homepage element
+     */
+    function homepage() {
+        $content = $this->Page->findBySlug('homepage');
+
+        return $content;
+    }
 
 	function admin_index() {
 		$this->Page->recursive = 0;
@@ -119,6 +128,9 @@ class PagesController extends AppController {
 		}
 		if (!empty($this->data)) {
 			if ($this->Page->save($this->data)) {
+                if ($this->data['Page']['slug'] === 'homepage') {
+                    Cache::delete('homepage_middle');
+                }
                                 $this->Transaction->createUserTransaction('CMS', null, null,
                                         'Edit page ID: ' . $id);
 				$this->Session->setFlash(__('The page has been saved', true), 'flash_success');
@@ -136,7 +148,15 @@ class PagesController extends AppController {
 		if (!$id) {
 			$this->Session->setFlash(__('Invalid id for page', true), 'flash_failure');
 			$this->redirect(array('action'=>'index'));
-		}
+        }
+
+        $page = $this->Page->read(null, $id);
+
+        if ($page['Page']['locked'] == 1) {
+            $this->Session->setFlash(__('This page cannot be deleted because it is locked', true), 'flash_failure');
+            $this->redirect(array('action' => 'index'));
+        }
+
 		if ($this->Page->delete($id)) {
                         $this->Transaction->createUserTransaction('CMS', null, null,
                                         'Deleted page ID: ' . $id);
