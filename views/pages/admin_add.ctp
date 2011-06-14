@@ -40,6 +40,11 @@
 							'between' => '</p><p class="left short">',
 							'after' => '</p>'));
 		echo '<br class="clear" />';
+		echo $this->Form->input('authentication_required', array(
+							'before' => '<p class="left">',
+							'between' => '</p><p class="left short">',
+							'after' => '</p>'));
+		echo '<br class="clear" />';
 	?>
 	</fieldset>
 <?php echo $this->Form->end(__('Submit', true));?>
