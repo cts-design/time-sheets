@@ -90,7 +90,7 @@ class ProgramResponseFixture extends CakeTestFixture {
 		array(
 			'id' => 5,
 			'program_id' => 1,
-			'answers' => 'bla bla bla',
+			'answers' => '{"question":"answer", "question2": "answer2"}',
 			'user_id' => 14,
 			'viewed_media' => 1,
 			'form_esignature' => 'George Bush',
