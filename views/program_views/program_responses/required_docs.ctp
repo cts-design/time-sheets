@@ -8,7 +8,7 @@
 	
 	<strong>
 		<p class="bot-mar-10">
-			<?php echo $html->link('I am going to mail, fax, or drop of my documents.', 
+			<?php echo $html->link('I am going to mail, fax, or drop off my documents.', 
 				'/program_responses/provided_docs/' . $this->params['pass'][0] .'/dropping_off_docs') ?>
 		</p>
 	</strong>	
