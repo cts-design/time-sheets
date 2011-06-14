@@ -36,7 +36,7 @@
  *
  */
 	if (!defined('ROOT')) {
-		define('ROOT', DS.'var'.DS.'www'.DS.'vhosts' . DS . 'development.ctsfla.com' . DS . 'atlas');
+		define('ROOT', DS.'var'.DS.'www'.DS.'vhosts' . DS . 'ccc.atlasforworkforce.com' . DS . 'atlas');
 	}
 /**
  * The actual directory name for the "app".
@@ -50,7 +50,7 @@
  *
  */
 	if (!defined('CAKE_CORE_INCLUDE_PATH')) {
-		define('CAKE_CORE_INCLUDE_PATH', DS.'var'.DS.'www'.DS.'vhosts' . DS . 'development.ctsfla.com' . DS . 'atlas'. DS . 'shared' . DS . 'cakephp');
+		define('CAKE_CORE_INCLUDE_PATH', DS.'var'.DS.'www'.DS.'vhosts' . DS . 'ccc.atlasforworkforce.com' . DS . 'atlas'. DS . 'shared' . DS . 'cakephp');
 	}
 
 /**

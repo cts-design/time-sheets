@@ -1,16 +1,16 @@
 <?php
 class CareerSeekersSurveysController extends AppController {
 
-    var $name = 'CareerSeekersSurveys';
+	var $name = 'CareerSeekersSurveys';
 	
 	function beforeFilter() {
 		parent::beforeFilter();
 		$this->Auth->allow('index', 'success', 'add');
 	}
 
-    function index() {}
+	function index() {}
 
-    function add() {
+	function add() {
             if (!empty($this->data)) {
                     $data = json_encode($this->data['CareerSeekersSurvey']);
                     $this->data['CareerSeekersSurvey']['answers'] = $data;

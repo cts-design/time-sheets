@@ -40,7 +40,10 @@
  * ));
  *
  */
-
+App::build(array(
+	'controllers' => array(CONTROLLERS. DS . 'program_controllers' . DS),
+	'models' => array(MODELS . DS . 'program_models' . DS),
+	'views' => array(VIEWS . DS . 'program_views' . DS)));
 /**
  * As of 1.3, additional rules for the inflector are added below
  *

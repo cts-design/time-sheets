@@ -3,14 +3,17 @@
 App::import('Controller', 'CareerSeekersSurveys');
 App::import('Lib', 'AtlasTestCase');
 class TestCareerSeekersSurveysController extends CareerSeekersSurveysController {
-        var $autoRender = false;
 
-        function redirect($url, $status = null, $exit = true) {
-                $this->redirectUrl = $url;
-        }
+	var $autoRender = false;
+
+	function redirect($url, $status = null, $exit = true) {
+		$this->redirectUrl = $url;
+	}
+
 }
 
 class CareerSeekersSurveysControllerTestCase extends AtlasTestCase {
+
 	var $fixtures = array(
 		'app.aco',
 	    'app.aro',
@@ -46,6 +49,7 @@ class CareerSeekersSurveysControllerTestCase extends AtlasTestCase {
 	    'user',
 	    'user_transaction');
 		
+
     function startTest() {
             $this->CareerSeekersSurveys =& new TestCareerSeekersSurveysController();
             $this->CareerSeekersSurveys->constructClasses();
@@ -206,5 +210,6 @@ class CareerSeekersSurveysControllerTestCase extends AtlasTestCase {
         $result = json_decode($this->CareerSeekersSurveys->admin_destroy(), true);
 		$this->assertFalse($result['success']);
 	}
+
 }
 ?>

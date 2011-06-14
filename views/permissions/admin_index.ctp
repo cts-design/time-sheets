@@ -8,7 +8,7 @@
 ?>
 <script type="text/javascript">
 	Ext.onReady(function(){
-		var permissionTabs = new Ext.TabPanel({
+		var PermissionTabs = new Ext.TabPanel({
 			activeTab: 0,
 			bodyStyle: 'padding: 10px',
 			renderTo: 'PermissionTabs',
@@ -17,6 +17,7 @@
 				{contentEl: 'Website', title: 'Website'},
 				{contentEl: 'Storage', title: 'Storage'},
 				{contentEl: 'SelfSign', title: 'Self Sign'},
+				{contentEl: 'Programs', title: 'Programs'},
 				{contentEl: 'Tools', title: 'Tools'}
 			]
 		})
@@ -303,9 +304,48 @@
 			    </fieldset>
 			<?php endif; ?>	
 			<br class="clear" />
-			<?php echo $this->Form->end('Submit')?>    
-	    <?php endif; ?>		
+			<?php echo $this->Form->end('Submit')?>    	
 	</div>
+	<div id="Programs" class="x-hide-display">
+		    <?php echo $this->Form->create('permission', array('action' => 'set_permissions')) ?>
+		    <?php echo $this->Form->hidden('id', array('value' => $id));?>
+		    <?php echo $this->Form->hidden('model', array('value' => $model));?>		
+		    <fieldset class="left right-mar-10">
+				<legend>Programs</legend>
+			       <?php echo $this->Form->input('Programs.admin_index', array(
+				    'type' => 'checkbox',
+				   	'label' => 'Index',
+				    'checked' => (isset($controllers['Programs']['admin_index'])) ? $controllers['Programs']['admin_index'] : '' ));?>
+			       <?php echo $this->Form->input('Programs.admin_edit_instructions', array(
+				    'type' => 'checkbox',
+				   	'label' => 'Edit Instructions',
+				    'checked' => (isset($controllers['Programs']['admin_edit_instructions'])) ? $controllers['Programs']['admin_edit_instructions'] : '' ));?>		    
+			    </fieldset>
+		    <fieldset class="left right-mar-10">
+				<legend>Program Responses</legend>
+			       <?php echo $this->Form->input('ProgramResponses.admin_index', array(
+				    'type' => 'checkbox',
+				   	'label' => 'Index',
+				    'checked' => (isset($controllers['ProgramResponses']['admin_index'])) ? $controllers['ProgramResponses']['admin_index'] : '' ));?>
+  				  <?php echo $this->Form->input('ProgramResponses.admin_view', array(
+				    'type' => 'checkbox',
+				   	'label' => 'View',
+				    'checked' => (isset($controllers['ProgramResponses']['admin_view'])) ? $controllers['ProgramResponses']['admin_view'] : '' ));?>			       
+			       <?php echo $this->Form->input('ProgramResponses.admin_approve', array(
+				    'type' => 'checkbox',
+				   	'label' => 'Approve',
+				    'checked' => (isset($controllers['ProgramResponses']['admin_approve'])) ? $controllers['ProgramResponses']['admin_approve'] : '' ));?>
+				   <?php echo $this->Form->input('ProgramResponses.admin_toggle_expired', array(
+				    'type' => 'checkbox',
+				   	'label' => 'Toggle Expired',
+				    'checked' => (isset($controllers['ProgramResponses']['admin_toggle_expired'])) ? $controllers['ProgramResponses']['admin_toggle_expired'] : '' ));?>
+				 				    
+			    </fieldset>		    
+		    <br class="clear" />
+			<?php echo $this->Form->end('Submit')?>    	
+	</div>
+ 
+	    <?php endif; ?>		
 	<div id="Tools" class="x-hide-display">
 		    <?php echo $this->Form->create('permission', array('action' => 'set_permissions')) ?>
 		    <?php echo $this->Form->hidden('id', array('value' => $id));?>

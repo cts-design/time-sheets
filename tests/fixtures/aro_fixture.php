@@ -28,7 +28,7 @@ class AroFixture extends CakeTestFixture {
                 'foreign_key' => 1,
                 'alias' => NULL,
                 'lft' => 1,
-                'rght' => 2
+                'rght' => 6
             ),
             array(
                 'id' => 68,
@@ -36,8 +36,8 @@ class AroFixture extends CakeTestFixture {
                 'model' => 'Role',
                 'foreign_key' => 2,
                 'alias' => NULL,
-                'lft' => 3,
-                'rght' => 6
+                'lft' => 7,
+                'rght' => 10
             ),
             array(
                 'id' => 69,
@@ -45,14 +45,32 @@ class AroFixture extends CakeTestFixture {
                 'model' => 'Role',
                 'foreign_key' => 3,
                 'alias' => NULL,
-                'lft' => 7,
-                'rght' => 8
+                'lft' => 10,
+                'rght' => 11
             ),
             array(
                 'id' => 70,
                 'parent_id' => 68,
                 'model' => 'User',
                 'foreign_key' => 2,
+                'alias' => NULL,
+                'lft' => 8,
+                'rght' => 9
+            ),
+            array(
+                'id' => 71,
+                'parent_id' => 67,
+                'model' => 'User',
+                'foreign_key' => 9,
+                'alias' => NULL,
+                'lft' => 2,
+                'rght' => 3
+            ), 
+           	array(
+                'id' => 72,
+                'parent_id' => 67,
+                'model' => 'User',
+                'foreign_key' => 10,
                 'alias' => NULL,
                 'lft' => 4,
                 'rght' => 5

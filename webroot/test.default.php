@@ -90,5 +90,7 @@ if (Configure::read('debug') < 1) {
 
 require_once CAKE_TESTS_LIB . 'cake_test_suite_dispatcher.php';
 
+define('CAKEPHP_TEST_SUITE', true);
+
 $Dispatcher = new CakeTestSuiteDispatcher();
 $Dispatcher->dispatch();

@@ -134,6 +134,11 @@ $(document).ready(function () {
 	        	icon: {
 	        		image: "/img/icons/featured.png"
 	        	}
+	        },
+	       	programs: {
+	        	icon: {
+	        		image: "/img/icons/clipboard.png"
+	        	}
 	        }
 	    }
 	},

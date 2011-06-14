@@ -68,4 +68,3 @@ class ExcelHelper extends AppHelper {
 	    $objWriter->save('php://output');
 	} 
 }
-?>

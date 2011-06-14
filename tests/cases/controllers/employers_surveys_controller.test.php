@@ -3,14 +3,15 @@
 App::import('Controller', 'EmployersSurveys');
 App::import('Lib', 'AtlasTestCase');
 class TestEmployersSurveysController extends EmployersSurveysController {
-        var $autoRender = false;
+	var $autoRender = false;
 
-        function redirect($url, $status = null, $exit = true) {
-                $this->redirectUrl = $url;
-        }
+	function redirect($url, $status = null, $exit = true) {
+		$this->redirectUrl = $url;
+	}
 }
 
 class EmployersSurveysControllerTestCase extends AtlasTestCase {
+
 	var $fixtures = array(
 		'app.aco',
 	    'app.aro',
@@ -47,10 +48,11 @@ class EmployersSurveysControllerTestCase extends AtlasTestCase {
 	    'user',
 	    'user_transaction');
 
-    function startTest() {
-            $this->EmployersSurveys =& new TestEmployersSurveysController();
-            $this->EmployersSurveys->constructClasses();
-    }
+
+	function startTest() {
+		$this->EmployersSurveys =& new TestEmployersSurveysController();
+		$this->EmployersSurveys->constructClasses();
+	}
 
     function endTest() {
     		$this->EmployersSurveys->Session->destroy();
@@ -207,5 +209,6 @@ class EmployersSurveysControllerTestCase extends AtlasTestCase {
         $result = json_decode($this->EmployersSurveys->admin_destroy(), true);
 		$this->assertFalse($result['success']);
 	}
+
 }
 ?>
