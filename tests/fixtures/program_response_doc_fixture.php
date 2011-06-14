@@ -87,5 +87,45 @@ class ProgramResponseDocFixture extends CakeTestFixture {
 			'created' => '2011-06-01 09:34:10',
 			'modified' => '2011-06-01 09:34:10'
 		),
+		array(
+			'id' => 8,
+			'cat_id' => 252,
+			'program_response_id' => 8,
+			'doc_id' => 9,
+			'paper_form' => 0,
+			'cert' => 0,
+			'created' => '2011-05-06 10:15:29',
+			'modified' => '2011-05-06 10:15:29'
+		),
+		array(
+			'id' => 9,
+			'cat_id' => 253,
+			'program_response_id' => 8,
+			'doc_id' => 10,
+			'paper_form' => 0,
+			'cert' => 0,
+			'created' => '2011-05-06 10:15:47',
+			'modified' => '2011-05-06 10:15:47'
+		),
+		array(
+			'id' => 10,
+			'cat_id' => 255,
+			'program_response_id' => 8,
+			'doc_id' => 11,
+			'paper_form' => 1,
+			'cert' => 0,
+			'created' => '2011-05-09 11:24:44',
+			'modified' => '2011-05-09 11:58:37'
+		),
+		array(
+			'id' => 11,
+			'cat_id' => 256,
+			'program_response_id' => 8,
+			'doc_id' => 14,
+			'paper_form' => 1,
+			'cert' => 0,
+			'created' => '2011-05-16 10:04:10',
+			'modified' => '2011-05-16 15:23:09'
+		),		
 	);
 }
