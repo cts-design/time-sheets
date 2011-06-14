@@ -304,7 +304,7 @@ class ProgramResponsesController extends AppController {
 				$user = $programResponse['User'];
 				$this->set(compact('user'));
 				$this->Transaction->createUserTransaction('Programs', null, null,
-					'Viewed Program Response for ' . $programResponse['Program']['name'] . ' for customer ' . 
+					'Viewed program response for ' . $programResponse['Program']['name'] . ' for customer ' . 
 					ucfirst($user['firstname']). ' ' . ucfirst($user['lastname']) . ' - '. 
 					substr($user['ssn'], '-4'));					
  				$this->render('/elements/program_responses/user_info');
@@ -397,8 +397,8 @@ class ProgramResponsesController extends AppController {
 				$programResponse = $this->ProgramResponse->findById($programResponseId);
 				$forms = $this->ProgramResponse->
 					Program->ProgramPaperForm->findAllByProgramId($programResponse['Program']['id']);					
-				if(!empty($programResponse['ProgramResponseDoc']) && !empty($forms)) {
-					
+				if(!empty($programResponse['ProgramResponseDoc'])) {
+
 					$catIds = Set::extract('/ProgramResponseDoc[paper_form=1]/cat_id', $programResponse);
 					
 					$formCatIds = Set::extract('/ProgramPaperForm/cat_3', $forms);
@@ -407,12 +407,18 @@ class ProgramResponsesController extends AppController {
 						$result = array_diff($formCatIds, $catIds);
 						if(!empty($result)) {
 							$data['success'] = false;
-							$data['message'] = 'You must genertate all program forms before approving response.';
+							$data['message'] = 'You must generate all program forms before approving response.';
 							$this->set(compact('data'));
-							return $this->render(null, null, '/elements/ajaxreturn');						
+							return $this->render(null, null, '/elements/ajaxreturn');	
 						}
 					}
-				}				
+				}
+				else {
+					$data['success'] = false;
+					$data['message'] = 'All required documents must be filed to customer before approving response.';
+					$this->set(compact('data'));
+					return $this->render(null, null, '/elements/ajaxreturn');
+				}			
 				$this->data['ProgramResponse']['id'] = $programResponseId;
 				$this->data['ProgramResponse']['needs_approval'] = 0;
 				$this->data['ProgramResponse']['complete'] = 1;
@@ -425,7 +431,11 @@ class ProgramResponsesController extends AppController {
 							'ProgramEmail.type' => 'final'
 					)));
 					$user['User'] = $programResponse['User'];
-					$this->Notifications->sendProgramEmail($programEmail, $user);					
+					$this->Notifications->sendProgramEmail($programEmail, $user);
+					$this->Transaction->createUserTransaction('Programs', null, null,
+						'Approved program response for ' . $programResponse['Program']['name'] . ' for customer ' . 
+						ucfirst($user['User']['firstname']). ' ' . ucfirst($user['User']['lastname']) . ' - '. 
+						substr($user['User']['ssn'], '-4'));										
 				}
 				else {
 					$data['success'] = false;
@@ -476,13 +486,15 @@ class ProgramResponsesController extends AppController {
 						$this->FiledDocument->User->QueuedDocument->save();
 						$docId = $this->FiledDocument->User->QueuedDocument->getLastInsertId();
 						// delete the empty record so it does not show up in the queue
-						$this->FiledDocument->User->QueuedDocument->delete($docId);						
+						$this->FiledDocument->User->QueuedDocument->delete($docId, false);	
+						$genType = 'Generated';					
 					}
 					else {
 						$this->data['ProgramResponseDoc']['id'] = 
 						$this->ProgramResponse->ProgramResponseDoc->field('id', array(
 								'ProgramResponseDoc.doc_id' => $docId,
 								'ProgramResponseDoc.program_response_id' => $programResponseId));
+						$genType = 'Regenerated';		
 					}
 									
 					$this->data['FiledDocument']['id'] = $docId;
@@ -506,6 +518,11 @@ class ProgramResponsesController extends AppController {
 					$this->ProgramResponse->ProgramResponseDoc->save($this->data['ProgramResponseDoc'])) {
 						$data['success'] = true;
 						$data['message'] = 'Form generated and filed successfully.';
+						$this->Transaction->createUserTransaction('Programs', null, null,
+							$genType . ' ' . $programPaperForm['ProgramPaperForm']['name'] . ' for ' . 
+							$programResponse['Program']['name'] . ' for customer ' . 
+							ucfirst($programResponse['User']['firstname']). ' ' . ucfirst($programResponse['User']['lastname']) . ' - '. 
+							substr($programResponse['User']['ssn'], '-4'));							
 					}
 					else {
 						$data['success'] = false;
@@ -543,9 +560,17 @@ class ProgramResponsesController extends AppController {
 				switch($toggle) {
 					case 'unexpire':
 						$data['message'] = 'Response marked un-expired successfully.';
+						$this->Transaction->createUserTransaction('Programs', null, null,
+							'Marked response un-expired for ' . $programResponse['Program']['name'] . ' for customer ' . 
+							ucfirst($programResponse['User']['firstname']). ' ' . ucfirst($programResponse['User']['lastname']) . ' - '. 
+							substr($programResponse['User']['ssn'], '-4'));							
 						break;
 					case 'expired':
 						$data['message'] = 'Response marked expired successfully.';
+						$this->Transaction->createUserTransaction('Programs', null, null,
+							'Marked response expired for ' . $programResponse['Program']['name'] . ' for customer ' . 
+							ucfirst($programResponse['User']['firstname']). ' ' . ucfirst($programResponse['User']['lastname']) . ' - '. 
+							substr($programResponse['User']['ssn'], '-4'));							
 						break;	
 				}
 			}
