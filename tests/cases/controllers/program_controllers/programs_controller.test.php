@@ -233,7 +233,7 @@ class ProgramsControllerTestCase extends AtlasTestCase {
 			'ProgramResponse.program_id' => 1,
 			'ProgramResponse.user_id' => 10)));
 
-		$this->assertEqual($result['ProgramResponse']['id'], 7);
+		$this->assertEqual($result['ProgramResponse']['id'], 9);
 		$this->assertEqual($result['ProgramResponse']['user_id'], 10);
 		$this->assertEqual($this->Programs->redirectUrl, '/programs/view_media/1');
 		$this->Programs->Session->destroy();		
