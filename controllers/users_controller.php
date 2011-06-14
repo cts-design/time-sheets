@@ -195,6 +195,8 @@ class UsersController extends AppController {
 		}
 		if($this->Auth->user()){
 			if($this->Session->read('Auth.redirect') != '') {
+			$this->Transaction->createUserTransaction('Website', 
+				null, null, 'Logged in using website' );				
 				$this->redirect($this->Session->read('Auth.redirect'));
 			}
 			else {
