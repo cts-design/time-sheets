@@ -479,13 +479,74 @@ class ProgramResponsesControllerTestCase extends AtlasTestCase {
 		$result = $this->testAction('/admin/program_responses/approve/8',  array('method' => 'get'));
 		$response = $this->ProgramResponses->ProgramResponse->findById(8);
 		$this->assertTrue($result['data']['success']);
+		$this->assertEqual($result['data']['message'], 'Program response was approved successfully.');
 		$this->assertEqual($response['ProgramResponse']['id'], 8);
 		$this->assertEqual($response['ProgramResponse']['complete'], 1);
 		$this->assertEqual($response['ProgramResponse']['needs_approval'], 0);
-		firecake::log($response);
-		firecake::log($result);
+
 	}
+	
+	public function testAdminApproveNoPaperForms() {
+		$this->ProgramResponses->Component->initialize($this->ProgramResponses);
+		$this->ProgramResponses->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));	
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';		
+		$result = $this->testAction('/admin/program_responses/approve/2',  array('method' => 'get'));
+		$this->assertFalse($result['data']['success']);
+		$this->assertEqual($result['data']['message'], 'You must generate all program forms before approving response.');
+	}
+	
+	public function testAdminApproveNoRequiredDocs() {
+		$this->ProgramResponses->Component->initialize($this->ProgramResponses);
+		$this->ProgramResponses->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));	
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';		
+		$result = $this->testAction('/admin/program_responses/approve/5',  array('method' => 'get'));
+		$this->assertFalse($result['data']['success']);
+		$this->assertEqual($result['data']['message'],
+			'All required documents must be filed to customer before approving response.');
+	}
+	
+	public function testAdminGenerateForm() {
+		$this->ProgramResponses->Component->initialize($this->ProgramResponses);
+		$this->ProgramResponses->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));	
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';		
+		$result = $this->testAction('/admin/program_responses/generate_form/1/5',  array('method' => 'get'));
+		$this->assertTrue($result['data']['success']);
+		$this->assertEqual($result['data']['message'], 'Form generated and filed successfully.');
+	}
+	
+	public function testAdminToggleExpired() {
+		$this->ProgramResponses->Component->initialize($this->ProgramResponses);
+		$this->ProgramResponses->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));	
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';		
+		$result = $this->testAction('/admin/program_responses/toggle_expired/5/expired',  array('method' => 'get'));
+		$this->assertTrue($result['data']['success']);
+		$this->assertEqual($result['data']['message'], 'Response marked expired successfully.');
 		
+		$result = $this->testAction('/admin/program_responses/toggle_expired/5/unexpire',  array('method' => 'get'));
+		$this->assertTrue($result['data']['success']);
+		$this->assertEqual($result['data']['message'], 'Response marked un-expired successfully.');				
+	}	
+	
 		 
 	public function endTest() {
 		Configure::write('debug', 2);
