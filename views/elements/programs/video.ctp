@@ -2,7 +2,7 @@
 <noscript>
 	You must have Javascript enabled to view this video. 
 </noscript>
-<div id="player" style="width:425px;height:300px;"></div>
+<div id="player" style="width:600px;height:400px;"></div>
 <script>
 <?php if (empty($this->validationErrors)) : ?>
 	$(document).ready(function(){
