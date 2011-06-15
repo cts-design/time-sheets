@@ -195,6 +195,9 @@ class UsersController extends AppController {
 		}
 		if($this->Auth->user()){
 			if($this->Session->read('Auth.redirect') != '') {
+			$this->Transaction->createUserTransaction('Self Sign', 
+				null, null, 'Logged in using website.' );
+			$this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_confirm'));				
 				$this->redirect($this->Session->read('Auth.redirect'));
 			}
 			else {
