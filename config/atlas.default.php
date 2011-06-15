@@ -9,7 +9,7 @@
  */
 
 // domain for use with cookies
-$config['domain'] = 'ccc.atlasforworkforce.com';
+$config['domain'] = 'development.ctsfla.com';
 
 // Company Name
 $config['Company']['name'] = 'ATLAS';
@@ -26,10 +26,10 @@ $config['Company']['counties'] = array(
 	'Other' => 'Other');
 
 // System Email From Address
-$config['System']['email'] = 'noreply@ccc.atlasforworkforce.com';
+$config['System']['email'] = 'noreply@development.ctsfla.com';
 
 // Pre Pop Email
-$config['PrePop']['email'] = '@ccc.atlasforworkforce.com';
+$config['PrePop']['email'] = '@development.ctsfla.com';
 
 // Registration SSN requirement (options are 'full' or 'last4')
 $config['Registration']['ssn'] = 'last4';
