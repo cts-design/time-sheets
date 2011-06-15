@@ -58,11 +58,10 @@ class QueuedDocument extends AppModel {
 				$this->data['DeletedDocument']['deleted_reason'] = $reason;
 				$this->data['DeletedDocument']['deleted_location_id'] = $deletedLocation;
 		    }
-		    unset($this->data['DeletedDocument']['modified']);
-		    unset($this->data['QueuedDocument']);
+		    unset($this->data['DeletedDocument']['modified']);	   	
 		}
 		if(!empty($adminId) && !empty($reason)) {
-		   if($delDoc->save($this->data)) {
+		   if($delDoc->save($this->data['DeletedDocument'])) {
 				return true;
 		    }
 		    else return false;
