@@ -36,7 +36,7 @@ class UsersController extends AppController {
 		$this->Auth->allow('kiosk_mini_registration', 'add', 'admin_password_reset', 'build_acl', 'admin_login', 'admin_logout', 'kiosk_self_sign_login', 'login', 'registration');
 
 		if(!empty($this->data)) {
-			if($this->params['prefix'] != 'admin') {
+			if(isset($this->params['prefix']) && $this->params['prefix'] != 'admin') {
 				$this->User->setValidation('customerLogin');
 				$this->User->set($this->data);
 				if($this->User->validates()) {
