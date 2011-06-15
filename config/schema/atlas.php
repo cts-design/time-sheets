@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2011-06-15 17:14:17 : 1308172457*/
+/* atlas schema generated on: 2011-06-15 17:19:41 : 1308172781*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -54,7 +54,7 @@ class atlasSchema extends CakeSchema {
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
 	var $auto_locks = array(
-		'auto_lock_id' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 8, 'key' => 'primary'),
+		'auto_lock_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 8, 'key' => 'primary'),
 		'auto_lock_title' => array('type' => 'string', 'null' => false, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'auto_lock_status' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 3),
 		'indexes' => array('PRIMARY' => array('column' => 'auto_lock_id', 'unique' => 1)),
