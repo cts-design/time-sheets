@@ -68,18 +68,26 @@ class PagesController extends AppController {
  */
         function dynamicDisplay() {
             if (!empty($this->params['requested'])) {
+                // requested is only set if this page was retreived
+                // using requestAction. In our case this means that
+                // the request originated from the homepage element
                 return $this->Page->findPublishedBySlug('homepage');
             } else {
                 // can't explode $this->params['url'] because its an array
                 $request = explode('/', $this->params['url']['url']);
                 $slug = $request[1];
-                
                 $page = $this->Page->findPublishedBySlug($slug);
 
                 if (!$page) {
+                    // throw the custom 404 error
                     $this->cakeError('error404');
                 }
                 else {
+                    // if the page requires authentication and the user is not logged in
+                    if ($page['Page']['authentication_required'] == '1' && !$this->Auth->user()) {
+                        $this->Session->write('Auth.redirect', '/' . $this->params['url']['url']);
+                        $this->redirect(array('controller' => 'users', 'action' => 'login'));
+                    }
                     $data = array(
                         'title_for_layout' => $page['Page']['title'],
                         'content' => $page['Page']['content']
