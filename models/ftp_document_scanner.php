@@ -42,14 +42,4 @@ class FtpDocumentScanner extends AppModel {
 		)
 	);
 
-    function delete($id = null) {
-	if($id) {
-	    $data['FtpDocumentScanner']['id'] = $id;
-	    $data['FtpDocumentScanner']['deleted'] = 1;
-	    if ($this->save($data)) {
-		return true;
-	    }
-	}
-	return false;
-    }
 }
