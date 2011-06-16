@@ -9,7 +9,8 @@ class PageFixture extends CakeTestFixture {
 		'slug' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'key' => 'index', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'content' => array('type' => 'text', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'published' => array('type' => 'boolean', 'null' => false, 'default' => '1'),
-		'authentication_required' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+        'authentication_required' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'locked' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'slug' => array('column' => 'slug', 'unique' => 0)),
@@ -23,7 +24,8 @@ class PageFixture extends CakeTestFixture {
 			'title' => 'Test Page',
 			'slug' => 'test_page',
 			'content' => 'This is the test page.',
-			'published' => 1,
+            'published' => 1,
+            'locked' => 0,
             'authentication_required' => 0,
 			'created' => '2011-02-04 14:50:04',
 			'modified' => '2011-02-04 14:50:04'
@@ -38,6 +40,7 @@ class PageFixture extends CakeTestFixture {
                                       Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim,
                                       rhoncus duis vestibulum nunc mattis convallis.',
 			'published' => 0,
+            'locked' => 1,
             'authentication_required' => 0,
 			'created' => '2011-02-04 14:50:04',
 			'modified' => '2011-02-04 14:50:04'
