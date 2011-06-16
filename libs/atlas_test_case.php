@@ -93,7 +93,8 @@ class AtlasTestCase extends CakeTestCase {
  
         $default = array(
             'data' => array(),
-            'method' => 'post'
+            'method' => 'post',
+            'session' => true
         );
         $options = array_merge($default, $options);
  
@@ -125,9 +126,11 @@ class AtlasTestCase extends CakeTestCase {
         // configure auth
         if (isset($Controller->Auth)) {
             $Controller->Auth->initialize($Controller);
-            if (!$Controller->Session->check('Auth.User') && !$Controller->Session->check('User')) {
-                $Controller->Session->write('Auth.User', array(
-                	'id' => 2, 'username' => 'dnolan', 'role_id' => 2, 'location_id' => 1));
+            if ($options['session'] === true) {
+                if (!$Controller->Session->check('Auth.User') && !$Controller->Session->check('User')) {
+                    $Controller->Session->write('Auth.User', array(
+                        'id' => 2, 'username' => 'dnolan', 'role_id' => 2, 'location_id' => 1));
+                }
             }
         }
         // configure acl
