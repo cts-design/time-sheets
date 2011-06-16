@@ -33,8 +33,16 @@ class UsersController extends AppController {
 				}
 	    	}
 		}
-		$this->Auth->allow('kiosk_mini_registration', 'add', 'admin_password_reset', 'build_acl', 'admin_login', 'admin_logout', 'kiosk_self_sign_login', 'login', 'registration');
-
+		$this->Auth->allowedActions = array(
+			'kiosk_mini_registration',
+			'admin_password_reset',
+			'admin_login',
+			'admin_logout',
+			'kiosk_self_sign_login',
+			'login',
+			'registration',
+			'logout');
+			
 		if(!empty($this->data)) {
 			if(isset($this->params['prefix']) && $this->params['prefix'] == 'admin') {
 				return;	
