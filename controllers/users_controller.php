@@ -33,8 +33,16 @@ class UsersController extends AppController {
 				}
 	    	}
 		}
-		$this->Auth->allow('kiosk_mini_registration', 'add', 'admin_password_reset', 'build_acl', 'admin_login', 'admin_logout', 'kiosk_self_sign_login', 'login', 'registration');
-
+		$this->Auth->allowedActions = array(
+			'kiosk_mini_registration',
+			'admin_password_reset',
+			'admin_login',
+			'admin_logout',
+			'kiosk_self_sign_login',
+			'login',
+			'registration',
+			'logout');
+			
 		if(!empty($this->data)) {
 			if(isset($this->params['prefix']) && $this->params['prefix'] == 'admin') {
 				return;	
@@ -197,10 +205,9 @@ class UsersController extends AppController {
 			$this->Session->write('Auth.redirect', '/' . $this->params['pass'][1] . '/index/' . $this->params['pass'][2]); 
 		}
 		if($this->Auth->user()){
-			if($this->Session->read('Auth.redirect') != '') {
-			$this->Transaction->createUserTransaction('Self Sign', 
-				null, null, 'Logged in using website.' );
-			$this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_confirm'));				
+			$this->Transaction->createUserTransaction('Website', 
+				null, null, 'Logged in using website.' );				
+			if($this->Session->read('Auth.redirect') != '') {	
 				$this->redirect($this->Session->read('Auth.redirect'));
 			}
 			else {
