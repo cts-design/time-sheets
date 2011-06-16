@@ -23,12 +23,13 @@ class PageTestCase extends CakeTestCase {
                                               'content' => 'This is the test page.',
                                               'published' => 1,
                                                 'authentication_required' => 0,
+                                                'locked' => 0,
                                               'created' => '2011-02-04 14:50:04',
                                               'modified' => '2011-02-04 14:50:04'));
             $this->assertEqual($result, $expected);
 
             // testing unpublished pages
-            $result = $this->Page->findPublishedBySlug('about_us');
+            $result = $this->Page->findPublishedBySlug('unpub');
             $this->assertFalse($result);
         }
 

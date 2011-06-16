@@ -39,9 +39,24 @@ class PageFixture extends CakeTestFixture {
                                       dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus.
                                       Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim,
                                       rhoncus duis vestibulum nunc mattis convallis.',
-			'published' => 0,
+			'published' => 1,
             'locked' => 1,
             'authentication_required' => 1,
+			'created' => '2011-02-04 14:50:04',
+			'modified' => '2011-02-04 14:50:04'
+                ),
+                // valid unpublished page
+                array(
+                        'id' => 3,
+			'title' => 'Unpub',
+			'slug' => 'unpub',
+			'content' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat
+                                      dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus.
+                                      Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim,
+                                      rhoncus duis vestibulum nunc mattis convallis.',
+			'published' => 0,
+            'locked' => 1,
+            'authentication_required' => 0,
 			'created' => '2011-02-04 14:50:04',
 			'modified' => '2011-02-04 14:50:04'
                 ),
