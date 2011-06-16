@@ -37,7 +37,7 @@ class UsersController extends AppController {
 
 		if(!empty($this->data)) {
 			if(isset($this->params['prefix']) && $this->params['prefix'] == 'admin') {
-				// Hmm what should I do here? 	
+				return;	
 			}
 			else {	
 				$this->User->setValidation('customerLogin');
