@@ -77,7 +77,10 @@ class PagesController extends AppController {
                 $request = explode('/', $this->params['url']['url']);
                 $slug = $request[1];
                 $page = $this->Page->findPublishedBySlug($slug);
-
+debug($request);
+debug($slug);
+debug($page);
+debug($this->Auth->user());
                 if (!$page) {
                     // throw the custom 404 error
                     $this->cakeError('error404');
@@ -87,12 +90,13 @@ class PagesController extends AppController {
                     if ($page['Page']['authentication_required'] == '1' && !$this->Auth->user()) {
                         $this->Session->write('Auth.redirect', '/' . $this->params['url']['url']);
                         $this->redirect(array('controller' => 'users', 'action' => 'login'));
+                    } else {
+                        $data = array(
+                            'title_for_layout' => $page['Page']['title'],
+                            'content' => $page['Page']['content']
+                        );
+                        $this->set($data);
                     }
-                    $data = array(
-                        'title_for_layout' => $page['Page']['title'],
-                        'content' => $page['Page']['content']
-                    );
-                    $this->set($data);
                 }
             }
         }
@@ -158,16 +162,18 @@ class PagesController extends AppController {
         if ($page['Page']['locked'] == 1) {
             $this->Session->setFlash(__('This page cannot be deleted because it is locked', true), 'flash_failure');
             $this->redirect(array('action' => 'index'));
+        } else {
+            if ($this->Page->delete($id)) {
+                            $this->Transaction->createUserTransaction('CMS', null, null,
+                                            'Deleted page ID: ' . $id);
+                $this->Session->setFlash(__('Page deleted', true), 'flash_success');
+                $this->redirect(array('action'=>'index'));
+            } else {
+                $this->Session->setFlash(__('Page was not deleted', true), 'flash_failure');
+                $this->redirect(array('action' => 'index'));
+            }
         }
 
-		if ($this->Page->delete($id)) {
-                        $this->Transaction->createUserTransaction('CMS', null, null,
-                                        'Deleted page ID: ' . $id);
-			$this->Session->setFlash(__('Page deleted', true), 'flash_success');
-			$this->redirect(array('action'=>'index'));
-		}
-		$this->Session->setFlash(__('Page was not deleted', true), 'flash_failure');
-		$this->redirect(array('action' => 'index'));
 	}
 
 	// returns a list of pages. on returns the title and slug field
