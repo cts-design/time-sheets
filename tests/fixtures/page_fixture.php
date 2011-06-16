@@ -24,6 +24,7 @@ class PageFixture extends CakeTestFixture {
 			'slug' => 'test_page',
 			'content' => 'This is the test page.',
 			'published' => 1,
+            'authentication_required' => 0,
 			'created' => '2011-02-04 14:50:04',
 			'modified' => '2011-02-04 14:50:04'
 		),
@@ -37,6 +38,7 @@ class PageFixture extends CakeTestFixture {
                                       Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim,
                                       rhoncus duis vestibulum nunc mattis convallis.',
 			'published' => 0,
+            'authentication_required' => 0,
 			'created' => '2011-02-04 14:50:04',
 			'modified' => '2011-02-04 14:50:04'
                 ),
