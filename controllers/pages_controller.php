@@ -77,10 +77,7 @@ class PagesController extends AppController {
                 $request = explode('/', $this->params['url']['url']);
                 $slug = $request[1];
                 $page = $this->Page->findPublishedBySlug($slug);
-debug($request);
-debug($slug);
-debug($page);
-debug($this->Auth->user());
+
                 if (!$page) {
                     // throw the custom 404 error
                     $this->cakeError('error404');
