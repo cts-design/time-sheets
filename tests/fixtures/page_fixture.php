@@ -41,7 +41,7 @@ class PageFixture extends CakeTestFixture {
                                       rhoncus duis vestibulum nunc mattis convallis.',
 			'published' => 0,
             'locked' => 1,
-            'authentication_required' => 0,
+            'authentication_required' => 1,
 			'created' => '2011-02-04 14:50:04',
 			'modified' => '2011-02-04 14:50:04'
                 ),
