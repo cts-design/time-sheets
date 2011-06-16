@@ -200,15 +200,18 @@ Ext.onReady(function(){
 			id: 'firstname',
 			header: 'First Name',
 			dataIndex: 'firstname',
+			sortable: true
 
 		},{
 			header: 'Last Name',
 			dataIndex: 'lastname',
 		 	editor: new Ext.form.TextField({}),
+		 	sortable: true
 
 		},{
 			header: 'SSN Last 4',
 			dataIndex: 'ssn',
+			sortable: true
 
 		}],
 		tbar: tb,

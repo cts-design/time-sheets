@@ -8,13 +8,19 @@
  */
 ?>
 
-<?php
-
-echo $session->flash('auth');
-echo $form->create('User', array('action' => 'login'));
-echo $form->input('username', array('label' => __('Last Name', true)));
-echo $form->input('dob');
-echo $form->input('password', array('label' => __('Last 4 Digits of Your SSN', true)));
-echo $form->end('Login');
-?>
-
+<div>
+	<fieldset>
+		<legend>Login</legend>
+		<?php
+		    echo $form->create('User');
+		    echo $form->input('username', array('label' => 'Lastname'));
+		    echo '<br class="clear"/>';
+		    echo $form->input('password', array(
+		    	'label' => 'Last 4 SSN'
+		    ));
+			echo $form->hidden('User.login_type', array('value' => 'website'));
+		    echo '<br class="clear"/>';
+		    echo $form->end('Login');
+		  ?>
+	  </fieldset>
+</div>

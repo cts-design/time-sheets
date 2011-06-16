@@ -1,5 +1,6 @@
 <?php
 /* ProgramField Fixture generated on: 2011-04-05 09:31:16 : 1302010276 */
+
 class ProgramFieldFixture extends CakeTestFixture {
 	var $name = 'ProgramField';
 
@@ -22,14 +23,28 @@ class ProgramFieldFixture extends CakeTestFixture {
 		array(
 			'id' => 1,
 			'program_id' => 1,
-			'label' => 'Lorem ipsum dolor sit amet',
-			'type' => 'Lorem ipsum dolor sit amet',
-			'name' => 'Lorem ipsum dolor sit amet',
-			'attributes' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
-			'options' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
-			'validation' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
-			'created' => '2011-04-05 09:31:16',
-			'modified' => '2011-04-05 09:31:16'
+
+			'label' => 'Preferred program schedule',
+			'type' => 'select',
+			'name' => 'preferred_program_schedule',
+			'attributes' => '{\"class\":\"testClass\"}',
+			'options' => '{\"\" : \"Select\", \"Winter\\/Spring only\":\"Winter\\/Spring only (540 Hours)\",\"School Year\":\"School Year (540 Hours)\", \"Summer Program\":\"Summer Program (300 Hours)\", \"Fall\\/Winter only\":\"Fall\\/Winter only (540 Hours)\"}',
+			'validation' => '{\"rule\":\"notEmpty\"}',
+			'created' => '2011-03-23 16:42:20',
+			'modified' => '2011-03-24 16:42:24'
+		),
+		array(
+			'id' => 2,
+			'program_id' => 1,
+			'label' => 'Preferred program setting',
+			'type' => 'select',
+			'name' => 'preferred_program_setting',
+			'attributes' => NULL,
+			'options' => '{\"\":\"Select\", \"Private provider\":\"Private provider (child care, private school, faith-based)\", \"Public school\":\"Public school\"}',
+			'validation' => '{\"rule\":\"notEmpty\"}',
+			'created' => '2011-03-24 15:01:17',
+			'modified' => '2011-03-24 15:01:22'
+
 		),
 	);
 }

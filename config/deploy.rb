@@ -3,8 +3,9 @@ require 'capcake'
 
 set :application, 'atlas' # Your app's location (domain or sub-domain name)
 set :repository, "git@git.assembla.com:CTSATLAS.git"
+
 set :branch, 'staging'
-set :deploy_via, :remote_cache
+set :deploy_via, :export
 
 set :default_shell, '/bin/bash'
 
@@ -17,7 +18,8 @@ set :user, 'dev4cts'
 # Cake Settings
 set :cake_branch, "master"
 
-set :shared_children,       %w(config system tmp webroot/files/public webroot/img/public storage storage/thumbnails)
+set :shared_children,       %w(config system tmp tmp/fdf webroot/files/public webroot/img/public storage 
+                               storage/thumbnails storage/program_forms storage/program_media)
 
 namespace :deploy do
 	desc "Updates symlinks needed to make application work"

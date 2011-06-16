@@ -164,6 +164,7 @@ class DocumentFilingCategoriesController extends AppController {
 	
 	function admin_toggle_disabled() {
 		if($this->RequestHandler->isAjax()){
+			$this->DocumentFilingCategory->recursive = 0;
 			if(!empty($this->data)) {			
 				if($this->data['DocumentFilingCategory']['id'] == 'source'){
 					$data['success'] = false;

@@ -38,7 +38,9 @@
 		<td><?php echo $page['Page']['modified']; ?>&nbsp;</td>
 		<td class="actions">
 			<?php echo $this->Html->link(__('Edit', true), array('action' => 'edit', $page['Page']['id']), array('class'=>'edit')); ?>
+            <?php if ($page['Page']['locked'] != 1): ?>
 			<?php echo $this->Html->link(__('Delete', true), array('action' => 'delete', $page['Page']['id']), array('class'=>'delete'), sprintf(__('Are you sure you want to delete /%s?', true), $page['Page']['slug'])); ?>
+            <?php endif ?>
 		</td>
 	</tr>
 <?php endforeach; ?>

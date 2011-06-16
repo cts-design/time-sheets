@@ -5,9 +5,7 @@
  * @link http://ctsfla.com
  */
 ?>
-<?php echo $this->Html->script('jquery.cookie', array('inline' => false)) ?>
-<?php echo $this->Html->script('jquery.jstree', array('inline' => false)) ?>
-<?php echo $this->Html->script('users/dashboard', array('inline' => false)) ?>
+<?php echo $this->Html->script(array('jquery.cookie', 'jquery.jstree', 'users/dashboard'), array('inline' => false)) ?>
 <div id="crumbWrapper">
     <span>You are here > </span>
     <?php echo $crumb->getHtml('Dashboard', 'reset', 'unique') ; ?>
@@ -87,6 +85,9 @@
 			    <li rel="archive"><?php echo $html->link('Filed Document Archive', array('controller' => 'filed_documents', 'action' => 'view_all_docs')) ?></li>
 			    <li rel="trash"><?php echo $html->link('Deleted Documents', array('controller' => 'deleted_documents', 'action' => 'index')) ?></li>
 			</ul>
+		    </li>
+		    <li rel="programs" id="programs">
+		    	<?php echo $html->link('Programs', array('controller' => 'programs', 'action' => 'index')) ?>
 		    </li>
 		    <li rel="tools" id="tools">
 			<a>Tools</a>

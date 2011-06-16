@@ -3,6 +3,7 @@
 App::import('Model', 'CareerSeekersSurvey');
 App::import('Lib', 'AtlasTestCase');
 class CareerSeekersSurveyTestCase extends AtlasTestCase {
+
     var $fixtures = array('app.career_seekers_survey');
 
     function startTest() {

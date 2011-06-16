@@ -1,5 +1,5 @@
 <?php
 class EmployersSurvey extends AppModel {
-        var $name = 'EmployersSurvey';
+	var $name = 'EmployersSurvey';
 }
 ?>

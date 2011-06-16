@@ -55,7 +55,23 @@ class FiledDocumentFixture extends CakeTestFixture {
 			'last_activity_admin_id' => 2,
 			'created' => '2010-11-24 15:26:21',
 			'modified' => '2010-11-24 15:26:21'
-		)		
+		),
+		array(
+			'id' => 112,
+			'filename' => '20110601093409467863.pdf',
+			'admin_id' => 2,
+			'user_id' => 15,
+			'scanned_location_id' => 1,
+			'filed_location_id' => 1,
+			'cat_1' => 2,
+			'cat_2' => 12,
+			'cat_3' => 13,
+			'description' => 'Lorem ipsum dolor sit amet',
+			'entry_method' => 'Program Generated',
+			'last_activity_admin_id' => 2,
+			'created' => '2010-11-24 15:26:21',
+			'modified' => '2010-11-24 15:26:21'
+		)					
 	);
 }
 ?>

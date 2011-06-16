@@ -6,6 +6,7 @@
  * @link http://ctsfla.com
  * @package ATLAS V3
  */
+ 
 class UsersController extends AppController {
 
     var $name = 'Users';
@@ -32,23 +33,38 @@ class UsersController extends AppController {
 				}
 	    	}
 		}
-		$this->Auth->allow('mini_registration', 'add', 'admin_password_reset', 'build_acl', 'admin_login', 'admin_logout', 'self_sign_login');
+		$this->Auth->allow('kiosk_mini_registration', 'add', 'admin_password_reset', 'build_acl', 'admin_login', 'admin_logout', 'kiosk_self_sign_login', 'login', 'registration');
 
-		if (isset($this->data['User']['username'], $this->data['User']['password'],$this->data['User']['self_sign'] ) &&
-			$this->data['User']['username'] != '' && $this->data['User']['password'] != '') {
-		    $count = $this->User->find('count', array(
-				'conditions' => array(
-				    'User.username' => $this->data['User']['username'],
-				    'and' => array(
-					'User.password' => $this->Auth->password($this->data['User']['password'])))));
-		    if ($count === 0) {
-				if ($this->data['User']['self_sign'] == 'self') {
-				    $this->redirect(array('action' => 'mini_registration',
-					$this->data['User']['username'], str_replace('/', '_', $this->data['User']['dob'])));
-				}
-				else
-				    $this->redirect(array('action' => 'add'));
-		    }
+		if(!empty($this->data)) {
+			if(isset($this->params['prefix']) && $this->params['prefix'] == 'admin') {
+				return;	
+			}
+			else {	
+				$this->User->setValidation('customerLogin');
+				$this->User->set($this->data);
+				if($this->User->validates()) {
+				    $count = $this->User->find('count', array(
+						'conditions' => array(
+						    'User.username' => $this->data['User']['username'],
+						    'and' => array(
+							'User.password' => $this->Auth->password($this->data['User']['password'])))));		
+				    if($count === 0 && isset($this->data['User']['login_type'])) {
+						if($this->data['User']['login_type'] == 'kiosk') {
+						    $this->redirect(array('action' => 'mini_registration',
+							$this->data['User']['username'], 'kiosk' => true));
+						}
+						elseif($this->data['User']['login_type'] == 'website') {
+						    $this->redirect(array('action' => 'registration', 'regular',
+							$this->data['User']['username'], 'kiosk' => false));					
+						}
+						elseif($this->data['User']['login_type'] == 'child_website') {
+							$this->redirect(array('action' => 'registration', 'child',
+							$this->data['User']['username'], 'kiosk' => false));
+						}		    
+				    }
+				}				
+			}
+
 		}
 		if($this->Auth->user() &&  $this->params['action'] == 'admin_dashboard' ) {
 		    if(! $this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Users/admin_dashboard', '*')) {
@@ -114,7 +130,7 @@ class UsersController extends AppController {
 		    if ($this->User->save($this->data)) {
 				$this->Transaction->createUserTransaction('Customer', 
 					null, null, 'Added customer '. $this->data['User']['firstname'] . 
-					' ' . $this->data['User']['lastname'] . ' - ' . substr($this->data['User']['ssn'],'5'));
+					' ' . $this->data['User']['lastname'] . ' - ' . substr($this->data['User']['ssn'], -4));
 				$this->Session->setFlash(__('The customer has been saved', true), 'flash_success');
 				$this->redirect(array('action' => 'index'));
 		    }
@@ -140,7 +156,7 @@ class UsersController extends AppController {
 		    if ($this->User->save($this->data)) {
 				$this->Transaction->createUserTransaction('Customer',
 					null, null, 'Edited customer '. $this->data['User']['firstname'] . 
-					' ' . $this->data['User']['lastname'] . ' - ' . substr($this->data['User']['ssn'],'5'));
+					' ' . $this->data['User']['lastname'] . ' - ' . substr($this->data['User']['ssn'],-4));
 				$this->Session->setFlash(__('The customer has been saved', true), 'flash_success');
 				$this->redirect(array('action' => 'index'));
 		    } 
@@ -163,8 +179,8 @@ class UsersController extends AppController {
 		$this->set($data);
     }
 
-    function self_sign_login() {
-		if (isset($this->data['User']['self_sign']) && $this->data['User']['self_sign'] == 'self') {
+    function kiosk_self_sign_login() {
+		if (isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'kiosk') {
 		    if ($this->Auth->user()) {
 			$this->Transaction->createUserTransaction('Self Sign', 
 				null, $this->User->SelfSignLog->Kiosk->getKioskLocationId(), 'Logged in at self sign kiosk' );
@@ -174,9 +190,39 @@ class UsersController extends AppController {
 		$this->set('title_for_layout', 'Self Sign Kiosk');
 		$this->layout = 'kiosk';
     }
+	
+	function login($type=null) {		
+		$this->User->setValidation('customerLogin');
+		if(isset($this->params['pass'][1], $this->params['pass'][2]) && $this->params['pass'][1] == 'programs') {
+			$this->Session->write('Auth.redirect', '/' . $this->params['pass'][1] . '/index/' . $this->params['pass'][2]); 
+		}
+		if($this->Auth->user()){
+			if($this->Session->read('Auth.redirect') != '') {
+			$this->Transaction->createUserTransaction('Self Sign', 
+				null, null, 'Logged in using website.' );
+			$this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_confirm'));				
+				$this->redirect($this->Session->read('Auth.redirect'));
+			}
+			else {
+				$this->redirect('/');
+			}
+		}
+		if(isset($type) && $type == 'child' || 
+			isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'child_website') {
+			$this->set('title_for_layout', 'Child Login');	
+			$this->render('child_login');
+		}
+					
+	}
 
     function logout($type=null, $logoutMsg=null) {
 		if ($this->Auth->user('role_id') == '1') {
+			
+			if($type == 'web') {
+				$this->Session->destroy();
+				$this->redirect('/');
+			}
+			
 		    if($type == 'selfSign') {
 			    if(!empty($logoutMsg)) {
 			    	$msg = $logoutMsg;
@@ -190,20 +236,76 @@ class UsersController extends AppController {
 		    }
 		    $this->Session->destroy();
 		    $this->Session->setFlash($msg, 'flash_success_modal');
-		    $this->redirect(array('action' => 'self_sign_login'));
+		    $this->redirect(array('action' => 'self_sign_login', 'kiosk' => true));
 		}
 		if ($this->Auth->user('role_id') != 1) {
 		    $this->redirect(array('action' => 'login', 'admin' => true));
 		}
     }
+	
+    function registration($type=null, $lastname=null) {
+		if (!empty($this->data)) {	
+		    $this->User->create();
+			if(Configure::read('Registration.ssn') == 'last4') {
+				if($this->data['User']['registration'] == 'child_website') {
+					$this->User->setValidation('childLast4Rules');
+				}	
+				else {
+					$this->User->setValidation('last4Rules');
+				}
+				if(Configure::read('Registration.ssn') == 'last4'){
+					$this->data['User']['ssn'] = 
+						$this->data['User']['ssn_1'] . 
+						$this->data['User']['ssn_2'] . 
+						$this->data['User']['ssn_3'];
+					$this->data['User']['ssn_confirm'] = 
+						$this->data['User']['ssn_1_confirm'] . 
+						$this->data['User']['ssn_2_confirm'] . 
+						$this->data['User']['ssn_3_confirm']; 
+				}				
+			}
+		    if ($this->User->save($this->data)) {
+				$userId = $this->User->getInsertId();
+				$last4 = substr($this->data['User']['ssn'], -4);
+				$this->data['User']['password'] = Security::hash($last4, null, true);
+				$this->data['User']['username'] = $this->data['User']['lastname'];
+				$this->Auth->login($this->data);
+				$this->Transaction->createUserTransaction('Web Site',
+					$userId, null, 'User self registered using the website.');
+				$this->Session->setFlash(__('Your account has been created.', true), 'flash_success');
+				if($this->Session->read('Auth.redirect') != '') {
+					$this->redirect($this->Session->read('Auth.redirect'));
+				}
+				else{
+					$this->redirect('/');
+				} 				
+		    } 
+		    else {
+				$this->Session->setFlash(__('The information could not be saved. Please, try again.', true), 'flash_failure');
+		    }
+		}
+		if (empty($this->data)) {
+			if($lastname) {
+				$this->data['User']['lastname'] = $lastname;
+			}    
+		}
+		$title_for_layout = 'Registration';
+		$states = $this->states;
+		$this->set(compact('title_for_layout', 'states'));
+		if(isset($type) && $type == 'child' || 
+			isset($this->data['User']['registration']) && $this->data['User']['registration'] == 'child_website') {
+			$this->render('child_registration');
+		}		
+		
+    }
 
-    function auto_logout() {
+    function kiosk_auto_logout() {
 		$this->Session->destroy();
 		$this->Session->setFlash(__('You have been logged out due to inactivity.', true), 'flash_failure');
 		$this->redirect(array('action' => 'self_sign_login'));   
     }
 
-    function mini_registration($lastname=null, $dob=null) {
+    function kiosk_mini_registration($lastname=null) {
 		if (!empty($this->data)) {	
 		    $this->User->create();
 			$this->User->setValidation('miniRegistration');
@@ -223,8 +325,6 @@ class UsersController extends AppController {
 		    }
 		}
 		if (empty($this->data)) {
-		    $dob = str_replace('_', '/', $dob);
-		    $this->data['User']['dob'] = $dob;
 		    $this->data['User']['lastname'] = $lastname;
 		}
 		$this->set('title_for_layout', 'Self Sign Kiosk');
@@ -232,6 +332,7 @@ class UsersController extends AppController {
     }
     
     function admin_login() {
+    	$this->User->setValidation('adminLogin');
 		if($this->RequestHandler->isAjax()) {
 		    $this->Auth->login($this->data);
 		    if($this->Auth->user()) {

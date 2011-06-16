@@ -1,7 +1,7 @@
 <?php
 /**
  * @author Daniel Nolan
- * @copyright Complete Technology Solutions 2010
+ * @copyright Complete Technology Solutions 2011
  * @link http://ctsfla.com
  * @package ATLAS V3
  */
@@ -14,17 +14,18 @@
 	    <?php __('ATLAS V3'); ?>
 	    <?php echo $title_for_layout; ?>
 	</title>
-	<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.2.0/build/cssreset/reset-min.css" />
 	<?php
 	echo $this->Html->meta('icon');
-
-	echo $this->Html->css('ui-darkness/jquery-ui-1.8.5.custom');
+	
+	echo $this->Html->css('reset');
+	
+	echo $this->Html->css('ui-redmond/jquery-ui-1.8.10.custom');
 
 	echo $this->Html->css('style');
 
-	echo $this->Html->script('jquery');
-
-	echo $this->Html->script('jquery-ui-1.8.5.custom.min');
+	echo $this->Html->script('https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js');
+	
+	echo $this->Html->script('https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js');
 
 	echo $scripts_for_layout;
 	?>
@@ -44,8 +45,7 @@
 		    <?php echo $this->Html->link($this->Html->image('/img/admin/admin_header_logo.jpg'),
 				array('controller' => 'pages',
 					'action' => 'display',
-					'admin' => false,
-					'home'), array('escape' => false));
+					'admin' => false, 'home'), array('escape' => false));
 			    ?>
 		</div>
 		<div id="logoLogout" class="right">
@@ -56,7 +56,7 @@
 			if ($session->read('Auth.User'))
 			    echo '<strong>Logged in as: ' . $session->read('Auth.User.firstname') . ' ' .
 				$session->read('Auth.User.lastname') . '</strong> | ' .
-				$this->Html->link(__('Logout', true), array('controller' => 'users', 'action' => 'logout', 'admin' => true));
+				$this->Html->link(__('Logout', true), array('controller' => 'users', 'action' => 'logout', 'kiosk' => false, 'web'));
 			?>
 		   </p>
 		</div>

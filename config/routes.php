@@ -35,6 +35,6 @@
 
 	Router::connect('/admin', array('controller' => 'users', 'action' => 'login', 'admin' => true));
 
-	Router::connect('/kiosks', array('controller' => 'users', 'action' => 'self_sign_login'));
+	Router::connect('/kiosk', array('controller' => 'users', 'action' => 'self_sign_login', 'kiosk' => true));
 
 

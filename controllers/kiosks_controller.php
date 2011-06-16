@@ -21,7 +21,9 @@ class KiosksController extends AppController {
 
     function admin_index() {
 		$this->Kiosk->recursive = 0;
-		$this->paginate = array('limit' => Configure::read('Pagination.kiosk.limit'), 'conditions' => array('Kiosk.deleted !=' => 1));
+		$this->paginate = array(
+			'limit' => Configure::read('Pagination.kiosk.limit'), 
+			'conditions' => array('Kiosk.deleted !=' => 1));
 		$this->set('kiosks', $this->paginate('Kiosk'));
 	}
 
@@ -78,12 +80,12 @@ class KiosksController extends AppController {
 		$this->redirect( array('action' => 'index'));
 	}
 
-	function self_sign_confirm() {
+	function kiosk_self_sign_confirm() {
 		$this->set('title_for_layout', 'Self Sign Kiosk');
 		$this->layout = 'kiosk';
 	}
 
-    function self_sign_edit($id =null) {
+    function kiosk_self_sign_edit($id =null) {
 		if(!$id && empty($this->data)) {
 			$this->Session->setFlash(__('An error occured please try again.', true), 'flash_failure');
 			$this->redirect( array('action' => 'self_sign_confirm'));
@@ -107,7 +109,7 @@ class KiosksController extends AppController {
 		$this->layout = 'kiosk';
 	}
 
-    function self_sign_service_selection($buttonId =null, $isChild =false) {
+    function kiosk_self_sign_service_selection($buttonId =null, $isChild =false) {
 		if(empty($buttonId)) {
 			$oneStop = env('HTTP_USER_AGENT');
 			$arrOneStop = explode('##', $oneStop);
@@ -171,7 +173,12 @@ class KiosksController extends AppController {
 					$this->Kiosk->SelfSignLogArchive->save($data['SelfSignLog']);
 					$this->Transaction->createUserTransaction('Self Sign');
 
-					$this->redirect( array('controller' => 'users', 'action' => 'logout', 'selfSign', $this->Cookie->read('logout_message')));
+					$this->redirect( array(
+						'controller' => 'users', 
+						'action' => 'logout', 
+						'selfSign', 
+						$this->Cookie->read('logout_message'), 
+						'kiosk' => false));
 				}
 			}
 			else {
@@ -217,7 +224,7 @@ class KiosksController extends AppController {
 								$this->Transaction->createUserTransaction('Self Sign');
 								$this->redirect(array(
 									'controller' => 'users', 
-									'action' => 'logout', 'selfSign', $this->Cookie->read('logout_message')));
+									'action' => 'logout', 'selfSign', $this->Cookie->read('logout_message'), 'kiosk' => false));
 							}
 						}
 					}
@@ -242,7 +249,7 @@ class KiosksController extends AppController {
 							$this->Transaction->createUserTransaction('Self Sign');
 							$this->redirect( array(
 								'controller' => 'users', 
-								'action' => 'logout', 'selfSign', $this->Cookie->read('logout_message')));
+								'action' => 'logout', 'selfSign', $this->Cookie->read('logout_message'), 'kiosk' => false));
 						}
 					}
 				}
@@ -266,7 +273,7 @@ class KiosksController extends AppController {
 		$this->layout = 'kiosk';
 	}
 
-  	function self_sign_other($level) {
+  	function kiosk_self_sign_other($level) {
 		if(!empty($this->data)) {
 			$data['SelfSignLog']['location_id'] = $this->Cookie->read('location');
 			$data['SelfSignLog']['user_id'] = $this->Auth->user('id');
@@ -288,7 +295,7 @@ class KiosksController extends AppController {
 				$this->Kiosk->SelfSignLogArchive->save($data['SelfSignLog']);
 				$this->Cookie->write('details.other', $this->data['SelfSignLog']['other']);
 				$this->Transaction->createUserTransaction('Self Sign');
-				$this->redirect( array('controller' => 'users', 'action' => 'logout', 'selfSign', $this->Cookie->read('logout_message')));
+				$this->redirect( array('controller' => 'users', 'action' => 'logout', 'selfSign', $this->Cookie->read('logout_message'), 'kiosk' => false));
 			}
 			else {
 				$this->Session->setFlash(__('An error occured please try again', true), 'flash_failure');
@@ -308,7 +315,7 @@ class KiosksController extends AppController {
 		$this->layout = 'kiosk';
 	}
 
-    function self_scan_program_selection($buttonId=null) {
+    function kiosk_self_scan_program_selection($buttonId=null) {
 		$this->loadModel('SelfScanCategory');
 		$this->SelfScanCategory->recursive = -1;
 		if(!$buttonId) {
@@ -333,7 +340,7 @@ class KiosksController extends AppController {
 		$this->set(compact('title_for_layout', 'parentButtons', 'referer'));
 	}
 
-    function self_scan_document($selfScanCatId=null, $queueCatId=null) {
+    function kiosk_self_scan_document($selfScanCatId=null, $queueCatId=null) {
 		if(!empty($this->data)) {
 			$id = $this->_queueScannedDocument();
 			if($id) {
@@ -354,7 +361,7 @@ class KiosksController extends AppController {
 		$this->layout = 'kiosk';
 	}
 
-    function self_scan_another_document() {
+    function kiosk_self_scan_another_document() {
 		$this->layout = 'kiosk';
 	}
 

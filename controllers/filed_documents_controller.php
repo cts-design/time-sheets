@@ -10,7 +10,7 @@ class FiledDocumentsController extends AppController {
 
     var $name = 'FiledDocuments';
 	
-	var $components = array('RequestHandler');
+	var $components = array('RequestHandler', 'Notifications');
 	var $helpers = array('Excel');
 
     var $reasons = array(
@@ -89,6 +89,7 @@ class FiledDocumentsController extends AppController {
 		    $this->redirect(array('action' => 'index'));
 		}
 		if(!empty($this->data)) {
+			$this->FiledDocument->User->recursive = -1;
 		    $user = $this->FiledDocument->User->find('first', array('conditions' => array(
 				    'User.role_id' => 1,
 				    'User.firstname' => $this->data['User']['firstname'],
@@ -97,12 +98,14 @@ class FiledDocumentsController extends AppController {
 				    )));
 		    $this->data['FiledDocument']['user_id'] = $user['User']['id'];
 		    $this->data['FiledDocument']['last_activity_admin_id'] = $this->Auth->user('id');
-		    $this->data['FiledDocument']['location_id'] = $this->Auth->user('location_id');
-	
+		    $this->data['FiledDocument']['location_id'] = $this->Auth->user('location_id');	
 		    if($this->FiledDocument->save($this->data)) {
+	    		if($this->isModuleEnabled('Programs')) {	
+					$this->_processResponseDoc($user);
+				}	
 				$this->Transaction->createUserTransaction('Storage', null, null,
 					'Edited filed document ID ' . $id . ' for ' . $user['User']['lastname'] .
-					', ' . $user['User']['firstname'] . ' - ' . substr($user['User']['ssn'], 5));
+					', ' . $user['User']['firstname'] . ' - ' . substr($user['User']['ssn'], -4));
 				$this->Session->setFlash(__('The filed document has been saved', true), 'flash_success');
 				$this->redirect(array('action' => 'index', ($this->data['FiledDocument']['edit_type'] == 'user') ? $user['User']['id'] : ''));
 		    }
@@ -161,7 +164,7 @@ class FiledDocumentsController extends AppController {
 		    if($id) {
 			$this->Transaction->createUserTransaction('Storage', null, null,
 				trim('Uploaded document ID ' . $id . ' to ' . $this->data['User']['lastname'] .
-					', ' . $this->data['User']['firstname'] . ' - ' . substr($this->data['User']['ssn'], 5), ' -'));
+					', ' . $this->data['User']['firstname'] . ' - ' . substr($this->data['User']['ssn'], -4), ' -'));
 			$this->Session->setFlash(__('The document has been filed.', true), 'flash_success');
 			$this->redirect(array('action' => 'index', $this->data['User']['id']));
 		    }
@@ -178,47 +181,6 @@ class FiledDocumentsController extends AppController {
 		$this->set(compact('user', 'cat1', 'title_for_layout'));
     }
 
-    function _uploadDocument($entryMethod='Upload') {
-		// get the document relative path to the inital storage folder
-		$path = Configure::read('Document.storage.uploadPath');
-		// check to see if the directory for the current year exists
-		if(!file_exists($path . date('Y') . '/')) {
-		    // if directory does not exist, create it
-		    mkdir($path . date('Y'), 0755);
-		}
-		// add the current year to our path string
-		$path .= date('Y') . '/';
-		// check to see if the directory for the current month exists
-		if(!file_exists($path . date('m') . '/')) {
-		    // if directory does not exist, create it
-		    mkdir($path . date('m'), 0755);
-		}
-		// add the current month to our path string
-		$path .= date('m') . '/';
-		// build our fancy unique filename
-		$docName = date('YmdHis') . rand(0, pow(10, 7)) . '.pdf';
-		$this->data['FiledDocument']['filename'] = $docName;
-		$this->data['FiledDocument']['user_id'] = $this->data['User']['id'];
-		$this->data['FiledDocument']['last_activity_admin_id'] = $this->data['FiledDocument']['admin_id'];
-		$this->data['FiledDocument']['entry_method'] = $entryMethod;
-		if(!move_uploaded_file($this->data['FiledDocument']['submittedfile']['tmp_name'], $path . $docName)) {
-		    return false;
-		}
-		// save an empty record to queued documents to generate unique doc id
-		$this->FiledDocument->User->QueuedDocument->create();
-		$this->FiledDocument->User->QueuedDocument->save();
-		$this->data['FiledDocument']['id'] = $this->FiledDocument->User->QueuedDocument->getLastInsertId();
-		// delete the empty record so it does not show up in the queue
-		$this->FiledDocument->User->QueuedDocument->delete($this->data['FiledDocument']['id']);
-	
-		if($this->FiledDocument->save($this->data)) {
-		    return $this->data['FiledDocument']['id'];
-		}
-		else {
-		    return false;
-		}
-    }
-
     function admin_scan_document($userId=null) {
 		$cat1 = $this->_getParentDocumentFilingCats();
 		if(!empty($this->data)) {
@@ -227,7 +189,7 @@ class FiledDocumentsController extends AppController {
 			$user = $this->FiledDocument->User->read(null, $this->data['User']['id']);
 			$this->Transaction->createUserTransaction('Storage', null, null,
 				trim('Scanned document ID ' . $id . ' to ' . $user['User']['lastname'] .
-					', ' . $user['User']['firstname'] . ' - ' . substr($user['User']['ssn'], 5), ' -'));
+					', ' . $user['User']['firstname'] . ' - ' . substr($user['User']['ssn'], -4), ' -'));
 			$this->Session->setFlash(__('Scanned document was filed successfully.', true), 'flash_success');
 			$this->autoRender = false;
 			exit;
@@ -247,16 +209,12 @@ class FiledDocumentsController extends AppController {
 
 	function admin_view_all_docs(){
 		if($this->RequestHandler->isAjax()){
-
 			if(!empty($this->params['url']['filters'])) {
 				$conditions = $this->_setFilters();
 				if($conditions) {
 					$this->paginate = array('conditions' => $conditions);	
 				}
-			}			
-			if(isset($this->params['url']['sort'])) {
-				$this->params['url']['sort'] = str_replace('-', '.', $this->params['url']['sort']);
-			}			
+			}				
 			$query = $this->Paginate('FiledDocument');
 			$data['docs'] = array();
 			if(!empty($conditions)) {
@@ -336,6 +294,51 @@ class FiledDocumentsController extends AppController {
 		$this->set($data);
 		$this->render('/elements/excelreport');		
 	}
+
+    function _uploadDocument($entryMethod='Upload') {
+		// get the document relative path to the inital storage folder
+		$path = Configure::read('Document.storage.uploadPath');
+		// check to see if the directory for the current year exists
+		if(!file_exists($path . date('Y') . '/')) {
+		    // if directory does not exist, create it
+		    mkdir($path . date('Y'), 0755);
+		}
+		// add the current year to our path string
+		$path .= date('Y') . '/';
+		// check to see if the directory for the current month exists
+		if(!file_exists($path . date('m') . '/')) {
+		    // if directory does not exist, create it
+		    mkdir($path . date('m'), 0755);
+		}
+		// add the current month to our path string
+		$path .= date('m') . '/';
+		// build our fancy unique filename
+		$docName = date('YmdHis') . rand(0, pow(10, 7)) . '.pdf';
+		$this->data['FiledDocument']['filename'] = $docName;
+		$this->data['FiledDocument']['user_id'] = $this->data['User']['id'];
+		$this->data['FiledDocument']['last_activity_admin_id'] = $this->data['FiledDocument']['admin_id'];
+		$this->data['FiledDocument']['entry_method'] = $entryMethod;
+		if(!move_uploaded_file($this->data['FiledDocument']['submittedfile']['tmp_name'], $path . $docName)) {
+		    return false;
+		}
+		// save an empty record to queued documents to generate unique doc id
+		$this->FiledDocument->User->QueuedDocument->create();
+		$this->FiledDocument->User->QueuedDocument->save();
+		$this->data['FiledDocument']['id'] = $this->FiledDocument->User->QueuedDocument->getLastInsertId();
+		// delete the empty record so it does not show up in the queue
+		$this->FiledDocument->User->QueuedDocument->delete($this->data['FiledDocument']['id']);
+	
+		if($this->FiledDocument->save($this->data)) {
+			if($this->isModuleEnabled('Programs')) {
+				$user = $this->FiledDocument->User->findById($this->data['User']['id']);	
+    			$this->_processResponseDoc($user);
+			}	
+		    return $this->data['FiledDocument']['id'];
+		}
+		else {
+		    return false;
+		}
+    }
 		
 	function _setFilters() {
 		if(isset($this->params['url']['filters'])){
@@ -376,4 +379,15 @@ class FiledDocumentsController extends AppController {
 			array('conditions' => array('DocumentFilingCategory.parent_id' => null)));
     }
 	
+	function _processResponseDoc($user) {
+		$this->loadModel('ProgramResponse');							
+		$processedDoc = $this->ProgramResponse->processResponseDoc($this->data, $user);	
+		if(isset($processedDoc['docFiledEmail'])) {
+			$this->Notifications->sendProgramEmail($processedDoc['docFiledEmail'], $user);
+		}				
+		if(isset($processedDoc['finalEmail'])) {
+			$this->Notifications->sendProgramEmail($processedDoc['finalEmail'], $user);
+		}
+    }		
+
 }

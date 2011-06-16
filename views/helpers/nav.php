@@ -77,5 +77,3 @@ class NavHelper extends AppHelper {
         }
     }
 }
-
-?>

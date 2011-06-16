@@ -67,21 +67,33 @@ class PagesController extends AppController {
  * @access public
  */
         function dynamicDisplay() {
-            // can't explode $this->params['url'] because its an array
-            $request = explode('/', $this->params['url']['url']);
-            $slug = $request[1];
-            
-            $page = $this->Page->findPublishedBySlug($slug);
+            if (!empty($this->params['requested'])) {
+                // requested is only set if this page was retreived
+                // using requestAction. In our case this means that
+                // the request originated from the homepage element
+                return $this->Page->findPublishedBySlug('homepage');
+            } else {
+                // can't explode $this->params['url'] because its an array
+                $request = explode('/', $this->params['url']['url']);
+                $slug = $request[1];
+                $page = $this->Page->findPublishedBySlug($slug);
 
-            if (!$page) {
-                $this->cakeError('error404');
-            }
-            else {
-                $data = array(
-                    'title_for_layout' => $page['Page']['title'],
-                    'content' => $page['Page']['content']
-                );
-                $this->set($data);
+                if (!$page) {
+                    // throw the custom 404 error
+                    $this->cakeError('error404');
+                }
+                else {
+                    // if the page requires authentication and the user is not logged in
+                    if ($page['Page']['authentication_required'] == '1' && !$this->Auth->user()) {
+                        $this->Session->write('Auth.redirect', '/' . $this->params['url']['url']);
+                        $this->redirect(array('controller' => 'users', 'action' => 'login'));
+                    }
+                    $data = array(
+                        'title_for_layout' => $page['Page']['title'],
+                        'content' => $page['Page']['content']
+                    );
+                    $this->set($data);
+                }
             }
         }
 
@@ -119,6 +131,9 @@ class PagesController extends AppController {
 		}
 		if (!empty($this->data)) {
 			if ($this->Page->save($this->data)) {
+                if ($this->data['Page']['slug'] === 'homepage') {
+                    Cache::delete('homepage_middle');
+                }
                                 $this->Transaction->createUserTransaction('CMS', null, null,
                                         'Edit page ID: ' . $id);
 				$this->Session->setFlash(__('The page has been saved', true), 'flash_success');
@@ -136,7 +151,15 @@ class PagesController extends AppController {
 		if (!$id) {
 			$this->Session->setFlash(__('Invalid id for page', true), 'flash_failure');
 			$this->redirect(array('action'=>'index'));
-		}
+        }
+
+        $page = $this->Page->read(null, $id);
+
+        if ($page['Page']['locked'] == 1) {
+            $this->Session->setFlash(__('This page cannot be deleted because it is locked', true), 'flash_failure');
+            $this->redirect(array('action' => 'index'));
+        }
+
 		if ($this->Page->delete($id)) {
                         $this->Transaction->createUserTransaction('CMS', null, null,
                                         'Deleted page ID: ' . $id);
