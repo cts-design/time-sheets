@@ -22,6 +22,7 @@ class PageTestCase extends CakeTestCase {
                                               'slug' => 'test_page',
                                               'content' => 'This is the test page.',
                                               'published' => 1,
+                                                'authentication_required' => 0,
                                               'created' => '2011-02-04 14:50:04',
                                               'modified' => '2011-02-04 14:50:04'));
             $this->assertEqual($result, $expected);
