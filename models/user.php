@@ -37,7 +37,7 @@ class User extends AppModel {
     );
     var $belongsTo = array('Role', 'Location');
 	
-    var $actsAs = array('Acl' => 'requester', 'Multivalidatable');
+    var $actsAs = array('AtlasAcl' => 'requester', 'Multivalidatable');
 	
     var $validate = array(
 		'firstname' => array(

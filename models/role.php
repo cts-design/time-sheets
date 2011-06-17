@@ -2,7 +2,7 @@
 class Role extends AppModel {
 	var $name = 'Role';
 	var $displayField = 'name';
-	var $actsAs = array('Acl' => array('type' => 'requester'));
+	var $actsAs = array('AtlasAcl' => array('type' => 'requester'));
 	var $validate = array(
 		'name' => array(
 			'notempty' => array(
