@@ -14,7 +14,7 @@ class AppController extends Controller {
     	'Session', 
     	'RequestHandler',
     	'Auth',
-    	'Acl',
+    	'AtlasAcl',
     	'Cookie',
     	'Transaction',
     	'Security',
@@ -146,6 +146,11 @@ class AppController extends Controller {
 	                $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => true));
 	            }
 	        }	
+    }
+
+    public function constructClasses() {
+        parent::constructClasses();
+        $this->Acl = $this->AtlasAcl;
     }
 
 	function forceSSL() {
