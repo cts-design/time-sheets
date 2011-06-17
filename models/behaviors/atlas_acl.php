@@ -1,4 +1,6 @@
 <?php
+App::import('Behavior', 'Acl');
+
 class AtlasAclBehavior extends AclBehavior {
 
 /**
