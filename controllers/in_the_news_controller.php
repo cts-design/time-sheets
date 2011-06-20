@@ -9,6 +9,11 @@ class InTheNewsController extends AppController {
 	}
 
 	function index() {
+        $this->paginate = array(
+            'order' => array(
+                'InTheNews.created' => 'desc'
+            )
+        );
 		$this->InTheNews->recursive = 0;
 		$this->set('inTheNews', $this->paginate());
 	}
