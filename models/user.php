@@ -184,11 +184,7 @@ class User extends AppModel {
 				'rule' => 'email',
 				'message' => 'Must be a vaild email like bob@test.com.',
 			    'allowEmpty' => true
-			),
-		    'unique' => array(
-				'rule' => 'isUnique',
-				'message' => 'The email address already exists in the system.'
-		    )
+			)
 		),
 		'language' => array(
 			'notEmpty' => array(
