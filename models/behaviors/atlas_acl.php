@@ -22,7 +22,7 @@ class AtlasAclBehavior extends AclBehavior {
 			'model' => $model->name,
 			'foreign_key' => $model->id
 		);
-		if (!$created) {
+		if (!$created && $data['parent_id'] != 1) {
 			$node = $this->node($model);
 			$data['id'] = isset($node[0][$type]['id']) ? $node[0][$type]['id'] : null;
 		}
