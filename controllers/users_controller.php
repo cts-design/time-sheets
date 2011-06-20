@@ -517,7 +517,7 @@ class UsersController extends AppController {
 
     function admin_password_reset() {
 		$this->set('title_for_layout', 'Password Reset');
-		if ($this->data['User']['email'] != '') {
+		if (isset($this->data['User']['email'])) {
 		    $user = $this->User->find('first', array('conditions' => array ('User.email' => $this->data['User']['email'])));
 		    $this->data['User']['id'] = $user['User']['id'];
 		    $this->data['User']['role_id'] = $user['User']['role_id'];
@@ -529,7 +529,7 @@ class UsersController extends AppController {
 			    // Fire off the E-Mail
 			    $message = Router::url('/admin', true) . "\n\n" . 'Temp Password: ' . $tempPassword ;
 			    $this->Email->from = Configure::read('System.email');
-			    $this->Email->to = $user['User']['firstname']." ".$user['User']['lastname']."<".$user['User']['email'].">";
+			    $this->Email->to = $user['User']['firstname']." ".$user['User']['lastname']." <".$user['User']['email'].">";
 			    $this->Email->subject = 'Password Reset Request';
 			    if($this->Email->send($message)) {
 			    // Set flash message
