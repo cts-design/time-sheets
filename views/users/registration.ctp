@@ -8,8 +8,22 @@
 ?>
 <?php echo $this->Html->script('jquery.dPassword', array('inline' => 'false')); ?>
 <?php echo $this->Html->script('users/mini.registration', array('inline' => 'false')) ?>
+<?php echo $this->Html->script('jquery.autotab-1.1b', array('inline' => false)) ?>
+<?php echo $this->Html->scriptStart(array('inline' => false)) ?>
+$(document).ready(function() {
+	$('#UserSsn1, #UserSsn2, #UserSsn3').autotab_magic().autotab_filter('numeric');
+	$('#UserSsn1Confirm, #UserSsn2Confirm, #UserSsn3Confirm').autotab_magic().autotab_filter('numeric');
+});
+<?php echo $this->Html->scriptEnd() ?>
 
-<p>We do not have a record for you please register below.</p>
+<p>
+	We currently do not have a record for you.
+	<br />	 
+	Please register your information using the following form.
+	<br />	
+	If you have already created a login, please <?php echo $html->link('click here', array('controller' => 'users', 'action' => 'login', 'child')) ?> to return
+	to the login page and try your login information again.
+</p>
 <br />
   <div>
 	<?php echo $this->Form->create('User', array('action' => 'registration')); ?>
@@ -52,18 +66,61 @@
 			'between' => '</p><p class="left">',
 			'after' => '</p>'));
 	    echo '<br class="clear"/>';					
-	    echo $this->Form->input('ssn', array(
-			'label' => __('SSN', true),
-			'before' => '<p class="left">',
-			'between' => '</p><p class="left">',
-			'after' => '</p>'));
-		    echo '<br class="clear"/>';
-	    echo $this->Form->input('ssn_confirm', array(
-			'label' => __('SSN Confirm', true),
-			'maxlength' => 9,
-			'before' => '<p class="left">',
-			'between' => '</p><p class="left">',
-			'after' => '</p>'));
+		if(Configure::read('Registration.ssn') == 'full') {
+		    echo $this->Form->input('ssn', array(
+				'label' => __('Social Security Number', true),
+				'between' => '<br />'));
+		    echo $this->Form->input('ssn_confirm', array(
+				'label' => __('Please confirm your Social Security Number', true),
+				'maxlength' => 9,
+				'between' => '<br />',
+				'after' => '<br />'));
+		}
+		elseif(Configure::read('Registration.ssn') == 'last4') {
+			echo '<div class="input required">';
+				echo $this->Form->label(__('Social Security Number', true));
+				echo '<br />';	
+				echo $this->Form->input('ssn_1', array(
+					'type' => 'text',
+					'div' => false,
+					'maxlength' => 3, 
+					'label' => false));
+				echo $this->Form->input('ssn_2', array(
+					'type' => 'text',
+					'maxlength' => 2,
+					'label' => false,
+					'div' => false));
+				echo $this->Form->input('ssn_3', array(
+					'type' => 'text',
+					'maxLength' => 4,
+					'label' => false,
+					'div' => false));
+				echo "<br class='clear' />";
+				echo '<div class="small">Please see the <a href="#">privacy act</a> statement concerning social security numbers.</div>';	
+				echo $this->Form->error('ssn');
+			echo '</div>';
+			echo '<div class="input required">';
+				echo $this->Form->label(__('Please confirm your Social Security Number', true));
+				echo '<br />';			
+				echo $this->Form->input('ssn_1_confirm', array(
+					'type' => 'text',
+					'maxlength' => 3,
+					'label' => false,
+					'div' => false));
+				echo $this->Form->input('ssn_2_confirm', array(
+					'type' => 'text',
+					'maxlength' => 2,
+					'label' => false,
+					'div' => false));
+				echo $this->Form->input('ssn_3_confirm', array(
+					'type' => 'text',
+					'maxlength' => 4,
+					'label' => false,
+					'div' => false,
+					'after' => '<br />'));
+				echo $this->Form->error('ssn_confirm');
+			echo '</div>';					
+		}	
 	    echo '<br class="clear"/>';
 	    echo $this->Form->input('dob', array(
 			'label' => __('Birth Date <span class="small gray">(mm/dd/yyyy)</span>', true),
