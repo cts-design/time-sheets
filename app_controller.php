@@ -6,7 +6,6 @@
  * @link http://ctsfla.com
  * @package ATLAS V3
  */
-App::import('vendor', 'DebugKit.FireCake');
 class AppController extends Controller {
 		
     var $helpers = array('Html', 'Form', 'Session', 'Js' => array('Jquery'), 'Time', 'Crumb', 'Nav');
