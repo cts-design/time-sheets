@@ -833,10 +833,12 @@ class User extends AppModel {
 		if (!$created) {
 		    $parent = $this->parentNode();
 		    $parent = $this->node($parent);
-		    $node = $this->node();
-		    $aro = $node[0];
-		    $aro['Aro']['parent_id'] = $parent[0]['Aro']['id'];
-	            $this->Aro->save($aro);
+			if($parent[0]['Aro']['id'] != 1) {
+			    $node = $this->node();
+			    $aro = $node[0];
+			    $aro['Aro']['parent_id'] = $parent[0]['Aro']['id'];
+	        	$this->Aro->save($aro);				
+			}
 		}
     }
    
