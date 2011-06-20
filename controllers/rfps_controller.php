@@ -1,5 +1,4 @@
 <?php
-App::import('Vendor', 'DebugKit.FireCake');
 class RfpsController extends AppController {
 
 	var $name = 'Rfps';
@@ -10,6 +9,11 @@ class RfpsController extends AppController {
 	}
 
 	function index() {
+        $this->paginate = array(
+            'order' => array(
+                'Rfp.created' => 'desc'
+            )
+        );
 		$this->Rfp->recursive = 0;
 		$this->set('rfps', $this->paginate());
 	}

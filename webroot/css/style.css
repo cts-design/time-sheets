@@ -505,19 +505,23 @@ div.required label:after {
 	width: 30px;
 }
 
-#ChildRegistrationForm form {
+#ChildRegistrationForm form,
+#WebRegistrationForm form{
 	margin-top: 10px;
 }
 
-#ChildRegistrationForm fieldset {
+#ChildRegistrationForm fieldset,
+#WebRegistrationForm fieldset{
 	width: 600px;
 }
 
-#ChildRegistrationForm .error-message{
+#ChildRegistrationForm .error-message,
+#WebRegistrationForm .error-message {
 	margin: 0;
 }
 
-#ChildRegistrationForm .input {
+#ChildRegistrationForm .input,
+#WebRegistrationForm .input{
 	height: auto;
 	margin-bottom: 20px;
 }

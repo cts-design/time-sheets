@@ -9,6 +9,12 @@
 ?>
 
 <div>
+	<p>
+		Welcome to the <?php Configure::read('Company.name') ?> Online Services System. To
+		begin, please log in with your last name and the last 4 digits of
+		your social security number.
+	</p>
+	<br />	
 	<fieldset>
 		<legend>Login</legend>
 		<?php
