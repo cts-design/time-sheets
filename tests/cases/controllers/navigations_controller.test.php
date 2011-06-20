@@ -112,6 +112,7 @@ class NavigationsControllerTestCase extends AtlasTestCase {
         $_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
         $this->Navigations->params = Router::parse('/admin/navigations/update');
         $this->Navigations->params['form'] = array(
+            'id' => 20,
             'name' => 'My New Link',
             'link' => 'my_new_link',
             'parentId' => 19
@@ -131,6 +132,7 @@ class NavigationsControllerTestCase extends AtlasTestCase {
         $_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
         $this->Navigations->params = Router::parse('/admin/navigations/update');
         $this->Navigations->params['form'] = array(
+            'id' => 20,
             'name' => 'Google',
             'link' => 'http://google.com',
             'parentId' => 19
@@ -150,6 +152,7 @@ class NavigationsControllerTestCase extends AtlasTestCase {
         $_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
         $this->Navigations->params = Router::parse('/admin/navigations/update');
         $this->Navigations->params['form'] = array(
+            'id' => 20,
             'name' => 'Google',
             'link' => 'https://google.com',
             'parentId' => 19
@@ -169,6 +172,7 @@ class NavigationsControllerTestCase extends AtlasTestCase {
         $_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
         $this->Navigations->params = Router::parse('/admin/navigations/update');
         $this->Navigations->params['form'] = array(
+            'id' => 20,
             'name' => 'Helpful Articles',
             'link' => '/pages/helpful_articles',
             'parentId' => 19
