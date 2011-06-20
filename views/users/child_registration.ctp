@@ -21,7 +21,7 @@ $(document).ready(function() {
 <p>
 	We currently do not have a record for your child.
 	<br />	 
-	Please register your your child's information using the following form.
+	Please register your child's information using the following form.
 	<br />	
 	If you have already created a login, please <?php echo $html->link('click here', array('controller' => 'users', 'action' => 'login', 'child')) ?> to return
 	to the login page and try your login information again.
