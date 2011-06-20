@@ -115,8 +115,7 @@ class NavigationsController extends AppController {
 		
 		function admin_create() {			
 			$params = $this->params;
-			
-			if (substr($params['form']['link'], 0, 1) !== '/') {
+			if (substr($params['form']['link'], 0, 1) !== '/' && substr($params['form']['link'], 0, 4) !== 'http') {
 				$params['form']['link'] = '/' . $params['form']['link'];
 			}
 			
