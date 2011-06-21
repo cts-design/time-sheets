@@ -868,6 +868,18 @@ div.actions .ui-button-text {
 	margin-bottom: 10px;
 }
 
+/* Release Notes Page  */
+
+#ReleaseNotes {
+	margin-top: 10px;
+}
+#ReleaseNotes ul {
+	padding-left: 25px;
+}
+#ReleaseNotes li {
+	list-style: disc;
+}
+
 /* jQuery UI overrides */
 .ui-autocomplete {
     max-height: 50px;
