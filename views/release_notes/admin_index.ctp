@@ -1,14 +1,3 @@
-<style>
-	#ReleaseNotes {
-		margin-top: 10px;
-	}
-	#ReleaseNotes ul {
-		padding-left: 25px;
-	}
-	#ReleaseNotes li {
-		list-style: disc;
-	}
-</style>
 <div id="crumbWrapper">
     <span>You are here > </span>
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
