@@ -11,7 +11,7 @@ class InTheNewsController extends AppController {
 	function index() {
         $this->paginate = array(
             'order' => array(
-                'InTheNews.created' => 'desc'
+                'InTheNews.posted_date' => 'desc'
             )
         );
 		$this->InTheNews->recursive = 0;
