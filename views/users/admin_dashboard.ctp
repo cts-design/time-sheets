@@ -111,7 +111,10 @@
 	    			%0AReply to a ticket alert from Assembla and your email will be posted as a ticket comment.">Create a support ticket via email</a> 
 	    	</p>
 	    	<p><?php echo $html->image('icons/telephone.png')?> 352-666-0333</p> 
-	    	<p><?php echo $html->image('icons/application_xp_terminal.png')?> Atlas 3.0.0</p>     	
+	    	<p>
+	    		<?php echo $html->image('icons/application_xp_terminal.png')?>
+	    		<?php echo $html->link('Atlas 3.0.0', array('controller' => 'release_notes', 'admin' => true))?>
+	    	</p>    	
 	    </div>
 
     </div>
