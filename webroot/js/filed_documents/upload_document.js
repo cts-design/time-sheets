@@ -4,7 +4,7 @@
  * @link http://ctsfla.com
  */
 $(document).ready(function(){
-    var validator = $('#FiledDocumentupload_documentForm').validate({
+    var validator = $('#FiledDocumentUploadDocumentForm').validate({
 	errorPlacement: function(error,element) {
 	    return true;
 	},
