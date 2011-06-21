@@ -315,6 +315,9 @@ class FiledDocumentsController extends AppController {
 		// build our fancy unique filename
 		$docName = date('YmdHis') . rand(0, pow(10, 7)) . '.pdf';
 		$this->data['FiledDocument']['filename'] = $docName;
+		if(empty($this->data['User']['id'])) {
+			return false;
+		}
 		$this->data['FiledDocument']['user_id'] = $this->data['User']['id'];
 		$this->data['FiledDocument']['last_activity_admin_id'] = $this->data['FiledDocument']['admin_id'];
 		$this->data['FiledDocument']['entry_method'] = $entryMethod;
