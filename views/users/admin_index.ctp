@@ -49,7 +49,7 @@
     	<tr<?php echo $class; ?>>
     	    <td><?php echo $user['User']['firstname']; ?>&nbsp;</td>
     	    <td><?php echo $user['User']['lastname']; ?>&nbsp;</td>
-    	    <td><?php echo $user['User']['ssn']; ?>&nbsp;</td>
+    	    <td><?php echo "*****" . substr($user['User']['ssn'], -4); ?>&nbsp;</td>
 	    <td><?php echo $this->Html->link($user['User']['email'], 'mailto:'.$user['User']['email']); ?>&nbsp;</td>
 	    <td class="actions">
 		<?php echo $this->Html->link(__('Docs', true), array('controller' => 'filed_documents',  'action' => 'index', $user['User']['id']), array('class' => 'docs')); ?>
