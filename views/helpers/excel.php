@@ -63,7 +63,7 @@ class ExcelHelper extends AppHelper {
 	function _output($title) {
 	    header('Content-Type: application/vnd.openXMLformats-officedocument.spreadsheetml.sheet');
 	    header('Content-Disposition: attachment;filename="'.$title.'.xlsx"');
-	    header('Cache-Control: max-age=0');
+	    header('Pragma: cache');
 	    $objWriter = new PHPExcel_Writer_Excel2007($this->xls);
 	    $objWriter->save('php://output');
 	} 
