@@ -113,7 +113,7 @@
 	    	<p><?php echo $html->image('icons/telephone.png')?> 352-666-0333</p> 
 	    	<p>
 	    		<?php echo $html->image('icons/application_xp_terminal.png')?>
-	    		<?php echo $html->link('Atlas 3.0.0', array('controller' => 'release_notes', 'admin' => true))?>
+	    		<?php echo $html->link('Atlas 3.0.1', array('controller' => 'release_notes', 'admin' => true))?>
 	    	</p>    	
 	    </div>
 
