@@ -871,14 +871,18 @@ div.actions .ui-button-text {
 /* Release Notes Page  */
 
 #ReleaseNotes {
+	width: 600px;
 	margin-top: 10px;
 }
-#ReleaseNotes ul {
-	padding-left: 25px;
+#ReleaseNotes ol {
+	padding-left: 35px;
 }
+
 #ReleaseNotes li {
-	list-style: disc;
+	list-style: decimal;
+	margin-bottom: 5px;
 }
+
 
 /* jQuery UI overrides */
 .ui-autocomplete {
