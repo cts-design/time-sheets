@@ -39,20 +39,24 @@ namespace :deploy do
     end	
 end
 
-desc "Update database schema create tables"
-	task :migrate_database_create, roles => [:web] do
-	run "cd #{current_release} && cake schema create atlas < #{shared_path}/config/schema_create_prompt.txt"
+namespace :cake do
+  namespace :schema do
+    desc "Update database schema create tables"
+    	task :create, roles => [:web] do
+    	run "cd #{current_release} && cake schema create atlas < #{shared_path}/config/schema_create_prompt.txt"
+    end
+    
+    desc "Update database schema update tables"
+    task :update, roles => [:web] do
+    	run "cd #{current_release} && yes y | cake schema update atlas"
+    end
+  end 
+   
+  desc "Update ACL Access Control Object Table" 
+  task :aco_update, roles => [:web] do
+    run "cd #{current_release} && cake acl_extras aco_update"
+  end  
 end
-
-desc "Update database schema update tables"
-task :migrate_database_update, roles => [:web] do
-	run "cd #{current_release} && yes y | cake schema update atlas"
-end
-
-desc "Update ACL Access Control Object Table" 
-task :aco_update, roles => [:web] do
-  run "cd #{current_release} && cake acl_extras aco_update"
-end  
 
 task :finalize_deploy, :roles => [:web] do
 	run "chmod 755 -R #{release_path}"	
@@ -63,6 +67,11 @@ task :finalize_deploy, :roles => [:web] do
 	run "mv #{release_path}/webroot/js/ckfinder/config.default.php #{release_path}/webroot/js/ckfinder/config.php"
 end	
 
-after "deploy:update_code", :finalize_deploy
+after "deploy:symlink", :finalize_deploy
+
+after("cake:database:symlink", "cake:schema:create")
+after("cake:schema:create", "cake:schema:update")
+after("cake:schema:update", "cake:aco_update")
+after("cake:aco_update", "cake:cache:clear")
 
 capcake
