@@ -143,6 +143,10 @@ class KiosksController extends AppController {
 			'fields' => array('MasterKioskButton.id', 'MasterKioskButton.tag'), 
 			'conditions' => array('MasterKioskButton.deleted' => 0)));
 		if(!empty($buttonId)) {
+			$message = $this->Kiosk->KioskButton->getLogoutMessage($buttonId, null);
+			if($message) {
+				$this->Cookie->write('logout_message', $message);
+			}			
 			if($masterButtonList[$buttonId] === 'Scan Documents') {
 				$this->redirect( array('action' => 'self_scan_program_selection'));
 			}
@@ -215,7 +219,7 @@ class KiosksController extends AppController {
 								$data['SelfSignLog']['user_id'] = $this->Auth->user('id');
 								$data['SelfSignLog']['kiosk_id'] = $this->Cookie->read('kioskId');
 								$data['SelfSignLog']['level_1'] = $this->Cookie->read('level.1');
-								$data['SelfSignLog']['level_2'] = $this->Cookie->read('level.2');
+								$data['SelfSignLog']['level_2'] = $this->Cookie->read('level.2');								
 								$this->Kiosk->SelfSignLog->create();
 								$this->Kiosk->SelfSignLog->save($data['SelfSignLog']);
 								$data['SelfSignLog']['id'] = $this->Kiosk->SelfSignLog->getInsertId();
@@ -240,7 +244,7 @@ class KiosksController extends AppController {
 							$data['SelfSignLog']['kiosk_id'] = $this->Cookie->read('kioskId');
 							$data['SelfSignLog']['level_1'] = $this->Cookie->read('level.1');
 							$data['SelfSignLog']['level_2'] = $this->Cookie->read('level.2');
-							$data['SelfSignLog']['level_3'] = $this->Cookie->read('level.3');
+							$data['SelfSignLog']['level_3'] = $this->Cookie->read('level.3');							
 							$this->Kiosk->SelfSignLog->create();
 							$this->Kiosk->SelfSignLog->save($data['SelfSignLog']);
 							$data['SelfSignLog']['id'] = $this->Kiosk->SelfSignLog->getInsertId();
