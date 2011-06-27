@@ -261,10 +261,10 @@ class KiosksController extends AppController {
 					'order' => array('KioskButton.order' => 'asc')));
 				$referer = null;
 				if($button['KioskButton']['parent_id'] == null) {
-					$referer = '/kiosks/self_sign_service_selection';
+					$referer = '/kiosk/kiosks/self_sign_service_selection';
 				}
 				else {
-					$referer = '/kiosks/self_sign_service_selection/' . $this->Cookie->read('level.1');
+					$referer = '/kiosk/kiosks/self_sign_service_selection/' . $this->Cookie->read('level.1');
 				}
 			}
 		}
@@ -301,13 +301,13 @@ class KiosksController extends AppController {
 				$this->Session->setFlash(__('An error occured please try again', true), 'flash_failure');
 			}
 		}
-		$referer = '/kiosks/self_sign_service_selection/';
+		$referer = '/kiosk/kiosks/self_sign_service_selection/';
 		switch($level) {
 			case 'level2' :
-				$referer = '/kiosks/self_sign_service_selection/' . $this->Cookie->read('level.1');
+				$referer = '/kiosk/kiosks/self_sign_service_selection/' . $this->Cookie->read('level.1');
 				break;
 			case 'level3' :
-				$referer = '/kiosks/self_sign_service_selection/' . $this->Cookie->read('level.2');
+				$referer = '/kiosk/kiosks/self_sign_service_selection/' . $this->Cookie->read('level.2');
 				break;
 		}
 		$title_for_layout = 'Self Sign Kiosk';
@@ -320,13 +320,13 @@ class KiosksController extends AppController {
 		$this->SelfScanCategory->recursive = -1;
 		if(!$buttonId) {
 			$parentButtons = $this->SelfScanCategory->find('all', array('conditions' => array('SelfScanCategory.parent_id' => null)));
-			$referer = '/kiosks/self_sign_service_selection';
+			$referer = '/kiosk/kiosks/self_sign_service_selection';
 		}
 		if($buttonId) {
 			$totalChildren = $this->SelfScanCategory->childCount($buttonId);
 			if($totalChildren > 0) {
 				$this->set('childButtons', $this->SelfScanCategory->children($buttonId));
-				$referer = '/kiosks/self_scan_program_selection';
+				$referer = '/kiosk/kiosks/self_scan_program_selection';
 			}
 			else {
 				$this->data = $this->SelfScanCategory->read(null, $buttonId);
