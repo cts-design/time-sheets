@@ -9,6 +9,7 @@
 <?php echo $this->Html->script('jquery.jstree', array('inline' => false)) ?>
 <?php echo $this->Html->script('jquery.cookie', array('inline' => false)) ?>
 <?php echo $this->Html->script('kiosk_buttons/buttons.tree', array('inline' => false))?>
+
 <div id="crumbWrapper">
     <span>You are here > </span>
     <?php echo $crumb->getHtml('Kiosk Buttons', null, 'unique'); ?>
@@ -19,8 +20,10 @@
 	    <ul>
 		<li><?php echo $this->Html->link('Enable Button', '', array('id' => 'enableButton')) ?></li>
 		<li><?php echo $this->Html->link('Disable Button', '', array('id' => 'disableButton')) ?></li>
+		<li><?php echo $this->Html->link('Edit Button Logout Message', '', array('id' => 'EditMessageButton')) ?></li>
 		<li><?php echo $this->Html->link('Done Managing Buttons',
 			array('controller' => 'kiosks', 'action' => 'index', 'admin' => true)) ?></li>
+		
 	    </ul>
     </div>
     <div class="tree-wrapper">
@@ -40,4 +43,14 @@
 	    echo '<p>There are no buttons, please add some</p>'; ?>
     </div>
     <br />
+    <?php echo $form->create(null, 
+    	array('url' => '/kiosk_button/edit_logout_message', 
+    	'admin' => true,
+		'id' => 'LogoutMessageForm'))
+    ?> 
+	<?php echo $form->input('logout_message', array('type' => 'textarea')) ?>
+	<?php echo $form->input('id', array('type' => 'hidden')) ?>
+	</form>
+	
+	<div id="Notify" ><p></p></div>
 </div>
