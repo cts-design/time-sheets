@@ -141,10 +141,13 @@ class KioskButtonsController extends AppController {
 			}
 			if($this->KioskButton->save($this->data)){
 				$data['message'] = 'Logout message was updated';
-				$this->set('data', $data);
-				return $this->render(null, null, '/elements/ajaxreturn');
+
 			}
-			
+			else {
+				$data['message'] = 'An error occured, please try again.';
+			}
+			$this->set('data', $data);
+			return $this->render(null, null, '/elements/ajaxreturn');
 		}
 	}
 
