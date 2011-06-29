@@ -5,13 +5,7 @@
 	<div id="Instructions"><?php echo $instructions ?></div>
 </noscript>
 <div id="RequiredDocs">
-	
-	<strong>
-		<p class="bot-mar-10">
-			<?php echo $html->link('I am going to mail, fax, or drop off my documents.', 
-				'/program_responses/provided_docs/' . $this->params['pass'][0] .'/dropping_off_docs') ?>
-		</p>
-	</strong>	
+		
 	<?php echo $form->create('ProgramResponse', array('action' => 'required_docs/'.$this->params['pass'][0], 'type' => 'file')) ?>
 	<fieldset>
 		<legend>Upload Documents</legend>
