@@ -5,8 +5,7 @@ class ModuleAccessControlsController extends AppController {
     var $blackList = array('App', 'Locations', 'ModuleAccessControls', 'Permissions', 'ReleaseNotes', 'Roles', 'Users');
 
 	function admin_index() {
-        $title_for_layout = 'Module Access Control';
-		$this->set(compact('modules', 'title_for_layout'));
+		$this->set('title_for_layout', 'Module Access Control');
     }
 
     function admin_read() {
