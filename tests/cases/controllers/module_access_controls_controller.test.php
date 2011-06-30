@@ -25,5 +25,46 @@ class ModuleAccessControlsControllerTestCase extends AtlasTestCase {
 		unset($this->ModuleAccessControls);
 		ClassRegistry::flush();
 	}
+
+    function testAdminUpdate() {
+        // test turning on pages
+        $formData = array(
+            'module' => 'Pages',
+            'state' => 0
+        );
+
+        $result = $this->testAction('/admin/module_access_controls/update', array('form_data' => $formData));
+        $this->assertTrue($result['data']['success']);
+
+        $check = $this->ModuleAccessControls->ModuleAccessControl->findByName('Pages');
+        $this->assertEqual($check['ModuleAccessControl']['permission'], 0);
+
+        // reset pages to disabled
+        $formData = array(
+            'module' => 'Pages',
+            'state' => 1
+        );
+
+        $result = $this->testAction('/admin/module_access_controls/update', array('form_data' => $formData));
+        $this->assertTrue($result['data']['success']);
+
+        $check = $this->ModuleAccessControls->ModuleAccessControl->findByName('Pages');
+        $this->assertEqual($check['ModuleAccessControl']['permission'], 1);
+
+        // test that the Programs module doesn't exist
+        $module = $this->ModuleAccessControls->ModuleAccessControl->findByName('Programs');
+        $this->assertFalse($module);
+
+        // test turning off programs
+        $formData = array(
+            'module' => 'Programs',
+            'state' => 1
+        );
+
+        $result = $this->testAction('/admin/module_access_controls/update', array('form_data' => $formData));
+        $this->assertTrue($result['data']['success']);
+        $check = $this->ModuleAccessControls->ModuleAccessControl->findByName('Programs');
+        $this->assertEqual($check['ModuleAccessControl']['permission'], 1);
+    }
 }
 ?>
