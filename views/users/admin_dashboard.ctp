@@ -59,7 +59,7 @@
 				<li rel="settings_1"><?php echo $html->link('FTP Document Scanners', array('controller' => 'ftp_document_scanners', 'action' => 'index')) ?></li>
 				<li rel="settings_1"><?php echo $html->link('Document Queue Categories', array('controller' => 'document_queue_categories', 'action' => 'index')) ?></li>
 				<li rel="settings_1"><?php echo $html->link('Self Scan Categories', array('controller' => 'self_scan_categories', 'action' => 'index')) ?></li>
-                <?php if ($this->Session->read('Auth.User.role_id') == 3): ?>
+                <?php if ($this->Session->read('Auth.User.role_id') == 2): ?>
 				<li rel="settings_1"><?php echo $html->link('Module Access Control', array('controller' => 'module_access_controls', 'action' => 'index')) ?></li>
                 <?php endif; ?>
                 </ul>
