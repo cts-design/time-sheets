@@ -143,8 +143,9 @@ class KiosksController extends AppController {
 		$masterButtonTagList = $this->MasterKioskButton->find('list', array(
 			'fields' => array('MasterKioskButton.id', 'MasterKioskButton.tag'), 
 			'conditions' => array('MasterKioskButton.deleted' => 0)));
-		if(!empty($buttonId)) {
-			$message = $this->Kiosk->KioskButton->getLogoutMessage($buttonId, null);
+			
+		if($buttonId) {
+			$message = $this->Kiosk->KioskButton->getLogoutMessage($buttonId, null, $kiosk['Kiosk']['location_id']);
 			if($message) {
 				$this->Cookie->write('logout_message', $message);
 			}			
