@@ -17,6 +17,7 @@ class KiosksController extends AppController {
 			$this->Security->validatePost = false;
 		}
 		$this->Cookie->name = 'self_sign';
+		$this->Cookie->domain = Configure::read('domain'); 
 	}
 
     function admin_index() {
