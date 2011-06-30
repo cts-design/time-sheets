@@ -11,33 +11,19 @@ class TestModuleAccessControlsController extends ModuleAccessControlsController 
 }
 
 class ModuleAccessControlsControllerTestCase extends AtlasTestCase {
-	var $fixtures = array('app.module_access_control');
-
 	function startTest() {
 		$this->ModuleAccessControls =& new TestModuleAccessControlsController();
 		$this->ModuleAccessControls->constructClasses();
+        $this->ModuleAccessControls->params['controller'] = 'module_access_controls';
+        $this->ModuleAccessControls->params['pass'] = array();
+        $this->ModuleAccessControls->params['named'] = array();
+        $this->testController = $this->ModuleAccessControls;
 	}
 
 	function endTest() {
+        $this->ModuleAccessControls->Session->destroy();
 		unset($this->ModuleAccessControls);
 		ClassRegistry::flush();
 	}
-
-	function testAdminIndex() {
-
-	}
-
-	function testAdminAdd() {
-
-	}
-
-	function testAdminEdit() {
-
-	}
-
-	function testAdminDelete() {
-
-	}
-
 }
 ?>
