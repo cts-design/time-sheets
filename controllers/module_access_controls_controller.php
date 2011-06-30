@@ -60,6 +60,8 @@ class ModuleAccessControlsController extends AppController {
 
             if ($this->ModuleAccessControl->save($this->data)) {
                 $data['success'] = true;
+                $this->Transaction->createUserTransaction('Module Access Control', null, null,
+                    "Disabled {$params['module']} module");
             } else {
                 $data['success'] = false;
             }
@@ -73,6 +75,9 @@ class ModuleAccessControlsController extends AppController {
 
             if ($this->ModuleAccessControl->save($this->data)) {
                 $data['success'] = true;
+                $action = ($params['state'] == 1) ? 'Disabled' : 'Enabled';
+                $this->Transaction->createUserTransaction('Module Access Control', null, null,
+                    "{$action} {$params['module']} module");
             } else {
                 $data['success'] = false;
             }
