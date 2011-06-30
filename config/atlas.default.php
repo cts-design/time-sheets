@@ -32,7 +32,7 @@ $config['System']['email'] = 'noreply@development.ctsfla.com';
 $config['PrePop']['email'] = '@development.ctsfla.com';
 
 // Registration SSN requirement (options are 'full' or 'last4')
-$config['Registration']['ssn'] = 'last4';
+$config['Registration']['ssn'] = 'full';
 
 // Document Storage location
 $config['Document']['storage']['path'] = '/storage/';
