@@ -105,7 +105,8 @@ class PermissionsController extends AppController {
 		if($model == 'User') {
 		   $this->loadModel('User');
 		   $user = $this->User->findById($id);
-		   $details = 'Edited permissions for admin ' . $user['User']['username'];
+		   $details = 'Edited permissions for administrator ' . $user['User']['lastname'] . ', ' . 
+		   	$user['User']['firstname'];
 		}
 		elseif($model == 'Role') {
 		    $this->loadModel('Role');
