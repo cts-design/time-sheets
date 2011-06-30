@@ -37,7 +37,7 @@ class User extends AppModel {
     );
     var $belongsTo = array('Role', 'Location');
 	
-    var $actsAs = array('AtlasAcl' => 'requester', 'Multivalidatable');
+    var $actsAs = array('AtlasAcl' => 'requester', 'Multivalidatable', 'Disableable');
 	
     var $validate = array(
 		'firstname' => array(
@@ -828,8 +828,10 @@ class User extends AppModel {
     function afterSave($created) {
 		if (!$created) {
 		    $parent = $this->parentNode();
-		    $parent = $this->node($parent);
-			if($parent[0]['Aro']['id'] != 1) {
+			if($parent) {
+				$parent = $this->node($parent);
+			}	    
+			if(isset($parent[0]) && $parent[0]['Aro']['id'] != 1) {
 			    $node = $this->node();
 			    $aro = $node[0];
 			    $aro['Aro']['parent_id'] = $parent[0]['Aro']['id'];
