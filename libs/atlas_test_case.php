@@ -94,13 +94,19 @@ class AtlasTestCase extends CakeTestCase {
         $default = array(
             'data' => array(),
             'method' => 'post',
-            'session' => true
+            'session' => true,
+            'form_data' => null
         );
         $options = array_merge($default, $options);
  
         // set up the controller based on the url
         $urlParams = Router::parse($url);
 		$action = $urlParams['action'];
+
+        if ($options['form_data']) {
+            $urlParams['form'] = $options['form_data'];
+        }
+
 		$prefix = null;
 		$urlParams['url']['url'] = $url;
         if (strtolower($options['method']) == 'get') {
@@ -141,14 +147,14 @@ class AtlasTestCase extends CakeTestCase {
         }
 		
         $Controller->beforeFilter();
-		
+
         $Controller->Component->startup($Controller);
  
         call_user_func_array(array(&$Controller, $action), $urlParams['pass']);
  
         $Controller->beforeRender();
         $Controller->Component->triggerCallback('beforeRender', $Controller);
- 
+
         return $Controller->viewVars;
     }
 
