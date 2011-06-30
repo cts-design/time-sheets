@@ -124,7 +124,6 @@ class KiosksController extends AppController {
 			$kiosk = $this->Kiosk->find('first', array(
 				'conditions' => array(
 					'Kiosk.location_recognition_name' => $oneStopLocation, 'Kiosk.deleted' => 0)));
-
 			$this->Cookie->write('location', $kiosk['Kiosk']['location_id']);
 			$this->Cookie->write('kioskId', $kiosk['Kiosk']['id']);
 			$this->Cookie->write('logout_message', $kiosk['Kiosk']['logout_message']);
@@ -145,7 +144,7 @@ class KiosksController extends AppController {
 			'conditions' => array('MasterKioskButton.deleted' => 0)));
 			
 		if($buttonId) {
-			$message = $this->Kiosk->KioskButton->getLogoutMessage($buttonId, null, $kiosk['Kiosk']['location_id']);
+			$message = $this->Kiosk->KioskButton->getLogoutMessage($buttonId, null, $this->Cookie->read('kioskId'));
 			if($message) {
 				$this->Cookie->write('logout_message', $message);
 			}			
