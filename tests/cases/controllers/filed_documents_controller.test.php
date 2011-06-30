@@ -30,13 +30,21 @@ class FiledDocumentsControllerTestCase extends CakeTestCase {
             'navigation',
             'page',
             'press_release',
+            'program',
+            'program_email',
+            'program_field',
+            'program_instruction',
+            'program_paper_form',
+            'program_response',
+            'program_response_doc',
             'queued_document',
             'role',
             'self_scan_category',
             'self_sign_log',
             'self_sign_log_archive',
             'user',
-            'user_transaction'
+            'user_transaction',
+            'watched_filing_cat'
         );
 
 	function startTest() {
@@ -60,7 +68,7 @@ class FiledDocumentsControllerTestCase extends CakeTestCase {
 	    ));
 		$result = $this->testAction('/admin/filed_documents/index', array('return' => 'vars'));
 		$result = Set::extract('/filedDocuments/.[1]', $result);		
-		$this->assertEqual($result[0]['FiledDocument']['id'], 111);
+		$this->assertEqual($result[0]['FiledDocument']['id'], 112);
 	}
 	
 	function testAdminIndexWithId() {
@@ -251,7 +259,7 @@ class FiledDocumentsControllerTestCase extends CakeTestCase {
 		$result = json_decode($this->testAction('/admin/filed_documents/view_all_docs'), true);
 		unset($_SERVER['HTTP_X_REQUESTED_WITH']);			
 		$this->assertEqual($result['docs'][0]['id'], 1);
-		$this->assertEqual($result['totalCount'], 2);		    			
+		$this->assertEqual($result['totalCount'], 3);		    			
 	}
 	
 	function testAdminViewAllDocsWithFilters(){
@@ -268,7 +276,7 @@ class FiledDocumentsControllerTestCase extends CakeTestCase {
 		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
 		unset($this->__savedGetData);	
 		$this->assertEqual($result['docs'][0]['id'], 111);
-		$this->assertEqual($result['totalCount'], 1);		    			
+		$this->assertEqual($result['totalCount'], 2);		    			
 	}
 
 	function testAdminViewAllDocsSorting(){
@@ -284,8 +292,8 @@ class FiledDocumentsControllerTestCase extends CakeTestCase {
 		$result = json_decode($this->testAction('/admin/filed_documents/view_all_docs'), true);
 		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
 		unset($this->__savedGetData);
-		$this->assertEqual($result['docs'][0]['id'], 111);
-		$this->assertEqual($result['totalCount'], 2);		    			
+		$this->assertEqual($result['docs'][0]['id'], 112);
+		$this->assertEqual($result['totalCount'], 3);		    			
 	}
 	
 	function testAdminViewAllDocsNoResults(){
@@ -296,7 +304,7 @@ class FiledDocumentsControllerTestCase extends CakeTestCase {
 	        'location_id' => 1
 	    ));
 		$this->__savedGetData['filters'] = 	
-			'{"fromDate":"03/14/2011","toDate":"03/14/2011","searchType":"","cusSearch":"","cat_1":"2","cat_2":"","admin_id":"","filed_location_id":""}';
+			'{"fromDate":"03/14/2011","toDate":"03/14/2011","searchType":"","cusSearch":"","cat_1":"2","cat_2":"","cat_3":"","admin_id":"","filed_location_id":""}';
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
 		$result = json_decode($this->testAction('/admin/filed_documents/view_all_docs'), true);
 		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
@@ -348,6 +356,32 @@ class FiledDocumentsControllerTestCase extends CakeTestCase {
         $this->FiledDocuments->admin_report();	
 		$this->assertEqual($this->FiledDocuments->Session->read('Message.flash.element'), 'flash_failure');			
 	}	
+
+    function testAdminGetAllAdmins() {
+	    $this->FiledDocuments->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$result = json_decode($this->testAction('/admin/filed_documents/get_all_admins'), true);
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+        $expected = array(
+            'admins' => array(
+                array(
+                    'id' => 20,
+                    'name' => 'Admin, Sally'
+                ),
+                array(
+                    'id' => 21,
+                    'name' => 'Admin, Another'
+                )
+            ),
+            'success' => true
+        );
+		$this->assertEqual($result, $expected);
+    }
 
 }
 ?>
