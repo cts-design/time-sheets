@@ -24,6 +24,16 @@ class FiledDocumentsController extends AppController {
 		'Other' => 'Other'
 	);
 
+    function beforeFilter() {
+        parent::beforeFilter();
+
+        if ($this->Acl->check(array('model' => 'User',
+                                    'foreign_key' => $this->Auth->user('id')),
+                                    'FiledDocuments/admin_view_all_docs', '*')) {
+            $this->Auth->allow('admin_get_all_admins');
+        }
+    }
+
     function admin_index($userId=null) {
 		$bool = false;
 		$actButton = false;
