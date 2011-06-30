@@ -358,7 +358,29 @@ class FiledDocumentsControllerTestCase extends CakeTestCase {
 	}	
 
     function testAdminGetAllAdmins() {
-        $this->assertTrue(true);
+	    $this->FiledDocuments->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$result = json_decode($this->testAction('/admin/filed_documents/get_all_admins'), true);
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+        $expected = array(
+            'admins' => array(
+                array(
+                    'id' => 20,
+                    'name' => 'Admin, Sally'
+                ),
+                array(
+                    'id' => 21,
+                    'name' => 'Admin, Another'
+                )
+            ),
+            'success' => true
+        );
+		$this->assertEqual($result, $expected);
     }
 
 }
