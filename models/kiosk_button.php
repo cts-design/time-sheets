@@ -26,18 +26,21 @@ class KioskButton extends AppModel {
 		)
     );
 	
-	function getLogoutMessage($id=null, $buttonId=null) {
+	function getLogoutMessage($id=null, $buttonId=null, $kioskId) {
 		if(!$buttonId && !$id){
 			return false;
 		}
 		if($buttonId) {
-			$button = $this->find('first', array('conditions' => array('KioskButton.button_id' => $buttonId)));	
+			$button = $this->find('first', array('conditions' => array(
+				'KioskButton.button_id' => $buttonId,
+				'KioskButton.kiosk_id' => $kioskId)));	
 		}
 		if($id) {
-			$button = $this->find('first', array('conditions' => array('KioskButton.id' => $id)));
-		}
-		
-		$message = $button['KioskButton']['logout_message'];
+			$button = $this->find('first', array('conditions' => array(
+				'KioskButton.id' => $id,
+				'KioskButton.kiosk_id' => $kioskId)));
+		}	
+		$message = $button['KioskButton']['logout_message'];	
 		if($message) {
 			return $message;
 		}
