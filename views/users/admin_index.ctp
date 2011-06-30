@@ -15,11 +15,22 @@
     <div class="actions ui-widget-header">
 	    <ul>
 		<li><?php echo $this->Html->link(__('New Customer', true), array('action' => 'add')); ?></li>
+	    <?php if(empty($this->params['pass'][0])) : ?>
+	    	<li><?php echo $this->Html->link(__('Show Disabled', true), array('action' => 'index', 'admin' => true, 'include_disabled')); ?></li>
+		<?php else : ?>
+			<li><?php echo $this->Html->link(__('Hide Disabled', true), array('action' => 'index', 'admin' => true)); ?></li>
+		<?php endif ?>		
 	    </ul>
     </div>
     <ul class="search">
 	<li>
-	    <?php echo $this->Form->create()?>
+		<?php if(empty($this->params['pass'][0])) {
+			echo $this->Form->create();
+		} 
+			else {
+				echo $this->Form->create(array('url' => '/admin/users/index/' . $this->params['pass'][0]));
+			}
+		?>
 	    <?php echo $this->Form->input('search_by', array(
 			'type' => 'select',
 			'options' => array('lastname' => 'Last Name', 'firstname' => 'First Name', 'ssn' => 'SSN')))
@@ -50,14 +61,21 @@
     	    <td><?php echo $user['User']['firstname']; ?>&nbsp;</td>
     	    <td><?php echo $user['User']['lastname']; ?>&nbsp;</td>
     	    <td><?php echo "*****" . substr($user['User']['ssn'], -4); ?>&nbsp;</td>
-	    <td><?php echo $this->Html->link($user['User']['email'], 'mailto:'.$user['User']['email']); ?>&nbsp;</td>
-	    <td class="actions">
-		<?php echo $this->Html->link(__('Docs', true), array('controller' => 'filed_documents',  'action' => 'index', $user['User']['id']), array('class' => 'docs')); ?>
-		<?php echo $this->Html->link(__('Activity', true), array('controller' => 'user_transactions',  'action' => 'index', $user['User']['id']), array('class' => 'activity')); ?>
-		<?php echo $this->Html->link(__('Upload', true), array('controller' => 'filed_documents',  'action' => 'upload_document', $user['User']['id']), array('class' => 'docs')); ?>
-		<?php echo $this->Html->link(__('Scan', true), array('controller' => 'filed_documents',  'action' => 'scan_document', $user['User']['id']), array('class' => 'docs')); ?>
-	    <?php echo $this->Html->link(__('Edit', true), array('action' => 'edit', $user['User']['id']), array('class' => 'edit')); ?>
-    	    </td>
+	    	<td><?php echo $this->Html->link($user['User']['email'], 'mailto:'.$user['User']['email']); ?>&nbsp;</td>
+	    	<td class="actions">
+				<?php echo $this->Html->link(__('Docs', true), array('controller' => 'filed_documents',  'action' => 'index', $user['User']['id']), array('class' => 'docs')); ?>
+				<?php echo $this->Html->link(__('Activity', true), array('controller' => 'user_transactions',  'action' => 'index', $user['User']['id']), array('class' => 'activity')); ?>
+				<?php if($user['User']['disabled'] == 0) :?>
+					<?php echo $this->Html->link(__('Upload', true), array('controller' => 'filed_documents',  'action' => 'upload_document', $user['User']['id']), array('class' => 'docs')); ?>
+					<?php echo $this->Html->link(__('Scan', true), array('controller' => 'filed_documents',  'action' => 'scan_document', $user['User']['id']), array('class' => 'docs')); ?>
+			    <?php endif ?>
+			    <?php echo $this->Html->link(__('Edit', true), array('action' => 'edit', $user['User']['id']), array('class' => 'edit')); ?>
+			   	<?php if($user['User']['disabled'] == 0) :?>
+		    		<?php echo $this->Html->link(__('Disable', true), array('controller' => 'users',  'action' => 'toggle_disabled', $user['User']['id'], 1, 'Customer')); ?>
+		    	<?php else : ?>
+		    		<?php echo $this->Html->link(__('Enable', true), array('controller' => 'users',  'action' => 'toggle_disabled', $user['User']['id'], 0, 'Customer')); ?> 
+		    	<?php endif ?>
+    		</td>
     	</tr>
 	<?php endforeach; ?>
     </table>
