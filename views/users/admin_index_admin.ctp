@@ -15,11 +15,22 @@
     <div class="actions ui-widget-header">
 	<ul>
 	    <li><?php echo $this->Html->link(__('New Admin', true), array('action' => 'add_admin', 'admin' => true)); ?></li>
+	    <?php if(empty($this->params['pass'][0])) : ?>
+	    	<li><?php echo $this->Html->link(__('Show Disabled', true), array('action' => 'index_admin', 'admin' => true, 'include_disabled')); ?></li>
+		<?php else : ?>
+			<li><?php echo $this->Html->link(__('Hide Disabled', true), array('action' => 'index_admin', 'admin' => true)); ?></li>
+		<?php endif ?>
 	</ul>
     </div>
     <ul class="search">
 	<li>
-	    <?php echo $this->Form->create() ?>
+		<?php if(empty($this->params['pass'][0])) {
+			echo $this->Form->create();
+		} 
+			else {
+				echo $this->Form->create(array('url' => '/admin/users/index_admin/' . $this->params['pass'][0]));
+			}
+		?>
 	    <?php
 	    echo $this->Form->input('search_by', array(
 		'type' => 'select',
@@ -62,12 +73,19 @@
 	    <td class="actions">
 		<?php echo $this->Html->link(__('Docs', true), array('controller' => 'filed_documents',  'action' => 'index', $user['User']['id']), array('class' => 'docs')); ?>
 		<?php echo $this->Html->link(__('Activity', true), array('controller' => 'user_transactions',  'action' => 'index', $user['User']['id']), array('class' => 'activity')); ?>
-		<?php echo $this->Html->link(__('Upload', true), array('controller' => 'filed_documents',  'action' => 'upload_document', $user['User']['id']), array('class' => 'docs')); ?>
-		<?php echo $this->Html->link(__('Scan', true), array('controller' => 'filed_documents',  'action' => 'scan_document', $user['User']['id']), array('class' => 'docs')); ?>
-		<?php if($user['User']['role_id'] > 3 ) { ?>
-		    <?php echo $this->Html->link(__('Permissions', true), array('controller' => 'permissions', 'action' => 'index', $user['User']['id'], 'User'), array('class'=>'permissions')); ?>
-		<?php } ?>
-		<?php echo $this->Html->link(__('Edit', true), array('action' => 'edit_admin', $user['User']['id'], 'admin' => true), array('class' => 'edit')); ?>
+		<?php if($user['User']['disabled'] == 0) :?>
+			<?php echo $this->Html->link(__('Upload', true), array('controller' => 'filed_documents',  'action' => 'upload_document', $user['User']['id']), array('class' => 'docs')); ?>
+			<?php echo $this->Html->link(__('Scan', true), array('controller' => 'filed_documents',  'action' => 'scan_document', $user['User']['id']), array('class' => 'docs')); ?>
+			<?php if($user['User']['role_id'] > 3 ) : ?>
+			    <?php echo $this->Html->link(__('Permissions', true), array('controller' => 'permissions', 'action' => 'index', $user['User']['id'], 'User'), array('class'=>'permissions')); ?>
+			<?php endif ?>
+	    <?php endif ?>
+	    <?php echo $this->Html->link(__('Edit', true), array('action' => 'edit_admin', $user['User']['id'], 'admin' => true), array('class' => 'edit')); ?>
+    	<?php if($user['User']['disabled'] == 0) :?>
+    		<?php echo $this->Html->link(__('Disable', true), array('controller' => 'users',  'action' => 'toggle_disabled', $user['User']['id'], 1, 'Administrator')); ?>
+    	<?php else : ?>
+    		<?php echo $this->Html->link(__('Enable', true), array('controller' => 'users',  'action' => 'toggle_disabled', $user['User']['id'], 0, 'Administrator')); ?> 
+    	<?php endif ?>
 	    </td>
 	</tr>
 	<?php endforeach; ?>
