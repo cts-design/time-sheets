@@ -54,6 +54,10 @@
 				    'type' => 'checkbox',
 				    'label' => 'Edit',
 				    'checked' => (isset($controllers['Users']['admin_edit']) ? $controllers['Users']['admin_edit'] : '' )));?>
+				<?php echo $this->Form->input('Users.admin_toggle_disabled', array(
+				    'type' => 'checkbox',
+				    'label' => 'Toggle Disabled',
+				    'checked' => (isset($controllers['Users']['admin_toggle_disabled']) ? $controllers['Users']['admin_toggle_disabled'] : '' )));?>				    
 			    </fieldset>
 			    <?php if (!in_array('UserTransactions', $disabledModules)): ?>
 			    <fieldset class="left right-mar-10">
