@@ -24,11 +24,12 @@ class UsersController extends AppController {
 		}				
 		if(isset($this->data['User']['username'])) {
 		    if($this->params['action'] == 'admin_login' || $this->params['action'] == 'self_sign_login') {
+				$this->User->Behaviors->disable('Disableable');	
 				$user = $this->User->find('first', array('conditions' => array(
 					'username' => $this->data['User']['username'],
 					'password' => Security::hash($this->data['User']['password'], null, true))));			
-				if($user['User']['status'] == 1 || $user['User']['deleted'] == 1) {
-				    $this->Session->setFlash(__('Account is inactive or has been deleted', true), 'flash_failure');
+				if($user['User']['disabled'] == 1) {
+				    $this->Session->setFlash(__('This account has been disabled.', true), 'flash_failure');
 				    $this->redirect($this->referer());
 				}
 	    	}
@@ -89,15 +90,16 @@ class UsersController extends AppController {
 		}			
     }
 
-    function admin_index() {
+    function admin_index($disabled=false) {
 		$this->set('title_for_layout', 'Customers');
+		if($disabled) {
+			$this->User->Behaviors->disable('Disableable');
+		}		
 		$this->User->recursive = 0;
 		if(! empty($this->data) && $this->data['User']['search_term'] != '' ) {
 		    $this->paginate = array(
 			'conditions' =>  array(
 			    'User.role_id' => 1,
-			    'User.status !=' => 1,
-			    'User.deleted !=' => 1,
 			    $this->data['User']['search_by'].' LIKE' => '%'.$this->data['User']['search_term'].'%' ),
 			'limit' => Configure::read('Pagination.customer.limit'),
 			'order' => array('User.lastname' => 'asc')
@@ -110,8 +112,6 @@ class UsersController extends AppController {
 		    $this->paginate = array(
 			'conditions' => array(
 			    'User.role_id' => 1,
-			    'User.status !=' => 1,
-			    'User.deleted !=' => 1,
 			    $this->passedArgs['search_by'].' LIKE' => '%'.$this->passedArgs['search_term'].'%' ),
 			'limit' => Configure::read('Pagination.customer.limit'),
 			'order' => array('User.lastname' => 'asc')
@@ -122,8 +122,7 @@ class UsersController extends AppController {
 		    $this->paginate = array(
 			'conditions' => array(
 			    'User.role_id' => 1,
-			    'User.status !=' => 1,
-			    'User.deleted !=' => 1),
+			 ),
 			 'limit' => Configure::read('Pagination.customer.limit'),
 			 'order' => array('User.lastname' => 'asc')
 		    );
@@ -132,13 +131,14 @@ class UsersController extends AppController {
     }
 
     function admin_add() {
+    	$this->User->Behaviors->disable('Disableable');
 		$this->set('title_for_layout', 'Add Customer');
 		if (!empty($this->data)) {
 		    $this->User->create();
 		    if ($this->User->save($this->data)) {
 				$this->Transaction->createUserTransaction('Customer', 
-					null, null, 'Added customer '. $this->data['User']['firstname'] . 
-					' ' . $this->data['User']['lastname'] . ' - ' . substr($this->data['User']['ssn'], -4));
+					null, null, 'Added customer '. $this->data['User']['lastname'] . 
+					', ' . $this->data['User']['firstname'] . ' - ' . substr($this->data['User']['ssn'], -4));
 				$this->Session->setFlash(__('The customer has been saved', true), 'flash_success');
 				$this->redirect(array('action' => 'index'));
 		    }
@@ -155,6 +155,7 @@ class UsersController extends AppController {
     }
 
     function admin_edit($id = null) {
+    	$this->User->Behaviors->disable('Disableable');
 		$this->set('title_for_layout', 'Edit Customer');
 		if (!$id && empty($this->data)) {
 		    $this->Session->setFlash(__('Invalid customer', true), 'flash_failure');
@@ -163,8 +164,8 @@ class UsersController extends AppController {
 		if (!empty($this->data)) {
 		    if ($this->User->save($this->data)) {
 				$this->Transaction->createUserTransaction('Customer',
-					null, null, 'Edited customer '. $this->data['User']['firstname'] . 
-					' ' . $this->data['User']['lastname'] . ' - ' . substr($this->data['User']['ssn'],-4));
+					null, null, 'Edited customer '. $this->data['User']['lastname'] . 
+					', ' . $this->data['User']['firstname'] . ' - ' . substr($this->data['User']['ssn'],-4));
 				$this->Session->setFlash(__('The customer has been saved', true), 'flash_success');
 				$this->redirect(array('action' => 'index'));
 		    } 
@@ -251,7 +252,8 @@ class UsersController extends AppController {
     }
 	
     function registration($type=null, $lastname=null) {
-		if (!empty($this->data)) {	
+		if (!empty($this->data)) {
+			$this->User->Behaviors->disable('Disableable');	
 		    $this->User->create();
 			if(Configure::read('Registration.ssn') == 'last4') {
 				if($this->data['User']['registration'] == 'child_website') {
@@ -313,7 +315,8 @@ class UsersController extends AppController {
     }
 
     function kiosk_mini_registration($lastname=null) {
-		if (!empty($this->data)) {	
+		if (!empty($this->data)) {
+			$this->User->Behaviors->disable('Disableable');	
 		    $this->User->create();
 			$this->User->setValidation('miniRegistration');
 		    if ($this->User->save($this->data)) {
@@ -367,8 +370,11 @@ class UsersController extends AppController {
 		$this->redirect( array('action' => 'login', 'admin' => true));
 	}
 
-	function admin_index_admin() {
+	function admin_index_admin($disabled=false) {
 		$this->User->recursive = 0;
+		if($disabled) {
+			$this->User->Behaviors->disable('Disableable');
+		}		
 		$perms = $this->Acl->Aro->find('all', array('conditions' => array('Aro.model' => 'User')));
 		foreach($perms as $k => $v) {
 			if(!empty($v['Aco'])) {
@@ -382,11 +388,10 @@ class UsersController extends AppController {
 			$filteredPerms = array();
 
 		if(! empty($this->data) && $this->data['User']['search_term'] != '') {
+
 			$this->paginate = array(
 				'conditions' => array(
 					'User.role_id >' => 2, 
-					'User.status !=' => 1, 
-					'User.deleted !=' => 1, 
 					$this->data['User']['search_by'] . ' LIKE' => '%' . $this->data['User']['search_term'] . '%'), 
 				'limit' => Configure::read('Pagination.admin.limit'), 'order' => array('User.lastname' => 'asc'));
 			if($this->Auth->user('role_id') == 2) {
@@ -401,8 +406,6 @@ class UsersController extends AppController {
 			$this->paginate = array(
 				'conditions' => array(
 					'User.role_id >' => 2, 
-					'User.status !=' => 1, 
-					'User.deleted !=' => 1, 
 					$this->passedArgs['search_by'] . ' LIKE' => '%' . $this->passedArgs['search_term'] . '%'), 
 				'limit' => Configure::read('Pagination.admin.limit'), 'order' => array('User.lastname' => 'asc'));
 			if($this->Auth->user('role_id') == 2) {
@@ -414,9 +417,8 @@ class UsersController extends AppController {
 		else {
 			$this->paginate = array(
 				'conditions' => array(
-					'User.role_id >' => 2, 
-					'User.status !=' => 1, 
-					'User.deleted !=' => 1), 
+					'User.role_id >' => 2
+				), 
 				'limit' => Configure::read('Pagination.admin.limit'), 'order' => array('User.lastname' => 'asc'));
 			if($this->Auth->user('role_id') == 2) {
 				$this->paginate['conditions']['User.role_id >'] = 1;
@@ -428,6 +430,7 @@ class UsersController extends AppController {
 
     function admin_add_admin() {
 		$this->set('title_for_layout', 'Add Administrator');
+		$this->User->Behaviors->disable('Disableable');
 		if (!empty($this->data)) {
 		    $this->User->create();
 			$this->User->setValidation('admin');
@@ -445,7 +448,7 @@ class UsersController extends AppController {
 			$this->Email->subject = 'Welcome to Atlas.';
 			$this->Email->send($message);
 			$this->Transaction->createUserTransaction('Administrator',
-				null, null, 'Added administrator '. $this->data['User']['firstname'] . ' ' . $this->data['User']['lastname'] );
+				null, null, 'Added administrator '. $this->data['User']['lastname'] . ', ' . $this->data['User']['firstname'] );
 			$this->Session->setFlash(__('The admin has been saved', true), 'flash_success');
 			$this->redirect(array('action' => 'index_admin'));
 		    } 
@@ -467,6 +470,7 @@ class UsersController extends AppController {
     }
 
     function admin_edit_admin($id = null) {
+    	$this->User->Behaviors->disable('Disableable');
 		$this->set('title_for_layout', 'Edit Administrator');
 		if (!$id && empty($this->data)) {
 		    $this->Session->setFlash(__('Invalid admin', true), 'flash_failure');
@@ -487,7 +491,7 @@ class UsersController extends AppController {
 			$this->User->setValidation('admin');
 		    if ($this->User->save($this->data)) {
 				$this->Transaction->createUserTransaction('Administrator', null, null,
-					'Edited administrator '. $this->data['User']['firstname'] . ' ' . $this->data['User']['lastname']);
+					'Edited administrator '. $this->data['User']['lastname'] . ', ' . $this->data['User']['firstname']);
 				$this->Session->setFlash(__('The admin has been saved', true), 'flash_success');
 				$this->redirect(array('action' => 'index_admin'));
 		    } 
@@ -689,6 +693,40 @@ class UsersController extends AppController {
 				$this->set('data', $data);
 				$this->render(null, null, '/elements/ajaxreturn');
 			}
+		}
+	}
+	
+	function admin_toggle_disabled($id=null, $disabled, $userType) {	
+		if(!$id) {
+			$this->Session->setFlash(__('Invalid user id', true), 'flash_failure');
+			$this->redirect($this->referer());
+		}
+		$this->User->Behaviors->disable('Disableable');
+		$user = $this->User->read(null, $id);
+		$this->User->Behaviors->enable('Disableable');
+		if($userType == 'Customer') {
+			$user = $user['User']['lastname'] . ', ' . $user['User']['firstname'] . ' - '. 
+			substr($user['User']['ssn'], -4);	
+		}
+		else {
+			$user = $user['User']['lastname'] . ', ' . $user['User']['firstname'];
+		}
+		if($this->User->toggleDisabled($id, $disabled)) {
+			if($disabled == 1){
+				$this->Session->setFlash(__('User disabled successfully.', true), 'flash_success');
+				$this->Transaction->createUserTransaction($userType, null, null,
+					'Disabled '. strtolower($userType) . ' ' . $user);				
+			}
+			else if($disabled == 0) {
+				$this->Session->setFlash(__('User enabled successfully.', true), 'flash_success');
+				$this->Transaction->createUserTransaction($userType, null, null,
+					'Enabled '. strtolower($userType) . ' ' . $user);	
+			}
+			$this->redirect($this->referer());
+		}
+		else {
+			$this->Session->setFlash(__('An error occured.', true), 'flash_failure');
+			$this->redirect($this->referer());
 		}
 	}
 
