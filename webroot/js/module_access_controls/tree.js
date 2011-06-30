@@ -42,6 +42,9 @@ moduleAccessControl = {
               params: {
                 module: node.text,
                 state: 0
+              },
+              failure: function(response, opts) {
+                Ext.Msg.alert('Error', 'Request failed with status: ' + response.status);
               }
             });
           } else {
@@ -52,7 +55,11 @@ moduleAccessControl = {
               params: {
                 module: node.text,
                 state: 1
+              },
+              failure: function(response, opts) {
+                Ext.Msg.alert('Error', 'Request failed with status: ' + response.status);
               }
+
             });
           }
         }
