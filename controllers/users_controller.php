@@ -23,7 +23,7 @@ class UsersController extends AppController {
 			}		
 		}				
 		if(isset($this->data['User']['username'])) {
-		    if($this->params['action'] == 'admin_login' || $this->params['action'] == 'self_sign_login') {
+		    if($this->params['action'] == 'admin_login' || $this->params['action'] == 'kiosk_self_sign_login') {
 				$this->User->Behaviors->disable('Disableable');	
 				$user = $this->User->find('first', array('conditions' => array(
 					'username' => $this->data['User']['username'],
