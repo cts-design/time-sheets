@@ -67,21 +67,21 @@ $(document).ready(function(){
 	});
     });
     $('#UserFirstname').autocomplete({
-	source: '/admin/filed_documents/auto_complete_first',
+	source: '/admin/filed_documents/auto_complete_first_ajax',
 	minLength: 2,
 	close: function(){
 	    populateUserInfo($('#UserFirstname').val());
 	}
     });
     $('#UserLastname').autocomplete({
-	source: '/admin/filed_documents/auto_complete_last',
+	source: '/admin/filed_documents/auto_complete_last_ajax',
 	minLength: 2,
 	close: function(){
 	    populateUserInfo($('#UserLastname').val());
        }
     });
     $('#UserSsn').autocomplete({
-	source: '/admin/filed_documents/auto_complete_ssn',
+	source: '/admin/filed_documents/auto_complete_ssn_ajax',
 	minLength: 2,
 	close: function(){
 	    populateUserInfo($('#UserSsn').val());
