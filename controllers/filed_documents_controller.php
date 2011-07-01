@@ -24,15 +24,15 @@ class FiledDocumentsController extends AppController {
 		'Other' => 'Other'
 	);
 	
-	function beforeFilter() {
-		parent::beforeFilter();
-		if($this->Acl->check(array(
-			'model' => 'User', 
-			'foreign_key' => $this->Auth->user('id')), 
-			'FiledDocuments/admin_view_all_docs', '*')){
-			$this->Auth->allow('admin_report');
-		}
-	}
+    function beforeFilter() {
+        parent::beforeFilter();
+
+        if ($this->Acl->check(array('model' => 'User',
+                                    'foreign_key' => $this->Auth->user('id')),
+                                    'FiledDocuments/admin_view_all_docs', '*')) {
+            $this->Auth->allow('admin_get_all_admins', 'admin_report');
+        }
+    }
 
     function admin_index($userId=null) {
 		$bool = false;
@@ -304,6 +304,35 @@ class FiledDocumentsController extends AppController {
 		$this->set($data);
 		$this->render('/elements/excelreport');		
 	}
+
+    function admin_get_all_admins() {
+		if($this->RequestHandler->isAjax()) {
+            $this->FiledDocument->User->Behaviors->detach('Disableable');
+			if(!empty($this->params['form']['query'])) {
+				$conditions = array( 'User.role_id >' => 2, 'User.lastname LIKE' => '%'.$this->params['form']['query'].'%');
+			}
+			else {
+				$conditions = array('User.role_id >' => 2);
+			}
+			$this->FiledDocument->User->recursive = -1;
+			$admins = $this->FiledDocument->User->find('all', array('conditions' => $conditions));		
+			if($admins) {
+				$i = 0;
+				foreach($admins as $admin) {
+					$data['admins'][$i]['id'] = $admin['User']['id'];
+					$data['admins'][$i]['name'] = $admin['User']['lastname'] . ', ' . $admin['User']['firstname'];
+					$i++;
+				}
+				$data['success'] = true;
+			}
+			else {
+				$data['success'] = false;
+			}
+			$this->set('data', $data);
+			$this->render(null, null,  '/elements/ajaxreturn');	
+
+		}
+    }
 
     function _uploadDocument($entryMethod='Upload') {
 		// get the document relative path to the inital storage folder

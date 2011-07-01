@@ -114,7 +114,7 @@ var searchTypeStore = new Ext.data.ArrayStore({
 });
 
 var adminProxy = new Ext.data.HttpProxy({
-	url: '/admin/users/get_admin_list',
+	url: '/admin/filed_documents/get_all_admins',
 	method: 'GET'
 });
 
