@@ -262,7 +262,7 @@ class User extends AppModel {
 			    ),
 			    'unique' => array(
 					'rule' => 'isUnique',
-					'message' => 'The SSN entered already exists in the system.'
+					'message' => 'The system is unable to register you at this time. Please see a representative for assistance'
 			    ),
 			    'minLength' => array(
 					'rule' => array('minLength', 9),
@@ -453,7 +453,7 @@ class User extends AppModel {
 			    ),
 			    'unique' => array(
 					'rule' => 'lastNameSSNUnique',
-					'message' => 'The SSN entered already exists in the system.'
+					'message' => 'The system is unable to register you at this time. Please contact us for assistance'
 			    ),
 			    '4or9' => array(
 					'rule' => 'ssn4or9',
@@ -630,7 +630,7 @@ class User extends AppModel {
 			    ),
 			    'unique' => array(
 					'rule' => 'lastNameSSNUnique',
-					'message' => 'The SSN entered already exists in the system.'
+					'message' => 'The system is unable to register you at this time. Please contact us for assistance'
 			    ),
 			    '4or9' => array(
 					'rule' => 'ssn4or9',
