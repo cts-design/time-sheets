@@ -371,7 +371,7 @@ class UsersController extends AppController {
 	}
 
 	function admin_index_admin($disabled=false) {
-		$this->User->recursive = -1;
+		$this->User->recursive = 0;
 		if($disabled) {
 			$this->User->Behaviors->disable('Disableable');
 		}		
