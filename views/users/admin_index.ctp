@@ -24,23 +24,7 @@
 	    </ul>
     </div>
     <div id="searchForm"></div>
-    <ul class="search">
-	<li>
-		<?php if(empty($this->params['pass'][0])) {
-			echo $this->Form->create();
-		} 
-			else {
-				echo $this->Form->create(array('url' => '/admin/users/index/' . $this->params['pass'][0]));
-			}
-		?>
-	    <?php echo $this->Form->input('search_by', array(
-			'type' => 'select',
-			'options' => array('lastname' => 'Last Name', 'firstname' => 'First Name', 'ssn' => 'SSN')))
-		    ?>
-	</li>
-	<li><?php echo $this->Form->input('search_term')?></li>
-	<li><?php echo $this->Form->end(array('label' => 'Search','div' => false))?></li>
-    </ul>
+<br />
 <div class="admin">
     <table cellpadding="0" cellspacing="0">
 	<thead class="ui-widget-header">
