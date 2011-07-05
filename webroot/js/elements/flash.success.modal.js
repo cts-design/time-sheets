@@ -8,6 +8,7 @@ $.fx.speeds._default = 1000;
 $(document).ready(function(){
     $("#message").dialog({
 	modal: true,
+	width: 400,
 	title: 'Success',
 	resizable: false,
 	show: 'blind',
