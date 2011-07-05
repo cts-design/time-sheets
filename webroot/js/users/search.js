@@ -33,12 +33,18 @@ var searchPanel = {
           },
           items: [{
             xtype: 'combo',
-            store: ['First Name', 'Last Name', 'SSN'],
-            name: 'search_by1'
+            mode: 'local',
+            name: 'search_by1',
+            hiddenName: 'search_by1',
+            store: [['firstname', 'First Name'], ['lastname', 'Last Name'], ['ssn', 'SSN']],
+            triggerAction: 'all'
           },{
             xtype: 'combo',
-            store: ['First Name', 'Last Name', 'SSN'],
-            name: 'search_by2'
+            mode: 'local',
+            name: 'search_by2',
+            hiddenName: 'search_by2',
+            store: [['firstname', 'First Name'], ['lastname', 'Last Name'], ['ssn', 'SSN']],
+            triggerAction: 'all'
           }]
         },{
           defaults: {
