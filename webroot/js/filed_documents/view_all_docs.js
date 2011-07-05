@@ -366,7 +366,7 @@ var allDocsSearch = new Ext.form.FormPanel({
       items: [{
         layout: 'form',
         id: 'cusSearch1',
-        title: 'Customer Search',
+        title: 'Customer Search Filter 1',
         bodyStyle: 'padding: 0 10px',
         width: 290,
         frame: true,
@@ -424,12 +424,12 @@ var allDocsSearch = new Ext.form.FormPanel({
         }]
       },{
         layout: 'form',
-        title: 'Customer Search',
+        title: 'Customer Search Filter 2',
         id: 'cusSearch2',
         bodyStyle: 'padding: 0 10px',
         width: 290,
         frame: true,
-        height: 128,		
+        height: 154,		
         items: [{
           xtype: 'combo',
           fieldLabel: 'Type',
