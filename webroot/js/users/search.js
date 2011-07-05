@@ -87,6 +87,14 @@ var searchPanel = {
             form.submit();
           }
         }
+      },{
+        text: 'Clear',
+        handler: function() {
+          var fp = Ext.getCmp('searchFormPanel'),
+          form = fp.getForm();
+
+          form.reset();
+        }
       }]
     });
   }
