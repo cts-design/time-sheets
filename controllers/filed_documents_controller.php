@@ -245,6 +245,7 @@ class FiledDocumentsController extends AppController {
 					$data['docs'][$k]['Cat1-name'] = $v['Cat1']['name'];
 					$data['docs'][$k]['Cat2-name'] = $v['Cat2']['name'];
 					$data['docs'][$k]['Cat3-name'] = $v['Cat3']['name'];
+					$data['docs'][$k]['description'] = $v['FiledDocument']['description'];
 					$data['docs'][$k]['created'] = date('m-d-Y g:i a', strtotime($v['FiledDocument']['created']));
 					$data['docs'][$k]['LastActAdmin-lastname'] = 
 						trim(ucwords($v['LastActAdmin']['lastname'] . ', ' . $v['LastActAdmin']['firstname']), ', ');
@@ -282,6 +283,7 @@ class FiledDocumentsController extends AppController {
 			$report[$k]['Main Cat'] = $v['Cat1']['name'];
 			$report[$k]['Second Cat'] = $v['Cat2']['name'];
 			$report[$k]['Third Cat'] = $v['Cat3']['name'];
+			$report[$k]['Description'] = $v['FiledDocument']['description'];
 			$report[$k]['Last Activity Admin'] = trim(ucwords($v['LastActAdmin']['lastname'] . ', '. $v['LastActAdmin']['firstname']), ' ,');
 			$report[$k]['Created'] = date('m/d/y h:i a', strtotime($v['FiledDocument']['created']));		
 		}

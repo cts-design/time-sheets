@@ -25,7 +25,8 @@ var allFiledDocsStore = new Ext.data.JsonStore({
 		'Admin-lastname', 
 		'Cat1-name', 
 		'Cat2-name', 
-		'Cat3-name', 
+		'Cat3-name',
+		'description', 
 		'created', 
 		'LastActAdmin-lastname',
 		'view'
@@ -46,43 +47,51 @@ var allDocsGrid = new Ext.grid.GridPanel({
 		header: 'Customer',
 		dataIndex: "User-lastname",
 		sortable: true,	
-		width: 130
+		width: 140
 	},{
 		header: 'Location',
 		dataIndex: 'Location-name',
 		sortable: true,	
-		width: 80	
+		width: 50	
 	},{
 		header: 'Filed by Admin',
 		dataIndex: 'Admin-lastname',
 		sortable: true,	
-		width: 105
+		width: 80
 	},{
 		header: 'Main Cat',
 		dataIndex: 'Cat1-name',
-		sortable: true
+		sortable: true,
+		width: 70
 	},{
 		header: 'Second Cat',
 		dataIndex: 'Cat2-name',
-		sortable: true
+		sortable: true,
+		width: 70
 	},{
 		header: 'Third Cat',
 		dataIndex: 'Cat3-name',
-		sortable: true
+		sortable: true,
+		width: 70
 	},{
-		header: 'Last Activity Admin',
+		header: 'Description',
+		dataIndex: 'description',
+		sortable: true,
+		width: 140
+	},{
+		header: 'Last Act. Admin',
 		dataIndex: 'LastActAdmin-lastname',
 		sortable: true,	
-		width: 105
+		width: 85
 	},{
 		header: 'Created',
 		dataIndex: 'created',
 		sortable: true,
-		width: 115
+		width: 110
 	},{
 		header: 'Actions',
 		dataIndex: 'view',
-		width: 50
+		width: 45
 	}],
 	viewConfig: {
 		

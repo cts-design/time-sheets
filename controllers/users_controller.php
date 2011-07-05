@@ -95,7 +95,7 @@ class UsersController extends AppController {
 		if($disabled) {
 			$this->User->Behaviors->disable('Disableable');
 		}		
-		$this->User->recursive = 0;
+		$this->User->recursive = -1;
 		if(! empty($this->data) && $this->data['User']['search_term'] != '' ) {
 		    $this->paginate = array(
 			'conditions' =>  array(
@@ -371,7 +371,7 @@ class UsersController extends AppController {
 	}
 
 	function admin_index_admin($disabled=false) {
-		$this->User->recursive = 0;
+		$this->User->recursive = -1;
 		if($disabled) {
 			$this->User->Behaviors->disable('Disableable');
 		}		
