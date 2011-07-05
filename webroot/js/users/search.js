@@ -78,6 +78,7 @@ var searchPanel = {
         }]
       }],
       buttons: [{
+        icon:  '/img/icons/find.png',
         text: 'Search',
         handler: function() {
           var fp = Ext.getCmp('searchFormPanel'),
@@ -88,7 +89,8 @@ var searchPanel = {
           }
         }
       },{
-        text: 'Clear',
+        text: 'Reset',
+        icon:  '/img/icons/arrow_redo.png',
         handler: function() {
           var fp = Ext.getCmp('searchFormPanel'),
           form = fp.getForm();
