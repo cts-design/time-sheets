@@ -37,7 +37,8 @@ var searchPanel = {
             name: 'search_by1',
             hiddenName: 'search_by1',
             store: [['firstname', 'First Name'], ['lastname', 'Last Name'], ['ssn', 'SSN']],
-            triggerAction: 'all'
+            triggerAction: 'all',
+            allowBlank: false
           },{
             xtype: 'combo',
             mode: 'local',
@@ -54,7 +55,8 @@ var searchPanel = {
           items: [{
             xtype: 'combo',
             store: ['containing','matching exactly'],
-            name: 'search_scope1'
+            name: 'search_scope1',
+            allowBlank: false
           },{
             xtype: 'combo',
             store: ['containing','matching exactly'],
@@ -67,7 +69,8 @@ var searchPanel = {
           },
           items: [{
             xtype: 'textfield',
-            name: 'search_term1'
+            name: 'search_term1',
+            allowBlank: false
           },{
             xtype: 'textfield',
             name: 'search_term2'
@@ -80,7 +83,9 @@ var searchPanel = {
           var fp = Ext.getCmp('searchFormPanel'),
           form = fp.getForm();
 
-          form.submit();
+          if (form.isValid()) {
+            form.submit();
+          }
         }
       }]
     });
