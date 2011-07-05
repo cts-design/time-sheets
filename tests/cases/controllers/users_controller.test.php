@@ -22,6 +22,7 @@ class UsersControllerTestCase extends AtlasTestCase {
     function startTest() {
         $this->Users =& new TestUsersController();
         $this->Users->constructClasses();
+        $this->Users->params['controller'] = 'users';
     }
 
     function endTest() {
@@ -29,23 +30,40 @@ class UsersControllerTestCase extends AtlasTestCase {
         ClassRegistry::flush();
     }
 
+    // function testAdminIndexWithoutSearch() {
+    //     $this->Users->Session->write('Auth.User', array(
+    //         'id' => 1,
+    //         'role_id' => 2,
+    //         'username' => 'bcordell',
+    //         'location_id' => 1
+    //     ));
+    //     debug($this->testAction('/admin/users'));
+    // }
+
     function testAdminAddWithValidData() {
+        $this->Users->Session->write('Auth.User', array(
+            'id' => 1,
+            'role_id' => 2,
+            'username' => 'bcordell',
+            'location_id' => 1
+        ));
+
         $this->Users->data = array(
             'User' => array(
                 'role_id' => 2,
-                'firstname' => 'brandon',
-                'lastname' => 'cordell',
+                'firstname' => 'valid',
+                'lastname' => 'user',
                 'middle_initial' => 'D',
-                'ssn' => '123456789',
-                'ssn_confirm' => '123456789',
-                'username' => 'validuser',
+                'ssn' => '999119999',
+                'ssn_confirm' => '999119999',
+                'username' => 'vuser',
                 'password' => 'asd123',
                 'address_1' => '123 main st',
                 'address_2' => '',
                 'city' => 'spring hill',
                 'state' => 'fl',
                 'zip' => '34609',
-                'phone' => '',
+                'phone' => '3521231234',
                 'alt_phone' => '',
                 'gender' => 'Male',
                 'dob' => '01/10/1986',
@@ -63,6 +81,13 @@ class UsersControllerTestCase extends AtlasTestCase {
     }
 
     function testAdminAddWithInvalidData() {
+        $this->Users->Session->write('Auth.User', array(
+            'id' => 1,
+            'role_id' => 2,
+            'username' => 'bcordell',
+            'location_id' => 1
+        ));
+
         $this->Users->data = array(
             'User' => array(
                 'name' => '',
@@ -76,6 +101,13 @@ class UsersControllerTestCase extends AtlasTestCase {
     }
 
     function testAdminEditWithInvalidId() {
+        $this->Users->Session->write('Auth.User', array(
+            'id' => 1,
+            'role_id' => 2,
+            'username' => 'bcordell',
+            'location_id' => 1
+        ));
+
         $this->Users->admin_edit();
         $this->assertFlashMessage($this->Users, 'Invalid customer', 'flash_failure');
 
@@ -84,9 +116,18 @@ class UsersControllerTestCase extends AtlasTestCase {
     }
 
     function testAdminEditWithValidData() {
+        $this->Users->Session->write('Auth.User', array(
+            'id' => 1,
+            'role_id' => 2,
+            'username' => 'bcordell',
+            'location_id' => 1
+        ));
+
         $this->Users->data = array(
             'User' => array(
-                'firstname' => 'Valid'
+                'firstname' => 'Valid',
+                'lastname' => 'Name',
+                'ssn' => '999999999'
             )
         );
         $this->Users->admin_edit(1);
@@ -94,23 +135,21 @@ class UsersControllerTestCase extends AtlasTestCase {
     }
 
     function testAdminEditWithInvalidData() {
+        $this->Users->Session->write('Auth.User', array(
+            'id' => 1,
+            'role_id' => 2,
+            'username' => 'bcordell',
+            'location_id' => 1
+        ));
+
         $this->Users->data = array(
             'User' => array(
-                'name' => ''
+                'firstname' => ''
             )
         );
         $this->Users->admin_edit(4);
         $this->assertFlashMessage($this->Users, 'The customer could not be saved. Please, try again.', 'flash_failure');
     }
 
-    function testAdminDeleteWithInvalidId() {
-        $this->Users->admin_delete();
-        $this->assertFlashMessage($this->Users, 'Customer was not deleted', 'flash_failure');
-    }
-
-    function testAdminDelete() {
-        $this->Users->admin_delete(1);
-        $this->assertFlashMessage($this->Users, 'Customer was not deleted', 'flash_failure');
-    }
 }
 ?>
