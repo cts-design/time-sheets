@@ -96,29 +96,55 @@ class UsersController extends AppController {
 			$this->User->Behaviors->disable('Disableable');
 		}		
 		$this->User->recursive = -1;
-		if(! empty($this->data) && $this->data['User']['search_term'] != '' ) {
-		    $this->paginate = array(
-			'conditions' =>  array(
-			    'User.role_id' => 1,
-			    $this->data['User']['search_by'].' LIKE' => '%'.$this->data['User']['search_term'].'%' ),
-			'limit' => Configure::read('Pagination.customer.limit'),
-			'order' => array('User.lastname' => 'asc')
-		    );
-			$this->set('users', $this->paginate('User'));
-			$this->passedArgs['search_by'] = $this->data['User']['search_by'];
-			$this->passedArgs['search_term'] = $this->data['User']['search_term'];
-		}
-		elseif(isset($this->passedArgs['search_term'], $this->passedArgs['search_by'])) {	    
-		    $this->paginate = array(
-			'conditions' => array(
-			    'User.role_id' => 1,
-			    $this->passedArgs['search_by'].' LIKE' => '%'.$this->passedArgs['search_term'].'%' ),
-			'limit' => Configure::read('Pagination.customer.limit'),
-			'order' => array('User.lastname' => 'asc')
-		    );
-		    $this->set('users', $this->paginate('User'));	
-		}
-		else {
+
+        $submittedValues = $this->params['form'];
+
+        // set up the default paginate options
+        $conditions = array('User.role_id' => 1);
+        $limit = Configure::read('Pagination.customer.limit');
+        $order = array('User.lastname' => 'ASC');
+
+        // $this->params[form][...] search_by1/2 search_scope1/2 search_term1/2
+
+        if (!empty($submittedValues) && $submittedValues['search_term1'] !== '') {
+            switch ($submittedValues['search_scope1']) {
+                case 'containing':
+                    $conditionScope = $submittedValues['search_by1'] . ' LIKE';
+                    $conditionValue = '%' . $submittedValues['search_term1'] . '%';
+                    break;
+                case 'matching exactly':
+                    $conditionScope = $submittedValues['search_by1'];
+                    $conditionValue = $submittedValues['search_term1'];
+                    break;
+            }
+
+            $conditions1 = array($conditionScope => $conditionValue);
+            $conditions = array_merge($conditions, $conditions1);
+
+            if ($submittedValues['search_by2'] !== '' && $submittedValues['search_term2'] !== '') {
+                switch ($submittedValues['search_scope2']) {
+                    case 'containing':
+                        $conditionScope2 = $submittedValues['search_by2'] . ' LIKE';
+                        $conditionValue2 = '%' . $submittedValues['search_term2'] . '%';
+                        break;
+                    case 'matching exactly':
+                        $conditionScope2 = $submittedValues['search_by2'];
+                        $conditionValue2 = $submittedValues['search_term2'];
+                        break;
+                }
+
+                $conditions2 = array($conditionScope2 => $conditionValue2);
+                $conditions = array_merge($conditions, $conditions2);
+            }
+
+            $this->paginate = array(
+                'conditions' => $conditions,
+                'limit'      => $limit,
+                'order'      => $order
+            );
+
+            $this->set('users', $this->paginate('User'));
+        } else {
 		    $this->paginate = array(
 			'conditions' => array(
 			    'User.role_id' => 1,
@@ -127,7 +153,7 @@ class UsersController extends AppController {
 			 'order' => array('User.lastname' => 'asc')
 		    );
 		    $this->set('users', $this->paginate('User'));
-		}	
+        }
     }
 
     function admin_add() {

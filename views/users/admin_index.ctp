@@ -6,11 +6,12 @@
  * @package ATLAS V3
  */
 ?>
+<?php echo $this->Html->script('users/search.js', array('inline' => false)) ?>
 <div id="crumbWrapper">
     <span>You are here > </span>
     <?php echo $crumb->getHtml('Customers');?>
 </div>
-<div class="admin">
+<div class="">
     <?php $this->Paginator->options(array('url' => $this->passedArgs)); ?>
     <div class="actions ui-widget-header">
 	    <ul>
@@ -22,23 +23,9 @@
 		<?php endif ?>		
 	    </ul>
     </div>
-    <ul class="search">
-	<li>
-		<?php if(empty($this->params['pass'][0])) {
-			echo $this->Form->create();
-		} 
-			else {
-				echo $this->Form->create(array('url' => '/admin/users/index/' . $this->params['pass'][0]));
-			}
-		?>
-	    <?php echo $this->Form->input('search_by', array(
-			'type' => 'select',
-			'options' => array('lastname' => 'Last Name', 'firstname' => 'First Name', 'ssn' => 'SSN')))
-		    ?>
-	</li>
-	<li><?php echo $this->Form->input('search_term')?></li>
-	<li><?php echo $this->Form->end(array('label' => 'Search','div' => false))?></li>
-    </ul>
+    <div id="searchForm"></div>
+<br />
+<div class="admin">
     <table cellpadding="0" cellspacing="0">
 	<thead class="ui-widget-header">
 	    <tr>
@@ -94,4 +81,5 @@
 	<?php echo $this->Paginator->next(__('next', true) . ' >>', array(), null, array('class' => 'disabled')); ?>
 	
     </div>
+</div>
 </div>

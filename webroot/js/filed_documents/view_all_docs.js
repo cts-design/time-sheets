@@ -116,6 +116,9 @@ var searchTypeStore = new Ext.data.ArrayStore({
 	fields: ['type', 'label'],
 	id: 0,
 	data:[[
+    'firstname', 'First Name'
+  ],
+  [
 		'lastname', 'Last Name'
 	],[
 		'last4', 'Last 4 SSN'
@@ -232,76 +235,34 @@ var allDocsSearch = new Ext.form.FormPanel({
 		layout: 'column',
 		items: [{
 			layout: 'form',
-			columnWidth: 0.29,
+			columnWidth: 0.31,
 			height: 115,
 			frame: true,
+      bodyStyle: 'padding: 0 10px',
 			title: 'Dates',
 			items: [{
 				xtype: 'datefield',
 				id: 'fromDate',
 				fieldLabel: 'From',
-				name: 'fromDate'
+				name: 'fromDate',
+        width: 200
 			},{
 				xtype: 'datefield',
 				fieldLabel: 'To',
 				name: 'toDate',
-				id: 'toDate'
+				id: 'toDate',
+        width: 200
 			}, dateSearchTb]
 		},{
 			layout: 'form',
-			title: 'Customer',
-			frame: true,
-			columnWidth: 0.25,
-			height: 115,		
-			items: [{
-				xtype: 'combo',
-				fieldLabel: 'Search Type',
-				triggerAction: 'all',
-				store: searchTypeStore,
-				mode: 'local',
-				hiddenName: 'searchType',
-				valueField: 'type',
-				displayField: 'label',
-				name: 'cusSearchType',
-				listeners: {
-					select: function(combo, record, index) {
-						if(record.id == 'lastname'){
-							Ext.getCmp('cusLastname').enable();
-							Ext.getCmp('cusLastname').show();
-							Ext.getCmp('cusLast4').disable();
-							Ext.getCmp('cusLast4').hide();
-						}
-						if(record.id ==  'last4'){
-							Ext.getCmp('cusLast4').enable();
-							Ext.getCmp('cusLast4').show();
-							Ext.getCmp('cusLastname').disable();
-							Ext.getCmp('cusLastname').hide();							
-						}
-					}
-				}
-			},{
-				xtype: 'textfield',
-				fieldLabel: 'Search',
-				name: 'cusSearch',
-				id: 'cusLast4',
-				maxLength: 4,
-			},{
-				xtype: 'textfield',
-				fieldLabel: 'Search',
-				hidden: true,
-				disabled: true,
-				name: 'cusSearch',
-				id: 'cusLastname'				
-			}]
-		},{
-			layout: 'form',
+      bodyStyle: 'padding: 0 10px',
 			title: 'Filing Categories',
 			frame: true,
 			height: 115,
 			defaults: {
-				width: 100
+				width: 200
 			},
-			columnWidth: 0.21,
+			columnWidth: 0.31,
 			items: [{
 				xtype: 'combo',
 				fieldLabel: 'Cat 1',
@@ -374,9 +335,11 @@ var allDocsSearch = new Ext.form.FormPanel({
 		},{
 			layout: 'form',
 			title: 'Additional Filters',
+      bodyStyle: 'padding: 0 10px',
 			frame: true,
 			height: 115,
-			columnWidth: 0.25,
+      anchor: '90%',
+			columnWidth: 0.31,
 			items: [{
 				xtype: 'combo',
 				triggerAction: 'all',
@@ -398,7 +361,128 @@ var allDocsSearch = new Ext.form.FormPanel({
 				displayField: 'name'
 			}]
 		}]
-	}],
+	},{
+			layout: 'column',
+      items: [{
+        layout: 'form',
+        id: 'cusSearch1',
+        title: 'Customer Search Filter 1',
+        bodyStyle: 'padding: 0 10px',
+        width: 290,
+        frame: true,
+        height: 115,		
+        items: [{
+          xtype: 'combo',
+          fieldLabel: 'Type',
+          triggerAction: 'all',
+          store: searchTypeStore,
+          mode: 'local',
+          hiddenName: 'searchType1',
+          valueField: 'type',
+          displayField: 'label',
+          name: 'cusSearchType1',
+          width: 200,
+          listeners: {
+            select: function(combo, record, index) {
+              if(record.id == 'lastname' || record.id == 'firstname'){
+                Ext.getCmp('cusLastname').enable();
+                Ext.getCmp('cusLastname').show();
+                Ext.getCmp('cusLast4').disable();
+                Ext.getCmp('cusLast4').hide();
+              }
+              if(record.id ==  'last4'){
+                Ext.getCmp('cusLast4').enable();
+                Ext.getCmp('cusLast4').show();
+                Ext.getCmp('cusLastname').disable();
+                Ext.getCmp('cusLastname').hide();							
+              }
+            }
+          }
+        },{
+          xtype: 'combo',
+          fieldLabel: 'Scope',
+          store: ['containing', 'matching exactly'],
+          name: 'cusScope1',
+          hiddenName: 'cusScope1',
+          width: 200,
+          id: 'cusScope'
+        },{
+          xtype: 'textfield',
+          fieldLabel: 'Search',
+          name: 'cusSearch1',
+          id: 'cusLast4',
+          maxLength: 4,
+          width: 200
+        },{
+          xtype: 'textfield',
+          fieldLabel: 'Search',
+          hidden: true,
+          disabled: true,
+          name: 'cusSearch1',
+          id: 'cusLastname',
+          width: 200
+        }]
+      },{
+        layout: 'form',
+        title: 'Customer Search Filter 2',
+        id: 'cusSearch2',
+        bodyStyle: 'padding: 0 10px',
+        width: 290,
+        frame: true,
+        height: 154,		
+        items: [{
+          xtype: 'combo',
+          fieldLabel: 'Type',
+          triggerAction: 'all',
+          store: searchTypeStore,
+          mode: 'local',
+          hiddenName: 'searchType2',
+          valueField: 'type',
+          displayField: 'label',
+          name: 'cusSearchType2',
+          width: 200,
+          listeners: {
+            select: function(combo, record, index) {
+              if(record.id == 'lastname' || record.id == 'firstname'){
+                Ext.getCmp('cusLastname').enable();
+                Ext.getCmp('cusLastname').show();
+                Ext.getCmp('cusLast4').disable();
+                Ext.getCmp('cusLast4').hide();
+              }
+              if(record.id ==  'last4'){
+                Ext.getCmp('cusLast4').enable();
+                Ext.getCmp('cusLast4').show();
+                Ext.getCmp('cusLastname').disable();
+                Ext.getCmp('cusLastname').hide();							
+              }
+            }
+          }
+        },{
+          xtype: 'combo',
+          fieldLabel: 'Scope',
+          store: ['containing', 'matching exactly'],
+          name: 'cusScope2',
+          hiddenName: 'cusScope2',
+          width: 200,
+          id: 'cusScope1'
+        },{
+          xtype: 'textfield',
+          fieldLabel: 'Search',
+          name: 'cusSearch2',
+          id: 'cusLast4_2',
+          maxLength: 4,
+          width: 200
+        },{
+          xtype: 'textfield',
+          fieldLabel: 'Search',
+          hidden: true,
+          disabled: true,
+          name: 'cusSearch2',
+          id: 'cusLastname2',
+          width: 200
+        }]
+      }]
+		}],
 	fbar: [{
 		text: 'Search',
 		id: 'docSearch',
