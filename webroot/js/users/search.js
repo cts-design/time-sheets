@@ -32,6 +32,8 @@ var searchPanel = {
             hideLabel: true
           },
           items: [{
+            html: 'Search for:'
+          },{
             xtype: 'combo',
             mode: 'local',
             id: 'SearchBy1',
@@ -55,6 +57,8 @@ var searchPanel = {
             hideLabel: true
           },
           items: [{
+            html: 'Where is:'
+          },{
             xtype: 'combo',
             store: ['containing','matching exactly'],
             id: 'SearchScope1',
@@ -74,6 +78,8 @@ var searchPanel = {
             hideLabel: true
           },
           items: [{
+            html: 'Search term:'
+          },{
             xtype: 'textfield',
             id: 'SearchTerm1',
             name: 'search_term1',
