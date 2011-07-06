@@ -1,86 +1,88 @@
 /* 
  * @author Daniel Nolan
- * @copyright Complete Technology Solutions 2010
+ * @copyright Complete Technology Solutions 2011
  * @link http://ctsfla.com
  */
 
-var locationId = '';
-var service = '';
-var refreshId = 0;
-$(document).ready(function(){
-    $.ajaxSetup({
-	cache: false
-    });
-    refreshId = setInterval('loadLogs()', 10000);
-    $('body').delegate('#SelfSignLogLocations', 'change', function() {
-	locationId = $('#SelfSignLogLocations').val();
-	service = '';
-	if($(this).val().length != 0) {
-	    $.getJSON('/admin/self_sign_logs/get_services_ajax',
-	    {
-		id: $(this).val()
-		},
-	    function(services) {
-		if(services !== null) {
-		    populateServicesList(services);
-		}
-	    });
-	}
-	else {
-	    $.getJSON('/admin/self_sign_logs/get_services_ajax',
-		function(services) {
-		    if(services !== null) {
-			populateServicesList(services);
-		    }
-		});
-	}
-	loadLogs();
-    });
-    $('body').delegate('.scrollingCheckboxes', 'change', function() {
-	var allVals = [];
-	 $('.scrollingCheckboxes :checked').each(function() {
-	   allVals.push($(this).val());
-	 });
-	if(allVals != null) {
-	    service = allVals;
-	}
-	if($(this).val() == null) {
-	    service = '';
-	}
-	loadLogs();
-    });
-    loadLogs();
-    $(".toggle").live('mouseover mouseout', function(event) {
-	if(event.type == 'mouseover'){
-	    clearInterval(refreshId);
-	}
-	if(event.type == 'mouseout') {
-	    refreshId = setInterval('loadLogs()', 10000);
-	}
-    });
-
-    $('.toggle').live('click', function(){
-	var url = $(this).attr('href');
-	$.post(url, function(data){
-	    loadLogs();
-	});
-	return false;
-    })
+var selfSignLogsProxy = new Ext.data.HttpProxy({
+	method: 'GET',
+	prettyUrls: true,
+	url: '/admin/self_sign_logs/'
 });
 
-function loadLogs() {
-    $('#selfSignLogs').load('/admin/self_sign_logs/get_logs_ajax?location='+locationId + '&service='+service);
-}
+var selfSignLogsReader = new Ext.data.JsonReader({
+	idProperty: 'id',
+	root: 'logs',
+	totalProperty: 'results',
+	fields: ['id', 'status', 'visitor', 'admin', 'created', 'location', 'service']
+})
 
-function populateServicesList(services) {
+var selfSignLogsStore = new Ext.data.GroupingStore({
+	reader: selfSignLogsReader,
+	proxy:	selfSignLogsProxy,
+	storeId: 'SelfSignLogsStore',
+	groupField: 'status',
+	groupDir: 'DESC'
+});
 
-    var checks = '';
-    $.each(services, function(index, service) {
+var selfSignLogsGrid = new Ext.grid.GridPanel({
+	store: selfSignLogsStore,
+	height: 500,
+	frame: true,
+	loadMask: true,
+	columns: [{
+		header: 'Id',
+		dataIndex: 'id',
+		sortable: true,
+		hidden: true	
+	},{
+		header: 'Status',
+		dataIndex: 'status',
+		sortable: true,
+		width: 40
+	},{
+		header: 'Visitor',
+		dataIndex: 'visitor',
+		sortable: true,
+		width: 75,
+	},{
+		header: 'Service',
+		dataIndex: 'service',
+		width: 280
+	},{
+		header: 'Last Act. Admin',
+		dataIndex: 'admin',
+		sortable: true,
+		width: 75
+	},{
+		header: 'Location',
+		dataIndex: 'location',
+		sortable: true,
+		width: 75
+	},{
+		header: 'Date',
+		dataIndex: 'created',
+		sortable: true,
+		width: 75		
+	}],
+	view: new Ext.grid.GroupingView({
+		forceFit: true,
+		groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})',
+		startCollapsed: true,
+		hideGroupedColumn: true,
+		deferEmptyText: false,
+		emptyText: '<div class="x-grid-empty">No records at this time.</div>'	
+	})
+	
+})
 
-	checks += '<div class="input checkbox"><input type="checkbox" value="' + index + '" name="data[SelfSignLog][Services][]"/>';
-
-	checks += '<label for="data[SelfSignLog][Services][]">' + service + '</label></div>';
-	});
-    $('.scrollingCheckboxes').html(checks);
-}
-
+Ext.onReady(function(){
+	Ext.QuickTips.init();
+	selfSignLogsGrid.render('SelfSignLogs');
+	selfSignLogsStore.load();
+	//setInterval('selfSignLogsStore.load()', 10000);	
+	selfSignLogsStore.addListener('load', function(){
+		var view = selfSignLogsGrid.getView();
+		view.toggleGroup('ext-gen12-gp-status-Open', true);
+	})
+});
