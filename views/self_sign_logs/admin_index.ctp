@@ -12,16 +12,6 @@
     <span>You are here > </span>
     <?php echo $crumb->getHtml('Self Sign Queue', null, 'unique'); ?>
 </div>
-<div class="admin">
-    <div id="selfSignSearch" class="form">
-	    <ul>
-		<li><?php echo $this->Form->create('SelfSignLog', array('action' => 'get_services_ajax')) ?>
-		    <?php echo $this->Form->input(__('Locations', true), array('type' => 'select', 'options' => $locations, 'empty' => "All Locations")) ?>
-		</li>
-		<li><span><strong><?php echo __('Services', true)?></strong></span></li>
-		<li><div class="scrollingCheckboxes"><?php echo $this->Form->input(__('Services', true), array('label' => false, 'type' => 'select', 'multiple' => 'checkbox', 'options' => $buttons));?></div></li>
-	    </ul>
-	<br class="clear" />
-    </div>
-    <div id="selfSignLogs"></div>
+<div>
+    <div id="SelfSignLogs"></div>
 </div>
