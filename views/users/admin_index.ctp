@@ -6,6 +6,14 @@
  * @package ATLAS V3
  */
 ?>
+<?php echo $this->Html->scriptStart(array('inline' => false)) ?>
+    var search_by1 = '<?php echo (isset($search_by1)) ? $search_by1 : null ?>';
+    var search_scope1 = '<?php echo (isset($search_scope1)) ? $search_scope1 : null ?>';
+    var search_term1 = '<?php echo (isset($search_term1)) ? $search_term1 : null ?>';
+    var search_by2 = '<?php echo (isset($search_by2)) ? $search_by2 : null ?>';
+    var search_scope2 = '<?php echo (isset($search_scope2)) ? $search_scope2 : null ?>';
+    var search_term2 = '<?php echo (isset($search_term2)) ? $search_term2 : null ?>';
+<?php echo $this->Html->scriptEnd() ?>
 <?php echo $this->Html->script('users/search.js', array('inline' => false)) ?>
 <div id="crumbWrapper">
     <span>You are here > </span>

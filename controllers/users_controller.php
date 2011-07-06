@@ -143,6 +143,7 @@ class UsersController extends AppController {
                 'order'      => $order
             );
 
+            $this->set($submittedValues);
             $this->set('users', $this->paginate('User'));
         } else {
 		    $this->paginate = array(

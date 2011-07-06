@@ -34,6 +34,7 @@ var searchPanel = {
           items: [{
             xtype: 'combo',
             mode: 'local',
+            id: 'SearchBy1',
             name: 'search_by1',
             hiddenName: 'search_by1',
             store: [['firstname', 'First Name'], ['lastname', 'Last Name'], ['ssn', 'SSN']],
@@ -42,6 +43,7 @@ var searchPanel = {
           },{
             xtype: 'combo',
             mode: 'local',
+            id: 'SearchBy2',
             name: 'search_by2',
             hiddenName: 'search_by2',
             store: [['firstname', 'First Name'], ['lastname', 'Last Name'], ['ssn', 'SSN']],
@@ -55,12 +57,16 @@ var searchPanel = {
           items: [{
             xtype: 'combo',
             store: ['containing','matching exactly'],
+            id: 'SearchScope1',
             name: 'search_scope1',
+            triggerAction: 'all',
             allowBlank: false
           },{
             xtype: 'combo',
             store: ['containing','matching exactly'],
-            name: 'search_scope2'
+            id: 'SearchScope2',
+            name: 'search_scope2',
+            triggerAction: 'all'
           }]
         },{
           defaults: {
@@ -69,10 +75,12 @@ var searchPanel = {
           },
           items: [{
             xtype: 'textfield',
+            id: 'SearchTerm1',
             name: 'search_term1',
             allowBlank: false
           },{
             xtype: 'textfield',
+            id: 'SearchTerm2',
             name: 'search_term2'
           }]
         }]
@@ -97,7 +105,22 @@ var searchPanel = {
 
           form.reset();
         }
-      }]
+      }],
+      listeners: {
+        render: function (panel) {
+          console.log(panel);
+          var form = panel.getForm();
+
+          form.setValues({
+            SearchBy1: search_by1,
+            SearchBy2: search_by2,
+            SearchScope1: search_scope1,
+            SearchScope2: search_scope2,
+            SearchTerm1: search_term1,
+            SearchTerm2: search_term2
+          });
+        }
+      }
     });
   }
 };
