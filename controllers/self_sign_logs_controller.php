@@ -1,7 +1,7 @@
 <?php
 /**
  * @author Daniel Nolan
- * @copyright Complete Technology Solutions 2010
+ * @copyright Complete Technology Solutions 2011
  * @link http://ctsfla.com
  * @package ATLAS V3
  */
@@ -9,16 +9,49 @@ class SelfSignLogsController extends AppController {
 
     var $name = 'SelfSignLogs';
     var $uses = array('SelfSignLog', 'MasterKioskButton');
-    var $statuses = array(0 => 'open', 1 => 'closed');
+    var $statuses = array(0 => 'Open', 1 => 'Closed', 2 => 'Not Helped');
 
     function admin_index() {
-	$data = array(
-	   'buttons' =>  $this->_getParentMasterButtonNames(),
-	    'locations' => $this->_getLocations(),
-	    'statuses' => $this->statuses,
-	    'title_for_layout' => 'Self Sign Queue'
-	);
-	$this->set($data);
+    	if($this->RequestHandler->isAjax()){
+    		$date = date('Y-m-d') . ' 00:01:00';
+			$selfSignLogs = $this->SelfSignLog->find('all', array('conditions' => array(
+				'SelfSignLog.created >' => $date)));
+			$i = 0;
+			$masterKioskButtonList = $this->_getAllMasterButtonNames();
+			$data = array();
+			$data['results'] = $this->SelfSignLog->find('count', array('conditions' => array(
+				'SelfSignLog.created >' => $date)));
+			$data['success'] = true;	
+			foreach($selfSignLogs as $selfSignLog) {
+				$data['logs'][$i]['id'] = $selfSignLog['SelfSignLog']['id'];
+				$data['logs'][$i]['status'] = $this->statuses[$selfSignLog['SelfSignLog']['status']]; 
+				$data['logs'][$i]['visitor'] = ucfirst($selfSignLog['User']['lastname']) . ', ' . 
+					ucfirst($selfSignLog['User']['firstname']) . ' - ' . substr($selfSignLog['User']['ssn'], -4);
+				$level2 = null;
+				$level3 = null;
+				$other = null;
+				if(!empty($selfSignLog['SelfSignLog']['level_2'])) {
+					$level2 = ' - ' . $masterKioskButtonList[$selfSignLog['SelfSignLog']['level_2']];
+				}
+				if(!empty($selfSignLog['SelfSignLog']['level_3'])) {
+					$level3 = ' - ' .  $masterKioskButtonList[$selfSignLog['SelfSignLog']['level_3']];
+				}
+				if(!empty($selfSignLog['SelfSignLog']['other'])) {
+					$other = ' - ' . $selfSignLog['SelfSignLog']['other'];
+				}	
+				$data['logs'][$i]['service'] = 	$masterKioskButtonList[$selfSignLog['SelfSignLog']['level_1']] .
+					' ' . $level2 . ' ' . $level3 . ' ' . $other;
+ 				$data['logs'][$i]['created'] = $selfSignLog['SelfSignLog']['created'];
+				$data['logs'][$i]['admin'] = trim(ucfirst($selfSignLog['Admin']['lastname']) . ', ' .
+					ucfirst($selfSignLog['Admin']['firstname']), ',');
+				$data['logs'][$i]['location'] = $selfSignLog['Location']['name'];	
+				$i++;	
+			}	
+			$this->set('data', $data);
+			$this->render(null, null, '/elements/ajaxreturn');	
+    	}
+		$title_for_layout = 'Self Sign Queue';
+		$this->set(compact('title_for_layout'));
     }
 
     function admin_get_logs_ajax() {
