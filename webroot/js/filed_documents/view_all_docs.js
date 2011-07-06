@@ -444,16 +444,16 @@ var allDocsSearch = new Ext.form.FormPanel({
           listeners: {
             select: function(combo, record, index) {
               if(record.id == 'lastname' || record.id == 'firstname'){
-                Ext.getCmp('cusLastname').enable();
-                Ext.getCmp('cusLastname').show();
-                Ext.getCmp('cusLast4').disable();
-                Ext.getCmp('cusLast4').hide();
+                Ext.getCmp('cusLastname2').enable();
+                Ext.getCmp('cusLastname2').show();
+                Ext.getCmp('cusLast4_2').disable();
+                Ext.getCmp('cusLast4_2').hide();
               }
               if(record.id ==  'last4'){
-                Ext.getCmp('cusLast4').enable();
-                Ext.getCmp('cusLast4').show();
-                Ext.getCmp('cusLastname').disable();
-                Ext.getCmp('cusLastname').hide();							
+                Ext.getCmp('cusLast4_2').enable();
+                Ext.getCmp('cusLast4_2').show();
+                Ext.getCmp('cusLastname2').disable();
+                Ext.getCmp('cusLastname2').hide();							
               }
             }
           }
