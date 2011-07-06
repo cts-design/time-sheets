@@ -113,7 +113,7 @@ var searchPanel = {
         }
       }],
       listeners: {
-        render: function (panel) {
+        afterrender: function (panel) {
           console.log(panel);
           var form = panel.getForm();
 
