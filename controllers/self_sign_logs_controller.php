@@ -51,8 +51,9 @@ class SelfSignLogsController extends AppController {
 			foreach($selfSignLogs as $selfSignLog) {
 				$data['logs'][$i]['id'] = $selfSignLog['SelfSignLog']['id'];
 				$data['logs'][$i]['status'] = $this->statuses[$selfSignLog['SelfSignLog']['status']]; 
-				$data['logs'][$i]['visitor'] = ucfirst($selfSignLog['User']['lastname']) . ', ' . 
-					ucfirst($selfSignLog['User']['firstname']) . ' - ' . substr($selfSignLog['User']['ssn'], -4);
+				$data['logs'][$i]['lastname'] = ucfirst($selfSignLog['User']['lastname']);		 
+				$data['logs'][$i]['firstname'] = ucfirst($selfSignLog['User']['firstname']);
+				$data['logs'][$i]['last4'] = substr($selfSignLog['User']['ssn'], -4); 
 				$level2 = null;
 				$level3 = null;
 				$other = null;
