@@ -16,7 +16,7 @@ var selfSignLogsReader = new Ext.data.JsonReader({
 	idProperty: 'id',
 	root: 'logs',
 	totalProperty: 'results',
-	fields: ['id', 'status', 'visitor', 'admin', 'created', 'location', 'service']
+	fields: ['id', 'status', 'firstname', 'lastname', 'last4', 'admin', 'created', 'location', 'service']
 })
 
 var selfSignLogsStore = new Ext.data.GroupingStore({
@@ -31,6 +31,7 @@ var selfSignLogsStore = new Ext.data.GroupingStore({
 var contextMenu = new Ext.menu.Menu({
   items: [{
     text: 'Open',
+    id: 'cmOpen',
     iconCls: 'edit',
     handler: function() {
     	var view = selfSignLogsGrid.getView();
@@ -40,9 +41,11 @@ var contextMenu = new Ext.menu.Menu({
     	console.log(record.data.id)  	
     }
   },{
-  	text: 'Close'
+  	text: 'Close',
+  	id: 'cmClose'
   },{
-  	text: 'Not Helped'
+  	text: 'Not Helped',
+  	id: 'cmNotHelped'
   },{
   	text: 'Re-Assign'
   }]
@@ -65,24 +68,34 @@ var selfSignLogsGrid = new Ext.grid.GridPanel({
 		sortable: true,
 		width: 40
 	},{
-		header: 'Visitor',
-		dataIndex: 'visitor',
+		header: 'First',
+		dataIndex: 'firstname',
 		sortable: true,
-		width: 75,
+		width: 40
+	},{
+		header: 'Last',
+		dataIndex: 'lastname',
+		sortable: true,
+		width: 40		
+	},{
+		header: 'Last 4',
+		dataIndex: 'last4',
+		sortable: true,
+		width: 30		
 	},{
 		header: 'Service',
 		dataIndex: 'service',
-		width: 280
+		width: 270
 	},{
 		header: 'Last Act. Admin',
 		dataIndex: 'admin',
 		sortable: true,
-		width: 75
+		width: 70
 	},{
 		header: 'Location',
 		dataIndex: 'location',
 		sortable: true,
-		width: 75
+		width: 70
 	},{
 		header: 'Date',
 		dataIndex: 'created',
@@ -100,6 +113,29 @@ var selfSignLogsGrid = new Ext.grid.GridPanel({
 	listeners: {
 		cellcontextmenu: function(grid, index, columnIndex, event) {
 			event.stopEvent();
+	    	var view = this.getView();
+	    	var row = view.getRow(index);
+	    	var record = this.store.getAt(index);
+	    	switch(record.data.status) {
+	    		case 'Open': {
+	    			Ext.getCmp('cmOpen').hide();
+	    			Ext.getCmp('cmNotHelped').show();
+	    			Ext.getCmp('cmClose').show();
+	    			break;
+	    		}
+	    		case 'Closed': {
+	    			Ext.getCmp('cmClose').hide();
+	    			Ext.getCmp('cmOpen').show();
+	    			Ext.getCmp('cmNotHelped').show();
+	    			break;
+	    		}
+	    		case 'Not Helped': {
+	    			Ext.getCmp('cmNotHelped').hide();
+	    			Ext.getCmp('cmClose').show();
+	    			Ext.getCmp('cmOpen').show();
+	    			break;	    			
+	    		}
+	    	}		
      		contextMenu.showAt(event.xy);
      		rowIndex = index;
 		}
