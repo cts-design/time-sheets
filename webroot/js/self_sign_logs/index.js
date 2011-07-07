@@ -179,12 +179,11 @@ var selfSignSearch = new Ext.form.FormPanel({
 				id: 'servicesSelect',
 				store: servicesStore,
 				mode: 'local',
-				blankText: 'Please make a selection',
 				valueField: 'id',
 				displayField: 'name',
 				name: 'services',
 				fieldLabel: 'Services',
-				allowBlank: false,
+				allowBlank: true,
 				msgTarget: 'under',
 				width: 300,
 				listeners: {
