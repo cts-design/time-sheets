@@ -35,15 +35,22 @@ var contextMenu = new Ext.menu.Menu({
     iconCls: 'edit',
     handler: function() {
     	var record = selfSignLogsGrid.store.getAt(rowIndex);
-    	// TODO implement open, closed, and not helped context menu buttons
-    	console.log(record.data.id)  	
+    	updateStatus(record.data.id, 0);	
     }
   },{
   	text: 'Close',
-  	id: 'cmClose'
+  	id: 'cmClose',
+    handler: function() {
+    	var record = selfSignLogsGrid.store.getAt(rowIndex);
+    	updateStatus(record.data.id, 1);	
+    }  	
   },{
   	text: 'Not Helped',
-  	id: 'cmNotHelped'
+  	id: 'cmNotHelped',
+    handler: function() {
+    	var record = selfSignLogsGrid.store.getAt(rowIndex);
+    	updateStatus(record.data.id, 2);	
+    }   	
   },{
   	text: 'Re-Assign'
   }]
@@ -243,6 +250,22 @@ var selfSignSearch = new Ext.form.FormPanel({
 	}]
 })
 
+function updateStatus(id, status) {
+    Ext.Ajax.request({
+        url: '/admin/self_sign_logs/update_status/' + id + '/' + status,
+        success: function(response){
+            selfSignLogsStore.reload();
+        },
+        failure: function(response){
+            Ext.Msg.show({
+                title: 'Status chage error.',
+                msg: 'An error occured when trying to update the records status.',
+                buttons: Ext.air.Msg.OK,
+                icon: Ext.air.MessageBox.ERROR
+            });
+        },
+    });	
+}
 
 Ext.onReady( function() {
 	Ext.QuickTips.init();
