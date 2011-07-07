@@ -1,0 +1,2252 @@
+# LANGUAGE translation of CakePHP Application
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Atlas v3.0.3\n"
+"POT-Creation-Date: 2011-07-07 12:00-0400\n"
+"PO-Revision-Date: 2011-07-07 12:12-0500\n"
+"Last-Translator: Brandon Cordell <brandonc@ctsfla.com>\n"
+"Language-Team: Complete Technology Solutions\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"X-Poedit-Language: English\n"
+"X-Poedit-Country: UNITED STATES\n"
+
+#: /app_controller.php:123
+msgid "You are not authorized to access that location"
+msgstr ""
+
+#: /app_controller.php:145
+msgid "This module needs to be activated, please contact CTS"
+msgstr ""
+
+#: /app_controller.php:280
+msgid "Controller::paginate() - can't find model %1$s in controller %2$sController"
+msgstr ""
+
+#: /controllers/career_seekers_surveys_controller.php:19
+msgid "The career seekers survey has been submitted"
+msgstr ""
+
+#: /controllers/career_seekers_surveys_controller.php:22
+msgid "The career seekers survey could not be submitted. Please try again."
+msgstr ""
+
+#: /controllers/chairman_reports_controller.php:25
+msgid "The chairman report could not be uploaded. Please try again."
+msgstr ""
+
+#: /controllers/chairman_reports_controller.php:33;50
+msgid "The chairman report has been saved"
+msgstr ""
+
+#: /controllers/chairman_reports_controller.php:36
+msgid "The chairman report could not be saved. Please try again."
+msgstr ""
+
+#: /controllers/chairman_reports_controller.php:43
+msgid "Invalid chairman report"
+msgstr ""
+
+#: /controllers/chairman_reports_controller.php:53
+msgid "The chairman report could not be saved. Please, try again."
+msgstr ""
+
+#: /controllers/chairman_reports_controller.php:63
+msgid "Invalid id for chairman report"
+msgstr ""
+
+#: /controllers/chairman_reports_controller.php:69
+msgid "Chairman report deleted"
+msgstr ""
+
+#: /controllers/chairman_reports_controller.php:72
+msgid "Chairman report was not deleted"
+msgstr ""
+
+#: /controllers/deleted_documents_controller.php:59
+msgid "Invalid deleted document"
+msgstr ""
+
+#: /controllers/deleted_documents_controller.php:79
+msgid "Invalid id for deleted document"
+msgstr ""
+
+#: /controllers/deleted_documents_controller.php:95
+msgid "Document was restored to the document queue successfully"
+msgstr ""
+
+#: /controllers/deleted_documents_controller.php:99;117
+msgid "Unable to restore document"
+msgstr ""
+
+#: /controllers/deleted_documents_controller.php:113
+msgid "Document was restored to filed documents successfully"
+msgstr ""
+
+#: /controllers/document_queue_categories_controller.php:24;39
+msgid "The document queue category has been saved"
+msgstr ""
+
+#: /controllers/document_queue_categories_controller.php:27;42
+msgid "The document queue category could not be saved. Please, try again."
+msgstr ""
+
+#: /controllers/document_queue_categories_controller.php:34
+msgid "Invalid document queue category"
+msgstr ""
+
+#: /controllers/document_queue_categories_controller.php:52
+msgid "Invalid id for document queue category"
+msgstr ""
+
+#: /controllers/document_queue_categories_controller.php:56
+msgid "Document queue category deleted"
+msgstr ""
+
+#: /controllers/document_queue_categories_controller.php:59
+msgid "Document queue category was not deleted"
+msgstr ""
+
+#: /controllers/employers_surveys_controller.php:19
+msgid "The employers survey has been saved"
+msgstr ""
+
+#: /controllers/employers_surveys_controller.php:22
+msgid "The employers survey could not be saved. Please, try again."
+msgstr ""
+
+#: /controllers/featured_employers_controller.php:28
+msgid "The image could not be uploaded. Please, try again."
+msgstr ""
+
+#: /controllers/featured_employers_controller.php:37;54
+msgid "The featured employer has been saved"
+msgstr ""
+
+#: /controllers/featured_employers_controller.php:40;57
+msgid "The featured employer could not be saved. Please, try again."
+msgstr ""
+
+#: /controllers/featured_employers_controller.php:47
+msgid "Invalid featured employer"
+msgstr ""
+
+#: /controllers/featured_employers_controller.php:67
+msgid "Invalid id for featured employer"
+msgstr ""
+
+#: /controllers/featured_employers_controller.php:73
+msgid "Featured employer deleted"
+msgstr ""
+
+#: /controllers/featured_employers_controller.php:76
+msgid "Featured employer was not deleted"
+msgstr ""
+
+#: /controllers/filed_documents_controller.php:75;97
+msgid "Invalid filed document"
+msgstr ""
+
+#: /controllers/filed_documents_controller.php:119
+msgid "The filed document has been saved"
+msgstr ""
+
+#: /controllers/filed_documents_controller.php:123
+msgid "The filed document could not be saved. Please, try again."
+msgstr ""
+
+#: /controllers/filed_documents_controller.php:146
+msgid "Invalid id for filed document"
+msgstr ""
+
+#: /controllers/filed_documents_controller.php:153
+msgid "Filed document deleted"
+msgstr ""
+
+#: /controllers/filed_documents_controller.php:157
+msgid "Filed document was not deleted"
+msgstr ""
+
+#: /controllers/filed_documents_controller.php:165
+msgid "Invalid User Id."
+msgstr ""
+
+#: /controllers/filed_documents_controller.php:170
+msgid "Document must be a .pdf file."
+msgstr ""
+
+#: /controllers/filed_documents_controller.php:178
+msgid "The document has been filed."
+msgstr ""
+
+#: /controllers/filed_documents_controller.php:182
+msgid "Unable to file document."
+msgstr ""
+
+#: /controllers/filed_documents_controller.php:203
+#: /controllers/queued_documents_controller.php:329
+msgid "Scanned document was filed successfully."
+msgstr ""
+
+#: /controllers/filed_documents_controller.php:208
+#: /controllers/queued_documents_controller.php:334
+msgid "Unable to save scanned document."
+msgstr ""
+
+#: /controllers/filed_documents_controller.php:292
+#: /controllers/self_sign_log_archives_controller.php:128
+msgid "There are no results to generate a report"
+msgstr ""
+
+#: /controllers/ftp_document_scanners_controller.php:22;39
+msgid "The ftp document scanner has been saved"
+msgstr ""
+
+#: /controllers/ftp_document_scanners_controller.php:25;42
+msgid "The ftp document scanner could not be saved. Please, try again."
+msgstr ""
+
+#: /controllers/ftp_document_scanners_controller.php:34
+msgid "Invalid ftp document scanner"
+msgstr ""
+
+#: /controllers/ftp_document_scanners_controller.php:54
+msgid "Invalid id for ftp document scanner"
+msgstr ""
+
+#: /controllers/ftp_document_scanners_controller.php:58
+msgid "Ftp document scanner deleted"
+msgstr ""
+
+#: /controllers/ftp_document_scanners_controller.php:61
+msgid "Ftp document scanner was not deleted"
+msgstr ""
+
+#: /controllers/helpful_articles_controller.php:27;44
+msgid "The helpful article has been saved"
+msgstr ""
+
+#: /controllers/helpful_articles_controller.php:30;47
+msgid "The helpful article could not be saved. Please, try again."
+msgstr ""
+
+#: /controllers/helpful_articles_controller.php:37
+msgid "Invalid helpful article"
+msgstr ""
+
+#: /controllers/helpful_articles_controller.php:57
+msgid "Invalid id for helpful article"
+msgstr ""
+
+#: /controllers/helpful_articles_controller.php:63
+msgid "Helpful article deleted"
+msgstr ""
+
+#: /controllers/helpful_articles_controller.php:66
+msgid "Helpful article was not deleted"
+msgstr ""
+
+#: /controllers/hot_jobs_controller.php:28
+msgid "The file could not be uploaded. Please, try again."
+msgstr ""
+
+#: /controllers/hot_jobs_controller.php:38;59
+msgid "The hot job has been saved"
+msgstr ""
+
+#: /controllers/hot_jobs_controller.php:41;62
+msgid "The hot job could not be saved. Please, try again."
+msgstr ""
+
+#: /controllers/hot_jobs_controller.php:48
+msgid "Invalid hot job"
+msgstr ""
+
+#: /controllers/hot_jobs_controller.php:72
+msgid "Invalid id for hot job"
+msgstr ""
+
+#: /controllers/hot_jobs_controller.php:78
+msgid "Hot job deleted"
+msgstr ""
+
+#: /controllers/hot_jobs_controller.php:81
+msgid "Hot job was not deleted"
+msgstr ""
+
+#: /controllers/hot_jobs_controller.php:87
+msgid "No job specified"
+msgstr ""
+
+#: /controllers/hot_jobs_controller.php:95
+msgid "We couldn't find the job you were looking for"
+msgstr ""
+
+#: /controllers/in_the_news_controller.php:32;49
+msgid "The in the news article has been saved"
+msgstr ""
+
+#: /controllers/in_the_news_controller.php:35;52
+msgid "The in the news article could not be saved. Please, try again."
+msgstr ""
+
+#: /controllers/in_the_news_controller.php:42
+msgid "Invalid in the news article"
+msgstr ""
+
+#: /controllers/in_the_news_controller.php:62
+msgid "Invalid id for in the news article"
+msgstr ""
+
+#: /controllers/in_the_news_controller.php:68
+msgid "In the news article deleted"
+msgstr ""
+
+#: /controllers/in_the_news_controller.php:71
+msgid "In the news article was not deleted"
+msgstr ""
+
+#: /controllers/kiosk_buttons_controller.php:17
+msgid "Invalid Kiosk Id."
+msgstr ""
+
+#: /controllers/kiosk_buttons_controller.php:37
+msgid "The kiosk button already exists for the current location."
+msgstr ""
+
+#: /controllers/kiosk_buttons_controller.php:50
+msgid "You must add the parent button before enabling a child button."
+msgstr ""
+
+#: /controllers/kiosk_buttons_controller.php:68
+msgid "The kiosk button has been enabled"
+msgstr ""
+
+#: /controllers/kiosk_buttons_controller.php:73
+msgid "The kiosk button could not be enabled. Please, try again."
+msgstr ""
+
+#: /controllers/kiosk_buttons_controller.php:92
+msgid "You cannot disable a parent button that has enabled children."
+msgstr ""
+
+#: /controllers/kiosk_buttons_controller.php:99
+msgid "The kiosk button has been disabled"
+msgstr ""
+
+#: /controllers/kiosk_buttons_controller.php:104
+msgid "The kiosk button could not be disabled. Please, try again."
+msgstr ""
+
+#: /controllers/kiosks_controller.php:36;55
+msgid "The kiosk has been saved"
+msgstr ""
+
+#: /controllers/kiosks_controller.php:40;59
+msgid "The kiosk could not be saved. Please, try again."
+msgstr ""
+
+#: /controllers/kiosks_controller.php:49
+msgid "Invalid kiosk"
+msgstr ""
+
+#: /controllers/kiosks_controller.php:71
+msgid "Invalid id for kiosk"
+msgstr ""
+
+#: /controllers/kiosks_controller.php:77
+msgid "Kiosk deleted"
+msgstr ""
+
+#: /controllers/kiosks_controller.php:80
+msgid "Kiosk was not deleted"
+msgstr ""
+
+#: /controllers/kiosks_controller.php:91
+msgid "An error occured please try again."
+msgstr ""
+
+#: /controllers/kiosks_controller.php:99
+msgid "The information has been saved"
+msgstr ""
+
+#: /controllers/kiosks_controller.php:103
+#: /controllers/users_controller.php:320;361
+msgid "The information could not be saved. Please, try again."
+msgstr ""
+
+#: /controllers/kiosks_controller.php:306
+msgid "An error occured please try again"
+msgstr ""
+
+#: /controllers/kiosks_controller.php:344
+msgid "Self Scan Program Selection"
+msgstr ""
+
+#: /controllers/kiosks_controller.php:354
+msgid "Scanned document was saved successfully."
+msgstr ""
+
+#: /controllers/kiosks_controller.php:359
+msgid "Unable to save document."
+msgstr ""
+
+#: /controllers/locations_controller.php:49;68
+msgid "The location has been saved"
+msgstr ""
+
+#: /controllers/locations_controller.php:52;71
+msgid "The location could not be saved. Please, try again."
+msgstr ""
+
+#: /controllers/locations_controller.php:63
+msgid "Invalid location"
+msgstr ""
+
+#: /controllers/locations_controller.php:81
+msgid "Invalid id for location"
+msgstr ""
+
+#: /controllers/locations_controller.php:85
+msgid "Location deleted"
+msgstr ""
+
+#: /controllers/locations_controller.php:88
+msgid "Location was not deleted"
+msgstr ""
+
+#: /controllers/master_kiosk_buttons_controller.php:31
+msgid "Buttons cannot be more than three levels deep"
+msgstr ""
+
+#: /controllers/master_kiosk_buttons_controller.php:52;71
+msgid "The kiosk button has been saved"
+msgstr ""
+
+#: /controllers/master_kiosk_buttons_controller.php:55;74
+msgid "The kiosk button could not be saved. Please, try again."
+msgstr ""
+
+#: /controllers/master_kiosk_buttons_controller.php:64
+msgid "Invalid kiosk button"
+msgstr ""
+
+#: /controllers/master_kiosk_buttons_controller.php:90
+msgid "Invalid id for kiosk button"
+msgstr ""
+
+#: /controllers/master_kiosk_buttons_controller.php:98
+msgid "Cannot delete button that has children"
+msgstr ""
+
+#: /controllers/master_kiosk_buttons_controller.php:106
+msgid "Kiosk button deleted"
+msgstr ""
+
+#: /controllers/master_kiosk_buttons_controller.php:109
+msgid "Kiosk button was not deleted"
+msgstr ""
+
+#: /controllers/pages_controller.php:116;140
+msgid "The page has been saved"
+msgstr ""
+
+#: /controllers/pages_controller.php:119;143
+msgid "The page could not be saved. Please, try again."
+msgstr ""
+
+#: /controllers/pages_controller.php:130
+msgid "Invalid page"
+msgstr ""
+
+#: /controllers/pages_controller.php:153
+msgid "Invalid id for page"
+msgstr ""
+
+#: /controllers/pages_controller.php:160
+msgid "This page cannot be deleted because it is locked"
+msgstr ""
+
+#: /controllers/pages_controller.php:166
+msgid "Page deleted"
+msgstr ""
+
+#: /controllers/pages_controller.php:169
+msgid "Page was not deleted"
+msgstr ""
+
+#: /controllers/permissions_controller.php:17;124
+msgid "Invalid Id. Please try again."
+msgstr ""
+
+#: /controllers/permissions_controller.php:100
+msgid "An error occured, please try again."
+msgstr ""
+
+#: /controllers/permissions_controller.php:104
+msgid "Permissions have been set."
+msgstr ""
+
+#: /controllers/permissions_controller.php:129
+msgid "Permissions reset."
+msgstr ""
+
+#: /controllers/permissions_controller.php:137
+msgid "Permissions were not reset. Please try again."
+msgstr ""
+
+#: /controllers/press_releases_controller.php:25
+msgid "The press release could not be uploaded. Please, try again."
+msgstr ""
+
+#: /controllers/press_releases_controller.php:34;51
+msgid "The press release has been saved"
+msgstr ""
+
+#: /controllers/press_releases_controller.php:37;54
+msgid "The press release could not be saved. Please, try again."
+msgstr ""
+
+#: /controllers/press_releases_controller.php:44
+msgid "Invalid press release"
+msgstr ""
+
+#: /controllers/press_releases_controller.php:64
+msgid "Invalid id for press release"
+msgstr ""
+
+#: /controllers/press_releases_controller.php:70
+msgid "Press release deleted"
+msgstr ""
+
+#: /controllers/press_releases_controller.php:73
+msgid "Press release was not deleted"
+msgstr ""
+
+#: /controllers/queued_documents_controller.php:65
+msgid "You must select a location"
+msgstr ""
+
+#: /controllers/queued_documents_controller.php:185
+msgid "Invalid document id. Please try again."
+msgstr ""
+
+#: /controllers/queued_documents_controller.php:195
+msgid "The queued document has been re-assigned."
+msgstr ""
+
+#: /controllers/queued_documents_controller.php:199
+msgid "The queued document could not be re-assigned. Please try again."
+msgstr ""
+
+#: /controllers/queued_documents_controller.php:239
+msgid "Invalid document Id. Please try again."
+msgstr ""
+
+#: /controllers/queued_documents_controller.php:248;290
+msgid "Unable to file document. Please try again."
+msgstr ""
+
+#: /controllers/queued_documents_controller.php:280
+msgid "The document was filed and re-queued successfully"
+msgstr ""
+
+#: /controllers/queued_documents_controller.php:286
+msgid "The document was filed successfully"
+msgstr ""
+
+#: /controllers/queued_documents_controller.php:302
+msgid "Invalid id for queued document"
+msgstr ""
+
+#: /controllers/queued_documents_controller.php:311
+msgid "Queued document deleted"
+msgstr ""
+
+#: /controllers/queued_documents_controller.php:315
+msgid "Queued document was not deleted"
+msgstr ""
+
+#: /controllers/queued_documents_controller.php:358
+#: /controllers/users_controller.php:169;196
+msgid "The customer has been saved"
+msgstr ""
+
+#: /controllers/queued_documents_controller.php:362
+#: /controllers/users_controller.php:173;200
+msgid "The customer could not be saved. Please, try again."
+msgstr ""
+
+#: /controllers/roles_controller.php:18;33
+msgid "The role has been saved"
+msgstr ""
+
+#: /controllers/roles_controller.php:21;36
+msgid "The role could not be saved. Please, try again."
+msgstr ""
+
+#: /controllers/roles_controller.php:28
+msgid "Invalid role"
+msgstr ""
+
+#: /controllers/roles_controller.php:46
+msgid "Invalid id for role"
+msgstr ""
+
+#: /controllers/roles_controller.php:50
+msgid "Role deleted"
+msgstr ""
+
+#: /controllers/roles_controller.php:53
+msgid "Role was not deleted"
+msgstr ""
+
+#: /controllers/self_scan_categories_controller.php:14;49
+msgid "Invalid self scan category"
+msgstr ""
+
+#: /controllers/self_scan_categories_controller.php:27;54
+msgid "The self scan category has been saved"
+msgstr ""
+
+#: /controllers/self_scan_categories_controller.php:30;57
+msgid "The self scan category could not be saved. Please, try again."
+msgstr ""
+
+#: /controllers/self_scan_categories_controller.php:72
+msgid "Invalid id for self scan category"
+msgstr ""
+
+#: /controllers/self_scan_categories_controller.php:78
+msgid "Cannot delete a category that has children"
+msgstr ""
+
+#: /controllers/self_scan_categories_controller.php:82
+msgid "Self scan category deleted"
+msgstr ""
+
+#: /controllers/self_scan_categories_controller.php:85
+msgid "Self scan category was not deleted"
+msgstr ""
+
+#: /controllers/self_sign_log_archives_controller.php:91
+msgid "Your results exceed 5000 records, please filter results further."
+msgstr ""
+
+#: /controllers/self_sign_log_archives_controller.php:96
+msgid "You must filter results to generate a report."
+msgstr ""
+
+#: /controllers/user_transactions_controller.php:15
+msgid "Invalid user id."
+msgstr ""
+
+#: /controllers/users_controller.php:32
+msgid "This account has been disabled."
+msgstr ""
+
+#: /controllers/users_controller.php:80
+msgid "You are not authorized to access the admin dashboard."
+msgstr ""
+
+#: /controllers/users_controller.php:188;206
+msgid "Invalid customer"
+msgstr ""
+
+#: /controllers/users_controller.php:311;357
+msgid "Your account has been created."
+msgstr ""
+
+#: /controllers/users_controller.php:340
+msgid "You have been logged out due to inactivity."
+msgstr ""
+
+#: /controllers/users_controller.php:479;522
+msgid "The admin has been saved"
+msgstr ""
+
+#: /controllers/users_controller.php:483;526
+msgid "The admin could not be saved. Please, try again."
+msgstr ""
+
+#: /controllers/users_controller.php:503
+msgid "Invalid admin"
+msgstr ""
+
+#: /controllers/users_controller.php:567
+msgid "Your password has been changed. Please check your E-Mail."
+msgstr ""
+
+#: /controllers/users_controller.php:572
+msgid "Error occured sending E-Mail. Please retry."
+msgstr ""
+
+#: /controllers/users_controller.php:577
+msgid "Error saving record. Please retry."
+msgstr ""
+
+#: /controllers/users_controller.php:583
+msgid "E-Mail address not found"
+msgstr ""
+
+#: /controllers/users_controller.php:728
+msgid "Invalid user id"
+msgstr ""
+
+#: /controllers/users_controller.php:743
+msgid "User disabled successfully."
+msgstr ""
+
+#: /controllers/users_controller.php:748
+msgid "User enabled successfully."
+msgstr ""
+
+#: /controllers/users_controller.php:755
+msgid "An error occured."
+msgstr ""
+
+#: /controllers/program_controllers/program_emails_controller.php:15;32
+msgid "The program email has been saved"
+msgstr ""
+
+#: /controllers/program_controllers/program_emails_controller.php:18;35
+msgid "The program email could not be saved. Please, try again."
+msgstr ""
+
+#: /controllers/program_controllers/program_emails_controller.php:27
+msgid "Invalid program email"
+msgstr ""
+
+#: /controllers/program_controllers/program_emails_controller.php:47
+msgid "Invalid id for program email"
+msgstr ""
+
+#: /controllers/program_controllers/program_emails_controller.php:51
+msgid "Program email deleted"
+msgstr ""
+
+#: /controllers/program_controllers/program_emails_controller.php:54
+msgid "Program email was not deleted"
+msgstr ""
+
+#: /controllers/program_controllers/program_responses_controller.php:34;78
+#: /controllers/program_controllers/programs_controller.php:20;147
+msgid "Invalid Program Id"
+msgstr ""
+
+#: /controllers/program_controllers/program_responses_controller.php:55
+#: /controllers/program_controllers/programs_controller.php:171
+msgid "Saved"
+msgstr ""
+
+#: /controllers/program_controllers/program_responses_controller.php:63
+msgid "Unable to save"
+msgstr ""
+
+#: /controllers/program_controllers/program_responses_controller.php:98
+msgid "Document uploaded successfully."
+msgstr ""
+
+#: /controllers/program_controllers/program_responses_controller.php:102;107
+msgid "Unable to upload document, please try again"
+msgstr ""
+
+#: /controllers/program_controllers/program_responses_controller.php:129
+msgid "An error has occured."
+msgstr ""
+
+#: /controllers/program_controllers/program_responses_controller.php:137
+msgid "Invalid Program"
+msgstr ""
+
+#: /controllers/program_controllers/programs_controller.php:31
+msgid "This program is disabled"
+msgstr ""
+
+#: /controllers/program_controllers/programs_controller.php:191
+msgid "You must check the I acknowledge box."
+msgstr ""
+
+#: /controllers/program_controllers/programs_controller.php:207
+msgid "Invalid id"
+msgstr ""
+
+#: /controllers/program_controllers/programs_controller.php:259
+msgid "Invalid instructions"
+msgstr ""
+
+#: /controllers/program_controllers/programs_controller.php:264
+msgid "Instructions updated successfully"
+msgstr ""
+
+#: /controllers/program_controllers/programs_controller.php:268
+msgid "Unable to save, please try again."
+msgstr ""
+
+#: /plugins/acl_extras/vendors/shells/acl_extras.php:87
+msgid "Available ACO sync commands:"
+msgstr ""
+
+#: /plugins/acl_extras/vendors/shells/acl_extras.php:93
+msgid "For help, run the 'help' command.  For help on a specific command, run 'help <command>'"
+msgstr ""
+
+#: /plugins/acl_extras/vendors/shells/acl_extras.php:124
+msgid "Aco Update Complete"
+msgstr ""
+
+#: /plugins/acl_extras/vendors/shells/acl_extras.php:167
+msgid "Deleted %s and all children"
+msgstr ""
+
+#: /plugins/acl_extras/vendors/shells/acl_extras.php:208
+msgid "Created Aco node: %s"
+msgstr ""
+
+#: /plugins/acl_extras/vendors/shells/acl_extras.php:244
+msgid "Deleted Aco node %s"
+msgstr ""
+
+#: /plugins/acl_extras/vendors/shells/acl_extras.php:259
+msgid "Usage: cake acl_extras <command>"
+msgstr ""
+
+#: /plugins/acl_extras/vendors/shells/acl_extras.php:261
+msgid "Commands:"
+msgstr ""
+
+#: /plugins/acl_extras/vendors/shells/acl_extras.php:265
+msgid "Add new ACOs for new controllers and actions"
+msgstr ""
+
+#: /plugins/acl_extras/vendors/shells/acl_extras.php:266
+msgid "Create new ACO's for controllers and their actions. Does not remove any nodes from ACO table"
+msgstr ""
+
+#: /plugins/acl_extras/vendors/shells/acl_extras.php:270
+msgid "Creates new ACO's for missing controllers and actions. Removes orphaned entries in the ACO table."
+msgstr ""
+
+#: /plugins/acl_extras/vendors/shells/acl_extras.php:273
+msgid "Verify the tree structure of either your Aco or Aro Trees"
+msgstr ""
+
+#: /plugins/acl_extras/vendors/shells/acl_extras.php:276
+msgid "Recover a corrupted Tree"
+msgstr ""
+
+#: /plugins/acl_extras/vendors/shells/acl_extras.php:279
+msgid "Displays this help message, or a message on a specific command."
+msgstr ""
+
+#: /plugins/acl_extras/vendors/shells/acl_extras.php:290
+msgid "Command '%s' not found"
+msgstr ""
+
+#: /plugins/acl_extras/vendors/shells/acl_extras.php:302;322
+msgid "Missing Type"
+msgstr ""
+
+#: /plugins/acl_extras/vendors/shells/acl_extras.php:308
+msgid "Tree is valid and strong"
+msgstr ""
+
+#: /plugins/acl_extras/vendors/shells/acl_extras.php:328
+msgid "Tree has been recovered, or tree did not need recovery."
+msgstr ""
+
+#: /plugins/acl_extras/vendors/shells/acl_extras.php:330
+msgid "Tree recovery failed."
+msgstr ""
+
+#: /views/career_seekers_surveys/index.ctp:3
+#: /views/career_seekers_surveys/view.ctp:2
+#: /views/employers_surveys/index.ctp:3
+msgid "Career Seekers Survey"
+msgstr ""
+
+#: /views/career_seekers_surveys/index.ctp:274
+#: /views/employers_surveys/index.ctp:221
+msgid "Please share any comments or suggestions you have regarding %s, our Business Services or the %s website. Please enter your name, phone number and email address here, if you would like our staff to contact you."
+msgstr ""
+
+#: /views/career_seekers_surveys/index.ctp:281
+#: /views/chairman_reports/admin_add.ctp:26
+#: /views/chairman_reports/admin_edit.ctp:25
+#: /views/document_filing_categories/admin_edit.ctp:26
+#: /views/document_queue_categories/admin_add.ctp:33
+#: /views/document_queue_categories/admin_edit.ctp:37
+#: /views/elements/queued_documents/customer_add_form.ctp:115
+#: /views/employers_surveys/index.ctp:228
+#: /views/event_categories/admin_add.ctp:19
+#: /views/event_categories/admin_edit.ctp:24
+#: /views/events/admin_add.ctp:59
+#: /views/events/admin_edit.ctp:64
+#: /views/featured_employers/admin_add.ctp:35
+#: /views/featured_employers/admin_edit.ctp:39
+#: /views/filed_documents/admin_edit.ctp:54
+#: /views/filed_documents/admin_upload_document.ctp:58
+#: /views/ftp_document_scanners/admin_add.ctp:41
+#: /views/ftp_document_scanners/admin_edit.ctp:43
+#: /views/helpful_articles/admin_add.ctp:39
+#: /views/helpful_articles/admin_edit.ctp:44
+#: /views/hot_jobs/admin_add.ctp:62
+#: /views/hot_jobs/admin_edit.ctp:66
+#: /views/in_the_news/admin_add.ctp:40
+#: /views/in_the_news/admin_edit.ctp:44
+#: /views/kiosks/admin_add.ctp:49
+#: /views/kiosks/admin_edit.ctp:49
+#: /views/kiosks/kiosk_self_sign_edit.ctp:39
+#: /views/kiosks/kiosk_self_sign_other.ctp:18
+#: /views/locations/admin_add.ctp:138
+#: /views/locations/admin_edit.ctp:139
+#: /views/master_kiosk_buttons/admin_edit.ctp:29
+#: /views/pages/admin_add.ctp:50
+#: /views/pages/admin_edit.ctp:52
+#: /views/press_releases/admin_add.ctp:26
+#: /views/press_releases/admin_edit.ctp:25
+#: /views/program_views/program_responses/index.ctp:38
+#: /views/program_views/programs/view_media.ctp:22
+#: /views/roles/admin_add.ctp:29
+#: /views/roles/admin_edit.ctp:29
+#: /views/self_scan_categories/admin_add.ctp:70
+#: /views/self_scan_categories/admin_edit.ctp:70
+#: /views/users/admin_add.ctp:166
+#: /views/users/admin_add_admin.ctp:76
+#: /views/users/admin_edit.ctp:167
+#: /views/users/admin_edit_admin.ctp:69
+#: /views/users/child_registration.ctp:205
+#: /views/users/kiosk_mini_registration.ctp:71
+#: /views/users/registration.ctp:180
+msgid "Submit"
+msgstr ""
+
+#: /views/career_seekers_surveys/success.ctp:1
+#: /views/employers_surveys/success.ctp:1
+msgid "Survey Submitted"
+msgstr ""
+
+#: /views/career_seekers_surveys/success.ctp:3
+msgid "Thank you for completing our Career Seeker Survey."
+msgstr ""
+
+#: /views/career_seekers_surveys/success.ctp:4
+#: /views/employers_surveys/success.ctp:5
+msgid "Your answers have been added to our system and emailed to one of our administrator to help us improve our level of service."
+msgstr ""
+
+#: /views/career_seekers_surveys/view.ctp:4
+#: /views/employers_surveys/view.ctp:5
+#: /views/event_categories/admin_view.ctp:4
+#: /views/events/admin_view.ctp:4
+#: /views/self_scan_categories/admin_view.ctp:4
+msgid "Id"
+msgstr ""
+
+#: /views/career_seekers_surveys/view.ctp:9
+#: /views/employers_surveys/view.ctp:10
+msgid "Answers"
+msgstr ""
+
+#: /views/career_seekers_surveys/view.ctp:14
+#: /views/employers_surveys/view.ctp:15
+#: /views/event_categories/admin_view.ctp:14
+#: /views/events/admin_view.ctp:54
+#: /views/self_scan_categories/admin_view.ctp:39
+msgid "Created"
+msgstr ""
+
+#: /views/career_seekers_surveys/view.ctp:19
+#: /views/employers_surveys/view.ctp:20
+#: /views/event_categories/admin_view.ctp:19
+#: /views/events/admin_view.ctp:59
+#: /views/self_scan_categories/admin_view.ctp:44
+msgid "Modified"
+msgstr ""
+
+#: /views/career_seekers_surveys/view.ctp:27
+#: /views/chairman_reports/admin_index.ctp:19
+#: /views/deleted_documents/admin_index.ctp:63
+#: /views/document_queue_categories/admin_index.ctp:24
+#: /views/elements/queued_documents/index_table.ctp:46
+#: /views/employers_surveys/view.ctp:28
+#: /views/event_categories/admin_index.ctp:17
+#: /views/event_categories/admin_view.ctp:27
+#: /views/events/admin_view.ctp:67
+#: /views/featured_employers/admin_index.ctp:18
+#: /views/filed_documents/admin_index.ctp:44
+#: /views/ftp_document_scanners/admin_index.ctp:25
+#: /views/helpful_articles/admin_index.ctp:21
+#: /views/hot_jobs/admin_index.ctp:21
+#: /views/in_the_news/admin_index.ctp:21
+#: /views/kiosks/admin_index.ctp:26
+#: /views/locations/admin_index.ctp:27
+#: /views/pages/admin_index.ctp:21
+#: /views/press_releases/admin_index.ctp:19
+#: /views/roles/admin_index.ctp:23
+#: /views/self_scan_categories/admin_index.ctp:19
+#: /views/self_scan_categories/admin_view.ctp:52
+#: /views/users/admin_index.ctp:44
+#: /views/users/admin_index_admin.ctp:52
+msgid "Actions"
+msgstr ""
+
+#: /views/career_seekers_surveys/view.ctp:29
+msgid "Edit Career Seekers Survey"
+msgstr ""
+
+#: /views/career_seekers_surveys/view.ctp:30
+msgid "Delete Career Seekers Survey"
+msgstr ""
+
+#: /views/career_seekers_surveys/view.ctp:30
+#: /views/chairman_reports/admin_index.ctp:38
+#: /views/employers_surveys/view.ctp:31
+#: /views/event_categories/admin_index.ctp:35
+#: /views/event_categories/admin_view.ctp:30
+#: /views/events/admin_view.ctp:70
+#: /views/featured_employers/admin_index.ctp:37
+#: /views/helpful_articles/admin_index.ctp:43
+#: /views/hot_jobs/admin_index.ctp:44
+#: /views/in_the_news/admin_index.ctp:43
+#: /views/press_releases/admin_index.ctp:38
+#: /views/self_scan_categories/admin_view.ctp:55
+msgid "Are you sure you want to delete # %s?"
+msgstr ""
+
+#: /views/career_seekers_surveys/view.ctp:31
+msgid "List Career Seekers Surveys"
+msgstr ""
+
+#: /views/career_seekers_surveys/view.ctp:32
+msgid "New Career Seekers Survey"
+msgstr ""
+
+#: /views/chairman_reports/admin_add.ctp:11
+msgid "Admin Add Chairman Report"
+msgstr ""
+
+#: /views/chairman_reports/admin_edit.ctp:11
+msgid "Admin Edit Chairman Report"
+msgstr ""
+
+#: /views/chairman_reports/admin_index.ctp:8
+msgid "New Chairman Report"
+msgstr ""
+
+#: /views/chairman_reports/admin_index.ctp:37
+#: /views/document_queue_categories/admin_index.ctp:39
+#: /views/event_categories/admin_index.ctp:34
+#: /views/featured_employers/admin_index.ctp:36
+#: /views/filed_documents/admin_index.ctp:73
+#: /views/ftp_document_scanners/admin_index.ctp:41
+#: /views/helpful_articles/admin_index.ctp:42
+#: /views/hot_jobs/admin_index.ctp:43
+#: /views/in_the_news/admin_index.ctp:42
+#: /views/kiosks/admin_index.ctp:44
+#: /views/locations/admin_index.ctp:49
+#: /views/pages/admin_index.ctp:40
+#: /views/press_releases/admin_index.ctp:37
+#: /views/roles/admin_index.ctp:38
+#: /views/self_scan_categories/admin_index.ctp:33;45
+#: /views/users/admin_index.ctp:67
+#: /views/users/admin_index_admin.ctp:83
+msgid "Edit"
+msgstr ""
+
+#: /views/chairman_reports/admin_index.ctp:38
+#: /views/document_queue_categories/admin_index.ctp:40
+#: /views/event_categories/admin_index.ctp:35
+#: /views/featured_employers/admin_index.ctp:37
+#: /views/filed_documents/admin_index.ctp:75
+#: /views/ftp_document_scanners/admin_index.ctp:42
+#: /views/helpful_articles/admin_index.ctp:43
+#: /views/hot_jobs/admin_index.ctp:44
+#: /views/in_the_news/admin_index.ctp:43
+#: /views/kiosks/admin_index.ctp:45
+#: /views/pages/admin_index.ctp:42
+#: /views/press_releases/admin_index.ctp:38
+#: /views/roles/admin_index.ctp:39
+#: /views/self_scan_categories/admin_index.ctp:34;46
+msgid "Delete"
+msgstr ""
+
+#: /views/chairman_reports/admin_index.ctp:46
+#: /views/chairman_reports/index.ctp:29
+#: /views/deleted_documents/admin_index.ctp:104
+#: /views/document_queue_categories/admin_index.ctp:48
+#: /views/elements/queued_documents/index_table.ctp:80
+#: /views/elements/self_sign_log_archives/index_table.ctp:65
+#: /views/event_categories/admin_index.ctp:43
+#: /views/events/index.ctp:79
+#: /views/featured_employers/admin_index.ctp:45
+#: /views/featured_employers/index.ctp:13
+#: /views/filed_documents/admin_index.ctp:83
+#: /views/ftp_document_scanners/admin_index.ctp:50
+#: /views/helpful_articles/admin_index.ctp:51
+#: /views/helpful_articles/index.ctp:19
+#: /views/hot_jobs/admin_index.ctp:52
+#: /views/hot_jobs/index.ctp:21
+#: /views/in_the_news/admin_index.ctp:51
+#: /views/in_the_news/index.ctp:19
+#: /views/kiosks/admin_index.ctp:53
+#: /views/locations/admin_index.ctp:58
+#: /views/pages/admin_index.ctp:51
+#: /views/press_releases/admin_index.ctp:46
+#: /views/press_releases/index.ctp:29
+#: /views/rfps/index.ctp:23
+#: /views/roles/admin_index.ctp:47
+#: /views/user_transactions/admin_index.ctp:50
+#: /views/users/admin_index.ctp:80
+#: /views/users/admin_index_admin.ctp:96
+msgid "Page %page% of %pages%, showing %current% records out of %count% total, starting on record %start%, ending on %end%"
+msgstr ""
+
+#: /views/chairman_reports/admin_index.ctp:51
+#: /views/chairman_reports/index.ctp:34
+#: /views/deleted_documents/admin_index.ctp:109
+#: /views/document_queue_categories/admin_index.ctp:53
+#: /views/elements/queued_documents/index_table.ctp:85
+#: /views/elements/self_sign_log_archives/index_table.ctp:70
+#: /views/event_categories/admin_index.ctp:48
+#: /views/events/index.ctp:84
+#: /views/featured_employers/admin_index.ctp:50
+#: /views/featured_employers/index.ctp:18
+#: /views/filed_documents/admin_index.ctp:88
+#: /views/ftp_document_scanners/admin_index.ctp:55
+#: /views/helpful_articles/admin_index.ctp:56
+#: /views/helpful_articles/index.ctp:24
+#: /views/hot_jobs/admin_index.ctp:57
+#: /views/hot_jobs/index.ctp:26
+#: /views/in_the_news/admin_index.ctp:56
+#: /views/in_the_news/index.ctp:24
+#: /views/kiosks/admin_index.ctp:59
+#: /views/locations/admin_index.ctp:63
+#: /views/pages/admin_index.ctp:56
+#: /views/press_releases/admin_index.ctp:51
+#: /views/press_releases/index.ctp:34
+#: /views/rfps/index.ctp:28
+#: /views/roles/admin_index.ctp:52
+#: /views/user_transactions/admin_index.ctp:55
+#: /views/users/admin_index.ctp:86
+#: /views/users/admin_index_admin.ctp:102
+msgid "previous"
+msgstr ""
+
+#: /views/chairman_reports/admin_index.ctp:54
+#: /views/chairman_reports/index.ctp:37
+#: /views/deleted_documents/admin_index.ctp:112
+#: /views/document_queue_categories/admin_index.ctp:56
+#: /views/elements/queued_documents/index_table.ctp:88
+#: /views/elements/self_sign_log_archives/index_table.ctp:73
+#: /views/event_categories/admin_index.ctp:51
+#: /views/events/index.ctp:87
+#: /views/featured_employers/admin_index.ctp:53
+#: /views/featured_employers/index.ctp:21
+#: /views/filed_documents/admin_index.ctp:91
+#: /views/ftp_document_scanners/admin_index.ctp:58
+#: /views/helpful_articles/admin_index.ctp:59
+#: /views/helpful_articles/index.ctp:27
+#: /views/hot_jobs/admin_index.ctp:60
+#: /views/hot_jobs/index.ctp:29
+#: /views/in_the_news/admin_index.ctp:59
+#: /views/in_the_news/index.ctp:27
+#: /views/kiosks/admin_index.ctp:62
+#: /views/locations/admin_index.ctp:66
+#: /views/pages/admin_index.ctp:59
+#: /views/press_releases/admin_index.ctp:54
+#: /views/press_releases/index.ctp:37
+#: /views/rfps/index.ctp:31
+#: /views/roles/admin_index.ctp:55
+#: /views/user_transactions/admin_index.ctp:58
+#: /views/users/admin_index.ctp:89
+#: /views/users/admin_index_admin.ctp:105
+msgid "next"
+msgstr ""
+
+#: /views/deleted_documents/admin_index.ctp:95
+#: /views/elements/queued_documents/index_table.ctp:72
+#: /views/filed_documents/admin_index.ctp:71
+msgid "View"
+msgstr ""
+
+#: /views/deleted_documents/admin_index.ctp:96
+msgid "Restore"
+msgstr ""
+
+#: /views/document_filing_categories/admin_edit.ctp:20
+msgid "Edit Document Filing Category"
+msgstr ""
+
+#: /views/document_queue_categories/admin_add.ctp:19
+msgid "Admin Add Document Queue Category"
+msgstr ""
+
+#: /views/document_queue_categories/admin_edit.ctp:19
+msgid "Admin Edit Document Queue Category"
+msgstr ""
+
+#: /views/document_queue_categories/admin_index.ctp:16
+msgid "New Document Queue Category"
+msgstr ""
+
+#: /views/document_queue_categories/admin_index.ctp:40
+msgid "Are you sure you want to delete category?"
+msgstr ""
+
+#: /views/elements/program_responses/user_info.ctp:3
+#: /views/kiosks/kiosk_self_sign_confirm.ctp:14
+msgid "First Name:"
+msgstr ""
+
+#: /views/elements/program_responses/user_info.ctp:5
+msgid "Middle Initial:"
+msgstr ""
+
+#: /views/elements/program_responses/user_info.ctp:7
+#: /views/kiosks/kiosk_self_sign_confirm.ctp:21
+msgid "Last Name:"
+msgstr ""
+
+#: /views/elements/program_responses/user_info.ctp:9
+msgid "SSN:"
+msgstr ""
+
+#: /views/elements/program_responses/user_info.ctp:11
+msgid "Address:"
+msgstr ""
+
+#: /views/elements/program_responses/user_info.ctp:13
+msgid "Address 2:"
+msgstr ""
+
+#: /views/elements/program_responses/user_info.ctp:15
+msgid "City:"
+msgstr ""
+
+#: /views/elements/program_responses/user_info.ctp:17
+msgid "State:"
+msgstr ""
+
+#: /views/elements/program_responses/user_info.ctp:19
+#: /views/kiosks/kiosk_self_sign_confirm.ctp:28
+msgid "Zip Code:"
+msgstr ""
+
+#: /views/elements/program_responses/user_info.ctp:21
+msgid "Phone:"
+msgstr ""
+
+#: /views/elements/program_responses/user_info.ctp:23
+msgid "Email:"
+msgstr ""
+
+#: /views/elements/program_responses/user_info.ctp:25
+msgid "Gender:"
+msgstr ""
+
+#: /views/elements/program_responses/user_info.ctp:27
+msgid "Date of Birth:"
+msgstr ""
+
+#: /views/elements/programs/video.ctp:3
+msgid "You must have Javascript enabled to view this video."
+msgstr ""
+
+#: /views/elements/queued_documents/customer_add_form.ctp:36
+#: /views/users/admin_add.ctp:52
+#: /views/users/admin_edit.ctp:53
+#: /views/users/kiosk_mini_registration.ctp:36
+msgid "SSN"
+msgstr ""
+
+#: /views/elements/queued_documents/customer_add_form.ctp:44
+#: /views/users/admin_add.ctp:60
+#: /views/users/admin_edit.ctp:62
+#: /views/users/kiosk_mini_registration.ctp:42
+msgid "SSN Confirm"
+msgstr ""
+
+#: /views/elements/queued_documents/index_table.ctp:72
+msgid "%page%"
+msgstr ""
+
+#: /views/employers_surveys/success.ctp:3
+msgid "Thank you for completing our Employer Survey."
+msgstr ""
+
+#: /views/employers_surveys/view.ctp:2
+msgid "Employers Survey"
+msgstr ""
+
+#: /views/employers_surveys/view.ctp:30
+msgid "Edit Employers Survey"
+msgstr ""
+
+#: /views/employers_surveys/view.ctp:31
+msgid "Delete Employers Survey"
+msgstr ""
+
+#: /views/employers_surveys/view.ctp:32
+msgid "List Employers Surveys"
+msgstr ""
+
+#: /views/employers_surveys/view.ctp:33
+msgid "New Employers Survey"
+msgstr ""
+
+#: /views/event_categories/admin_add.ctp:10
+msgid "Admin Add Event Category"
+msgstr ""
+
+#: /views/event_categories/admin_edit.ctp:10
+msgid "Admin Edit Event Category"
+msgstr ""
+
+#: /views/event_categories/admin_index.ctp:7
+#: /views/event_categories/admin_view.ctp:32
+msgid "New Event Category"
+msgstr ""
+
+#: /views/event_categories/admin_view.ctp:2
+msgid "Event Category"
+msgstr ""
+
+#: /views/event_categories/admin_view.ctp:9
+#: /views/self_scan_categories/admin_index.ctp:14
+#: /views/self_scan_categories/admin_view.ctp:9
+msgid "Name"
+msgstr ""
+
+#: /views/event_categories/admin_view.ctp:29
+msgid "Edit Event Category"
+msgstr ""
+
+#: /views/event_categories/admin_view.ctp:30
+msgid "Delete Event Category"
+msgstr ""
+
+#: /views/event_categories/admin_view.ctp:31
+msgid "List Event Categories"
+msgstr ""
+
+#: /views/events/admin_add.ctp:10
+msgid "Admin Add Event"
+msgstr ""
+
+#: /views/events/admin_edit.ctp:10
+msgid "Admin Edit Event"
+msgstr ""
+
+#: /views/events/admin_view.ctp:2
+msgid "Event"
+msgstr ""
+
+#: /views/events/admin_view.ctp:9
+msgid "Title"
+msgstr ""
+
+#: /views/events/admin_view.ctp:14
+msgid "Description"
+msgstr ""
+
+#: /views/events/admin_view.ctp:19
+msgid "Category"
+msgstr ""
+
+#: /views/events/admin_view.ctp:24
+msgid "Start"
+msgstr ""
+
+#: /views/events/admin_view.ctp:29
+msgid "End"
+msgstr ""
+
+#: /views/events/admin_view.ctp:34
+msgid "Location"
+msgstr ""
+
+#: /views/events/admin_view.ctp:39
+msgid "Event Url"
+msgstr ""
+
+#: /views/events/admin_view.ctp:44
+msgid "Sponsor"
+msgstr ""
+
+#: /views/events/admin_view.ctp:49
+msgid "Sponsor Url"
+msgstr ""
+
+#: /views/events/admin_view.ctp:69
+msgid "Edit Event"
+msgstr ""
+
+#: /views/events/admin_view.ctp:70
+msgid "Delete Event"
+msgstr ""
+
+#: /views/events/admin_view.ctp:71
+msgid "List Events"
+msgstr ""
+
+#: /views/events/admin_view.ctp:72
+msgid "New Event"
+msgstr ""
+
+#: /views/events/index.ctp:7
+msgid "Select an event type"
+msgstr ""
+
+#: /views/events/index.ctp:17
+msgid "Go"
+msgstr ""
+
+#: /views/events/index.ctp:62
+msgid "Visit Website"
+msgstr ""
+
+#: /views/events/index.ctp:65
+msgid "Map It"
+msgstr ""
+
+#: /views/events/index.ctp:72
+msgid "No events to display"
+msgstr ""
+
+#: /views/featured_employers/admin_add.ctp:10
+msgid "Admin Add Featured Employer"
+msgstr ""
+
+#: /views/featured_employers/admin_edit.ctp:10
+msgid "Admin Edit Featured Employer"
+msgstr ""
+
+#: /views/featured_employers/admin_index.ctp:7
+msgid "New Featured Employer"
+msgstr ""
+
+#: /views/filed_documents/admin_edit.ctp:32
+msgid "Edit Filed Document"
+msgstr ""
+
+#: /views/filed_documents/admin_index.ctp:19
+#: /views/program_views/program_responses/required_docs.ctp:22
+#: /views/users/admin_index.ctp:64
+#: /views/users/admin_index_admin.ctp:77
+msgid "Upload"
+msgstr ""
+
+#: /views/filed_documents/admin_index.ctp:20
+#: /views/users/admin_index.ctp:65
+#: /views/users/admin_index_admin.ctp:78
+msgid "Scan"
+msgstr ""
+
+#: /views/filed_documents/admin_index.ctp:23
+#: /views/users/admin_index.ctp:62
+#: /views/users/admin_index_admin.ctp:75
+msgid "Activity"
+msgstr ""
+
+#: /views/filed_documents/admin_upload_document.ctp:32
+msgid "Upload Document"
+msgstr ""
+
+#: /views/ftp_document_scanners/admin_add.ctp:16
+msgid "List Ftp Document Scanners"
+msgstr ""
+
+#: /views/ftp_document_scanners/admin_add.ctp:21
+msgid "Admin Add Ftp Document Scanner"
+msgstr ""
+
+#: /views/ftp_document_scanners/admin_edit.ctp:19
+msgid "Admin Edit Ftp Document Scanner"
+msgstr ""
+
+#: /views/ftp_document_scanners/admin_index.ctp:16
+msgid "New Ftp Document Scanner"
+msgstr ""
+
+#: /views/ftp_document_scanners/admin_index.ctp:42
+msgid "Are you sure you want to delete this scanner?"
+msgstr ""
+
+#: /views/helpful_articles/admin_add.ctp:10
+msgid "Admin Add Helpful Article"
+msgstr ""
+
+#: /views/helpful_articles/admin_edit.ctp:10
+msgid "Admin Edit Helpful Article"
+msgstr ""
+
+#: /views/helpful_articles/admin_index.ctp:7
+msgid "New Helpful Article"
+msgstr ""
+
+#: /views/helpful_articles/index.ctp:11
+#: /views/in_the_news/index.ctp:11
+msgid "Read More"
+msgstr ""
+
+#: /views/hot_jobs/admin_add.ctp:13
+msgid "Admin Add Hot Job"
+msgstr ""
+
+#: /views/hot_jobs/admin_edit.ctp:13
+msgid "Admin Edit Hot Job"
+msgstr ""
+
+#: /views/hot_jobs/admin_index.ctp:7
+msgid "New Hot Job"
+msgstr ""
+
+#: /views/hot_jobs/admin_index.ctp:42
+msgid "Applications"
+msgstr ""
+
+#: /views/hot_jobs/index.ctp:8
+#: /views/rfps/index.ctp:9
+msgid "Date Posted:"
+msgstr ""
+
+#: /views/hot_jobs/index.ctp:9
+msgid "Location:"
+msgstr ""
+
+#: /views/hot_jobs/index.ctp:10
+msgid "Reference #:"
+msgstr ""
+
+#: /views/hot_jobs/index.ctp:11
+#: /views/rfps/index.ctp:11
+msgid "Contact:"
+msgstr ""
+
+#: /views/hot_jobs/index.ctp:14
+msgid "Apply for this job"
+msgstr ""
+
+#: /views/in_the_news/admin_add.ctp:10
+msgid "Admin Add In The News"
+msgstr ""
+
+#: /views/in_the_news/admin_edit.ctp:10
+msgid "Admin Edit In The News"
+msgstr ""
+
+#: /views/in_the_news/admin_index.ctp:7
+msgid "New Article"
+msgstr ""
+
+#: /views/kiosk_buttons/admin_index.ctp:30
+msgid "Master Button List"
+msgstr ""
+
+#: /views/kiosks/admin_add.ctp:19
+msgid "Admin Add Kiosk"
+msgstr ""
+
+#: /views/kiosks/admin_edit.ctp:19
+msgid "Admin Edit Kiosk"
+msgstr ""
+
+#: /views/kiosks/admin_index.ctp:16
+msgid "New Kiosk"
+msgstr ""
+
+#: /views/kiosks/admin_index.ctp:43
+msgid "Buttons"
+msgstr ""
+
+#: /views/kiosks/admin_index.ctp:45
+msgid "Are you sure you want to delete this kiosk?"
+msgstr ""
+
+#: /views/kiosks/kiosk_self_scan_another_document.ctp:10
+msgid "Would you like to scan another document for %s, %s?"
+msgstr ""
+
+#: /views/kiosks/kiosk_self_scan_another_document.ctp:13
+msgid "Yes Scan Another"
+msgstr ""
+
+#: /views/kiosks/kiosk_self_scan_another_document.ctp:14
+msgid "No Logout"
+msgstr ""
+
+#: /views/kiosks/kiosk_self_scan_document.ctp:13
+msgid "Scan document for %s, %s"
+msgstr ""
+
+#: /views/kiosks/kiosk_self_scan_document.ctp:16
+msgid "You are about to be logged out of the system in <span>1</span>&nbsp;seconds due to inactivity."
+msgstr ""
+
+#: /views/kiosks/kiosk_self_scan_document.ctp:17
+msgid "Click here to continue using this page"
+msgstr ""
+
+#: /views/kiosks/kiosk_self_scan_document.ctp:20
+msgid "1. Place document in scanner."
+msgstr ""
+
+#: /views/kiosks/kiosk_self_scan_document.ctp:24
+msgid "3. Verify document."
+msgstr ""
+
+#: /views/kiosks/kiosk_self_scan_document.ctp:26
+msgid "4. If necessary"
+msgstr ""
+
+#: /views/kiosks/kiosk_self_scan_program_selection.ctp:10
+msgid "Select program to scan document for %s, %s"
+msgstr ""
+
+#: /views/kiosks/kiosk_self_scan_program_selection.ctp:24;36
+#: /views/kiosks/kiosk_self_sign_other.ctp:22
+#: /views/kiosks/kiosk_self_sign_service_selection.ctp:42
+msgid "Go Back"
+msgstr ""
+
+#: /views/kiosks/kiosk_self_sign_confirm.ctp:10
+msgid "Please verify that the information we have in our records is correct."
+msgstr ""
+
+#: /views/kiosks/kiosk_self_sign_confirm.ctp:36
+msgid "Correct"
+msgstr ""
+
+#: /views/kiosks/kiosk_self_sign_confirm.ctp:38
+msgid "Incorrect"
+msgstr ""
+
+#: /views/kiosks/kiosk_self_sign_edit.ctp:11
+msgid "Please correct the information we have on file."
+msgstr ""
+
+#: /views/kiosks/kiosk_self_sign_edit.ctp:17
+#: /views/users/kiosk_mini_registration.ctp:24
+#: /views/users/registration.ctp:38
+msgid "First Name"
+msgstr ""
+
+#: /views/kiosks/kiosk_self_sign_edit.ctp:23
+#: /views/users/kiosk_mini_registration.ctp:30
+#: /views/users/kiosk_self_sign_login.ctp:18
+#: /views/users/registration.ctp:42
+msgid "Last Name"
+msgstr ""
+
+#: /views/kiosks/kiosk_self_sign_edit.ctp:29
+#: /views/users/kiosk_mini_registration.ctp:57
+#: /views/users/registration.ctp:141
+msgid "Zip Code"
+msgstr ""
+
+#: /views/kiosks/kiosk_self_sign_other.ctp:9
+msgid "Please describe service needed."
+msgstr ""
+
+#: /views/kiosks/kiosk_self_sign_service_selection.ctp:15
+msgid "Please make next service selection."
+msgstr ""
+
+#: /views/kiosks/kiosk_self_sign_service_selection.ctp:18
+msgid "How can we help you today?"
+msgstr ""
+
+#: /views/layouts/admin.ctp:14
+#: /views/layouts/default.ctp:14
+msgid "ATLAS V3"
+msgstr ""
+
+#: /views/layouts/admin.ctp:68
+#: /views/layouts/default.ctp:58
+msgid "Logout"
+msgstr ""
+
+#: /views/layouts/default.ctp:57
+msgid "<strong>Logged in as: %s %s</strong> |"
+msgstr ""
+
+#: /views/layouts/default.ctp:74
+msgid "%s is an equal opportunity employer/program. Auxiliary aids and services are available upon request to individuals with disabilities. All voice telephone numbers listed on this website may be reached by persons using TTY/TDD equipment via the Florida Relay Service at 711."
+msgstr ""
+
+#: /views/layouts/default.ctp:75
+msgid "Copyright &copy; %s - %s. All Rights Reserved. Developed &amp; Hosted by Complete Technology Solutions"
+msgstr ""
+
+#: /views/layouts/kiosk.ctp:69
+msgid "%s is an equal opportunity employer/program. Auxiliary aids and services are available upon request to individuals with disabilities."
+msgstr ""
+
+#: /views/layouts/kiosk.ctp:71
+msgid "All voice telephone numbers listed on this website may be reached by persons using TTY/TDD equipment via the Florida Relay Service at 711."
+msgstr ""
+
+#: /views/layouts/kiosk.ctp:73
+msgid "ATLAS is a trademark of Complete Technology Solutions Copyright &copy; %s - Complete Technology Solutions. All Rights Reserved.</span>"
+msgstr ""
+
+#: /views/locations/admin_add.ctp:22
+msgid "Admin Add Location"
+msgstr ""
+
+#: /views/locations/admin_add.ctp:105
+#: /views/locations/admin_edit.ctp:106
+msgid "Location Hours"
+msgstr ""
+
+#: /views/locations/admin_add.ctp:121
+#: /views/locations/admin_edit.ctp:122
+msgid "Location Facilities"
+msgstr ""
+
+#: /views/locations/admin_edit.ctp:22
+msgid "Admin Edit Location"
+msgstr ""
+
+#: /views/locations/admin_index.ctp:16
+msgid "New Location"
+msgstr ""
+
+#: /views/locations/facilities.ctp:14
+#: /views/locations/index.ctp:15
+msgid "Hours:"
+msgstr ""
+
+#: /views/locations/facilities.ctp:14
+#: /views/locations/index.ctp:15
+msgid "Monday"
+msgstr ""
+
+#: /views/locations/facilities.ctp:14
+#: /views/locations/index.ctp:15
+msgid "Friday"
+msgstr ""
+
+#: /views/master_kiosk_buttons/admin_edit.ctp:17
+msgid "Edit Kiosk Button"
+msgstr ""
+
+#: /views/master_kiosk_buttons/admin_index.ctp:22
+msgid "This will edit this button system wide, are you sure you want to edit?"
+msgstr ""
+
+#: /views/master_kiosk_buttons/admin_index.ctp:24
+msgid "This will delete this button system wide, are you sure you want to delete?"
+msgstr ""
+
+#: /views/master_kiosk_buttons/admin_index.ctp:29
+msgid "Master Kiosk Button List"
+msgstr ""
+
+#: /views/pages/admin_add.ctp:13
+msgid "List Pages"
+msgstr ""
+
+#: /views/pages/admin_add.ctp:18
+msgid "Admin Add Page"
+msgstr ""
+
+#: /views/pages/admin_edit.ctp:15
+msgid "Admin Edit Page"
+msgstr ""
+
+#: /views/pages/admin_index.ctp:9
+msgid "New Page"
+msgstr ""
+
+#: /views/pages/admin_index.ctp:42
+msgid "Are you sure you want to delete /%s?"
+msgstr ""
+
+#: /views/press_releases/admin_add.ctp:11
+msgid "Admin Add Press Release"
+msgstr ""
+
+#: /views/press_releases/admin_edit.ctp:11
+msgid "Admin Edit Press Release"
+msgstr ""
+
+#: /views/press_releases/admin_index.ctp:8
+msgid "New Press Release"
+msgstr ""
+
+#: /views/program_views/program_responses/index.ctp:2
+#: /views/program_views/program_responses/required_docs.ctp:2
+#: /views/program_views/programs/view_media.ctp:2
+msgid "Hide Instructions"
+msgstr ""
+
+#: /views/program_views/program_responses/index.ctp:9
+#: /views/users/child_registration.ctp:31
+msgid "indicates required fields."
+msgstr ""
+
+#: /views/program_views/program_responses/index.ctp:31
+msgid "Electronic Signature"
+msgstr ""
+
+#: /views/program_views/program_responses/index.ctp:33
+msgid "Please enter your first and last name in the box below."
+msgstr ""
+
+#: /views/program_views/program_responses/index.ctp:34
+msgid "I agree"
+msgstr ""
+
+#: /views/program_views/program_responses/provided_docs.ctp:3
+msgid "Back"
+msgstr ""
+
+#: /views/program_views/program_responses/required_docs.ctp:11
+msgid "Upload Documents"
+msgstr ""
+
+#: /views/program_views/program_responses/required_docs.ctp:13
+msgid "Please upload only PDF files, 1Mb max size."
+msgstr ""
+
+#: /views/program_views/program_responses/required_docs.ctp:14
+msgid "After uploading a document you will be returned to this page so you can upload additional documents as nessesary."
+msgstr ""
+
+#: /views/program_views/program_responses/required_docs.ctp:26
+msgid "I am finished uploading my documents."
+msgstr ""
+
+#: /views/program_views/program_responses/response_complete.ctp:11
+msgid "Congratulations! Your $s certificate has been issued. Please download the certificate below"
+msgstr ""
+
+#: /views/program_views/program_responses/response_complete.ctp:13
+msgid "Program:"
+msgstr ""
+
+#: /views/program_views/program_responses/response_complete.ctp:16
+msgid "Registrant name:"
+msgstr ""
+
+#: /views/program_views/program_responses/response_complete.ctp:21
+msgid "Approved on:"
+msgstr ""
+
+#: /views/program_views/program_responses/response_complete.ctp:26
+msgid "Download Certificate"
+msgstr ""
+
+#: /views/program_views/programs/index.ctp:6
+msgid "Get Started"
+msgstr ""
+
+#: /views/program_views/programs/view_media.ctp:14
+msgid ""
+"I acknowledge that I have viewed the orientation and completely understand its content.\n"
+"\t\tI futher understand that it is my responsibility to abide by the rules and requirements.\n"
+"\t\tI also understand clearly that my failure to comply with the conditions may result in the loss of %s services."
+msgstr ""
+
+#: /views/rfps/index.ctp:10
+msgid "Deadline:"
+msgstr ""
+
+#: /views/roles/admin_add.ctp:20
+msgid "Admin Add Role"
+msgstr ""
+
+#: /views/roles/admin_edit.ctp:19
+msgid "Admin Edit Role"
+msgstr ""
+
+#: /views/roles/admin_index.ctp:16
+msgid "New Role"
+msgstr ""
+
+#: /views/roles/admin_index.ctp:37
+#: /views/users/admin_index_admin.ctp:80
+msgid "Permissions"
+msgstr ""
+
+#: /views/roles/admin_index.ctp:39
+msgid "Are you sure you want to delete this role?"
+msgstr ""
+
+#: /views/self_scan_categories/admin_add.ctp:15
+msgid "Admin Add Self Scan Category"
+msgstr ""
+
+#: /views/self_scan_categories/admin_edit.ctp:19
+msgid "Admin Edit Self Scan Category"
+msgstr ""
+
+#: /views/self_scan_categories/admin_index.ctp:8
+msgid "Add Main Category"
+msgstr ""
+
+#: /views/self_scan_categories/admin_index.ctp:15
+msgid "Queue Cat"
+msgstr ""
+
+#: /views/self_scan_categories/admin_index.ctp:16
+#: /views/self_scan_categories/admin_view.ctp:19
+msgid "Cat 1"
+msgstr ""
+
+#: /views/self_scan_categories/admin_index.ctp:17
+#: /views/self_scan_categories/admin_view.ctp:24
+msgid "Cat 2"
+msgstr ""
+
+#: /views/self_scan_categories/admin_index.ctp:18
+#: /views/self_scan_categories/admin_view.ctp:29
+msgid "Cat 3"
+msgstr ""
+
+#: /views/self_scan_categories/admin_index.ctp:31
+msgid "Add Child Category"
+msgstr ""
+
+#: /views/self_scan_categories/admin_index.ctp:34;46
+msgid "Are you sure you want to delete this category?"
+msgstr ""
+
+#: /views/self_scan_categories/admin_view.ctp:2
+msgid "Self Scan Category"
+msgstr ""
+
+#: /views/self_scan_categories/admin_view.ctp:14
+msgid "Queue Cat Id"
+msgstr ""
+
+#: /views/self_scan_categories/admin_view.ctp:34
+msgid "Parent Id"
+msgstr ""
+
+#: /views/self_scan_categories/admin_view.ctp:54
+msgid "Edit Self Scan Category"
+msgstr ""
+
+#: /views/self_scan_categories/admin_view.ctp:55
+msgid "Delete Self Scan Category"
+msgstr ""
+
+#: /views/self_scan_categories/admin_view.ctp:56
+msgid "List Self Scan Categories"
+msgstr ""
+
+#: /views/self_scan_categories/admin_view.ctp:57
+msgid "New Self Scan Category"
+msgstr ""
+
+#: /views/self_sign_logs/admin_get_logs_ajax.ctp:14
+msgid "Status"
+msgstr ""
+
+#: /views/self_sign_logs/admin_get_logs_ajax.ctp:15
+msgid "Visitor"
+msgstr ""
+
+#: /views/self_sign_logs/admin_get_logs_ajax.ctp:16
+msgid "Service"
+msgstr ""
+
+#: /views/self_sign_logs/admin_get_logs_ajax.ctp:17
+msgid "Last Activity Admin"
+msgstr ""
+
+#: /views/self_sign_logs/admin_get_logs_ajax.ctp:18
+msgid "Date"
+msgstr ""
+
+#: /views/self_sign_logs/admin_index.ctp:19
+msgid "Locations"
+msgstr ""
+
+#: /views/self_sign_logs/admin_index.ctp:21;22
+msgid "Services"
+msgstr ""
+
+#: /views/user_transactions/admin_index.ctp:16
+#: /views/users/admin_index.ctp:61
+#: /views/users/admin_index_admin.ctp:74
+msgid "Docs"
+msgstr ""
+
+#: /views/users/admin_add.ctp:20
+msgid "Add Customer"
+msgstr ""
+
+#: /views/users/admin_add_admin.ctp:25
+msgid "Add Admin"
+msgstr ""
+
+#: /views/users/admin_add_admin.ctp:39
+#: /views/users/admin_edit_admin.ctp:35
+msgid "Password"
+msgstr ""
+
+#: /views/users/admin_edit.ctp:20
+msgid "Edit Customer"
+msgstr ""
+
+#: /views/users/admin_edit_admin.ctp:20
+msgid "Edit Admin"
+msgstr ""
+
+#: /views/users/admin_index.ctp:26
+msgid "New Customer"
+msgstr ""
+
+#: /views/users/admin_index.ctp:28
+#: /views/users/admin_index_admin.ctp:19
+msgid "Show Disabled"
+msgstr ""
+
+#: /views/users/admin_index.ctp:30
+#: /views/users/admin_index_admin.ctp:21
+msgid "Hide Disabled"
+msgstr ""
+
+#: /views/users/admin_index.ctp:69
+#: /views/users/admin_index_admin.ctp:85
+msgid "Disable"
+msgstr ""
+
+#: /views/users/admin_index.ctp:71
+#: /views/users/admin_index_admin.ctp:87
+msgid "Enable"
+msgstr ""
+
+#: /views/users/admin_index_admin.ctp:17
+msgid "New Admin"
+msgstr ""
+
+#: /views/users/child_login.ctp:3
+msgid ""
+"Welcome to the %s Online Services System. To begin, please log in\n"
+"                         with your child's last name and the last 4 digits of your child's \n"
+"                         social security number"
+msgstr ""
+
+#: /views/users/child_login.ctp:18
+msgid "Child's Last 4 SSN"
+msgstr ""
+
+#: /views/users/child_login.ctp:29
+#: /views/users/kiosk_self_sign_login.ctp:29
+#: /views/users/login.ctp:29
+msgid "Login"
+msgstr ""
+
+#: /views/users/child_registration.ctp:22
+msgid "We currently do not have a record for your child."
+msgstr ""
+
+#: /views/users/child_registration.ctp:24
+msgid "Please register your child's information using the following form."
+msgstr ""
+
+#: /views/users/child_registration.ctp:26
+#: /views/users/registration.ctp:24
+msgid "If you have already created a login, please"
+msgstr ""
+
+#: /views/users/child_registration.ctp:27
+#: /views/users/registration.ctp:25
+msgid "click here"
+msgstr ""
+
+#: /views/users/child_registration.ctp:28
+#: /views/users/registration.ctp:26
+msgid "to return to the login page and try your login information again."
+msgstr ""
+
+#: /views/users/child_registration.ctp:40
+msgid "Child's First Name"
+msgstr ""
+
+#: /views/users/child_registration.ctp:44
+msgid "Child's Last Name"
+msgstr ""
+
+#: /views/users/child_registration.ctp:48
+msgid "Child's Middle Initial"
+msgstr ""
+
+#: /views/users/child_registration.ctp:52
+msgid "Child's Surname"
+msgstr ""
+
+#: /views/users/child_registration.ctp:59
+msgid "Child's Gender"
+msgstr ""
+
+#: /views/users/child_registration.ctp:67;77
+msgid "Child's Social Security Number"
+msgstr ""
+
+#: /views/users/child_registration.ctp:70;98
+msgid "Please confirm child's Social Security Number"
+msgstr ""
+
+#: /views/users/child_registration.ctp:120
+msgid "Child's Birth Date <span class=\"small gray\">(mm/dd/yyyy)</span>"
+msgstr ""
+
+#: /views/users/child_registration.ctp:127
+msgid "Child's Address"
+msgstr ""
+
+#: /views/users/child_registration.ctp:132
+msgid "Child's City"
+msgstr ""
+
+#: /views/users/child_registration.ctp:137
+msgid "Child's County"
+msgstr ""
+
+#: /views/users/child_registration.ctp:147
+msgid "Child's State"
+msgstr ""
+
+#: /views/users/child_registration.ctp:153
+msgid "Child's Zip Code"
+msgstr ""
+
+#: /views/users/child_registration.ctp:158
+msgid "Parent's Phone"
+msgstr ""
+
+#: /views/users/child_registration.ctp:163
+msgid "Parent's Email"
+msgstr ""
+
+#: /views/users/child_registration.ctp:167
+msgid "Confirm Parent's Email"
+msgstr ""
+
+#: /views/users/child_registration.ctp:175
+msgid "Child's Primary Spoken Language"
+msgstr ""
+
+#: /views/users/child_registration.ctp:179
+msgid "Child's Ethnicity"
+msgstr ""
+
+#: /views/users/child_registration.ctp:189
+msgid "Child's Race"
+msgstr ""
+
+#: /views/users/kiosk_mini_registration.ctp:13
+msgid "It appears that we don't have a record for you in our database."
+msgstr ""
+
+#: /views/users/kiosk_mini_registration.ctp:15
+msgid "Please complete the form below."
+msgstr ""
+
+#: /views/users/kiosk_mini_registration.ctp:49
+#: /views/users/registration.ctp:118
+msgid "Birth Date <span class=\"small gray\">(mm/dd/yyyy)</span>"
+msgstr ""
+
+#: /views/users/kiosk_mini_registration.ctp:63
+#: /views/users/registration.ctp:145
+msgid "Phone"
+msgstr ""
+
+#: /views/users/kiosk_mini_registration.ctp:72
+msgid "Cancel"
+msgstr ""
+
+#: /views/users/kiosk_self_sign_login.ctp:11
+msgid "Welcome to %s. Please sign in here."
+msgstr ""
+
+#: /views/users/kiosk_self_sign_login.ctp:23
+msgid "Last 4 Digits of Your SSN"
+msgstr ""
+
+#: /views/users/login.ctp:13
+msgid ""
+"Welcome to the %s Online Services System. To being, please log in with\n"
+"                         your last name and the last 4 digits of your social security\n"
+"                         number"
+msgstr ""
+
+#: /views/users/login.ctp:25
+msgid "Last 4 SSN"
+msgstr ""
+
+#: /views/users/registration.ctp:20
+msgid "We currently do not have a record for you."
+msgstr ""
+
+#: /views/users/registration.ctp:22
+msgid "Please register your information using the following form."
+msgstr ""
+
+#: /views/users/registration.ctp:46
+msgid "Middle Initial"
+msgstr ""
+
+#: /views/users/registration.ctp:50
+msgid "Surname"
+msgstr ""
+
+#: /views/users/registration.ctp:57
+msgid "Gender"
+msgstr ""
+
+#: /views/users/registration.ctp:64;74
+msgid "Social Security Number"
+msgstr ""
+
+#: /views/users/registration.ctp:67;96
+msgid "Please confirm your Social Security Number"
+msgstr ""
+
+#: /views/users/registration.ctp:124
+msgid "Address"
+msgstr ""
+
+#: /views/users/registration.ctp:128
+msgid "City"
+msgstr ""
+
+#: /views/users/registration.ctp:132
+msgid "County"
+msgstr ""
+
+#: /views/users/registration.ctp:137
+msgid "State"
+msgstr ""
+
+#: /views/users/registration.ctp:149
+msgid "Email Address"
+msgstr ""
+
+#: /views/users/registration.ctp:153
+msgid "Primary Spoken Language"
+msgstr ""
+
+#: /views/users/registration.ctp:157
+msgid "Ethnicity"
+msgstr ""
+
+#: /views/users/registration.ctp:166
+msgid "Race"
+msgstr ""
+
+#: /webroot/test.default.php:88
+msgid "Debug setting does not allow access to this url."
+msgstr ""
+
