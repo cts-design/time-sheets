@@ -54,8 +54,7 @@
 		   <p>
 		   <?php
 			if ($session->read('Auth.User'))
-			    echo '<strong>Logged in as: ' . $session->read('Auth.User.firstname') . ' ' .
-				$session->read('Auth.User.lastname') . '</strong> | ' .
+                printf(__('<strong>Logged in as: %s %s</strong> |', true), $session->read('Auth.User.firstname'), $session->read('Auth.User.lastname'));
 				$this->Html->link(__('Logout', true), array('controller' => 'users', 'action' => 'logout', 'kiosk' => false, 'web'));
 			?>
 		   </p>
@@ -71,13 +70,9 @@
 	    </div>
             <div id="bottom_navigation"><?php echo $this->Nav->links('Bottom') ?></div>
 	    <div  id="footer">
-		<p>
-		    <?php echo Configure::read('Company.name')?> is an equal opportunity employer/program.
-		    Auxiliary aids and services are available upon request to individuals with disabilities.
-		    All voice telephone numbers listed on this website may be reached by persons using TTY/TDD
-		    equipment via the Florida Relay Service at 711.
-		    Copyright &copy; <?php echo date('Y')?> - <?php echo Configure::read('Company.name')?>.
-		    All Rights Reserved. Developed & Hosted by Complete Technology Solutions
+        <p>
+            <?php printf(__('%s is an equal opportunity employer/program. Auxiliary aids and services are available upon request to individuals with disabilities. All voice telephone numbers listed on this website may be reached by persons using TTY/TDD equipment via the Florida Relay Service at 711.', true), Configure::read('Company.name')) ?>
+            <?php printf(__('Copyright &copy; %s - %s. All Rights Reserved. Developed &amp; Hosted by Complete Technology Solutions', true), date('Y'), Configure::read('Company.name')) ?>
 		</p>
 	    </div>
 	</div>

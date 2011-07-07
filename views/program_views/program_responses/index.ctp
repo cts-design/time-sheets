@@ -1,12 +1,12 @@
 <?php echo $html->script('program_responses/toggle_instructions', array('inline' => false)) ?>
-<a id="Toggle" class="small" style="display: none">Hide Instructions</a>
+<a id="Toggle" class="small" style="display: none"><?php __('Hide Instructions') ?></a>
 <div id="Instructions"><?php echo $instructions ?></div>
 <noscript>
 	<div id="Instructions"><?php echo $instructions ?></div>
 </noscript>
 
 <br />
-<div class="required bot-mar-10"><label></label> indicates required fields.</div>
+<div class="required bot-mar-10"><label></label> <?php __('indicates required fields.') ?></div>
 <div id="ProgramForm">
 	<?php if(!empty($program['ProgramField'])) : ?>
 		<?php echo $form->create('ProgramResponse', array('action' => 'index/' . $program['Program']['id'])); ?>	
@@ -28,13 +28,13 @@
 		<?php if($program['Program']['form_esign_required']) : ?>
 			<?php $esignInstructions = Set::extract('/ProgramInstruction[type=esign]/text', $program); ?>
 			<fieldset>
-				<legend>Electronic Signature</legend>
+                <legend><?php __('Electronic Signature') ?></legend>
 				<p class="bot-mar-10"><?php echo $esignInstructions[0] ?></p>
-				<p class="bot-mar-10">Please enter your first and last name in the box below.</p>
-				<?php echo $form->input('form_esignature', array('label' => 'I agree', 'after' => '<br />')) ?>	
+                <p class="bot-mar-10"><?php __('Please enter your first and last name in the box below.') ?></p>
+				<?php echo $form->input('form_esignature', array('label' => __('I agree', true), 'after' => '<br />')) ?>	
 			</fieldset>
 			<br />
 		<?php endif ?>		
-		<?php echo $form->end('Submit'); ?>										
+		<?php echo $form->end(__('Submit', true)); ?>										
 	<?php endif; ?>
 </div>

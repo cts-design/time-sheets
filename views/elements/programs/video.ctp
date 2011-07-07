@@ -1,6 +1,6 @@
 <?php echo $this->Html->script('flowplayer-3.2.6.min', array('inline' => false)) ?>
 <noscript>
-	You must have Javascript enabled to view this video. 
+	<?php __('You must have Javascript enabled to view this video.') ?>
 </noscript>
 <div id="player" style="width:600px;height:400px;"></div>
 <script>

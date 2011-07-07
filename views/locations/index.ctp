@@ -12,7 +12,7 @@
 			<?php echo $location['Location']['fax']; ?>
 			<br />
 			<br />
-			<strong>Hours:</strong> Monday&ndash;Friday <?php echo date('g:i A', strtotime($location['Location']['open'])) ?>&ndash;<?php echo date('g:i A', strtotime($location['Location']['close'])) ?>
+            <strong><?php __('Hours:') ?></strong> <?php __('Monday') ?>&ndash;<?php __('Friday') ?> <?php echo date('g:i A', strtotime($location['Location']['open'])) ?>&ndash;<?php echo date('g:i A', strtotime($location['Location']['close'])) ?>
 			<br />
 			<br />
 			<?php if (!empty($location['Location']['facilities'])): ?>

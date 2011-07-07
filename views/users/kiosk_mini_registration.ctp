@@ -10,9 +10,9 @@
 <?php echo $this->Html->script('users/mini.registration', array('inline' => 'false')) ?>
 <div id="miniRegistration" class="self-sign-wrapper">
     <h2>
-	It appears that we don't have a record for you in our database.
+    <?php __('It appears that we don\'t have a record for you in our database.') ?>
 	<br />
-	Please complete the form below.
+    <?php __('Please complete the form below.') ?>
     </h2>
     <?php echo $this->Session->flash(); ?>
     <div class="miniRegistrationForm">
@@ -69,7 +69,7 @@
 	    ?>
 	</fieldset>
 	<?php echo $this->Form->end(array('label' => __('Submit', true), 'class' => 'self-sign-kiosk-button')); ?>
-	<?php echo $this->Html->link('Cancel', array('controller' => 'users', 'action' => 'self_sign_login'),
+	<?php echo $this->Html->link(__('Cancel', true), array('controller' => 'users', 'action' => 'self_sign_login'),
 		 array('class' => 'self-sign-kiosk-link'))?>
     </div>
 </div>

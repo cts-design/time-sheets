@@ -8,7 +8,7 @@
 			<span class="reporter"><?php echo $inTheNews['InTheNews']['reporter']; ?></span>
 			
 			<p class="summary"><?php echo $inTheNews['InTheNews']['summary']; ?></p>
-			<a href="<?php echo $inTheNews['InTheNews']['link']; ?>">Read More</a>
+			<a href="<?php echo $inTheNews['InTheNews']['link']; ?>"><?php __('Read More') ?></a>
 		</div>
 	</div>
 	<?php endforeach; ?>

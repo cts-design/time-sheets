@@ -17,12 +17,13 @@ $(document).ready(function() {
 <?php echo $this->Html->scriptEnd() ?>
 
 <p>
-	We currently do not have a record for you.
+    <?php __('We currently do not have a record for you.') ?>
 	<br />	 
-	Please register your information using the following form.
+    <?php __('Please register your information using the following form.') ?>
 	<br />	
-	If you have already created a login, please <?php echo $html->link('click here', array('controller' => 'users', 'action' => 'login', 'child')) ?> to return
-	to the login page and try your login information again.
+    <?php __('If you have already created a login, please') ?>
+    <?php echo $html->link(__('click here', true), array('controller' => 'users', 'action' => 'login', 'child')) ?> 
+    <?php __('to return to the login page and try your login information again.') ?>
 </p>
 <br />
 <div class="required"><label></label> indicates required fields.</div>

@@ -65,16 +65,13 @@
 		<?php echo $content_for_layout; ?>
 	    </div>
 	    <div id="footer">
-		<span id="copyright" class="left"><?php echo Configure::read('Company.name')?> is an equal opportunity employer/program.
-		      Auxiliary aids and services are available upon request to individuals with disabilities.
-		      <br />
-		      All voice telephone numbers listed on this website may be reached by persons using TTY/TDD
-		      equipment via the Florida Relay Service at 711.
-		      <br />
-		      ATLAS is a trademark of Complete Technology Solutions
-		      Copyright &copy; <?php echo date('Y')?> - Complete Technology Solutions.
-		      All Rights Reserved.</span>
-		      <?php echo $this->Html->image('employ_florida_logo.jpg', array('class' => 'right'))?>
+        <span id="copyright" class="left">
+        <?php printf(__('%s is an equal opportunity employer/program. Auxiliary aids and services are available upon request to individuals with disabilities.', true), Configure::read('Company.name')) ?>
+		<br />
+        <?php __('All voice telephone numbers listed on this website may be reached by persons using TTY/TDD equipment via the Florida Relay Service at 711.') ?>
+		<br />
+        <?php printf(__('ATLAS is a trademark of Complete Technology Solutions Copyright &copy; %s - Complete Technology Solutions. All Rights Reserved.</span>', true), date('Y')) ?>
+		<?php echo $this->Html->image('employ_florida_logo.jpg', array('class' => 'right'))?>
 	    </div>
 	</div>
 	<?php echo $this->Js->writeBuffer(); ?>

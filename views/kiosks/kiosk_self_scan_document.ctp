@@ -10,20 +10,20 @@
 <?php echo $this->Html->script('kiosks/self_scan_document', array('inline' => false)) ?>
 
 <div id="SelfScanDoument" >
-    <h1>Scan document for <?php echo $this->Session->read('Auth.User.lastname') .', ' .$this->Session->read('Auth.User.firstname'); ?></h1>
+	<h1><?php printf(__('Scan document for %s, %s', true), $this->Session->read('Auth.User.lastname'), $this->Session->read('Auth.User.firstname')) ?></h1>
     <?php echo $this->Session->flash(); ?>
     <div id="idletimeout">
-	You are about to be logged out of the system in <span>1</span>&nbsp;seconds due to inactivity.
-	<a href="#" id="idletimeout-resume">Click here to continue using this page</a>
+	<?php __('You are about to be logged out of the system in <span>1</span>&nbsp;seconds due to inactivity.') ?>
+	<a href="#" id="idletimeout-resume"><?php __('Click here to continue using this page') ?></a>
     </div>
     <div id="scanForm" class="left">
-	<h3>1. Place document in scanner.</h3>
+	<h3><?php __('1. Place document in scanner.') ?></h3>
 	<br />
 	<h3>2. <input class="scan" name="scan"  type="button" value="Scan"/></h3>
 	<br />
-	<h3>3. Verify document.</h3>
+	<h3><?php __('3. Verify document.') ?></h3>
 	<br />
-	<h3>4. If necessary <input class="re-scan" name="rescan"  type="button" value="Re-Scan"/></h3>
+	<h3><?php __('4. If necessary') ?> <input class="re-scan" name="rescan"  type="button" value="Re-Scan"/></h3>
 	<?php
 		echo $this->Form->create('QueuedDocument', array( 'action' => 'scan_document',  'enctype' => 'multipart/form-data', 'name' => 'myForm'));
 

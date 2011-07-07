@@ -8,7 +8,7 @@
 			<span class="reporter"><?php echo $helpfulArticle['HelpfulArticle']['reporter']; ?></span>
 			
 			<p class="summary"><?php echo $helpfulArticle['HelpfulArticle']['summary']; ?></p>
-			<a href="<?php echo $helpfulArticle['HelpfulArticle']['link']; ?>">Read More</a>
+			<a href="<?php echo $helpfulArticle['HelpfulArticle']['link']; ?>"><?php __('Read More') ?></a>
 		</div>
 	</div>
 	<?php endforeach; ?>

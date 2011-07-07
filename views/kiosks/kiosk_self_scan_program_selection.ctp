@@ -7,7 +7,7 @@
 
 ?>
 <div id="selfScanProgram" class="self-scan-wrapper">
-    <h1>Select program to scan document for <?php echo $this->Session->read('Auth.User.lastname') .', ' .$this->Session->read('Auth.User.firstname'); ?></h1>
+	<h1><?php printf(__('Select program to scan document for %s, %s', true), $this->Session->read('Auth.User.lastname'), $this->Session->read('Auth.User.firstname')) ?></h1>
     <?php echo $this->Session->flash(); ?>
     <div class="actions">
 	<?php
@@ -21,7 +21,7 @@
 		$i++;
 	    }
 	    if($referer != null) {
-		echo $this->Html->link('Go Back', $referer, array('class' => 'self-sign-kiosk-link'));
+		echo $this->Html->link(__('Go Back', true), $referer, array('class' => 'self-sign-kiosk-link'));
 	    }
 	}
 	if (!empty($childButtons)) {
@@ -33,7 +33,7 @@
 		$i++;
 	    }
 	    if($referer != null) {
-		echo $this->Html->link('Go Back', $referer, array('class' => 'self-sign-kiosk-link'));
+		echo $this->Html->link(__('Go Back', true), $referer, array('class' => 'self-sign-kiosk-link'));
 	    }
 	}
 	?>

@@ -5,13 +5,13 @@
 		<p><?php echo $hotJob['HotJob']['description'] ?></p>
 		
 		<ul>
-			<li><strong>Date Posted:</strong> <?php echo date('m/d/Y', strtotime($hotJob['HotJob']['created'])) ?></li>
-			<li><strong>Location:</strong> <?php echo $hotJob['HotJob']['location'] ?></li>
-			<li><strong>Reference #:</strong> <?php echo $hotJob['HotJob']['reference_number'] ?></li>
-			<li><strong>Contact:</strong> <?php echo $hotJob['HotJob']['contact'] ?></li>
+			<li><strong><?php __('Date Posted:') ?></strong> <?php echo date('m/d/Y', strtotime($hotJob['HotJob']['created'])) ?></li>
+			<li><strong><?php __('Location:') ?></strong> <?php echo $hotJob['HotJob']['location'] ?></li>
+			<li><strong><?php __('Reference #:') ?></strong> <?php echo $hotJob['HotJob']['reference_number'] ?></li>
+			<li><strong><?php __('Contact:') ?></strong> <?php echo $hotJob['HotJob']['contact'] ?></li>
 		</ul>
 		
-		<?php echo $this->Html->link('Apply for this job', array('controller' => 'hot_jobs', 'action' => 'apply', $hotJob['HotJob']['id'])) ?>
+		<?php echo $this->Html->link(__('Apply for this job', true), array('controller' => 'hot_jobs', 'action' => 'apply', $hotJob['HotJob']['id'])) ?>
 	</div>
 	<?php endforeach; ?>
 	

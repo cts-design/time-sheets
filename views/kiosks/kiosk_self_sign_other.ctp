@@ -6,7 +6,7 @@
  */
 ?>
 <div id="selfSignOther" class="self-sign-wrapper">
-    <h1>Please describe service needed.</h1>
+	<h1><?php __('Please describe service needed.') ?></h1>
     <?php echo $this->Form->create('Kiosk') ?>
     <?php
 	echo $this->Form->input('SelfSignLog.other', array(
@@ -15,11 +15,11 @@
 	    'after' => '</p><br class="clear"/>'
 	))
 	?>
-    <?php echo $form->end(array('label' => 'Submit', 'class' => 'self-sign-kiosk-button')); ?>
+    <?php echo $form->end(array('label' => __('Submit', true), 'class' => 'self-sign-kiosk-button')); ?>
     <div class="actions">
 	<?php
 	    if($referer != null) {
-		echo $this->Html->link('Go Back', $referer, array('class' => 'self-sign-kiosk-link'));
+		echo $this->Html->link(__('Go Back', true), $referer, array('class' => 'self-sign-kiosk-link'));
 	    }
 	    ?>
     </div>

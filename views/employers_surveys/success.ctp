@@ -1,5 +1,5 @@
-<h2>Survey Submitted</h2>
+<h2><?php __('Survey Submitted') ?></h2>
 <br />
-<p><strong>Thank you for completing our Employer Survey.</strong> 
+<p><strong><?php __('Thank you for completing our Employer Survey.') ?></strong> 
 
-Your answers have been added to our system and emailed to one of our administrator to help us improve our level of service.</p>
+<?php __('Your answers have been added to our system and emailed to one of our administrator to help us improve our level of service.') ?></p>

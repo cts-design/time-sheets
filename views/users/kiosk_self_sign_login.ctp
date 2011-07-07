@@ -8,7 +8,7 @@
 ?>
 
 <div class="self-sign-wrapper">
-    <h1>Welcome to <?php echo Configure::read('Company.name').'.'; ?> Please sign in here.</h1>
+    <h1><?php printf(__('Welcome to %s. Please sign in here.', true), Configure::read('Company.name')) ?></h1>
     <div id="errorMessage"></div>
     <?php echo $this->Session->flash(); ?>
     <?php
@@ -26,6 +26,6 @@
 			'after' => '</p><br class="clear"/>',
 			'maxlength' => 4));
 	    echo $form->hidden('User.login_type', array('value' => 'kiosk'));
-	    echo $form->end(array('label' => 'Login', 'class' => 'self-sign-kiosk-button'));
+	    echo $form->end(array('label' => __('Login', true), 'class' => 'self-sign-kiosk-button'));
     ?>
 </div>

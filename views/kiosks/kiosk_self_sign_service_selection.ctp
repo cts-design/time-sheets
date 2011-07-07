@@ -12,10 +12,10 @@
 	    <?php if (!empty ($tag)) { ?>
 		<h1><?php echo $tag ?></h1>
 	    <?php } else { ?>
-		<h1>Please make next service selection.</h1>
+        <h1><?php __('Please make next service selection.') ?></h1>
 	    <?php } ?>
     <?php } else {?>
-	<h1>How can we help you today?</h1>
+    <h1><?php __('How can we help you today?') ?></h1>
     <?php } ?>
     <?php echo $this->Session->flash(); ?>
     <div class="actions">
@@ -39,7 +39,7 @@
 		$i++;
 	    }
 	    if($referer != null) {
-		echo $this->Html->link('Go Back', $referer, array('class' => 'self-sign-kiosk-link'));
+		echo $this->Html->link(__('Go Back', true), $referer, array('class' => 'self-sign-kiosk-link'));
 	    }
 	}
 	?>

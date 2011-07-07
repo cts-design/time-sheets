@@ -4,7 +4,7 @@
 	<form class="event_categories" action="<?php echo $this->here; ?>" method="post">
 		<ol>
 			<li class="top">
-				<label class="event_categories_label" for="event_categories_dropdown">Select an event type</label>
+			<label class="event_categories_label" for="event_categories_dropdown"><?php __('Select an event type') ?></label>
 				<select id="event_categories_dropdown" name="event_categories_dropdown">
 				<?php
 					$selected = $categories['selected'];
@@ -14,7 +14,7 @@
 					<option value="<?php echo $id ?>"<?php echo ($id === $selected) ? ' selected="selected"' : '' ?>><?php echo $category ?></option>
 				<?php endforeach; ?>
 				</select>
-				<input type="submit" id="category_submit" value="Go" />
+					<input type="submit" id="category_submit" value="<?php __('Go') ?>" />
 			</li>
 		</ol>
 	</form>
@@ -59,17 +59,17 @@
 					
 					<p class="event_links">
 						<?php if (!empty($event['Event']['event_url'])): ?>
-						<a href="<?php echo $event['Event']['event_url'] ?>">Visit Website</a>
+						<a href="<?php echo $event['Event']['event_url'] ?>"><?php __('Visit Website') ?></a>
 						<?php endif; ?>
 						<?php if (!empty($event['Event']['address'])): ?>
-						<a href="http://maps.google.com/maps?q=<?php echo urlencode($event['Event']['address']) ?>">Map It</a>
+							<a href="http://maps.google.com/maps?q=<?php echo urlencode($event['Event']['address']) ?>"><?php __('Map It') ?></a>
 						<?php endif; ?>
 					</p>
 				</div>
 			<?php endforeach; ?>
 		<?php else: ?>
 				<div class="no-events">
-					<p>No events to display</p>
+				<p><?php __('No events to display') ?></p>
 				</div>		
 		<?php endif; ?>
 		

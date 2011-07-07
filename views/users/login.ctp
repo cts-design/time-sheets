@@ -10,9 +10,9 @@
 
 <div>
 	<p>
-		Welcome to the <?php Configure::read('Company.name') ?> Online Services System. To
-		begin, please log in with your last name and the last 4 digits of
-		your social security number.
+        <?php printf(__("Welcome to the %s Online Services System. To being, please log in with
+                         your last name and the last 4 digits of your social security
+                         number", true), Configure::read('Company.name')) ?>
 	</p>
 	<br />	
 	<fieldset>
@@ -22,11 +22,11 @@
 		    echo $form->input('username', array('label' => 'Lastname'));
 		    echo '<br class="clear"/>';
 		    echo $form->input('password', array(
-		    	'label' => 'Last 4 SSN'
+		    	'label' => __('Last 4 SSN', true)
 		    ));
 			echo $form->hidden('User.login_type', array('value' => 'website'));
 		    echo '<br class="clear"/>';
-		    echo $form->end('Login');
+		    echo $form->end(__('Login', true));
 		  ?>
 	  </fieldset>
 </div>

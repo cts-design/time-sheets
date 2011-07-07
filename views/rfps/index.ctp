@@ -6,9 +6,9 @@
 		<p><?php echo $rfp['Rfp']['description'] ?></p>
 		
 		<ul>
-			<li><strong>Date Posted:</strong> <?php echo date('m/d/Y', strtotime($rfp['Rfp']['created'])) ?></li>
-			<li><strong>Deadline:</strong> <?php echo date('m/d/Y', strtotime($rfp['Rfp']['deadline'])) ?></li>
-			<li><strong>Contact:</strong> <?php echo $rfp['Rfp']['contact_email'] ?></li>
+            <li><strong><?php __('Date Posted:') ?></strong> <?php echo date('m/d/Y', strtotime($rfp['Rfp']['created'])) ?></li>
+			<li><strong><?php __('Deadline:') ?></strong> <?php echo date('m/d/Y', strtotime($rfp['Rfp']['deadline'])) ?></li>
+            <li><strong><?php __('Contact:') ?></strong> <?php echo $rfp['Rfp']['contact_email'] ?></li>
 		</ul>
 		
 		<?php if (!empty($rfp['Rfp']['file'])): ?>

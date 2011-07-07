@@ -1,8 +1,8 @@
 <div id="ChildLoginForm">
 	<p>
-		Welcome to the <?php Configure::read('Company.name') ?> Online Services System. To
-		begin, please log in with your child's last name and the last 4 digits of
-		your child's social security number.
+        <?php printf(__("Welcome to the %s Online Services System. To begin, please log in
+                         with your child's last name and the last 4 digits of your child's 
+                         social security number", true), Configure::read('Company.name')) ?>
 	</p>
 	<br />	
 	<fieldset>
@@ -15,7 +15,7 @@
 				'after' => '<br />'));
 		    echo '<br class="clear"/>';
 		    echo $form->input('password', array(
-		    	'label' => 'Child\'s Last 4 SSN',
+		    	'label' => __('Child\'s Last 4 SSN', true),
 		    	'maxlength' => 4,
 		    	'between' => '<br />',
 		    	'after' => '<br />'
@@ -26,5 +26,5 @@
 		  ?>
 	  </fieldset>
 	  <br />
-	 <?php echo $form->end('Login'); ?>
+	 <?php echo $form->end(__('Login', true)); ?>
 </div>

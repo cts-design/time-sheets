@@ -8,7 +8,7 @@
 ?>
 
 <div class="self-sign-wrapper">
-    <h1>Please correct the information we have on file.</h1>
+	<h1><?php __('Please correct the information we have on file.') ?></h1>
     <?php echo $this->Session->flash(); ?>
     <?php echo $this->Form->create('Kiosk'); ?>
     <fieldset>
@@ -36,5 +36,5 @@
 	echo $this->Form->hidden('User.self_sign_edit', array('value' => 'edit'));
 	?>
     </fieldset>
-    <?php echo $form->end(array('label' => 'Submit', 'class' => 'self-sign-kiosk-button')); ?>
+    <?php echo $form->end(array('label' => __('Submit', true), 'class' => 'self-sign-kiosk-button')); ?>
 </div>

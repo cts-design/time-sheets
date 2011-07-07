@@ -1,6 +1,6 @@
 <div class="survey careerSeekersSurveys form">
 	<fieldset>
-		<legend>Career Seekers Survey</legend>
+    <legend><?php __('Career Seekers Survey') ?></legend>
 		
 		<?php echo $form->create('CareerSeekersSurvey', array('action' => 'add')) ?>
 			<?php echo $form->input('first_name', array('before' => '<p class="left label">',
@@ -271,14 +271,14 @@
 			<br class="clear" />
 			<div class="input textarea supertall">
 				<p class="left label">
-					<label>Please share any comments or suggestions you have regarding <?php Configure::read('Company.name') ?>, our Business Services or the <?php Configure::read('Company.name') ?> website. Please enter your name, phone number and email address here, if you would like our staff to contact you.</label>
+                    <label><?php printf(__('Please share any comments or suggestions you have regarding %s, our Business Services or the %s website. Please enter your name, phone number and email address here, if you would like our staff to contact you.', true), Configure::read('Company.name'), Configure::read('Company.name'))?></label>
 				</p>
 				<p class="left">
 					<?php echo $form->textarea('please_share_any_comments') ?>
 				</p>
 			</div>
 			<br class="clear" />
-		<?php echo $form->end('Submit'); ?>
+		<?php echo $form->end(__('Submit', true)); ?>
 	</fieldset>
 </div>
 
