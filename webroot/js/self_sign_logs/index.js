@@ -34,8 +34,6 @@ var contextMenu = new Ext.menu.Menu({
     id: 'cmOpen',
     iconCls: 'edit',
     handler: function() {
-    	var view = selfSignLogsGrid.getView();
-    	var row = view.getRow(rowIndex);
     	var record = selfSignLogsGrid.store.getAt(rowIndex);
     	// TODO implement open, closed, and not helped context menu buttons
     	console.log(record.data.id)  	
@@ -113,8 +111,6 @@ var selfSignLogsGrid = new Ext.grid.GridPanel({
 	listeners: {
 		cellcontextmenu: function(grid, index, columnIndex, event) {
 			event.stopEvent();
-	    	var view = this.getView();
-	    	var row = view.getRow(index);
 	    	var record = this.store.getAt(index);
 	    	switch(record.data.status) {
 	    		case 'Open': {
