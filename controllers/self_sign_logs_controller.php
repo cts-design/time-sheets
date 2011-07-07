@@ -110,10 +110,10 @@ class SelfSignLogsController extends AppController {
 		}
     }
 
-    function admin_toggle_status($id=null, $status=null) {
+    function admin_update_status($id=null, $status=null) {
 		if($this->RequestHandler->isAjax()) {
 		    if ($id != null && $status != null) {
-				if($status == 1) {
+				if($status == 1 || $status == 2) {
 				    $closed = date('Y-m-d H:i:s');
 				}
 				else {
@@ -132,11 +132,21 @@ class SelfSignLogsController extends AppController {
 				    $log = $this->SelfSignLog->findById($id);
 				    if($status == 1) {
 						$details = 'Closed self sign queue record for ' .
-							$log['User']['lastname'] . ', ' . substr($log['User']['ssn'], -4);
+							ucfirst($log['User']['lastname']) . ', ' . 
+							ucfirst($log['User']['firstname']) . ' - ' . 
+							substr($log['User']['ssn'], -4);
 				    }
+					elseif($status == 2) {
+						$details = 'Marked self sign queue record as not helped for ' .
+							ucfirst($log['User']['lastname']) . ', ' . 
+							ucfirst($log['User']['firstname']) . ' - ' . 
+							substr($log['User']['ssn'], -4);					
+					}
 				    else {
 						$details = 'Opened self sign queue record for '.
-						    $log['User']['lastname'] . ', ' . substr($log['User']['ssn'], -4);
+							ucfirst($log['User']['lastname']) . ', ' . 
+							ucfirst($log['User']['firstname']) . ' - ' . 
+							substr($log['User']['ssn'], -4);
 				    }
 				    $this->Transaction->createUserTransaction('Self Sign', null, null, $details);
 				}
