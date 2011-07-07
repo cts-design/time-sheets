@@ -11,7 +11,7 @@ class SelfScanCategoriesController extends AppController {
 
 	function admin_view($id = null) {
 		if (!$id) {
-			$this->Session->setFlash(__('Invalid self scan category', true));
+			$this->Session->setFlash(__('Invalid self scan category', true), 'flash_failure');
 			$this->redirect(array('action' => 'index'));
 		}
 		$this->set('selfScanCategory', $this->SelfScanCategory->read(null, $id));
@@ -46,7 +46,7 @@ class SelfScanCategoriesController extends AppController {
 
 	function admin_edit($id = null) {
 		if (!$id && empty($this->data)) {
-			$this->Session->setFlash(__('Invalid self scan category', true));
+			$this->Session->setFlash(__('Invalid self scan category', true), 'flash_failure');
 			$this->redirect(array('action' => 'index'));
 		}
 		if (!empty($this->data)) {

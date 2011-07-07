@@ -88,12 +88,12 @@ class SelfSignLogArchivesController extends AppController {
 				$data = $this->SelfSignLogArchive->find('all', array('conditions' => $conditions));
 			}
 			else {
-			 $this->Session->setFlash('Your results exceed 5000 records, please filter results further.', 'flash_failure');
+			 $this->Session->setFlash(__('Your results exceed 5000 records, please filter results further.', true), 'flash_failure');
 		   	 $this->redirect(array('action' => 'index'));	
 			}
 		}
 		else {
-		    $this->Session->setFlash('You must filter results to generate a report.', 'flash_failure');
+		    $this->Session->setFlash(__('You must filter results to generate a report.', true), 'flash_failure');
 		    $this->redirect(array('action' => 'index'));		
 		}
 	    
@@ -125,7 +125,7 @@ class SelfSignLogArchivesController extends AppController {
 		    $report[$k]['Closed In'] = $v['SelfSignLogArchive']['closed_in'];
 		}
 		if(empty($report[0])) {
-		    $this->Session->setFlash('There are no results to generate a report', 'flash_failure');
+		    $this->Session->setFlash(__('There are no results to generate a report', true), 'flash_failure');
 		    $this->redirect(array('action' => 'index'));
 		}
 		$title = "Self Sign Report for ";

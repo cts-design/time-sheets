@@ -22,7 +22,7 @@ class ChairmanReportsController extends AppController {
 		if (!empty($this->data)) {
                         $file = $this->_uploadChairmanReport();
                         if (!$file) {
-                            $this->Session->setFlash(__('The chairman report could not be uploaded. Please, try again.', true), 'flash_failure');
+                            $this->Session->setFlash(__('The chairman report could not be uploaded. Please try again.', true), 'flash_failure');
                             $this->redirect(array('action' => 'index'));
                         }
                         $this->data['ChairmanReport']['file'] = Router::url('/', true) . $file;
@@ -33,7 +33,7 @@ class ChairmanReportsController extends AppController {
 				$this->Session->setFlash(__('The chairman report has been saved', true), 'flash_success');
 				$this->redirect(array('action' => 'index'));
 			} else {
-				$this->Session->setFlash(__('The chairman report could not be saved. Please, try again.', true), 'flash_failure');
+				$this->Session->setFlash(__('The chairman report could not be saved. Please try again.', true), 'flash_failure');
 			}
 		}
 	}

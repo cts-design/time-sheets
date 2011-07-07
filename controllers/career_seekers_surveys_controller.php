@@ -19,7 +19,7 @@ class CareerSeekersSurveysController extends AppController {
                             $this->Session->setFlash(__('The career seekers survey has been submitted', true), 'flash_success');
                             $this->redirect(array('action' => 'success'));
                     } else {
-                            $this->Session->setFlash(__('The career seekers survey could not be submitted. Please, try again.', true), 'flash_failure');
+                            $this->Session->setFlash(__('The career seekers survey could not be submitted. Please try again.', true), 'flash_failure');
                     }
             }
     }

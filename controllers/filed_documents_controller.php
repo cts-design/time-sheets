@@ -289,7 +289,7 @@ class FiledDocumentsController extends AppController {
 		}
 
 		if(empty($report[0])) {
-		    $this->Session->setFlash('There are no results to generate a report', 'flash_failure');
+		    $this->Session->setFlash(__('There are no results to generate a report', true), 'flash_failure');
 		    $this->redirect(array('action' => 'view_all_docs'));
 			return 'No Report Results';
 		}

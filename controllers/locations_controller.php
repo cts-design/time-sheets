@@ -60,7 +60,7 @@ class LocationsController extends AppController {
 			$_SESSION['ck_authorized'] = true;
 	    }
 		if (!$id && empty($this->data)) {
-			$this->Session->setFlash(__('Invalid location', true));
+			$this->Session->setFlash(__('Invalid location', true), 'flash_failure');
 			$this->redirect(array('action' => 'index'));
 		}
 		if (!empty($this->data)) {
