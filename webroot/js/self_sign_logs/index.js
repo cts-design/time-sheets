@@ -83,7 +83,8 @@ var selfSignLogsGrid = new Ext.grid.GridPanel({
 	},{
 		header: 'Service',
 		dataIndex: 'service',
-		width: 270
+		width: 270,
+		sortable: true
 	},{
 		header: 'Last Act. Admin',
 		dataIndex: 'admin',
@@ -252,7 +253,7 @@ Ext.onReady( function() {
 	selfSignLogsStore.addListener('load', function(store, records, options) {
 		var view = selfSignLogsGrid.getView();
 		var groupId = view.getGroupId('Open');
-		if(records != '') {
+		if(records[0]._groupId == groupId) {
 			view.toggleGroup(groupId, true);
 		}
 		
