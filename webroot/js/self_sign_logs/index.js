@@ -61,7 +61,7 @@ var selfSignLogsGrid = new Ext.grid.GridPanel({
 	id: 'selfSignGrid',
 	height: 500,
 	frame: true,
-	loadMask: true,
+	loadMask: false,
 	columns: [{
 		header: 'Id',
 		dataIndex: 'id',
@@ -113,6 +113,7 @@ var selfSignLogsGrid = new Ext.grid.GridPanel({
 		groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})',
 		startCollapsed: true,
 		hideGroupedColumn: true,
+		enableGroupingMenu: false,
 		deferEmptyText: false,
 		emptyText: '<div class="x-grid-empty">No records at this time.</div>'
 	}),
@@ -193,7 +194,7 @@ var selfSignSearch = new Ext.form.FormPanel({
 				displayField: 'name',
 				name: 'locations',
 				fieldLabel: 'Locations',
-				allowBlank: false,
+				allowBlank: true,
 				msgTarget: 'under',
 				width: 300,
 				listeners: {
@@ -239,7 +240,8 @@ var selfSignSearch = new Ext.form.FormPanel({
 			if(form.isValid()) {
 				var locations = Ext.getCmp('locationsSelect').getValue();
 				var services = Ext.getCmp('servicesSelect').getValue();
-				selfSignLogsStore.reload({
+				selfSignLogsStore.addListener('load', loadCallBack); 
+				selfSignLogsStore.load({
 					params: {
 						locations: locations,
 						services: services
@@ -247,13 +249,24 @@ var selfSignSearch = new Ext.form.FormPanel({
 				});	
 			}	
 		}
+	},{
+		text: 'Reset',
+		handler: function() {
+			if(! selfSignLogsStore.hasListener('load')) {
+				selfSignLogsStore.addListener('load', loadCallBack); 
+			}
+			Ext.getCmp('servicesSelect').reset();
+			Ext.getCmp('locationsSelect').reset();
+			selfSignLogsStore.load();
+		}
 	}]
 })
 
 function updateStatus(id, status) {
     Ext.Ajax.request({
         url: '/admin/self_sign_logs/update_status/' + id + '/' + status,
-        success: function(response){
+        success: function(response){  	
+			selfSignLogsStore.addListener('load', loadCallBack); 
             selfSignLogsStore.reload();
         },
         failure: function(response){
@@ -267,18 +280,31 @@ function updateStatus(id, status) {
     });	
 }
 
+function loadLogs() {
+	if(selfSignLogsStore.hasListener('load')) {
+		selfSignLogsStore.removeListener('load', loadCallBack); 
+	}
+	selfSignLogsStore.reload()
+	
+}
+
+function loadCallBack(store, records, options) {
+	var view = selfSignLogsGrid.getView();
+	view.collapseAllGroups();
+	var groupId = view.getGroupId('Open');
+	for(var i in records) {
+		if(records[i]._groupId == groupId) {		
+			view.toggleGroup(groupId, true);
+		} 
+	}	
+}
+
 Ext.onReady( function() {
 	Ext.QuickTips.init();
-	selfSignSearch.render('SelfSignSearch');
+	selfSignSearch.render('SelfSignSearch');	
 	selfSignLogsGrid.render('SelfSignLogs');
+	selfSignLogsStore.addListener('load', loadCallBack);
 	selfSignLogsStore.load();
-	//setInterval('selfSignLogsStore.reload()', 10000);
-	selfSignLogsStore.addListener('load', function(store, records, options) {
-		var view = selfSignLogsGrid.getView();
-		var groupId = view.getGroupId('Open');
-		if(records[0]._groupId == groupId) {
-			view.toggleGroup(groupId, true);
-		}
-		
-	})
-});
+	
+	setInterval(loadLogs, 10000);
+});// Ext.get(view.getGroupId('Open')).hasClass('x-grid-group-collapsed')
