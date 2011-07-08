@@ -125,6 +125,8 @@ var searchPanel = {
             SearchTerm1: search_term1,
             SearchTerm2: search_term2
           });
+
+          form.clearInvalid();
         }
       }
     });
