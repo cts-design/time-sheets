@@ -26,7 +26,7 @@ $(document).ready(function() {
     <?php __('to return to the login page and try your login information again.') ?>
 </p>
 <br />
-<div class="required"><label></label> indicates required fields.</div>
+<div class="required"><label></label> <?php __('indicates required fields.') ?></div>
 <br />
   <div id="WebRegistrationForm">
 	<?php echo $this->Form->create('User', array('action' => 'registration')); ?>
