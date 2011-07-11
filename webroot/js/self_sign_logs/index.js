@@ -4,6 +4,36 @@
  * @link http://ctsfla.com
  * @package Atlas V3
  */
+
+// Override to allow disabling of collapseable groups 
+Ext.override(Ext.grid.GroupingView, {
+    disableGroupingByClick: false,
+    
+    processEvent: function(name, e){
+        Ext.grid.GroupingView.superclass.processEvent.call(this, name, e);
+        var hd = e.getTarget('.x-grid-group-hd', this.mainBody);
+        if(hd){
+            // group value is at the end of the string
+            var field = this.getGroupField(),
+                prefix = this.getPrefix(field),
+                groupValue = hd.id.substring(prefix.length),
+                emptyRe = new RegExp('gp-' + Ext.escapeRe(field) + '--hd');
+
+            // remove trailing '-hd'
+            groupValue = groupValue.substr(0, groupValue.length - 3);
+            
+            // also need to check for empty groups
+            if(groupValue || emptyRe.test(hd.id)){
+                this.grid.fireEvent('group' + name, this.grid, field, groupValue, e);
+            }
+            if(name == 'mousedown' && e.button == 0 && !this.disableGroupingByClick){
+                this.toggleGroup(hd.parentNode);
+            }
+        }
+
+    },
+});
+
 var rowIndex = null;
 
 var selfSignLogsProxy = new Ext.data.HttpProxy({
@@ -111,10 +141,12 @@ var selfSignLogsGrid = new Ext.grid.GridPanel({
 	view: new Ext.grid.GroupingView({
 		forceFit: true,
 		groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})',
-		startCollapsed: true,
+		startCollapsed: false,
 		hideGroupedColumn: true,
 		enableGroupingMenu: false,
+		disableGroupingByClick: true,
 		deferEmptyText: false,
+		ignoreAdd: true,
 		emptyText: '<div class="x-grid-empty">No records at this time.</div>'
 	}),
 	listeners: {
@@ -240,7 +272,6 @@ var selfSignSearch = new Ext.form.FormPanel({
 			if(form.isValid()) {
 				var locations = Ext.getCmp('locationsSelect').getValue();
 				var services = Ext.getCmp('servicesSelect').getValue();
-				selfSignLogsStore.addListener('load', loadCallBack); 
 				selfSignLogsStore.load({
 					params: {
 						locations: locations,
@@ -252,9 +283,6 @@ var selfSignSearch = new Ext.form.FormPanel({
 	},{
 		text: 'Reset',
 		handler: function() {
-			if(! selfSignLogsStore.hasListener('load')) {
-				selfSignLogsStore.addListener('load', loadCallBack); 
-			}
 			Ext.getCmp('servicesSelect').reset();
 			Ext.getCmp('locationsSelect').reset();
 			selfSignLogsStore.load();
@@ -265,8 +293,7 @@ var selfSignSearch = new Ext.form.FormPanel({
 function updateStatus(id, status) {
     Ext.Ajax.request({
         url: '/admin/self_sign_logs/update_status/' + id + '/' + status,
-        success: function(response){  	
-			selfSignLogsStore.addListener('load', loadCallBack); 
+        success: function(response){  
             selfSignLogsStore.reload();
         },
         failure: function(response){
@@ -280,31 +307,10 @@ function updateStatus(id, status) {
     });	
 }
 
-function loadLogs() {
-	if(selfSignLogsStore.hasListener('load')) {
-		selfSignLogsStore.removeListener('load', loadCallBack); 
-	}
-	selfSignLogsStore.reload()
-	
-}
-
-function loadCallBack(store, records, options) {
-	var view = selfSignLogsGrid.getView();
-	view.collapseAllGroups();
-	var groupId = view.getGroupId('Open');
-	for(var i in records) {
-		if(records[i]._groupId == groupId) {		
-			view.toggleGroup(groupId, true);
-		} 
-	}	
-}
-
 Ext.onReady( function() {
 	Ext.QuickTips.init();
-	selfSignSearch.render('SelfSignSearch');	
+	selfSignSearch.render('SelfSignSearch');
+	selfSignLogsStore.load();	
 	selfSignLogsGrid.render('SelfSignLogs');
-	selfSignLogsStore.addListener('load', loadCallBack);
-	selfSignLogsStore.load();
-	
-	setInterval(loadLogs, 10000);
-});// Ext.get(view.getGroupId('Open')).hasClass('x-grid-group-collapsed')
+	setInterval('selfSignLogsStore.reload()', 10000);
+});
