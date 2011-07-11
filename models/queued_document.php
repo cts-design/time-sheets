@@ -34,9 +34,9 @@ class QueuedDocument extends AppModel {
 				'rule' =>'isPDF',
 				'message' => 'Please supply document in .pdf format.'
 			),
-			'lessThen1mb' => array(
+			'lessThen5mb' => array(
 				'rule' => 'lessThen1mb',
-				'message' => 'Document must not be larger then 1mb'
+				'message' => 'Document must not be larger then 5mb'
 			)
 		)
 	);
@@ -156,8 +156,8 @@ class QueuedDocument extends AppModel {
 		return true;
 	}
 	
-	function lessThen1mb() {
-		if($this->data['QueuedDocument']['submittedfile']['size'] > 1048576) {
+	function lessThen5mb() {
+		if($this->data['QueuedDocument']['submittedfile']['size'] > 5242880) {
 			return false;
 		}
 		return true;		
