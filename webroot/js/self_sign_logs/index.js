@@ -149,6 +149,7 @@ var selfSignLogsGrid = new Ext.grid.GridPanel({
 		ignoreAdd: true,
 		emptyText: '<div class="x-grid-empty">No records at this time.</div>'
 	}),
+	sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
 	listeners: {
 		cellcontextmenu: function(grid, index, columnIndex, event) {
 			event.stopEvent();
