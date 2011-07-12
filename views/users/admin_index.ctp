@@ -76,6 +76,22 @@
     </table>
     <p class="paging-counter">
 	<?php
+    $options = array();
+
+    if (isset($search_by1) && $search_by1) {
+        $options['url']['search_by1'] = $search_by1;
+        $options['url']['search_scope1'] = $search_scope1;
+        $options['url']['search_term1'] = $search_term1;
+    }
+
+    if (isset($search_by2) && $search_by2) {
+        $options['url']['search_by2'] = $search_by2;
+        $options['url']['search_scope2'] = $search_scope2;
+        $options['url']['search_term2'] = $search_term2;
+    }
+
+    $this->Paginator->options($options);
+
 	echo $this->Paginator->counter(array(
 	    'format' => __('Page %page% of %pages%, showing %current% records out of %count% total, starting on record %start%, ending on %end%', true)
 	));

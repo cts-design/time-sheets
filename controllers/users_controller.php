@@ -97,14 +97,24 @@ class UsersController extends AppController {
 		}		
 		$this->User->recursive = -1;
 
-        $submittedValues = $this->params['form'];
+        $named = $this->params['named'];
+        if (!empty($this->params['form'])) {
+            $submittedValues = $this->params['form'];
+        }
+
+        if (empty($submittedValues)) {
+            $submittedValues['search_by1'] = (isset($named['search_by1'])) ? $named['search_by1'] : '';
+            $submittedValues['search_scope1'] = (isset($named['search_scope1'])) ? $named['search_scope1'] : '';
+            $submittedValues['search_term1'] = (isset($named['search_term1'])) ? $named['search_term1'] : '';
+            $submittedValues['search_by2'] = (isset($named['search_by2'])) ? $named['search_by2'] : '';
+            $submittedValues['search_scope2'] = (isset($named['search_scope2'])) ? $named['search_scope2'] : '';
+            $submittedValues['search_term2'] = (isset($named['search_term2'])) ? $named['search_term2'] : '';
+        }
 
         // set up the default paginate options
         $conditions = array('User.role_id' => 1);
         $limit = Configure::read('Pagination.customer.limit');
         $order = array('User.lastname' => 'ASC');
-
-        // $this->params[form][...] search_by1/2 search_scope1/2 search_term1/2
 
         if (!empty($submittedValues) && $submittedValues['search_term1'] !== '') {
             switch ($submittedValues['search_scope1']) {
@@ -147,11 +157,9 @@ class UsersController extends AppController {
             $this->set('users', $this->paginate('User'));
         } else {
 		    $this->paginate = array(
-			'conditions' => array(
-			    'User.role_id' => 1,
-			 ),
-			 'limit' => Configure::read('Pagination.customer.limit'),
-			 'order' => array('User.lastname' => 'asc')
+			'conditions' => $conditions,
+			 'limit' => $limit,
+			 'order' => $order
 		    );
 		    $this->set('users', $this->paginate('User'));
         }
