@@ -35,7 +35,7 @@ class QueuedDocument extends AppModel {
 				'message' => 'Please supply document in .pdf format.'
 			),
 			'lessThen5mb' => array(
-				'rule' => 'lessThen1mb',
+				'rule' => 'lessThen5mb',
 				'message' => 'Document must not be larger then 5mb'
 			)
 		)
