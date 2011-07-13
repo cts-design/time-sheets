@@ -7,6 +7,8 @@
 
 var searchPanel = {
   init: function() {
+    var windowUrl = window.location.pathname.replace(/\/page\:\d+/g, '');
+
     this.form = new Ext.FormPanel({
       id: 'searchFormPanel',
       renderTo: 'searchForm',
@@ -14,7 +16,7 @@ var searchPanel = {
       frame: true,
       collapsible: true,
       standardSubmit: true,
-      url: window.location.pathname,
+      url: windowUrl,
       bodyStyle: 'padding: 5px',
       defaults: {
       },
