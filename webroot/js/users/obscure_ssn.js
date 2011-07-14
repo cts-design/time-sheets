@@ -1,8 +1,8 @@
 $(function() {
   $('td.ssn').each(function(index) {
     var me = $(this),
-    ssn = $(this).text(),
-    obscuredSsn = '*****' + ssn.trim().substr(-4);
+    ssn = $(this).text().trim(),
+    obscuredSsn = '*****' + ssn.substr( ssn.length - 5);
 
     me.data('full_ssn', ssn)
             .data('obscured_ssn', obscuredSsn)
