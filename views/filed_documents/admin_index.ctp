@@ -69,7 +69,8 @@
 		<td><?php echo (isset($filedDocument['LastActAdmin']['lastname'])) ? $filedDocument['LastActAdmin']['lastname'] . ', ' . $filedDocument['LastActAdmin']['firstname'] : ''; ?>&nbsp;</td>
 		<td class="actions">
 			<?php echo $this->Html->link(__('View', true),
-				    array('action' => 'view', $filedDocument['FiledDocument']['id']), array('class' => 'view')); ?>
+				    array('action' => 'view', $filedDocument['FiledDocument']['id']), 
+				    array('class' => 'view', 'target' => '_blank')); ?>
 			<?php echo $this->Html->link(__('Edit', true),
 				    array('action' => 'edit', $filedDocument['FiledDocument']['id'], (!empty($this->params['pass'][0]) ? $this->params['pass'][0] : null) ), array('class'=>'edit')); ?>
 			<?php echo $this->Html->link(__('Delete', true), 'admin/filed_documents/delete/' .$filedDocument['FiledDocument']['id'], array('class'=>'delete', 'rel' => $filedDocument['FiledDocument']['id'])); ?>
