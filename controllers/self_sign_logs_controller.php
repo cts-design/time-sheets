@@ -41,7 +41,9 @@ class SelfSignLogsController extends AppController {
 			if($serviceIds){
 				$conditions['SelfSignLog.level_1'] = $serviceIds;
 			}				
-			$selfSignLogs = $this->SelfSignLog->find('all', array('conditions' => $conditions));
+			$selfSignLogs = $this->SelfSignLog->find('all', array(
+				'conditions' => $conditions,
+				'order' => array('SelfSignLog.created DESC')));
 			$i = 0;
 			$masterKioskButtonList = $this->_getAllMasterButtonNames();
 			$data = array();
@@ -71,7 +73,8 @@ class SelfSignLogsController extends AppController {
  				$data['logs'][$i]['created'] = $selfSignLog['SelfSignLog']['created'];
 				$data['logs'][$i]['admin'] = trim(ucfirst($selfSignLog['Admin']['lastname']) . ', ' .
 					ucfirst($selfSignLog['Admin']['firstname']), ',');
-				$data['logs'][$i]['location'] = $selfSignLog['Location']['name'];	
+				$data['logs'][$i]['location'] = $selfSignLog['Location']['name'];
+				$data['logs'][$i]['kioskId'] = $selfSignLog['SelfSignLog']['kiosk_id'];	
 				$i++;	
 			}	
 			$this->set('data', $data);
@@ -79,35 +82,6 @@ class SelfSignLogsController extends AppController {
     	}
 		$title_for_layout = 'Self Sign Queue';
 		$this->set(compact('title_for_layout'));
-    }
-
-    function admin_get_services() {
-		if ($this->RequestHandler->isAjax()) {
-		    $this->loadModel('KioskButton');
-		    $masterParentButtonNameList = $this->_getParentMasterButtonNames();
-			$data = array('services' => array());
-		    $locationIds = $this->_parseLocationIds();
-		    if($locationIds) {				
-				$kiosks = $this->SelfSignLog->Kiosk->find('list',
-					array('conditions' => array('Kiosk.location_id' => $locationIds)));		
-				$data['services'] = array();
-				if($kiosks) {
-					$buttons = $this->KioskButton->find('all', array(
-					    'conditions' =>array(
-						'KioskButton.parent_id' => null,
-						'KioskButton.kiosk_id' => $kiosks,
-						'KioskButton.status' => 0 )));	
-					$i = 0;
-					foreach ($buttons as $button) {
-					    $data['services'][$i]['id'] = $button['KioskButton']['id'];
-					    $data['services'][$i]['name'] = $masterParentButtonNameList[$button['KioskButton']['id']];
-					    $i++;
-					}					
-				}
-		    }
-			$this->set(compact('data'));
-			$this->render(null, null, '/elements/ajaxreturn');
-		}
     }
 
     function admin_update_status($id=null, $status=null) {
@@ -154,6 +128,104 @@ class SelfSignLogsController extends AppController {
 		    }
 		}
     }
+
+	function admin_reassign() {
+		if($this->RequestHandler->isAjax()) {
+			if(!empty($this->data)) {
+				$this->data['SelfSignLog']['last_activity_admin_id'] = $this->Auth->user('id');
+				$this->data['SelfSignLogArchive']['last_activity_admin_id'] = $this->Auth->user('id');
+				$this->data['SelfSignLogArchive']['id'] = $this->data['SelfSignLog']['id'];
+				$this->data['SelfSignLogArchive']['level_1'] = $this->data['SelfSignLog']['level_1'];
+				$this->data['SelfSignLogArchive']['level_2'] = $this->data['SelfSignLog']['level_2'];
+				$this->data['SelfSignLogArchive']['level_3'] = $this->data['SelfSignLog']['level_3'];
+				$this->data['SelfSignLogArchive']['other'] = $this->data['SelfSignLog']['other'];
+				if($this->SelfSignLog->save($this->data['SelfSignLog']) && 
+					$this->SelfSignLog->Kiosk->SelfSignLogArchive->save($this->data['SelfSignLogArchive'])){
+					$data['success'] = true;
+					$data['message'] = 'Record reassigned successfully.';
+					$log = $this->SelfSignLog->findById($this->data['SelfSignLog']['id']);
+					$details = 'Reassigned self sign queue record for ' .
+						ucfirst($log['User']['lastname']) . ', ' . 
+						ucfirst($log['User']['firstname']) . ' - ' . 
+						substr($log['User']['ssn'], -4); 
+					$this->Transaction->createUserTransaction('Self Sign', null, null, $details);					
+				}
+				else {
+					$data['success'] = false;
+					$data['message'] = 'Unable to reassign record at this time, please try again.';
+				}
+			}
+			
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
+
+    function admin_get_services() {
+		if ($this->RequestHandler->isAjax()) {
+		    $this->loadModel('KioskButton');
+		    $masterParentButtonNameList = $this->_getParentMasterButtonNames();
+			$data = array('services' => array());
+		    $locationIds = $this->_parseLocationIds();
+		    if($locationIds) {				
+				$kiosks = $this->SelfSignLog->Kiosk->find('list',
+					array('conditions' => array('Kiosk.location_id' => $locationIds)));		
+				$data['services'] = array();
+				if($kiosks) {
+					$buttons = $this->KioskButton->find('all', array(
+					    'conditions' =>array(
+						'KioskButton.parent_id' => null,
+						'KioskButton.kiosk_id' => $kiosks,
+						'KioskButton.status' => 0 )));	
+					$i = 0;
+					foreach ($buttons as $button) {
+					    $data['services'][$i]['id'] = $button['KioskButton']['id'];
+					    $data['services'][$i]['name'] = $masterParentButtonNameList[$button['KioskButton']['id']];
+					    $i++;
+					}					
+				}
+		    }
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+    }
+	
+	function admin_get_kiosk_buttons($kioskId, $parentId=null) {
+		if($this->RequestHandler->isAjax()) {
+			$masterButtonList = $this->_getAllMasterButtonNames();
+			if($parentId) {				
+				$buttons = $this->MasterKioskButton->KioskButton->find('list', array(
+					'conditions' => array(
+						'KioskButton.kiosk_id' => $kioskId,
+						'KioskButton.parent_id' => $parentId,
+						'KioskButton.status' => 0),
+					'fields' => array('button_id', 'id')));
+			}
+			else {			
+				$buttons = $this->MasterKioskButton->KioskButton->find('list', array(
+					'conditions' => array(
+						'KioskButton.kiosk_id' => $kioskId,
+						'KioskButton.parent_id' => null,
+						'KioskButton.status' => 0),
+					'fields' => array('button_id', 'id')));
+			}
+			$data['buttons'] = array();
+			if($buttons) {
+				$i = 0;
+				foreach($buttons as $k => $v) {
+					if(! in_array($v, $data['buttons'])) {
+						$data['buttons'][$i]['id'] = $v;
+						$data['buttons'][$i]['name'] = $masterButtonList[$v];
+						$i++;						
+					}
+
+				}				
+			}
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');	
+		}	
+		
+	}
 
 	function _parseLocationIds() {
 	    if(isset($this->params['url']['locations']) && $this->params['url']['locations'] != '' ) {
