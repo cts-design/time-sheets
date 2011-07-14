@@ -41,7 +41,7 @@ var searchPanel = {
             id: 'SearchBy1',
             name: 'search_by1',
             hiddenName: 'search_by1',
-            store: [['firstname', 'First Name'], ['lastname', 'Last Name'], ['ssn', 'SSN']],
+            store: [['firstname', 'First Name'], ['lastname', 'Last Name'], ['fullssn', 'Full SSN'], ['last4', 'Last 4 SSN']],
             triggerAction: 'all',
             allowBlank: false
           },{
@@ -50,7 +50,7 @@ var searchPanel = {
             id: 'SearchBy2',
             name: 'search_by2',
             hiddenName: 'search_by2',
-            store: [['firstname', 'First Name'], ['lastname', 'Last Name'], ['ssn', 'SSN']],
+            store: [['firstname', 'First Name'], ['lastname', 'Last Name'], ['fullssn', 'Full SSN'], ['last4', 'Last 4 SSN']],
             triggerAction: 'all'
           }]
         },{

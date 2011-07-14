@@ -124,11 +124,25 @@ class UsersController extends AppController {
         if (!empty($submittedValues) && $submittedValues['search_term1'] !== '') {
             switch ($submittedValues['search_scope1']) {
                 case 'containing':
-                    $conditionScope = $submittedValues['search_by1'] . ' LIKE';
+                    if ($submittedValues['search_by1'] === 'last4') {
+                        $conditionScope = 'RIGHT (User.ssn , 4) LIKE';
+                    } else if ($submittedValues['search_by1'] === 'fullssn') {
+                        $conditionScope = 'User.ssn LIKE';
+                    } else {
+                        $conditionScope = $submittedValues['search_by1'] . ' LIKE';
+                    }
+
                     $conditionValue = '%' . $submittedValues['search_term1'] . '%';
                     break;
                 case 'matching exactly':
-                    $conditionScope = $submittedValues['search_by1'];
+                    if ($submittedValues['search_by1'] === 'last4') {
+                        $conditionScope = 'RIGHT (User.ssn , 4)';
+                    } else if ($submittedValues['search_by1'] === 'fullssn') {
+                        $conditionScope = 'User.ssn';
+                    } else {
+                        $conditionScope = $submittedValues['search_by1'];
+                    }
+
                     $conditionValue = $submittedValues['search_term1'];
                     break;
             }
@@ -139,11 +153,25 @@ class UsersController extends AppController {
             if ($submittedValues['search_by2'] !== '' && $submittedValues['search_term2'] !== '') {
                 switch ($submittedValues['search_scope2']) {
                     case 'containing':
-                        $conditionScope2 = $submittedValues['search_by2'] . ' LIKE';
+                        if ($submittedValues['search_by2'] === 'last4') {
+                            $conditionScope2 = 'RIGHT (User.ssn , 4) LIKE';
+                        } else if ($submittedValues['search_by2'] === 'fullssn') {
+                            $conditionScope2 = 'User.ssn LIKE';
+                        } else {
+                            $conditionScope2 = $submittedValues['search_by2'] . ' LIKE';
+                        }
+
                         $conditionValue2 = '%' . $submittedValues['search_term2'] . '%';
                         break;
                     case 'matching exactly':
-                        $conditionScope2 = $submittedValues['search_by2'];
+                        if ($submittedValues['search_by2'] === 'last4') {
+                            $conditionScope2 = 'RIGHT (User.ssn , 4)';
+                        } else if ($submittedValues['search_by2'] === 'fullssn') {
+                            $conditionScope2 = 'User.ssn';
+                        } else {
+                            $conditionScope2 = $submittedValues['search_by2'];
+                        }
+
                         $conditionValue2 = $submittedValues['search_term2'];
                         break;
                 }
