@@ -121,7 +121,9 @@ var searchTypeStore = new Ext.data.ArrayStore({
 		'lastname', 'Last Name'
 	], [
 		'last4', 'Last 4 SSN'
-	]]
+	], [
+    'fullssn', 'Full SSN'
+  ]]
 });
 
 var adminProxy = new Ext.data.HttpProxy({

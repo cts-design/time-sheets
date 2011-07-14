@@ -246,7 +246,7 @@ class UserFixture extends CakeTestFixture {
 			'firstname' => 'Slim',
 			'lastname' => 'Jim',
 			'middle_initial' => '',
-			'ssn' => '123441234',
+			'ssn' => '123441244',
                         'username' => 'jim',
 			'password' => '1234',
 			'address_1' => '123 main st',

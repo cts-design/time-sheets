@@ -396,6 +396,13 @@ class FiledDocumentsController extends AppController {
                         $conditions['User.firstname'] = $filters['cusSearch1'];
                     }
                 }
+                if($filters['searchType1'] == 'fullssn' && (!empty($filters['cusSearch1']))) {
+                    if ($filters['cusScope1'] === 'containing') {
+                        $conditions['User.ssn LIKE'] = '%'.$filters['cusSearch1'].'%';
+                    } else {
+                        $conditions['User.ssn'] = $filters['cusSearch1'];
+                    }
+                }
                 if($filters['searchType1'] == 'last4' && (!empty($filters['cusSearch1']))) {
                     if ($filters['cusScope1'] === 'containing') {
                         $conditions['RIGHT (User.ssn , 4) LIKE'] = '%'.$filters['cusSearch1'].'%';
@@ -418,6 +425,13 @@ class FiledDocumentsController extends AppController {
                         $conditions['User.firstname LIKE'] = '%'. $filters['cusSearch2'] . '%';
                     } else {
                         $conditions['User.firstname'] = $filters['cusSearch2'];
+                    }
+                }
+                if($filters['searchType2'] == 'fullssn' && (!empty($filters['cusSearch2']))) {
+                    if ($filters['cusScope2'] === 'containing') {
+                        $conditions['User.ssn LIKE'] = '%'.$filters['cusSearch2'].'%';
+                    } else {
+                        $conditions['User.ssn'] = $filters['cusSearch2'];
                     }
                 }
                 if($filters['searchType2'] == 'last4' && (!empty($filters['cusSearch2']))) {

@@ -328,7 +328,7 @@ class FiledDocumentsControllerTestCase extends CakeTestCase {
 		$result = json_decode($this->testAction('/admin/filed_documents/view_all_docs'), true);
 		unset($this->__savedGetData);	
 		$this->assertEqual($result['docs'][0]['id'], 1);
-		$this->assertEqual($result['totalCount'], 3);
+		$this->assertEqual($result['totalCount'], 2);
 
 		$this->__savedGetData['filters'] =	
             '{"fromDate":"","toDate":"","searchType1":"last4","cusScope1":"matching exactly","cusSearch1":"1234","cat_1":"","cat_2":"","admin_id":"","filed_location_id":""}';
@@ -338,7 +338,25 @@ class FiledDocumentsControllerTestCase extends CakeTestCase {
 		unset($this->__savedGetData);	
 
         $this->assertEqual($result['docs'][0]['id'], 1);
-        $this->assertEqual($result['totalCount'], 3);
+        $this->assertEqual($result['totalCount'], 2);
+
+		$this->__savedGetData['filters'] =	
+            '{"fromDate":"","toDate":"","searchType1":"fullssn","cusScope1":"containing","cusSearch1":"1244","cat_1":"","cat_2":"","admin_id":"","filed_location_id":""}';
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+
+		unset($this->__savedGetData);	
+		$this->assertEqual($result['docs'][0]['id'], 1);
+		$this->assertEqual($result['totalCount'], 2);
+
+		$this->__savedGetData['filters'] =	
+            '{"fromDate":"","toDate":"","searchType1":"fullssn","cusScope1":"matching exactly","cusSearch1":"123441244","cat_1":"","cat_2":"","admin_id":"","filed_location_id":""}';
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$result = json_decode($this->testAction('/admin/filed_documents/view_all_docs'), true);
+        unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+		unset($this->__savedGetData);	
+
+        $this->assertEqual($result['docs'][0]['id'], 112);
+        $this->assertEqual($result['totalCount'], 1);
 	}
 
 	function testAdminViewAllDocsWithCustomerSearchSecondSet(){
@@ -390,7 +408,7 @@ class FiledDocumentsControllerTestCase extends CakeTestCase {
 		$result = json_decode($this->testAction('/admin/filed_documents/view_all_docs'), true);
 		unset($this->__savedGetData);	
 		$this->assertEqual($result['docs'][0]['id'], 1);
-		$this->assertEqual($result['totalCount'], 3);
+		$this->assertEqual($result['totalCount'], 2);
 
 		$this->__savedGetData['filters'] =	
             '{"fromDate":"","toDate":"","searchType2":"last4","cusScope2":"matching exactly","cusSearch2":"1234","cat_1":"","cat_2":"","admin_id":"","filed_location_id":""}';
@@ -399,7 +417,25 @@ class FiledDocumentsControllerTestCase extends CakeTestCase {
         unset($_SERVER['HTTP_X_REQUESTED_WITH']);
 		unset($this->__savedGetData);	
         $this->assertEqual($result['docs'][0]['id'], 1);
-        $this->assertEqual($result['totalCount'], 3);
+        $this->assertEqual($result['totalCount'], 2);
+
+		$this->__savedGetData['filters'] =	
+            '{"fromDate":"","toDate":"","searchType2":"fullssn","cusScope2":"containing","cusSearch2":"1244","cat_1":"","cat_2":"","admin_id":"","filed_location_id":""}';
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+
+		unset($this->__savedGetData);	
+		$this->assertEqual($result['docs'][0]['id'], 1);
+		$this->assertEqual($result['totalCount'], 2);
+
+		$this->__savedGetData['filters'] =	
+            '{"fromDate":"","toDate":"","searchType2":"fullssn","cusScope2":"matching exactly","cusSearch2":"123441244","cat_1":"","cat_2":"","admin_id":"","filed_location_id":""}';
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$result = json_decode($this->testAction('/admin/filed_documents/view_all_docs'), true);
+        unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+		unset($this->__savedGetData);	
+
+        $this->assertEqual($result['docs'][0]['id'], 112);
+        $this->assertEqual($result['totalCount'], 1);
 	}
 
 
