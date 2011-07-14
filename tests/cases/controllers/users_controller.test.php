@@ -171,6 +171,71 @@ class UsersControllerTestCase extends AtlasTestCase {
         $this->assertEqual($users[0], $expected[0]);
     }
 
+    function testAdminIndexWithSearchSsn() {
+        $this->Users->Session->write('Auth.User', array(
+            'id' => 1,
+            'role_id' => 2,
+            'username' => 'bcordell',
+            'location_id' => 1
+        ));
+
+        $this->Users->params = Router::parse('/admin/users');
+        $this->Users->params['url']['url'] = 'admin/users';
+        $this->Users->params['form'] = array(
+            'search_by1' => 'fullssn',
+            'search_scope1' => 'containing',
+            'search_term1' => '1234',
+            'search_by2' => '',
+            'search_scope2' => '',
+            'search_term2' => ''
+        );
+        $this->Users->admin_index();
+
+        $users = Set::extract('/users/User', $this->Users->viewVars);
+        $this->assertEqual(count($users), 8);
+
+        $this->Users->params['form'] = array(
+            'search_by1' => 'fullssn',
+            'search_scope1' => 'matching exactly',
+            'search_term1' => '123441244',
+            'search_by2' => '',
+            'search_scope2' => '',
+            'search_term2' => ''
+        );
+        $this->Users->admin_index();
+
+        $users = Set::extract('/users/User', $this->Users->viewVars);
+        $this->assertEqual(count($users), 1);
+        $this->assertEqual($users[0]['User']['firstname'], 'Slim');
+
+        $this->Users->params['form'] = array(
+            'search_by1' => 'last4',
+            'search_scope1' => 'containing',
+            'search_term1' => '12',
+            'search_by2' => '',
+            'search_scope2' => '',
+            'search_term2' => ''
+        );
+        $this->Users->admin_index();
+
+        $users = Set::extract('/users/User', $this->Users->viewVars);
+        $this->assertEqual(count($users), 8);
+
+        $this->Users->params['form'] = array(
+            'search_by1' => 'last4',
+            'search_scope1' => 'matching exactly',
+            'search_term1' => '1244',
+            'search_by2' => '',
+            'search_scope2' => '',
+            'search_term2' => ''
+        );
+        $this->Users->admin_index();
+
+        $users = Set::extract('/users/User', $this->Users->viewVars);
+        $this->assertEqual(count($users), 1);
+        $this->assertEqual($users[0]['User']['firstname'], 'Slim');
+    }
+
     function testAdminIndexSsnObscurity() {
         $this->Users->params = Router::parse('/admin/users');
         $this->Users->params['url']['url'] = 'admin/users';
