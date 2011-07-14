@@ -30,7 +30,8 @@ class SelfSignLog extends AppModel {
 	'other' => array(
 	    'other' => array(
 		'rule' => array('notempty'),
-		'message' => 'Please provide a description.'
+		'message' => 'Please provide a description.',
+		'on' => 'create'
 	    )
 	)
     );
