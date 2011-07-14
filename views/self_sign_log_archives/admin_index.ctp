@@ -58,7 +58,7 @@
 	    <div  id="searchFieldset3" class="left">
 	    <?php echo $this->Form->input('status', array(
 		    'type' => 'select',
-		    'empty' => 'Both',
+		    'empty' => 'All',
 		    'options' => $statuses,
 		    'before' => '<p class="left">',
 		    'between' => '</p><p class="left">',
