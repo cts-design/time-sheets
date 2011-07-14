@@ -42,6 +42,8 @@ $(document).ready( function() {
 				populateChildCatsList(childCats);
 				$('#FiledDocumentCat2').trigger('change');
 			} else {
+				resetChildCatsList();
+				resetGrandChildCatsList();
 				$('#FiledDocumentCat2').hide().removeClass('required');
 				$('#FiledDocumentCat3').hide().removeClass('required');
 			}
@@ -55,6 +57,7 @@ $(document).ready( function() {
 				populateGrandChildCatsList(grandCats);
 				$('#FiledDocumentCat3').show().addClass('required');			
 			} else {
+				resetGrandChildCatsList();
 				$('#FiledDocumentCat3').hide().removeClass('required');
 			}
 		});
@@ -103,6 +106,11 @@ function populateGrandChildCatsList(grandCats) {
 		}
 	});
 	$('#FiledDocumentCat3').html(options);
+}
+
+function resetChildCatsList() {
+	options = '<option value="">Select 2nd Cat</option>';
+	$('#FiledDocumentCat2').html(options);
 }
 
 function resetGrandChildCatsList() {
