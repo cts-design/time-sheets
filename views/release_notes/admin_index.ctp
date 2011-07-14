@@ -3,6 +3,19 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+	<h1>Release 3.0.3 (7/14/11)</h1>
+	<ol>
+		<li>Fixed issue that caused pagination to reset after search results returned more that 2 pages</li>
+		<li>Fixed issue that caused search parameters to be blanked out after initial search</li>
+		<li>Implemented a 5mb file size upload limit for PDF documents being sent into the "programs" module</li>
+		<li>Made changes to email notification within the "programs" module, for users that are processing automated VPK applications with the ATLAS system</li>
+		<li>Implemented a way to control what roles can or cannot view full ssn numbers in the customer list view. If you create or edit a role there is now a checkbox for (can view full ssn). When a admin belongs to a role that has that checkbox ticked they can hover over the obscured ssn in the customer list to view the full ssn.</li>
+		<li>Fixed issue where third category dropdown menu was intermittently not being populated when editing a filed customer document.</li>
+		<li>Added ability to search by full SSN or last 4 SSN in customer list view and filed document archive view.</li>
+		<li>Fixed bug where disabled document queue categories were showing up in the dropdown menu for the requeue document form.</li>
+		<li>Updated view document link in filed documents index view to open in a new tab or window.</li>
+	</ol>	
+	<hr />	
 	<h1>Release 3.0.2 (7/7/11)</h1>
 	<ol>
 		<li>Update to Module Access Control(mac) – Internal to CTS and Development Team</li>
