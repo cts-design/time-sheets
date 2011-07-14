@@ -7,6 +7,7 @@
  */
 ?>
 <?php echo $this->Html->scriptStart(array('inline' => false)) ?>
+    var test = obscure('246493082');
     var search_by1 = '<?php echo (isset($search_by1)) ? $search_by1 : null ?>';
     var search_scope1 = '<?php echo (isset($search_scope1)) ? $search_scope1 : null ?>';
     var search_term1 = '<?php echo (isset($search_term1)) ? $search_term1 : null ?>';
@@ -14,6 +15,9 @@
     var search_scope2 = '<?php echo (isset($search_scope2)) ? $search_scope2 : null ?>';
     var search_term2 = '<?php echo (isset($search_term2)) ? $search_term2 : null ?>';
 <?php echo $this->Html->scriptEnd() ?>
+<?php if ($canViewFullSsn): ?>
+    <?php echo $this->Html->script('users/obscure_ssn.js', array('inline' => false)) ?>
+<?php endif; ?>
 <?php echo $this->Html->script('users/search.js', array('inline' => false)) ?>
 <div id="crumbWrapper">
     <span>You are here > </span>
@@ -55,7 +59,11 @@
     	<tr<?php echo $class; ?>>
     	    <td><?php echo $user['User']['firstname']; ?>&nbsp;</td>
     	    <td><?php echo $user['User']['lastname']; ?>&nbsp;</td>
+            <?php if ($canViewFullSsn): ?>
+    	    <td class="ssn"><?php echo $user['User']['ssn'] ?>&nbsp;</td>
+            <?php else: ?>
     	    <td><?php echo "*****" . substr($user['User']['ssn'], -4); ?>&nbsp;</td>
+            <?php endif; ?>
 	    	<td><?php echo $this->Html->link($user['User']['email'], 'mailto:'.$user['User']['email']); ?>&nbsp;</td>
 	    	<td class="actions">
 				<?php echo $this->Html->link(__('Docs', true), array('controller' => 'filed_documents',  'action' => 'index', $user['User']['id']), array('class' => 'docs')); ?>

@@ -171,116 +171,141 @@ class UsersControllerTestCase extends AtlasTestCase {
         $this->assertEqual($users[0], $expected[0]);
     }
 
-    // function testAdminAddWithValidData() {
-    //     $this->Users->Session->write('Auth.User', array(
-    //         'id' => 1,
-    //         'role_id' => 2,
-    //         'username' => 'bcordell',
-    //         'location_id' => 1
-    //     ));
+    function testAdminIndexSsnObscurity() {
+        $this->Users->params = Router::parse('/admin/users');
+        $this->Users->params['url']['url'] = 'admin/users';
+        $this->Users->Session->write('Auth.User', array(
+            'id' => 1,
+            'role_id' => 2,
+            'username' => 'bcordell',
+            'location_id' => 1
+        ));
+        $this->Users->admin_index();
+        $this->assertTrue($this->Users->viewVars['canViewFullSsn']);
 
-    //     $this->Users->data = array(
-    //         'User' => array(
-    //             'role_id' => 2,
-    //             'firstname' => 'valid',
-    //             'lastname' => 'user',
-    //             'middle_initial' => 'D',
-    //             'ssn' => '999119999',
-    //             'ssn_confirm' => '999119999',
-    //             'username' => 'vuser',
-    //             'password' => 'asd123',
-    //             'address_1' => '123 main st',
-    //             'address_2' => '',
-    //             'city' => 'spring hill',
-    //             'state' => 'fl',
-    //             'zip' => '34609',
-    //             'phone' => '3521231234',
-    //             'alt_phone' => '',
-    //             'gender' => 'Male',
-    //             'dob' => '01/10/1986',
-    //             'email' => 'brandonc@gmail.com',
-    //             'location_id' => '1',
-    //             'signature_created' => '2010-09-22 15:02:21',
-    //             'signature_modified' => '2010-09-22 15:02:21',
-    //             'created' => '2010-09-22 15:02:21',
-    //             'modified' => '2010-09-22 15:02:21'
-    //         )
-    //     );
+        $this->Users->Session->destroy();
+        $this->Users->Session->write('Auth.User', array(
+            'id' => 1,
+            'role_id' => 6,
+            'username' => 'bcordell',
+            'location_id' => 1
+        ));
+        $this->Users->admin_index();
+        $this->assertFalse($this->Users->viewVars['canViewFullSsn']);
 
-    //     $this->Users->admin_add();
-    //     $this->assertFlashMessage($this->Users, 'The customer has been saved', 'flash_success');
-    // }
+        debug($this->Users->output);
+    }
 
-    // function testAdminAddWithInvalidData() {
-    //     $this->Users->Session->write('Auth.User', array(
-    //         'id' => 1,
-    //         'role_id' => 2,
-    //         'username' => 'bcordell',
-    //         'location_id' => 1
-    //     ));
+    function testAdminAddWithValidData() {
+        $this->Users->Session->write('Auth.User', array(
+            'id' => 1,
+            'role_id' => 2,
+            'username' => 'bcordell',
+            'location_id' => 1
+        ));
 
-    //     $this->Users->data = array(
-    //         'User' => array(
-    //             'name' => '',
-    //             'created' => '0000-00-00 00:00:00',
-    //             'modified' => '0000-00-00 00:00:00'
-    //         )
-    //     );
+        $this->Users->data = array(
+            'User' => array(
+                'role_id' => 2,
+                'firstname' => 'valid',
+                'lastname' => 'user',
+                'middle_initial' => 'D',
+                'ssn' => '999119999',
+                'ssn_confirm' => '999119999',
+                'username' => 'vuser',
+                'password' => 'asd123',
+                'address_1' => '123 main st',
+                'address_2' => '',
+                'city' => 'spring hill',
+                'state' => 'fl',
+                'zip' => '34609',
+                'phone' => '3521231234',
+                'alt_phone' => '',
+                'gender' => 'Male',
+                'dob' => '01/10/1986',
+                'email' => 'brandonc@gmail.com',
+                'location_id' => '1',
+                'signature_created' => '2010-09-22 15:02:21',
+                'signature_modified' => '2010-09-22 15:02:21',
+                'created' => '2010-09-22 15:02:21',
+                'modified' => '2010-09-22 15:02:21'
+            )
+        );
 
-    //     $this->Users->admin_add();
-    //     $this->assertFlashMessage($this->Users, 'The customer could not be saved. Please, try again.', 'flash_failure');
-    // }
+        $this->Users->admin_add();
+        $this->assertFlashMessage($this->Users, 'The customer has been saved', 'flash_success');
+    }
 
-    // function testAdminEditWithInvalidId() {
-    //     $this->Users->Session->write('Auth.User', array(
-    //         'id' => 1,
-    //         'role_id' => 2,
-    //         'username' => 'bcordell',
-    //         'location_id' => 1
-    //     ));
+    function testAdminAddWithInvalidData() {
+        $this->Users->Session->write('Auth.User', array(
+            'id' => 1,
+            'role_id' => 2,
+            'username' => 'bcordell',
+            'location_id' => 1
+        ));
 
-    //     $this->Users->admin_edit();
-    //     $this->assertFlashMessage($this->Users, 'Invalid customer', 'flash_failure');
+        $this->Users->data = array(
+            'User' => array(
+                'name' => '',
+                'created' => '0000-00-00 00:00:00',
+                'modified' => '0000-00-00 00:00:00'
+            )
+        );
 
-    //     $this->Users->admin_edit(2);
-    //     $this->assertFlashMessage($this->Users, 'Invalid customer', 'flash_failure');
-    // }
+        $this->Users->admin_add();
+        $this->assertFlashMessage($this->Users, 'The customer could not be saved. Please, try again.', 'flash_failure');
+    }
 
-    // function testAdminEditWithValidData() {
-    //     $this->Users->Session->write('Auth.User', array(
-    //         'id' => 1,
-    //         'role_id' => 2,
-    //         'username' => 'bcordell',
-    //         'location_id' => 1
-    //     ));
+    function testAdminEditWithInvalidId() {
+        $this->Users->Session->write('Auth.User', array(
+            'id' => 1,
+            'role_id' => 2,
+            'username' => 'bcordell',
+            'location_id' => 1
+        ));
 
-    //     $this->Users->data = array(
-    //         'User' => array(
-    //             'firstname' => 'Valid',
-    //             'lastname' => 'Name',
-    //             'ssn' => '999999999'
-    //         )
-    //     );
-    //     $this->Users->admin_edit(1);
-    //     $this->assertFlashMessage($this->Users, 'The customer has been saved', 'flash_success');
-    // }
+        $this->Users->admin_edit();
+        $this->assertFlashMessage($this->Users, 'Invalid customer', 'flash_failure');
 
-    // function testAdminEditWithInvalidData() {
-    //     $this->Users->Session->write('Auth.User', array(
-    //         'id' => 1,
-    //         'role_id' => 2,
-    //         'username' => 'bcordell',
-    //         'location_id' => 1
-    //     ));
+        $this->Users->admin_edit(2);
+        $this->assertFlashMessage($this->Users, 'Invalid customer', 'flash_failure');
+    }
 
-    //     $this->Users->data = array(
-    //         'User' => array(
-    //             'firstname' => ''
-    //         )
-    //     );
-    //     $this->Users->admin_edit(4);
-    //     $this->assertFlashMessage($this->Users, 'The customer could not be saved. Please, try again.', 'flash_failure');
-    // }
+    function testAdminEditWithValidData() {
+        $this->Users->Session->write('Auth.User', array(
+            'id' => 1,
+            'role_id' => 2,
+            'username' => 'bcordell',
+            'location_id' => 1
+        ));
+
+        $this->Users->data = array(
+            'User' => array(
+                'firstname' => 'Valid',
+                'lastname' => 'Name',
+                'ssn' => '999999999'
+            )
+        );
+        $this->Users->admin_edit(1);
+        $this->assertFlashMessage($this->Users, 'The customer has been saved', 'flash_success');
+    }
+
+    function testAdminEditWithInvalidData() {
+        $this->Users->Session->write('Auth.User', array(
+            'id' => 1,
+            'role_id' => 2,
+            'username' => 'bcordell',
+            'location_id' => 1
+        ));
+
+        $this->Users->data = array(
+            'User' => array(
+                'firstname' => ''
+            )
+        );
+        $this->Users->admin_edit(4);
+        $this->assertFlashMessage($this->Users, 'The customer could not be saved. Please, try again.', 'flash_failure');
+    }
 
 }
 ?>

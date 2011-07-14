@@ -92,6 +92,11 @@ class UsersController extends AppController {
 
     function admin_index($disabled=false) {
 		$this->set('title_for_layout', 'Customers');
+
+        // check to see if user can view full ssn
+        $role = $this->User->Role->findById($this->Session->read('Auth.User.role_id'));
+        $canViewFullSsn = ($role['Role']['can_view_full_ssn']) ? true : false;
+
 		if($disabled) {
 			$this->User->Behaviors->disable('Disableable');
 		}		
@@ -154,15 +159,15 @@ class UsersController extends AppController {
             );
 
             $this->set($submittedValues);
-            $this->set('users', $this->paginate('User'));
         } else {
 		    $this->paginate = array(
 			'conditions' => $conditions,
 			 'limit' => $limit,
 			 'order' => $order
 		    );
-		    $this->set('users', $this->paginate('User'));
         }
+        $this->set(compact('canViewFullSsn'));
+        $this->set('users', $this->paginate('User'));
     }
 
     function admin_add() {
