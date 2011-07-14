@@ -36,6 +36,12 @@ Ext.override(Ext.grid.GroupingView, {
 
 var rowIndex = null;
 
+var recordId = null;
+
+var kioskId = '';
+
+var buttonParentId = '';
+
 var selfSignLogsProxy = new Ext.data.HttpProxy({
 	method: 'GET',
 	prettyUrls: true,
@@ -46,7 +52,11 @@ var selfSignLogsReader = new Ext.data.JsonReader({
 	idProperty: 'id',
 	root: 'logs',
 	totalProperty: 'results',
-	fields: ['id', 'status', 'firstname', 'lastname', 'last4', 'admin', 'created', 'location', 'service']
+	fields: [
+		'id', 'status', 'firstname', 'lastname', 'last4', 'admin', 
+		{name: 'created', type: 'date', dateFormat: 'Y-m-d H:i:s'}, 
+		'location', 'service', 'kioskId'
+	]
 })
 
 var selfSignLogsStore = new Ext.data.GroupingStore({
@@ -56,6 +66,222 @@ var selfSignLogsStore = new Ext.data.GroupingStore({
 	groupField: 'status',
 	groupDir: 'DESC',
 	autoDestroy: true
+});
+
+var kioskButtonsProxy = new Ext.data.HttpProxy({
+	method: 'GET',
+	prettyUrls: true,
+	url: '/admin/self_sign_logs/get_kiosk_buttons/'
+});
+
+var level1ButtonsStore = new Ext.data.JsonStore({
+	autoDestroy: true,
+	proxy: kioskButtonsProxy,
+	storeId: 'level1ButtonsStore',
+	root: 'buttons',
+	idProperty: 'id',
+	fields:['id', 'name'],
+	listeners: {
+		beforeload: function() {
+			kioskButtonsProxy.setUrl('/admin/self_sign_logs/get_kiosk_buttons/'+kioskId+'/');
+		}
+	}
+});
+
+var level2ButtonsStore = new Ext.data.JsonStore({
+	autoDestroy: true,
+	proxy: kioskButtonsProxy,
+	storeId: 'level2ButtonsStore',
+	root: 'buttons',
+	idProperty: 'id',
+	fields:['id', 'name'],
+	listeners: {
+		beforeload: function() {
+			kioskButtonsProxy.setUrl('/admin/self_sign_logs/get_kiosk_buttons/'+kioskId+'/'+buttonParentId);
+		},
+		load: function(store, records, options) {		
+			if(records[0] && records[0].data != undefined) {
+				level2Buttons.enable();
+			}
+		}
+	}
+});
+
+var level3ButtonsStore = new Ext.data.JsonStore({
+	autoDestroy: true,
+	proxy: kioskButtonsProxy,
+	storeId: 'level3ButtonsStore',
+	root: 'buttons',
+	idProperty: 'id',
+	fields:['id', 'name'],
+	listeners: {
+		beforeload: function() {
+			kioskButtonsProxy.setUrl('/admin/self_sign_logs/get_kiosk_buttons/'+kioskId+'/'+buttonParentId);
+		},
+		load: function(store, records, options) {		
+			if(records[0] && records[0].data != undefined) {
+				level3Buttons.enable();
+			}
+		}
+	}
+});
+
+var level1Buttons = new Ext.form.ComboBox({
+	store: level1ButtonsStore,
+	id: 'level1',
+	hiddenName: 'level1',
+	allowBlank: false,
+	hideLabel: true,
+	valueField: 'id',
+    displayField: 'name',
+    typeAhead: true,
+    mode: 'remote',
+    triggerAction: 'all',
+    emptyText: 'Select 1st Button',
+    selectOnFocus: true,
+    width: 270,
+    getListParent: function() {
+        return this.el.up('.x-menu');
+    },
+    iconCls: 'no-icon',
+    listeners: {
+    	select: function(combo, record, index) {
+    		buttonParentId = record.data.id;
+    		level2ButtonsStore.load();
+    		level2Buttons.reset();
+    		level2Buttons.disable();
+    		level3Buttons.reset();
+    		level3Buttons.disable();
+    		other.disable();    		
+    	},
+		beforequery: function(qe){
+            delete qe.combo.lastQuery;
+        }
+    }
+});
+
+var level2Buttons = new Ext.form.ComboBox({
+	store: level2ButtonsStore,
+	id: 'level2',
+	hiddenName: 'level2',
+	hideLabel: true,
+	disabled: true,
+	allowBlank: false,
+	valueField: 'id',
+    displayField: 'name',
+    typeAhead: true,
+    mode: 'local',
+    triggerAction: 'all',
+    emptyText: 'Select 2nd Button',
+    selectOnFocus: true,
+    width: 270,
+    getListParent: function() {
+        return this.el.up('.x-menu');
+    },
+    iconCls: 'no-icon',
+    listeners: {
+    	select: function(combo, record, index) {
+    		buttonParentId = record.data.id;
+    		other.disable();
+    		if(record.data.name  == 'Other' || record.data.name  == 'other') {
+    			other.enable();
+    		}
+    		level3ButtonsStore.load();
+    		level3Buttons.reset();
+    		level3Buttons.disable();   		
+    	}
+    }
+}); 
+   
+var level3Buttons = new Ext.form.ComboBox({
+    store: level3ButtonsStore,
+    hideLabel: true,
+    id: 'level3',
+    disabled: true,
+    allowBlank: false,
+    hiddenName: 'level3',
+    valueField: 'id',
+    displayField: 'name',
+    typeAhead: true,
+    mode: 'local',
+    triggerAction: 'all',
+    emptyText: 'Select 3rd Button',
+    selectOnFocus: true,
+    width: 270,
+    getListParent: function() {
+        return this.el.up('.x-menu');
+    },
+    iconCls: 'no-icon',
+    listeners: {
+    	select: function(combo, record, index) {
+    		if(record.data.name  == 'Other' || record.data.name  == 'other') {
+    			other.enable();
+    		}
+    	}	    	
+    }
+}); 
+
+var other = new Ext.form.TextField({
+	id: 'other',
+	hideLabel: false,
+	allowBlank: false,
+	disabled: true,
+	fieldLabel: 'Other',
+	width: 225
+});
+
+var reassign = new Ext.form.FormPanel({
+	width: 285,
+	frame: true,
+	labelWidth: 40,
+	items: [
+		level1Buttons,
+		level2Buttons,
+		level3Buttons,
+		other
+	],
+	fbar: {
+		items: {
+			text: 'Submit',
+			handler: function() {
+				var form = reassign.getForm();
+				if(form.isValid()) {
+					var values = form.getValues();
+				    form.reset();
+					level2Buttons.disable();
+					level3Buttons.disable();
+				    other.disable();
+				    if(contextMenu.isVisible()){
+				        contextMenu.hide(); 
+				    }  					
+				    Ext.Ajax.request({
+				        url: '/admin/self_sign_logs/reassign/',
+				        params: {
+				        	'data[SelfSignLog][id]':  recordId,
+				        	'data[SelfSignLog][level_1]': values.level1,
+				        	'data[SelfSignLog][level_2]': values.level2,
+				        	'data[SelfSignLog][level_3]': values.level3,
+				        	'data[SelfSignLog][other]': values.other
+				        },
+				        success: function(response, opts){			        	
+				        	var obj = Ext.decode(response.responseText);
+				        	if(obj.success) {   	
+					            selfSignLogsStore.reload();
+								Ext.Msg.alert('Success', obj.message)					        		
+				        	}
+				        	else {
+				        		opts.failure();
+				        	}		            
+				        },
+				        failure: function(response, opts){
+				        	var obj = Ext.decode(response.responseText);
+				            Ext.Msg.alert('Error', obj.message)
+				        },
+				    });				
+				}				
+			}
+		}
+	}
 });
 
 var contextMenu = new Ext.menu.Menu({
@@ -82,7 +308,14 @@ var contextMenu = new Ext.menu.Menu({
     	updateStatus(record.data.id, 2);	
     }   	
   },{
-  	text: 'Re-Assign'
+  	text: 'Reassign',
+  	id: 'cmReassign',
+	menu: {
+		width: 295,
+		items: [
+			reassign
+		]
+	}
   }]
 })
 
@@ -120,13 +353,13 @@ var selfSignLogsGrid = new Ext.grid.GridPanel({
 	},{
 		header: 'Service',
 		dataIndex: 'service',
-		width: 270,
+		width: 280,
 		sortable: true
 	},{
 		header: 'Last Act. Admin',
 		dataIndex: 'admin',
 		sortable: true,
-		width: 70
+		width: 65
 	},{
 		header: 'Location',
 		dataIndex: 'location',
@@ -135,8 +368,10 @@ var selfSignLogsGrid = new Ext.grid.GridPanel({
 	},{
 		header: 'Date',
 		dataIndex: 'created',
+		format: 'm/d/y g:i a',
+		xtype: 'datecolumn',
 		sortable: true,
-		width: 75
+		width: 65
 	}],
 	view: new Ext.grid.GroupingView({
 		forceFit: true,
@@ -176,6 +411,8 @@ var selfSignLogsGrid = new Ext.grid.GridPanel({
 	    	}		
      		contextMenu.showAt(event.xy);
      		rowIndex = index;
+     		recordId = record.data.id;
+     		kioskId = record.data.kioskId; 
 		}
 	}
 
@@ -208,14 +445,14 @@ var servicesStore = new Ext.data.JsonStore({
 var selfSignSearch = new Ext.form.FormPanel({
 	frame: true,
 	collapsible: true,
-	labelWidth: 50,
+	labelWidth: 55,
 	title: 'Filters',
 	id: 'selfSignSearch',
 	items: [{
 		layout: 'column',
 		items: [{
 			layout: 'form',
-			columnWidth: 0.4,
+			columnWidth: 0.5,
 			items: [{
 				xtype: 'superboxselect',
 				id: 'locationsSelect',
@@ -229,7 +466,7 @@ var selfSignSearch = new Ext.form.FormPanel({
 				fieldLabel: 'Locations',
 				allowBlank: true,
 				msgTarget: 'under',
-				width: 300,
+				width: 400,
 				listeners: {
 					'additem': function() {
 						Ext.getCmp('servicesSelect').reset();
@@ -247,7 +484,7 @@ var selfSignSearch = new Ext.form.FormPanel({
 			}]
 		},{
 			layout: 'form',
-			columnWidth: 0.4,
+			columnWidth: 0.5,
 			items: [{
 				xtype: 'superboxselect',
 				id: 'servicesSelect',
@@ -259,7 +496,7 @@ var selfSignSearch = new Ext.form.FormPanel({
 				fieldLabel: 'Services',
 				allowBlank: true,
 				msgTarget: 'under',
-				width: 300,
+				width: 400,
 				listeners: {
 
 				}
@@ -298,12 +535,7 @@ function updateStatus(id, status) {
             selfSignLogsStore.reload();
         },
         failure: function(response){
-            Ext.Msg.show({
-                title: 'Status chage error.',
-                msg: 'An error occured when trying to update the records status.',
-                buttons: Ext.air.Msg.OK,
-                icon: Ext.air.MessageBox.ERROR
-            });
+            Ext.Msg.alert('Error', 'An error has occured, please try again.');
         },
     });	
 }
