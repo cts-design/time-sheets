@@ -43,7 +43,36 @@ var searchPanel = {
             hiddenName: 'search_by1',
             store: [['firstname', 'First Name'], ['lastname', 'Last Name'], ['fullssn', 'Full SSN'], ['last4', 'Last 4 SSN']],
             triggerAction: 'all',
-            allowBlank: false
+            allowBlank: false,
+            listeners: {
+              select: function(combo, record, index) {
+                console.log(record);
+                if (record.data.field1 === 'firstname' || record.data.field1 === 'lastname') {
+                  Ext.getCmp('SearchTerm1').enable();
+                  Ext.getCmp('SearchTerm1').show();
+                  Ext.getCmp('SearchFullSsn1').disable();
+                  Ext.getCmp('SearchFullSsn1').hide();
+                  Ext.getCmp('SearchLast41').disable();
+                  Ext.getCmp('SearchLast41').hide();
+                }
+                if (record.data.field1 === 'fullssn') {
+                  Ext.getCmp('SearchTerm1').disable();
+                  Ext.getCmp('SearchTerm1').hide();
+                  Ext.getCmp('SearchFullSsn1').enable();
+                  Ext.getCmp('SearchFullSsn1').show();
+                  Ext.getCmp('SearchLast41').disable();
+                  Ext.getCmp('SearchLast41').hide();
+                }
+                if (record.data.field1 === 'last4') {
+                  Ext.getCmp('SearchTerm1').disable();
+                  Ext.getCmp('SearchTerm1').hide();
+                  Ext.getCmp('SearchFullSsn1').disable();
+                  Ext.getCmp('SearchFullSsn1').hide();
+                  Ext.getCmp('SearchLast41').enable();
+                  Ext.getCmp('SearchLast41').show();
+                }
+              }
+            }
           },{
             xtype: 'combo',
             mode: 'local',
@@ -51,7 +80,36 @@ var searchPanel = {
             name: 'search_by2',
             hiddenName: 'search_by2',
             store: [['firstname', 'First Name'], ['lastname', 'Last Name'], ['fullssn', 'Full SSN'], ['last4', 'Last 4 SSN']],
-            triggerAction: 'all'
+            triggerAction: 'all',
+            listeners: {
+              select: function(combo, record, index) {
+                console.log(record);
+                if (record.data.field1 === 'firstname' || record.data.field1 === 'lastname') {
+                  Ext.getCmp('SearchTerm2').enable();
+                  Ext.getCmp('SearchTerm2').show();
+                  Ext.getCmp('SearchFullSsn2').disable();
+                  Ext.getCmp('SearchFullSsn2').hide();
+                  Ext.getCmp('SearchLast42').disable();
+                  Ext.getCmp('SearchLast42').hide();
+                }
+                if (record.data.field1 === 'fullssn') {
+                  Ext.getCmp('SearchTerm2').disable();
+                  Ext.getCmp('SearchTerm2').hide();
+                  Ext.getCmp('SearchFullSsn2').enable();
+                  Ext.getCmp('SearchFullSsn2').show();
+                  Ext.getCmp('SearchLast42').disable();
+                  Ext.getCmp('SearchLast42').hide();
+                }
+                if (record.data.field1 === 'last4') {
+                  Ext.getCmp('SearchTerm2').disable();
+                  Ext.getCmp('SearchTerm2').hide();
+                  Ext.getCmp('SearchFullSsn2').disable();
+                  Ext.getCmp('SearchFullSsn2').hide();
+                  Ext.getCmp('SearchLast42').enable();
+                  Ext.getCmp('SearchLast42').show();
+                }
+              }
+            }
           }]
         },{
           defaults: {
@@ -66,13 +124,37 @@ var searchPanel = {
             id: 'SearchScope1',
             name: 'search_scope1',
             triggerAction: 'all',
-            allowBlank: false
+            allowBlank: false,
+            listeners: {
+              select: function(combo, record, index) {
+                if (record.data.field1 === 'containing') {
+                  Ext.getCmp('SearchFullSsn1').minLength = 3;
+                  Ext.getCmp('SearchLast41').minLength = 1;
+                }
+                if (record.data.field1 === 'matching exactly') {
+                  Ext.getCmp('SearchFullSsn1').minLength = 9;
+                  Ext.getCmp('SearchLast41').minLength = 4;
+                }
+              }
+            }
           },{
             xtype: 'combo',
             store: ['containing','matching exactly'],
             id: 'SearchScope2',
             name: 'search_scope2',
-            triggerAction: 'all'
+            triggerAction: 'all',
+            listeners: {
+              select: function(combo, record, index) {
+                if (record.data.field1 === 'containing') {
+                  Ext.getCmp('SearchFullSsn2').minLength = 3;
+                  Ext.getCmp('SearchLast42').minLength = 1;
+                }
+                if (record.data.field1 === 'matching exactly') {
+                  Ext.getCmp('SearchFullSsn2').minLength = 9;
+                  Ext.getCmp('SearchLast42').minLength = 4;
+                }
+              }
+            }
           }]
         },{
           defaults: {
@@ -88,8 +170,38 @@ var searchPanel = {
             allowBlank: false
           },{
             xtype: 'textfield',
+            id: 'SearchFullSsn1',
+            name: 'search_term1',
+            hidden: true,
+            disabled: true,
+            allowBlank: false,
+            maxLength: 9
+          },{
+            xtype: 'textfield',
+            id: 'SearchLast41',
+            name: 'search_term1',
+            hidden: true,
+            disabled: true,
+            allowBlank: false,
+            maxLength: 4
+          },{
+            xtype: 'textfield',
             id: 'SearchTerm2',
             name: 'search_term2'
+          },{
+            xtype: 'textfield',
+            id: 'SearchFullSsn2',
+            name: 'search_term2',
+            hidden: true,
+            maxLength: 9,
+            disabled: true
+          },{
+            xtype: 'textfield',
+            id: 'SearchLast42',
+            name: 'search_term2',
+            hidden: true,
+            maxLength: 4,
+            disabled: true
           }]
         }]
       }],
@@ -136,5 +248,6 @@ var searchPanel = {
 };
 
 Ext.onReady(function() {
+  Ext.QuickTips.init();
   searchPanel.init();
 });
