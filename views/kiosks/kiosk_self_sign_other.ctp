@@ -7,20 +7,23 @@
 ?>
 <div id="selfSignOther" class="self-sign-wrapper">
     <h1>Please describe service needed.</h1>
-    <?php echo $this->Form->create('Kiosk') ?>
+    <?php echo $this->Session->flash(); ?>
+    <?php $url = '/kiosk/kiosks/self_sign_other'; ?>
+    <?php if(!empty($this->params['pass'][0])) : ?>
+    	<?php $url = '/kiosk/kiosks/self_sign_other/'. $this->params['pass'][0]; ?>
+    <?php endif ?>		
+    <?php echo $this->Form->create(null, array('url' => $url)) ?>
     <?php
-	echo $this->Form->input('SelfSignLog.other', array(
-	    'before' => '<p class="left">',
-	    'between' => '</p><p class="left">',
-	    'after' => '</p><br class="clear"/>'
-	))
+		echo $this->Form->input('SelfSignLog.other', array(
+		    'before' => '<p class="left">',
+		    'between' => '</p><p class="left">',
+		    'after' => '</p><br class="clear"/>'
+		))
 	?>
     <?php echo $form->end(array('label' => 'Submit', 'class' => 'self-sign-kiosk-button')); ?>
     <div class="actions">
-	<?php
-	    if($referer != null) {
-		echo $this->Html->link('Go Back', $referer, array('class' => 'self-sign-kiosk-link'));
-	    }
-	    ?>
+		<?php if($referer != null) : ?>
+			<?php echo $this->Html->link('Go Back', $referer, array('class' => 'self-sign-kiosk-link'))?>
+		<?php endif ?>
     </div>
 </div>
