@@ -26,7 +26,11 @@ class AtlasAclBehavior extends AclBehavior {
 			$node = $this->node($model);
 			$data['id'] = isset($node[0][$type]['id']) ? $node[0][$type]['id'] : null;
 		}	
-		if(isset($data['parent_id']) && $data['parent_id'] != 1) {
+		if(isset($data['parent_id']) && $data['parent_id'] != 1 && $model->name == 'User') {
+			$model->{$type}->create();
+			$model->{$type}->save($data);			
+		}
+		elseif($model->name == 'Role') {
 			$model->{$type}->create();
 			$model->{$type}->save($data);			
 		}
