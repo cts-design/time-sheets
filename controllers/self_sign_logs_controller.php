@@ -100,30 +100,22 @@ class SelfSignLogsController extends AppController {
 				$this->data['SelfSignLog']['last_activity_admin_id'] = $this->Auth->user('id');
 				$this->data['SelfSignLog']['status'] = $status;
 				$this->data['SelfSignLog']['closed'] = $closed;
-				$this->data['SelfSignLogArchive']['id'] = $id;
-				$this->data['SelfSignLogArchive']['last_activity_admin_id'] = $this->Auth->user('id');
-				$this->data['SelfSignLogArchive']['status'] = $status;
-				$this->data['SelfSignLogArchive']['closed'] = $closed;
+				$this->data['SelfSignLogArchive'] = $this->data['SelfSignLog'];
+
 				if($this->SelfSignLog->save($this->data) &&
 					$this->SelfSignLog->Kiosk->SelfSignLogArchive->save($this->data)) {
 				    $log = $this->SelfSignLog->findById($id);
+					$customer = ucfirst($log['User']['lastname']) . ', ' . 
+						ucfirst($log['User']['firstname']) . ' - ' . 
+						substr($log['User']['ssn'], -4);
 				    if($status == 1) {
-						$details = 'Closed self sign queue record for ' .
-							ucfirst($log['User']['lastname']) . ', ' . 
-							ucfirst($log['User']['firstname']) . ' - ' . 
-							substr($log['User']['ssn'], -4);
+						$details = 'Closed self sign queue record for ' . $customer;
 				    }
 					elseif($status == 2) {
-						$details = 'Marked self sign queue record as not helped for ' .
-							ucfirst($log['User']['lastname']) . ', ' . 
-							ucfirst($log['User']['firstname']) . ' - ' . 
-							substr($log['User']['ssn'], -4);					
+						$details = 'Marked self sign queue record as not helped for ' . $customer;					
 					}
 				    else {
-						$details = 'Opened self sign queue record for '.
-							ucfirst($log['User']['lastname']) . ', ' . 
-							ucfirst($log['User']['firstname']) . ' - ' . 
-							substr($log['User']['ssn'], -4);
+						$details = 'Opened self sign queue record for ' . $customer;
 				    }
 				    $this->Transaction->createUserTransaction('Self Sign', null, null, $details);
 				}
@@ -136,12 +128,7 @@ class SelfSignLogsController extends AppController {
 		if($this->RequestHandler->isAjax()) {
 			if(!empty($this->data)) {
 				$this->data['SelfSignLog']['last_activity_admin_id'] = $this->Auth->user('id');
-				$this->data['SelfSignLogArchive']['last_activity_admin_id'] = $this->Auth->user('id');
-				$this->data['SelfSignLogArchive']['id'] = $this->data['SelfSignLog']['id'];
-				$this->data['SelfSignLogArchive']['level_1'] = $this->data['SelfSignLog']['level_1'];
-				$this->data['SelfSignLogArchive']['level_2'] = $this->data['SelfSignLog']['level_2'];
-				$this->data['SelfSignLogArchive']['level_3'] = $this->data['SelfSignLog']['level_3'];
-				$this->data['SelfSignLogArchive']['other'] = $this->data['SelfSignLog']['other'];
+				$this->data['SelfSignLogArchive'] = $this->data['SelfSignLog'];
 				if($this->SelfSignLog->save($this->data['SelfSignLog']) && 
 					$this->SelfSignLog->Kiosk->SelfSignLogArchive->save($this->data['SelfSignLogArchive'])){
 					$data['success'] = true;
