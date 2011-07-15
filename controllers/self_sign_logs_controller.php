@@ -49,34 +49,37 @@ class SelfSignLogsController extends AppController {
 			$data = array();
 			$data['results'] = $this->SelfSignLog->find('count', array('conditions' => $conditions));
 			$data['success'] = true;
-			$data['logs'] = array();	
-			foreach($selfSignLogs as $selfSignLog) {
-				$data['logs'][$i]['id'] = $selfSignLog['SelfSignLog']['id'];
-				$data['logs'][$i]['status'] = $this->statuses[$selfSignLog['SelfSignLog']['status']]; 
-				$data['logs'][$i]['lastname'] = ucfirst($selfSignLog['User']['lastname']);		 
-				$data['logs'][$i]['firstname'] = ucfirst($selfSignLog['User']['firstname']);
-				$data['logs'][$i]['last4'] = substr($selfSignLog['User']['ssn'], -4); 
-				$level2 = null;
-				$level3 = null;
-				$other = null;
-				if(!empty($selfSignLog['SelfSignLog']['level_2'])) {
-					$level2 = ' - ' . $masterKioskButtonList[$selfSignLog['SelfSignLog']['level_2']];
-				}
-				if(!empty($selfSignLog['SelfSignLog']['level_3'])) {
-					$level3 = ' - ' .  $masterKioskButtonList[$selfSignLog['SelfSignLog']['level_3']];
-				}
-				if(!empty($selfSignLog['SelfSignLog']['other'])) {
-					$other = ' - ' . $selfSignLog['SelfSignLog']['other'];
-				}	
-				$data['logs'][$i]['service'] = 	$masterKioskButtonList[$selfSignLog['SelfSignLog']['level_1']] .
-					' ' . $level2 . ' ' . $level3 . ' ' . $other;
- 				$data['logs'][$i]['created'] = $selfSignLog['SelfSignLog']['created'];
-				$data['logs'][$i]['admin'] = trim(ucfirst($selfSignLog['Admin']['lastname']) . ', ' .
-					ucfirst($selfSignLog['Admin']['firstname']), ',');
-				$data['logs'][$i]['location'] = $selfSignLog['Location']['name'];
-				$data['logs'][$i]['kioskId'] = $selfSignLog['SelfSignLog']['kiosk_id'];	
-				$i++;	
-			}	
+			$data['logs'] = array();
+			if($selfSignLogs)	{
+				foreach($selfSignLogs as $selfSignLog) {
+					$data['logs'][$i]['id'] = $selfSignLog['SelfSignLog']['id'];
+					$data['logs'][$i]['status'] = $this->statuses[$selfSignLog['SelfSignLog']['status']]; 
+					$data['logs'][$i]['lastname'] = ucfirst($selfSignLog['User']['lastname']);		 
+					$data['logs'][$i]['firstname'] = ucfirst($selfSignLog['User']['firstname']);
+					$data['logs'][$i]['last4'] = substr($selfSignLog['User']['ssn'], -4); 
+					$level2 = null;
+					$level3 = null;
+					$other = null;
+					if(!empty($selfSignLog['SelfSignLog']['level_2'])) {
+						$level2 = ' - ' . $masterKioskButtonList[$selfSignLog['SelfSignLog']['level_2']];
+					}
+					if(!empty($selfSignLog['SelfSignLog']['level_3'])) {
+						$level3 = ' - ' .  $masterKioskButtonList[$selfSignLog['SelfSignLog']['level_3']];
+					}
+					if(!empty($selfSignLog['SelfSignLog']['other'])) {
+						$other = ' - ' . $selfSignLog['SelfSignLog']['other'];
+					}	
+					$data['logs'][$i]['service'] = 	trim($masterKioskButtonList[$selfSignLog['SelfSignLog']['level_1']] .
+						' ' . $level2 . ' ' . $level3 . ' ' . $other, ' -');
+	 				$data['logs'][$i]['created'] = $selfSignLog['SelfSignLog']['created'];
+					$data['logs'][$i]['admin'] = trim(ucfirst($selfSignLog['Admin']['lastname']) . ', ' .
+						ucfirst($selfSignLog['Admin']['firstname']), ',');
+					$data['logs'][$i]['location'] = $selfSignLog['Location']['name'];
+					$data['logs'][$i]['kioskId'] = $selfSignLog['SelfSignLog']['kiosk_id'];	
+					$i++;	
+				}				
+			}
+	
 			$this->set('data', $data);
 			$this->render(null, null, '/elements/ajaxreturn');	
     	}
