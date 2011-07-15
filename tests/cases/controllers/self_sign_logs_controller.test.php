@@ -11,54 +11,52 @@ class TestSelfSignLogsController extends SelfSignLogsController {
 }
 
 class SelfSignLogsControllerTestCase extends AtlasTestCase {
+		
 	function startTest() {
 		$this->SelfSignLogs =& new TestSelfSignLogsController();
 		$this->SelfSignLogs->constructClasses();
-	}
-
-	function endTest() {
-		unset($this->SelfSignLogs);
-		ClassRegistry::flush();
-	}
-
-	function testIndex() {
-
-	}
-
-	function testView() {
-
-	}
-
-	function testAdd() {
-
-	}
-
-	function testEdit() {
-
-	}
-
-	function testDelete() {
-
+        $this->SelfSignLogs->params['controller'] = 'self_sign_logs';
+        $this->SelfSignLogs->params['pass'] = array();
+        $this->SelfSignLogs->params['named'] = array();	
+		$this->testController = $this->SelfSignLogs;
 	}
 
 	function testAdminIndex() {
-
+		$this->SelfSignLogs->Component->initialize($this->SelfSignLogs);
+		$this->SelfSignLogs->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan'
+	    ));
+		$expectedResult = array(
+		'title_for_layout' => 'Self Sign Queue',
+		'data' => 
+			array(
+				'results' => 1,
+				'success' => TRUE,
+				'logs' => array(
+					0 => array(
+						'id' => 1,
+						'status' => 'Open',
+						'lastname' => 'Smith',
+						'firstname' => 'Daniel',
+						'last4' => 1234,
+						'service' => 'Orientations',
+						'created' => '2111-07-25 09:50:24',
+						'admin' => ' ',
+						'location' => 'Citrus',
+						'kioskId' => 2))));
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$result = $this->testAction('/admin/self_sign_logs/index', array('method' => 'get'));
+		$this->assertEqual($expectedResult, $result);		
 	}
 
-	function testAdminView() {
-
-	}
-
-	function testAdminAdd() {
-
-	}
-
-	function testAdminEdit() {
-
-	}
-
-	function testAdminDelete() {
-
+	
+	function endTest() {
+		Configure::write('debug', 2);
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+		unset($this->SelfSignLogs);
+		ClassRegistry::flush();
 	}
 
 }
