@@ -16,10 +16,16 @@ class KioskFixture extends CakeTestFixture {
 	var $records = array(
 		array(
 			'id' => 1,
-                        'location_id' => 1,
+            'location_id' => 1,
 			'location_recognition_name' => 'Lorem ipsum dolor sit amet',
 			'location_description' => 'Lorem ipsum dolor sit amet'
 		),
+		array(
+			'id' => 2,
+            'location_id' => 1,
+			'location_recognition_name' => 'Lorem ipsum dolor sit amet',
+			'location_description' => 'Lorem ipsum dolor sit amet'
+		)		
 	);
 }
 ?>
