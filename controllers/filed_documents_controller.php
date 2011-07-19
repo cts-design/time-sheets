@@ -387,12 +387,68 @@ class FiledDocumentsController extends AppController {
 	function _setFilters() {
 		if(isset($this->params['url']['filters'])){
 			$filters = json_decode($this->params['url']['filters'], true);
-			if($filters['searchType'] == 'last4' && (!empty($filters['cusSearch']))) {
-				$conditions['RIGHT (User.ssn , 4) LIKE'] = '%'.$filters['cusSearch'].'%';
-			}
-			if($filters['searchType'] == 'lastname' && (!empty($filters['cusSearch']))) {
-				$conditions['User.lastname LIKE'] = '%'.$filters['cusSearch'].'%';
-			}
+
+            if (isset($filters['searchType1'])) {
+                if ($filters['searchType1'] == 'firstname' && (!empty($filters['cusSearch1']))) {
+                    if ($filters['cusScope1'] === 'containing') {
+                        $conditions['User.firstname LIKE'] = '%'. $filters['cusSearch1'] . '%';
+                    } else {
+                        $conditions['User.firstname'] = $filters['cusSearch1'];
+                    }
+                }
+                if($filters['searchType1'] == 'fullssn' && (!empty($filters['cusSearch1']))) {
+                    if ($filters['cusScope1'] === 'containing') {
+                        $conditions['User.ssn LIKE'] = '%'.$filters['cusSearch1'].'%';
+                    } else {
+                        $conditions['User.ssn'] = $filters['cusSearch1'];
+                    }
+                }
+                if($filters['searchType1'] == 'last4' && (!empty($filters['cusSearch1']))) {
+                    if ($filters['cusScope1'] === 'containing') {
+                        $conditions['RIGHT (User.ssn , 4) LIKE'] = '%'.$filters['cusSearch1'].'%';
+                    } else {
+                        $conditions['RIGHT (User.ssn , 4)'] = $filters['cusSearch1'];
+                    }
+                }
+                if($filters['searchType1'] == 'lastname' && (!empty($filters['cusSearch1']))) {
+                    if ($filters['cusScope1'] === 'containing') {
+                        $conditions['User.lastname LIKE'] = '%'. $filters['cusSearch1'] . '%';
+                    } else {
+                        $conditions['User.lastname'] = $filters['cusSearch1'];
+                    }
+                }
+            }
+
+            if (isset($filters['searchType2'])) {
+                if ($filters['searchType2'] == 'firstname' && (!empty($filters['cusSearch2']))) {
+                    if ($filters['cusScope2'] === 'containing') {
+                        $conditions['User.firstname LIKE'] = '%'. $filters['cusSearch2'] . '%';
+                    } else {
+                        $conditions['User.firstname'] = $filters['cusSearch2'];
+                    }
+                }
+                if($filters['searchType2'] == 'fullssn' && (!empty($filters['cusSearch2']))) {
+                    if ($filters['cusScope2'] === 'containing') {
+                        $conditions['User.ssn LIKE'] = '%'.$filters['cusSearch2'].'%';
+                    } else {
+                        $conditions['User.ssn'] = $filters['cusSearch2'];
+                    }
+                }
+                if($filters['searchType2'] == 'last4' && (!empty($filters['cusSearch2']))) {
+                    if ($filters['cusScope2'] === 'containing') {
+                        $conditions['RIGHT (User.ssn , 4) LIKE'] = '%'.$filters['cusSearch2'].'%';
+                    } else {
+                        $conditions['RIGHT (User.ssn , 4)'] = $filters['cusSearch2'];
+                    }
+                }
+                if($filters['searchType2'] == 'lastname' && (!empty($filters['cusSearch2']))) {
+                    if ($filters['cusScope2'] === 'containing') {
+                        $conditions['User.lastname LIKE'] = '%'. $filters['cusSearch2'] . '%';
+                    } else {
+                        $conditions['User.lastname'] = $filters['cusSearch2'];
+                    }
+                }
+            }
 			if(!empty($filters['fromDate']) && !empty($filters['toDate'])){
 				$from = date('Y-m-d H:i:m', strtotime($filters['fromDate'] . '12:00 AM'));
 				$to = date('Y-m-d H:i:m', strtotime($filters['toDate'] . '11:59 PM'));

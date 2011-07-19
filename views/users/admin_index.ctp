@@ -6,11 +6,23 @@
  * @package ATLAS V3
  */
 ?>
+<?php echo $this->Html->scriptStart(array('inline' => false)) ?>
+    var search_by1 = '<?php echo (isset($search_by1)) ? $search_by1 : null ?>';
+    var search_scope1 = '<?php echo (isset($search_scope1)) ? $search_scope1 : null ?>';
+    var search_term1 = '<?php echo (isset($search_term1)) ? $search_term1 : null ?>';
+    var search_by2 = '<?php echo (isset($search_by2)) ? $search_by2 : null ?>';
+    var search_scope2 = '<?php echo (isset($search_scope2)) ? $search_scope2 : null ?>';
+    var search_term2 = '<?php echo (isset($search_term2)) ? $search_term2 : null ?>';
+<?php echo $this->Html->scriptEnd() ?>
+<?php if ($canViewFullSsn): ?>
+    <?php echo $this->Html->script('users/obscure_ssn.js', array('inline' => false)) ?>
+<?php endif; ?>
+<?php echo $this->Html->script('users/search.js', array('inline' => false)) ?>
 <div id="crumbWrapper">
     <span>You are here > </span>
     <?php echo $crumb->getHtml('Customers');?>
 </div>
-<div class="admin">
+<div class="">
     <?php $this->Paginator->options(array('url' => $this->passedArgs)); ?>
     <div class="actions ui-widget-header">
 	    <ul>
@@ -22,23 +34,9 @@
 		<?php endif ?>		
 	    </ul>
     </div>
-    <ul class="search">
-	<li>
-		<?php if(empty($this->params['pass'][0])) {
-			echo $this->Form->create();
-		} 
-			else {
-				echo $this->Form->create(array('url' => '/admin/users/index/' . $this->params['pass'][0]));
-			}
-		?>
-	    <?php echo $this->Form->input('search_by', array(
-			'type' => 'select',
-			'options' => array('lastname' => 'Last Name', 'firstname' => 'First Name', 'ssn' => 'SSN')))
-		    ?>
-	</li>
-	<li><?php echo $this->Form->input('search_term')?></li>
-	<li><?php echo $this->Form->end(array('label' => 'Search','div' => false))?></li>
-    </ul>
+    <div id="searchForm"></div>
+<br />
+<div class="admin">
     <table cellpadding="0" cellspacing="0">
 	<thead class="ui-widget-header">
 	    <tr>
@@ -60,7 +58,11 @@
     	<tr<?php echo $class; ?>>
     	    <td><?php echo $user['User']['firstname']; ?>&nbsp;</td>
     	    <td><?php echo $user['User']['lastname']; ?>&nbsp;</td>
+            <?php if ($canViewFullSsn): ?>
+    	    <td class="ssn"><?php echo $user['User']['ssn'] ?>&nbsp;</td>
+            <?php else: ?>
     	    <td><?php echo "*****" . substr($user['User']['ssn'], -4); ?>&nbsp;</td>
+            <?php endif; ?>
 	    	<td><?php echo $this->Html->link($user['User']['email'], 'mailto:'.$user['User']['email']); ?>&nbsp;</td>
 	    	<td class="actions">
 				<?php echo $this->Html->link(__('Docs', true), array('controller' => 'filed_documents',  'action' => 'index', $user['User']['id']), array('class' => 'docs')); ?>
@@ -81,6 +83,22 @@
     </table>
     <p class="paging-counter">
 	<?php
+    $options = array();
+
+    if (isset($search_by1) && $search_by1) {
+        $options['url']['search_by1'] = $search_by1;
+        $options['url']['search_scope1'] = $search_scope1;
+        $options['url']['search_term1'] = $search_term1;
+    }
+
+    if (isset($search_by2) && $search_by2) {
+        $options['url']['search_by2'] = $search_by2;
+        $options['url']['search_scope2'] = $search_scope2;
+        $options['url']['search_term2'] = $search_term2;
+    }
+
+    $this->Paginator->options($options);
+
 	echo $this->Paginator->counter(array(
 	    'format' => __('Page %page% of %pages%, showing %current% records out of %count% total, starting on record %start%, ending on %end%', true)
 	));
@@ -94,4 +112,5 @@
 	<?php echo $this->Paginator->next(__('next', true) . ' >>', array(), null, array('class' => 'disabled')); ?>
 	
     </div>
+</div>
 </div>

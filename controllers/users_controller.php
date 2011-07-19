@@ -92,42 +92,110 @@ class UsersController extends AppController {
 
     function admin_index($disabled=false) {
 		$this->set('title_for_layout', 'Customers');
+
+        // check to see if user can view full ssn
+        $role = $this->User->Role->findById($this->Session->read('Auth.User.role_id'));
+        $canViewFullSsn = ($role['Role']['can_view_full_ssn']) ? true : false;
+
 		if($disabled) {
 			$this->User->Behaviors->disable('Disableable');
 		}		
 		$this->User->recursive = -1;
-		if(! empty($this->data) && $this->data['User']['search_term'] != '' ) {
+
+        $named = $this->params['named'];
+        if (!empty($this->params['form'])) {
+            $submittedValues = $this->params['form'];
+        }
+
+        if (empty($submittedValues)) {
+            $submittedValues['search_by1'] = (isset($named['search_by1'])) ? $named['search_by1'] : '';
+            $submittedValues['search_scope1'] = (isset($named['search_scope1'])) ? $named['search_scope1'] : '';
+            $submittedValues['search_term1'] = (isset($named['search_term1'])) ? $named['search_term1'] : '';
+            $submittedValues['search_by2'] = (isset($named['search_by2'])) ? $named['search_by2'] : '';
+            $submittedValues['search_scope2'] = (isset($named['search_scope2'])) ? $named['search_scope2'] : '';
+            $submittedValues['search_term2'] = (isset($named['search_term2'])) ? $named['search_term2'] : '';
+        }
+
+        // set up the default paginate options
+        $conditions = array('User.role_id' => 1);
+        $limit = Configure::read('Pagination.customer.limit');
+        $order = array('User.lastname' => 'ASC');
+
+        if (!empty($submittedValues) && $submittedValues['search_term1'] !== '') {
+            switch ($submittedValues['search_scope1']) {
+                case 'containing':
+                    if ($submittedValues['search_by1'] === 'last4') {
+                        $conditionScope = 'RIGHT (User.ssn , 4) LIKE';
+                    } else if ($submittedValues['search_by1'] === 'fullssn') {
+                        $conditionScope = 'User.ssn LIKE';
+                    } else {
+                        $conditionScope = $submittedValues['search_by1'] . ' LIKE';
+                    }
+
+                    $conditionValue = '%' . $submittedValues['search_term1'] . '%';
+                    break;
+                case 'matching exactly':
+                    if ($submittedValues['search_by1'] === 'last4') {
+                        $conditionScope = 'RIGHT (User.ssn , 4)';
+                    } else if ($submittedValues['search_by1'] === 'fullssn') {
+                        $conditionScope = 'User.ssn';
+                    } else {
+                        $conditionScope = $submittedValues['search_by1'];
+                    }
+
+                    $conditionValue = $submittedValues['search_term1'];
+                    break;
+            }
+
+            $conditions1 = array($conditionScope => $conditionValue);
+            $conditions = array_merge($conditions, $conditions1);
+
+            if ($submittedValues['search_by2'] !== '' && $submittedValues['search_term2'] !== '') {
+                switch ($submittedValues['search_scope2']) {
+                    case 'containing':
+                        if ($submittedValues['search_by2'] === 'last4') {
+                            $conditionScope2 = 'RIGHT (User.ssn , 4) LIKE';
+                        } else if ($submittedValues['search_by2'] === 'fullssn') {
+                            $conditionScope2 = 'User.ssn LIKE';
+                        } else {
+                            $conditionScope2 = $submittedValues['search_by2'] . ' LIKE';
+                        }
+
+                        $conditionValue2 = '%' . $submittedValues['search_term2'] . '%';
+                        break;
+                    case 'matching exactly':
+                        if ($submittedValues['search_by2'] === 'last4') {
+                            $conditionScope2 = 'RIGHT (User.ssn , 4)';
+                        } else if ($submittedValues['search_by2'] === 'fullssn') {
+                            $conditionScope2 = 'User.ssn';
+                        } else {
+                            $conditionScope2 = $submittedValues['search_by2'];
+                        }
+
+                        $conditionValue2 = $submittedValues['search_term2'];
+                        break;
+                }
+
+                $conditions2 = array($conditionScope2 => $conditionValue2);
+                $conditions = array_merge($conditions, $conditions2);
+            }
+
+            $this->paginate = array(
+                'conditions' => $conditions,
+                'limit'      => $limit,
+                'order'      => $order
+            );
+
+            $this->set($submittedValues);
+        } else {
 		    $this->paginate = array(
-			'conditions' =>  array(
-			    'User.role_id' => 1,
-			    $this->data['User']['search_by'].' LIKE' => '%'.$this->data['User']['search_term'].'%' ),
-			'limit' => Configure::read('Pagination.customer.limit'),
-			'order' => array('User.lastname' => 'asc')
+			'conditions' => $conditions,
+			 'limit' => $limit,
+			 'order' => $order
 		    );
-			$this->set('users', $this->paginate('User'));
-			$this->passedArgs['search_by'] = $this->data['User']['search_by'];
-			$this->passedArgs['search_term'] = $this->data['User']['search_term'];
-		}
-		elseif(isset($this->passedArgs['search_term'], $this->passedArgs['search_by'])) {	    
-		    $this->paginate = array(
-			'conditions' => array(
-			    'User.role_id' => 1,
-			    $this->passedArgs['search_by'].' LIKE' => '%'.$this->passedArgs['search_term'].'%' ),
-			'limit' => Configure::read('Pagination.customer.limit'),
-			'order' => array('User.lastname' => 'asc')
-		    );
-		    $this->set('users', $this->paginate('User'));	
-		}
-		else {
-		    $this->paginate = array(
-			'conditions' => array(
-			    'User.role_id' => 1,
-			 ),
-			 'limit' => Configure::read('Pagination.customer.limit'),
-			 'order' => array('User.lastname' => 'asc')
-		    );
-		    $this->set('users', $this->paginate('User'));
-		}	
+        }
+        $this->set(compact('canViewFullSsn'));
+        $this->set('users', $this->paginate('User'));
     }
 
     function admin_add() {
