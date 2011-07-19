@@ -170,9 +170,12 @@ class SelfSignLogsController extends AppController {
 					$i = 0;
 					if($buttons) {
 						foreach ($buttons as $button) {
-						    $data['services'][$i]['id'] = $button['KioskButton']['id'];
-						    $data['services'][$i]['name'] = $masterParentButtonNameList[$button['KioskButton']['id']];
-						    $i++;
+							if($masterParentButtonNameList[$button['KioskButton']['id']] != 'Scan Documents') {
+							    $data['services'][$i]['id'] = $button['KioskButton']['id'];
+							    $data['services'][$i]['name'] = $masterParentButtonNameList[$button['KioskButton']['id']];
+							    $i++;								
+							}
+
 						}						
 					}
 					
@@ -206,7 +209,7 @@ class SelfSignLogsController extends AppController {
 			if($buttons) {
 				$i = 0;
 				foreach($buttons as $k => $v) {
-					if(! in_array($v, $data['buttons'])) {
+					if(! in_array($v, $data['buttons']) && $masterButtonList[$v] != 'Scan Documents') {
 						$data['buttons'][$i]['id'] = $v;
 						$data['buttons'][$i]['name'] = $masterButtonList[$v];
 						$i++;						
