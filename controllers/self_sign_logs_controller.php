@@ -168,11 +168,14 @@ class SelfSignLogsController extends AppController {
 						'KioskButton.kiosk_id' => $kiosks,
 						'KioskButton.status' => 0 )));	
 					$i = 0;
-					foreach ($buttons as $button) {
-					    $data['services'][$i]['id'] = $button['KioskButton']['id'];
-					    $data['services'][$i]['name'] = $masterParentButtonNameList[$button['KioskButton']['id']];
-					    $i++;
-					}					
+					if($buttons) {
+						foreach ($buttons as $button) {
+						    $data['services'][$i]['id'] = $button['KioskButton']['id'];
+						    $data['services'][$i]['name'] = $masterParentButtonNameList[$button['KioskButton']['id']];
+						    $i++;
+						}						
+					}
+					
 				}
 		    }
 			$this->set(compact('data'));
@@ -235,18 +238,6 @@ class SelfSignLogsController extends AppController {
 		}
 		else return false;			
 	}
-
-    function _getLocations($id=null) {
-		$this->loadModel('Kiosk');
-		if ($id == null) {
-		    return $this->Kiosk->Location->find('list');
-		}
-	
-		if ($id != null) {
-		    return $this->Kiosk->Location->find('list', array(
-			'conditions' => array('Location.id' => $id)));
-		}
-    }
 
     function _getParentMasterButtonNames() {
 		return $this->MasterKioskButton->find('list', array(
