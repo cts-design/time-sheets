@@ -242,7 +242,8 @@ var reassign = new Ext.form.FormPanel({
 	],
 	fbar: {
 		items: {
-			text: 'Submit',
+			text: 'Save',
+			icon:  '/img/icons/save.png',
 			handler: function() {
 				var form = reassign.getForm();
 				if(form.isValid()) {
