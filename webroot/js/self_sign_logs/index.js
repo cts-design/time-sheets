@@ -288,6 +288,7 @@ var contextMenu = new Ext.menu.Menu({
   items: [{
     text: 'Open',
     id: 'cmOpen',
+    icon:  '/img/icons/note_add.png',
     iconCls: 'edit',
     handler: function() {
     	var record = selfSignLogsGrid.store.getAt(rowIndex);
@@ -296,6 +297,7 @@ var contextMenu = new Ext.menu.Menu({
   },{
   	text: 'Close',
   	id: 'cmClose',
+  	icon:  '/img/icons/note_delete.png',
     handler: function() {
     	var record = selfSignLogsGrid.store.getAt(rowIndex);
     	updateStatus(record.data.id, 1);	
@@ -303,6 +305,7 @@ var contextMenu = new Ext.menu.Menu({
   },{
   	text: 'Not Helped',
   	id: 'cmNotHelped',
+  	icon:  '/img/icons/note_error.png',
     handler: function() {
     	var record = selfSignLogsGrid.store.getAt(rowIndex);
     	updateStatus(record.data.id, 2);	
@@ -310,6 +313,7 @@ var contextMenu = new Ext.menu.Menu({
   },{
   	text: 'Reassign',
   	id: 'cmReassign',
+  	icon:  '/img/icons/arrow_undo.png',
 	menu: {
 		width: 295,
 		items: [
@@ -505,6 +509,7 @@ var selfSignSearch = new Ext.form.FormPanel({
 	}],
 	fbar: [{
 		text: 'Filter',
+		icon:  '/img/icons/find.png',
 		handler: function() {
 			var form = selfSignSearch.getForm();
 			if(form.isValid()) {
@@ -520,6 +525,7 @@ var selfSignSearch = new Ext.form.FormPanel({
 		}
 	},{
 		text: 'Reset',
+		icon:  '/img/icons/arrow_redo.png',
 		handler: function() {
 			Ext.getCmp('servicesSelect').reset();
 			Ext.getCmp('locationsSelect').reset();
