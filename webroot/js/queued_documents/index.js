@@ -87,12 +87,12 @@ $(document).ready(function(){
     $countdown = $bar.find('span'), // span tag that will hold the countdown value
     redirectAfter = 10, // number of seconds to wait before redirecting the user
     redirectTo = '/admin/queued_documents/index/resetInactive', // URL to relocate the user to once they have timed out
-    expiredMessage = 'If you had a document open it has been return to the queue.', // message to show user when the countdown reaches 0
+    expiredMessage = 'If you had a document open it has been returned to the queue.', // message to show user when the countdown reaches 0
     running = false, // var to check if the countdown is running
     timer; // reference to the setInterval timer so it can be stopped
 
     // start the idle timer.  the user will be considered idle after 2 seconds (2000 ms)
-    $.idleTimer(60000);
+    $.idleTimer(180000);
 
     // bind to idleTimer's idle.idleTimer event
     $(document).bind("idle.idleTimer", function(){
