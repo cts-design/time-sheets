@@ -1,6 +1,6 @@
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('In The News', null, 'unique'); ?></div>
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('In The News', true), null, 'unique'); ?></div>
 <div class="inTheNews admin">
 <div class="actions ui-widget-header">
 	<ul>
@@ -11,13 +11,13 @@
 	    <thead class="ui-widget-header">
 		<tr>
 					<th class="ui-state-default"><?php echo $this->Paginator->sort('id');?></th>
-					<th class="ui-state-default"><?php echo $this->Paginator->sort('title');?></th>
-					<th class="ui-state-default"><?php echo $this->Paginator->sort('reporter');?></th>
-					<th class="ui-state-default"><?php echo $this->Paginator->sort('summary');?></th>
-					<th class="ui-state-default"><?php echo $this->Paginator->sort('link');?></th>
-					<th class="ui-state-default"><?php echo $this->Paginator->sort('posted_date');?></th>
-					<th class="ui-state-default"><?php echo $this->Paginator->sort('created');?></th>
-					<th class="ui-state-default"><?php echo $this->Paginator->sort('modified');?></th>
+					<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Title', true), 'title');?></th>
+					<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Reporter', true), 'reporter');?></th>
+					<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Summary', true), 'summary');?></th>
+					<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Link', true), 'link');?></th>
+					<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Posted Date', true), 'posted_date');?></th>
+					<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Created', true), 'created');?></th>
+					<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Modified', true), 'modified');?></th>
 					<th class="actions ui-state-default"><?php __('Actions');?></th>
 		</tr>
 	    </thead>

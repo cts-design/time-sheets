@@ -9,8 +9,8 @@
 <?php echo $this->Html->script('document_filing_categories/index', array('inline' => FALSE));?>
 
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Document Filing Categories', null, 'unique') ; ?>
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('Document Filing Categories', true), null, 'unique') ; ?>
 </div>
 
 <div id="documentFilingCategoryTree"></div>

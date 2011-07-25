@@ -7,8 +7,8 @@
  */
 ?>
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Kiosks', null, 'unique'); ?>
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('Kiosks', true), null, 'unique'); ?>
 </div>
 <div class="admin">
     <div class="actions ui-widget-header">
@@ -19,10 +19,10 @@
     <table cellpadding="0" cellspacing="0">
 	<thead class="ui-widget-header">
 	    <tr>
-		<th width="10%" class="ui-state-default"><?php echo $this->Paginator->sort('Location', 'Location.name'); ?></th>
-		<th width="20%" class="ui-state-default"><?php echo $this->Paginator->sort('location_recognition_name'); ?></th>
-		<th width="30%" class="ui-state-default"><?php echo $this->Paginator->sort('location_description'); ?></th>
-		<th width="30%" class="ui-state-default"><?php echo $this->Paginator->sort('logout_message'); ?></th>
+		<th width="10%" class="ui-state-default"><?php echo $this->Paginator->sort(__('Location', true), 'Location.name'); ?></th>
+		<th width="20%" class="ui-state-default"><?php echo $this->Paginator->sort(__('Location Recognition Name', true), 'location_recognition_name'); ?></th>
+		<th width="30%" class="ui-state-default"><?php echo $this->Paginator->sort(__('Location Description', true), 'location_description'); ?></th>
+		<th width="30%" class="ui-state-default"><?php echo $this->Paginator->sort(__('Logout Message', true), 'logout_message'); ?></th>
 		<th width="10%" class="actions ui-state-default"><?php __('Actions'); ?></th>
 	    </tr>
 	</thead>

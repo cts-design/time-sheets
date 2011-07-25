@@ -11,28 +11,28 @@
 <?php echo $this->Html->script('kiosk_buttons/buttons.tree', array('inline' => false))?>
 
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Kiosk Buttons', null, 'unique'); ?>
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('Kiosk Buttons', true), null, 'unique'); ?>
 </div>
 <div id="manageButtons" class="admin">
     
     <div class="actions ui-widget-header">
 	    <ul>
-		<li><?php echo $this->Html->link('Enable Button', '', array('id' => 'enableButton')) ?></li>
-		<li><?php echo $this->Html->link('Disable Button', '', array('id' => 'disableButton')) ?></li>
-		<li><?php echo $this->Html->link('Edit Button Logout Message', '', array('id' => 'EditMessageButton')) ?></li>
-		<li><?php echo $this->Html->link('Done Managing Buttons',
+		<li><?php echo $this->Html->link(__('Enable Button', true), '', array('id' => 'enableButton')) ?></li>
+		<li><?php echo $this->Html->link(__('Disable Button', true), '', array('id' => 'disableButton')) ?></li>
+		<li><?php echo $this->Html->link(__('Edit Button Logout Message', true), '', array('id' => 'EditMessageButton')) ?></li>
+		<li><?php echo $this->Html->link(__('Done Managing Buttons', true),
 			array('controller' => 'kiosks', 'action' => 'index', 'admin' => true)) ?></li>
 		
 	    </ul>
     </div>
     <div class="tree-wrapper">
 	<h2><?php echo __('Master Button List')?></h2>
-	<p class="expand-wrap"><?php echo $this->Html->link('Expand All', '', array('class' => 'expand-master')) ?></p>
+	<p class="expand-wrap"><?php echo $this->Html->link(__('Expand All', true), '', array('class' => 'expand-master')) ?></p>
 	<?php if (!empty($masterButtons)) { ?>
 	    <?php echo '<div id="masterKioskButtonTree">' . $tree->generate($masterButtons, array('element' => 'master_kiosk_buttons/master_kiosk_button_tree')) . '</div>'; ?>
 	<?php } else
-	    echo '<p>There are no buttons, please add some</p>'; ?>
+	    echo '<p>' . __('There are no buttons, please add some', true) . '</p>'; ?>
     </div>
     <div class="tree-wrapper">
 	<?php if (!empty($locationButtons)) { ?>
@@ -40,7 +40,7 @@
 	 <p class="expand-wrap"><?php echo $this->Html->link('Expand All', '', array('class' => 'expand')) ?></p>
 	<?php echo '<div id="kioskButtonTree">' . $tree->generate($locationButtons, array('element' => 'kiosk_buttons/kiosk_button_tree')) . '</div>'; ?>
 	<?php } else
-	    echo '<p>There are no buttons, please add some</p>'; ?>
+	    echo '<p>' . __('There are no buttons, please add some', true) . '</p>'; ?>
     </div>
     <br />
     <?php echo $form->create(null, 

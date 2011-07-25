@@ -7,8 +7,8 @@
  */
 ?>
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Ftp Document Scanners', null, 'unique'); ?>
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('Ftp Document Scanners', true), null, 'unique'); ?>
 </div>
 <div class="ftpDocumentScanners admin">
     <div class="actions ui-widget-header">
@@ -19,9 +19,9 @@
     <table cellpadding="0" cellspacing="0">
 	<thead class="ui-widget-header">
 	    <tr>
-		<th class="ui-state-default"><?php echo $this->Paginator->sort('device_ip'); ?></th>
-		<th class="ui-state-default"><?php echo $this->Paginator->sort('device_name'); ?></th>
-		<th class="ui-state-default"><?php echo $this->Paginator->sort('location_id'); ?></th>
+		<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Device IP', true), 'device_ip'); ?></th>
+		<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Devise Name', true), 'device_name'); ?></th>
+		<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Location Id', true), 'location_id'); ?></th>
 		<th class="actions ui-state-default"><?php __('Actions'); ?></th>
 	    </tr>
 	</thead>

@@ -7,8 +7,8 @@
  */
 ?>
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Edit Document Queue Category', null, 'unique') ; ?>
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('Edit Document Queue Category', true), null, 'unique') ; ?>
 </div>
 <div class="documentQueueCategories form admin">
     <div class="actions ui-widget-header">

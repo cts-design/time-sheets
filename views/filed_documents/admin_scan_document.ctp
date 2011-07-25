@@ -8,15 +8,15 @@
 <?php echo $this->Html->script('jquery.validate', array('inline' => false)) ?>
 <?php echo $this->Html->script('filed_documents/scan_document' ,array('inline' => false)) ?>
 <div id="crumbWrapper">
-    <span>You are here > </span>
-<?php echo $crumb->getHtml('Scan Document', null, 'unique'); ?>
+    <span><?php __('You are here') ?> > </span>
+<?php echo $crumb->getHtml(__('Scan Document', true), null, 'unique'); ?>
 </div>
 <div id="FiledDocumentScanDoument">
     <div id="scanForm" class="left">
-	<h3>1. Place document in scanner.</h3>
+    <h3>1. <?php __('Place document in scanner.') ?></h3>
 	<h3>2. <input class="scan" name="scan"  type="button" value="Scan"/></h3>
-	<h3>3. Verify document. If necessary <input class="re-scan" name="rescan"  type="button" value="Re-Scan"/></h3>
-	<h3>4. Select Filing Categories </h3>
+    <h3>3. <?php __('Verify document. If necessary') ?> <input class="re-scan" name="rescan"  type="button" value="Re-Scan"/></h3>
+    <h3>4. <?php __('Select Filing Categories') ?> </h3>
 	<div class="formErrors"></div>
 	<?php
 		echo $this->Form->create('FiledDocument', array( 'action' => 'scan_document',  'enctype' => 'multipart/form-data', 'name' => 'myForm'));

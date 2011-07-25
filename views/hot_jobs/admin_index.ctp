@@ -1,6 +1,6 @@
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Hot Jobs', null, 'unique'); ?></div>
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('Hot Jobs', true), null, 'unique'); ?></div>
 <div class="hotJobs admin">
 <div class="actions ui-widget-header">
 	<ul>
@@ -11,13 +11,13 @@
 	    <thead class="ui-widget-header">
 		<tr>
 			<th class="ui-state-default"><?php echo $this->Paginator->sort('id');?></th>
-			<th class="ui-state-default"><?php echo $this->Paginator->sort('employer');?></th>
-			<th class="ui-state-default"><?php echo $this->Paginator->sort('title');?></th>
-			<th class="ui-state-default"><?php echo $this->Paginator->sort('location');?></th>
-			<th class="ui-state-default"><?php echo $this->Paginator->sort('url');?></th>
-			<th class="ui-state-default"><?php echo $this->Paginator->sort('reference_number');?></th>
-			<th class="ui-state-default"><?php echo $this->Paginator->sort('contact');?></th>
-			<th class="ui-state-default"><?php echo $this->Paginator->sort('file');?></th>
+			<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Employer', true), 'employer');?></th>
+			<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Title', true), 'title');?></th>
+			<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Location', true), 'location');?></th>
+			<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Url', true), 'url');?></th>
+			<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Reference Number', true), 'reference_number');?></th>
+			<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Contact', true), 'contact');?></th>
+			<th class="ui-state-default"><?php echo $this->Paginator->sort(__('File', true), 'file');?></th>
 			<th class="actions ui-state-default"><?php __('Actions');?></th>
 		</tr>
 	    </thead>

@@ -16,8 +16,8 @@
 <?php echo $this->Html->scriptEnd() ?>
 <?php echo $this->Html->script('users/search.js', array('inline' => false)) ?>
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Customers');?>
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('Customers', true));?>
 </div>
 <div class="">
     <?php $this->Paginator->options(array('url' => $this->passedArgs)); ?>

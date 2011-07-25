@@ -6,8 +6,8 @@
 <?php echo $this->Html->script('jquery.validate', array('inline' => 'false'));?>
 
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Edit Self Sign Category', null, 'unique'); ?>
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('Edit Self Sign Category', true), null, 'unique'); ?>
 </div>
 <div class="selfScanCategories form admin">
     <div class="actions ui-widget-header">

@@ -1,6 +1,6 @@
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Edit Press Release', null, 'unique'); ?>
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('Edit Press Release', true), null, 'unique'); ?>
 </div>
 <div class="pressReleases form admin">
     <div class="actions ui-widget-header">

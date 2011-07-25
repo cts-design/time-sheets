@@ -7,8 +7,8 @@
  */
 ?>
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Edit Master Kiosk Button', null, 'unique'); ?>
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('Edit Master Kiosk Button', true), null, 'unique'); ?>
 </div>
 <div class="admin">
     <div id ="masterKioskButtons" class="masterKioskButtons mini-form ">

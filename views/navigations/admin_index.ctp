@@ -3,8 +3,8 @@
 ?>
 
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Navigation', null, 'unique'); ?>
+<span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('Navigation', true), null, 'unique'); ?>
 </div>
 
 <div class="navigations">

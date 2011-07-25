@@ -13,8 +13,8 @@
 </script>
 <?php $paginator->options(array('url' => $this->passedArgs));?>
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Deleted Documents', null, 'unique'); ?>
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('Deleted Documents', true), null, 'unique'); ?>
 </div>
 <div class="deletedDocuments admin">
     <div class="actions ui-widget-header">
@@ -32,34 +32,34 @@
 		    'class' => 'date',
 		    'value' => (isset($this->passedArgs['to_date']) ? $this->Time->format('m/d/Y', $this->passedArgs['to_date']) : '')))
 	    ?>
-	<?php echo $this->Form->end('Search')?>
+	<?php echo $this->Form->end(__('Search', true))?>
 	<span class="quick-dates">
 	    Quick Dates: 
-	    <?php echo $this->Html->link('Today', array('action' => 'index', 'today'))?>
+	    <?php echo $this->Html->link(__('Today', true), array('action' => 'index', 'today'))?>
 	    |
-	    <?php echo $this->Html->link('Yesterday', array('action' => 'index', 'yesterday'))?>
+	    <?php echo $this->Html->link(__('Yesterday', true), array('action' => 'index', 'yesterday'))?>
 	    |
-	    <?php echo $this->Html->link('Last 7 Days', array('action' => 'index', 'last_7'))?>
+	    <?php echo $this->Html->link(__('Last 7 Days', true), array('action' => 'index', 'last_7'))?>
 	    |
-	    <?php echo $this->Html->link('Last Month', array('action' => 'index', 'last_month'))?>
+	    <?php echo $this->Html->link(__('Last Month', true), array('action' => 'index', 'last_month'))?>
 	</span>
     </div>
     <table cellpadding="0" cellspacing="0">
 	<thead class="ui-widget-header">
 	    <tr>
 		<th class="ui-state-default"><?php echo $this->Paginator->sort('id'); ?></th>
-		<th class="ui-state-default"><?php echo $this->Paginator->sort('Admin', 'Admin.lastname'); ?></th>
-		<th class="ui-state-default"><?php echo $this->Paginator->sort('Customer', 'User.lastname'); ?></th>
-		<th class="ui-state-default"><?php echo $this->Paginator->sort('deleted_location_id'); ?></th>
+		<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Admin', true), 'Admin.lastname'); ?></th>
+		<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Customer', true), 'User.lastname'); ?></th>
+		<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Deleted Location Id', true), 'deleted_location_id'); ?></th>
 		<th class="ui-state-default"><?php echo $this->Paginator->sort('Cat 1', 'Cat1.name'); ?></th>
 		<th class="ui-state-default"><?php echo $this->Paginator->sort('Cat 2', 'Cat2.name'); ?></th>
 		<th class="ui-state-default"><?php echo $this->Paginator->sort('Cat 3', 'Cat3.name'); ?></th>
-		<th class="ui-state-default"><?php echo $this->Paginator->sort('description'); ?></th>
-		<th class="ui-state-default"><?php echo $this->Paginator->sort('entry_method'); ?></th>
-		<th class="ui-state-default"><?php echo $this->Paginator->sort('deleted_reason'); ?></th>
-		<th class="ui-state-default"><?php echo $this->Paginator->sort('last_activity_admin_id'); ?></th>
-		<th class="ui-state-default"><?php echo $this->Paginator->sort('created'); ?></th>
-		<th class="ui-state-default"><?php echo $this->Paginator->sort('modified'); ?></th>
+		<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Description', true), 'description'); ?></th>
+		<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Entry Method', true), 'entry_method'); ?></th>
+		<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Deleted Reason', true), 'deleted_reason'); ?></th>
+		<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Last Activity Admin Id', true), 'last_activity_admin_id'); ?></th>
+		<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Created', true), 'created'); ?></th>
+		<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Modified', true), 'modified'); ?></th>
 		<th class="actions ui-state-default"><?php __('Actions'); ?></th>
 	    </tr>
 	</thead>

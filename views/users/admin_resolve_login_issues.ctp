@@ -12,8 +12,8 @@
 ?>
 
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Resolve Login Issues', null, 'unique') ; ?>
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('Resolve Login Issues', true), null, 'unique') ; ?>
 </div>
 <br />
 <div id="search"></div>

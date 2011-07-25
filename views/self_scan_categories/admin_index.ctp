@@ -1,6 +1,6 @@
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Self Sign Categories', null, 'unique'); ?>
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('Self Sign Categories', true), null, 'unique'); ?>
 </div>
 <div class="selfScanCategories admin">
     <div class="actions ui-widget-header">

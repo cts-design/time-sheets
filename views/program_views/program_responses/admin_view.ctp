@@ -5,7 +5,7 @@
 <?php echo $this->Html->script('program_responses/admin_view', array('inline' => FALSE));?>
 
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Program Response', null, 'unique');?>
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('Program Response', true), null, 'unique');?>
 </div>
 <div id="ProgramResponsePanel"></div>

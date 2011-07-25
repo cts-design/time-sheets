@@ -2,8 +2,8 @@
 <?php echo $this->Html->script('self_scan_categories/add', array('inline' => 'false'));?>
 <?php echo $this->Html->script('jquery.validate', array('inline' => 'false'));?>
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Add Self Sign Category', null, 'unique'); ?>
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('Add Self Sign Category', true), null, 'unique'); ?>
 </div>
 <div class="selfScanCategories form admin">
     <div class="actions ui-widget-header">

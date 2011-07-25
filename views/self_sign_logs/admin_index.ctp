@@ -9,8 +9,8 @@
 
 <?php echo $this->Html->script('self_sign_logs/index', array('inline' => false)); ?>
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Self Sign Queue', null, 'unique'); ?>
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('Self Sign Queue', true), null, 'unique'); ?>
 </div>
 <div class="admin">
     <div id="selfSignSearch" class="form">

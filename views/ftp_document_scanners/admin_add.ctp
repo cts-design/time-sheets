@@ -7,8 +7,8 @@
  */
 ?>
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Add Ftp Document Scanner', null, 'unique'); ?>
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('Add Ftp Document Scanner', true), null, 'unique'); ?>
 </div>
 <div class="ftpDocumentScanners form admin">
     <div class="actions ui-widget-header">

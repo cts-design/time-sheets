@@ -8,15 +8,15 @@
 <?php echo $this->Html->script('jquery.validate', array('inline' => false)) ?>
 <?php echo $this->Html->script('queued_documents/desktop_scan_document' ,array('inline' => false)) ?>
 <div id="crumbWrapper">
-    <span>You are here > </span>
-<?php echo $crumb->getHtml('Desktop Scan Document', null, 'unique'); ?>
+    <span><?php __('You are here') ?> > </span>
+<?php echo $crumb->getHtml(__('Desktop Scan Document', true), null, 'unique'); ?>
 </div>
 <div id="QueuedDocumentScanDoument">
     <div id="scanForm" class="left">
-	<h3>1. Place document(s) in scanner.</h3>
+    <h3>1. <?php __('Place document(s) in scanner.') ?></h3>
 	<h3>2. <input class="scan" name="scan"  type="button" value="Scan"/></h3>
-	<h3>3. Verify document. If necessary <input class="re-scan" name="rescan"  type="button" value="Re-Scan"/></h3>
-	<h3>4. Select Queue Category & Location </h3>
+    <h3>3. <?php __('Verify document. If necessary') ?> <input class="re-scan" name="rescan"  type="button" value="Re-Scan"/></h3>
+    <h3>4. <?php __('Select Queue Category & Location') ?> </h3>
 	<div class="formErrors"></div>
 	<?php
 		echo $this->Form->create('QueuedDocument', array( 'action' => 'desktop_scan_document',  'enctype' => 'multipart/form-data', 'name' => 'myForm'));

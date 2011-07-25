@@ -11,8 +11,8 @@
 <?php echo $this->Html->script('filed_documents/upload_document' ,array('inline' => false)) ?>
 
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Upload Document', null, 'unique') ; ?>
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('Upload Document', true), null, 'unique') ; ?>
 </div>
 <div class="filedDocuments form admin">
     <div class="actions ui-widget-header">

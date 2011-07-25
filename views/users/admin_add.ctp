@@ -7,8 +7,8 @@
  */
 ?>
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Add Customer', null, 'unique') ; ?>
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('Add Customer', true), null, 'unique') ; ?>
 </div>
 <div class="admin">
     <div class="actions ui-widget-header">

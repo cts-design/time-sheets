@@ -1,6 +1,6 @@
 <div id="crumbWrapper">
-    <span>You are here > </span>
-<?php echo $crumb->getHtml('Add In The News', null, 'unique'); ?></div>
+    <span><?php __('You are here') ?> > </span>
+<?php echo $crumb->getHtml(__('Add In The News', true), null, 'unique'); ?></div>
 <div class="inTheNews form admin">
     <div class="actions ui-widget-header">
 	<ul></ul>

@@ -7,8 +7,8 @@
  */
 ?>
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Administrators', null, 'unique') ; ?>
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('Administrators', true), null, 'unique') ; ?>
 </div>
 <div class="admin">
     <?php $this->Paginator->options(array('url' => $this->passedArgs)); ?>
@@ -41,7 +41,7 @@
 	<li><?php echo $this->Form->end(array('label' => 'Search', 'div' => false)) ?></li>
     </ul>
     <br class="clear"/>
-    <span class="small bot-mar-10">* denotes admin has role overridden permissions</span>
+    <span class="small bot-mar-10">* <?php __('denotes admin has role overridden permissions') ?></span>
     <table cellpadding="0" cellspacing="0">
 	<thead class="ui-widget-header">
 	    <tr>

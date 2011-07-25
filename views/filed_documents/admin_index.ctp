@@ -8,8 +8,8 @@
  ?>
 <?php echo $this->Html->script('filed_documents/index', array('inline' => false)); ?>
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Filed Documents') ; ?>
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('Filed Documents', true)) ; ?>
 </div>
 <div class="filedDocuments admin">
 <div class="actions ui-widget-header">
@@ -32,15 +32,15 @@
 	    <thead class="ui-widget-header">
 		<tr>
 		    <th class="ui-state-default"><?php echo $this->Paginator->sort('id');?></th>
-		    <th class="ui-state-default"><?php echo $this->Paginator->sort('Customer', 'User.lastname');?></th>
-		    <th class="ui-state-default"><?php echo $this->Paginator->sort('filed_location_id');?></th>
-		    <th class="ui-state-default"><?php echo $this->Paginator->sort('Admin', 'Admin.lastname');?></th>
+		    <th class="ui-state-default"><?php echo $this->Paginator->sort(__('Customer', true), 'User.lastname');?></th>
+		    <th class="ui-state-default"><?php echo $this->Paginator->sort(__('Filed Location Id', true), 'filed_location_id');?></th>
+		    <th class="ui-state-default"><?php echo $this->Paginator->sort(__('Admin', true), 'Admin.lastname');?></th>
 		    <th class="ui-state-default"><?php echo $this->Paginator->sort('Cat 1', 'Cat1.name');?></th>
 		    <th class="ui-state-default"><?php echo $this->Paginator->sort('Cat 2', 'Cat2.name');?></th>
 		    <th class="ui-state-default"><?php echo $this->Paginator->sort('Cat 3', 'Cat3.name');?></th>
-		    <th class="ui-state-default"><?php echo $this->Paginator->sort('description');?></th>
-		    <th class="ui-state-default"><?php echo $this->Paginator->sort('created');?></th>
-		    <th class="ui-state-default"><?php echo $this->Paginator->sort('Last Activity Admin', 'LastActAdmin.lastname');?></th>
+		    <th class="ui-state-default"><?php echo $this->Paginator->sort(__('Description', true), 'description');?></th>
+		    <th class="ui-state-default"><?php echo $this->Paginator->sort(__('Created', true), 'created');?></th>
+		    <th class="ui-state-default"><?php echo $this->Paginator->sort(__('Last Activity Admin', true), 'LastActAdmin.lastname');?></th>
 		    <th class="actions ui-state-default"><?php __('Actions');?></th>
 		</tr>
 	    </thead>

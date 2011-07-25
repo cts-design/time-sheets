@@ -12,8 +12,8 @@ if (!isset($userEmail)) {
 }
 ?>
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Add Admin', null, 'unique') ; ?>
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('Add Admin', true), null, 'unique') ; ?>
 </div>
 <div class="admin">
     <div class="actions ui-widget-header">

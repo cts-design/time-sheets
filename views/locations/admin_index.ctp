@@ -7,8 +7,8 @@
  */
 ?>
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Locations', null, 'unique'); ?>
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('Locations', true), null, 'unique'); ?>
 </div>
 <div class="locations admin">
 <div class="actions ui-widget-header">
@@ -19,11 +19,11 @@
 	<table cellpadding="0" cellspacing="0">
 	    <thead class="ui-widget-header">
 		<tr>
-		    <th class="ui-state-default"><?php echo $this->Paginator->sort('name');?></th>
-			<th class="ui-state-default"><?php echo $this->Paginator->sort('public_name');?></th>
-			<th class="ui-state-default">Address</th>
-			<th class="ui-state-default"><?php echo $this->Paginator->sort('telephone');?></th>
-			<th class="ui-state-default"><?php echo $this->Paginator->sort('fax');?></th>
+		    <th class="ui-state-default"><?php echo $this->Paginator->sort(__('Name', true), 'name');?></th>
+			<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Public Name', true), 'public_name');?></th>
+            <th class="ui-state-default"><?php __('Address') ?></th>
+			<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Telephone', true), 'telephone');?></th>
+			<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Fax', true), 'fax');?></th>
 		    <th class="actions ui-state-default"><?php __('Actions');?></th>
 		</tr>
 	    </thead>

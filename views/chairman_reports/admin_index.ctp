@@ -1,6 +1,6 @@
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Chairman Reports', null, 'unique'); ?>
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('Chairman Reports', true), null, 'unique'); ?>
 </div>
 <div class="chairmanReports admin">
 <div class="actions ui-widget-header">
@@ -12,10 +12,10 @@
 	    <thead class="ui-widget-header">
 		<tr>
 					<th class="ui-state-default"><?php echo $this->Paginator->sort('id');?></th>
-					<th class="ui-state-default"><?php echo $this->Paginator->sort('title');?></th>
-					<th class="ui-state-default"><?php echo $this->Paginator->sort('file');?></th>
-					<th class="ui-state-default"><?php echo $this->Paginator->sort('created');?></th>
-					<th class="ui-state-default"><?php echo $this->Paginator->sort('modified');?></th>
+					<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Title', true), 'title');?></th>
+					<th class="ui-state-default"><?php echo $this->Paginator->sort(__('File', true), 'file');?></th>
+					<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Created', true), 'created');?></th>
+					<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Modified', true), 'modified');?></th>
 					<th class="actions ui-state-default"><?php __('Actions');?></th>
 		</tr>
 	    </thead>

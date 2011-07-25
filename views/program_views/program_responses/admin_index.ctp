@@ -16,7 +16,7 @@
 <?php echo $this->Html->script('program_responses/admin_index', array('inline' => FALSE));?>
 
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Program Responses', null, 'unique');?>
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('Program Responses', true), null, 'unique');?>
 </div>
 <div id="programResponseTabs"></div>

@@ -8,8 +8,8 @@
 ?>
 <?php echo $html->script('programs/admin_edit_instructions', array('inline' => FALSE));?>
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Edit Program Instructions', null, 'unique') ; ?>
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('Edit Program Instructions', true), null, 'unique') ; ?>
 </div>
 <div id="editForm">
 	<?php echo $form->create('Program', array('action' => 'edit_instructions')) ?>
@@ -18,6 +18,6 @@
 		'label' => false,
 		'class' => 'x-hide-visibility')) ?>
 	<?php echo $form->input('ProgramInstruction.id', array('type' => 'hidden')); ?>
-	<?php echo $form->end('Submit') ?>
+	<?php echo $form->end(__('Submit', true)) ?>
 	
 </div>

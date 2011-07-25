@@ -10,16 +10,16 @@
 <?php echo $this->Html->script('jquery.form', array('inline' => false));?>
 
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Self Sign Queue Archives', null, 'unique'); ?>
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('Self Sign Queue Archives', true), null, 'unique'); ?>
 </div>
 <div class="selfSignLogArchives admin">
     <div id="search" class="form">
-	<h3><a>Search</a></h3>
+    <h3><a><?php __('Search') ?></a></h3>
 	<div>
 	    <div id="searchFieldset1" class="left left-mar-10">
 		<?php echo $this->Form->create(array( 'controller' => 'self_sign_log_archives', 'action' => 'index')) ?>
-		<span><strong>Locations</strong></span>
+        <span><strong><?php __('Locations') ?></strong></span>
 		<div class="scrollingCheckboxes left-mar-10 left">
 		<?php echo $this->Form->input('locations', array(
 			'type' => 'select',

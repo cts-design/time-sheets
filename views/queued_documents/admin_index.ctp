@@ -47,14 +47,14 @@ $this->Paginator->options(array(
 ));
 ?>
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Queued Documents', null, 'unique'); ?>
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('Queued Documents', true), null, 'unique'); ?>
 </div>
 <div class="queuedDocuments admin">
     <div id="docAccordion">
 	<h2>
 	    <a>Filters <span class="right normal">
-		    <strong>Current Applied Filters:</strong>
+            <strong><?php __('Current Applied Filters:') ?></strong>
 		    <?php $string = ''; ?>
 		    <?php
 				if(empty($locationId)) {
@@ -89,7 +89,7 @@ $this->Paginator->options(array(
 			    'selected' => $locationId
 			))?>
 		</li>
-		<li><label>Program</label></li>
+        <li><label><?php __('Program') ?></label></li>
 		<li>
 		<div class="scrollingCheckboxes">
 		    <?php echo $this->Form->input('program', array(
@@ -123,22 +123,22 @@ $this->Paginator->options(array(
 	    <br class="clear" />
 		<ul class="right">
 		    <li><?php echo $this->Form->end(array('label' => 'Set Filters' ))?><li>
-		    <li><?php echo $this->Html->link('Reset Filters', array('action' => 'index', 'reset'), array('class' => 'reset'));?></li>
+		    <li><?php echo $this->Html->link(__('Reset Filters', true), array('action' => 'index', 'reset'), array('class' => 'reset'));?></li>
 		</ul>
 	</div>
-	<h2><a>Documents in Queue</a></h2>
+    <h2><a><?php __('Documents in Queue') ?></a></h2>
 	<div id="queuedDocumentsNav">
 	    <?php echo $this->element('/queued_documents/index_table')?>
 	</div>
 	<?php if($canFile) { ?>
-	<h2><a>Document Filing</a></h2>
+    <h2><a><?php __('Document Filing') ?></a></h2>
 	<div id="documentFiling">
-	    <p class="left"><strong>Scanned Date:</strong>
+        <p class="left"><strong><?php __('Scanned Date:') ?></strong>
 		<?php echo (isset($lockedDoc['QueuedDocument']['created'])) ?
 			    date('m/d/Y h:i a', strtotime($lockedDoc['QueuedDocument']['created'])) : ''?>
 	    </p>
 	    <p class="right">
-		<strong>Doc Id:</strong> <?php echo (isset($lockedDoc['QueuedDocument']['id'])) ? $lockedDoc['QueuedDocument']['id'] : '' ?>
+        <strong><?php __('Doc Id:') ?></strong> <?php echo (isset($lockedDoc['QueuedDocument']['id'])) ? $lockedDoc['QueuedDocument']['id'] : '' ?>
 		<br />
 		<?php if(isset($lockedDoc)) { ?>
 		    <span class="small">
@@ -152,7 +152,7 @@ $this->Paginator->options(array(
 	    <br class="clear" />
 	    <hr />
 	    <?php echo $this->Form->create(array('action' => 'reassign_queue'))?>
-	    <h2>Reassign Queue</h2>
+        <h2><?php __('Reassign Queue') ?></h2>
 	    <?php echo $this->Form->input('queue_category_id', array(
 		    'type' => 'select',
 		    'label' => 'Queued Program',
@@ -163,14 +163,14 @@ $this->Paginator->options(array(
 	    <?php echo $this->Form->input('id', array('type' => 'hidden', 'value' => $lockedDoc['QueuedDocument']['id'])); ?>
 	    <?php echo $this->Form->end(array('label' => 'Re-Assign')) ?>
 	    <?php echo $this->Form->create(array('action' => 'delete'))?>
-	    <h2>Delete Document</h2>
+        <h2><?php __('Delete Document') ?></h2>
 	    <?php echo $this->Form->input('id', array('type' => 'hidden', 'value' => $lockedDoc['QueuedDocument']['id'])); ?>
 	    <?php echo $this->Form->input('reason', array('type' => 'select'))?>
 	    <?php echo $this->Form->end('Delete Doc') ?>
 	    <br class="clear" />
 	    <hr />
 	    <?php echo $this->Form->create(array('action' => 'file_document'))?>
-	    <h2>Filing Categories</h2><span class="formErrors"></span>
+        <h2><?php __('Filing Categories') ?></h2><span class="formErrors"></span>
 	    <div class="cats" >
 		<?php echo $this->Form->input('FiledDocument.cat_1',
 			array(

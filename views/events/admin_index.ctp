@@ -5,7 +5,7 @@
 	$this->Html->script('events/calendar', array('inline' => FALSE));
 ?>
 <div id="crumbWrapper">
-    <span>You are here > </span>
+    <span><?php __('You are here') ?> > </span>
     <?php echo $crumb->getHtml('Events', null, 'unique'); ?></div>
 <div class="events">
 	<div class="actions ui-widget-header">

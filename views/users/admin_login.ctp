@@ -23,7 +23,7 @@
 		    'after' => '</p>'
 	    ));
 	    echo '<br class="clear"/>';
-	    echo '<span id="forgotPass">' . $this->Html->link( 'Forgot Password?', array('action' => 'password_reset')) . '</span>';
+	    echo '<span id="forgotPass">' . $this->Html->link(__('Forgot Password?', true), array('action' => 'password_reset')) . '</span>';
 	    echo $form->hidden('admin_login', array('value' => 'admin'));
 	    echo $form->end('Login');
 	  ?>

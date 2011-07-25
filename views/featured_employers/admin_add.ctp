@@ -1,6 +1,6 @@
 <div id="crumbWrapper">
-    <span>You are here > </span>
-<?php echo $crumb->getHtml('Add Featured Employer', null, 'unique'); ?></div>
+    <span><?php __('You are here') ?> > </span>
+<?php echo $crumb->getHtml(__('Add Featured Employer', true), null, 'unique'); ?></div>
 <div class="featuredEmployers form admin">
     <div class="actions ui-widget-header">
 	<ul></ul>

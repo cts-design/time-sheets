@@ -13,8 +13,8 @@
 <?php echo $html->script('programs/admin_instructions_index', array('inline' => false));?>
 
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Program Instructions', null, 'unique') ; ?>
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('Program Instructions', true), null, 'unique') ; ?>
 </div>
 
 <div id="instructionGrid">

@@ -3,8 +3,8 @@
 <?php echo $this->Html->script('pages/wysiwyg', array('inline' => FALSE)); ?>
 
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Edit Page', null, 'unique'); ?>
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('Edit Page', true), null, 'unique'); ?>
 </div>
 <div class="pages form admin">
     <div class="actions ui-widget-header">

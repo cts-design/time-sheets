@@ -7,8 +7,8 @@
  */
 ?>
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Document Queue Categories', null, 'unique') ; ?>
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('Document Queue Categories', true), null, 'unique') ; ?>
 </div>
 <div class="documentQueueCategories admin">
 <div class="actions ui-widget-header">
@@ -19,8 +19,8 @@
 	<table cellpadding="0" cellspacing="0">
 	    <thead class="ui-widget-header">
 		<tr>
-		    <th class="ui-state-default"><?php echo $this->Paginator->sort('ftp_path');?></th>
-		    <th class="ui-state-default"><?php echo $this->Paginator->sort('name');?></th>
+		    <th class="ui-state-default"><?php echo $this->Paginator->sort(__('FTP Path', true), 'ftp_path');?></th>
+		    <th class="ui-state-default"><?php echo $this->Paginator->sort(__('Name', true), 'name');?></th>
 		    <th class="actions ui-state-default"><?php __('Actions');?></th>
 		</tr>
 	    </thead>

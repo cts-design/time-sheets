@@ -25,8 +25,8 @@
 </script>
 
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Edit Permissions', null, 'unique'); ?>
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('Edit Permissions', true), null, 'unique'); ?>
 </div>
 <div id="PermissionTabs">
 	<div id="Users" class="x-hide-display">
@@ -34,14 +34,14 @@
 		    <?php echo $this->Form->hidden('id', array('value' => $id));?>
 		    <?php echo $this->Form->hidden('model', array('value' => $model));?>		
 		  <fieldset class="left right-mar-10">
-				<legend>Administration</legend>
+                  <legend><?php __('Administration') ?></legend>
 				 <?php echo $this->Form->input('Users.admin_dashboard', array(
 				     'label' => 'Dashboard',
 				     'type' => 'checkbox',
 				    'checked' => (isset($controllers['Users']['admin_dashboard'])) ? $controllers['Users']['admin_dashboard'] : '' ));?>
 			    </fieldset>
 			    <fieldset class="left right-mar-10">
-				<legend>Customers</legend>
+                <legend><?php __('Customers') ?></legend>
 				<?php echo $this->Form->input('Users.admin_index', array(
 				    'type' => 'checkbox',
 				    'label' => 'Index',
@@ -61,7 +61,7 @@
 			    </fieldset>
 			    <?php if (!in_array('UserTransactions', $disabledModules)): ?>
 			    <fieldset class="left right-mar-10">
-				<legend>Activity</legend>
+                <legend><?php __('Activity') ?></legend>
 			       <?php echo $this->Form->input('UserTransactions.all', array(
 				    'type' => 'checkbox',
 				   'label' => 'Index',
@@ -69,7 +69,7 @@
 			    </fieldset>
 		    <?php endif; ?>
 		    <br class="clear" />
-		    <?php echo $this->Form->end('Submit')?>  		
+			<?php echo $this->Form->end(__('Submit', true))?>    
 	</div>
 	<div id="Website" class="x-hide-display">
 		    <?php echo $this->Form->create('permission', array('action' => 'set_permissions')) ?>
@@ -77,7 +77,7 @@
 		    <?php echo $this->Form->hidden('model', array('value' => $model));?>			
 		   <?php if (!in_array('Pages', $disabledModules)): ?>
 		    <fieldset class="left right-mar-10">
-			<legend>Website Pages</legend>
+            <legend><?php __('Website Pages') ?></legend>
 		       <?php echo $this->Form->input('Pages.admin_index', array(
 			    'type' => 'checkbox',
 			   	'label' => 'Index',
@@ -99,7 +99,7 @@
 		    
 		    <?php if (!in_array('Navigations', $disabledModules)): ?>
 		    <fieldset class="left right-mar-10">
-			<legend>Website Navigation</legend>
+            <legend><?php __('Website Navigation') ?></legend>
 		       <?php echo $this->Form->input('Navigations.all', array(
 			    'type' => 'checkbox',
 			   	'label' => 'Index',
@@ -109,7 +109,7 @@
 		    
 		    <?php if (!in_array('ChairmanReports', $disabledModules)): ?>
 		    <fieldset class="left right-mar-10">
-			<legend>Chairman Reports</legend>
+            <legend><?php __('Chairman Reports') ?></legend>
 		       <?php echo $this->Form->input('ChairmanReports.admin_index', array(
 			    'type' => 'checkbox',
 			   	'label' => 'Index',
@@ -131,7 +131,7 @@
 		    
 		    <?php if (!in_array('PressReleases', $disabledModules)): ?>
 		    <fieldset class="left right-mar-10">
-		    <legend>Press Releases</legend>
+            <legend><?php __('Press Releases') ?></legend>
 		       <?php echo $this->Form->input('PressReleases.admin_index', array(
 			    'type' => 'checkbox',
 			   	'label' => 'Index',
@@ -153,7 +153,7 @@
 		    
 		    <?php if (!in_array('HotJobs', $disabledModules)): ?>
 		    <fieldset class="left right-mar-10">
-		    <legend>Hot Jobs</legend>
+            <legend><?php __('Hot Jobs') ?></legend>
 		       <?php echo $this->Form->input('HotJobs.admin_index', array(
 			    'type' => 'checkbox',
 			   	'label' => 'Index',
@@ -175,7 +175,7 @@
 		    
 		    <?php if (!in_array('Rfps', $disabledModules)): ?>
 		    <fieldset class="left right-mar-10">
-		    <legend>RFPs &amp; Bids</legend>
+            <legend><?php __('RFPs & Bids') ?></legend>
 		       <?php echo $this->Form->input('Rfps.admin_index', array(
 			    'type' => 'checkbox',
 			   	'label' => 'Index',
@@ -185,7 +185,7 @@
 		    
 		    <?php if (!in_array('FeaturedEmployers', $disabledModules)): ?>
 			    <fieldset class="left right-mar-10">
-			    <legend>Featured Employers</legend>
+                <legend><?php __('Featured Employers') ?></legend>
 			       <?php echo $this->Form->input('FeaturedEmployers.admin_index', array(
 				    'type' => 'checkbox',
 				   	'label' => 'Index',
@@ -205,7 +205,7 @@
 			    </fieldset>
 		    <?php endif; ?>	
 		    <br class="clear" />
-		    <?php echo $this->Form->end('Submit')?>	
+			<?php echo $this->Form->end(__('Submit', true))?>    
 	</div>
 	<div id="Storage" class="x-hide-display">
 		    <?php echo $this->Form->create('permission', array('action' => 'set_permissions')) ?>
@@ -213,7 +213,7 @@
 		    <?php echo $this->Form->hidden('model', array('value' => $model));?>	
 		    <?php if (!in_array('QueuedDocuments', $disabledModules)): ?>
 		    <fieldset class="left right-mar-10">
-			<legend>Queued Docs</legend>
+            <legend><?php __('Queued Docs') ?></legend>
 		       <?php echo $this->Form->input('QueuedDocuments.admin_index', array(
 			    'type' => 'checkbox',
 			   'label' => 'Index',
@@ -239,7 +239,7 @@
 		    
 		    <?php if (!in_array('FiledDocuments', $disabledModules)): ?>
 		    <fieldset class="left right-mar-10">
-			<legend>Filed Docs</legend>
+            <legend><?php __('Filed Docs') ?></legend>
 			<?php echo $this->Form->input('FiledDocuments.admin_index', array(
 			    'type' => 'checkbox',
 			   'label' => 'Index',
@@ -273,7 +273,7 @@
 		    
 		    <?php if (!in_array('DeletedDocuments', $disabledModules)): ?>
 		    <fieldset class="left right-mar-10">
-			<legend>Deleted Docs</legend>
+            <legend><?php __('Deleted Docs') ?></legend>
 		       <?php echo $this->Form->input('DeletedDocuments.all', array(
 			    'type' => 'checkbox',
 			   'label' => 'Index',
@@ -281,7 +281,7 @@
 		    </fieldset>
 		    <?php endif; ?>
 		    <br class="clear" />
-		    <?php echo $this->Form->end('Submit')?>
+			<?php echo $this->Form->end(__('Submit', true))?>    
 	</div>
 	<div id="SelfSign" class="x-hide-display">
 		<?php if(isset($controllers)) :?>
@@ -290,7 +290,7 @@
 		    <?php echo $this->Form->hidden('model', array('value' => $model));?>
 		    <?php if (!in_array('SelfSignLogs', $disabledModules)): ?>
 			    <fieldset class="left right-mar-10">
-				<legend>Self Sign</legend>
+                <legend><?php __('Self Sign') ?></legend>
 			       <?php echo $this->Form->input('SelfSignLogs.all', array(
 				    'type' => 'checkbox',
 				   	'label' => 'Index',
@@ -300,7 +300,7 @@
 			    
 			    <?php if (!in_array('SelfSignLogArchives', $disabledModules)): ?>
 			    <fieldset class="left right-mar-10">
-				<legend>Self Sign Archive</legend>
+                <legend><?php __('Self Sign Archive') ?></legend>
 			       <?php echo $this->Form->input('SelfSignLogArchives.all', array(
 				    'type' => 'checkbox',
 				   'label' => 'Index',
@@ -308,14 +308,14 @@
 			    </fieldset>
 			<?php endif; ?>	
 			<br class="clear" />
-			<?php echo $this->Form->end('Submit')?>    	
+			<?php echo $this->Form->end(__('Submit', true))?>    
 	</div>
 	<div id="Programs" class="x-hide-display">
 		    <?php echo $this->Form->create('permission', array('action' => 'set_permissions')) ?>
 		    <?php echo $this->Form->hidden('id', array('value' => $id));?>
 		    <?php echo $this->Form->hidden('model', array('value' => $model));?>		
 		    <fieldset class="left right-mar-10">
-				<legend>Programs</legend>
+                <legend><?php __('Programs') ?></legend>
 			       <?php echo $this->Form->input('Programs.admin_index', array(
 				    'type' => 'checkbox',
 				   	'label' => 'Index',
@@ -326,7 +326,7 @@
 				    'checked' => (isset($controllers['Programs']['admin_edit_instructions'])) ? $controllers['Programs']['admin_edit_instructions'] : '' ));?>		    
 			    </fieldset>
 		    <fieldset class="left right-mar-10">
-				<legend>Program Responses</legend>
+                <legend><?php __('Program Responses') ?></legend>
 			       <?php echo $this->Form->input('ProgramResponses.admin_index', array(
 				    'type' => 'checkbox',
 				   	'label' => 'Index',
@@ -346,7 +346,7 @@
 				 				    
 			    </fieldset>		    
 		    <br class="clear" />
-			<?php echo $this->Form->end('Submit')?>    	
+			<?php echo $this->Form->end(__('Submit', true))?>    
 	</div>
  
 	    <?php endif; ?>		
@@ -355,20 +355,20 @@
 		    <?php echo $this->Form->hidden('id', array('value' => $id));?>
 		    <?php echo $this->Form->hidden('model', array('value' => $model));?>		
 		    <fieldset class="left right-mar-10">
-			<legend>Tools</legend>
+            <legend><?php __('Tools') ?></legend>
 		       <?php echo $this->Form->input('Users.admin_resolve_login_issues', array(
 			    'type' => 'checkbox',
 			   	'label' => 'Resolve Login Issues',
 			    'checked' => (isset($controllers['Users']['admin_resolve_login_issues'])) ? $controllers['Users']['admin_resolve_login_issues'] : '' ));?>
 		    </fieldset>
 		    <br class="clear" />
-			<?php echo $this->Form->end('Submit')?>    
+			<?php echo $this->Form->end(__('Submit', true))?>    
 	</div>
 </div>
 <br class="clear" />
 <?php if($model == 'User') : ?>
 	<p>
-		<?php echo $this->Html->link('Reset User Permissions', array(
+		<?php echo $this->Html->link(__('Reset User Permissions', true), array(
 			'action' => 'delete_permissions', 'admin' => true, $aroId, $id));?>
 	</p>	
 <?php endif ?>

@@ -1,6 +1,6 @@
 <div id="crumbWrapper">
-    <span>You are here > </span>
-<?php echo $crumb->getHtml('Add Helpful Article', null, 'unique'); ?></div>
+    <span><?php __('You are here') ?> > </span>
+<?php echo $crumb->getHtml(__('Add Helpful Article', true), null, 'unique'); ?></div>
 <div class="helpfulArticles form admin">
     <div class="actions ui-widget-header">
 	<ul></ul>

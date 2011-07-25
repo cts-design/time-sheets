@@ -14,8 +14,8 @@
 <?php echo $this->Html->script('filed_documents/edit' ,array('inline' => false)) ?>
 
 <div id="crumbWrapper">
-    <span>You are here > </span>
-    <?php echo $crumb->getHtml('Edit Document', null, 'action') ; ?>
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('Edit Document', true), null, 'action') ; ?>
 </div>
 <div class="filedDocuments form admin">
     <div class="actions ui-widget-header">

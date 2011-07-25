@@ -7,7 +7,7 @@
  */
 ?>
 <div id="crumbWrapper">
-    <span>You are here > </span>
+<span><?php __('You are here') ?> > </span>
     <?php echo $crumb->getHtml('Activity', null, 'unique') ; ?>
 </div>
 <div class="userTransactions admin">
