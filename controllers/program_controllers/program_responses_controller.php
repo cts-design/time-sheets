@@ -213,10 +213,10 @@ class ProgramResponsesController extends AppController {
 							break;
 						case 'closed':
 							$conditions['ProgramResponse.complete'] = 1;
-							$conditions['ProgramResponse.needs_approval'] = 0;
-							$conditions['ProgramResponse.expires_on >'] = date('Y-m-d H:i:s'); 							
+							$conditions['ProgramResponse.needs_approval'] = 0;							
 							break;
 						case 'expired':
+							$conditions['ProgramResponse.complete'] = 0;
 							$conditions['ProgramResponse.expires_on <'] = date('Y-m-d H:i:s');  
 							break;							
 						case 'unapproved':
