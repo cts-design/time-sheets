@@ -495,6 +495,7 @@ class ProgramResponsesController extends AppController {
 					}
 									
 					$this->data['FiledDocument']['id'] = $docId;
+					$this->data['FiledDocument']['created'] = date('Y-m-d H:i:s');
 					$this->data['FiledDocument']['filename'] = $pdf;
 					$this->data['FiledDocument']['admin_id'] = $this->Auth->user('id');
 					$this->data['FiledDocument']['user_id'] = $data['id'];
@@ -503,7 +504,8 @@ class ProgramResponsesController extends AppController {
 					$this->data['FiledDocument']['cat_2'] = $programPaperForm['ProgramPaperForm']['cat_2'];
 					$this->data['FiledDocument']['cat_3'] = $programPaperForm['ProgramPaperForm']['cat_3'];
 					$this->data['FiledDocument']['entry_method'] = 'Program Generated';
-					$this->data['FiledDocument']['last_activity_admin_id'] = $this->Auth->user('id');					
+					$this->data['FiledDocument']['last_activity_admin_id'] = $this->Auth->user('id');
+					$this->data['ProgramResponseDoc']['created'] = date('Y-m-d H:i:s');					
 					$this->data['ProgramResponseDoc']['cat_id'] = $programPaperForm['ProgramPaperForm']['cat_3'];
 					$this->data['ProgramResponseDoc']['program_response_id'] =  $programResponseId;
 					$this->data['ProgramResponseDoc']['doc_id'] = $docId;
