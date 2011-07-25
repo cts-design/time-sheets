@@ -122,7 +122,7 @@ $(document).ready(function() {
 		echo $this->Form->input('address_1', array(
 			'label' => __('Address', true),
 			'between' => '<br />',
-			'after' => '<br />'));
+			'after' => '<strong>&nbspNo P.O. Box Addresses accepted.<strong></span><br />'));
 		echo $this->Form->input('city', array(
 			'label' => __('City', true),
 			'between' => '<br />',
