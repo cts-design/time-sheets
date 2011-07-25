@@ -263,12 +263,7 @@ class ProgramResponsesController extends AppController {
 									$response['ProgramResponse']['id'].'">View</a> | ' . 
 									'<a href="/admin/program_responses/toggle_expired/' . 
 									$response['ProgramResponse']['id'] . '/unexpire'.'" class="expire">Mark Un-Expired</a>';							
-						}
-						elseif($this->params['url']['filter'] == 'unapproved'){
-							$data['responses'][$i]['actions'] = 
-								'<a href="/admin/program_responses/view/'. 
-									$response['ProgramResponse']['id'].'">View</a>';							
-						}							
+						}						
 						else {
 							$data['responses'][$i]['actions'] = 
 								'<a href="/admin/program_responses/view/'. 
