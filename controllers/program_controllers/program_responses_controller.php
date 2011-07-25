@@ -471,6 +471,7 @@ class ProgramResponsesController extends AppController {
 			$data['dob'] = date('m/d/Y', strtotime($data['dob']));		
 			$data['admin'] = $this->Auth->user('firstname') . ' ' . $this->Auth->user('lastname');
 			$data['todays_date'] = date('m/d/Y');
+			$data['form_completed'] = date('m/d/Y', strtotime($programResponse['ProgramResponse']['created']));
 			
 			if($programPaperForm) {				
 				$pdf = $this->_createPDF($data, $programPaperForm['ProgramPaperForm']['template']);
