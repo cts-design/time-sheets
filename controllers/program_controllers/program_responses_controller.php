@@ -467,6 +467,7 @@ class ProgramResponsesController extends AppController {
 				}
 			}
 			
+			$data['masked_ssn'] = '***-**-' . substr($data['ssn'], -4);
 			$data['conformation_id'] = $programResponse['ProgramResponse']['conformation_id'];			
 			$data['dob'] = date('m/d/Y', strtotime($data['dob']));		
 			$data['admin'] = $this->Auth->user('firstname') . ' ' . $this->Auth->user('lastname');
