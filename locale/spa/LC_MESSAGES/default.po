@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Atlas v3\n"
 "POT-Creation-Date: 2011-07-25 10:21-0400\n"
-"PO-Revision-Date: 2011-07-25 10:48-0500\n"
+"PO-Revision-Date: 2011-07-26 08:39-0500\n"
 "Last-Translator: Brandon Cordell <brandonc@ctsfla.com>\n"
 "Language-Team: Complete Technology Solutions\n"
 "MIME-Version: 1.0\n"
@@ -801,15 +801,15 @@ msgstr "Aco completa actualización de la"
 
 #: /plugins/acl_extras/vendors/shells/acl_extras.php:167
 msgid "Deleted %s and all children"
-msgstr "% S eliminado y todos los niños"
+msgstr "%s eliminado y todos los niños"
 
 #: /plugins/acl_extras/vendors/shells/acl_extras.php:208
 msgid "Created Aco node: %s"
-msgstr "Creado el nodo Aco:%s"
+msgstr "Creado el nodo Aco: %s"
 
 #: /plugins/acl_extras/vendors/shells/acl_extras.php:244
 msgid "Deleted Aco node %s"
-msgstr "Eliminado el nodo Aco%s"
+msgstr "Eliminado el nodo Aco %s"
 
 #: /plugins/acl_extras/vendors/shells/acl_extras.php:259
 msgid "Usage: cake acl_extras <command>"
@@ -960,7 +960,7 @@ msgstr "Buscadores de la carrera Encuesta"
 #: /views/career_seekers_surveys/index.ctp:274
 #: /views/employers_surveys/index.ctp:221
 msgid "Please share any comments or suggestions you have regarding %s, our Business Services or the %s website. Please enter your name, phone number and email address here, if you would like our staff to contact you."
-msgstr "Por favor comparta cualquier comentario o sugerencia que usted tenga con respecto a%s, nuestros servicios de negocio o sitio web de la%s. Por favor, introduzca su nombre, número de teléfono y dirección de correo electrónico, si desea que nuestro personal en contacto con usted."
+msgstr "Por favor comparta cualquier comentario o sugerencia que usted tenga con respecto a %s, nuestros servicios de negocio o sitio web de la %s. Por favor, introduzca su nombre, número de teléfono y dirección de correo electrónico, si desea que nuestro personal en contacto con usted."
 
 #: /views/career_seekers_surveys/index.ctp:281
 #: /views/chairman_reports/admin_add.ctp:26
@@ -1121,7 +1121,7 @@ msgstr "Eliminar carrera Encuesta Solicitantes"
 #: /views/press_releases/admin_index.ctp:38
 #: /views/self_scan_categories/admin_view.ctp:55
 msgid "Are you sure you want to delete # %s?"
-msgstr "¿Está seguro que desea eliminar #%s?"
+msgstr "¿Está seguro que desea eliminar # %s?"
 
 #: /views/career_seekers_surveys/view.ctp:31
 msgid "List Career Seekers Surveys"
@@ -1239,7 +1239,7 @@ msgstr "Borrar"
 #: /views/users/admin_index.ctp:80
 #: /views/users/admin_index_admin.ctp:96
 msgid "Page %page% of %pages%, showing %current% records out of %count% total, starting on record %start%, ending on %end%"
-msgstr "%% Page Página de%% páginas, mostrando registros actual%% del total de% count%, a partir del Inicio de la%%, hasta el%% final"
+msgstr "Page %page% de %pages%, que muestra %current% de los registros %count% en total, a partir del registro %start%, hasta el %end%"
 
 #: /views/chairman_reports/admin_index.ctp:51
 #: /views/chairman_reports/index.ctp:34
@@ -2011,7 +2011,7 @@ msgstr "¿Está seguro que desea eliminar este quiosco?"
 
 #: /views/kiosks/kiosk_self_scan_another_document.ctp:10
 msgid "Would you like to scan another document for %s, %s?"
-msgstr "¿Quieres escanear otro documento de%s,%s?"
+msgstr "¿Quieres escanear otro documento de %s, %s?"
 
 #: /views/kiosks/kiosk_self_scan_another_document.ctp:13
 msgid "Yes Scan Another"
@@ -2023,11 +2023,11 @@ msgstr "No Desconectarse"
 
 #: /views/kiosks/kiosk_self_scan_document.ctp:13
 msgid "Scan document for %s, %s"
-msgstr "Escaneo de documentos para%s%s,"
+msgstr "Escaneo de documentos para %s, %s"
 
 #: /views/kiosks/kiosk_self_scan_document.ctp:16
 msgid "You are about to be logged out of the system in <span>1</span>&nbsp;seconds due to inactivity."
-msgstr "Usted está a punto de ser desconectado del sistema en <span>un segundo</span> debido a la inactividad."
+msgstr "Usted está a punto de ser desconectado del sistema en <span>1</span> segundo debido a la inactividad."
 
 #: /views/kiosks/kiosk_self_scan_document.ctp:17
 msgid "Click here to continue using this page"
@@ -2047,7 +2047,7 @@ msgstr "4. Si es necesario"
 
 #: /views/kiosks/kiosk_self_scan_program_selection.ctp:10
 msgid "Select program to scan document for %s, %s"
-msgstr "Seleccione el programa para escanear documento para%s,%s"
+msgstr "Seleccione el programa para escanear documento para %s, %s"
 
 #: /views/kiosks/kiosk_self_scan_program_selection.ctp:24;36
 #: /views/kiosks/kiosk_self_sign_other.ctp:22
@@ -2113,16 +2113,16 @@ msgid "Logout"
 msgstr "Cerrar sesión"
 
 #: /views/layouts/default.ctp:57
-msgid "<strong>Logged in as: %s %s</strong> |"
-msgstr "<strong>Conectado como:%s%s</strong> |"
+msgid "<strong>Logged in as: %s %s</strong> | "
+msgstr "<strong>Conectado como: %s %s</strong> | "
 
 #: /views/layouts/default.ctp:74
 msgid "%s is an equal opportunity employer/program. Auxiliary aids and services are available upon request to individuals with disabilities. All voice telephone numbers listed on this website may be reached by persons using TTY/TDD equipment via the Florida Relay Service at 711."
-msgstr "% S es una igualdad de oportunidad / programa. Ayudas y servicios auxiliares están disponibles a pedido de personas con discapacidad. Todos los números telefónicos que aparecen en este sitio web pueden ser utilizados por personas con equipo TTY / TDD a través del Servicio de Retransmisión de Florida al 711."
+msgstr "%$ es una igualdad de oportunidad / programa. Ayudas y servicios auxiliares están disponibles a pedido de personas con discapacidad. Todos los números telefónicos que aparecen en este sitio web pueden ser utilizados por personas con equipo TTY / TDD a través del Servicio de Retransmisión de Florida al 711."
 
 #: /views/layouts/default.ctp:75
 msgid "Copyright &copy; %s - %s. All Rights Reserved. Developed &amp; Hosted by Complete Technology Solutions"
-msgstr "Copyright ©%s -%s. Todos los derechos reservados. Desarrollado y Hospedado por Soluciones Tecnológicas completa"
+msgstr "Copyright © %s - %s. Todos los derechos reservados. Desarrollado y Hospedado por Soluciones Tecnológicas completa"
 
 #: /views/layouts/kiosk.ctp:69
 msgid "%s is an equal opportunity employer/program. Auxiliary aids and services are available upon request to individuals with disabilities."
@@ -2134,7 +2134,7 @@ msgstr "Todos los números telefónicos que aparecen en este sitio web pueden se
 
 #: /views/layouts/kiosk.ctp:73
 msgid "ATLAS is a trademark of Complete Technology Solutions Copyright &copy; %s - Complete Technology Solutions. All Rights Reserved.</span>"
-msgstr "ATLAS es una marca comercial de la tecnología completa de soluciones de Derechos de Autor © s% - Soluciones Integrales de Tecnología. Todos los derechos reservados."
+msgstr "ATLAS es una marca comercial de la tecnología completa de soluciones de Derechos de Autor © %s - Soluciones Integrales de Tecnología. Todos los derechos reservados."
 
 #: /views/locations/admin_add.ctp:14
 msgid "Add Location"
@@ -2837,12 +2837,15 @@ msgstr "denota el administrador ha anulado los permisos del rol"
 msgid "Forgot Password?"
 msgstr "¿Olvidó su contraseña?"
 
+msgid "Username"
+msgstr "Nombre de usuario"
+
 #: /views/users/child_login.ctp:3
 msgid ""
 "Welcome to the %s Online Services System. To begin, please log in\n"
 "                         with your child's last name and the last 4 digits of your child's \n"
 "                         social security number"
-msgstr "Bienvenido al sistema de la línea%s Servicios. Para empezar, por favor, acceda con el apellido de su hijo y los últimos 4 dígitos de su número de seguro social del niño"
+msgstr "Bienvenido al sistema de la línea %s Servicios. Para empezar, por favor, acceda con el apellido de su hijo y los últimos 4 dígitos de su número de seguro social del niño"
 
 #: /views/users/child_login.ctp:18
 msgid "Child's Last 4 SSN"
@@ -2852,7 +2855,7 @@ msgstr "Hijo últimos 4 SSN"
 #: /views/users/kiosk_self_sign_login.ctp:29
 #: /views/users/login.ctp:29
 msgid "Login"
-msgstr "Login"
+msgstr "Iniciar sesión"
 
 #: /views/users/child_registration.ctp:22
 msgid "We currently do not have a record for your child."
@@ -2907,7 +2910,7 @@ msgstr "Por favor confirmar el número de Seguro Social"
 
 #: /views/users/child_registration.ctp:120
 msgid "Child's Birth Date <span class=\"small gray\">(mm/dd/yyyy)</span>"
-msgstr "Fecha de Nacimiento del niño <span class=\"small gray\">(dd / mm / aaaa)</span>"
+msgstr "Fecha de Nacimiento del niño <span class=\"small gray\">(mm/dd/yyyy)</span>"
 
 #: /views/users/child_registration.ctp:127
 msgid "Child's Address"
@@ -2964,7 +2967,7 @@ msgstr "Por favor completa el siguiente formulario."
 #: /views/users/kiosk_mini_registration.ctp:49
 #: /views/users/registration.ctp:118
 msgid "Birth Date <span class=\"small gray\">(mm/dd/yyyy)</span>"
-msgstr "Fecha de nacimiento <span class=\"small gray\">(dd / mm / aaaa)</span>"
+msgstr "Fecha de nacimiento <span class=\"small gray\">(mm/dd/yyyy)</span>"
 
 #: /views/users/kiosk_mini_registration.ctp:63
 #: /views/users/registration.ctp:145
@@ -2977,7 +2980,7 @@ msgstr "Cancelar"
 
 #: /views/users/kiosk_self_sign_login.ctp:11
 msgid "Welcome to %s. Please sign in here."
-msgstr "Bienvenido a%s. Por favor, regístrate aquí."
+msgstr "Bienvenido a %s. Por favor, regístrate aquí."
 
 #: /views/users/kiosk_self_sign_login.ctp:23
 msgid "Last 4 Digits of Your SSN"
@@ -2988,7 +2991,7 @@ msgid ""
 "Welcome to the %s Online Services System. To being, please log in with\n"
 "                         your last name and the last 4 digits of your social security\n"
 "                         number"
-msgstr "Bienvenido al sistema de la línea%s Servicios. De ser, por favor ingrese con su apellido y los últimos 4 dígitos de su número de seguro social"
+msgstr "Bienvenido al sistema de la línea %s Servicios. De ser, por favor ingrese con su apellido y los últimos 4 dígitos de su número de seguro social"
 
 #: /views/users/login.ctp:25
 msgid "Last 4 SSN"
@@ -3053,3 +3056,4 @@ msgstr "Carrera"
 #: /webroot/test.default.php:88
 msgid "Debug setting does not allow access to this url."
 msgstr "Configuración de depuración no permite el acceso a esta URL."
+
