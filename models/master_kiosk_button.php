@@ -23,6 +23,15 @@ class MasterKioskButton extends AppModel {
 	    )
 	)
     );
+	
+	var $actsAs = array(
+		'Translatable' => array(
+			'name'
+		),
+		'Translate' => array(
+			'name'
+		)
+	);
 
     var $hasMany = array(
 	'KioskButton' => array(
@@ -40,5 +49,9 @@ class MasterKioskButton extends AppModel {
 	}
 	return false;
     }
+	
+	function aftersave() {
+		
+	}
 
 }
