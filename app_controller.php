@@ -104,7 +104,7 @@ class AppController extends Controller {
 			    );
 		}
 		else {
-		    $this->Auth->allow('display');
+		    $this->Auth->allow('display', 'set_language');
 		}
 		
 		if($this->Auth->user()) {
@@ -202,6 +202,11 @@ class AppController extends Controller {
 			$this->_setAutoCompleteOptions($query);
 			$this->render('/elements/app_controller/auto_complete_ajax');
 		}
+	}
+
+	function set_language() {
+		$this->Session->write('Config.language', 'es-es');
+		$this->redirect($this->referer(), null, true); 
 	}
 
     function _setAutoCompleteOptions($query) {
