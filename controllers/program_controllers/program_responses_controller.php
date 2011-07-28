@@ -213,10 +213,10 @@ class ProgramResponsesController extends AppController {
 							break;
 						case 'closed':
 							$conditions['ProgramResponse.complete'] = 1;
-							$conditions['ProgramResponse.needs_approval'] = 0;
-							$conditions['ProgramResponse.expires_on >'] = date('Y-m-d H:i:s'); 							
+							$conditions['ProgramResponse.needs_approval'] = 0;							
 							break;
 						case 'expired':
+							$conditions['ProgramResponse.complete'] = 0;
 							$conditions['ProgramResponse.expires_on <'] = date('Y-m-d H:i:s');  
 							break;							
 						case 'unapproved':
@@ -263,12 +263,7 @@ class ProgramResponsesController extends AppController {
 									$response['ProgramResponse']['id'].'">View</a> | ' . 
 									'<a href="/admin/program_responses/toggle_expired/' . 
 									$response['ProgramResponse']['id'] . '/unexpire'.'" class="expire">Mark Un-Expired</a>';							
-						}
-						elseif($this->params['url']['filter'] == 'unapproved'){
-							$data['responses'][$i]['actions'] = 
-								'<a href="/admin/program_responses/view/'. 
-									$response['ProgramResponse']['id'].'">View</a>';							
-						}							
+						}						
 						else {
 							$data['responses'][$i]['actions'] = 
 								'<a href="/admin/program_responses/view/'. 
@@ -472,10 +467,12 @@ class ProgramResponsesController extends AppController {
 				}
 			}
 			
+			$data['masked_ssn'] = '***-**-' . substr($data['ssn'], -4);
 			$data['conformation_id'] = $programResponse['ProgramResponse']['conformation_id'];			
 			$data['dob'] = date('m/d/Y', strtotime($data['dob']));		
 			$data['admin'] = $this->Auth->user('firstname') . ' ' . $this->Auth->user('lastname');
 			$data['todays_date'] = date('m/d/Y');
+			$data['form_completed'] = date('m/d/Y', strtotime($programResponse['ProgramResponse']['created']));
 			
 			if($programPaperForm) {				
 				$pdf = $this->_createPDF($data, $programPaperForm['ProgramPaperForm']['template']);
@@ -498,6 +495,7 @@ class ProgramResponsesController extends AppController {
 					}
 									
 					$this->data['FiledDocument']['id'] = $docId;
+					$this->data['FiledDocument']['created'] = date('Y-m-d H:i:s');
 					$this->data['FiledDocument']['filename'] = $pdf;
 					$this->data['FiledDocument']['admin_id'] = $this->Auth->user('id');
 					$this->data['FiledDocument']['user_id'] = $data['id'];
@@ -506,7 +504,8 @@ class ProgramResponsesController extends AppController {
 					$this->data['FiledDocument']['cat_2'] = $programPaperForm['ProgramPaperForm']['cat_2'];
 					$this->data['FiledDocument']['cat_3'] = $programPaperForm['ProgramPaperForm']['cat_3'];
 					$this->data['FiledDocument']['entry_method'] = 'Program Generated';
-					$this->data['FiledDocument']['last_activity_admin_id'] = $this->Auth->user('id');					
+					$this->data['FiledDocument']['last_activity_admin_id'] = $this->Auth->user('id');
+					$this->data['ProgramResponseDoc']['created'] = date('Y-m-d H:i:s');					
 					$this->data['ProgramResponseDoc']['cat_id'] = $programPaperForm['ProgramPaperForm']['cat_3'];
 					$this->data['ProgramResponseDoc']['program_response_id'] =  $programResponseId;
 					$this->data['ProgramResponseDoc']['doc_id'] = $docId;

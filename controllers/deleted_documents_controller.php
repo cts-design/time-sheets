@@ -81,7 +81,8 @@ class DeletedDocumentsController extends AppController {
 	}
 	$lastActivityAdmin = $this->Auth->user('id');
 	$doc = $this->DeletedDocument->read(null, $id);
-	if($doc['DeletedDocument']['user_id'] == null && $doc['DeletedDocument']['cat_1'] == null) {
+	if($doc['DeletedDocument']['cat_1'] == null && $doc['DeletedDocument']['cat_2'] == null && 
+		$doc['DeletedDocument']['cat_3'] == null) {
 	    $doc['QueuedDocument'] = $doc['DeletedDocument'];
 	    unset($doc['DeletedDocument']);
 	    unset($doc['QueuedDocument']['modified']);

@@ -122,12 +122,11 @@ $(document).ready(function() {
 			'maxlength' => 10,
 			'between' => '<br />',
 			'after' => '<br />'));
-
+		
 		echo $this->Form->input('address_1', array(
 			'label' => __('Child\'s Address', true),
 			'between' => '<br />',
-			'after' => '<br />'));
-
+			'after' => '<span><strong>&nbspNo P.O. Box Addresses accepted.<strong></span><br />'));
 		echo $this->Form->input('city', array(
 			'label' => __('Child\'s City', true),
 			'between' => '<br />',

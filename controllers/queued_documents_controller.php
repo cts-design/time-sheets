@@ -158,7 +158,8 @@ class QueuedDocumentsController extends AppController {
 			    array('conditions' => array('DocumentFilingCategory.parent_id' => null, 'DocumentFilingCategory.disabled' => 0))),
 		    'locations' => $locations,
 		    'reasons' => $this->reasons,
-		    'queueCategories' => $this->QueuedDocument->DocumentQueueCategory->find('list', array('conditions')),
+		    'queueCategories' => $this->QueuedDocument->DocumentQueueCategory->find('list', array(
+		    	'conditions' => array('DocumentQueueCategory.deleted' => 0))),
 		    'locationId' => $locationId,
 		    'queuedDocId' => $queuedDocId,
 		    'from' => $from,

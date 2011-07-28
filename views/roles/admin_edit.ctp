@@ -24,6 +24,11 @@
 	    'between' => '</p><p class="left">',
 	    'after' => '</p>'));
 	echo '<br class="clear" />';
+		echo $this->Form->input('can_view_full_ssn', array(
+							'before' => '<p class="left" style="margin-top: 10px">',
+							'between' => '</p><p class="left" style="margin-top: 4px; width: 112px">',
+                            'after' => '</p>',
+                            'label' => 'Can view full SSNs'));
 	?>
     </fieldset>
     <?php echo $this->Form->end(__('Submit', true)); ?>

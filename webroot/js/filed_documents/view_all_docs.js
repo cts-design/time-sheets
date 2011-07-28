@@ -121,7 +121,9 @@ var searchTypeStore = new Ext.data.ArrayStore({
 		'lastname', 'Last Name'
 	], [
 		'last4', 'Last 4 SSN'
-	]]
+	], [
+    'fullssn', 'Full SSN'
+  ]]
 });
 
 var adminProxy = new Ext.data.HttpProxy({
@@ -386,12 +388,24 @@ var allDocsSearch = new Ext.form.FormPanel({
               Ext.getCmp('cusLastname').show();
               Ext.getCmp('cusLast4').disable();
               Ext.getCmp('cusLast4').hide();
+              Ext.getCmp('cusFullSsn').disable();
+              Ext.getCmp('cusFullSsn').hide();
             }
             if (record.id === 'last4') {
               Ext.getCmp('cusLast4').enable();
               Ext.getCmp('cusLast4').show();
               Ext.getCmp('cusLastname').disable();
               Ext.getCmp('cusLastname').hide();							
+              Ext.getCmp('cusFullSsn').disable();
+              Ext.getCmp('cusFullSsn').hide();
+            }
+            if (record.id === 'fullssn') {
+              Ext.getCmp('cusFullSsn').enable();
+              Ext.getCmp('cusFullSsn').show();
+              Ext.getCmp('cusLastname').disable();
+              Ext.getCmp('cusLastname').hide();							
+              Ext.getCmp('cusLast4').disable();
+              Ext.getCmp('cusLast4').hide();
             }
           }
         }
@@ -403,13 +417,34 @@ var allDocsSearch = new Ext.form.FormPanel({
         name: 'cusScope1',
         hiddenName: 'cusScope1',
         width: 200,
-        id: 'cusScope'
+        id: 'cusScope',
+        listeners: {
+          select: function(combo, record, index) {
+            if (record.data.field1 === 'containing') {
+              Ext.getCmp('cusLast4').minLength = 1;
+              Ext.getCmp('cusFullSsn').minLength = 3;
+            }
+            if (record.data.field1 === 'matching exactly') {
+              Ext.getCmp('cusLast4').minLength = 4;
+              Ext.getCmp('cusFullSsn').minLength = 9;
+            }
+          }
+        }
       }, {
         xtype: 'textfield',
         fieldLabel: 'Search',
         name: 'cusSearch1',
         id: 'cusLast4',
         maxLength: 4,
+        width: 200
+      }, {
+        xtype: 'textfield',
+        fieldLabel: 'Search',
+        hidden: true,
+        disabled: true,
+        name: 'cusSearch1',
+        id: 'cusFullSsn',
+        maxLength: 9,
         width: 200
       }, {
         xtype: 'textfield',
@@ -445,13 +480,26 @@ var allDocsSearch = new Ext.form.FormPanel({
               Ext.getCmp('cusLastname2').show();
               Ext.getCmp('cusLast4_2').disable();
               Ext.getCmp('cusLast4_2').hide();
+              Ext.getCmp('cusFullSsn_2').disable();
+              Ext.getCmp('cusFullSsn_2').hide();
             }
             if (record.id === 'last4') {
               Ext.getCmp('cusLast4_2').enable();
               Ext.getCmp('cusLast4_2').show();
               Ext.getCmp('cusLastname2').disable();
               Ext.getCmp('cusLastname2').hide();							
+              Ext.getCmp('cusFullSsn_2').disable();
+              Ext.getCmp('cusFullSsn_2').hide();
             }
+            if (record.id === 'fullssn') {
+              Ext.getCmp('cusFullSsn_2').enable();
+              Ext.getCmp('cusFullSsn_2').show();
+              Ext.getCmp('cusLast4_2').disable();
+              Ext.getCmp('cusLast4_2').hide();
+              Ext.getCmp('cusLastname2').disable();
+              Ext.getCmp('cusLastname2').hide();							
+            }
+            console.log(record)
           }
         }
       }, {
@@ -462,7 +510,19 @@ var allDocsSearch = new Ext.form.FormPanel({
 				name: 'cusScope2',
 				hiddenName: 'cusScope2',
 				width: 200,
-				id: 'cusScope1'
+				id: 'cusScope1',
+        listeners: {
+          select: function(combo, record, index) {
+            if (record.data.field1 === 'containing') {
+              Ext.getCmp('cusLast4_2').minLength = 1;
+              Ext.getCmp('cusFullSsn_2').minLength = 3;
+            }
+            if (record.data.field1 === 'matching exactly') {
+              Ext.getCmp('cusLast4_2').minLength = 4;
+              Ext.getCmp('cusFullSsn_2').minLength = 9;
+            }
+          }
+        }
 			}, {
 				xtype: 'textfield',
 				fieldLabel: 'Search',
@@ -471,6 +531,15 @@ var allDocsSearch = new Ext.form.FormPanel({
 				maxLength: 4,
 				width: 200
 			}, {
+				xtype: 'textfield',
+				fieldLabel: 'Search',
+				name: 'cusSearch2',
+				id: 'cusFullSsn_2',
+				hidden: true,
+				disabled: true,
+				maxLength: 9,
+				width: 200
+      }, {
 				xtype: 'textfield',
 				fieldLabel: 'Search',
 				hidden: true,

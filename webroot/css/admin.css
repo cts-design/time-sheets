@@ -444,29 +444,20 @@ div.actions .ui-button-text {
     margin: 10px 0 0 10px;
 }
 
-#selfSignSearch {
-    margin-bottom: 20px;
+#SelfSignReassign {
+	margin-bottom: 20px;
 }
-
-#selfSignSearch select{
-    width: 300px;
+/* remove the trigger and the mouse-cursor-hand from groupable-grid-headers */
+#selfSignGrid .x-grid-group-hd {
+    border-bottom: 2px solid #99bbe8;
+    cursor:default;
+    padding-top:6px;
 }
-
-#selfSignSearch label {
-    margin-right: 10px;
-}
-
-#selfSignSearch li{
-    margin-right: 10px;
-}
-
-#selfSignSearch li {
-    float: left;
-}
-
-#selfSignSearch .scrollingCheckboxes {
-    width: 250px;
-    border: thin solid #999;
+#selfSignGrid .x-grid-group-hd div {
+    background-image: none;
+    padding:4px 4px 4px 4px;
+    color:#3764a0;
+    font:bold 11px tahoma, arial, helvetica, sans-serif;
 }
 
 #manageButtons label {
@@ -897,7 +888,17 @@ div.actions .ui-button-text {
 
 
 
-
+.x-grid-group-hd {
+    border-bottom: 2px solid #99bbe8;
+    cursor:default;
+    padding-top:6px;
+}
+.x-grid-group-hd div {
+    background-image: none;
+    padding:4px 4px 4px 4px;
+    color:#3764a0;
+    font:bold 11px tahoma, arial, helvetica, sans-serif;
+}
 
 
 /** Debugging **/
