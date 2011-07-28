@@ -66,7 +66,7 @@
 		<?php echo $content_for_layout; ?>
 	    </div>
 		<div style="margin: 10px 0 0" id="speakspanish">
-	    	<p style="font-family: Arial, 'sans-serif'; font-size: 16px; text-align: center;">Habla español? <a class="no-button" href="/kiosks/set_language">Haga clic aquí</a></p> </div>
+	    	<p style="font-family: Arial, 'sans-serif'; font-size: 16px; text-align: center;">Habla español? <a class="no-button" href="/kiosk/kiosks/set_language">Haga clic aquí</a></p> </div>
 	    <div id="footer">
         <span id="copyright" class="left">
         <?php printf(__('%s is an equal opportunity employer/program. Auxiliary aids and services are available upon request to individuals with disabilities.', true), Configure::read('Company.name')) ?>

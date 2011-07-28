@@ -18,6 +18,8 @@ class KiosksController extends AppController {
 		}
 		$this->Cookie->name = 'self_sign';
 		$this->Cookie->domain = Configure::read('domain'); 
+
+        $this->Auth->allow('kiosk_set_language');
 	}
 
     function admin_index() {
@@ -404,4 +406,8 @@ class KiosksController extends AppController {
 		}
     }
 
+	function kiosk_set_language() {
+		$this->Session->write('Config.language', 'es-es');
+		$this->redirect($this->referer(), null, true); 
+	}
 }
