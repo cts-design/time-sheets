@@ -138,7 +138,7 @@ class KiosksController extends AppController {
 		}
 		$this->loadModel('MasterKioskButton');
 		$this->MasterKioskButton->recursive = -1;
-		$masterButtonList = $this->MasterKioskButton->find('list');
+		$masterButtonList = $this->MasterKioskButton->find('list', array('fields' => 'MasterKioskButton.name'));
 		$masterButtonTagList = $this->MasterKioskButton->find('list', array(
 			'fields' => array('MasterKioskButton.id', 'MasterKioskButton.tag'), 
 			'conditions' => array('MasterKioskButton.deleted' => 0)));
