@@ -28,7 +28,7 @@ class MasterKioskButton extends AppModel {
 		'Translatable' => array(
 			'name'
 		),
-		'Translate' => array(
+		'AtlasTranslate' => array(
 			'name'
 		)
 	);
