@@ -204,10 +204,6 @@ class AppController extends Controller {
 		}
 	}
 
-	function set_language() {
-		$this->Session->write('Config.language', 'es-es');
-		$this->redirect($this->referer(), null, true); 
-	}
 
     function _setAutoCompleteOptions($query) {
 		if(empty($query)) {
