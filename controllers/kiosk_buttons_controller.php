@@ -157,13 +157,26 @@ class KioskButtonsController extends AppController {
 		$masterButtons = $this->MasterKioskButton->find('threaded', array('conditions' => array('MasterKioskButton.deleted !=' => 1),
 			'order' => array('MasterKioskButton.id',
 				'MasterKioskButton.id DESC')));
-		$masterButtonNames = $this->MasterKioskButton->find('list', array('conditions' => array('MasterKioskButton.deleted !=' => 1)));
+
+		$this->MasterKioskButton->recursive = 1;
+		$masterButtonNames = $this->MasterKioskButton->find('list', array('conditions' => array('MasterKioskButton.deleted !=' => 1),
+			'fields' => array('MasterKioskButton.name')));
+
 		$masterButtonParentIds = $this->MasterKioskButton->find('list', array('conditions' => array('MasterKioskButton.deleted !=' => 1),
 			'fields' => array('MasterKioskButton.parent_id')));
+
 		$this->KioskButton->primaryKey = 'id';
 		$locationButtons = $this->KioskButton->find('threaded', array('conditions' => array('KioskButton.status !=' => 1,
 			'KioskButton.kiosk_id' => $id),
 			'order' => array('KioskButton.order' => 'asc')));
+
+		// this is needed for the translations
+		// without this, the page will load blank.
+		foreach ($locationButtons as $key => $value) {
+			$locationButtons[$key]['MasterKioskButton']['name'] =
+				$masterButtonNames[$locationButtons[$key]['MasterKioskButton']['id']];
+		}
+
 		$vars = array('masterButtonParentIds' => $masterButtonParentIds,
 			'masterButtonNames' => $masterButtonNames,
 			'masterButtons' => $masterButtons,
