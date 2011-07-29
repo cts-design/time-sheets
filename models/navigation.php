@@ -8,7 +8,15 @@
 class Navigation extends AppModel {
 	var $name = 'Navigation';
 	var $displayField = 'title';
-    var $actsAs = array('Tree');
+    var $actsAs = array(
+    	'Tree',
+    	'Translatable' => array(
+			'title'
+		),
+		'AtlasTranslate' => array(
+			'title'
+		)
+    );
     var $order = 'Navigation.lft ASC';
 
     /**

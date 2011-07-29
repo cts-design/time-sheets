@@ -2,7 +2,14 @@
 class HotJob extends AppModel {
 	var $name = 'HotJob';
 	var $displayField = 'title';
-	
+	var $actsAs = array(
+		'Translatable' => array(
+			'title', 'description', 'contact'
+		),
+		'AtlasTranslate' => array(
+			'title', 'description', 'contact'
+		)
+	);
 	var $validate = array(
 		'employer' => array(
 			'notEmpty' => array(

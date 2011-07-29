@@ -10,6 +10,14 @@ class Page extends AppModel {
 
     var $name = 'Page';
     var $displayField = 'title';
+	var $actsAs = array(
+		'Translatable' => array(
+			'title', 'content'
+		),
+		'AtlasTranslate' => array(
+			'title', 'content'
+		)
+	);	
     var $validate = array(
         'title' => array(
             'alphaNumericPlus' => array(

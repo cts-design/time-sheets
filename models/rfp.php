@@ -2,7 +2,14 @@
 class Rfp extends AppModel {
 	var $name = 'Rfp';
 	var $displayField = 'title';
-	
+    var $actsAs = array(
+    	'Translatable' => array(
+			'title', 'byline', 'description'
+		),
+		'AtlasTranslate' => array(
+			'title', 'byline', 'description'
+		)
+    );	
 	var $validate = array(
 		'title' => array(
 			'notEmpty' => array(
