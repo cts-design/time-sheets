@@ -2,7 +2,14 @@
 class InTheNews extends AppModel {
 	var $name = 'InTheNews';
 	var $displayField = 'title';
-	
+	var $actsAs = array(
+		'Translatable' => array(
+			'title', 'summary'
+		),
+		'AtlasTranslate' => array(
+			'title', 'summary'
+		)
+	);	
 	var $validate = array(
 		'title' => array(
 			'notEmpty' => array(
