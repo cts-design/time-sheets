@@ -2,7 +2,11 @@
 class HelpfulArticlesController extends AppController {
 
 	var $name = 'HelpfulArticles';
-	
+	var $paginate = array(
+		'order' => array(
+			'HelpfulArticle.posted_date' => 'desc'
+		)
+	);
 	function beforeFilter() {
 		parent::beforeFilter();
 		$this->Auth->allow('index');
