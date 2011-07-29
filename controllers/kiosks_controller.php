@@ -406,8 +406,13 @@ class KiosksController extends AppController {
 		}
     }
 
-	function kiosk_set_language() {
-		$this->Session->write('Config.language', 'es-es');
+	function kiosk_set_language($lang) {
+		if ($lang === 'en') {
+			$this->Session->delete('Config.language');
+		} else if ($lang === 'es') {
+			$this->Session->write('Config.language', 'es-es');
+		}
+		
 		$this->redirect($this->referer(), null, true); 
 	}
 }
