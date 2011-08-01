@@ -51,6 +51,7 @@ class SelfSignLogsController extends AppController {
 			$data['success'] = true;
 			$data['logs'] = array();
 			if($selfSignLogs)	{
+				$kiosks = $this->_getKioskNames();
 				foreach($selfSignLogs as $selfSignLog) {
 					$data['logs'][$i]['id'] = $selfSignLog['SelfSignLog']['id'];
 					$data['logs'][$i]['status'] = $this->statuses[$selfSignLog['SelfSignLog']['status']]; 
@@ -75,7 +76,8 @@ class SelfSignLogsController extends AppController {
 					$data['logs'][$i]['admin'] = trim(ucfirst($selfSignLog['Admin']['lastname']) . ', ' .
 						ucfirst($selfSignLog['Admin']['firstname']), ',');
 					$data['logs'][$i]['location'] = $selfSignLog['Location']['name'];
-					$data['logs'][$i]['kioskId'] = $selfSignLog['SelfSignLog']['kiosk_id'];	
+					$data['logs'][$i]['kioskId'] = $selfSignLog['SelfSignLog']['kiosk_id'];
+					$data['logs'][$i]['kiosk'] = $kiosks[$selfSignLog['SelfSignLog']['kiosk_id']];		
 					$i++;	
 				}				
 			}
@@ -252,5 +254,12 @@ class SelfSignLogsController extends AppController {
 		return $this->MasterKioskButton->find('list', array(
 		    'fields' => array('MasterKioskButton.id', 'MasterKioskButton.name')));
     }
+	
+	function _getKioskNames(){
+		$this->loadModel('Kiosk');
+		return $this->Kiosk->find('list', array(
+		    'fields' => array('Kiosk.id', 'Kiosk.location_description'),
+		    'conditions' => array('Kiosk.deleted' => 0)));		
+	}
 
 }
