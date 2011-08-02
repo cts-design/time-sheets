@@ -38,7 +38,7 @@ class RoleFixture extends CakeTestFixture {
             array(
                     'id' => 4,
                     'name' => 'Custom 1',
-                    'can__view_full_ssn' => 1,
+                    'can_view_full_ssn' => 1,
                     'created' => '2010-11-10 16:00:26',
                     'modified' => '2010-11-10 16:00:26'
             ),

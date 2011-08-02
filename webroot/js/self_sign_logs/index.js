@@ -38,9 +38,13 @@ var rowIndex = null;
 
 var recordId = null;
 
+var userId = null;
+
 var kioskId = '';
 
 var buttonParentId = '';
+
+var locationId = null;
 
 var selfSignLogsProxy = new Ext.data.HttpProxy({
 	method: 'GET',
@@ -55,9 +59,9 @@ var selfSignLogsReader = new Ext.data.JsonReader({
 	fields: [
 		'id', 'status', 'firstname', 'lastname', 'last4', 'admin', 
 		{name: 'created', type: 'date', dateFormat: 'Y-m-d H:i:s'}, 
-		'location', 'service', 'kioskId'
+		'location', 'service', 'kioskId', 'userId', 'locationId'
 	]
-})
+});
 
 var selfSignLogsStore = new Ext.data.GroupingStore({
 	reader: selfSignLogsReader,
@@ -102,6 +106,7 @@ var level2ButtonsStore = new Ext.data.JsonStore({
 		load: function(store, records, options) {		
 			if(records[0] && records[0].data != undefined) {
 				level2Buttons.enable();
+				level2Buttons2.enable();
 			}
 		}
 	}
@@ -121,6 +126,7 @@ var level3ButtonsStore = new Ext.data.JsonStore({
 		load: function(store, records, options) {		
 			if(records[0] && records[0].data != undefined) {
 				level3Buttons.enable();
+				level3Buttons2.enable();
 			}
 		}
 	}
@@ -268,7 +274,7 @@ var reassign = new Ext.form.FormPanel({
 				        	var obj = Ext.decode(response.responseText);
 				        	if(obj.success) {   	
 					            selfSignLogsStore.reload();
-								Ext.Msg.alert('Success', obj.message)					        		
+								Ext.Msg.alert('Success', obj.message);					        		
 				        	}
 				        	else {
 				        		opts.failure();
@@ -276,7 +282,110 @@ var reassign = new Ext.form.FormPanel({
 				        },
 				        failure: function(response, opts){
 				        	var obj = Ext.decode(response.responseText);
-				            Ext.Msg.alert('Error', obj.message)
+				            Ext.Msg.alert('Error', obj.message);
+				        }
+				    });				
+				}				
+			}
+		}
+	}
+});
+
+var level1Buttons2 = level1Buttons.cloneConfig({
+	id: 'level1Buttons2',
+	listeners: {
+    	select: function(combo, record, index) {
+    		buttonParentId = record.data.id;
+    		level2ButtonsStore.load();
+    		level2Buttons2.reset();
+    		level2Buttons2.disable();
+    		level3Buttons2.reset();
+    		level3Buttons2.disable();
+    		other2.disable();    		
+    	},
+		beforequery: function(qe){
+            delete qe.combo.lastQuery;
+        }		
+	}
+});
+var level2Buttons2 = level2Buttons.cloneConfig({
+	id: 'level2Buttons2',
+    listeners: {
+    	select: function(combo, record, index) {
+    		buttonParentId = record.data.id;
+    		other2.disable();
+    		if(record.data.name  == 'Other' || record.data.name  == 'other') {
+    			other2.enable();
+    		}
+    		level3ButtonsStore.load();
+    		level3Buttons2.reset();
+    		level3Buttons2.disable();   		
+    	}
+    }	
+});
+var level3Buttons2 = level3Buttons.cloneConfig({
+	id: 'level3Buttons2',
+    listeners: {
+    	select: function(combo, record, index) {
+    		if(record.data.name  == 'Other' || record.data.name  == 'other') {
+    			other2.enable();
+    		}
+    	}	    	
+    }	
+});
+var other2 = other.cloneConfig({id: 'other2'});
+
+
+var newRecord = new Ext.form.FormPanel({
+	width: 285,
+	frame: true,
+	labelWidth: 40,
+	items: [
+		level1Buttons2,
+		level2Buttons2,
+		level3Buttons2,
+		other2
+	],
+	fbar: {
+		items: {
+			text: 'Save',
+			icon:  '/img/icons/save.png',
+			handler: function() {
+				var form = newRecord.getForm();
+				if(form.isValid()) {
+					var values = form.getValues();
+				    form.reset();
+					level2Buttons2.disable();
+					level3Buttons2.disable();
+				    other2.disable();
+				    if(contextMenu.isVisible()){
+				        contextMenu.hide(); 
+				    }  					
+				    Ext.Ajax.request({
+				        url: '/admin/self_sign_logs/new_record/',
+				        params: {
+				        	'data[SelfSignLog][user_id]':  userId,
+				        	'data[SelfSignLog][location_id]':  locationId,
+				        	'data[SelfSignLog][kiosk_id]':  kioskId,
+				        	'data[SelfSignLog][level_1]': values.level1,
+				        	'data[SelfSignLog][level_2]': values.level2,
+				        	'data[SelfSignLog][level_3]': values.level3,
+				        	'data[SelfSignLog][other]': values.other
+				        },
+				        success: function(response, opts){			        	
+				        	var obj = Ext.decode(response.responseText);
+				        	
+				        	if(obj.success) {  	
+					            selfSignLogsStore.reload();
+								Ext.Msg.alert('Success', obj.message);					        		
+				        	}
+				        	else {
+				        		opts.failure();
+				        	}		            
+				        },
+				        failure: function(response, opts){
+				        	var obj = Ext.decode(response.responseText);
+				            Ext.Msg.alert('Error', obj.message);
 				        },
 				    });				
 				}				
@@ -313,6 +422,7 @@ var contextMenu = new Ext.menu.Menu({
     }   	
   },{
   	text: 'Reassign',
+  	hidden: true,
   	id: 'cmReassign',
   	icon:  '/img/icons/arrow_undo.png',
 	menu: {
@@ -321,8 +431,19 @@ var contextMenu = new Ext.menu.Menu({
 			reassign
 		]
 	}
+  },{
+  	text: 'New Sign In',
+  	id: 'cmNewRecord',
+  	hidden: true,
+  	icon:  '/img/icons/add.png',
+	menu: {
+		width: 295,
+		items: [
+			newRecord
+		]
+	}  	
   }]
-})
+});
 
 var selfSignLogsGrid = new Ext.grid.GridPanel({
 	store: selfSignLogsStore,
@@ -399,18 +520,24 @@ var selfSignLogsGrid = new Ext.grid.GridPanel({
 	    			Ext.getCmp('cmOpen').hide();
 	    			Ext.getCmp('cmNotHelped').show();
 	    			Ext.getCmp('cmClose').show();
+	    			Ext.getCmp('cmReassign').show();
+	    			Ext.getCmp('cmNewRecord').hide();
 	    			break;
 	    		}
 	    		case 'Closed': {
 	    			Ext.getCmp('cmClose').hide();
 	    			Ext.getCmp('cmOpen').show();
 	    			Ext.getCmp('cmNotHelped').show();
+	    			Ext.getCmp('cmReassign').hide();
+	    			Ext.getCmp('cmNewRecord').show();
 	    			break;
 	    		}
 	    		case 'Not Helped': {
 	    			Ext.getCmp('cmNotHelped').hide();
 	    			Ext.getCmp('cmClose').show();
 	    			Ext.getCmp('cmOpen').show();
+	    			Ext.getCmp('cmReassign').hide();
+	    			Ext.getCmp('cmNewRecord').show();	    			
 	    			break;	    			
 	    		}
 	    	}		
@@ -418,10 +545,12 @@ var selfSignLogsGrid = new Ext.grid.GridPanel({
      		rowIndex = index;
      		recordId = record.data.id;
      		kioskId = record.data.kioskId; 
+     		userId = record.data.userId;
+     		locationId = record.data.locationId;
 		}
 	}
 
-})
+});
 
 var locationsProxy = new Ext.data.HttpProxy({
 	url: '/admin/locations/get_location_list',
@@ -477,13 +606,13 @@ var selfSignSearch = new Ext.form.FormPanel({
 						Ext.getCmp('servicesSelect').reset();
 						servicesStore.load({params: {
 							locations: this.getValue()
-						}})
+						}});
 					},
 					'removeitem' : function() {
 						Ext.getCmp('servicesSelect').reset();
 						servicesStore.load({params: {
 							locations: this.getValue()
-						}})						
+						}});						
 					}
 				}
 			}]
@@ -533,7 +662,7 @@ var selfSignSearch = new Ext.form.FormPanel({
 			selfSignLogsStore.load();
 		}
 	}]
-})
+});
 
 function updateStatus(id, status) {
     Ext.Ajax.request({
