@@ -36,16 +36,19 @@ class SelfSignLogsControllerTestCase extends AtlasTestCase {
 				'success' => TRUE,
 				'logs' => array(
 					0 => array(
-						'id' => 1,
-						'status' => 'Open',
-						'lastname' => 'Smith',
-						'firstname' => 'Daniel',
-						'last4' => 1234,
-						'service' => 'Orientations',
-						'created' => '2111-07-25 09:50:24',
-						'admin' => ' ',
-						'location' => 'Citrus',
-						'kioskId' => 2))));
+						'id'=>'1',
+						'status'=>'Open',
+						'lastname'=>'Smith',
+						'firstname'=>'Daniel',
+						'last4'=>'1234',
+						'userId'=>'9',
+						'service'=>'Orientations',
+						'created'=>'2111-07-25 09:50:24',
+						'admin'=>' ',
+						'location'=>'Citrus',
+						'locationId'=>'1',
+						'kioskId'=>'2',
+						'kiosk'=>'Lorem ipsum dolor sit amet'))));
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
 		$result = $this->testAction('/admin/self_sign_logs/index', array('method' => 'get'));
 		$this->assertEqual($expectedResult, $result);		
@@ -70,16 +73,19 @@ class SelfSignLogsControllerTestCase extends AtlasTestCase {
 					'success' => TRUE,
 					'logs' => array(
 						0 => array(
-							'id' => 1,
-							'status' => 'Open',
-							'lastname' => 'Smith',
-							'firstname' => 'Daniel',
-							'last4' => 1234,
-							'service' => 'Orientations',
-							'created' => '2111-07-25 09:50:24',
-							'admin' => ' ',
-							'location' => 'Citrus',
-							'kioskId' => 2))));
+							'id'=>'1',
+							'status'=>'Open',
+							'lastname'=>'Smith',
+							'firstname'=>'Daniel',
+							'last4'=>'1234',
+							'userId'=>'9',
+							'service'=>'Orientations',
+							'created'=>'2111-07-25 09:50:24',
+							'admin'=>' ',
+							'location'=>'Citrus',
+							'locationId'=>'1',
+							'kioskId'=>'2',
+							'kiosk'=>'Lorem ipsum dolor sit amet'))));
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
 		$result = $this->testAction('/admin/self_sign_logs/index/', array('method' => 'get', 'data' => $data));
 		$this->assertEqual($expectedResult, $result);
@@ -104,16 +110,19 @@ class SelfSignLogsControllerTestCase extends AtlasTestCase {
 					'success' => TRUE,
 					'logs' => array(
 						0 => array(
-							'id' => 1,
-							'status' => 'Open',
-							'lastname' => 'Smith',
-							'firstname' => 'Daniel',
-							'last4' => 1234,
-							'service' => 'Orientations',
-							'created' => '2111-07-25 09:50:24',
-							'admin' => ' ',
-							'location' => 'Citrus',
-							'kioskId' => 2))));
+							'id'=>'1',
+							'status'=>'Open',
+							'lastname'=>'Smith',
+							'firstname'=>'Daniel',
+							'last4'=>'1234',
+							'userId'=>'9',
+							'service'=>'Orientations',
+							'created'=>'2111-07-25 09:50:24',
+							'admin'=>' ',
+							'location'=>'Citrus',
+							'locationId'=>'1',
+							'kioskId'=>'2',
+							'kiosk'=>'Lorem ipsum dolor sit amet'))));
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
 		$result = $this->testAction('/admin/self_sign_logs/index/', array('method' => 'get', 'data' => $data));
 		$this->assertEqual($expectedResult, $result);
@@ -185,31 +194,27 @@ class SelfSignLogsControllerTestCase extends AtlasTestCase {
 			'method' => 'get',
 			'data' => $data));
 		$expectedResult = array(
-			'data' => array(
-				'services' => array(
-					0 => array(
-						'id' => 1,
-						'name' => 'Cash Assistance & Food Stamps'
+			'data'=>array(
+				'services'=>array(
+					array(
+						'id'=>'1',
+						'name'=>'Cash Assistance & Food Stamps'
+						),
+					array(
+						'id'=>'10',
+						'name'=>'Veteran Services'
+						),
+					array(
+						'id'=>'14',
+						'name'=>'Orientations'
 					),
-					1 => array(
-						'id' => 10,
-						'name' => 'Veteran Services'
+					array(
+						'id'=>'6',
+						'name'=>'Look For A Job'
 					),
-					2 => array(
-						'id' => 45,
-						'name' => 'Scan Documents'
-					),
-					3 => array(
-						'id' => 14,
-						'name' => 'Orientations'
-					),
-					4 => array(
-						'id' => 6,
-						'name' => 'Look For A Job'
-					),
-					5 => array(
-						'id' => 73,
-						'name' => 'Register To Win A Kindle'
+					array(
+						'id'=>'73',
+						'name'=>'Register To Win A Kindle'
 					)
 				)
 			)
@@ -228,29 +233,25 @@ class SelfSignLogsControllerTestCase extends AtlasTestCase {
 		$expectedResult = array(
 			'data' => array(
 				'buttons' => array(
-					0 => array(
-						'id' => 1,
-						'name' => 'Cash Assistance & Food Stamps'
+					array(
+					'id'=>'1',
+					'name'=>'Cash Assistance & Food Stamps'
 					),
-					1 => array(
-						'id' => 10,
-						'name' => 'Veteran Services'
+					array(
+					'id'=>'10',
+					'name'=>'Veteran Services'
 					),
-					2 => array(
-						'id' => 45,
-						'name' => 'Scan Documents'
+					array(
+					'id'=>'14',
+					'name'=>'Orientations'
 					),
-					3 => array(
-						'id' => 14,
-						'name' => 'Orientations'
+					array(
+					'id'=>'6',
+					'name'=>'Look For A Job'
 					),
-					4 => array(
-						'id' => 6,
-						'name' => 'Look For A Job'
-					),
-					5 => array(
-						'id' => 73,
-						'name' => 'Register To Win A Kindle'
+					array(
+					'id'=>'73',
+					'name'=>'Register To Win A Kindle'
 					)
 				)
 			)
@@ -281,6 +282,39 @@ class SelfSignLogsControllerTestCase extends AtlasTestCase {
 			)
 		);			
 		$this->assertEqual($result, $expectedResult);
+	}
+
+	function testAdminNewRecord() {
+		$this->SelfSignLogs->params = Router::parse('/admin/self_sign_logs/new_record');	
+		$this->SelfSignLogs->Component->initialize($this->SelfSignLogs);	
+		$this->SelfSignLogs->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+		$data = array(
+			'SelfSignLog' => array(
+				'user_id' => 9,
+				'location_id' => 1,
+				'kiosk_id' => 1,
+				'last_activity_admin_id' => 2,
+				'level_1' => 14,
+				'level_2' => 24,
+				'level_3' => 36
+			)
+		);
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$testedAction = $this->testAction('/admin/self_sign_logs/new_record', array(
+			'method' => 'post', 'data' => $data));
+		$id = $this->SelfSignLogs->SelfSignLog->getLastInsertId();	
+		$result = $this->SelfSignLogs->SelfSignLog->findById($id);
+		$this->assertTrue($testedAction['data']['success']);
+		$this->assertEqual($result['SelfSignLog']['id'], 11);
+		$this->assertEqual($result['SelfSignLog']['user_id'], 9);
+		$this->assertEqual($result['SelfSignLog']['level_1'], 14);
+		$this->assertEqual($result['SelfSignLog']['level_2'], 24);
+		$this->assertEqual($result['SelfSignLog']['level_3'], 36);		
 	}
 	
 	function endTest() {

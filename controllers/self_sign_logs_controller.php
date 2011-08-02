@@ -57,7 +57,8 @@ class SelfSignLogsController extends AppController {
 					$data['logs'][$i]['status'] = $this->statuses[$selfSignLog['SelfSignLog']['status']]; 
 					$data['logs'][$i]['lastname'] = ucfirst($selfSignLog['User']['lastname']);		 
 					$data['logs'][$i]['firstname'] = ucfirst($selfSignLog['User']['firstname']);
-					$data['logs'][$i]['last4'] = substr($selfSignLog['User']['ssn'], -4); 
+					$data['logs'][$i]['last4'] = substr($selfSignLog['User']['ssn'], -4);
+					$data['logs'][$i]['userId'] = $selfSignLog['User']['id']; 
 					$level2 = null;
 					$level3 = null;
 					$other = null;
@@ -76,12 +77,12 @@ class SelfSignLogsController extends AppController {
 					$data['logs'][$i]['admin'] = trim(ucfirst($selfSignLog['Admin']['lastname']) . ', ' .
 						ucfirst($selfSignLog['Admin']['firstname']), ',');
 					$data['logs'][$i]['location'] = $selfSignLog['Location']['name'];
+					$data['logs'][$i]['locationId'] = $selfSignLog['Location']['id'];
 					$data['logs'][$i]['kioskId'] = $selfSignLog['SelfSignLog']['kiosk_id'];
 					$data['logs'][$i]['kiosk'] = $kiosks[$selfSignLog['SelfSignLog']['kiosk_id']];		
 					$i++;	
 				}				
 			}
-	
 			$this->set('data', $data);
 			$this->render(null, null, '/elements/ajaxreturn');	
     	}
@@ -145,6 +146,36 @@ class SelfSignLogsController extends AppController {
 				else {
 					$data['success'] = false;
 					$data['message'] = 'Unable to reassign record at this time, please try again.';
+				}
+			}
+			
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
+
+	function admin_new_record() {
+		if($this->RequestHandler->isAjax()) {
+			if(!empty($this->data)) {
+				$this->data['SelfSignLog']['last_activity_admin_id'] = $this->Auth->user('id');
+				$this->data['SelfSignLogArchive'] = $this->data['SelfSignLog'];
+				$this->SelfSignLog->create();
+				if($this->SelfSignLog->save($this->data['SelfSignLog'], false)){
+					$this->SelfSignLog->Kiosk->SelfSignLogArchive->create();
+					$this->data['SelfSignLogArchive']['id'] = $this->SelfSignLog->getLastInsertId();
+					$this->SelfSignLog->Kiosk->SelfSignLogArchive->save($this->data['SelfSignLogArchive']);	
+					$data['success'] = true;
+					$data['message'] = 'New sign in created successfully.';
+					$log = $this->SelfSignLog->findById($this->SelfSignLog->getLastInsertId());
+					$details = 'Created new self sign queue record for ' .
+						ucfirst($log['User']['lastname']) . ', ' . 
+						ucfirst($log['User']['firstname']) . ' - ' . 
+						substr($log['User']['ssn'], -4); 
+					$this->Transaction->createUserTransaction('Self Sign', null, null, $details);					
+				}
+				else {
+					$data['success'] = false;
+					$data['message'] = 'Unable to create new sign in at this time, please try again.';
 				}
 			}
 			
