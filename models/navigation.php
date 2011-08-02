@@ -26,7 +26,7 @@ class Navigation extends AppModel {
      * @return array $children returns all the children of the parent node
      */
     function findChildrenByPosition($position) {
-    	$parent = $this->find('first', array('conditions' => array('title' => $position)));
+    	$parent = $this->find('first', array('conditions' => array('I18n__title.content' => $position)));
 		$children = $this->find('all', array('conditions' => array('parent_id' => $parent['Navigation']['id'])));
 
 		foreach ($children  as $key => $value) {
