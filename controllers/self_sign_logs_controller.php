@@ -171,7 +171,24 @@ class SelfSignLogsController extends AppController {
 						ucfirst($log['User']['lastname']) . ', ' . 
 						ucfirst($log['User']['firstname']) . ' - ' . 
 						substr($log['User']['ssn'], -4); 
-					$this->Transaction->createUserTransaction('Self Sign', null, null, $details);					
+					$this->Transaction->createUserTransaction('Self Sign', null, null, $details);
+					$buttons = $this->_getAllMasterButtonNames();
+					$details = 'Sign in created by admin. ';
+					if($log['SelfSignLog']['level_1']) {
+						$details .= $buttons[$log['SelfSignLog']['level_1']] . ' - ';
+					}
+					if($log['SelfSignLog']['level_2']) {
+						$details .= $buttons[$log['SelfSignLog']['level_2']] . ' - ';
+					}
+					if($log['SelfSignLog']['level_3']) {
+						$details .= $buttons[$log['SelfSignLog']['level_3']] . ' - ';
+					}
+					if($log['SelfSignLog']['other']) {
+						$details .= $log['SelfSignLog']['other'];
+					}
+					$details = trim($details, ' -');
+					$this->Transaction->createUserTransaction('Self Sign', 
+						$log['User']['id'], $log['SelfSignLog']['location_id'], $details);	
 				}
 				else {
 					$data['success'] = false;
