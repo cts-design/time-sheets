@@ -3,6 +3,17 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+	<h1>Release 3.1.0 (8/4/11)</h1>
+	<ol>
+		<li>Added bi-lingual (Spanish) selection to Website module. Utilizing browser based "regional" settings to determine language. Also, added manual link on public facing websites</li>
+		<li>Added bi-lingual (Spanish) translation option to kiosk buttons.</li>
+		<li>Added bilingual (Spanish) translation options to the admin sections of ATLAS.</li>
+		<li>Re-development of the self-sign queue to allow for status grouping, column sorting, enhanced "status" definitions.</li>
+		<li>Refactoring of self-sign archive to take in account new filtering fields from within the self-ign queue.</li>
+		<li>Re-development of the standalone AIR application to mimic fetaures and look of browser based self sign queue application.</li>
+		<li>Resolved bug causing customer documents to be un-editable when imported through a custom import tool</li>
+	</ol>
+	<hr />
 	<h1>Release 3.0.3 (7/14/11)</h1>
 	<ol>
 		<li>Fixed issue that caused pagination to reset after search results returned more that 2 pages</li>

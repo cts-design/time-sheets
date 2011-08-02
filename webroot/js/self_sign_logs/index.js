@@ -370,7 +370,7 @@ var newRecord = new Ext.form.FormPanel({
 				        	'data[SelfSignLog][level_1]': values.level1,
 				        	'data[SelfSignLog][level_2]': values.level2,
 				        	'data[SelfSignLog][level_3]': values.level3,
-				        	'data[SelfSignLog][other]': values.other
+				        	'data[SelfSignLog][other]': values.other2
 				        },
 				        success: function(response, opts){			        	
 				        	var obj = Ext.decode(response.responseText);
