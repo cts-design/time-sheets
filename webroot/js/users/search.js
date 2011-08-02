@@ -46,30 +46,24 @@ var searchPanel = {
             allowBlank: false,
             listeners: {
               select: function(combo, record, index) {
-                console.log(record);
+                var searchTerm1 = Ext.getCmp('SearchTerm1'),
+                searchFullSsn1  = Ext.getCmp('SearchFullSsn1'),
+                searchLast41    = Ext.getCmp('SearchLast41');
+
                 if (record.data.field1 === 'firstname' || record.data.field1 === 'lastname') {
-                  Ext.getCmp('SearchTerm1').enable();
-                  Ext.getCmp('SearchTerm1').show();
-                  Ext.getCmp('SearchFullSsn1').disable();
-                  Ext.getCmp('SearchFullSsn1').hide();
-                  Ext.getCmp('SearchLast41').disable();
-                  Ext.getCmp('SearchLast41').hide();
+                  searchTerm1.enable().show()
+                  searchFullSsn1.disable().hide();
+                  searchLast41.disable().hide();
                 }
                 if (record.data.field1 === 'fullssn') {
-                  Ext.getCmp('SearchTerm1').disable();
-                  Ext.getCmp('SearchTerm1').hide();
-                  Ext.getCmp('SearchFullSsn1').enable();
-                  Ext.getCmp('SearchFullSsn1').show();
-                  Ext.getCmp('SearchLast41').disable();
-                  Ext.getCmp('SearchLast41').hide();
+                  searchTerm1.disable().hide()
+                  searchFullSsn1.enable().show();
+                  searchLast41.disable().hide();
                 }
                 if (record.data.field1 === 'last4') {
-                  Ext.getCmp('SearchTerm1').disable();
-                  Ext.getCmp('SearchTerm1').hide();
-                  Ext.getCmp('SearchFullSsn1').disable();
-                  Ext.getCmp('SearchFullSsn1').hide();
-                  Ext.getCmp('SearchLast41').enable();
-                  Ext.getCmp('SearchLast41').show();
+                  searchTerm1.disable().hide()
+                  searchFullSsn1.disable().hide();
+                  searchLast41.enable().show();
                 }
               }
             }
@@ -83,31 +77,39 @@ var searchPanel = {
             triggerAction: 'all',
             listeners: {
               select: function(combo, record, index) {
-                console.log(record);
+                var searchTerm2 = Ext.getCmp('SearchTerm2'),
+                searchFullSsn2  = Ext.getCmp('SearchFullSsn2'),
+                searchLast42    = Ext.getCmp('SearchLast42'),
+                whereIs2        = Ext.getCmp('SearchScope2');
+
                 if (record.data.field1 === 'firstname' || record.data.field1 === 'lastname') {
-                  Ext.getCmp('SearchTerm2').enable();
-                  Ext.getCmp('SearchTerm2').show();
-                  Ext.getCmp('SearchFullSsn2').disable();
-                  Ext.getCmp('SearchFullSsn2').hide();
-                  Ext.getCmp('SearchLast42').disable();
-                  Ext.getCmp('SearchLast42').hide();
+                  searchTerm2.enable().show().allowBlank = false;
+                  searchFullSsn2.disable().hide();
+                  searchLast42.disable().hide();
                 }
                 if (record.data.field1 === 'fullssn') {
-                  Ext.getCmp('SearchTerm2').disable();
-                  Ext.getCmp('SearchTerm2').hide();
-                  Ext.getCmp('SearchFullSsn2').enable();
-                  Ext.getCmp('SearchFullSsn2').show();
-                  Ext.getCmp('SearchLast42').disable();
-                  Ext.getCmp('SearchLast42').hide();
+                  searchTerm2.disable().hide();
+                  searchFullSsn2.enable().show().allowBlank = false;
+                  searchLast42.disable().hide();
                 }
                 if (record.data.field1 === 'last4') {
-                  Ext.getCmp('SearchTerm2').disable();
-                  Ext.getCmp('SearchTerm2').hide();
-                  Ext.getCmp('SearchFullSsn2').disable();
-                  Ext.getCmp('SearchFullSsn2').hide();
-                  Ext.getCmp('SearchLast42').enable();
-                  Ext.getCmp('SearchLast42').show();
+                  searchTerm2.disable().hide();
+                  searchFullSsn2.disable().hide();
+                  searchLast42.enable().show().allowBlank = false;
                 }
+
+                whereIs2.allowBlank = false;
+              },
+              change: function(combo, newValue, oldValue) {
+                var searchTerm2 = Ext.getCmp('SearchTerm2'),
+                searchFullSsn2  = Ext.getCmp('SearchFullSsn2'),
+                searchLast42    = Ext.getCmp('SearchLast42'),
+                whereIs2        = Ext.getCmp('SearchScope2');
+
+                searchTerm2.allowBlank = true;
+                searchFullSsn2.allowBlank = true;
+                searchLast42.allowBlank = true;
+                whereIs2.allowBlank = true;
               }
             }
           }]
