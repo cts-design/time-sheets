@@ -44,6 +44,8 @@ var kioskId = '';
 
 var buttonParentId = '';
 
+var locationId = null;
+
 var selfSignLogsProxy = new Ext.data.HttpProxy({
 	method: 'GET',
 	prettyUrls: true,
@@ -59,7 +61,7 @@ var selfSignLogsReader = new Ext.data.JsonReader({
 		{name: 'created', type: 'date', dateFormat: 'Y-m-d H:i:s'}, 
 		'location', 'service', 'kioskId', 'userId', 'locationId'
 	]
-})
+});
 
 var selfSignLogsStore = new Ext.data.GroupingStore({
 	reader: selfSignLogsReader,
@@ -272,7 +274,7 @@ var reassign = new Ext.form.FormPanel({
 				        	var obj = Ext.decode(response.responseText);
 				        	if(obj.success) {   	
 					            selfSignLogsStore.reload();
-								Ext.Msg.alert('Success', obj.message)					        		
+								Ext.Msg.alert('Success', obj.message);					        		
 				        	}
 				        	else {
 				        		opts.failure();
@@ -280,8 +282,8 @@ var reassign = new Ext.form.FormPanel({
 				        },
 				        failure: function(response, opts){
 				        	var obj = Ext.decode(response.responseText);
-				            Ext.Msg.alert('Error', obj.message)
-				        },
+				            Ext.Msg.alert('Error', obj.message);
+				        }
 				    });				
 				}				
 			}
@@ -383,7 +385,7 @@ var newRecord = new Ext.form.FormPanel({
 				        },
 				        failure: function(response, opts){
 				        	var obj = Ext.decode(response.responseText);
-				            Ext.Msg.alert('Error', obj.message)
+				            Ext.Msg.alert('Error', obj.message);
 				        },
 				    });				
 				}				
@@ -433,7 +435,7 @@ var contextMenu = new Ext.menu.Menu({
   	text: 'New Sign In',
   	id: 'cmNewRecord',
   	hidden: true,
-  	icon:  '/img/icons/arrow_undo.png',
+  	icon:  '/img/icons/add.png',
 	menu: {
 		width: 295,
 		items: [
@@ -441,7 +443,7 @@ var contextMenu = new Ext.menu.Menu({
 		]
 	}  	
   }]
-})
+});
 
 var selfSignLogsGrid = new Ext.grid.GridPanel({
 	store: selfSignLogsStore,
@@ -519,6 +521,7 @@ var selfSignLogsGrid = new Ext.grid.GridPanel({
 	    			Ext.getCmp('cmNotHelped').show();
 	    			Ext.getCmp('cmClose').show();
 	    			Ext.getCmp('cmReassign').show();
+	    			Ext.getCmp('cmNewRecord').hide();
 	    			break;
 	    		}
 	    		case 'Closed': {
@@ -547,7 +550,7 @@ var selfSignLogsGrid = new Ext.grid.GridPanel({
 		}
 	}
 
-})
+});
 
 var locationsProxy = new Ext.data.HttpProxy({
 	url: '/admin/locations/get_location_list',
@@ -603,13 +606,13 @@ var selfSignSearch = new Ext.form.FormPanel({
 						Ext.getCmp('servicesSelect').reset();
 						servicesStore.load({params: {
 							locations: this.getValue()
-						}})
+						}});
 					},
 					'removeitem' : function() {
 						Ext.getCmp('servicesSelect').reset();
 						servicesStore.load({params: {
 							locations: this.getValue()
-						}})						
+						}});						
 					}
 				}
 			}]
@@ -659,7 +662,7 @@ var selfSignSearch = new Ext.form.FormPanel({
 			selfSignLogsStore.load();
 		}
 	}]
-})
+});
 
 function updateStatus(id, status) {
     Ext.Ajax.request({
