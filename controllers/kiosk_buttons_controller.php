@@ -175,6 +175,20 @@ class KioskButtonsController extends AppController {
 		foreach ($locationButtons as $key => $value) {
 			$locationButtons[$key]['MasterKioskButton']['name'] =
 				$masterButtonNames[$locationButtons[$key]['MasterKioskButton']['id']];
+				
+			if (!empty($locationButtons[$key]['children'])) {
+				foreach ($locationButtons[$key]['children'] as $k => $v) {
+					$locationButtons[$key]['children'][$k]['MasterKioskButton']['name'] =
+                    	$masterButtonNames[$locationButtons[$key]['children'][$k]['MasterKioskButton']['id']];
+				}
+				
+				if (!empty($locationButtons[$key]['children'][$k]['children'])) {
+					foreach ($locationButtons[$key]['children'][$k]['children'] as $ck => $cv) {
+						$locationButtons[$key]['children'][$k]['children'][$ck]['MasterKioskButton']['name'] =
+	                    	$masterButtonNames[$locationButtons[$key]['children'][$k]['children'][$ck]['MasterKioskButton']['id']];	
+					}				
+				}
+			}
 		}
 
 		$vars = array('masterButtonParentIds' => $masterButtonParentIds,
