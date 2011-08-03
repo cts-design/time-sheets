@@ -21,6 +21,7 @@ class NavHelper extends AppHelper {
             return FALSE;
 
         $Navigation = ClassRegistry::init('Navigation'); // load the navigation model
+        $Navigation->recursive = 1;
         $links = $Navigation->findChildrenByPosition($position);
 
         $output = "<ul class=\"sf-menu\">";
@@ -66,6 +67,8 @@ class NavHelper extends AppHelper {
     }
     
     function checkCurrentPage($navigationLink) {
+    	if ($navigationLink == '') return false;
+					
 		if ($navigationLink == '/' || $navigationLink == '/home' || $navigationLink == '/homepage') {
             if ($this->here == '/') {
            		return true;
