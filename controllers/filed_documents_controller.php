@@ -130,8 +130,7 @@ class FiledDocumentsController extends AppController {
 			    $this->data['User']['firstname'];
 		}
 		$cat1 = $this->_getParentDocumentFilingCats();
-		$users = $this->FiledDocument->User->find('list');
-		$this->set(compact('users', 'cat1', 'title_for_layout'));
+		$this->set(compact('cat1', 'title_for_layout'));
     }
 
     function admin_delete() {
