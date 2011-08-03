@@ -900,6 +900,13 @@ div.actions .ui-button-text {
     font:bold 11px tahoma, arial, helvetica, sans-serif;
 }
 
+.reassign-menu {
+	overflow: visible !important;
+}
+
+.new-sign-in-menu {
+	overflow: visible !important;
+}
 
 /** Debugging **/
 pre {
