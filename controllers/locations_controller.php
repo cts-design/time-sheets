@@ -92,6 +92,7 @@ class LocationsController extends AppController {
 
 	function admin_get_location_list() {
 	    if ($this->RequestHandler->isAjax()) {
+	    	$this->Location->recursive = -1;
 			$locations = $this->Location->find('all');
 			$i = 0;
 			foreach($locations as $location) {
