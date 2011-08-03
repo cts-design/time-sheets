@@ -280,7 +280,7 @@ class KiosksController extends AppController {
 		$this->layout = 'kiosk';
 	}
 
-  	function kiosk_self_sign_other($level) {
+  	function kiosk_self_sign_other($level=null) {
 		if(!empty($this->data)) {
 			$data['SelfSignLog']['location_id'] = $this->Cookie->read('location');
 			$data['SelfSignLog']['user_id'] = $this->Auth->user('id');
@@ -309,13 +309,15 @@ class KiosksController extends AppController {
 			}
 		}
 		$referer = '/kiosk/kiosks/self_sign_service_selection/';
-		switch($level) {
-			case 'level2' :
-				$referer = '/kiosk/kiosks/self_sign_service_selection/' . $this->Cookie->read('level.1');
-				break;
-			case 'level3' :
-				$referer = '/kiosk/kiosks/self_sign_service_selection/' . $this->Cookie->read('level.2');
-				break;
+		if($level) {
+			switch($level) {
+				case 'level2' :
+					$referer = '/kiosk/kiosks/self_sign_service_selection/' . $this->Cookie->read('level.1');
+					break;
+				case 'level3' :
+					$referer = '/kiosk/kiosks/self_sign_service_selection/' . $this->Cookie->read('level.2');
+					break;
+			}			
 		}
 		$title_for_layout = 'Self Sign Kiosk';
 		$this->set(compact('title_for_layout', 'referer'));
