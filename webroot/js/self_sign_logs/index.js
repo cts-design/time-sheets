@@ -426,6 +426,7 @@ var contextMenu = new Ext.menu.Menu({
   	id: 'cmReassign',
   	icon:  '/img/icons/arrow_undo.png',
 	menu: {
+		cls: 'reassign-menu',
 		width: 295,
 		items: [
 			reassign
@@ -437,6 +438,7 @@ var contextMenu = new Ext.menu.Menu({
   	hidden: true,
   	icon:  '/img/icons/add.png',
 	menu: {
+		cls: 'new-sign-in-menu',
 		width: 295,
 		items: [
 			newRecord
@@ -508,7 +510,18 @@ var selfSignLogsGrid = new Ext.grid.GridPanel({
 		disableGroupingByClick: true,
 		deferEmptyText: false,
 		ignoreAdd: true,
-		emptyText: '<div class="x-grid-empty">No records at this time.</div>'
+		emptyText: '<div class="x-grid-empty">No records at this time.</div>',
+		onLoad: Ext.emptyFn,
+		listeners: {
+		    beforerefresh: function(v) {
+		       v.scrollTop = v.scroller.dom.scrollTop;
+		       v.scrollHeight = v.scroller.dom.scrollHeight;
+		    },
+		    refresh: function(v) {
+		       v.scroller.dom.scrollTop = v.scrollTop + 
+		        (v.scrollTop == 0 ? 0 : v.scroller.dom.scrollHeight - v.scrollHeight);
+		    }
+		}		
 	}),
 	sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
 	listeners: {
