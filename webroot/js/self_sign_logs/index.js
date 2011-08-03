@@ -632,7 +632,12 @@ var selfSignSearch = new Ext.form.FormPanel({
 				msgTarget: 'under',
 				width: 400,
 				listeners: {
-
+					beforequery: function() {
+						var val = Ext.getCmp('locationsSelect').getValue();
+						if(!val) {
+							this.markInvalid('Please select a location first');
+						}			
+					}
 				}
 			}]
 		}]
