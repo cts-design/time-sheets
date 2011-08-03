@@ -159,8 +159,11 @@ class SelfSignLogArchivesController extends AppController {
 	}
 
 	function admin_get_parent_buttons_ajax() {
+		App::import('Vendor', 'DebugKit.FireCake');
 		if($this->RequestHandler->isAjax()) {
-			$masterButtonList = $this->SelfSignLogArchive->Kiosk->KioskButton->MasterKioskButton->find('list');
+			$masterButtonList = $this->SelfSignLogArchive->Kiosk->KioskButton->MasterKioskButton->find('list', array(
+				'fields' => array('MasterKioskButton.name')
+			));
 			if(!empty($this->params['url']['ids']) && $this->params['url']['ids'] != 'null') {
 				$conditions = array('SelfSignLogArchive.location_id' => $this->params['url']['ids'],
 					'SelfSignLogArchive.level_1 !=' => null);
@@ -171,6 +174,8 @@ class SelfSignLogArchivesController extends AppController {
 			$buttonList = $this->SelfSignLogArchive->find('list', array('fields' => array('SelfSignLogArchive.id',
 				'SelfSignLogArchive.level_1'),
 				'conditions' => $conditions));
+			FireCake::log($buttonList);
+			FireCake::log($masterButtonList);
 			if(isset($buttonList)) {
 				$buttonList = array_unique($buttonList);
 				$button[''] = 'All Buttons';
@@ -185,7 +190,9 @@ class SelfSignLogArchivesController extends AppController {
 
 	function admin_get_child_buttons_ajax() {
 		if($this->RequestHandler->isAjax()) {
-			$masterButtonList = $this->SelfSignLogArchive->Kiosk->KioskButton->MasterKioskButton->find('list');
+			$masterButtonList = $this->SelfSignLogArchive->Kiosk->KioskButton->MasterKioskButton->find('list', array(
+				'fields' => array('MasterKioskButton.name')
+			));
 			if(empty($this->params['url']['location'])) {
 				$conditions = array('SelfSignLogArchive.level_2 !=' => null);
 			} elseif(!empty($this->params['url']['id']) && !empty($this->params['url']['location'])) {
@@ -219,7 +226,9 @@ class SelfSignLogArchivesController extends AppController {
 
 	function admin_get_grand_child_buttons_ajax() {
 		if($this->RequestHandler->isAjax()) {
-			$masterButtonList = $this->SelfSignLogArchive->Kiosk->KioskButton->MasterKioskButton->find('list');
+			$masterButtonList = $this->SelfSignLogArchive->Kiosk->KioskButton->MasterKioskButton->find('list', array(
+				'fields' => array('MasterKioskButton.name')
+			));
 			if(empty($this->params['url']['location'])) {
 				$conditions = array('SelfSignLogArchive.level_3 !=' => null);
 			} elseif(!empty($this->params['url']['id']) && !empty($this->params['url']['location'])) {
