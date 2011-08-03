@@ -62,9 +62,10 @@
 		    <br />
 		   <p>
 		   <?php
-			if ($session->read('Auth.User'))
+			if ($session->read('Auth.User')) {
                 printf(__('<strong>Logged in as: %s %s</strong> | ', true), $session->read('Auth.User.firstname'), $session->read('Auth.User.lastname'));
 				echo $this->Html->link(__('Logout', true), array('controller' => 'users', 'action' => 'logout', 'admin' => true));
+			}
 			?>
 		   </p>
 		</div>
