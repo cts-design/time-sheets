@@ -65,10 +65,14 @@ class SelfSignLogArchivesController extends AppController {
 				'order' => array('SelfSignLogArchive.id' => 'desc'));
 		}
 		$selfSignLogArchives = $this->paginate('SelfSignLogArchive');
-		$masterButtonList = $this->SelfSignLogArchive->Kiosk->KioskButton->MasterKioskButton->find('list');
+		$masterButtonList = $this->SelfSignLogArchive->Kiosk->KioskButton->MasterKioskButton->find('list', array(
+			'fields' => array('MasterKioskButton.name')
+		));
 		$data = array('title_for_layout' => 'Self Sign Archives',
 			'selfSignLogArchives' => $selfSignLogArchives,
-			'masterButtonList' => $this->SelfSignLogArchive->Kiosk->KioskButton->MasterKioskButton->find('list'),
+			'masterButtonList' => $this->SelfSignLogArchive->Kiosk->KioskButton->MasterKioskButton->ffind('list', array(
+				'fields' => array('MasterKioskButton.name')
+			)),
 			'statuses' => array('0' => 'Open',
 				'1' => 'Closed', '2' => 'Not Helped'),
 			'locations' => $this->SelfSignLogArchive->Kiosk->Location->find('list'));
