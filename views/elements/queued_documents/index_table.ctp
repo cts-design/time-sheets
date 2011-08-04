@@ -42,6 +42,7 @@ $this->Paginator->options(array(
 	    <th class="ui-state-default"><?php echo $this->Paginator->sort('locked_status'); ?></th>
 	    <th class="ui-state-default"><?php echo $this->Paginator->sort('Last Activity Admin',  'LastActAdmin.lastname'); ?></th>
 	    <th class="ui-state-default"><?php echo $this->Paginator->sort('created'); ?></th>
+	    <th class="ui-state-default"><?php echo $this->Paginator->sort('modified'); ?></th>
 	    <th class="ui-state-default">Quick View</th>
 	    <th class="actions ui-state-default"><?php __('Actions'); ?></th>
 	</tr>
@@ -63,6 +64,7 @@ $this->Paginator->options(array(
     	<td><?php echo $lockStatuses[$queuedDocument['QueuedDocument']['locked_status']]; ?>&nbsp;</td>
 	<td><?php echo trim($queuedDocument['LastActAdmin']['lastname'] . ', ' . $queuedDocument['LastActAdmin']['firstname'], ' ,'); ?>&nbsp;</td>
 	<td><?php echo $this->Time->format('m/d/Y h:i a', $queuedDocument['QueuedDocument']['created']); ?>&nbsp;</td>
+	<td><?php echo $this->Time->format('m/d/Y h:i a', $queuedDocument['QueuedDocument']['modified']); ?>&nbsp;</td>
 	<td>
 	    <?php echo $this->Html->link($this->Html->image('icons/pdf.png'),'/admin/queued_documents/view_thumbnail/'. $queuedDocument['QueuedDocument']['id'] . '.jpg',
 		array('escape' => false, 'class' => 'quick-view-pdf'))?>
