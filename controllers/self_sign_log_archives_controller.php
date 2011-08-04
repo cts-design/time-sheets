@@ -111,7 +111,7 @@ class SelfSignLogArchivesController extends AppController {
 		$statuses = array('Open',
 			'Closed', 'Not Helped');
 		$locations = $this->SelfSignLogArchive->Kiosk->Location->find('list');
-		$buttons = $this->SelfSignLogArchive->Kiosk->KioskButton->MasterKioskButton->find('list');
+		$buttons = $this->SelfSignLogArchive->Kiosk->KioskButton->MasterKioskButton->find('list', array('fields' => array('MasterKioskButton.name')));
 
 		foreach($data as $k => $v) {
 			$report[$k]['Name'] = $v['User']['firstname'] . ' ' . $v['User']['lastname'];

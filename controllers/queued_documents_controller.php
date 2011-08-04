@@ -271,6 +271,7 @@ class QueuedDocumentsController extends AppController {
 				$this->data['QueuedDocument']['locked_status'] = 1;
 				$this->data['QueuedDocument']['entry_method'] = $this->data['FiledDocument']['entry_method'];
 				$this->data['QueuedDocument']['user_id'] = $this->data['FiledDocument']['user_id'];
+				$this->data['QueuedDocument']['created'] = $this->data['FiledDocument']['created'];
 				$this->QueuedDocument->create();
 				$this->QueuedDocument->save($this->data['QueuedDocument']);
 				$id = $this->QueuedDocument->getLastInsertId();
