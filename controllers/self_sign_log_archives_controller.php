@@ -70,7 +70,7 @@ class SelfSignLogArchivesController extends AppController {
 		));
 		$data = array('title_for_layout' => 'Self Sign Archives',
 			'selfSignLogArchives' => $selfSignLogArchives,
-			'masterButtonList' => $this->SelfSignLogArchive->Kiosk->KioskButton->MasterKioskButton->ffind('list', array(
+			'masterButtonList' => $this->SelfSignLogArchive->Kiosk->KioskButton->MasterKioskButton->find('list', array(
 				'fields' => array('MasterKioskButton.name')
 			)),
 			'statuses' => array('0' => 'Open',
