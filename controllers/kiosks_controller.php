@@ -13,7 +13,7 @@ class KiosksController extends AppController {
 
     function beforeFilter() {
 		parent::beforeFilter();
-		if($this->params['action'] == 'self_scan_document') {
+		if($this->params['action'] == 'kiosk_self_scan_document') {
 			$this->Security->validatePost = false;
 		}
 		$this->Cookie->name = 'self_sign';
