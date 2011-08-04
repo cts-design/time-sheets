@@ -116,6 +116,7 @@ class DeletedDocumentsController extends AppController {
 	    }
 	    else {
 		$this->Session->setFlash(__('Unable to restore document', true), 'flash_failure');
+		$this->redirect(array('action' => 'index'));
 	    }
 	}
     }
