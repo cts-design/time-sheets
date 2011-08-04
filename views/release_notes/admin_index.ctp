@@ -12,6 +12,10 @@
 		<li>Refactoring of self-sign archive to take in account new filtering fields from within the self-ign queue.</li>
 		<li>Re-development of the standalone AIR application to mimic fetaures and look of browser based self sign queue application.</li>
 		<li>Resolved bug causing customer documents to be un-editable when imported through a custom import tool</li>
+		<li>Fixed bug where document was not viewable in the queue after using filing and requeue option.</li>
+		<li>Fixed bug where random role permissions were not able to be edited.</li>
+		<li>Fixed bug that was causing kiosk buttons page to load blank.</li>
+		<li>Fixed bug where button dropdown menus were showing button ids instead of button names on the self sign archive page.</li>
 	</ol>
 	<hr />
 	<h1>Release 3.0.3 (7/14/11)</h1>
