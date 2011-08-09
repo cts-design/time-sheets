@@ -104,16 +104,20 @@
     <div id="information" class="left">
 	    <div id='help'>
             <h3><?php echo $html->image('icons/help.png')?> <?php __('Help') ?></h3>
-	    	<p>
-	    		<?php echo $html->image('icons/email.png')?> 
-	    		<a href="mailto:CTSATLAS@support.assembla.com
-	    			?subject=This subject line will be the title of your ticket
-	    			&body=Please be as descriptive as possible.
-	    			%0AAttachments included in this email will be included in the ticket.
-	    			%0AInclude a screenshot of the error as an attachment if possible.
-                    %0AReply to a ticket alert from Assembla and your email will be posted as a ticket comment."><?php __('Create a support ticket via email') ?></a> 
-	    	</p>
-	    	<p><?php echo $html->image('icons/telephone.png')?> 352-666-0333</p> 
+            <?php if($this->Session->read('Auth.User.role_id') <= 3) : ?>
+		    	<p>
+		    		<?php echo $html->image('icons/email.png')?> 
+		    		<a href="mailto:CTSATLAS@support.assembla.com
+		    			?subject=This subject line will be the title of your ticket
+		    			&body=Please be as descriptive as possible.
+		    			%0AAttachments included in this email will be included in the ticket.
+		    			%0AInclude a screenshot of the error as an attachment if possible.
+	                    %0AReply to a ticket alert from Assembla and your email will be posted as a ticket comment."><?php __('Create a support ticket via email') ?></a> 
+		    	</p>
+		    	<p><?php echo $html->image('icons/telephone.png')?> 352-666-0333</p>
+	    	<?php else : ?>
+	    		<p><?php echo $html->image('icons/bug.png')?> Please report any bugs to your supervisor.</p>
+	    	<?php endif ?> 
 	    	<p>
 	    		<?php echo $html->image('icons/application_xp_terminal.png')?>
 	    		<?php echo $html->link('Atlas 3.1.0', array('controller' => 'release_notes', 'admin' => true))?>
