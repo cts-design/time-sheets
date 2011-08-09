@@ -116,7 +116,7 @@
 		    	</p>
 		    	<p><?php echo $html->image('icons/telephone.png')?> 352-666-0333</p>
 	    	<?php else : ?>
-	    		<p><?php echo $html->image('icons/bug.png')?> Please report any bugs to your supervisor.</p>
+	    		<p><?php echo $html->image('icons/bug.png')?> Please report issues with ATLAS to your supervisor.</p>
 	    	<?php endif ?> 
 	    	<p>
 	    		<?php echo $html->image('icons/application_xp_terminal.png')?>
