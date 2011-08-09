@@ -73,7 +73,13 @@ class EventsController extends AppController {
 				'title' => $params['title'],
 				'start' => date('Y-m-d H:i:s', strtotime($params['start'])),
 				'end' => date('Y-m-d H:i:s', strtotime($params['end'])),
-				'all_day' => $params['all_day']
+                'all_day' => $params['all_day'],
+                'description' => (isset($params['description'])) ? $params['description'] : '',
+                'location' => (isset($params['location'])) ? $params['location'] : '',
+                'address' => (isset($params['address'])) ? $params['address'] : '',
+                'sponsor' => (isset($params['sponsor'])) ? $params['sponsor'] : '',
+                'sponsor_url' => (isset($params['sponsor_url'])) ? $params['sponsor_url'] : '',
+                'url' => (isset($params['url'])) ? $params['url'] : '',
 			)
 		);
 
