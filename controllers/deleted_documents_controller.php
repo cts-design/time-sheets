@@ -65,6 +65,7 @@ class DeletedDocumentsController extends AppController {
 	    'id' => $doc['DeletedDocument']['filename'],
 	    'name' => str_replace('.pdf', '', $doc['DeletedDocument']['filename']),
 	    'extension' => 'pdf',
+	    'cache' => true,
 	    'path' => Configure::read('Document.storage.path') . '/' .
 	    date('Y', strtotime($doc['DeletedDocument']['created'])) . '/' .
 	    date('m', strtotime($doc['DeletedDocument']['created'])) . '/'

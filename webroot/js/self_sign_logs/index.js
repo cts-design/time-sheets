@@ -31,7 +31,7 @@ Ext.override(Ext.grid.GroupingView, {
             }
         }
 
-    },
+    }
 });
 
 var rowIndex = null;
@@ -386,7 +386,7 @@ var newRecord = new Ext.form.FormPanel({
 				        failure: function(response, opts){
 				        	var obj = Ext.decode(response.responseText);
 				            Ext.Msg.alert('Error', obj.message);
-				        },
+				        }
 				    });				
 				}				
 			}
@@ -690,7 +690,7 @@ function updateStatus(id, status) {
         },
         failure: function(response){
             Ext.Msg.alert('Error', 'An error has occured, please try again.');
-        },
+        }
     });	
 }
 
