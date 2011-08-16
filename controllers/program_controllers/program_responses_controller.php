@@ -446,98 +446,20 @@ class ProgramResponsesController extends AppController {
 
 	function admin_generate_form($formId, $programResponseId, $docId=null) {
 		if($this->RequestHandler->isAjax()) {
-				
-			$programResponse = $this->ProgramResponse->findById($programResponseId);
-			
-			foreach($programResponse['User'] as $k => $v) {
-				if(!preg_match('[\@]', $v)) {
-					$programResponse['User'][$k] = ucwords($v);
-				}				
+			$generated = $this->_generateForm($formId, $programResponseId, $docId=null);	
+			if($generated) {
+				$data['success'] = true;
+				$data['message'] = 'Form generated and filed successfully.';
+				$this->Transaction->createUserTransaction('Programs', null, null,
+					$generated[2] . ' ' . $generated[0]['ProgramPaperForm']['name'] . ' for ' . 
+					$generated[1]['Program']['name'] . ' for customer ' . 
+					ucfirst($generated[1]['User']['firstname']). ' ' . ucfirst($generated[1]['User']['lastname']) . ' - '. 
+					substr($generated[1]['User']['ssn'], '-4'));							
 			}
-			
-			$data = $programResponse['User'];
-			
-			$programPaperForm = $this->ProgramResponse->Program->ProgramPaperForm->findById($formId);	
-		
-			$answers = json_decode($programResponse['ProgramResponse']['answers'], true);
-			
-			foreach($answers as $k => $v) {
-				if(!preg_match('[\@]', $v)) {
-					$data[$k] = ucwords($v);
-				}
-			}
-			
-			$data['masked_ssn'] = '***-**-' . substr($data['ssn'], -4);
-			$data['conformation_id'] = $programResponse['ProgramResponse']['conformation_id'];			
-			$data['dob'] = date('m/d/Y', strtotime($data['dob']));		
-			$data['admin'] = $this->Auth->user('firstname') . ' ' . $this->Auth->user('lastname');
-			$data['todays_date'] = date('m/d/Y');
-			$data['form_completed'] = date('m/d/Y', strtotime($programResponse['ProgramResponse']['created']));
-			
-			if($programPaperForm) {				
-				$pdf = $this->_createPDF($data, $programPaperForm['ProgramPaperForm']['template']);
-				if($pdf) {
-					$this->loadModel('FiledDocument');
-					if(!$docId) {
-						$this->FiledDocument->User->QueuedDocument->create();
-						$this->FiledDocument->User->QueuedDocument->save();
-						$docId = $this->FiledDocument->User->QueuedDocument->getLastInsertId();
-						// delete the empty record so it does not show up in the queue
-						$this->FiledDocument->User->QueuedDocument->delete($docId, false);	
-						$genType = 'Generated';					
-					}
-					else {
-						$this->data['ProgramResponseDoc']['id'] = 
-						$this->ProgramResponse->ProgramResponseDoc->field('id', array(
-								'ProgramResponseDoc.doc_id' => $docId,
-								'ProgramResponseDoc.program_response_id' => $programResponseId));
-						$genType = 'Regenerated';		
-					}
-									
-					$this->data['FiledDocument']['id'] = $docId;
-					$this->data['FiledDocument']['created'] = date('Y-m-d H:i:s');
-					$this->data['FiledDocument']['filename'] = $pdf;
-					$this->data['FiledDocument']['admin_id'] = $this->Auth->user('id');
-					$this->data['FiledDocument']['user_id'] = $data['id'];
-					$this->data['FiledDocument']['filed_location_id'] = $this->Auth->user('location_id');
-					$this->data['FiledDocument']['cat_1'] = $programPaperForm['ProgramPaperForm']['cat_1'];
-					$this->data['FiledDocument']['cat_2'] = $programPaperForm['ProgramPaperForm']['cat_2'];
-					$this->data['FiledDocument']['cat_3'] = $programPaperForm['ProgramPaperForm']['cat_3'];
-					$this->data['FiledDocument']['entry_method'] = 'Program Generated';
-					$this->data['FiledDocument']['last_activity_admin_id'] = $this->Auth->user('id');
-					$this->data['ProgramResponseDoc']['created'] = date('Y-m-d H:i:s');					
-					$this->data['ProgramResponseDoc']['cat_id'] = $programPaperForm['ProgramPaperForm']['cat_3'];
-					$this->data['ProgramResponseDoc']['program_response_id'] =  $programResponseId;
-					$this->data['ProgramResponseDoc']['doc_id'] = $docId;
-					$this->data['ProgramResponseDoc']['paper_form'] = 1;
-					if($programPaperForm['ProgramPaperForm']['cert']) {
-						$this->data['ProgramResponseDoc']['cert'] = 1;
-					}									
-					if($this->FiledDocument->save($this->data['FiledDocument']) && 
-					$this->ProgramResponse->ProgramResponseDoc->save($this->data['ProgramResponseDoc'])) {
-						$data['success'] = true;
-						$data['message'] = 'Form generated and filed successfully.';
-						$this->Transaction->createUserTransaction('Programs', null, null,
-							$genType . ' ' . $programPaperForm['ProgramPaperForm']['name'] . ' for ' . 
-							$programResponse['Program']['name'] . ' for customer ' . 
-							ucfirst($programResponse['User']['firstname']). ' ' . ucfirst($programResponse['User']['lastname']) . ' - '. 
-							substr($programResponse['User']['ssn'], '-4'));							
-					}
-					else {
-						$data['success'] = false;
-						$data['message'] = 'Unable to file form at this time.';
-						$path = Configure::read('Document.storage.uploadPath');
-						$path .= substr($pdf, 0, 4) . DS;
-						$path .= substr($pdf, 4, 2) . DS;
-						$file = $path . $pdf;
-						unlink($file);
-					}			
-				}
-				else {
-					$data['success'] = false;
-					$data['message'] = 'Unable to create pdf form at this time.';						
-				}	
-			}
+			else {
+				$data['success'] = false;
+				$data['message'] = 'Unable to file form at this time.';
+			}			
 			$this->set(compact('data'));
 			$this->render(null, null, '/elements/ajaxreturn');
 		}		
@@ -580,6 +502,100 @@ class ProgramResponsesController extends AppController {
 			$this->set(compact('data'));
 			$this->render(null, null, '/elements/ajaxreturn');			
 		}
+	}
+
+	function _generateForm($formId, $programResponseId, $docId=null) {
+				
+			$programResponse = $this->ProgramResponse->findById($programResponseId);
+			
+			foreach($programResponse['User'] as $k => $v) {
+				if(!preg_match('[\@]', $v)) {
+					$programResponse['User'][$k] = ucwords($v);
+				}				
+			}
+			
+			$data = $programResponse['User'];
+			
+			$programPaperForm = $this->ProgramResponse->Program->ProgramPaperForm->findById($formId);	
+			
+			if($programResponse['ProgramResponse']['answers']) {
+				$answers = json_decode($programResponse['ProgramResponse']['answers'], true);
+				
+				foreach($answers as $k => $v) {
+					if(!preg_match('[\@]', $v)) {
+						$data[$k] = ucwords($v);
+					}
+				}				
+			}
+
+			$data['masked_ssn'] = '***-**-' . substr($data['ssn'], -4);
+			$data['conformation_id'] = $programResponse['ProgramResponse']['conformation_id'];			
+			$data['dob'] = date('m/d/Y', strtotime($data['dob']));		
+			$data['admin'] = $this->Auth->user('firstname') . ' ' . $this->Auth->user('lastname');
+			$data['todays_date'] = date('m/d/Y');
+			$data['form_completed'] = date('m/d/Y', strtotime($programResponse['ProgramResponse']['created']));
+			
+			if($programPaperForm) {				
+				$pdf = $this->_createPDF($data, $programPaperForm['ProgramPaperForm']['template']);
+				if($pdf) {
+					$this->loadModel('FiledDocument');
+					if(!$docId) {
+						$this->FiledDocument->User->QueuedDocument->create();
+						$this->FiledDocument->User->QueuedDocument->save();
+						$docId = $this->FiledDocument->User->QueuedDocument->getLastInsertId();
+						// delete the empty record so it does not show up in the queue
+						$this->FiledDocument->User->QueuedDocument->delete($docId, false);	
+						$genType = 'Generated';					
+					}
+					else {
+						$this->data['ProgramResponseDoc']['id'] = 
+						$this->ProgramResponse->ProgramResponseDoc->field('id', array(
+								'ProgramResponseDoc.doc_id' => $docId,
+								'ProgramResponseDoc.program_response_id' => $programResponseId));
+						$genType = 'Regenerated';		
+					}
+									
+					$this->data['FiledDocument']['id'] = $docId;
+					$this->data['FiledDocument']['created'] = date('Y-m-d H:i:s');
+					$this->data['FiledDocument']['filename'] = $pdf;
+					if($this->Auth->user('role_id')!= 1) {
+						$this->data['FiledDocument']['admin_id'] = $this->Auth->user('id');
+					}
+					$this->data['FiledDocument']['admin_id'] = $this->Auth->user('id');
+					$this->data['FiledDocument']['user_id'] = $data['id'];
+					$this->data['FiledDocument']['filed_location_id'] = $this->Auth->user('location_id');
+					$this->data['FiledDocument']['cat_1'] = $programPaperForm['ProgramPaperForm']['cat_1'];
+					$this->data['FiledDocument']['cat_2'] = $programPaperForm['ProgramPaperForm']['cat_2'];
+					$this->data['FiledDocument']['cat_3'] = $programPaperForm['ProgramPaperForm']['cat_3'];
+					$this->data['FiledDocument']['entry_method'] = 'Program Generated';
+					if($this->Auth->user('role_id')!= 1) {
+						$this->data['FiledDocument']['last_activity_admin_id'] = $this->Auth->user('id');
+					}
+					$this->data['ProgramResponseDoc']['created'] = date('Y-m-d H:i:s');					
+					$this->data['ProgramResponseDoc']['cat_id'] = $programPaperForm['ProgramPaperForm']['cat_3'];
+					$this->data['ProgramResponseDoc']['program_response_id'] =  $programResponseId;
+					$this->data['ProgramResponseDoc']['doc_id'] = $docId;
+					$this->data['ProgramResponseDoc']['paper_form'] = 1;
+					if($programPaperForm['ProgramPaperForm']['cert']) {
+						$this->data['ProgramResponseDoc']['cert'] = 1;
+					}									
+					if($this->FiledDocument->save($this->data['FiledDocument']) && 
+					$this->ProgramResponse->ProgramResponseDoc->save($this->data['ProgramResponseDoc'])) {
+						return array($programPaperForm, $programResponse, $genType);	
+					}
+					else {
+						$path = Configure::read('Document.storage.uploadPath');
+						$path .= substr($pdf, 0, 4) . DS;
+						$path .= substr($pdf, 4, 2) . DS;
+						$file = $path . $pdf;
+						unlink($file);
+						return false;
+					}			
+				}
+				else {
+					return false;
+				}	
+			}
 	}
 
 	function _createFDF($file,$info){
