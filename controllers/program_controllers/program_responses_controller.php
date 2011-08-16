@@ -119,12 +119,19 @@ class ProgramResponsesController extends AppController {
 		$this->set($data);
 	}
 
-	function response_complete($id=null) {
+	function response_complete($id=null, $autoApprove=false) {
 		$programResponse = $this->ProgramResponse->find('first', array('conditions' => array(
 			'ProgramResponse.user_id' => $this->Auth->user('id'),
-			'ProgramResponse.program_id' => $id,
-			'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s') 
+			'ProgramResponse.program_id' => $id 
 		)));
+		if($autoApprove) {
+			$form = $this->ProgramResponse->Program->ProgramPaperForm->find('first', array(
+				'conditions' => array(
+					'ProgramPaperForm.program_id' => $programResponse['Program']['id'],
+					'ProgramPaperForm.cert' => 1)));
+			$generated = $this->_generateForm($form['ProgramPaperForm']['id'], $programResponse['ProgramResponse']['id']);
+			//@TODO send program complete emial, and create a user transaction.
+		}
 		if(!$programResponse) {
 			$this->Session->setFlash(__('An error has occured.', true), 'flash_failure');
 		}
@@ -534,6 +541,7 @@ class ProgramResponsesController extends AppController {
 			$data['admin'] = $this->Auth->user('firstname') . ' ' . $this->Auth->user('lastname');
 			$data['todays_date'] = date('m/d/Y');
 			$data['form_completed'] = date('m/d/Y', strtotime($programResponse['ProgramResponse']['created']));
+			$data['program_name'] = $programResponse['Program']['name'];
 			
 			if($programPaperForm) {				
 				$pdf = $this->_createPDF($data, $programPaperForm['ProgramPaperForm']['template']);
