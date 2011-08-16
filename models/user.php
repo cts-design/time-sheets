@@ -928,13 +928,6 @@ class User extends AppModel {
 					'message' => 'Must be a vaild email like bob@test.com.',
 				    'allowEmpty' => true
 				)
-			),
-			'language' => array(
-				'notEmpty' => array(
-					'rule' => 'notEmpty',
-					'message' => 'Please provide a language.',
-					'on' => 'create'
-				)
 			)		
 		)
 	);
