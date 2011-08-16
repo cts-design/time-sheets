@@ -228,9 +228,9 @@ class ProgramsController extends AppController {
 				$this->Session->setFlash(__('You must check the I acknowledge box.', true), 'flash_failure');		
 			}
 		}
-		$data['aknowledgeMedia'] = true;
+		$data['acknowledgeMedia'] = true;
 		if($program['Program']['auth_required'] == 0) {
-			$data['aknowledgeMedia'] = false;
+			$data['acknowledgeMedia'] = false;
 		}
 		$instructions = Set::extract('/ProgramInstruction[type=media]/text', $program);		
 		$data['element'] = '/programs/' . $element; 
@@ -280,12 +280,12 @@ class ProgramsController extends AppController {
 					if($program['Program']['auth_required']) {
 						$data['programs'][$i]['actions'] = '<a href="/admin/program_responses/index/'.
 							$program['Program']['id'].'">View Responses</a> | 
-							<a class="edit" href="/admin/programs/instructions_index/'.
+							<a class="edit" href="/admin/program_instructions/index/'.
 							$program['Program']['id'].'">Edit Instructions</a>';						
 					}
 					else {
-						$data['programs'][$i]['actions'] = '<a class="edit" href="/admin/programs/'.
-						'instructions_index/' . $program['Program']['id'].'">Edit Instructions</a>';
+						$data['programs'][$i]['actions'] = '<a class="edit" href="/admin/program_instructions/'.
+						'index/' . $program['Program']['id'].'">Edit Instructions</a>';
 					}	
 					$i++;			
 				}
@@ -302,33 +302,6 @@ class ProgramsController extends AppController {
 		$this->set(compact('title_for_layout'));
 	}
 	
-	function admin_instructions_index() {
-		$title_for_layout = 'Program Instructions';
-		$this->set(compact('title_for_layout'));
-	}
-	
-	function admin_edit_instructions($id=null) {
-		if(!$id && empty($this->data)){
-		    $this->Session->setFlash(__('Invalid instructions', true), 'flash_failure');
-		    $this->redirect(array('action' => 'instructions_index', 'admin' => true));
-		}
-		if(!empty($this->data)) {
-			if($this->Program->ProgramInstruction->save($this->data)) {
-			    $this->Session->setFlash(__('Instructions updated successfully', true), 'flash_success');
-			    $this->redirect(array('action' => 'instructions_index', 'admin' => true));				
-			}
-			else {
-			    $this->Session->setFlash(__('Unable to save, please try again.', true), 'flash_failure');
-			    $this->redirect(array(
-			    	'action' => 'edit_instructions', 
-			    	$this->data['ProgramInstruction']['id'], 
-			    	'admin' => true));					
-			}
-		}
-		if(empty($this->data)) {
-			$this->data = $this->Program->ProgramInstruction->read(null, $id);
-		}
-		$this->set('title_for_layout', 'Edit ' . Inflector::humanize($this->data['ProgramInstruction']['type']) . ' Instructions');
-	}
+
 		
 }
