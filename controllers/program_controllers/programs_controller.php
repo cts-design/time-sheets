@@ -29,16 +29,31 @@ class ProgramsController extends AppController {
 			$this->redirect('/');
 		}
 		$program = $this->Program->findById($id);
-		
-		$programResponse = $this->Program->ProgramResponse->find('first', array('conditions' => array(
-			'ProgramResponse.user_id' => $this->Auth->user('id'),
-			'ProgramResponse.program_id' => $id,
-			'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s') 
-		)));
 		if($program['Program']['disabled'] == 1){
 			$this->Session->setFlash(__('This program is disabled', true), 'flash_failure');
 			$this->redirect('/');
 		}
+		
+		$programResponse = $this->Program->ProgramResponse->find('first', array(
+			'conditions' => array(
+				'ProgramResponse.user_id' => $this->Auth->user('id'),
+				'ProgramResponse.program_id' => $id
+			),
+			'order' => array('ProgramResponse.id DESC')));		
+		if($programResponse['ProgramResponse']['complete']) {
+			if($programResponse['ProgramResponse']['complete']) {
+				$this->redirect(array(
+					'controller' => 'program_responses', 
+					'action' => 'response_complete', $id));						
+			}
+		}
+		if($programResponse['ProgramResponse']['expires_on'] < date('Y-m-d H:i:s') ) {
+			$programResponse = null;
+		}
+		if($programResponse['ProgramResponse']['rejected']) {
+			$this->redirect();
+		}
+					
 		switch($program['Program']['type']){
 			case "docs": 
 				break;
@@ -77,15 +92,15 @@ class ProgramsController extends AppController {
 					$this->redirect(array(
 						'controller' => 'programs', 
 						'action' => 'view_media', $id, 'video'));
-				}
+				}				
 				elseif($programResponse) {
 					if(!$programResponse['ProgramResponse']['viewed_media']) {
-						$this->Session->write('step2', 'complete');
 						$this->redirect(array(
 							'controller' => 'programs', 
 							'action' => 'view_media', $id, 'video'));
 					}
 				}
+				$this->Session->write('step2', 'complete');
 				$data['redirect'] = '/programs/view_media/' . $program['Program']['id'] . '/' . 'video';  		
 				break;
 			case "video_form":
@@ -186,13 +201,18 @@ class ProgramsController extends AppController {
 		}
 		$program = $this->Program->findById($id);
 		if(!empty($this->data)) {
-		$programResponse = $this->Program->ProgramResponse->find('first', array('conditions' => array(
-			'ProgramResponse.user_id' => $this->Auth->user('id'),
-			'ProgramResponse.program_id' => $id,
-			'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s') 
-		)));
+			$programResponse = $this->Program->ProgramResponse->find('first', array(
+				'conditions' => array(
+					'ProgramResponse.user_id' => $this->Auth->user('id'),
+					'ProgramResponse.program_id' => $id,
+					'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s') 
+				),
+				'order' => array('ProgramResponse.id DESC')));
 			$this->data['ProgramResponse']['id'] = $programResponse['ProgramResponse']['id'];
 			$this->data['ProgramResponse']['user_id'] =	$this->Auth->user('id');
+			if($this->Session->read('step2') == 'complete') {
+				$this->data['ProgramResponse']['complete'] = 1;
+			}
 			if($this->Program->ProgramResponse->save($this->data, true)) {
 				$this->Transaction->createUserTransaction('Programs', null, null,
 					'Completed media for ' . $program['Program']['name']);	
@@ -220,7 +240,7 @@ class ProgramsController extends AppController {
 					case "complete":
 						$this->redirect(array(
 							'controller' => 'program_responses',
-							'action' => 'submission_recieved', $id));		
+							'action' => 'response_complete', $id, true));		
 						break;
 				}
 			}
