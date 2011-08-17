@@ -35,11 +35,13 @@ class ProgramResponsesController extends AppController {
 			$this->redirect($this->referer());
 		} 
 		if(!empty($this->data)) {
-			$response = $this->ProgramResponse->find('first', array('conditions' => array(
-				'ProgramResponse.user_id' => $this->Auth->user('id'),
-				'ProgramResponse.program_id' => $id,
-				'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s') 
-			)));
+			$response = $this->ProgramResponse->find('first', array(
+				'conditions' => array(
+					'ProgramResponse.user_id' => $this->Auth->user('id'),
+					'ProgramResponse.program_id' => $id,
+					'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s') 
+				),
+				'order' => array('ProgramResponse.id DESC')));
 			$this->data['ProgramResponse']['answers'] = json_encode($this->data['ProgramResponse']);
 			$this->data['ProgramResponse']['id'] = $response['ProgramResponse']['id'];
 			$this->data['ProgramResponse']['program_id'] = $id;
@@ -79,9 +81,13 @@ class ProgramResponsesController extends AppController {
 			$this->redirect($this->referer());
 		}
 		if($reset == 1) {
-		$programResponse = $this->ProgramResponse->find('first', array('conditions' => array(
+		$programResponse = $this->ProgramResponse->find('first', array(
+			'conditions' => array(
 				'ProgramResponse.user_id' => $this->Auth->user('id'),
-				'ProgramResponse.program_id' => $id)));
+				'ProgramResponse.program_id' => $id,
+				'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s')
+			),
+			'order' => array('ProgramResponse.id DESC')));
 			$this->ProgramResponse->id = $programResponse['ProgramResponse']['id'];
 			$this->ProgramResponse->saveField('uploaded_docs', 0);
 			$this->ProgramResponse->saveField('dropping_off_docs', 0);
@@ -120,10 +126,13 @@ class ProgramResponsesController extends AppController {
 	}
 
 	function response_complete($id=null, $autoApprove=false) {
-		$programResponse = $this->ProgramResponse->find('first', array('conditions' => array(
-			'ProgramResponse.user_id' => $this->Auth->user('id'),
-			'ProgramResponse.program_id' => $id 
-		)));
+		$programResponse = $this->ProgramResponse->find('first', array(
+			'conditions' => array(
+				'ProgramResponse.user_id' => $this->Auth->user('id'),
+				'ProgramResponse.program_id' => $id,
+				'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s')
+			),
+			'order' => array('ProgramResponse.id DESC')));
 		if($autoApprove) {
 			$form = $this->ProgramResponse->Program->ProgramPaperForm->find('first', array(
 				'conditions' => array(
@@ -144,11 +153,13 @@ class ProgramResponsesController extends AppController {
 		    $this->Session->setFlash(__('Invalid Program', true), 'flash_failure');
 		    $this->redirect(array('action' => 'index'));
 		}
-		$programResponse = $this->ProgramResponse->find('first', array('conditions' => array(
-			'ProgramResponse.user_id' => $this->Auth->user('id'),
-			'ProgramResponse.program_id' => $id,
-			'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s') 
-		)));
+		$programResponse = $this->ProgramResponse->find('first', array(
+			'conditions' => array(
+				'ProgramResponse.user_id' => $this->Auth->user('id'),
+				'ProgramResponse.program_id' => $id,
+				'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s')
+			),
+			'order' => array('ProgramResponse.id DESC')));
 		$docId = Set::extract('/ProgramResponseDoc[cert=1]/doc_id', $programResponse);
 		$this->view = 'Media';
 		$this->loadModel('FiledDocument');
@@ -174,9 +185,10 @@ class ProgramResponsesController extends AppController {
 		$programResponse = $this->ProgramResponse->find('first', array(
 			'conditions' => array(
 				'ProgramResponse.user_id' => $this->Auth->user('id'),
-				'ProgramResponse.program_id' => $id
-			)
-		));
+				'ProgramResponse.program_id' => $id,
+				'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s')
+			),
+			'order' => array('ProgramResponse.id DESC')));
 		$this->ProgramResponse->Program->ProgramInstruction->recursive = -1;
 		if($programResponse['ProgramResponse']['uploaded_docs'] == 0 && 
 			$programResponse['ProgramResponse']['dropping_off_docs'] == 0) {
