@@ -184,7 +184,7 @@ class ProgramsController extends AppController {
 				date('Y-m-d H:i:s', strtotime('+' . $program['Program']['response_expires_in'] . ' days'));
 			if($this->Program->ProgramResponse->save($this->data)){
 			$this->Transaction->createUserTransaction('Programs', null, null,
-				'Initiated program' . $program['Program']['name']);				
+				'Initiated program ' . $program['Program']['name']);				
 				$this->redirect($this->data['Program']['redirect']);
 			}
 		}
