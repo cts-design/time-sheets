@@ -140,8 +140,13 @@ class ProgramResponsesController extends AppController {
 					'ProgramPaperForm.cert' => 1)));
 			$generated = $this->_generateForm($form['ProgramPaperForm']['id'], $programResponse['ProgramResponse']['id']);
 			$this->Transaction->createUserTransaction('Programs', null, null,
-				'Completed program ' . $programResponse['Program']['name']);				
-			//@TODO send program complete emial
+				'Completed program ' . $programResponse['Program']['name']);
+			$programEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', 
+				array('conditions' => array(
+					'ProgramEmail.program_id' => $programResponse['Program']['id'],
+					'ProgramEmail.type' => 'final'
+			)));
+			$this->Notifications->sendProgramEmail($programEmail);
 		}
 		if(!$programResponse) {
 			$this->Session->setFlash(__('An error has occured.', true), 'flash_failure');
