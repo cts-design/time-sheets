@@ -88,6 +88,8 @@ class ProgramsController extends AppController {
 			case "uri_form_docs":
 				break;								
 			case "video":
+				$this->Session->write('step2', 'complete');
+				$data['redirect'] = '/programs/view_media/' . $program['Program']['id'] . '/' . 'video'; 
 				if(!$program['Program']['auth_required']) {
 					$this->redirect(array(
 						'controller' => 'programs', 
@@ -100,8 +102,6 @@ class ProgramsController extends AppController {
 							'action' => 'view_media', $id, 'video'));
 					}
 				}
-				$this->Session->write('step2', 'complete');
-				$data['redirect'] = '/programs/view_media/' . $program['Program']['id'] . '/' . 'video';  		
 				break;
 			case "video_form":
 				$element = '/programs/video';
