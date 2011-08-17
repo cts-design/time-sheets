@@ -580,17 +580,14 @@ class ProgramResponsesController extends AppController {
 					$this->data['FiledDocument']['filename'] = $pdf;
 					if($this->Auth->user('role_id')!= 1) {
 						$this->data['FiledDocument']['admin_id'] = $this->Auth->user('id');
+						$this->data['FiledDocument']['filed_location_id'] = $this->Auth->user('location_id');
+						$this->data['FiledDocument']['last_activity_admin_id'] = $this->Auth->user('id');
 					}
-					$this->data['FiledDocument']['admin_id'] = $this->Auth->user('id');
 					$this->data['FiledDocument']['user_id'] = $data['id'];
-					$this->data['FiledDocument']['filed_location_id'] = $this->Auth->user('location_id');
 					$this->data['FiledDocument']['cat_1'] = $programPaperForm['ProgramPaperForm']['cat_1'];
 					$this->data['FiledDocument']['cat_2'] = $programPaperForm['ProgramPaperForm']['cat_2'];
 					$this->data['FiledDocument']['cat_3'] = $programPaperForm['ProgramPaperForm']['cat_3'];
 					$this->data['FiledDocument']['entry_method'] = 'Program Generated';
-					if($this->Auth->user('role_id')!= 1) {
-						$this->data['FiledDocument']['last_activity_admin_id'] = $this->Auth->user('id');
-					}
 					$this->data['ProgramResponseDoc']['created'] = date('Y-m-d H:i:s');					
 					$this->data['ProgramResponseDoc']['cat_id'] = $programPaperForm['ProgramPaperForm']['cat_3'];
 					$this->data['ProgramResponseDoc']['program_response_id'] =  $programResponseId;
