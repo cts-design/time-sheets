@@ -12,7 +12,9 @@
 
 <?php if ($acknowledgeMedia) : ?>
 	<div id="Acknowledge">
-		<?php echo $form->create('Program', array('action' => 'view_media/' . $this->params['pass'][0])) ?>
+		<?php echo $form->create('Program', array('action' => 'view_media/' . $this->params['pass'][0] . '/' . 
+			$this->params['pass'][1]));
+		?>
 		<br />
 		<br />
 	    <?php $label = sprintf(__("I acknowledge that I have viewed the orientation and completely understand its content.
