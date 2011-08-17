@@ -320,8 +320,5 @@ class ProgramsController extends AppController {
 		}	
 		$title_for_layout = 'Programs';		
 		$this->set(compact('title_for_layout'));
-	}
-	
-
-		
+	}	
 }
