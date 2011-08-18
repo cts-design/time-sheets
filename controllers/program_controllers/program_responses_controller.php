@@ -33,7 +33,8 @@ class ProgramResponsesController extends AppController {
 		if(!$id) {
 			$this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');
 			$this->redirect($this->referer());
-		} 
+		}
+		$program = $this->ProgramResponse->Program->findById($id); 
 		if(!empty($this->data)) {
 			$response = $this->ProgramResponse->find('first', array(
 				'conditions' => array(
@@ -55,7 +56,6 @@ class ProgramResponsesController extends AppController {
 					)));
 				$this->Notifications->sendProgramEmail($programEmail);
 				$this->Session->setFlash(__('Saved', true), 'flash_success');
-				$program = $this->ProgramResponse->Program->findById($id);
 				if(strpos($program['Program']['type'], 'docs', 0)) {
 					$this->redirect(array('action' => 'required_docs', $id));
 				}
@@ -65,7 +65,6 @@ class ProgramResponsesController extends AppController {
 				$this->Session->setFlash(__('Unable to save', true), 'flash_failure');
 			}			
 		}
-		$program = $this->ProgramResponse->Program->findById($id);
 		$instructions = Set::extract('/ProgramInstruction[type=form]/text', $program);
 		if($instructions) {
 			$data['instructions'] = $instructions[0];
