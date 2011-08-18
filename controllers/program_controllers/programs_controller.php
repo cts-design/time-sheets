@@ -56,12 +56,6 @@ class ProgramsController extends AppController {
 		}
 					
 		switch($program['Program']['type']){
-			case "docs": 
-				break;
-			case "form":
-				break;
-			case "form_docs": 
-				break;
 			case "pdf":
 				$this->Session->write('step2', 'complete');
 				$data['redirect'] = '/programs/view_media/' . $program['Program']['id'] . '/' . 'pdf'; 				
@@ -79,24 +73,25 @@ class ProgramsController extends AppController {
 				}
 				break;
 			case "pdf_form":
-				break;
-			case "pdf_docs":
-				break;
-			case "pdf_form_docs":
-				break;
+				break;		
 			case "uri":
+				$this->Session->write('step2', 'complete');
+				$data['redirect'] = '/programs/view_media/' . $program['Program']['id'] . '/' . 'uri'; 				
 				if(!$program['Program']['auth_required']) {
 					$this->redirect(array(
 						'controller' => 'programs', 
 						'action' => 'view_media', $id, 'uri'));
+				}
+				elseif($programResponse) {
+					if(!$programResponse['ProgramResponse']['viewed_media']) {
+						$this->redirect(array(
+							'controller' => 'programs', 
+							'action' => 'view_media', $id, 'uri'));
+					}
 				} 				
 				break;
 			case "uri_form":
-				break;					
-			case "uri_docs":
-				break;				
-			case "uri_form_docs":
-				break;								
+				break;												
 			case "video":
 				$this->Session->write('step2', 'complete');
 				$data['redirect'] = '/programs/view_media/' . $program['Program']['id'] . '/' . 'video'; 
@@ -115,10 +110,7 @@ class ProgramsController extends AppController {
 				break;
 			case "video_form":
 				$element = '/programs/video';
-				break;
-			case "video_docs":
-				$element = '/programs/video';
-				break;				
+				break;			
 			case "video_form_docs":
 				if($programResponse) {
 					if($programResponse['ProgramResponse']['viewed_media'] == 0) {
