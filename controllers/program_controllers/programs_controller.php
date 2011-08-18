@@ -63,11 +63,20 @@ class ProgramsController extends AppController {
 			case "form_docs": 
 				break;
 			case "pdf":
+				$this->Session->write('step2', 'complete');
+				$data['redirect'] = '/programs/view_media/' . $program['Program']['id'] . '/' . 'pdf'; 				
 				if($program['Program']['auth_required'] == 0) {
 					$this->redirect(array(
 						'controller' => 'programs', 
 						'action' => 'view_media', $id, 'pdf'));
-				}   			
+				}
+				elseif($programResponse) {
+					if(!$programResponse['ProgramResponse']['viewed_media']) {
+						$this->redirect(array(
+							'controller' => 'programs', 
+							'action' => 'view_media', $id, 'pdf'));
+					}
+				}
 				break;
 			case "pdf_form":
 				break;
