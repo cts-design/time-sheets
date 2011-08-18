@@ -52,6 +52,7 @@ class ProgramsController extends AppController {
 		}
 		if($programResponse['ProgramResponse']['rejected']) {
 			$this->redirect();
+			//@TODO Redirect to proper location. 
 		}
 					
 		switch($program['Program']['type']){
