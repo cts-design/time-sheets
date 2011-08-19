@@ -3,6 +3,18 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+	<h1>Release 3.1.1 (8/18/11)</h1>
+	<ol>
+		<li>Implemented a dynamic text resizing tool for website CMS pages.</li>
+		<li>Fixed bug that was causing the self-sign queue to not display within IE7.</li>
+		<li>Implemented "Bug Report" option to admin roles only.</li>
+		<li>Resolved issue with “view” button within the deleted documents area of Storage.</li>
+		<li>Adjusted “required” fields within the “add customer” section of users to allow addition of customer without specification of Gender, Race and Ethnicity.</li>
+		<li>Fixed bug which was causing the location house to display incorrectly within the CMS locations module.</li>
+		<li>Implemented a deployment monitoring tool to track load times, memory usage, CPU usage, ping times and alert systems admin in the event of an issue.</li>
+		<li>Resolved validation issue when using 2nd conditional search criteria within the Users - Customers search function.</li>
+	</ol>
+	<hr />	
 	<h1>Release 3.1.0 (8/4/11)</h1>
 	<ol>
 		<li>Added bi-lingual (Spanish) selection to Website module. Utilizing browser based "regional" settings to determine language. Also, added manual link on public facing websites</li>

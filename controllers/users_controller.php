@@ -203,6 +203,7 @@ class UsersController extends AppController {
 		$this->set('title_for_layout', 'Add Customer');
 		if (!empty($this->data)) {
 		    $this->User->create();
+			$this->User->setValidation('adminAddCustomer');
 		    if ($this->User->save($this->data)) {
 				$this->Transaction->createUserTransaction('Customer', 
 					null, null, 'Added customer '. $this->data['User']['lastname'] . 

@@ -781,6 +781,154 @@ class User extends AppModel {
 					'on' => 'create'
 				)
 			) 		
+		),
+		'adminAddCustomer' => array(
+			'firstname' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a first name.'
+			    ),
+			    'maxlength' => array(
+					'rule' => array('maxlength', 50),
+					'message' => 'This field cannot excced 50 characters.'
+			    ),
+			),
+			'lastname' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a last name.'
+			    ),
+			    'maxlength' => array(
+					'rule' => array('maxlength', 50),
+					'message' => 'This field cannot excced 50 characters.'
+			    ),
+			),
+			'ssn' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a SSN.'
+			    ),
+			    'numeric' => array(
+					'rule' => 'numeric',
+					'message' => 'Please provide only numbers, no spaces or dashes.'
+			    ),
+			    'unique' => array(
+					'rule' => 'isUnique',
+					'message' => 'The SSN entered already exists in the system.'
+			    ),
+			    'minLength' => array(
+					'rule' => array('minLength', 9),
+					'message' => 'SSN must be full 9 digits.'
+				)
+			),
+			'ssn_confirm' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please confirm the SSN.',
+			    ),
+			    'numeric' => array(
+					'rule' => 'numeric',
+					'message' => 'Please provide only numbers, no spaces or dashes.',
+			    ),
+			    'verify' => array(
+					'rule' => array('verifies', 'ssn'),
+					'message' => 'SSNs do not match.'
+			    ),
+			    'minLength' => array(
+					'rule' => array('minLength', 9),
+					'message' => 'SSN must be full 9 digits.'
+				)		    
+			),
+			'address_1' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a street address.',
+					'on' => 'create'
+				)
+			),
+			'city' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a city.',
+					'on' => 'create'
+				)
+			),
+			'county' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a county.',
+					'on' => 'create'
+				)
+			),
+			'state' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a state',
+					'on' => 'create'
+				)
+			),
+			'zip' => array(
+			    'numeric' => array(
+					'rule' => 'numeric',
+					'message' => 'Please provide only numbers, no spaces or dashes.'
+			    ),
+			    'minLength' => array(
+					'rule' => array('minLength', 5),
+					'message' => 'Please enter 5 digit zip code.'
+			    ),
+			    'maxLength' => array(
+					'rule' => array('maxLength', 5),
+					'message' => 'Please enter 5 digit zip code.'
+			    )
+			),
+			'phone' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a phone number',
+					'on' => 'create'
+				),
+			    'phone' => array(
+					'rule' => array('maxLength', 20),
+					'message' => 'Please no more than 20 characters.',
+					'allowEmpty' => true
+			    )
+			),
+			'alt_phone' => array(
+			    'phone' => array(
+					'rule' => array('maxLength', 20),
+					'message' => 'Please no more than 20 characters.',
+					'allowEmpty' => true
+			    )
+			),
+			'gender' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please select a gender.',
+					'on' => 'create'
+			    )
+			),
+			'dob' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide date of birth.'
+			    ),
+			    'date' => array(
+					'rule' => array('date', 'mdy'),
+					'message' => 'Please provide a valid date in this format mm/dd/yyyy.'
+			    )
+			),
+			'email' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide an email address.',
+					'on' => 'create'
+				),
+			    'email' => array(
+					'rule' => 'email',
+					'message' => 'Must be a vaild email like bob@test.com.',
+				    'allowEmpty' => true
+				)
+			)		
 		)
 	);
 

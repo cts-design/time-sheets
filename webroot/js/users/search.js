@@ -83,7 +83,8 @@ var searchPanel = {
                 whereIs2        = Ext.getCmp('SearchScope2');
 
                 if (record.data.field1 === 'firstname' || record.data.field1 === 'lastname') {
-                  searchTerm2.enable().show().allowBlank = false;
+                  searchTerm2.allowBlank = false;
+                  searchTerm2.enable().show();
                   searchFullSsn2.disable().hide();
                   searchLast42.disable().hide();
                 }
@@ -106,10 +107,12 @@ var searchPanel = {
                 searchLast42    = Ext.getCmp('SearchLast42'),
                 whereIs2        = Ext.getCmp('SearchScope2');
 
-                searchTerm2.allowBlank = true;
-                searchFullSsn2.allowBlank = true;
-                searchLast42.allowBlank = true;
-                whereIs2.allowBlank = true;
+                if (newValue === '') {
+                  searchTerm2.allowBlank = true;
+                  searchFullSsn2.allowBlank = true;
+                  searchLast42.allowBlank = true;
+                  whereIs2.allowBlank = true;
+                }
               }
             }
           }]
