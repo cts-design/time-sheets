@@ -147,6 +147,16 @@ class FiledDocumentsController extends AppController {
 		}
 		if(isset($id)) {
 			if($this->FiledDocument->delete($id)) {
+				if($this->isModuleEnabled('Programs')) {	
+					$this->loadModel('ProgramResponseDoc');
+					$programResponseDoc = $this->ProgramResponseDoc->find('first', array('conditions' => array('ProgramResponseDoc.doc_id' => $id)));
+					if($programResponseDoc) {
+						$this->data['ProgramResponseDoc']['id'] = $programResponseDoc['ProgramResponseDoc']['id'];
+						$this->data['ProgramResponseDoc']['deleted'] = 1;
+						$this->data['ProgramResponseDoc']['deleted_reason'] = $this->data['FiledDocument']['reason'];
+						$this->ProgramResponseDoc->save($this->data);
+					}
+				}
 			    $this->Transaction->createUserTransaction('Storage', null, null,
 				    'Deleted filed document ID ' . $id);
 			    $this->Session->setFlash(__('Filed document deleted', true), 'flash_success');
