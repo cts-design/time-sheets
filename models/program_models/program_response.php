@@ -29,47 +29,45 @@ class ProgramResponse extends AppModel {
 				'DocumentFilingCategory.name !=' => 'Rejected')));
 			$watchedCats = Set::classicExtract($allWatchedCats, '{n}.WatchedFilingCat.cat_id');
 			$filedResponseDocCats = $this->getFiledResponseDocCats($watchedCat['Program']['id'], $user['User']['id']);	
-			if(!in_array($this->data['FiledDocument']['cat_3'], $filedResponseDocCats))	{
-				if($this->ProgramResponseDoc->save($this->data['ProgramResponseDoc'])) {								
-					$docFiledEmail = $this->Program->ProgramEmail->find('first', array(
-						'conditions' => array(
-							'ProgramEmail.program_id' => $watchedCat['Program']['id'],
-							'ProgramEmail.cat_id' => $this->data['FiledDocument']['cat_3'])));				
-					if($docFiledEmail['ProgramEmail']['type'] == 'rejected') {				
-						$docFiledEmail['ProgramEmail']['body'] = $docFiledEmail['ProgramEmail']['body'] . 
-						 "\r\n" . $this->data['FiledDocument']['description'];
+			if($this->ProgramResponseDoc->save($this->data['ProgramResponseDoc'])) {								
+				$docFiledEmail = $this->Program->ProgramEmail->find('first', array(
+					'conditions' => array(
+						'ProgramEmail.program_id' => $watchedCat['Program']['id'],
+						'ProgramEmail.cat_id' => $this->data['FiledDocument']['cat_3'])));				
+				if($docFiledEmail['ProgramEmail']['type'] == 'rejected') {				
+					$docFiledEmail['ProgramEmail']['body'] = $docFiledEmail['ProgramEmail']['body'] . 
+					 "\r\n" . $this->data['FiledDocument']['description'];
+				}
+				if($docFiledEmail) {
+					$return['docFiledEmail'] = $docFiledEmail;	
+				}														
+				$filedResponseDocCats = $this->getFiledResponseDocCats($watchedCat['Program']['id'], $user['User']['id']);	
+				$result = array_diff($watchedCats, $filedResponseDocCats);
+				if(empty($result)){
+					$this->id = $userResponse['ProgramResponse']['id'];					
+					if($watchedCat['Program']['approval_required'] == 1) {
+						$this->saveField('needs_approval', 1);
 					}
-					if($docFiledEmail) {
-						$return['docFiledEmail'] = $docFiledEmail;	
-					}														
-					$filedResponseDocCats = $this->getFiledResponseDocCats($watchedCat['Program']['id'], $user['User']['id']);	
-					$result = array_diff($watchedCats, $filedResponseDocCats);
-					if(empty($result)){
-						$this->id = $userResponse['ProgramResponse']['id'];					
-						if($watchedCat['Program']['approval_required'] == 1) {
-							$this->saveField('needs_approval', 1);
+					else{
+						$this->saveField('complete', 1);
+						$finalEmail = $this->Program->ProgramEmail->find('first', array(
+							'conditions' => array(
+								'ProgramEmail.program_id' => $watchedCat['Program']['id'],
+								'ProgramEmail.type' => 'final')));													
+						if($watchedCat['Program']['cert_type'] != 'none'){
+							$response = $this->find('first', array('conditions' => array(
+								'ProgramResponse.program_id' => $watchedCat['Program']['id'],
+								'ProgramResponse.user_id' => $user['User']['id'])));
+							$finalEmail['ProgramEmail']['body'] = $finalEmail['ProgramEmail']['body'] .
+							"\r\n" . $response['ProgramResponse']['cert_link'];																				
 						}
-						else{
-							$this->saveField('complete', 1);
-							$finalEmail = $this->Program->ProgramEmail->find('first', array(
-								'conditions' => array(
-									'ProgramEmail.program_id' => $watchedCat['Program']['id'],
-									'ProgramEmail.type' => 'final')));													
-							if($watchedCat['Program']['cert_type'] != 'none'){
-								$response = $this->find('first', array('conditions' => array(
-									'ProgramResponse.program_id' => $watchedCat['Program']['id'],
-									'ProgramResponse.user_id' => $user['User']['id'])));
-								$finalEmail['ProgramEmail']['body'] = $finalEmail['ProgramEmail']['body'] .
-								"\r\n" . $response['ProgramResponse']['cert_link'];																				
-							}
-							if($finalEmail) {
-								$return['finalEmail'] = $finalEmail;
-							}						
-						} 
-					}	
-				}				
-			}		
-		}
+						if($finalEmail) {
+							$return['finalEmail'] = $finalEmail;
+						}						
+					} 
+				}	
+			}				
+		}		
 		return $return;		
 	}
 	
