@@ -348,11 +348,23 @@ class ProgramResponsesController extends AppController {
 					$filedForms = Set::extract('/ProgramResponseDoc[paper_form=1]',  $programResponse);
 					$i = 0;
 					foreach($docs as $doc) {
-						$data['docs'][$i]['name'] = $filingCatList[$doc['ProgramResponseDoc']['cat_id']];
-						$data['docs'][$i]['filedDate'] = $doc['ProgramResponseDoc']['created'];
-						$data['docs'][$i]['link'] = '<a href="/admin/filed_documents/view/'.
-							$doc['ProgramResponseDoc']['doc_id'] . '" target="_blank">View Doc</a>';
-						$data['docs'][$i]['id'] = $doc['ProgramResponseDoc']['doc_id'];
+						
+						$data['docs'][$i]['id'] = $doc['ProgramResponseDoc']['doc_id'];	
+						if($doc['ProgramResponseDoc']['deleted']) {
+							$data['docs'][$i]['name'] = 'Deleted';
+							$data['docs'][$i]['deletedReason'] = $doc['ProgramResponseDoc']['deleted_reason'];
+							$data['docs'][$i]['deletedDate'] = $doc['ProgramResponseDoc']['modified'];
+							$data['docs'][$i]['link'] = '<a href="/admin/deleted_documents/view/'.
+								$doc['ProgramResponseDoc']['doc_id'] . '" target="_blank">View Doc</a>';							
+						}
+						else {
+							$data['docs'][$i]['name'] = $filingCatList[$doc['ProgramResponseDoc']['cat_id']];
+							$data['docs'][$i]['filedDate'] = $doc['ProgramResponseDoc']['created'];
+							$data['docs'][$i]['link'] = '<a href="/admin/filed_documents/view/'.
+								$doc['ProgramResponseDoc']['doc_id'] . '" target="_blank">View Doc</a> | 
+									<a href="/admin/filed_documents/edit/'.
+								$doc['ProgramResponseDoc']['doc_id'] . '">Edit Doc</a>';						
+						}
 						$i++;
 					}							
 				}
