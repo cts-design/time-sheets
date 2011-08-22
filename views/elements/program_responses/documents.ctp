@@ -3,9 +3,15 @@
 		<?php if(is_array($docs)) :?>
 			<?php foreach($docs as $doc) : ?>
 				<div class="response-doc">
-					<p><strong>Doc id:</strong> <?php echo $doc['id'] ?></p> 
+					<p><strong>Doc id:</strong> <?php echo $doc['id'] ?></p>
 					<p><strong>Doc type:</strong> <?php echo $doc['name'] ?></p>
-					<p><strong>Filed on:</strong> <?php echo $doc['filedDate'] ?></p>			
+					<?php if(isset($doc['filedDate'])) : ?>
+						<p><strong>Filed on:</strong> <?php echo $doc['filedDate']; ?></p>
+					<?php endif ?>						
+					<?php if(isset($doc['deletedDate'])) : ?>
+						<p><strong>Deleted on:</strong> <?php echo $doc['deletedDate']; ?></p>
+						<p><strong>Deleted reason:</strong> <?php echo $doc['deletedReason']; ?></p>
+					<?php endif ?>		
 					<p><?php echo $doc['link'] ?></p>
 				</div>
 			<?php endforeach ?>	
