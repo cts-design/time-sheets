@@ -14,6 +14,10 @@ class ProgramResponse extends AppModel {
 		$this->data = $data;	
 		$watchedCat = $this->Program->WatchedFilingCat->findByCatId($this->data['FiledDocument']['cat_3']);
 		$return['cat_id'] = $this->data['FiledDocument']['cat_3'];
+		$programResponseDocId = $this->ProgramResponseDoc->field('id', array('doc_id' => $this->data['FiledDocument']['id']));
+		if($programResponseDocId) {
+			$this->data['ProgramResponseDoc']['id'] = $programResponseDocId;
+		}
 		if($watchedCat) {	
 			$userResponse = $this->find('first', array('conditions' => array(
 				'ProgramResponse.user_id' => $user['User']['id'],
