@@ -54,7 +54,7 @@ class ProgramsController extends AppController {
 		if($programResponse['ProgramResponse']['expires_on'] < date('Y-m-d H:i:s') ) {
 			$programResponse = null;
 		}
-		if($programResponse['ProgramResponse']['rejected']) {
+		if($programResponse['ProgramResponse']['not_approved']) {
 			$this->redirect();
 			//@TODO Redirect to proper location. 
 		}
