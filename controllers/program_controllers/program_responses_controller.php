@@ -483,7 +483,28 @@ class ProgramResponsesController extends AppController {
 
 	function admin_generate_form($formId, $programResponseId, $docId=null) {
 		if($this->RequestHandler->isAjax()) {
-			$generated = $this->_generateForm($formId, $programResponseId, $docId=null);	
+			$programResponse = $this->ProgramResponse->findById($programResponseId);
+			if(strpos($programResponse['Program']['type'], 'docs')) {
+				$allWatchedCats = $this->ProgramResponse->Program->WatchedFilingCat->find('all', array('conditions' => array(
+					'WatchedFilingCat.program_id' => $programResponse['Program']['id'],
+					'DocumentFilingCategory.name !=' => 'rejected',
+					'DocumentFilingCategory.name !=' => 'Rejected')));
+				$watchedCats = Set::classicExtract($allWatchedCats, '{n}.WatchedFilingCat.cat_id');	
+				$filedResponseDocCats = $this->ProgramResponse->ProgramResponseDoc->getFiledResponseDocCats(
+					$programResponse['Program']['id'], $programResponse['User']['id']);	
+				$result = array_diff($watchedCats, $filedResponseDocCats);
+				$generated = false;
+				if(empty($result)) {
+					$generated = $this->_generateForm($formId, $programResponseId, $docId);	
+				}
+				else {
+					$data['success'] = false;
+					$data['message'] = 'All required documents must be filed before generating forms.';				
+				}				
+			}
+			else {
+				$generated = $this->_generateForm($formId, $programResponseId, $docId);
+			}
 			if($generated) {
 				$data['success'] = true;
 				$data['message'] = 'Form generated and filed successfully.';
@@ -493,7 +514,7 @@ class ProgramResponsesController extends AppController {
 					ucfirst($generated[1]['User']['firstname']). ' ' . ucfirst($generated[1]['User']['lastname']) . ' - '. 
 					substr($generated[1]['User']['ssn'], '-4'));							
 			}
-			else {
+			elseif(empty($data['message'])) {
 				$data['success'] = false;
 				$data['message'] = 'Unable to file form at this time.';
 			}			
