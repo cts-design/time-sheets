@@ -13,7 +13,7 @@
 <?php if ($acknowledgeMedia) : ?>
 	<div id="Acknowledge">
 		<?php echo $form->create('Program', array('action' => 'view_media/' . $this->params['pass'][0] . '/' . 
-			$this->params['pass'][1]));
+			$this->params['pass'][1] . '/' . $this->params['pass'][2]));
 		?>
 		<br />
 		<br />
