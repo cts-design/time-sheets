@@ -75,9 +75,9 @@ class ProgramResponseDoc extends AppModel {
 					} 
 				}
 				if(!empty($result)) {
-					$this->id = $programResponse['ProgramResponse']['id'];					
+					$this->ProgramResponse->id = $programResponse['ProgramResponse']['id'];					
 					if($watchedCat['Program']['approval_required'] == 1 && !$programResponse['ProgramResponse']['complete']) {
-						$this->saveField('needs_approval', 0);
+						$this->ProgramResponse->saveField('needs_approval', 0);
 					}					
 				}	
 			}				
