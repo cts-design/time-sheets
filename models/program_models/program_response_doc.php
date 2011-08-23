@@ -58,7 +58,6 @@ class ProgramResponseDoc extends AppModel {
 					$this->ProgramResponse->id = $programResponse['ProgramResponse']['id'];					
 					if($watchedCat['Program']['approval_required'] == 1 && $programResponse['ProgramResponse']['complete'] == 0) {
 						$this->ProgramResponse->saveField('needs_approval', 1);
-						$this->log('line 63 got here', 'debug');
 					}
 					else{
 						$this->ProgramResponse->saveField('complete', 1);
