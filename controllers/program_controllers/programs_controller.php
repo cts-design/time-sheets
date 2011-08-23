@@ -174,7 +174,7 @@ class ProgramsController extends AppController {
 							'action' => 'response_complete', $id));
 					}		
 				}
-				$data['redirect'] = '/programs/view_media/' . $id  . '/' . 'video';
+				$data['redirect'] = '/programs/view_media/' . $id  . '/' . $responseId . '/' . 'video';
 				$this->Session->write('step2', 'form');
 				break;					
 		}
