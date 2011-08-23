@@ -487,7 +487,7 @@ class ProgramResponsesController extends AppController {
 					'DocumentFilingCategory.name !=' => 'Rejected')));
 				$watchedCats = Set::classicExtract($allWatchedCats, '{n}.WatchedFilingCat.cat_id');	
 				$filedResponseDocCats = $this->ProgramResponse->ProgramResponseDoc->getFiledResponseDocCats(
-					$programResponse['Program']['id'], $programResponse['User']['id']);	
+					$programResponse['Program']['id'], $programResponse['ProgramResponse']['id']);	
 				$result = array_diff($watchedCats, $filedResponseDocCats);
 				$generated = false;
 				if(empty($result)) {
