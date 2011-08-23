@@ -99,7 +99,7 @@ class ProgramResponsesController extends AppController {
 			if($this->QueuedDocument->validates()) {
 				if($this->QueuedDocument->uploadDocument($this->data, 'Program Upload', $this->Auth->user('id'))) {
 					$this->Transaction->createUserTransaction('Programs', null, null,
-						'Uploaded document for ' . $response['Program']['name']);							
+						'Uploaded document for ' . $programResponse['Program']['name']);							
 					$this->Session->setFlash(__('Document uploaded successfully.', true), 'flash_success');
 					$this->redirect(array('action' => 'required_docs', $id));
 				}
