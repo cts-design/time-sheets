@@ -257,7 +257,7 @@ class QueuedDocumentsController extends AppController {
 			$this->QueuedDocument->delete($this->data['FiledDocument']['id']);		
 			
 			$this->loadModel('ProgramResponse');							
-			$processedDoc = $this->ProgramResponse->processResponseDoc($this->data, $user);	
+			$processedDoc = $this->ProgramResponse->ProgramResponseDoc->processResponseDoc($this->data, $user);	
 			if(isset($processedDoc['docFiledEmail'])) {
 				$this->Notifications->sendProgramEmail($processedDoc['docFiledEmail'], $user);
 			}				
