@@ -125,13 +125,9 @@ class ProgramResponsesController extends AppController {
 	}
 
 	function response_complete($id=null, $autoApprove=false) {
+		// @FIXME possibly pass program response id instead of program id
 		$programResponse = $this->ProgramResponse->find('first', array(
-			'conditions' => array(
-				'ProgramResponse.user_id' => $this->Auth->user('id'),
-				'ProgramResponse.program_id' => $id,
-				'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s')
-			),
-			'order' => array('ProgramResponse.id DESC')));
+			'conditions' => array('ProgramResponse.id' => $id)));
 		if($autoApprove) {
 			$form = $this->ProgramResponse->Program->ProgramPaperForm->find('first', array(
 				'conditions' => array(
