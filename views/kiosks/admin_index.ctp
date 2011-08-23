@@ -6,6 +6,7 @@
  * @package ATLAS V3
  */
 ?>
+<?php echo $this->Html->script('kiosks/admin_index', array('inline' => false)) ?>
 <div id="crumbWrapper">
     <span><?php __('You are here') ?> > </span>
     <?php echo $crumb->getHtml(__('Kiosks', true), null, 'unique'); ?>
@@ -43,6 +44,13 @@
 		    <?php echo $this->Html->link(__('Buttons', true), array('controller' => 'kiosk_buttons', 'action' => 'index', $kiosk['Kiosk']['id']), array('class' => 'buttons')); ?>
 		    <?php echo $this->Html->link(__('Edit', true), array('action' => 'edit', $kiosk['Kiosk']['id']), array('class' => 'edit')); ?>
 		    <?php echo $this->Html->link(__('Delete', true), array('action' => 'delete', $kiosk['Kiosk']['id']), array('class' => 'delete'), sprintf(__('Are you sure you want to delete this kiosk?', true), $kiosk['Kiosk']['id'])); ?>
+		    <?php echo $this->Html->link(__('Add Survey', true), '', array('class' => 'add-survey')) ?>
+		    <?php echo $this->Html->link(__('Select a Survey', true), '', array('class' => 'select-survey')) ?>
+            <ul style="z-index: 10000 !important">
+                <li><?php echo $this->Html->link(__('Veteran Services', true), '') ?></li>
+                <li><?php echo $this->Html->link(__('Housing Services Outgoing', true), '') ?></li>
+                <li><?php echo $this->Html->link(__('Outgoing', true), '') ?></li>
+            </ul>
     	    </td>
     	</tr>
 	<?php endforeach; ?>
