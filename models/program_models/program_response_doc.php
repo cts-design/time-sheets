@@ -39,7 +39,7 @@ class ProgramResponseDoc extends AppModel {
 				'DocumentFilingCategory.name !=' => 'rejected',
 				'DocumentFilingCategory.name !=' => 'Rejected')));
 			$watchedCats = Set::classicExtract($allWatchedCats, '{n}.WatchedFilingCat.cat_id');
-			$filedResponseDocCats = $this->getFiledResponseDocCats($watchedCat['Program']['id'], $user['User']['id']);	
+
 			if($this->save($this->data['ProgramResponseDoc'])) {								
 				$docFiledEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array(
 					'conditions' => array(
@@ -51,8 +51,10 @@ class ProgramResponseDoc extends AppModel {
 				}
 				if($docFiledEmail) {
 					$return['docFiledEmail'] = $docFiledEmail;	
-				}														
-				$filedResponseDocCats = $this->getFiledResponseDocCats($watchedCat['Program']['id'], $user['User']['id']);	
+				}
+				$filedResponseDocCats = 
+					$this->getFiledResponseDocCats(
+						$watchedCat['Program']['id'], $programResponse['ProgramResponse']['id']);																
 				$result = array_diff($watchedCats, $filedResponseDocCats);
 				if(empty($result)){
 					$this->ProgramResponse->id = $programResponse['ProgramResponse']['id'];					
@@ -85,11 +87,10 @@ class ProgramResponseDoc extends AppModel {
 		return $return;		
 	}
 
-	function getFiledResponseDocCats($programId, $userId) {
+	function getFiledResponseDocCats($programId, $responseId) {
 		$filedResponseDocs = $this->find('all', array(
 			'conditions' => array(
-				'ProgramResponse.program_id' => $programId,
-				'ProgramResponse.user_id' => $userId,
+				'ProgramResponse.id' => $responseId,
 				'ProgramResponseDoc.deleted' => 0,
 				'ProgramResponseDoc.paper_form' => 0,
 				'ProgramResponseDoc.cert' => 0
