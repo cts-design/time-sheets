@@ -79,14 +79,14 @@ class ProgramResponsesController extends AppController {
 			$this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');
 			$this->redirect($this->referer());
 		}
-		if($reset == 1) {
 		$programResponse = $this->ProgramResponse->find('first', array(
 			'conditions' => array(
 				'ProgramResponse.user_id' => $this->Auth->user('id'),
 				'ProgramResponse.program_id' => $id,
 				'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s')
 			),
-			'order' => array('ProgramResponse.id DESC')));
+			'order' => array('ProgramResponse.id DESC')));		
+		if($reset == 1) {
 			$this->ProgramResponse->id = $programResponse['ProgramResponse']['id'];
 			$this->ProgramResponse->saveField('uploaded_docs', 0);
 			$this->ProgramResponse->saveField('dropping_off_docs', 0);
