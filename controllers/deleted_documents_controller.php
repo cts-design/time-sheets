@@ -118,6 +118,7 @@ class DeletedDocumentsController extends AppController {
 				$this->data['ProgramResponseDoc']['deleted'] = 0;
 				$this->data['ProgramResponseDoc']['deleted_reason'] = null;
 				$this->ProgramResponseDoc->save($this->data);
+				$this->ProgramResponseDoc->processResponseDoc($doc, $doc);
 			}
 		}			
 	    $this->Transaction->createUserTransaction('Storage', null, null ,
