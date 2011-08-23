@@ -40,7 +40,10 @@ class ProgramsController extends AppController {
 				'ProgramResponse.program_id' => $id
 			),
 			'order' => array('ProgramResponse.id DESC')));
-		$responseId = $programResponse['ProgramResponse']['id']; 			
+		$responseId = 0;	
+		if($programResponse) {
+			$responseId = $programResponse['ProgramResponse']['id']; 
+		}								
 		if($programResponse['ProgramResponse']['complete']) {
 			if($programResponse['ProgramResponse']['complete']) {
 				$this->redirect(array(
@@ -55,11 +58,11 @@ class ProgramsController extends AppController {
 			$this->redirect();
 			//@TODO Redirect to proper location. 
 		}
-					
+			
 		switch($program['Program']['type']){
 			case "pdf":
 				$this->Session->write('step2', 'complete');
-				$data['redirect'] = '/programs/view_media/' . $id . '/' . 'pdf'; 				
+				$data['redirect'] = '/programs/view_media/' . $id . '/' . $responseId . '/' . 'pdf'; 				
 				if($program['Program']['auth_required'] == 0) {
 					$this->redirect(array(
 						'controller' => 'programs', 
@@ -86,12 +89,12 @@ class ProgramsController extends AppController {
 						$this->redirect(array('controller' => 'program_responses', 'action' => 'index', $id));
 					}
 				}
-				$data['redirect'] = '/programs/view_media/' . $program['Program']['id']  . '/' . 'pdf';
+				$data['redirect'] = '/programs/view_media/' . $id  . '/' . $responseId . '/' . 'pdf';
 				$this->Session->write('step2', 'form');				
 				break;		
 			case "uri":
 				$this->Session->write('step2', 'complete');
-				$data['redirect'] = '/programs/view_media/' . $id . '/' . 'uri'; 				
+				$data['redirect'] = '/programs/view_media/' . $id . '/' . $responseId . '/' . 'uri'; 				
 				if(!$program['Program']['auth_required']) {
 					$this->redirect(array(
 						'controller' => 'programs', 
@@ -109,11 +112,9 @@ class ProgramsController extends AppController {
 				break;												
 			case "video":
 				$this->Session->write('step2', 'complete');
-				$data['redirect'] = '/programs/view_media/' . $program['Program']['id'] . '/' . 'video'; 
+				$data['redirect'] = '/programs/view_media/' . $id . '/' . $responseId . '/' . 'video'; 
 				if(!$program['Program']['auth_required']) {
-					$this->redirect(array(
-						'controller' => 'programs', 
-						'action' => 'view_media', $id, $responseId, 'video'));
+					$this->redirect(array('action' => 'view_media', $id, $responseId, 'video'));
 				}				
 				elseif($programResponse) {
 					if(!$programResponse['ProgramResponse']['viewed_media']) {
