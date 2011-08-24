@@ -229,7 +229,6 @@ class ProgramsController extends AppController {
 					$this->Email->send($email['ProgramEmail']['body']);								
 				}								
 				$this->Session->setFlash(__('Saved', true), 'flash_success');
-				$this->log($this->Session->read('step2'), 'debug');
 				switch($this->Session->read('step2')) {
 					case "form":
 						$this->redirect(array(
