@@ -23,7 +23,7 @@ class ProgramResponseDoc extends AppModel {
 			$this->data['ProgramResponseDoc']['id'] = $programResponseDocId;
 		}
 		if($watchedCat) {	
-			$programResponse = $this->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));	
+			$programResponse = $this->ProgramResponse->getProgramResponse($watchedCat['Program']['id'], $user['User']['id']);	
 			$return['program_id'] = $watchedCat['Program']['id'];				
 			$this->data['ProgramResponseDoc']['cat_id'] = $this->data['FiledDocument']['cat_3'];
 			$this->data['ProgramResponseDoc']['doc_id'] = $this->data['FiledDocument']['id'];
@@ -60,11 +60,7 @@ class ProgramResponseDoc extends AppModel {
 						$finalEmail = $Program->ProgramEmail->find('first', array(
 							'conditions' => array(
 								'ProgramEmail.program_id' => $watchedCat['Program']['id'],
-								'ProgramEmail.type' => 'final')));													
-						if($watchedCat['Program']['cert_type'] != 'none'){
-							$finalEmail['ProgramEmail']['body'] = $finalEmail['ProgramEmail']['body'] .
-							"\r\n" . $programResponse['ProgramResponse']['cert_link'];																				
-						}
+								'ProgramEmail.type' => 'final')));
 						if($finalEmail) {
 							$return['finalEmail'] = $finalEmail;
 						}						
