@@ -36,19 +36,14 @@ class ProgramResponsesController extends AppController {
 		}
 		$program = $this->ProgramResponse->Program->findById($id); 
 		if(!empty($this->data)) {
-			$response = $this->ProgramResponse->find('first', array(
-				'conditions' => array(
-					'ProgramResponse.user_id' => $this->Auth->user('id'),
-					'ProgramResponse.program_id' => $id,
-					'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s') 
-				),
-				'order' => array('ProgramResponse.id DESC')));
+			$programResponse = 
+				$this->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
 			$this->data['ProgramResponse']['answers'] = json_encode($this->data['ProgramResponse']);
-			$this->data['ProgramResponse']['id'] = $response['ProgramResponse']['id'];
+			$this->data['ProgramResponse']['id'] = $programResponse['ProgramResponse']['id'];
 			$this->data['ProgramResponse']['program_id'] = $id;
 			if($this->ProgramResponse->save($this->data)) {
 				$this->Transaction->createUserTransaction('Programs', null, null,
-					'Completed form for ' . $response['Program']['name']);				
+					'Completed form for ' . $programResponse['Program']['name']);				
 				$programEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array(
 					'conditions' => array(
 						'ProgramEmail.program_id' => $id,
@@ -79,13 +74,7 @@ class ProgramResponsesController extends AppController {
 			$this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');
 			$this->redirect($this->referer());
 		}
-		$programResponse = $this->ProgramResponse->find('first', array(
-			'conditions' => array(
-				'ProgramResponse.user_id' => $this->Auth->user('id'),
-				'ProgramResponse.program_id' => $id,
-				'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s')
-			),
-			'order' => array('ProgramResponse.id DESC')));		
+		$programResponse = $this->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));	
 		if($reset == 1) {
 			$this->ProgramResponse->id = $programResponse['ProgramResponse']['id'];
 			$this->ProgramResponse->saveField('uploaded_docs', 0);
@@ -125,8 +114,7 @@ class ProgramResponsesController extends AppController {
 	}
 
 	function response_complete($id=null, $autoApprove=false) {
-		$programResponse = $this->ProgramResponse->find('first', array(
-			'conditions' => array('ProgramResponse.id' => $id)));
+		$programResponse = $this->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
 		if($autoApprove) {
 			$form = $this->ProgramResponse->Program->ProgramPaperForm->find('first', array(
 				'conditions' => array(
@@ -154,13 +142,7 @@ class ProgramResponsesController extends AppController {
 		    $this->Session->setFlash(__('Invalid Program', true), 'flash_failure');
 		    $this->redirect(array('action' => 'index'));
 		}
-		$programResponse = $this->ProgramResponse->find('first', array(
-			'conditions' => array(
-				'ProgramResponse.user_id' => $this->Auth->user('id'),
-				'ProgramResponse.program_id' => $id,
-				'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s')
-			),
-			'order' => array('ProgramResponse.id DESC')));
+		$programResponse = $this->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
 		$docId = Set::extract('/ProgramResponseDoc[cert=1]/doc_id', $programResponse);
 		$this->view = 'Media';
 		$this->loadModel('FiledDocument');
@@ -183,13 +165,7 @@ class ProgramResponsesController extends AppController {
 	}
 
 	function provided_docs($id, $type) {
-		$programResponse = $this->ProgramResponse->find('first', array(
-			'conditions' => array(
-				'ProgramResponse.user_id' => $this->Auth->user('id'),
-				'ProgramResponse.program_id' => $id,
-				'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s')
-			),
-			'order' => array('ProgramResponse.id DESC')));
+		$programResponse = $this->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
 		$this->ProgramResponse->Program->ProgramInstruction->recursive = -1;
 		if($programResponse['ProgramResponse']['uploaded_docs'] == 0 && 
 			$programResponse['ProgramResponse']['dropping_off_docs'] == 0) {
@@ -288,7 +264,7 @@ class ProgramResponsesController extends AppController {
 						else {
 							$data['responses'][$i]['actions'] = 
 								'<a href="/admin/program_responses/view/'. 
-									$response['ProgramResponse']['id'].'">View</a>| ' . 
+									$response['ProgramResponse']['id'].'">View</a> | ' . 
 									'<a href="/admin/program_responses/toggle_expired/' . 
 									$response['ProgramResponse']['id'] . '/expire'.'" class="expire">Mark Expired</a>';
 						}
