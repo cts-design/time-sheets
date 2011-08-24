@@ -33,14 +33,7 @@ class ProgramsController extends AppController {
 			$this->Session->setFlash(__('This program is disabled', true), 'flash_failure');
 			$this->redirect('/');
 		}
-		
-		$programResponse = $this->Program->ProgramResponse->find('first', array(
-			'conditions' => array(
-				'ProgramResponse.user_id' => $this->Auth->user('id'),
-				'ProgramResponse.program_id' => $id
-			),
-			'order' => array('ProgramResponse.id DESC')));
-		$responseId = 0;	
+		$programResponse = $this->Program->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));	
 		if($programResponse) {
 			$responseId = $programResponse['ProgramResponse']['id']; 
 		}								
@@ -48,11 +41,8 @@ class ProgramsController extends AppController {
 			if($programResponse['ProgramResponse']['complete']) {
 				$this->redirect(array(
 					'controller' => 'program_responses', 
-					'action' => 'response_complete', $responseId));						
+					'action' => 'response_complete', $id));						
 			}
-		}
-		if($programResponse['ProgramResponse']['expires_on'] < date('Y-m-d H:i:s') ) {
-			$programResponse = null;
 		}
 		if($programResponse['ProgramResponse']['not_approved']) {
 			$this->redirect();
@@ -62,17 +52,17 @@ class ProgramsController extends AppController {
 		switch($program['Program']['type']){
 			case "pdf":
 				$this->Session->write('step2', 'complete');
-				$data['redirect'] = '/programs/view_media/' . $id . '/' . $responseId . '/' . 'pdf'; 				
+				$data['redirect'] = '/programs/view_media/' . $id . '/' . 'pdf'; 				
 				if($program['Program']['auth_required'] == 0) {
 					$this->redirect(array(
 						'controller' => 'programs', 
-						'action' => 'view_media', $id, $responseId, 'pdf'));
+						'action' => 'view_media', $id, 'pdf'));
 				}
 				elseif($programResponse) {
 					if(!$programResponse['ProgramResponse']['viewed_media']) {
 						$this->redirect(array(
 							'controller' => 'programs', 
-							'action' => 'view_media', $id, $responseId ,'pdf'));
+							'action' => 'view_media', $id, 'pdf'));
 					}
 				}
 				break;
@@ -89,22 +79,22 @@ class ProgramsController extends AppController {
 						$this->redirect(array('controller' => 'program_responses', 'action' => 'index', $id));
 					}
 				}
-				$data['redirect'] = '/programs/view_media/' . $id  . '/' . $responseId . '/' . 'pdf';
+				$data['redirect'] = '/programs/view_media/' . $id . '/' . 'pdf';
 				$this->Session->write('step2', 'form');				
 				break;		
 			case "uri":
 				$this->Session->write('step2', 'complete');
-				$data['redirect'] = '/programs/view_media/' . $id . '/' . $responseId . '/' . 'uri'; 				
+				$data['redirect'] = '/programs/view_media/' . $id . '/' . 'uri'; 				
 				if(!$program['Program']['auth_required']) {
 					$this->redirect(array(
 						'controller' => 'programs', 
-						'action' => 'view_media', $id, $responseId, 'uri'));
+						'action' => 'view_media', $id, 'uri'));
 				}
 				elseif($programResponse) {
 					if(!$programResponse['ProgramResponse']['viewed_media']) {
 						$this->redirect(array(
 							'controller' => 'programs', 
-							'action' => 'view_media', $id, $responseId, 'uri'));
+							'action' => 'view_media', $id, 'uri'));
 					}
 				} 				
 				break;
@@ -112,15 +102,15 @@ class ProgramsController extends AppController {
 				break;												
 			case "video":
 				$this->Session->write('step2', 'complete');
-				$data['redirect'] = '/programs/view_media/' . $id . '/' . $responseId . '/' . 'video'; 
+				$data['redirect'] = '/programs/view_media/' . $id . '/' . 'video'; 
 				if(!$program['Program']['auth_required']) {
-					$this->redirect(array('action' => 'view_media', $id, $responseId, 'video'));
+					$this->redirect(array('action' => 'view_media', $id, 'video'));
 				}				
 				elseif($programResponse) {
 					if(!$programResponse['ProgramResponse']['viewed_media']) {
 						$this->redirect(array(
 							'controller' => 'programs', 
-							'action' => 'view_media', $id, $responseId, 'video'));
+							'action' => 'view_media', $id, 'video'));
 					}
 				}
 				break;
@@ -128,11 +118,13 @@ class ProgramsController extends AppController {
 				$element = '/programs/video';
 				break;			
 			case "video_form_docs":
+				$data['redirect'] = '/programs/view_media/' . $id  . '/' . 'video';
+				$this->Session->write('step2', 'form');
 				if($programResponse) {
 					if($programResponse['ProgramResponse']['viewed_media'] == 0) {
 						$this->redirect(array(
 							'controller' => 'programs', 
-							'action' => 'view_media', $id, $responseId, 'video'));
+							'action' => 'view_media', $id, 'video'));
 					}					
 					if($programResponse['ProgramResponse']['viewed_media'] == 1 && 
 					$programResponse['ProgramResponse']['answers'] == null &&
@@ -174,8 +166,6 @@ class ProgramsController extends AppController {
 							'action' => 'response_complete', $id));
 					}		
 				}
-				$data['redirect'] = '/programs/view_media/' . $id  . '/' . $responseId . '/' . 'video';
-				$this->Session->write('step2', 'form');
 				break;					
 		}
 
@@ -208,7 +198,7 @@ class ProgramsController extends AppController {
 		}
 	}
 
-	function view_media($id=null, $responseId=null, $element=null) {
+	function view_media($id=null, $element=null) {
 		if(!$id) {
 			$this->Session->setFlash(__('Invalid program id.', true), 'flash_failure');
 			$this->redirect('/');
@@ -219,8 +209,9 @@ class ProgramsController extends AppController {
 		}
 		$program = $this->Program->findById($id);
 		if(!empty($this->data)) {
-			$programResponse = $this->Program->ProgramResponse->findById($responseId);
-			$this->data['ProgramResponse']['id'] = $responseId;
+			$programResponse = 
+				$this->Program->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
+			$this->data['ProgramResponse']['id'] = $programResponse['ProgramResponse']['id'];
 			$this->data['ProgramResponse']['user_id'] =	$this->Auth->user('id');
 			if($this->Session->read('step2') == 'complete') {
 				$this->data['ProgramResponse']['complete'] = 1;
@@ -238,6 +229,7 @@ class ProgramsController extends AppController {
 					$this->Email->send($email['ProgramEmail']['body']);								
 				}								
 				$this->Session->setFlash(__('Saved', true), 'flash_success');
+				$this->log($this->Session->read('step2'), 'debug');
 				switch($this->Session->read('step2')) {
 					case "form":
 						$this->redirect(array(
