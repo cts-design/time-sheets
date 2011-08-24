@@ -77,6 +77,7 @@
 			<ul>
 			    <li rel="queue"><?php echo $html->link(__('Self Sign Queue', true), array('controller' => 'self_sign_logs', 'action' => 'index')) ?></li>
 			    <li rel="archive"><?php echo $html->link(__('Self Sign Archives', true), array('controller' => 'self_sign_log_archives', 'action' => 'index')) ?></li>
+			    <li rel="selfSignSurvey"><?php echo $html->link(__('Self Sign Surveys', true), array('controller' => 'kiosk_surveys', 'action' => 'index')) ?></li>
 			</ul>
 		    </li>
 		    <li rel="storage" id="storage">
