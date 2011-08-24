@@ -538,39 +538,52 @@ class ProgramResponsesController extends AppController {
 	function admin_toggle_expired($programResponseId, $toggle) {
 		if($this->RequestHandler->isAjax()) {
 			$programResponse = $this->ProgramResponse->findById($programResponseId);
+			$allProgramResponses = null;
 			if($toggle == 'expired') {
 				$this->data['ProgramResponse']['expires_on'] = 
 					date('Y-m-d H:i:s', strtotime('-' . ($programResponse['Program']['response_expires_in']+1) . ' days'));	
 			}
 			elseif($toggle == 'unexpire') {
-				$this->data['ProgramResponse']['expires_on'] = date('Y-m-d H:i:s', strtotime('+' . ($programResponse['Program']['response_expires_in']) . ' days'));	
+				$this->data['ProgramResponse']['expires_on'] = date('Y-m-d H:i:s', 
+					strtotime('+' . ($programResponse['Program']['response_expires_in']) . ' days'));
+				$allProgramResponses = $this->ProgramResponse->find('all', array(
+					'conditions' => array(
+						'ProgramResponse.user_id' => $programResponse['ProgramResponse']['user_id'],
+						'ProgramResponse.program_id' => $programResponse['ProgramResponse']['program_id'],
+						'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s'))));									
 			}
-			$this->data['ProgramResponse']['id'] = $programResponseId;		
-			if($this->ProgramResponse->save($this->data)) {
-				$data['success'] = true;
-				switch($toggle) {
-					case 'unexpire':
-						$data['message'] = 'Response marked un-expired successfully.';
-						$this->Transaction->createUserTransaction('Programs', null, null,
-							'Marked response un-expired for ' . $programResponse['Program']['name'] . ' for customer ' . 
-							ucfirst($programResponse['User']['firstname']). ' ' . ucfirst($programResponse['User']['lastname']) . ' - '. 
-							substr($programResponse['User']['ssn'], '-4'));							
-						break;
-					case 'expired':
-						$data['message'] = 'Response marked expired successfully.';
-						$this->Transaction->createUserTransaction('Programs', null, null,
-							'Marked response expired for ' . $programResponse['Program']['name'] . ' for customer ' . 
-							ucfirst($programResponse['User']['firstname']). ' ' . ucfirst($programResponse['User']['lastname']) . ' - '. 
-							substr($programResponse['User']['ssn'], '-4'));							
-						break;	
-				}
+			if($allProgramResponses) {
+				$data['success'] = false;
+				$data['message'] = 'Customer already has an non-expired response for this program.';
 			}
 			else {
-				$data['success'] = false;
-				$data['message'] = 'An error has occured, please try again.';
-			}
+				$this->data['ProgramResponse']['id'] = $programResponseId;		
+				if($this->ProgramResponse->save($this->data)) {
+					$data['success'] = true;
+					switch($toggle) {
+						case 'unexpire':
+							$data['message'] = 'Response marked un-expired successfully.';
+							$this->Transaction->createUserTransaction('Programs', null, null,
+								'Marked response un-expired for ' . $programResponse['Program']['name'] . ' for customer ' . 
+								ucfirst($programResponse['User']['firstname']). ' ' . ucfirst($programResponse['User']['lastname']) . ' - '. 
+								substr($programResponse['User']['ssn'], '-4'));							
+							break;
+						case 'expired':
+							$data['message'] = 'Response marked expired successfully.';
+							$this->Transaction->createUserTransaction('Programs', null, null,
+								'Marked response expired for ' . $programResponse['Program']['name'] . ' for customer ' . 
+								ucfirst($programResponse['User']['firstname']). ' ' . ucfirst($programResponse['User']['lastname']) . ' - '. 
+								substr($programResponse['User']['ssn'], '-4'));							
+							break;	
+					}
+				}
+				else {
+					$data['success'] = false;
+					$data['message'] = 'An error has occured, please try again.';
+				}				
+			}			
 			$this->set(compact('data'));
-			$this->render(null, null, '/elements/ajaxreturn');			
+			$this->render(null, null, '/elements/ajaxreturn');
 		}
 	}
 
