@@ -271,6 +271,7 @@ class ProgramResponsesController extends AppController {
 							'created' => $response['ProgramResponse']['created'],
 							'modified' => $response['ProgramResponse']['modified'],
 							'expires_on' => $response['ProgramResponse']['expires_on'],
+							'notes' => $response['ProgramResponse']['notes'],
 							'status' => $status
 						);
 						if($this->params['url']['filter'] == 'closed'){
@@ -412,6 +413,24 @@ class ProgramResponsesController extends AppController {
 		}
 		$title_for_layout = 'Program Response';
 		$this->set(compact('title_for_layout', 'approval'));
+	}
+
+
+	function admin_edit() {
+		if($this->RequestHandler->isAjax()) {
+			if(!empty($this->data)) {
+				if($this->ProgramResponse->save($this->data)) {
+					$data['success'] = true;
+					$data['message'] = 'Notes were saved successfully.';
+				}
+				else {
+					$data['success'] = true;
+					$data['message'] = 'Unable to update notes at this time';
+				}
+			}
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
 	}
 
 	function admin_approve($programResponseId=null) {
