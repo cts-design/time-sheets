@@ -288,7 +288,9 @@ class ProgramResponsesController extends AppController {
 						else {
 							$data['responses'][$i]['actions'] = 
 								'<a href="/admin/program_responses/view/'. 
-									$response['ProgramResponse']['id'].'">View</a>';
+									$response['ProgramResponse']['id'].'">View</a>| ' . 
+									'<a href="/admin/program_responses/toggle_expired/' . 
+									$response['ProgramResponse']['id'] . '/expire'.'" class="expire">Mark Expired</a>';
 						}
 						$i++;		
 					}				
