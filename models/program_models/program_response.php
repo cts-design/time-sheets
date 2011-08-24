@@ -11,23 +11,23 @@ class ProgramResponse extends AppModel {
 	var $validate = array();
 	
 	function getProgramResponse($programId, $userId) {
-		$this->recursive = -1;
 		$programResponses = $this->find('all', array(
 			'conditions' => array(
 				'ProgramResponse.user_id' => $userId,
 				'ProgramResponse.program_id' => $programId)));
-		$date = date('Y-m-d H:i:s');
-		$completedResponse = Set::extract('/ProgramResponse[complete=1]', $programResponses);
-		$openResponse = Set::extract("/ProgramResponse[expires_on>$date]", $programResponses);
-		if(!empty($completedResponse)) {
-			$programResponse = $completedResponse[0];
+		foreach($programResponses as $programResponse) {
+			if($programResponse['ProgramResponse']['complete']) {
+				$return = $programResponse;
+				break;
+			}
+			elseif($programResponse['ProgramResponse']['expires_on'] > date('Y-m-d H:i:s')) {
+				$return = $programResponse;;
+				break;
+			}
 		}
-		elseif(!empty($openResponse)) {
-			$programResponse = $openResponse[0];
+		if(empty($return)) {
+			$return = null;
 		}
-		else {
-			$programResponse = null;
-		}
-		return $programResponse;		
+		return $return;		
 	}
 }
