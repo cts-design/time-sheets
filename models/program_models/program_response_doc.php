@@ -23,13 +23,7 @@ class ProgramResponseDoc extends AppModel {
 			$this->data['ProgramResponseDoc']['id'] = $programResponseDocId;
 		}
 		if($watchedCat) {	
-		$programResponse = $this->ProgramResponse->find('first', array(
-			'conditions' => array(
-				'ProgramResponse.user_id' => $user['User']['id'],
-				'ProgramResponse.program_id' => $watchedCat['Program']['id'],
-				'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s')
-			),
-			'order' => array('ProgramResponse.id DESC')));	
+			$programResponse = $this->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));	
 			$return['program_id'] = $watchedCat['Program']['id'];				
 			$this->data['ProgramResponseDoc']['cat_id'] = $this->data['FiledDocument']['cat_3'];
 			$this->data['ProgramResponseDoc']['doc_id'] = $this->data['FiledDocument']['id'];
