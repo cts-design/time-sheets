@@ -125,7 +125,6 @@ class ProgramResponsesController extends AppController {
 	}
 
 	function response_complete($id=null, $autoApprove=false) {
-		// @FIXME possibly pass program response id instead of program id
 		$programResponse = $this->ProgramResponse->find('first', array(
 			'conditions' => array('ProgramResponse.id' => $id)));
 		if($autoApprove) {
@@ -289,9 +288,7 @@ class ProgramResponsesController extends AppController {
 						else {
 							$data['responses'][$i]['actions'] = 
 								'<a href="/admin/program_responses/view/'. 
-									$response['ProgramResponse']['id'].'">View</a> | ' .
-									'<a href="/admin/program_responses/toggle_expired/' . 
-									$response['ProgramResponse']['id'] . '/expired'.'" class="expire">Mark Expired</a>';
+									$response['ProgramResponse']['id'].'">View</a>';
 						}
 						$i++;		
 					}				
