@@ -16,6 +16,7 @@ class ProgramResponseFixture extends CakeTestFixture {
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'uploaded_docs' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'dropping_off_docs' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'not_approved' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'expires_on' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'prog_id' => array('column' => 'program_id', 'unique' => 0), 'user_id' => array('column' => 'user_id', 'unique' => 0)),
@@ -35,6 +36,7 @@ class ProgramResponseFixture extends CakeTestFixture {
 			'conformation_id' => '',
 			'uploaded_docs' => 0,
 			'dropping_off_docs' => 0,
+			'not_approved' => 0,
 			'created' => '2011-05-04 09:09:08',
 			'modified' => '2011-05-12 11:12:24',
 			'expires_on' => '2120-06-10 16:13:30'
@@ -51,6 +53,7 @@ class ProgramResponseFixture extends CakeTestFixture {
 			'conformation_id' => '',
 			'uploaded_docs' => 0,
 			'dropping_off_docs' => 0,
+			'not_approved' => 0,
 			'created' => '2011-05-04 09:09:08',
 			'modified' => '2011-05-12 11:12:24',
 			'expires_on' => '2120-06-08 16:13:30'
@@ -67,6 +70,7 @@ class ProgramResponseFixture extends CakeTestFixture {
 			'conformation_id' => 'dasf234f34',
 			'uploaded_docs' => 0,
 			'dropping_off_docs' => 0,
+			'not_approved' => 0,
 			'created' => '2011-05-04 09:09:08',
 			'modified' => '2011-05-12 11:12:24',
 			'expires_on' => '2120-06-08 16:13:30'
@@ -83,6 +87,7 @@ class ProgramResponseFixture extends CakeTestFixture {
 			'conformation_id' => 'ddasf4354',
 			'uploaded_docs' => 1,
 			'dropping_off_docs' => 0,
+			'not_approved' => 0,
 			'created' => '2011-05-04 09:09:08',
 			'modified' => '2011-05-12 11:12:24',
 			'expires_on' => '2120-06-08 16:13:30'
@@ -99,6 +104,7 @@ class ProgramResponseFixture extends CakeTestFixture {
 			'conformation_id' => '5dfdasf34',
 			'uploaded_docs' => 0,
 			'dropping_off_docs' => 1,
+			'not_approved' => 0,
 			'created' => '2011-05-04 09:09:08',
 			'modified' => '2011-05-12 11:12:24',
 			'expires_on' => '2120-06-08 16:13:30'
@@ -115,6 +121,7 @@ class ProgramResponseFixture extends CakeTestFixture {
 			'conformation_id' => '23eff2343',
 			'uploaded_docs' => 0,
 			'dropping_off_docs' => 1,
+			'not_approved' => 0,
 			'created' => '2011-05-04 09:09:08',
 			'modified' => '2011-05-12 11:12:24',
 			'expires_on' => '2120-06-08 16:13:30'
@@ -131,6 +138,7 @@ class ProgramResponseFixture extends CakeTestFixture {
 			'conformation_id' => '23eff2343',
 			'uploaded_docs' => 0,
 			'dropping_off_docs' => 1,
+			'not_approved' => 0,
 			'created' => '2011-05-04 09:09:08',
 			'modified' => '2011-05-12 11:12:24',
 			'expires_on' => '2011-06-08 16:13:30'
@@ -147,6 +155,7 @@ class ProgramResponseFixture extends CakeTestFixture {
 			'conformation_id' => '123dsfds6',
 			'uploaded_docs' => 0,
 			'dropping_off_docs' => 1,
+			'not_approved' => 0,
 			'created' => '2011-05-04 09:09:08',
 			'modified' => '2011-05-12 11:12:24',
 			'expires_on' => '2120-06-08 16:13:30'
