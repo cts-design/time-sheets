@@ -18,7 +18,7 @@ var surveyPanel = {
 				text: 'New Question',
 				icon: '/img/icons/add.png',
 				disabled: true,
-				handler: function() {
+				handler: function () {
 					var form = Ext.getCmp('questionForm'),
 						questionsGrid = Ext.getCmp('questionsGrid'),
 						questionsSelModel = questionsGrid.getSelectionModel();	
@@ -37,7 +37,7 @@ var surveyPanel = {
 				icon: '/img/icons/delete.png',
 				disabled: true,
 				scope: this,
-				handler: function() {
+				handler: function () {
 					var form = Ext.getCmp('questionForm'),
 						me = Ext.getCmp('deleteQuestionButton');
 					
@@ -49,114 +49,113 @@ var surveyPanel = {
 			}]
 		}),
 		
-		gridForm = new Ext.FormPanel({
-			id: 'questionForm',
-			frame: true,
-			labelAlign: 'top',
-			title: false,
-			bodyStyle: 'padding:5px',
-			layout: 'column',
-			items: [{
-				columnWidth: 0.70,
-				layout: 'fit',
-				items: [ this.surveyQuestionsGrid ]
-			}, {
-				columnWidth: 0.30,
-				xtype: 'fieldset',
-				labelWidth: 90,
-				title: 'Questions/Options',
-				defaults: {
-					width: 243,
-					border: false
-				},
-				defaultType: 'textfield',
-				autoHeight: true,
-				bodyStyle: Ext.isIE ? 'padding: 0 0 5px 15px' : 'padding: 10px 15px',
-				border: false,
-				style: {
-					'margin-left': '8px',
-					'margin-right': Ext.isIE6 ? (Ext.isStrict ? '-10px' : '-13px') : '0'
-				},
+			gridForm = new Ext.FormPanel({
+				id: 'questionForm',
+				frame: true,
+				labelAlign: 'top',
+				title: false,
+				bodyStyle: 'padding:5px',
+				layout: 'column',
 				items: [{
-					id: 'questionField',
-					xtype: 'textfield',
-					fieldLabel: 'Question',
-					name: 'question',
-					disabled: true,
-					allowBlank: false
+					columnWidth: 0.70,
+					layout: 'fit',
+					items: [ this.surveyQuestionsGrid ]
 				}, {
-					id: 'typeField',
-					xtype: 'combo',
-					fieldLabel: 'Type',
-					name: 'type',
-					disabled: true,
-					allowBlank: false,
-					hiddenName: 'type',
-					store: new Ext.data.ArrayStore({
-						fields: ['shortname', 'longname'],
-						data: [
-							['yesno', 'Yes/No'],
-							['truefalse', 'True/False'],
-							['multi', 'Multiple Choice']
-						]
-					}),
-					valueField: 'shortname',
-					displayField: 'longname',
-					mode: 'local',
-					triggerAction: 'all',
-					emptyText: 'Select a question type...',
-					selectOnFocus: true,
-					listeners: {
-						select: function(combo, rec, index) {
-							if (rec.data.shortname === 'yesno' || rec.data.shortname === 'truefalse') {
-								Ext.getCmp('optionsField').disable();
-							} else {
-								Ext.getCmp('optionsField').enable();
+					columnWidth: 0.30,
+					xtype: 'fieldset',
+					labelWidth: 90,
+					title: 'Questions/Options',
+					defaults: {
+						width: 243,
+						border: false
+					},
+					defaultType: 'textfield',
+					autoHeight: true,
+					bodyStyle: Ext.isIE ? 'padding: 0 0 5px 15px' : 'padding: 10px 15px',
+					border: false,
+					style: {
+						'margin-left': '8px',
+						'margin-right': Ext.isIE6 ? (Ext.isStrict ? '-10px' : '-13px') : '0'
+					},
+					items: [{
+						id: 'questionField',
+						xtype: 'textfield',
+						fieldLabel: 'Question',
+						name: 'question',
+						disabled: true,
+						allowBlank: false
+					}, {
+						id: 'typeField',
+						xtype: 'combo',
+						fieldLabel: 'Type',
+						name: 'type',
+						disabled: true,
+						allowBlank: false,
+						hiddenName: 'type',
+						store: new Ext.data.ArrayStore({
+							fields: ['shortname', 'longname'],
+							data: [
+								['yesno', 'Yes/No'],
+								['truefalse', 'True/False'],
+								['multi', 'Multiple Choice']
+							]
+						}),
+						valueField: 'shortname',
+						displayField: 'longname',
+						mode: 'local',
+						triggerAction: 'all',
+						emptyText: 'Select a question type...',
+						selectOnFocus: true,
+						listeners: {
+							select: function (combo, rec, index) {
+								if (rec.data.shortname === 'yesno' || rec.data.shortname === 'truefalse') {
+									Ext.getCmp('optionsField').disable();
+								} else {
+									Ext.getCmp('optionsField').enable();
+								}
 							}
 						}
-					}
-				}, {
-					id: 'optionsField',
-					xtype: 'textfield',
-					fieldLabel: 'Options',
-					name: 'options',
-					disabled: true,
-					allowBlank: false
-				}],
-				buttons: [{
-					id: 'saveButton',
-					text: 'Save',
-					disabled: true,
-					scope: this,
-					handler: function() {
-						var form = Ext.getCmp('questionForm').getForm(),
-							vals = form.getValues();
-
-						if (form.isValid()) {
-							// check to see if we're updating an existing
-							// record
-							if (this.selectedQuestion) {
-								// should be editing an existing record.
-								console.log('already existed!');
+					}, {
+						id: 'optionsField',
+						xtype: 'textfield',
+						fieldLabel: 'Options',
+						name: 'options',
+						disabled: true,
+						allowBlank: false
+					}],
+					buttons: [{
+						id: 'saveButton',
+						text: 'Save',
+						disabled: true,
+						scope: this,
+						handler: function () {
+							var form = Ext.getCmp('questionForm').getForm(),
+								vals = form.getValues(),
+								NewRecord = Ext.data.Record.create(['kiosk_survey_id', 'question', 'type', 'options']),
+								rec;
+								
+							if (form.isValid()) {
+								// check to see if we're updating an existing
+								// record
+								if (this.selectedQuestion) {
+									// should be editing an existing record.
+								}
+	
+								rec = new NewRecord({
+									kiosk_survey_id: this.selectedSurvey.id,
+									question: vals.question,
+									type: vals.type,
+									options: vals.options
+								});
+	
+								this.surveyQuestionStore.add(rec);
+								this.surveyQuestionStore.commitChanges();
+								this.surveyQuestionStore.reload();
 							}
-							
-							var NewRecord = Ext.data.Record.create(['kiosk_survey_id', 'question', 'type', 'options']),
-
-							rec = new NewRecord({
-								kiosk_survey_id: this.selectedSurvey.id,
-								question: vals.question,
-								type: vals.type,
-								options: vals.options
-							});
-
-							this.surveyQuestionStore.add(rec);
-							this.surveyQuestionStore.commitChanges();
-							this.surveyQuestionStore.reload();
 						}
-					}
+					}]
 				}]
-			}]
-		});
+			});
 
 		this.panel = new Ext.Panel({
 			layout: 'border',
@@ -248,13 +247,14 @@ var surveyPanel = {
 						this.surveyGrid.topToolbar.items.items[1].disable();
 						
 						// check if there are questions
-						if (this.surveyQuestionStore.totalLength > 0)
+						if (this.surveyQuestionStore.totalLength > 0) {
 							this.surveyQuestionStore.reload();
+						}
 					},
 					scope: this
 				},
 				add: {
-					fn: function(store, rec, index) {
+					fn: function (store, rec, index) {
 						store.reload();
 					}
 				}
@@ -286,7 +286,7 @@ var surveyPanel = {
 				singleSelect: true,
 				listeners: {
 					rowdeselect: {
-						fn: function(sm, row, rec) {
+						fn: function (sm, row, rec) {
 							this.selectedSurvey = null;
 						},
 						scope: this
@@ -359,7 +359,7 @@ var surveyPanel = {
 				singleSelect: true,
 				listeners: {
 					rowdeselect: {
-						fn: function(sm, row, rec) {
+						fn: function (sm, row, rec) {
 							this.selectedQuestion = null;
 						},
 						scope: this
