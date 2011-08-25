@@ -10,6 +10,8 @@ class ProgramResponseDocFixture extends CakeTestFixture {
 		'doc_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'paper_form' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'cert' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'deleted' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'deleted_reason' => array('type' => 'string', 'null' => false, 'default' => NULL),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'cat_id' => array('column' => 'cat_id', 'unique' => 0)),
@@ -24,6 +26,8 @@ class ProgramResponseDocFixture extends CakeTestFixture {
 			'doc_id' => 8,
 			'paper_form' => 0,
 			'cert' => 0,
+			'deleted' => 0,
+			'deleted_reason' => NULL,
 			'created' => '2011-05-06 10:14:24',
 			'modified' => '2011-05-06 10:14:24'
 		),
@@ -34,6 +38,8 @@ class ProgramResponseDocFixture extends CakeTestFixture {
 			'doc_id' => 9,
 			'paper_form' => 0,
 			'cert' => 0,
+			'deleted' => 0,
+			'deleted_reason' => NULL,			
 			'created' => '2011-05-06 10:15:29',
 			'modified' => '2011-05-06 10:15:29'
 		),
@@ -44,16 +50,20 @@ class ProgramResponseDocFixture extends CakeTestFixture {
 			'doc_id' => 10,
 			'paper_form' => 0,
 			'cert' => 0,
+			'deleted' => 0,
+			'deleted_reason' => NULL,			
 			'created' => '2011-05-06 10:15:47',
 			'modified' => '2011-05-06 10:15:47'
 		),
 		array(
 			'id' => 4,
-			'cat_id' => 255,
+			'cat_id' => 252,
 			'program_response_id' => 1,
 			'doc_id' => 11,
-			'paper_form' => 1,
+			'paper_form' => 0,
 			'cert' => 0,
+			'deleted' => 0,
+			'deleted_reason' => NULL,			
 			'created' => '2011-05-09 11:24:44',
 			'modified' => '2011-05-09 11:58:37'
 		),
@@ -64,6 +74,8 @@ class ProgramResponseDocFixture extends CakeTestFixture {
 			'doc_id' => 14,
 			'paper_form' => 1,
 			'cert' => 0,
+			'deleted' => 0,
+			'deleted_reason' => NULL,			
 			'created' => '2011-05-16 10:04:10',
 			'modified' => '2011-05-16 15:23:09'
 		),
@@ -74,6 +86,8 @@ class ProgramResponseDocFixture extends CakeTestFixture {
 			'doc_id' => 112,
 			'paper_form' => 1,
 			'cert' => 1,
+			'deleted' => 0,
+			'deleted_reason' => NULL,			
 			'created' => '2011-05-16 10:28:57',
 			'modified' => '2011-05-16 14:24:04'
 		),
@@ -84,6 +98,8 @@ class ProgramResponseDocFixture extends CakeTestFixture {
 			'doc_id' => 19,
 			'paper_form' => 1,
 			'cert' => 1,
+			'deleted' => 0,
+			'deleted_reason' => NULL,			
 			'created' => '2011-06-01 09:34:10',
 			'modified' => '2011-06-01 09:34:10'
 		),
@@ -94,6 +110,8 @@ class ProgramResponseDocFixture extends CakeTestFixture {
 			'doc_id' => 9,
 			'paper_form' => 0,
 			'cert' => 0,
+			'deleted' => 0,
+			'deleted_reason' => NULL,			
 			'created' => '2011-05-06 10:15:29',
 			'modified' => '2011-05-06 10:15:29'
 		),
@@ -104,6 +122,8 @@ class ProgramResponseDocFixture extends CakeTestFixture {
 			'doc_id' => 10,
 			'paper_form' => 0,
 			'cert' => 0,
+			'deleted' => 0,
+			'deleted_reason' => NULL,			
 			'created' => '2011-05-06 10:15:47',
 			'modified' => '2011-05-06 10:15:47'
 		),
@@ -114,6 +134,8 @@ class ProgramResponseDocFixture extends CakeTestFixture {
 			'doc_id' => 11,
 			'paper_form' => 1,
 			'cert' => 0,
+			'deleted' => 0,
+			'deleted_reason' => NULL,			
 			'created' => '2011-05-09 11:24:44',
 			'modified' => '2011-05-09 11:58:37'
 		),
@@ -124,6 +146,8 @@ class ProgramResponseDocFixture extends CakeTestFixture {
 			'doc_id' => 14,
 			'paper_form' => 1,
 			'cert' => 0,
+			'deleted' => 0,
+			'deleted_reason' => NULL,			
 			'created' => '2011-05-16 10:04:10',
 			'modified' => '2011-05-16 15:23:09'
 		),		
