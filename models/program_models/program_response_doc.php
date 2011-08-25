@@ -78,6 +78,8 @@ class ProgramResponseDoc extends AppModel {
 	}
 
 	function getFiledResponseDocCats($programId, $responseId) {
+		$DocumentFilingCat = ClassRegistry::init('DocumentFilingCategory');
+		$filingCats = $DocumentFilingCat->find('list');
 		$filedResponseDocs = $this->find('all', array(
 			'conditions' => array(
 				'ProgramResponse.id' => $responseId,
@@ -89,6 +91,11 @@ class ProgramResponseDoc extends AppModel {
 				'DISTINCT ProgramResponseDoc.cat_id' 
 			)));
 		$filedResponseDocCats = Set::classicExtract($filedResponseDocs, '{n}.ProgramResponseDoc.cat_id');
+		foreach($filedResponseDocCats as $k => $v) {
+			if(in_array($filingCats[$v], array('Rejected', 'rejected'))) {
+				unset($filedResponseDocCats[$k]);
+			}
+		}
 		return 	$filedResponseDocCats;	
 	}	
 	
