@@ -14,12 +14,12 @@ class ProgramsController extends AppController {
 				at the top of this page.'));	
 		$this->Program->ProgramResponse->modifyValidate($validate);
 		// check if auth is required for the program, if not give access to index and view_media
-		if($this->params['action'] == 'index' || $this->params['action'] == 'view_media'  
-			|| $this->params['action'] == 'load_media'	&& isset($this->params['pass'][0])) {
+		if(isset($this->params['pass'][0]) && 
+			in_array($this->params['action'], array('index', 'view_media', 'load_media'))) {
 				$program = $this->Program->findById($this->params['pass'][0]);
-				if($program['Program']['auth_required'] == 0) {
-					$this->Auth->allow('index', 'view_media', 'load_media');
-				}
+					if($program['Program']['auth_required'] == 0) {
+						$this->Auth->allow('index', 'view_media', 'load_media');
+					}
 		}
 	}
 			
