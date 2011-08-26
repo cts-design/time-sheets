@@ -87,7 +87,7 @@ class KioskSurveyQuestionsController extends AppController {
 			'kiosk_survey_id' => $params['kiosk_survey_id'],
 			'question' => $params['question'],
 			'type' => $params['type'],
-			'options' => $params['options']
+			'options' => (isset($params['options'])) ? $params['options'] : null
 		);
 		
 		$result = $this->KioskSurveyQuestion->save($this->data);
