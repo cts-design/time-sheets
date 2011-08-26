@@ -7,6 +7,5 @@ class KioskSurvey extends AppModel {
         'dependent' => true
       )
     );
-    var $belongsTo = array('Kiosk');
 }
 ?>

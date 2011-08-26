@@ -24,9 +24,18 @@ class KiosksController extends AppController {
 
     function admin_index() {
 		$this->Kiosk->recursive = 0;
+		$this->Kiosk->Behaviors->attach('Containable');
+		
 		$this->paginate = array(
+			'contain' => array(
+				'Location',
+				'KioskSurvey', 
+				'KioskSurvey.KioskSurveyQuestion'
+			),
 			'limit' => Configure::read('Pagination.kiosk.limit'), 
-			'conditions' => array('Kiosk.deleted !=' => 1));
+			'conditions' => array('Kiosk.deleted !=' => 1)
+		);
+			
 		$this->set('kiosks', $this->paginate('Kiosk'));
 	}
 
