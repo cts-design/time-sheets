@@ -33,7 +33,7 @@ class ProgramsController extends AppController {
 			$this->Session->setFlash(__('This program is disabled', true), 'flash_failure');
 			$this->redirect('/');
 		}
-		$programResponse = $this->Program->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));	
+		$programResponse = $this->Program->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
 		if($programResponse) {
 			$responseId = $programResponse['ProgramResponse']['id']; 
 		}								
@@ -67,6 +67,8 @@ class ProgramsController extends AppController {
 				}
 				break;
 			case "pdf_form":
+				$data['redirect'] = '/programs/view_media/' . $id . '/' . 'pdf';
+				$this->Session->write('step2', 'form');					
 				if($programResponse) {
 					if($programResponse['ProgramResponse']['viewed_media'] == 0) {
 						$this->redirect(array(
@@ -74,13 +76,18 @@ class ProgramsController extends AppController {
 							'action' => 'view_media', $id, 'pdf'));
 					}					
 					if($programResponse['ProgramResponse']['viewed_media'] == 1 && 
-					$programResponse['ProgramResponse']['answers'] == null &&
-					$programResponse['ProgramResponse']['complete'] != 1) {
-						$this->redirect(array('controller' => 'program_responses', 'action' => 'index', $id));
+						$programResponse['ProgramResponse']['answers'] == null &&
+						$programResponse['ProgramResponse']['complete'] != 1) {
+							$this->redirect(array('controller' => 'program_responses', 'action' => 'index', $id));
 					}
-				}
-				$data['redirect'] = '/programs/view_media/' . $id . '/' . 'pdf';
-				$this->Session->write('step2', 'form');				
+					if($programResponse['ProgramResponse']['viewed_media'] == 1 && 
+						$programResponse['ProgramResponse']['answers'] != null &&
+						$programResponse['ProgramResponse']['complete'] == 1) {
+							$this->redirect(array(
+								'controller' => 'program_responses', 
+								'action' => 'response_complete', $id));
+					}
+				}			
 				break;		
 			case "uri":
 				$this->Session->write('step2', 'complete');
