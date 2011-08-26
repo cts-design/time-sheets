@@ -256,7 +256,7 @@ var editor = new Ext.form.HtmlEditor({
 	
 var responsesPanel = new Ext.Panel({
 	frame: true,
-	width: 800,
+	width: 950,
 	height: 600,
 	layout: 'border',
 	items: [
