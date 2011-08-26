@@ -351,7 +351,26 @@ var surveyPanel = {
 
 			surveyQuestionsColModel = new Ext.grid.ColumnModel([
 				{ header: 'Question', sortable: true, dataIndex: 'question' },
-				{ header: 'Type', sortable: true, dataIndex: 'type' },
+				{ 
+					header: 'Type', 
+					sortable: true, 
+					dataIndex: 'type',
+					renderer: function(value) {
+						switch (value) {
+							case 'yesno':
+								return 'Yes/No'
+								break
+							case 'truefalse':
+								return 'True/False';
+								break;
+							case 'multi':
+								return 'Multiple Choice';
+								break;
+						}
+
+						return value;
+					}
+				},
 				{ header: 'Options', sortable: true, dataIndex: 'options' }
 			]),
 
