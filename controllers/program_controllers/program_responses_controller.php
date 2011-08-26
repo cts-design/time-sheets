@@ -41,6 +41,9 @@ class ProgramResponsesController extends AppController {
 			$this->data['ProgramResponse']['answers'] = json_encode($this->data['ProgramResponse']);
 			$this->data['ProgramResponse']['id'] = $programResponse['ProgramResponse']['id'];
 			$this->data['ProgramResponse']['program_id'] = $id;
+			if(!strpos($program['Program']['type'], 'docs', 0) && $program['Program']['approval_required'] == 0) {
+				$this->data['ProgramResponse']['complete'] = 1;
+			}
 			if($this->ProgramResponse->save($this->data)) {
 				$this->Transaction->createUserTransaction('Programs', null, null,
 					'Completed form for ' . $programResponse['Program']['name']);				
@@ -54,7 +57,13 @@ class ProgramResponsesController extends AppController {
 				if(strpos($program['Program']['type'], 'docs', 0)) {
 					$this->redirect(array('action' => 'required_docs', $id));
 				}
-			//	@TODO Redirect to a thank you page if the program does not require documents 
+				elseif($program['Program']['approval_required']) {
+					//@TODO Redirect to a thank you page if the program does not require documents and 
+					// requires approval
+				}
+				else {
+					$this->redirect(array('action' => 'response_complete', $id, true));
+				}
 			}
 			else {
 				$this->Session->setFlash(__('Unable to save', true), 'flash_failure');
@@ -279,13 +288,16 @@ class ProgramResponsesController extends AppController {
 				$this->set('data', $data);
 				$this->render('/elements/ajaxreturn');				
 			}
-
 			if($program['Program']['approval_required'] == 1){
 				$approvalPermission = $this->Acl->check(array(
 					'model' => 'User', 
 					'foreign_key' => $this->Auth->user('id')), 'ProgramResponses/admin_approve', '*');
-				$this->set(compact('approvalPermission'));
-			}			
+				
+			}
+			else {
+				$approvalPermission = null;
+			}
+			$this->set(compact('approvalPermission'));		
 		}	
 	}
 
