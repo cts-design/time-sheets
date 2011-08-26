@@ -150,7 +150,6 @@ var surveyPanel = {
 	
 								this.surveyQuestionStore.add(rec);
 								this.surveyQuestionStore.commitChanges();
-								this.surveyQuestionStore.reload();
 							}
 						}
 					}]
@@ -253,8 +252,8 @@ var surveyPanel = {
 					},
 					scope: this
 				},
-				add: {
-					fn: function (store, rec, index) {
+				write: {
+					fn: function (store, action, result, res, rs) {
 						store.reload();
 					}
 				}
@@ -265,7 +264,12 @@ var surveyPanel = {
 			storeId: 'surveyQuestionStore',
 			proxy: surveyQuestionProxy,
 			reader: surveyQuestionReader,
-			writer: surveyQuestionWriter
+			writer: surveyQuestionWriter,
+			write: {
+				fn: function (store, action, result, res, rs) {
+					store.reload();
+				}
+			}
 		});
 	},
 	initGrid: function () {
@@ -355,17 +359,15 @@ var surveyPanel = {
 					header: 'Type', 
 					sortable: true, 
 					dataIndex: 'type',
-					renderer: function(value) {
+					renderer: function (value) {
+					
 						switch (value) {
-							case 'yesno':
-								return 'Yes/No'
-								break
-							case 'truefalse':
-								return 'True/False';
-								break;
-							case 'multi':
-								return 'Multiple Choice';
-								break;
+						case 'yesno':
+							return 'Yes/No';
+						case 'truefalse':
+							return 'True/False';
+						case 'multi':
+							return 'Multiple Choice';
 						}
 
 						return value;
