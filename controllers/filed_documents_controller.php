@@ -117,7 +117,7 @@ class FiledDocumentsController extends AppController {
 					'Edited filed document ID ' . $id . ' for ' . $user['User']['lastname'] .
 					', ' . $user['User']['firstname'] . ' - ' . substr($user['User']['ssn'], -4));
 				$this->Session->setFlash(__('The filed document has been saved', true), 'flash_success');
-				$this->redirect(array('action' => 'index', ($this->data['FiledDocument']['edit_type'] == 'user') ? $user['User']['id'] : ''));
+				$this->redirect(array('action' => 'index', (isset($this->data['FiledDocument']['edit_type']) == 'user') ? $user['User']['id'] : ''));
 		    }
 		    else {
 				$this->Session->setFlash(__('The filed document could not be saved. Please, try again.', true), 'flash_failure');
