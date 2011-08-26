@@ -42,7 +42,7 @@ var editor = new Ext.form.HtmlEditor({
 		background: '#ffffff',
 		padding: '7px'
 	},
-	html: 'Please select a row to see email text.'		
+	html: 'Please select a row to see instruction text.'		
 });
 
 var instructionPanel = new Ext.Panel({
