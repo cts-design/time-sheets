@@ -15,7 +15,7 @@ class ProgramResponseDoc extends AppModel {
 	
 	function processResponseDoc($data, $user) {	
 		$Program = ClassRegistry::init('Program');
-		$this->data = $data;	
+		$this->data = $data;
 		$watchedCat = $Program->WatchedFilingCat->findByCatId($this->data['FiledDocument']['cat_3']);
 		$return['cat_id'] = $this->data['FiledDocument']['cat_3'];
 		$programResponseDocId = $this->field('id', array('doc_id' => $this->data['FiledDocument']['id']));
@@ -34,11 +34,11 @@ class ProgramResponseDoc extends AppModel {
 				'DocumentFilingCategory.name !=' => 'Rejected')));
 			$watchedCats = Set::classicExtract($allWatchedCats, '{n}.WatchedFilingCat.cat_id');
 
-			if($this->save($this->data['ProgramResponseDoc'])) {								
+			if($this->save($this->data)) {					
 				$docFiledEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array(
 					'conditions' => array(
 						'ProgramEmail.program_id' => $watchedCat['Program']['id'],
-						'ProgramEmail.cat_id' => $this->data['FiledDocument']['cat_3'])));				
+						'ProgramEmail.cat_id' => $return['cat_id'])));				
 				if($docFiledEmail['ProgramEmail']['type'] == 'rejected') {				
 					$docFiledEmail['ProgramEmail']['body'] = $docFiledEmail['ProgramEmail']['body'] . 
 					 "\r\n" . $this->data['FiledDocument']['description'];
