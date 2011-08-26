@@ -431,13 +431,13 @@ class ProgramResponsesControllerTestCase extends AtlasTestCase {
 	    ));	
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';		
 		$result = $this->testAction('/admin/program_responses/view/2/documents',  array('method' => 'get'));
+		unset($result['docs'][0]['link']);
 		$doc = array(
-			'name' => 'Birth Proof',
-			'filedDate' => '2011-05-06 10:15:29',
-			'id' => 9,
-			'link' => '<a href="/admin/filed_documents/view/9" target="_blank">View Doc</a>');
-		$this->assertEqual($result['docs'][0], $doc);
-		
+				'id'=>'9',
+				'name'=>'Birth Proof',
+				'filedDate'=>'2011-05-06 10:15:29'
+			);
+		$this->assertEqual($result['docs'][0], $doc);	
 	}
 	
 	public function testAdminViewNoDocuments() {
@@ -449,7 +449,7 @@ class ProgramResponsesControllerTestCase extends AtlasTestCase {
 	        'location_id' => 1
 	    ));	
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';		
-		$result = $this->testAction('/admin/program_responses/view/5/documents',  array('method' => 'get'));
+		$result = $this->testAction('/admin/program_responses/view/7/documents',  array('method' => 'get'));
 		$this->assertEqual($result['docs'], 'No program response documents filed for this user.');
 	}
 	
@@ -509,11 +509,26 @@ class ProgramResponsesControllerTestCase extends AtlasTestCase {
 	        'location_id' => 1
 	    ));	
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';		
-		$result = $this->testAction('/admin/program_responses/approve/5',  array('method' => 'get'));
+		$result = $this->testAction('/admin/program_responses/approve/7',  array('method' => 'get'));
 		$this->assertFalse($result['data']['success']);
 		$this->assertEqual($result['data']['message'],
 			'All required documents must be filed to customer before approving response.');
 	}
+	
+	public function testAdminApproveNoGeneratedForms() {
+		$this->ProgramResponses->Component->initialize($this->ProgramResponses);
+		$this->ProgramResponses->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));	
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';		
+		$result = $this->testAction('/admin/program_responses/approve/5',  array('method' => 'get'));
+		$this->assertFalse($result['data']['success']);
+		$this->assertEqual($result['data']['message'],
+			'You must generate all program forms before approving response.');
+	}	
 	
 	public function testAdminGenerateForm() {
 		$this->ProgramResponses->Component->initialize($this->ProgramResponses);
@@ -545,6 +560,23 @@ class ProgramResponsesControllerTestCase extends AtlasTestCase {
 		$result = $this->testAction('/admin/program_responses/toggle_expired/5/unexpire',  array('method' => 'get'));
 		$this->assertTrue($result['data']['success']);
 		$this->assertEqual($result['data']['message'], 'Response marked un-expired successfully.');				
+	}
+	
+	public function testAdminEdit() {
+		$this->ProgramResponses->Component->initialize($this->ProgramResponses);
+		$this->ProgramResponses->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));	
+		$data['ProgramResponse']['id'] = 1;
+		$data['ProgramResponse']['notes'] = 'These are the test notes';
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';		
+		$result = $this->testAction('/admin/program_responses/edit/1',  array('data' => $data));
+		$response = $this->ProgramResponses->ProgramResponse->findById(1);	
+		$this->assertTrue($result['data']['success']);
+		$this->assertEqual($response['ProgramResponse']['notes'], 'These are the test notes');
 	}	
 	
 		 
