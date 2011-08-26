@@ -18,6 +18,7 @@ class ProgramResponseDoc extends AppModel {
 		$this->data = $data;
 		$watchedCat = $Program->WatchedFilingCat->findByCatId($this->data['FiledDocument']['cat_3']);
 		$return['cat_id'] = $this->data['FiledDocument']['cat_3'];
+		$rejectedReason = $this->data['FiledDocument']['description'];
 		$programResponseDocId = $this->field('id', array('doc_id' => $this->data['FiledDocument']['id']));
 		if($programResponseDocId) {
 			$this->data['ProgramResponseDoc']['id'] = $programResponseDocId;
@@ -41,7 +42,7 @@ class ProgramResponseDoc extends AppModel {
 						'ProgramEmail.cat_id' => $return['cat_id'])));				
 				if($docFiledEmail['ProgramEmail']['type'] == 'rejected') {				
 					$docFiledEmail['ProgramEmail']['body'] = $docFiledEmail['ProgramEmail']['body'] . 
-					 "\r\n" . $this->data['FiledDocument']['description'];
+					 "\r\n" . $rejectedReason;
 				}
 				if($docFiledEmail) {
 					$return['docFiledEmail'] = $docFiledEmail;	
