@@ -42,7 +42,7 @@ class ProgramResponseDoc extends AppModel {
 						'ProgramEmail.cat_id' => $return['cat_id'])));				
 				if($docFiledEmail['ProgramEmail']['type'] == 'rejected') {				
 					$docFiledEmail['ProgramEmail']['body'] = $docFiledEmail['ProgramEmail']['body'] . 
-					 "\r\n" . $rejectedReason;
+					 "\r\n\r\n\r\n\r\n" . 'Comment: ' . $rejectedReason;
 				}
 				if($docFiledEmail) {
 					$return['docFiledEmail'] = $docFiledEmail;	
