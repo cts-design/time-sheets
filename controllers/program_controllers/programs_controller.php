@@ -106,6 +106,27 @@ class ProgramsController extends AppController {
 				} 				
 				break;
 			case "uri_form":
+				$data['redirect'] = '/programs/view_media/' . $id . '/' . 'uri';
+				$this->Session->write('step2', 'form');					
+				if($programResponse) {
+					if($programResponse['ProgramResponse']['viewed_media'] == 0) {
+						$this->redirect(array(
+							'controller' => 'programs', 
+							'action' => 'view_media', $id, 'uri'));
+					}					
+					if($programResponse['ProgramResponse']['viewed_media'] == 1 && 
+						$programResponse['ProgramResponse']['answers'] == null &&
+						$programResponse['ProgramResponse']['complete'] != 1) {
+							$this->redirect(array('controller' => 'program_responses', 'action' => 'index', $id));
+					}
+					if($programResponse['ProgramResponse']['viewed_media'] == 1 && 
+						$programResponse['ProgramResponse']['answers'] != null &&
+						$programResponse['ProgramResponse']['complete'] == 1) {
+							$this->redirect(array(
+								'controller' => 'program_responses', 
+								'action' => 'response_complete', $id));
+					}
+				}				
 				break;												
 			case "video":
 				$this->Session->write('step2', 'complete');
@@ -122,7 +143,27 @@ class ProgramsController extends AppController {
 				}
 				break;
 			case "video_form":
-				$element = '/programs/video';
+				$data['redirect'] = '/programs/view_media/' . $id . '/' . 'video';
+				$this->Session->write('step2', 'form');					
+				if($programResponse) {
+					if($programResponse['ProgramResponse']['viewed_media'] == 0) {
+						$this->redirect(array(
+							'controller' => 'programs', 
+							'action' => 'view_media', $id, 'pdf'));
+					}					
+					if($programResponse['ProgramResponse']['viewed_media'] == 1 && 
+						$programResponse['ProgramResponse']['answers'] == null &&
+						$programResponse['ProgramResponse']['complete'] != 1) {
+							$this->redirect(array('controller' => 'program_responses', 'action' => 'index', $id));
+					}
+					if($programResponse['ProgramResponse']['viewed_media'] == 1 && 
+						$programResponse['ProgramResponse']['answers'] != null &&
+						$programResponse['ProgramResponse']['complete'] == 1) {
+							$this->redirect(array(
+								'controller' => 'program_responses', 
+								'action' => 'response_complete', $id));
+					}
+				}
 				break;			
 			case "video_form_docs":
 				$data['redirect'] = '/programs/view_media/' . $id  . '/' . 'video';
