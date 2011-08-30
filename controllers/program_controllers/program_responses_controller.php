@@ -209,8 +209,35 @@ class ProgramResponsesController extends AppController {
 			$program = $this->ProgramResponse->Program->findById($id);
 			if($this->RequestHandler->isAjax()){
 				$conditions = array('ProgramResponse.program_id' => $id);
-				if(!empty($this->params['url']['filter'])) {
-					switch($this->params['url']['filter']) {
+				if(!empty($this->params['url']['fromDate']) && !empty($this->params['url']['toDate'])) {
+					$from = date('Y-m-d H:i:m', strtotime($this->params['url']['fromDate'] . '12:00 AM'));
+					$to = date('Y-m-d H:i:m', strtotime($this->params['url']['toDate'] . '11:59 PM'));
+					$conditions['ProgramResponse.created BETWEEN ? AND ?'] = array($from, $to);
+				}
+				if(!empty($this->params['url']['id'])) {
+					$conditions['ProgramResponse.id'] = $this->params['url']['id'];
+				}
+				if(!empty($this->params['url']['searchType']) && !empty($this->params['url']['search'])) {
+					switch($this->params['url']['searchType']) {
+						case 'firstname' : 
+							$conditions['User.firstname LIKE'] = '%' . 
+								$this->params['url']['search'] . '%';
+							break;
+						case 'lastname'	:
+							$conditions['User.lastname LIKE'] = '%' . 
+								$this->params['url']['search'] . '%';
+							break;
+						case 'last4' :
+							$conditions['RIGHT (User.ssn , 4) LIKE'] = '%' .
+								$this->params['url']['search'] . '%';
+							break;	
+						case 'fullssn' : 
+							$conditions['User.ssn LIKE'] = '%' . $this->params['url']['search'] . '%';
+							break;		
+					}
+				} 
+				if(!empty($this->params['url']['tab'])) {
+					switch($this->params['url']['tab']) {
 						case 'open':
 							$conditions['ProgramResponse.complete'] = 0;
 							$conditions['ProgramResponse.needs_approval'] = 0;
@@ -258,12 +285,12 @@ class ProgramResponsesController extends AppController {
 							'notes' => $response['ProgramResponse']['notes'],
 							'status' => $status
 						);
-						if($this->params['url']['filter'] == 'closed'){
+						if($this->params['url']['tab'] == 'closed'){
 							$data['responses'][$i]['actions'] = 
 								'<a href="/admin/program_responses/view/'. 
 									$response['ProgramResponse']['id'].'">View</a>';							
 						}
-						elseif($this->params['url']['filter'] == 'expired'){
+						elseif($this->params['url']['tab'] == 'expired'){
 							$data['responses'][$i]['actions'] = 
 								'<a href="/admin/program_responses/view/'. 
 									$response['ProgramResponse']['id'].'">View</a> | ' . 
