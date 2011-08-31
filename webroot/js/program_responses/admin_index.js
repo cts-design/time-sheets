@@ -212,6 +212,22 @@ var pendingApprovalProgramResponsesGrid = new Atlas.grid.ProgramResponseGrid({
 	})
 });
 
+var notApprovedProgramResponsesGrid = new Atlas.grid.ProgramResponseGrid({
+	title : 'Not Approved',
+	sm : new Ext.grid.RowSelectionModel({
+		singleSelect : true,
+		listeners : {
+			rowselect : function(sm, rowIdx, r) {
+				if(!r.data.text) {
+					r.data.text = ''
+				}
+				responseId = r.data.id;
+				editor.setValue(r.data.notes);
+			}
+		}
+	})
+});
+
 var editor = new Ext.form.HtmlEditor({
 	width : 800,
 	height : 300,
@@ -246,6 +262,9 @@ var programResponseTabs = new Ext.TabPanel({
 				case 'Pending Approval':
 					programResponseStore.setBaseParam('tab', 'pending_approval');
 					break;
+				case 'Not Approved':
+					programResponseStore.setBaseParam('tab', 'not_approved');
+					break;					
 			}
 			programResponseStore.load();
 		},
@@ -257,6 +276,7 @@ var programResponseTabs = new Ext.TabPanel({
 		beforerender : function() {
 			if(approvalPermission) {
 				this.add(pendingApprovalProgramResponsesGrid);
+				this.add(notApprovedProgramResponsesGrid);
 			}
 
 		}
