@@ -396,7 +396,7 @@ var programResponseSearch = new Ext.form.FormPanel({
 		id : 'docSearch',
 		icon : '/img/icons/find.png',
 		handler : function() {
-			var f = programResponseSearch.getForm(), vals = f.getValues(), params = vals;
+			var f = programResponseSearch.getForm(), vals = f.getValues()
 			Ext.iterate(vals, function (key, value){
 				programResponseStore.setBaseParam(key, value);
 			}) 
