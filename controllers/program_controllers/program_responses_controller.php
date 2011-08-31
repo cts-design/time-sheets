@@ -251,7 +251,7 @@ class ProgramResponsesController extends AppController {
 							$conditions['ProgramResponse.complete'] = 0;
 							$conditions['ProgramResponse.expires_on <'] = date('Y-m-d H:i:s');  
 							break;							
-						case 'unapproved':
+						case 'pending_approval':
 							$conditions['ProgramResponse.complete'] = 0;
 							$conditions['ProgramResponse.expires_on >'] = date('Y-m-d H:i:s');  
 							$conditions['ProgramResponse.needs_approval'] = 1;
@@ -448,37 +448,35 @@ class ProgramResponsesController extends AppController {
 	}
 
 	function admin_approve($programResponseId=null) {
-		if($this->RequestHandler->isAjax()) {
-			
+		if($this->RequestHandler->isAjax()) {		
 			if(!$programResponseId) {
 				$data['success'] = false;
 				$data['message'] = 'Invalid program response id.';
 			}
 			else {
-				$programResponse = $this->ProgramResponse->findById($programResponseId);
-				$forms = $this->ProgramResponse->
-					Program->ProgramPaperForm->findAllByProgramId($programResponse['Program']['id']);					
-				if(!empty($programResponse['ProgramResponseDoc'])) {
-
-					$catIds = Set::extract('/ProgramResponseDoc[paper_form=1]/cat_id', $programResponse);
-					
-					$formCatIds = Set::extract('/ProgramPaperForm/cat_3', $forms);
-					
-					if(!empty($formCatIds)) {
-						$result = array_diff($formCatIds, $catIds);
-						if(!empty($result)) {
-							$data['success'] = false;
-							$data['message'] = 'You must generate all program forms before approving response.';
-							$this->set(compact('data'));
-							return $this->render(null, null, '/elements/ajaxreturn');	
+				$programResponse = $this->ProgramResponse->findById($programResponseId);					
+				if(strpos($programResponse['Program']['type'], 'docs')) {
+					if(!empty($programResponse['ProgramResponseDoc'])) {
+						$forms = $this->ProgramResponse->
+							Program->ProgramPaperForm->findAllByProgramId($programResponse['Program']['id']);
+						$catIds = Set::extract('/ProgramResponseDoc[paper_form=1]/cat_id', $programResponse);						
+						$formCatIds = Set::extract('/ProgramPaperForm/cat_3', $forms);				
+						if(!empty($formCatIds)) {
+							$result = array_diff($formCatIds, $catIds);
+							if(!empty($result)) {
+								$data['success'] = false;
+								$data['message'] = 'You must generate all program forms before approving response.';
+								$this->set(compact('data'));
+								return $this->render(null, null, '/elements/ajaxreturn');	
+							}
 						}
 					}
-				}
-				else {
-					$data['success'] = false;
-					$data['message'] = 'All required documents must be filed to customer before approving response.';
-					$this->set(compact('data'));
-					return $this->render(null, null, '/elements/ajaxreturn');
+					else {
+						$data['success'] = false;
+						$data['message'] = 'All required documents must be filed to customer before approving response.';
+						$this->set(compact('data'));
+						return $this->render(null, null, '/elements/ajaxreturn');
+					}
 				}			
 				$this->data['ProgramResponse']['id'] = $programResponseId;
 				$this->data['ProgramResponse']['needs_approval'] = 0;
@@ -508,6 +506,10 @@ class ProgramResponsesController extends AppController {
 			$this->render(null, null, '/elements/ajaxreturn');
 
 		}	
+	}
+
+	function admin_not_approved() {
+		
 	}
 
 	function admin_generate_form($formId, $programResponseId, $docId=null) {
