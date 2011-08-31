@@ -196,8 +196,8 @@ var expiredProgramResponsesGrid = new Atlas.grid.ProgramResponseGrid({
 	})
 });
 
-var unapprovedProgramResponsesGrid = new Atlas.grid.ProgramResponseGrid({
-	title : 'Un-Approved',
+var pendingApprovalProgramResponsesGrid = new Atlas.grid.ProgramResponseGrid({
+	title : 'Pending Approval',
 	sm : new Ext.grid.RowSelectionModel({
 		singleSelect : true,
 		listeners : {
@@ -243,8 +243,8 @@ var programResponseTabs = new Ext.TabPanel({
 				case 'Expired':
 					programResponseStore.setBaseParam('tab', 'expired');
 					break;
-				case 'Needs Approval':
-					programResponseStore.setBaseParam('tab', 'unapproved');
+				case 'Pending Approval':
+					programResponseStore.setBaseParam('tab', 'pending_approval');
 					break;
 			}
 			programResponseStore.load();
@@ -256,7 +256,7 @@ var programResponseTabs = new Ext.TabPanel({
 		},
 		beforerender : function() {
 			if(approvalPermission) {
-				this.add(unapprovedProgramResponsesGrid);
+				this.add(pendingApprovalProgramResponsesGrid);
 			}
 
 		}
