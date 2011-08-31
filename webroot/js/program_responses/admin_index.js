@@ -1,4 +1,4 @@
-var responseId = null, progId = null, CurrentPage = null, Atlas = {};
+var responseId = null, CurrentPage = null, Atlas = {};
 
 var programResponseProxy = new Ext.data.HttpProxy({
 	url : '/admin/program_responses/index/' + progId,
