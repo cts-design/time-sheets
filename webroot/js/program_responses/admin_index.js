@@ -18,7 +18,12 @@ var programResponseStore = new Ext.data.JsonStore({
 	totalProperty : 'totalCount',
 	baseParams : {
 		page : 1,
-		tab : ''
+		tab : '',
+		dateFrom : '',
+		dateTo : '',
+		id : '',
+		searchType : '',
+		search : ''
 	},
 	root : 'responses',
 	idProperty : 'id',
@@ -34,7 +39,12 @@ var programResponseStore = new Ext.data.JsonStore({
 		name : 'expires_on',
 		type : 'date',
 		dateFormat : 'Y-m-d H:i:s'
-	}, 'conformation_id', 'actions', 'notes']
+	}, 'conformation_id', 'actions', 'notes'],
+	listeners : {
+		beforeload : function (store) {
+			
+		}
+	}
 });
 
 Ext.ns('Atlas.grid');
@@ -387,9 +397,10 @@ var programResponseSearch = new Ext.form.FormPanel({
 		icon : '/img/icons/find.png',
 		handler : function() {
 			var f = programResponseSearch.getForm(), vals = f.getValues(), params = vals;
-			programResponseStore.load({
-				params : params
-			});
+			Ext.iterate(vals, function (key, value){
+				programResponseStore.setBaseParam(key, value);
+			}) 
+			programResponseStore.load();
 		}
 	}, {
 		text : 'Reset',
@@ -397,6 +408,10 @@ var programResponseSearch = new Ext.form.FormPanel({
 		handler : function() {
 			var f = programResponseSearch.getForm();
 			f.reset();
+			var vals = f.getValues();
+			Ext.iterate(vals, function (key, value){
+				programResponseStore.setBaseParam(key, value);
+			}) 			
 			programResponseStore.load();
 		}
 	}]
