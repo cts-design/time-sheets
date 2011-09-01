@@ -7,5 +7,17 @@ class KioskSurvey extends AppModel {
         'dependent' => true
       )
     );
+
+    var $hasAndBelongsToMany = array(
+        'Kiosk' => array(
+            'className' => 'Kiosk',
+            'joinTable' => 'kiosks_kiosk_surveys',
+            'foreign_key' => 'kiosk_survey_id',
+            'associationForeignKey' => 'kiosk_id',
+            'unique' => false
+        )
+    );
+
+
 }
 ?>
