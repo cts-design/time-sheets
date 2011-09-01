@@ -3,6 +3,19 @@ class KioskSurveysController extends AppController {
 
 	var $name = 'KioskSurveys';
 	
+	function beforeFilter() {
+		parent::beforeFilter();
+		$this->Auth->allow('start');
+	}
+	
+	function start() {
+		$this->layout = 'kiosk';
+		
+
+	}
+	
+	function admin_index() {}
+	
 	function admin_create() {
 	  $params = json_decode($this->params['form']['surveys'], true);
 	  $data = null;
@@ -57,6 +70,52 @@ class KioskSurveysController extends AppController {
 	  
 	  $this->set('data', $data);
 	  return $this->render(null, null, '/elements/ajaxreturn');  
+	}
+	
+	/**
+	 * Responsible for attaching surveys to kiosks
+	 *
+	 * @return Element The ajaxreturn element is returned to provide the json result
+	 */
+	function admin_attach() {
+		$this->KioskSurvey->recursive = -1;
+        $kioskId = intval($this->params['form']['kiosk_id']);
+        $surveyId = intval($this->params['form']['survey_id']);
+		
+		$survey = $this->KioskSurvey->findById($surveyId);
+		
+		$this->data = $survey;
+		$this->data['Kiosk'] = array(
+			'id' => $kioskId
+		);
+		
+		if ($this->KioskSurvey->saveAll($this->data)) {
+			$data['success'] = true;
+		} else {
+			$data['success'] = false;
+		}
+		
+		$this->set('data', $data);
+		return $this->render(null, null, '/elements/ajaxreturn');
+	}
+	
+	/**
+	 * Responsible for detaching surveys to kiosks
+	 *
+	 * @return Element The ajaxreturn element is returned to provide the json result
+	 */
+	function admin_detach() {
+		$this->KioskSurvey->recursive = -1;
+		$kioskId = intval($this->params['form']['kiosk_id']);
+		
+		if ($this->KioskSurvey->KiosksKioskSurvey->deleteAll(array('KiosksKioskSurvey.kiosk_id' => $kioskId))) {
+			$data['success'] = true;
+		} else {
+			$data['success'] = false;
+		}
+		
+		$this->set('data', $data);
+		return $this->render(null, null, '/elements/ajaxreturn');
 	}
 }
 
