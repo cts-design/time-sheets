@@ -35,7 +35,7 @@
 	    echo $scripts_for_layout;
 	   ?>
 	<?php
-	    $exclude = array('kiosk_self_sign_login', 'kiosk_self_scan_document');
+	    $exclude = array('kiosk_self_sign_login', 'kiosk_self_scan_document', 'start');
 	    if (!in_array($this->params['action'], $exclude)) {
 		echo $this->Html->scriptBlock(
 			"$(document).ready(function(){
@@ -51,7 +51,8 @@
 	    echo $this->Html->scriptBlock(
 		    "$(document).ready(function(){
 		    $('input:submit, a').button();
-		    $('a.translate-button').button('destroy');
+            $('a.translate-button').button('destroy');
+            $('.survey-button a').button('destroy');
 		    $('form:first *:input[type!=hidden]:first').focus();
 		    $('.message').fadeOut(10000);
 		});")
