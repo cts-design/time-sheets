@@ -28,4 +28,9 @@
 	    echo $form->hidden('User.login_type', array('value' => 'kiosk'));
 	    echo $form->end(array('label' => __('Login', true), 'class' => 'self-sign-kiosk-button'));
     ?>
+    <?php if ($kioskHasSurvey): ?>
+    	<div class="survey-button">
+    		<a href="/kiosk/survey/1">Take Survey</a>
+    	</div>
+    <?php endif ?>
 </div>
