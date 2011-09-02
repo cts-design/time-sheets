@@ -1,1 +1,3 @@
-<p>Place holder page for pending approval.</p>
+<?php if(isset($instructions)) : ?>
+	<div id="Instructions"><?php echo $instructions ?></div>
+<?php endif ?>
