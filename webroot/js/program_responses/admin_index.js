@@ -275,8 +275,8 @@ var programResponseTabs = new Ext.TabPanel({
 		},
 		beforerender : function() {
 			if(approvalPermission) {
-				this.add(pendingApprovalProgramResponsesGrid);
 				this.add(notApprovedProgramResponsesGrid);
+				this.add(pendingApprovalProgramResponsesGrid);
 			}
 
 		}
@@ -445,6 +445,7 @@ var responsesPanel = new Ext.Panel({
 	items : [programResponseTabs, editor, programResponseSearch],
 	fbar : [{
 		text : 'Save',
+		icon : '/img/icons/save.png',
 		handler : function() {
 			Ext.Ajax.request({
 				url : '/admin/program_responses/edit',
