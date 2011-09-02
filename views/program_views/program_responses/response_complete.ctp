@@ -6,6 +6,9 @@
  * @package ATLAS V3
  */
 ?>
+<?php if(isset($instructions)) : ?>
+	<div id="Instructions"><?php echo $instructions ?></div>
+<?php endif ?>
 <?php if(!empty($programResponse) ) : ?>
 	<p>
         <?php printf(__('Congratulations! Your %s certificate has been issued. Please download the certificate below', true), $programResponse['Program']['name']) ?>
