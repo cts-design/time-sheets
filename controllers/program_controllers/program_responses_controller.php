@@ -153,8 +153,10 @@ class ProgramResponsesController extends AppController {
 		if(!$programResponse) {
 			$this->Session->setFlash(__('An error has occured.', true), 'flash_failure');
 		}
+		$instructions = $this->ProgramResponse->Program->ProgramInstruction->getInstructions(
+			$programId, 'pending_approval');		
 		$title_for_layout = 'Program Certificate';
-		$this->set(compact('title_for_layout', 'programResponse'));
+		$this->set(compact('title_for_layout', 'programResponse', $instructions));
 	}
 			
 	function view_cert($id=null) {
@@ -203,24 +205,23 @@ class ProgramResponsesController extends AppController {
 				}					
 			}
 	
-		$instructions = $this->ProgramResponse->Program->ProgramInstruction->find('first', array(
-			'conditions' => array(
-				'ProgramInstruction.program_id' => $id,
-				'ProgramInstruction.type' => $type
-			)
-		));
-		$data['instructions'] = $instructions['ProgramInstruction']['text'];
+		$data['instructions'] = $this->ProgramResponse->Program->ProgramInstruction->getInstructions(
+			$programId, $type);
 		$data['title_for_layout'] = 'Program Response Documents';
 		$this->set($data);
 	}
 
-	function pending_approval() {
+	function pending_approval($programId) {
+		$data['instructions'] = $this->ProgramResponse->Program->ProgramInstruction->getInstructions(
+			$programId, 'pending_approval');
 		$data['title_for_layout'] = 'Program Response Pending Approval';
 		$this->set($data);
 	}
 
 	function not_approved() {
 		$data['title_for_layout'] = 'Program Response Not Approved';
+		$data['instructions'] = $this->ProgramResponse->Program->ProgramInstruction->getInstructions(
+			$programId, 'not_approved');	
 		$this->set($data);
 	} 
 	
