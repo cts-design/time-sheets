@@ -13,5 +13,21 @@ class ProgramInstruction extends AppModel {
 			'order' => ''
 		)
 	);
+	
+	function getInstructions($programId, $type) {
+		$instructions = $this->find('first', array(
+			'conditions' => array(
+				'ProgramInstruction.program_id' => $programId,
+				'ProgramInstruction.type' => $type
+			),
+			'fields' => array(
+				'ProgramInstruction.text'
+			)
+		));
+		if($instructions) {
+			return $instructions['ProgramInstruction']['text'];
+		}
+		else return false;		
+	}
 }
 ?>
