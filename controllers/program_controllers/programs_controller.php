@@ -36,19 +36,27 @@ class ProgramsController extends AppController {
 		$programResponse = $this->Program->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
 		if($programResponse) {
 			$responseId = $programResponse['ProgramResponse']['id']; 
-		}								
+		}
+		if($programResponse['ProgramResponse']['not_approved']) {
+			if($programResponse['ProgramResponse']['allow_new_response']) {
+				$programResponse = null;
+			}
+			elseif(strpos($programResponse['Program']['type'], 'form')) {
+				if(!$programResponse['ProgramResponse']['answers']) {
+					$this->redirect(array('controller' => 'program_responses', 'action' => 'index', $id));
+				}
+			}
+			else {
+				$this->redirect(array('controller' => 'program_responses', 'action' => 'not_approved', $id));
+			}	
+		}
 		if($programResponse['ProgramResponse']['complete']) {
 			if($programResponse['ProgramResponse']['complete']) {
 				$this->redirect(array(
 					'controller' => 'program_responses', 
 					'action' => 'response_complete', $id));						
 			}
-		}
-		if($programResponse['ProgramResponse']['not_approved']) {
-			$this->redirect();
-			//@TODO Redirect to proper location. 
-		}
-			
+		}			
 		switch($program['Program']['type']){
 			case "pdf":
 				$this->Session->write('step2', 'complete');
@@ -87,6 +95,14 @@ class ProgramsController extends AppController {
 								'controller' => 'program_responses', 
 								'action' => 'response_complete', $id));
 					}
+					if($programResponse['ProgramResponse']['viewed_media'] == 1 && 
+						$programResponse['ProgramResponse']['answers'] != null &&
+						$programResponse['ProgramResponse']['complete'] == 0 &&
+						$programResponse['ProgramResponse']['needs_approval'] == 1) {
+							$this->redirect(array(
+								'controller' => 'program_responses', 
+								'action' => 'pending_approval', $id));
+					}						
 				}			
 				break;		
 			case "uri":
