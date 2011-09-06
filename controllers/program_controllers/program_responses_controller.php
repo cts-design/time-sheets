@@ -25,8 +25,14 @@ class ProgramResponsesController extends AppController {
 				}			
 				$this->ProgramResponse->modifyValidate($validate);
 			}
-
 		}
+		// check if the logged in user has permission to approve responses
+		// if they do we allow them access to other actions relating to approval
+		if($this->Acl->check(array(
+			'model' => 'User', 
+			'foreign_key' => $this->Auth->user('id')), 'ProgramResponses/admin_approve', '*')) {
+				$this->Auth->allow('admin_not_approved', 'admin_reset_form', 'admin_allow_new_response');
+			}
 	}	
 	
 	function index($id = null) {
