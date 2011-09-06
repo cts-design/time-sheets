@@ -469,16 +469,17 @@ var responsesPanel = new Ext.Panel({
 			});
 		}
 	}]
+	
+	
 });
 
 Ext.onReady(function() {
-	Ext.QuickTips.init()
-
+	Ext.QuickTips.init();
 	responsesPanel.render('programResponseTabs');
 	Ext.get('programResponseTabs').on('click', function(e, t) {
 		t = Ext.get(t);
 		var url = '';
-		if(t.hasClass('expire')) {
+		if(t.hasClass('expire') || t.hasClass('reset') || t.hasClass('allow-new') ) {
 			Ext.Msg.wait('Please wait', 'Status');
 			e.preventDefault();
 			Ext.Ajax.request({
@@ -504,4 +505,5 @@ Ext.onReady(function() {
 			});
 		}
 	});
+
 });
