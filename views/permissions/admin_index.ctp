@@ -320,10 +320,18 @@
 				    'type' => 'checkbox',
 				   	'label' => 'Index',
 				    'checked' => (isset($controllers['Programs']['admin_index'])) ? $controllers['Programs']['admin_index'] : '' ));?>
-			       <?php echo $this->Form->input('Programs.admin_edit_instructions', array(
+			       <?php echo $this->Form->input('ProgramInstructions.admin_edit', array(
 				    'type' => 'checkbox',
 				   	'label' => 'Edit Instructions',
-				    'checked' => (isset($controllers['Programs']['admin_edit_instructions'])) ? $controllers['Programs']['admin_edit_instructions'] : '' ));?>		    
+				    'checked' => (isset($controllers['ProgramInstructions']['admin_edit'])) ? $controllers['ProgramInstructions']['admin_edit'] : '' ));?>		    
+			       <?php echo $this->Form->input('ProgramEmails.admin_edit', array(
+				    'type' => 'checkbox',
+				   	'label' => 'Edit Emails',
+				    'checked' => (isset($controllers['ProgramEmails']['admin_edit'])) ? $controllers['ProgramEmails']['admin_edit'] : '' ));?>			    
+     	 		  <?php echo $this->Form->input('ProgramEmails.admin_toggle_disabled', array(
+				    'type' => 'checkbox',
+				   	'label' => 'Enable/Disable Emails',
+				    'checked' => (isset($controllers['ProgramEmails']['admin_toggle_disabled'])) ? $controllers['ProgramEmails']['admin_toggle_disabled'] : '' ));?>			    
 			    </fieldset>
 		    <fieldset class="left right-mar-10">
                 <legend><?php __('Program Responses') ?></legend>
@@ -337,7 +345,7 @@
 				    'checked' => (isset($controllers['ProgramResponses']['admin_view'])) ? $controllers['ProgramResponses']['admin_view'] : '' ));?>			       
 			       <?php echo $this->Form->input('ProgramResponses.admin_approve', array(
 				    'type' => 'checkbox',
-				   	'label' => 'Approve',
+				   	'label' => 'Approve / Not Approve',
 				    'checked' => (isset($controllers['ProgramResponses']['admin_approve'])) ? $controllers['ProgramResponses']['admin_approve'] : '' ));?>
 				   <?php echo $this->Form->input('ProgramResponses.admin_toggle_expired', array(
 				    'type' => 'checkbox',
