@@ -5,6 +5,11 @@ class KioskSurveyResponse extends AppModel {
 	  'KioskSurvey' => array(
 	    'dependent' => true
 	  )
-	);
+  );
+    var $hasMany = array(
+        'KioskSurveyResponseAnswer' => array(
+            'dependent' => true
+        )
+    );
 }
 ?>
