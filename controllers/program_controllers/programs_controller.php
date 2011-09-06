@@ -309,6 +309,7 @@ class ProgramsController extends AppController {
 	function admin_index() {
 		if($this->RequestHandler->isAjax()) {
 			$programs = $this->Program->find('all');
+
 			if($programs) {
 				$i = 0;
 				foreach($programs as $program){
@@ -319,14 +320,15 @@ class ProgramsController extends AppController {
 						$data['programs'][$i]['actions'] = '<a href="/admin/program_responses/index/'.
 							$program['Program']['id'].'">View Responses</a> | 
 							<a class="edit" href="/admin/program_instructions/index/'.
-							$program['Program']['id'].'">Edit Instructions</a> | ' .
-							'<a class="edit" href="/admin/program_emails/index/'.
-							$program['Program']['id'].'">Edit Emails</a>';						
+							$program['Program']['id'].'">Edit Instructions</a>';						
 					}
 					else {
 						$data['programs'][$i]['actions'] = '<a class="edit" href="/admin/program_instructions/'.
-						'index/' . $program['Program']['id'].'">Edit Instructions</a> | ' .
-							'<a class="edit" href="/admin/program_emails/index/'.
+						'index/' . $program['Program']['id'].'">Edit Instructions</a>';
+					}
+					if(!empty($program['ProgramEmail'])) {
+						$data['programs'][$i]['actions'] .= 
+							' | <a class="edit" href="/admin/program_emails/index/'.
 							$program['Program']['id'].'">Edit Emails</a>';
 					}	
 					$i++;			
