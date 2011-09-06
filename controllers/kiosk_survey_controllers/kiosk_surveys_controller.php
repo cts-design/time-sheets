@@ -2,6 +2,8 @@
 class KioskSurveysController extends AppController {
 
 	var $name = 'KioskSurveys';
+    var $survey = null;
+    var $questions = null;
 	
 	function beforeFilter() {
 		parent::beforeFilter();
@@ -9,10 +11,16 @@ class KioskSurveysController extends AppController {
 	}
 	
 	function start() {
-		$this->layout = 'kiosk';
-		
+        $survey = $this->KioskSurvey->findById($this->params['survey_id']);
+        debug($survey);
+        $this->set('survey', $survey);
 
+		$this->layout = 'kiosk';
 	}
+
+    function question() {
+        
+    }
 	
 	function admin_index() {}
 	
@@ -54,8 +62,14 @@ class KioskSurveysController extends AppController {
 	}
 	
 	function admin_update() {
-	  
-	  
+        $this->KioskSurvey->recursive = -1;
+        $data = null;
+        $params = $this->params['form'];
+
+        FireCake::log($params);
+
+        $this->data('data', $data);
+        return $this->render(null, null, '/elements/ajaxreturn');
 	}
 	
 	function admin_destroy() {

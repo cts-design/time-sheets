@@ -79,6 +79,29 @@ class KioskSurveyQuestionsController extends AppController {
 		return $this->render(null, null, '/elements/ajaxreturn');
 	}
 
+    function admin_update() {
+        $data = null;
+        $params = json_decode($this->params['form']['surveyQuestions'], true);
+
+        if (isset($params['type'])) {
+            if ($params['type'] === 'yesno' || $params['type'] === 'truefalse') {
+                $params['options'] = null;
+            }
+        }
+
+        $this->KioskSurveyQuestion->read(null, $params['id']);
+        $this->KioskSurveyQuestion->set($params);
+
+        if ($this->KioskSurveyQuestion->save()) {
+            $data['success'] = true;
+        } else {
+            $data['success'] = false;
+        }
+
+        $this->set('data', $data);
+        return $this->render(null, null, '/elements/ajaxreturn');
+    }
+
 	function admin_create() {
 		$params = json_decode($this->params['form']['surveyQuestions'], true);
 		$data = null;
