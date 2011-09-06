@@ -326,7 +326,14 @@ class ProgramResponsesController extends AppController {
 									$response['ProgramResponse']['id'].'">View</a> | ' . 
 									'<a href="/admin/program_responses/toggle_expired/' . 
 									$response['ProgramResponse']['id'] . '/unexpire'.'" class="expire">Mark Un-Expired</a>';							
-						}						
+						}
+						elseif($this->params['url']['tab'] == 'not_approved') {
+							$data['responses'][$i]['actions'] = 
+								'<a href="/admin/program_responses/reset_form/'. 
+									$response['ProgramResponse']['id'].'" class="reset">Reset Form</a> | ' .
+									'<a href="/admin/program_responses/allow_new_response/' . 
+									$response['ProgramResponse']['id'] . '" class="allow-new">Allow New Response</a>';							
+						}
 						else {
 							$data['responses'][$i]['actions'] = 
 								'<a href="/admin/program_responses/view/'. 
@@ -673,6 +680,54 @@ class ProgramResponsesController extends AppController {
 			$this->set(compact('data'));
 			$this->render(null, null, '/elements/ajaxreturn');
 		}
+	}
+
+	function admin_reset_form($id=null)	{
+		if($this->RequestHandler->isAjax()) {
+			if(!$id){
+				$data['success'] = false;
+				$data['message'] = 'Invalid program response id'; 
+			}
+			else {
+				$this->data['ProgramResponse']['id'] = $id;
+				$this->data['ProgramResponse']['answers'] = null;
+				if($this->ProgramResponse->save($this->data)) {
+					$data['success'] = true;
+					$data['message'] = 'Customer program response form reset successfully.';
+					// @TODO add user activity transaction
+				}
+				else {
+					$data['success'] = false;
+					$data['message'] = 'An error occurred, please try again.';
+				}
+			}
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
+	
+	function admin_allow_new_response($id=null) {
+		if($this->RequestHandler->isAjax()) {
+			if(!$id){
+				$data['success'] = false;
+				$data['message'] = 'Invalid program response id'; 
+			}
+			else {
+				$this->data['ProgramResponse']['id'] = $id;
+				$this->data['ProgramResponse']['allow_new_response'] = 1;
+				if($this->ProgramResponse->save($this->data)) {
+					$data['success'] = true;
+					$data['message'] = 'Customer can now create a new response for this program.';
+					// @TODO add user activity transaction
+				}
+				else {
+					$data['success'] = false;
+					$data['message'] = 'An error occurred, please try again.';
+				}
+			}
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}		
 	}
 
 	function _generateForm($formId, $programResponseId, $docId=null) {
