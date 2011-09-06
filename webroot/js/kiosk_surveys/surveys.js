@@ -9,6 +9,8 @@ var surveyPanel = {
 	selectedSurvey: null,
 	selectedQuestion: null,
 	init: function () {
+    "use strict";
+
 		this.initData();
 		this.initGrid();
 		
@@ -122,7 +124,14 @@ var surveyPanel = {
 						name: 'options',
 						disabled: true,
 						allowBlank: false
-					}],
+					}, {
+            id: 'orderField',
+            xtype: 'textfield',
+            fieldLabel: 'Order',
+            name: 'order',
+            disabled: true,
+            allowBlank: false
+          }],
 					buttons: [{
 						id: 'saveButton',
 						text: 'Save',
@@ -135,21 +144,31 @@ var surveyPanel = {
 								rec;
 								
 							if (form.isValid()) {
-								// check to see if we're updating an existing
-								// record
 								if (this.selectedQuestion) {
-									// should be editing an existing record.
-								}
+                  rec = this.surveyQuestionStore.getById(this.selectedQuestion.id);
+
+                  rec.beginEdit();
+                  rec.set('question', vals.question);
+                  rec.set('type', vals.type);
+                  rec.set('options', vals.options);
+                  rec.set('order', vals.order);
+                  rec.endEdit();
+
+                  console.log(rec);
+
+                } else {
+                  rec = new NewRecord({
+                    kiosk_survey_id: this.selectedSurvey.id,
+                    question: vals.question,
+                    type: vals.type,
+                    options: vals.options,
+                    order: vals.order
+                  });
+
+                  this.surveyQuestionStore.add(rec);
+                }
 	
-								rec = new NewRecord({
-									kiosk_survey_id: this.selectedSurvey.id,
-									question: vals.question,
-									type: vals.type,
-									options: vals.options
-								});
-	
-								this.surveyQuestionStore.add(rec);
-								this.surveyQuestionStore.commitChanges();
+                this.surveyQuestionStore.commitChanges();
 							}
 						}
 					}]
@@ -185,6 +204,8 @@ var surveyPanel = {
 		this.surveyStore.load();
 	},
 	initData: function () {
+    "use strict";
+
 		var surveyProxy = new Ext.data.HttpProxy({
 			api: {
 				create:  { url: '/admin/kiosk_surveys/create',  method: 'POST' },
@@ -223,6 +244,7 @@ var surveyPanel = {
 				'question',
 				'type',
 				'options',
+        { name: 'order', type: 'int' },
 				{ name: 'created', type: 'date', dateFormat: 'Y-m-d H:i:s' }
 			]),
 
@@ -231,7 +253,9 @@ var surveyPanel = {
 				root: 'surveyQuestions'
 			}, surveyQuestionFields),
 
-			surveyQuestionWriter = new Ext.data.JsonWriter();
+			surveyQuestionWriter = new Ext.data.JsonWriter({
+        writeAllFields: true
+      });
 			
 		this.surveyStore = new Ext.data.Store({
 			storeId: 'surveyStore',
@@ -265,6 +289,10 @@ var surveyPanel = {
 			proxy: surveyQuestionProxy,
 			reader: surveyQuestionReader,
 			writer: surveyQuestionWriter,
+      sortInfo: {
+        field: 'order',
+        direction: 'ASC'
+      },
 			write: {
 				fn: function (store, action, result, res, rs) {
 					store.reload();
@@ -273,6 +301,8 @@ var surveyPanel = {
 		});
 	},
 	initGrid: function () {
+    "use strict";
+
 		var surveyGridView = new Ext.grid.GridView({ forceFit: true }),
 
 			surveyColModel = new Ext.grid.ColumnModel([
@@ -373,7 +403,8 @@ var surveyPanel = {
 						return value;
 					}
 				},
-				{ header: 'Options', sortable: true, dataIndex: 'options' }
+				{ header: 'Options', sortable: true, dataIndex: 'options' },
+        { header: 'Order', sortable: false, dataIndex: 'order' }
 			]),
 
 			surveyQuestionsSelModel = new Ext.grid.RowSelectionModel({
@@ -393,14 +424,27 @@ var surveyPanel = {
 								questionField = Ext.getCmp('questionField'),
 								typeField = Ext.getCmp('typeField'),
 								optionsField = Ext.getCmp('optionsField'),
+                orderField = Ext.getCmp('orderField'),
 								saveButton = Ext.getCmp('saveButton');
+
+              console.log(rec);
+              console.log(rec.data.type);
 
 							if (questionField.disabled) {
 								questionField.enable();
 								typeField.enable();
-								optionsField.enable();
+                orderField.enable();
 								saveButton.enable();
-							}
+
+                if (rec.data.type !== "yesno" && rec.data.type !== 'truefalse') {
+                  optionsField.enable();
+                }
+							} else {
+                if (rec.data.type === "yesno" || rec.data.type === "truefalse") {
+                  optionsField.disable();
+                }
+              }
+
 							
 							form.loadRecord(rec);
 							
@@ -437,6 +481,8 @@ var surveyPanel = {
 };
 
 Ext.onReady(function () {
+  "use strict";
+
 	Ext.QuickTips.init();
 	surveyPanel.init();
 });
