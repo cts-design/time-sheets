@@ -72,6 +72,4 @@ class ProgramInstructionsController extends AppController {
 			$this->render('/elements/ajaxreturn');				
 		}
 	}
-
 }
-?>
