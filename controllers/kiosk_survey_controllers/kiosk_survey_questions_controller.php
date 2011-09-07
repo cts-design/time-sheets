@@ -58,7 +58,7 @@ class KioskSurveyQuestionsController extends AppController {
 
         // check to see if there are more questions
         if (count($survey[0]['KioskSurveyQuestion']) < $questionNumber) {
-            $this->Session->setFlash(__('Thanks', true), 'flash_success');
+            $this->Session->setFlash(__('Thank you for taking the time to complete the survey. Your input is very important to us.', true), 'flash_success');
             $this->redirect('/kiosk');
         }
 
