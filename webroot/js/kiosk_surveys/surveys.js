@@ -140,7 +140,7 @@ var surveyPanel = {
 						handler: function () {
 							var form = Ext.getCmp('questionForm').getForm(),
 								vals = form.getValues(),
-								NewRecord = Ext.data.Record.create(['kiosk_survey_id', 'question', 'type', 'options']),
+								NewRecord = Ext.data.Record.create(['kiosk_survey_id', 'question', 'type', 'options', 'order']),
 								rec;
 								
 							if (form.isValid()) {
@@ -327,7 +327,20 @@ var surveyPanel = {
 					},
 					rowselect: {
 						fn: function (sm, row, rec) {
-							var newQuestionButton = Ext.getCmp('newQuestionButton');
+							var newQuestionButton = Ext.getCmp('newQuestionButton'),
+                form = Ext.getCmp('questionForm'),
+								questionField = Ext.getCmp('questionField'),
+								typeField = Ext.getCmp('typeField'),
+								optionsField = Ext.getCmp('optionsField'),
+                orderField = Ext.getCmp('orderField'),
+								saveButton = Ext.getCmp('saveButton');
+
+              form.getForm().reset();
+              questionField.disable();
+              typeField.disable();
+              optionsField.disable();
+              orderField.disable();
+              saveButton.disable();
 
 							this.selectedSurvey = rec;
 							sm.grid.topToolbar.items.items[1].enable(); // enable delete button
@@ -427,23 +440,20 @@ var surveyPanel = {
                 orderField = Ext.getCmp('orderField'),
 								saveButton = Ext.getCmp('saveButton');
 
-              console.log(rec);
-              console.log(rec.data.type);
-
 							if (questionField.disabled) {
 								questionField.enable();
 								typeField.enable();
                 orderField.enable();
 								saveButton.enable();
 
-                if (rec.data.type !== "yesno" && rec.data.type !== 'truefalse') {
-                  optionsField.enable();
-                }
 							} else {
                 if (rec.data.type === "yesno" || rec.data.type === "truefalse") {
                   optionsField.disable();
                 }
               }
+                if (rec.data.type !== "yesno" && rec.data.type !== 'truefalse') {
+                  optionsField.enable();
+                }
 
 							
 							form.loadRecord(rec);
@@ -462,7 +472,8 @@ var surveyPanel = {
 			sm: surveySelModel,
 			view: surveyGridView,
 			height: 175,
-			frame: false
+			frame: false,
+      loadMask: true
 		});
 
 		this.surveyQuestionsGrid = new Ext.grid.GridPanel({
@@ -473,6 +484,7 @@ var surveyPanel = {
 			view: surveyQuestionsGridView,
 			height: 270,
 			frame: true,
+      loadMask: true,
 			viewConfig: {
 				emptyText: '<br/><br/><center><div class="no_data">No data available...</div></center>'
 			}
