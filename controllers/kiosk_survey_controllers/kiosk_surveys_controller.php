@@ -11,16 +11,19 @@ class KioskSurveysController extends AppController {
 	}
 	
 	function start() {
-        $survey = $this->KioskSurvey->findById($this->params['survey_id']);
-        debug($survey);
-        $this->set('survey', $survey);
+        $surveyId = $this->params['survey_id'];
 
-		$this->layout = 'kiosk';
+        // create the response record
+        $this->KioskSurvey->KioskSurveyResponse->create(
+            array(
+                'kiosk_survey_id' => $surveyId
+            )
+        );
+        $this->KioskSurvey->KioskSurveyResponse->save();
+        $this->Session->write('surveyResponseId', $this->KioskSurvey->KioskSurveyResponse->id);
+
+        $this->redirect("/kiosk/survey/{$surveyId}/question/1");
 	}
-
-    function question() {
-        
-    }
 	
 	function admin_index() {}
 	

@@ -30,7 +30,7 @@
     ?>
     <?php if ($kioskHasSurvey): ?>
     	<div class="survey-button">
-    		<a href="/kiosk/survey/1">Take Survey</a>
+		<a href="/kiosk/survey/<?php echo $kiosk['KioskSurvey'][0]['id'] ?>">Take Survey</a>
     	</div>
     <?php endif ?>
 </div>
