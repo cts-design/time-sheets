@@ -175,6 +175,7 @@ var closedProgramResponsesGrid = new Atlas.grid.ProgramResponseGrid({
 				}
 				responseId = r.data.id;
 				editor.setValue(r.data.notes);
+				Ext.getCmp('save').enable();
 			}
 		}
 	})
@@ -191,6 +192,7 @@ var expiredProgramResponsesGrid = new Atlas.grid.ProgramResponseGrid({
 				}
 				responseId = r.data.id;
 				editor.setValue(r.data.notes);
+				Ext.getCmp('save').enable();
 			}
 		}
 	})
@@ -207,6 +209,7 @@ var pendingApprovalProgramResponsesGrid = new Atlas.grid.ProgramResponseGrid({
 				}
 				responseId = r.data.id;
 				editor.setValue(r.data.notes);
+				Ext.getCmp('save').enable();
 			}
 		}
 	})
@@ -223,6 +226,7 @@ var notApprovedProgramResponsesGrid = new Atlas.grid.ProgramResponseGrid({
 				}
 				responseId = r.data.id;
 				editor.setValue(r.data.notes);
+				Ext.getCmp('save').enable();
 			}
 		}
 	})
@@ -247,6 +251,7 @@ var programResponseTabs = new Ext.TabPanel({
 	items : [openProgramResponsesGrid, closedProgramResponsesGrid, expiredProgramResponsesGrid],
 	listeners : {
 		tabchange : function(TabPanel, Panel) {
+			Ext.getCmp('save').disable();
 			programResponseSearch.getForm().reset()
 			editor.setValue('Please select a row in the grid above to see program response notes.');
 			switch (Panel.title) {
@@ -445,6 +450,8 @@ var responsesPanel = new Ext.Panel({
 	items : [programResponseTabs, editor, programResponseSearch],
 	fbar : [{
 		text : 'Save',
+		id: 'save',
+		disabled: true,
 		icon : '/img/icons/save.png',
 		handler : function() {
 			Ext.Msg.wait('Please wait', 'Status');
