@@ -3,7 +3,8 @@ class KioskSurveysController extends AppController {
 
 	var $name = 'KioskSurveys';
     var $survey = null;
-    var $questions = null;
+	var $questions = null;
+	var $helpers = array('Excel');
 	
 	function beforeFilter() {
 		parent::beforeFilter();
@@ -133,6 +134,70 @@ class KioskSurveysController extends AppController {
 		
 		$this->set('data', $data);
 		return $this->render(null, null, '/elements/ajaxreturn');
+	}
+
+	function admin_report() {
+		$data = null;
+		$report = null;
+		$surveyId = $this->params['url']['survey_id'];
+		$this->KioskSurvey->recursive = -1;
+		$this->KioskSurvey->Behaviors->attach('Containable');
+
+		$survey = $this->KioskSurvey->find(
+			'first',
+			array(
+				'conditions' => array(
+					"KioskSurvey.id = {$surveyId}"
+				),
+				'contain' => array(
+					'KioskSurveyQuestion' => array(
+						'conditions' => "KioskSurveyQuestion.kiosk_survey_id = {$surveyId}",
+						'fields' => array(
+							'KioskSurveyQuestion.id',
+							'KioskSurveyQuestion.question',
+							'KioskSurveyQuestion.order'
+						),
+						'order' => 'KioskSurveyQuestion.order ASC'
+					),
+					'KioskSurveyResponse' => array(
+						'KioskSurveyResponseAnswer' => array(
+							'fields' => array(
+								'KioskSurveyResponseAnswer.question_id',
+								'KioskSurveyResponseAnswer.answer'
+							)
+						),
+						'conditions' => "KioskSurveyResponse.kiosk_survey_id = {$surveyId}",
+						'fields' => array('KioskSurveyResponse.id', 'KioskSurveyResponse.created')
+					)
+				)
+			)
+		);
+
+		$surveyQuestion = Set::combine($survey['KioskSurveyQuestion'], '{n}.id', '{n}.question');
+
+		$title = 'Self sign survey report: ' . $survey['KioskSurvey']['name'] . ' ' . date('m/d/Y');
+
+		foreach($survey['KioskSurveyResponse'] as $key => $value) {
+			$skip = true;
+			foreach($value['KioskSurveyResponseAnswer'] as $k => $v) {
+				if (isset($v['answer'])) {
+					$report[$key][$surveyQuestion[$v['question_id']]] = Inflector::humanize($v['answer']);
+					$skip = false;
+				} 
+			}
+			if (! $skip)
+				$report[$key]['Date Taken'] = date('m/d/y h:i a', strtotime($value['created']));
+		}
+
+		$data = array(
+			'data' => $report,
+			'title' => $title
+		);
+
+		Configure::write('debug', 0);
+		$this->layout = 'ajax';
+		$this->set($data);
+		return $this->render('/elements/excelreport');
 	}
 }
 
