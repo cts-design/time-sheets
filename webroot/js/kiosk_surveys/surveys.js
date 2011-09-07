@@ -361,6 +361,7 @@ var surveyPanel = {
 
 							this.selectedSurvey = rec;
 							sm.grid.topToolbar.items.items[1].enable(); // enable delete button
+              sm.grid.topToolbar.items.items[2].enable();
 							this.surveyQuestionStore.reload({ params: {kiosk_id: rec.id} }); // load any existing questions
 							newQuestionButton.enable(); // enable new question button
 
@@ -408,7 +409,16 @@ var surveyPanel = {
 							}
 						});
 					}
-				}]
+				}, {
+          text: 'Report',
+          icon: '/img/icons/excel.png',
+          disabled: true,
+          scope: this,
+          handler: function() {
+            var surveyId = this.selectedSurvey.id;
+            window.location = '/admin/kiosk_surveys/report?survey_id=' + surveyId;
+          }
+        }]
 			}),
 		
 			surveyQuestionsGridView = new Ext.grid.GridView({ forceFit: true }),
