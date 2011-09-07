@@ -49,9 +49,12 @@
 			    <?php echo $this->Html->link(__('Add Survey', true), '', array('class' => 'add-survey hidden')) ?>
 			    <?php echo $this->Html->link(__('Select a Survey', true), '', array('class' => 'select-survey hidden')) ?>
 	            <ul style="z-index: 10000 !important">
-	                <li><?php echo $this->Html->link(__('Veteran Services', true), '') ?></li>
-	                <li><?php echo $this->Html->link(__('Housing Services Outgoing', true), '') ?></li>
-	                <li><?php echo $this->Html->link(__('Outgoing', true), '') ?></li>
+					<?php foreach ($surveys as $key => $value): ?>
+					<li>
+						<?php echo $this->Html->link($value['KioskSurvey']['name'], '', array('data-survey-id' => $value['KioskSurvey']['id'])) ?>
+					</li>
+					<?php endforeach ?>
+				</ul>
 	            </ul>
 		    <?php else: ?>
 		    	<?php echo $this->Html->link(__('Remove Survey', true), '', array('class' => 'remove-survey hidden')) ?>
