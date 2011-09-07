@@ -56,6 +56,9 @@ var instructionPanel = new Ext.Panel({
 	],
 	fbar: [{	
 		text: 'Save',
+		disabled: true,
+		id: 'save',
+		icon:  '/img/icons/save.png',
 		handler: function() {
 			Ext.Msg.wait('Please wait', 'Status');
 			Ext.Ajax.request({
@@ -89,6 +92,7 @@ instructionGrid.getSelectionModel().on('rowselect', function(sm, rowIdx, r) {
 	}
 	instructionId = r.data.id;
 	editor.setValue(r.data.text);
+	Ext.getCmp('save').enable();
 });
 Ext.onReady(function(){  	
 	instructionPanel.render('instructions');
