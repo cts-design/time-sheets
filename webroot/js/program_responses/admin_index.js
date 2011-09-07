@@ -447,6 +447,7 @@ var responsesPanel = new Ext.Panel({
 		text : 'Save',
 		icon : '/img/icons/save.png',
 		handler : function() {
+			Ext.Msg.wait('Please wait', 'Status');
 			Ext.Ajax.request({
 				url : '/admin/program_responses/edit',
 				success : function(response, opts) {
