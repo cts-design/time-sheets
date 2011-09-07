@@ -185,7 +185,7 @@ margin-bottom: 10px;
 }
 
 .self-sign-survey-wrapper div .ui-button.self-sign-survey-button, .self-scan-survey-button {
-    width:200px;
+    /* width:200px;*/
     height: 50px;
     font-size: 19px;
     line-height: 2em !important;
@@ -373,6 +373,16 @@ div.survey-button a {
   height: 100px;
   text-indent: -9999px;
   width: 89px;
+}
+
+div.survey-nav .back {
+  float: left;
+  margin-left: 40px;
+}
+
+div.survey-nav .next {
+  float: right;
+  margin-right: 40px;
 }
 
 /* debug stuffs */
