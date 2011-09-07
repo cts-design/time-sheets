@@ -217,6 +217,34 @@ var pendingApprovalProgramResponsesGrid = new Atlas.grid.ProgramResponseGrid({
 
 var notApprovedProgramResponsesGrid = new Atlas.grid.ProgramResponseGrid({
 	title : 'Not Approved',
+	columns : [{
+		id : 'id',
+		header : 'Id',
+		dataIndex : 'id',
+		width : 30,
+		sortable : true
+	}, {
+		header : 'Customer',
+		dataIndex : 'User-lastname',
+		width : 150,
+		sortable : true
+	}, {
+		header : 'Created',
+		dataIndex : 'created',
+		xtype : 'datecolumn',
+		format : 'm/d/Y g:i a',
+		sortable : true
+	}, {
+		header : 'Modified',
+		dataIndex : 'modified',
+		xtype : 'datecolumn',
+		format : 'm/d/Y g:i a',
+		sortable : true
+	}, {
+		header : 'Actions',
+		dataIndex : 'actions',
+		width : 150,
+	}],	
 	sm : new Ext.grid.RowSelectionModel({
 		singleSelect : true,
 		listeners : {
