@@ -57,6 +57,7 @@ var instructionPanel = new Ext.Panel({
 	fbar: [{	
 		text: 'Save',
 		handler: function() {
+			Ext.Msg.wait('Please wait', 'Status');
 			Ext.Ajax.request({
 			   url: '/admin/program_instructions/edit/' + instructionId,
 		        success: function(response, opts){			        	
