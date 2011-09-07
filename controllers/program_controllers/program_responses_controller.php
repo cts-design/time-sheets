@@ -379,8 +379,7 @@ class ProgramResponsesController extends AppController {
 				$this->set(compact('user'));
 				$this->Transaction->createUserTransaction('Programs', null, null,
 					'Viewed program response for ' . $programResponse['Program']['name'] . ' for customer ' . 
-					ucfirst($user['firstname']). ' ' . ucfirst($user['lastname']) . ' - '. 
-					substr($user['ssn'], '-4'));					
+					ucwords($user['name_last4']));					
  				$this->render('/elements/program_responses/user_info');
 			}
 			if($type == 'answers') {
@@ -536,8 +535,7 @@ class ProgramResponsesController extends AppController {
 					$this->Notifications->sendProgramEmail($programEmail, $user);
 					$this->Transaction->createUserTransaction('Programs', null, null,
 						'Approved program response for ' . $programResponse['Program']['name'] . ' for customer ' . 
-						ucfirst($user['User']['firstname']). ' ' . ucfirst($user['User']['lastname']) . ' - '. 
-						substr($user['User']['ssn'], '-4'));										
+						ucwords($user['User']['name_last4']));										
 				}
 				else {
 					$data['success'] = false;
@@ -577,7 +575,9 @@ class ProgramResponsesController extends AppController {
 						$user['User'] = $programResponse['User'];
 						$this->Notifications->sendProgramEmail($programEmail, $user);						
 					}
-					// @TODO Add transaction for transaction log. 		
+					$this->Transaction->createUserTransaction('Programs', null, null,
+						'Marked ' . $programResponse['Program']['name'] . 
+						' response not approved for ' . ucwords($user['User']['name_last4'])); 		
 				} 
 				else {
 					$data['success'] = false;
@@ -624,8 +624,7 @@ class ProgramResponsesController extends AppController {
 				$this->Transaction->createUserTransaction('Programs', null, null,
 					$generated[2] . ' ' . $generated[0]['ProgramPaperForm']['name'] . ' for ' . 
 					$generated[1]['Program']['name'] . ' for customer ' . 
-					ucfirst($generated[1]['User']['firstname']). ' ' . ucfirst($generated[1]['User']['lastname']) . ' - '. 
-					substr($generated[1]['User']['ssn'], '-4'));							
+					ucwords($generated[1]['User']['name_last4']));							
 			}
 			elseif(empty($data['message'])) {
 				$data['success'] = false;
@@ -666,15 +665,13 @@ class ProgramResponsesController extends AppController {
 							$data['message'] = 'Response marked un-expired successfully.';
 							$this->Transaction->createUserTransaction('Programs', null, null,
 								'Marked response un-expired for ' . $programResponse['Program']['name'] . ' for customer ' . 
-								ucfirst($programResponse['User']['firstname']). ' ' . ucfirst($programResponse['User']['lastname']) . ' - '. 
-								substr($programResponse['User']['ssn'], '-4'));							
+								ucwords($programResponse['User']['name_last4']));							
 							break;
 						case 'expired':
 							$data['message'] = 'Response marked expired successfully.';
 							$this->Transaction->createUserTransaction('Programs', null, null,
 								'Marked response expired for ' . $programResponse['Program']['name'] . ' for customer ' . 
-								ucfirst($programResponse['User']['firstname']). ' ' . ucfirst($programResponse['User']['lastname']) . ' - '. 
-								substr($programResponse['User']['ssn'], '-4'));							
+								ucwords($programResponse['User']['name_last4']));							
 							break;	
 					}
 				}
