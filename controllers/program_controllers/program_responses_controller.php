@@ -335,6 +335,8 @@ class ProgramResponsesController extends AppController {
 						}
 						elseif($this->params['url']['tab'] == 'not_approved') {
 							$data['responses'][$i]['actions'] = 
+								'<a href="/admin/program_responses/view/'. 
+									$response['ProgramResponse']['id'].'">View</a> | ' .							
 								'<a href="/admin/program_responses/reset_form/'. 
 									$response['ProgramResponse']['id'].'" class="reset">Reset Form</a> | ' .
 									'<a href="/admin/program_responses/allow_new_response/' . 
