@@ -476,8 +476,12 @@ class ProgramResponsesController extends AppController {
 		if($this->RequestHandler->isAjax()) {
 			if(!empty($this->data)) {
 				if($this->ProgramResponse->save($this->data)) {
+					$programResponse = $this->ProgramResponse->read(null, $this->data['ProgramResponse']['id']);
 					$data['success'] = true;
 					$data['message'] = 'Notes were saved successfully.';
+					$this->Transaction->createUserTransaction('Programs', null, null,
+						'Updated ' . $programResponse['Program']['name'] . ' response notes for customer ' . 
+						ucwords($programResponse['User']['name_last4']));						
 				}
 				else {
 					$data['success'] = true;
