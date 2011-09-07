@@ -52,8 +52,12 @@ class ProgramInstructionsController extends AppController {
 		if($this->RequestHandler->isAjax()) {
 			if(!empty($this->data)) {
 				if($this->ProgramInstruction->save($this->data)) {
+					$this->data = $this->ProgramInstruction->read(null, $this->data['ProgramInstruction']['id']);
 					$data['success'] = true;
-					$data['message'] = 'Instructions saved sucessfully.';	
+					$data['message'] = 'Instructions saved sucessfully.';
+					$this->Transaction->createUserTransaction('Programs', null, null,
+						'Edited ' . Inflector::humanize($this->data['ProgramInstruction']['type']) . 
+						' instructions for ' . $this->data['Program']['name']);
 				}
 				else {
 					$data['success'] = false;
