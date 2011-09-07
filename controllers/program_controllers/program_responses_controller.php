@@ -577,7 +577,12 @@ class ProgramResponsesController extends AppController {
 					}
 					$this->Transaction->createUserTransaction('Programs', null, null,
 						'Marked ' . $programResponse['Program']['name'] . 
-						' response not approved for ' . ucwords($user['User']['name_last4'])); 		
+						' response not approved for ' . ucwords($user['User']['name_last4'])); 
+					if($this->params['form']['reset_form'] == 'on') {
+						$this->Transaction->createUserTransaction('Programs', null, null,
+							'Reset program response form for ' . $programResponse['Program']['name'] . ' for customer ' . 
+							ucwords($programResponse['User']['name_last4']));					
+					}			
 				} 
 				else {
 					$data['success'] = false;
@@ -695,9 +700,12 @@ class ProgramResponsesController extends AppController {
 				$this->data['ProgramResponse']['id'] = $id;
 				$this->data['ProgramResponse']['answers'] = null;
 				if($this->ProgramResponse->save($this->data)) {
+					$programResponse = $this->ProgramResponse->read(null, $id);
 					$data['success'] = true;
 					$data['message'] = 'Customer program response form reset successfully.';
-					// @TODO add user activity transaction
+					$this->Transaction->createUserTransaction('Programs', null, null,
+						'Reset program response form for ' . $programResponse['Program']['name'] . ' for customer ' . 
+						ucwords($programResponse['User']['name_last4']));	
 				}
 				else {
 					$data['success'] = false;
@@ -719,9 +727,12 @@ class ProgramResponsesController extends AppController {
 				$this->data['ProgramResponse']['id'] = $id;
 				$this->data['ProgramResponse']['allow_new_response'] = 1;
 				if($this->ProgramResponse->save($this->data)) {
+					$programResponse = $this->ProgramResponse->read(null, $id);
 					$data['success'] = true;
 					$data['message'] = 'Customer can now create a new response for this program.';
-					// @TODO add user activity transaction
+					$this->Transaction->createUserTransaction('Programs', null, null,
+						'Enabled allow new response for ' . $programResponse['Program']['name'] . ' for customer ' . 
+						ucwords($programResponse['User']['name_last4']));	
 				}
 				else {
 					$data['success'] = false;
