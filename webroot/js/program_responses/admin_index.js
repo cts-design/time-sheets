@@ -99,7 +99,7 @@ Atlas.grid.ProgramResponseGrid = Ext.extend(Ext.grid.GridPanel, {
 		store : programResponseStore,
 		displayInfo : true,
 		displayMsg : 'Displaying records {0} - {1} of {2}',
-		emptyMsg : "No documents to display",
+		emptyMsg : "No responses to display",
 		listeners : {
 			beforechange : function (paging, params) {
 				
