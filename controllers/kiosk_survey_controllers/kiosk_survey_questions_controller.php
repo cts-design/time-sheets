@@ -3,6 +3,76 @@ class KioskSurveyQuestionsController extends AppController {
 
 	var $name = 'KioskSurveyQuestions';
 
+    function beforeFilter() {
+        parent::beforeFilter();
+        $this->Auth->allow('question');
+    }
+
+    function question() {
+        $this->layout = 'kiosk';
+        $responseId = $this->Session->read('surveyResponseId');
+
+        if (! empty($this->data)) {
+            $questionNumber = $this->data['KioskSurveyQuestions']['question_number'];
+            $surveyId = $this->data['KioskSurveyQuestions']['survey_id'];
+
+            $this->KioskSurveyQuestion->KioskSurvey
+                                      ->KioskSurveyResponse
+                                      ->KioskSurveyResponseAnswer->create(
+                                        array(
+                                            'survey_response_id' => $responseId,
+                                            'question_id' => $this->data['KioskSurveyQuestions']['question_id'],
+                                            'answer' => $this->data['KioskSurveyQuestions']['answer']
+                                        )
+                                      );
+
+            $this->KioskSurveyQuestion->KioskSurvey
+                                      ->KioskSurveyResponse
+                                      ->KioskSurveyResponseAnswer->save();
+
+            $nextQuestion = $questionNumber + 1;
+            $this->redirect("/kiosk/survey/{$surveyId}/question/{$nextQuestion}");
+        } else {
+            $questionNumber = $this->params['question_number'];
+        }
+
+        $this->KioskSurveyQuestion->KioskSurvey->recursive = -1;
+        $this->KioskSurveyQuestion->KioskSurvey->Behaviors->attach('Containable');
+
+        $survey = $this->KioskSurveyQuestion->KioskSurvey->find(
+            'all',
+            array(
+                'conditions' => array(
+                    'KioskSurvey.id' => $this->params['survey_id']
+                ),
+                'contain' => array(
+                    'KioskSurveyQuestion' => array(
+                        'order' => 'KioskSurveyQuestion.order ASC'
+                    ),
+                    'KioskSurveyResponse' => array(
+                        'conditions' => array("KioskSurveyResponse.id = {$responseId}")
+                    )
+                )
+            )
+        );
+
+        // check to see if there are more questions
+        if (count($survey[0]['KioskSurveyQuestion']) < $questionNumber) {
+            $this->Session->setFlash(__('Thanks', true), 'flash_success');
+            $this->redirect('/kiosk');
+        }
+
+        $question = Set::extract("/KioskSurveyQuestion/.[{$questionNumber}]", $survey);
+
+        if ($question[0]['type'] === 'multi') {
+            $question[0]['options'] = explode(',', $question[0]['options']);
+        }
+
+
+        $this->set('survey', $survey);
+        $this->set('question', $question[0]);
+    }
+
 	function index() {
 		$this->KioskSurveyQuestion->recursive = 0;
 		$this->set('kioskSurveyQuestions', $this->paginate());
@@ -110,7 +180,8 @@ class KioskSurveyQuestionsController extends AppController {
 			'kiosk_survey_id' => $params['kiosk_survey_id'],
 			'question' => $params['question'],
 			'type' => $params['type'],
-			'options' => (isset($params['options'])) ? $params['options'] : null
+            'options' => (isset($params['options'])) ? $params['options'] : null,
+            'order' => $params['order']
 		);
 		
 		$result = $this->KioskSurveyQuestion->save($this->data);

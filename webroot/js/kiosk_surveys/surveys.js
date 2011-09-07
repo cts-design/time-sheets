@@ -141,9 +141,21 @@ var surveyPanel = {
 							var form = Ext.getCmp('questionForm').getForm(),
 								vals = form.getValues(),
 								NewRecord = Ext.data.Record.create(['kiosk_survey_id', 'question', 'type', 'options', 'order']),
-								rec;
+								rec,
+								questionField = Ext.getCmp('questionField'),
+								typeField = Ext.getCmp('typeField'),
+								optionsField = Ext.getCmp('optionsField'),
+                orderField = Ext.getCmp('orderField'),
+								saveButton = Ext.getCmp('saveButton');
+
 								
 							if (form.isValid()) {
+                questionField.disable();
+                typeField.disable();
+                optionsField.disable();
+                orderField.disable();
+                saveButton.disable();
+
 								if (this.selectedQuestion) {
                   rec = this.surveyQuestionStore.getById(this.selectedQuestion.id);
 
@@ -169,6 +181,11 @@ var surveyPanel = {
                 }
 	
                 this.surveyQuestionStore.commitChanges();
+                questionField.enable();
+                typeField.enable();
+                optionsField.enable();
+                orderField.enable();
+                saveButton.enable();
 							}
 						}
 					}]
