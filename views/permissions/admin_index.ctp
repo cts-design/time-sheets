@@ -284,7 +284,6 @@
 			<?php echo $this->Form->end(__('Submit', true))?>    
 	</div>
 	<div id="SelfSign" class="x-hide-display">
-		<?php if(isset($controllers)) :?>
 		    <?php echo $this->Form->create('permission', array('action' => 'set_permissions')) ?>
 		    <?php echo $this->Form->hidden('id', array('value' => $id));?>
 		    <?php echo $this->Form->hidden('model', array('value' => $model));?>
@@ -348,8 +347,6 @@
 		    <br class="clear" />
 			<?php echo $this->Form->end(__('Submit', true))?>    
 	</div>
- 
-	    <?php endif; ?>		
 	<div id="Tools" class="x-hide-display">
 		    <?php echo $this->Form->create('permission', array('action' => 'set_permissions')) ?>
 		    <?php echo $this->Form->hidden('id', array('value' => $id));?>
