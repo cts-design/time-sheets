@@ -31,10 +31,11 @@
 	?>
 	<?php echo $this->Html->scriptBlock(
 		"$(document).ready(function(){
-		$('.message').fadeOut(10000);
-		if($('.actions ul').text() == '') {
-		    $('div.actions').hide();
-		}
+			$('.message').fadeOut(10000);
+			$('.datepicker').datepicker();
+			if($('.actions ul').text() == '') {
+			    $('div.actions').hide();
+			}
 	    });"
 	    )?>
     </head>
