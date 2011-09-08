@@ -8,7 +8,7 @@ class KioskSurveysController extends AppController {
 	
 	function beforeFilter() {
 		parent::beforeFilter();
-		$this->Auth->allow('start');
+		$this->Auth->allow('start', 'cancel');
 	}
 	
 	function start() {
@@ -26,6 +26,11 @@ class KioskSurveysController extends AppController {
         $this->redirect("/kiosk/survey/{$surveyId}/question/1");
 	}
 	
+	function cancel() {
+		$this->Session->destroy();
+		$this->redirect('/kiosk');
+	}
+
 	function admin_index() {}
 	
 	function admin_create() {

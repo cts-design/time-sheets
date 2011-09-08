@@ -11,7 +11,6 @@ class KioskSurveyQuestionsController extends AppController {
     function question() {
         $this->layout = 'kiosk';
         $responseId = $this->Session->read('surveyResponseId');
-        FireCake::log($this->data);
 
         if (! empty($this->data)) {
             $questionNumber = $this->data['KioskSurveyQuestions']['question_number'];
@@ -60,7 +59,7 @@ class KioskSurveyQuestionsController extends AppController {
         // check to see if there are more questions
         if (count($survey[0]['KioskSurveyQuestion']) < $questionNumber) {
             $this->Session->setFlash(__('Thank you for taking the time to complete the survey. Your input is very important to us.', true), 'flash_success');
-            return $this->redirect('/kiosk');
+            $this->redirect('/kiosk');
         }
 
         $question = Set::extract("/KioskSurveyQuestion/.[{$questionNumber}]", $survey);

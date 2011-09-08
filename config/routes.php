@@ -21,6 +21,14 @@
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
+	Router::connect(
+		'/kiosk/survey/cancel',
+		array(
+			'controller' => 'kiosk_surveys',
+			'action' => 'cancel'
+		)
+	);
 	Router::connect(
 		'/kiosk/survey/:survey_id',
 		array(
@@ -28,6 +36,7 @@
 			'action'	 => 'start'
 		)
 	);
+
 
     Router::connect(
         '/kiosk/survey/:survey_id/question/:question_number',
