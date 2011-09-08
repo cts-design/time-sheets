@@ -65,17 +65,6 @@ class KioskSurveysController extends AppController {
 		return $this->render(null, null, '/elements/ajaxreturn');
 	}
 	
-	function admin_update() {
-        $this->KioskSurvey->recursive = -1;
-        $data = null;
-        $params = $this->params['form'];
-
-        FireCake::log($params);
-
-        $this->data('data', $data);
-        return $this->render(null, null, '/elements/ajaxreturn');
-	}
-	
 	function admin_destroy() {
 	  $recordIdString = json_decode($this->params['form']['surveys']);
 	  $recordId = intval($recordIdString);
@@ -137,6 +126,7 @@ class KioskSurveysController extends AppController {
 	}
 
 	function admin_report() {
+		FireCake::log($this->params);
 		$data = null;
 		$report = null;
 		$surveyId = $this->params['url']['survey_id'];
@@ -163,11 +153,14 @@ class KioskSurveysController extends AppController {
 						'KioskSurveyResponseAnswer' => array(
 							'fields' => array(
 								'KioskSurveyResponseAnswer.question_id',
-								'KioskSurveyResponseAnswer.answer'
-							)
+								'KioskSurveyResponseAnswer.answer',
+								'KioskSurveyResponseAnswer.created'
+							),
+							'order' => 'KioskSurveyResponseAnswer.created ASC'
 						),
 						'conditions' => "KioskSurveyResponse.kiosk_survey_id = {$surveyId}",
-						'fields' => array('KioskSurveyResponse.id', 'KioskSurveyResponse.created')
+						'fields' => array('KioskSurveyResponse.id', 'KioskSurveyResponse.created'),
+						'order' => 'KioskSurveyResponse.created ASC'
 					)
 				)
 			)
@@ -197,7 +190,7 @@ class KioskSurveysController extends AppController {
 		Configure::write('debug', 0);
 		$this->layout = 'ajax';
 		$this->set($data);
-		return $this->render('/elements/excelreport');
+		$this->render('/elements/excelreport');
 	}
 }
 

@@ -21,6 +21,13 @@ class KioskSurvey extends AppModel {
         )
     );
 
+	var $validate = array(
+		'name' => array(
+			'rule' => 'notEmpty',
+			'message' => 'You must provide a survey name'
+		)
+	);
+
 
 }
 ?>
