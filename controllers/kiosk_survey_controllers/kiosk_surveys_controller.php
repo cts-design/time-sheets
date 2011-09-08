@@ -41,7 +41,9 @@ class KioskSurveysController extends AppController {
 	  
 	  $result = $this->KioskSurvey->save($this->data);
 	  if ($result) {
-      $data['success'] = true;
+		  $data['success'] = true;
+		  $this->Transaction->createUserTransaction('Self Sign Survey', null, null,
+			  'Created self sign survey ' . $params['name']);
 	  } else {
 	    $data['success'] = false;
 	  }
@@ -71,6 +73,8 @@ class KioskSurveysController extends AppController {
 	  
 	  if ($this->KioskSurvey->delete($recordId)) {
 	    $data['success'] = true;
+		  $this->Transaction->createUserTransaction('Self Sign Survey', null, null,
+			  'Deleted self sign survey id ' . $recordId);
 	  } else {
 	    $data['success'] = false;
 	  }
@@ -97,6 +101,8 @@ class KioskSurveysController extends AppController {
 		);
 		
 		if ($this->KioskSurvey->saveAll($this->data)) {
+		  $this->Transaction->createUserTransaction('Self Sign Survey', null, null,
+			  'Attached self sign survey id ' . $surveyId . ' to kiosk id ' . $kioskId);
 			$data['success'] = true;
 		} else {
 			$data['success'] = false;
@@ -116,6 +122,8 @@ class KioskSurveysController extends AppController {
 		$kioskId = intval($this->params['form']['kiosk_id']);
 		
 		if ($this->KioskSurvey->KiosksKioskSurvey->deleteAll(array('KiosksKioskSurvey.kiosk_id' => $kioskId))) {
+		  $this->Transaction->createUserTransaction('Self Sign Survey', null, null,
+			  'Detached self sign survey from kiosk id ' . $kioskId);
 			$data['success'] = true;
 		} else {
 			$data['success'] = false;
@@ -186,6 +194,9 @@ class KioskSurveysController extends AppController {
 			'data' => $report,
 			'title' => $title
 		);
+
+		  $this->Transaction->createUserTransaction('Self Sign Survey', null, null,
+			  'Created self sign survey report for survey id ' . $surveyId);
 
 		Configure::write('debug', 0);
 		$this->layout = 'ajax';

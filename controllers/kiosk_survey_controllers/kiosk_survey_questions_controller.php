@@ -90,6 +90,8 @@ class KioskSurveyQuestionsController extends AppController {
 		$result = $this->KioskSurveyQuestion->save($this->data);
 		
 		if ($result) {
+			$this->Transaction->createUserTransaction('Programs', null, null,
+				'Created self sign survey question for survey id ' . $params['kiosk_survey_id']);				
 			$data['success'] = true;
 		} else {
 			$data['success'] = false;
@@ -140,6 +142,8 @@ class KioskSurveyQuestionsController extends AppController {
         $this->KioskSurveyQuestion->set($params);
 
         if ($this->KioskSurveyQuestion->save()) {
+			$this->Transaction->createUserTransaction('Programs', null, null,
+				'Updated self sign survey question id ' . $params['id']);				
             $data['success'] = true;
         } else {
             $data['success'] = false;
@@ -154,6 +158,8 @@ class KioskSurveyQuestionsController extends AppController {
 	  $recordId = intval($recordIdString);
 	  
 	  if ($this->KioskSurveyQuestion->delete($recordId)) {
+			$this->Transaction->createUserTransaction('Programs', null, null,
+				'Deleted self sign survey question id ' . $recordId);				
 	    $data['success'] = true;
 	  } else {
 	    $data['success'] = false;
