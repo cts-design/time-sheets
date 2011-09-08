@@ -13,6 +13,14 @@ class ProgramsController extends AppController {
 				If you do not completely understand the information please review the instructions
 				at the top of this page.'));	
 		$this->Program->ProgramResponse->modifyValidate($validate);
+		// check if auth is required for the program, if not give access to index and view_media
+		if(isset($this->params['pass'][0]) && 
+			in_array($this->params['action'], array('index', 'view_media', 'load_media'))) {
+				$program = $this->Program->findById($this->params['pass'][0]);
+					if($program['Program']['auth_required'] == 0) {
+						$this->Auth->allow('index', 'view_media', 'load_media');
+					}
+		}
 	}
 			
 	function index($id = null) {
@@ -21,52 +29,150 @@ class ProgramsController extends AppController {
 			$this->redirect('/');
 		}
 		$program = $this->Program->findById($id);
-		
-		$programResponse = $this->Program->ProgramResponse->find('first', array('conditions' => array(
-			'ProgramResponse.user_id' => $this->Auth->user('id'),
-			'ProgramResponse.program_id' => $id,
-			'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s') 
-		)));
 		if($program['Program']['disabled'] == 1){
 			$this->Session->setFlash(__('This program is disabled', true), 'flash_failure');
 			$this->redirect('/');
 		}
+		$programResponse = $this->Program->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
+		if($programResponse) {
+			$responseId = $programResponse['ProgramResponse']['id']; 
+		}								
+		if($programResponse['ProgramResponse']['complete']) {
+			if($programResponse['ProgramResponse']['complete']) {
+				$this->redirect(array(
+					'controller' => 'program_responses', 
+					'action' => 'response_complete', $id));						
+			}
+		}
+		if($programResponse['ProgramResponse']['not_approved']) {
+			$this->redirect();
+			//@TODO Redirect to proper location. 
+		}
+			
 		switch($program['Program']['type']){
-			case "docs": 
-				break;
-			case "form":
-				break;
-			case "form_docs": 
-				break;
 			case "pdf":
+				$this->Session->write('step2', 'complete');
+				$data['redirect'] = '/programs/view_media/' . $id . '/' . 'pdf'; 				
+				if($program['Program']['auth_required'] == 0) {
+					$this->redirect(array(
+						'controller' => 'programs', 
+						'action' => 'view_media', $id, 'pdf'));
+				}
+				elseif($programResponse) {
+					if(!$programResponse['ProgramResponse']['viewed_media']) {
+						$this->redirect(array(
+							'controller' => 'programs', 
+							'action' => 'view_media', $id, 'pdf'));
+					}
+				}
 				break;
 			case "pdf_form":
-				break;
-			case "pdf_docs":
-				break;
-			case "pdf_form_docs":
-				break;
-			case "uri":
-				break;
-			case "uri_form":
-				break;					
-			case "uri_docs":
-				break;				
-			case "uri_form_docs":
-				break;								
-			case "video": 
-				$element = '/programs/video';
-				break;
-			case "video_form":
-				$element = '/programs/video';
-				break;
-			case "video_docs":
-				$element = '/programs/video';
-				break;				
-			case "video_form_docs":
+				$data['redirect'] = '/programs/view_media/' . $id . '/' . 'pdf';
+				$this->Session->write('step2', 'form');					
 				if($programResponse) {
 					if($programResponse['ProgramResponse']['viewed_media'] == 0) {
-						$this->redirect(array('controller' => 'programs', 'action' => 'view_media', $id));
+						$this->redirect(array(
+							'controller' => 'programs', 
+							'action' => 'view_media', $id, 'pdf'));
+					}					
+					if($programResponse['ProgramResponse']['viewed_media'] == 1 && 
+						$programResponse['ProgramResponse']['answers'] == null &&
+						$programResponse['ProgramResponse']['complete'] != 1) {
+							$this->redirect(array('controller' => 'program_responses', 'action' => 'index', $id));
+					}
+					if($programResponse['ProgramResponse']['viewed_media'] == 1 && 
+						$programResponse['ProgramResponse']['answers'] != null &&
+						$programResponse['ProgramResponse']['complete'] == 1) {
+							$this->redirect(array(
+								'controller' => 'program_responses', 
+								'action' => 'response_complete', $id));
+					}
+				}			
+				break;		
+			case "uri":
+				$this->Session->write('step2', 'complete');
+				$data['redirect'] = '/programs/view_media/' . $id . '/' . 'uri'; 				
+				if(!$program['Program']['auth_required']) {
+					$this->redirect(array(
+						'controller' => 'programs', 
+						'action' => 'view_media', $id, 'uri'));
+				}
+				elseif($programResponse) {
+					if(!$programResponse['ProgramResponse']['viewed_media']) {
+						$this->redirect(array(
+							'controller' => 'programs', 
+							'action' => 'view_media', $id, 'uri'));
+					}
+				} 				
+				break;
+			case "uri_form":
+				$data['redirect'] = '/programs/view_media/' . $id . '/' . 'uri';
+				$this->Session->write('step2', 'form');					
+				if($programResponse) {
+					if($programResponse['ProgramResponse']['viewed_media'] == 0) {
+						$this->redirect(array(
+							'controller' => 'programs', 
+							'action' => 'view_media', $id, 'uri'));
+					}					
+					if($programResponse['ProgramResponse']['viewed_media'] == 1 && 
+						$programResponse['ProgramResponse']['answers'] == null &&
+						$programResponse['ProgramResponse']['complete'] != 1) {
+							$this->redirect(array('controller' => 'program_responses', 'action' => 'index', $id));
+					}
+					if($programResponse['ProgramResponse']['viewed_media'] == 1 && 
+						$programResponse['ProgramResponse']['answers'] != null &&
+						$programResponse['ProgramResponse']['complete'] == 1) {
+							$this->redirect(array(
+								'controller' => 'program_responses', 
+								'action' => 'response_complete', $id));
+					}
+				}				
+				break;												
+			case "video":
+				$this->Session->write('step2', 'complete');
+				$data['redirect'] = '/programs/view_media/' . $id . '/' . 'video'; 
+				if(!$program['Program']['auth_required']) {
+					$this->redirect(array('action' => 'view_media', $id, 'video'));
+				}				
+				elseif($programResponse) {
+					if(!$programResponse['ProgramResponse']['viewed_media']) {
+						$this->redirect(array(
+							'controller' => 'programs', 
+							'action' => 'view_media', $id, 'video'));
+					}
+				}
+				break;
+			case "video_form":
+				$data['redirect'] = '/programs/view_media/' . $id . '/' . 'video';
+				$this->Session->write('step2', 'form');					
+				if($programResponse) {
+					if($programResponse['ProgramResponse']['viewed_media'] == 0) {
+						$this->redirect(array(
+							'controller' => 'programs', 
+							'action' => 'view_media', $id, 'pdf'));
+					}					
+					if($programResponse['ProgramResponse']['viewed_media'] == 1 && 
+						$programResponse['ProgramResponse']['answers'] == null &&
+						$programResponse['ProgramResponse']['complete'] != 1) {
+							$this->redirect(array('controller' => 'program_responses', 'action' => 'index', $id));
+					}
+					if($programResponse['ProgramResponse']['viewed_media'] == 1 && 
+						$programResponse['ProgramResponse']['answers'] != null &&
+						$programResponse['ProgramResponse']['complete'] == 1) {
+							$this->redirect(array(
+								'controller' => 'program_responses', 
+								'action' => 'response_complete', $id));
+					}
+				}
+				break;			
+			case "video_form_docs":
+				$data['redirect'] = '/programs/view_media/' . $id  . '/' . 'video';
+				$this->Session->write('step2', 'form');
+				if($programResponse) {
+					if($programResponse['ProgramResponse']['viewed_media'] == 0) {
+						$this->redirect(array(
+							'controller' => 'programs', 
+							'action' => 'view_media', $id, 'video'));
 					}					
 					if($programResponse['ProgramResponse']['viewed_media'] == 1 && 
 					$programResponse['ProgramResponse']['answers'] == null &&
@@ -108,8 +214,6 @@ class ProgramsController extends AppController {
 							'action' => 'response_complete', $id));
 					}		
 				}
-				$data['redirect'] = '/programs/view_media/' . $program['Program']['id'];
-				$this->Session->write('step2', 'form');
 				break;					
 		}
 
@@ -136,26 +240,30 @@ class ProgramsController extends AppController {
 				date('Y-m-d H:i:s', strtotime('+' . $program['Program']['response_expires_in'] . ' days'));
 			if($this->Program->ProgramResponse->save($this->data)){
 			$this->Transaction->createUserTransaction('Programs', null, null,
-				'Initiated program' . $program['Program']['name']);				
+				'Initiated program ' . $program['Program']['name']);				
 				$this->redirect($this->data['Program']['redirect']);
 			}
 		}
 	}
 
-	function view_media($id=null) {
+	function view_media($id=null, $element=null) {
 		if(!$id) {
-			$this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');
+			$this->Session->setFlash(__('Invalid program id.', true), 'flash_failure');
+			$this->redirect('/');
+		}
+		if(!$element && empty($this->data)) {
+			$this->Session->setFlash(__('Invalid media element.', true), 'flash_failure');
 			$this->redirect('/');
 		}
 		$program = $this->Program->findById($id);
 		if(!empty($this->data)) {
-		$programResponse = $this->Program->ProgramResponse->find('first', array('conditions' => array(
-			'ProgramResponse.user_id' => $this->Auth->user('id'),
-			'ProgramResponse.program_id' => $id,
-			'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s') 
-		)));
+			$programResponse = 
+				$this->Program->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
 			$this->data['ProgramResponse']['id'] = $programResponse['ProgramResponse']['id'];
 			$this->data['ProgramResponse']['user_id'] =	$this->Auth->user('id');
+			if($this->Session->read('step2') == 'complete') {
+				$this->data['ProgramResponse']['complete'] = 1;
+			}
 			if($this->Program->ProgramResponse->save($this->data, true)) {
 				$this->Transaction->createUserTransaction('Programs', null, null,
 					'Completed media for ' . $program['Program']['name']);	
@@ -183,22 +291,30 @@ class ProgramsController extends AppController {
 					case "complete":
 						$this->redirect(array(
 							'controller' => 'program_responses',
-							'action' => 'submission_recieved', $id));		
+							'action' => 'response_complete', $id, true));		
 						break;
 				}
 			}
 			else {
 				$this->Session->setFlash(__('You must check the I acknowledge box.', true), 'flash_failure');		
 			}
-		}		
-
+		}
+		$data['acknowledgeMedia'] = true;
+		if($program['Program']['auth_required'] == 0) {
+			$data['acknowledgeMedia'] = false;
+		}
 		$instructions = Set::extract('/ProgramInstruction[type=media]/text', $program);		
-		$data['element'] = '/programs/video'; 
-		$data['media'] = '/programs/load_media/' . $program['Program']['id'];
+		$data['element'] = '/programs/' . $element; 
+		if(strstr($program['Program']['type'], 'uri')) {
+			$data['media'] = $program['Program']['media'];
+		}
+		else {
+			$data['media'] = '/programs/load_media/' . $program['Program']['id'];
+		}
 		if($instructions) {
 			$data['instructions'] = $instructions[0];	
 		}
-		$data['title_for_layout'] = $program['Program']['name'];
+		$data['title_for_layout'] = $program['Program']['name'];	
 		$this->set($data);		
 	}
 
@@ -227,14 +343,26 @@ class ProgramsController extends AppController {
 		if($this->RequestHandler->isAjax()) {
 			$programs = $this->Program->find('all');
 			if($programs) {
+				$i = 0;
 				foreach($programs as $program){
-					$data['programs'][] = array(
+					$data['programs'][$i] = array(
 						'id' => $program['Program']['id'],
-						'name' => $program['Program']['name'],
-						'actions' => '<a href="/admin/program_responses/index/'.
+						'name' => $program['Program']['name']);
+					if($program['Program']['auth_required']) {
+						$data['programs'][$i]['actions'] = '<a href="/admin/program_responses/index/'.
 							$program['Program']['id'].'">View Responses</a> | 
-							<a class="edit" href="/admin/programs/instructions_index/'.
-							$program['Program']['id'].'">Edit Instructions</a>');
+							<a class="edit" href="/admin/program_instructions/index/'.
+							$program['Program']['id'].'">Edit Instructions</a> | ' .
+							'<a class="edit" href="/admin/program_emails/index/'.
+							$program['Program']['id'].'">Edit Emails</a>';						
+					}
+					else {
+						$data['programs'][$i]['actions'] = '<a class="edit" href="/admin/program_instructions/'.
+						'index/' . $program['Program']['id'].'">Edit Instructions</a> | ' .
+							'<a class="edit" href="/admin/program_emails/index/'.
+							$program['Program']['id'].'">Edit Emails</a>';
+					}	
+					$i++;			
 				}
 				$data['success'] = true;
 			}
@@ -247,35 +375,5 @@ class ProgramsController extends AppController {
 		}	
 		$title_for_layout = 'Programs';		
 		$this->set(compact('title_for_layout'));
-	}
-	
-	function admin_instructions_index() {
-		$title_for_layout = 'Program Instructions';
-		$this->set(compact('title_for_layout'));
-	}
-	
-	function admin_edit_instructions($id=null) {
-		if(!$id && empty($this->data)){
-		    $this->Session->setFlash(__('Invalid instructions', true), 'flash_failure');
-		    $this->redirect(array('action' => 'instructions_index', 'admin' => true));
-		}
-		if(!empty($this->data)) {
-			if($this->Program->ProgramInstruction->save($this->data)) {
-			    $this->Session->setFlash(__('Instructions updated successfully', true), 'flash_success');
-			    $this->redirect(array('action' => 'instructions_index', 'admin' => true));				
-			}
-			else {
-			    $this->Session->setFlash(__('Unable to save, please try again.', true), 'flash_failure');
-			    $this->redirect(array(
-			    	'action' => 'edit_instructions', 
-			    	$this->data['ProgramInstruction']['id'], 
-			    	'admin' => true));					
-			}
-		}
-		if(empty($this->data)) {
-			$this->data = $this->Program->ProgramInstruction->read(null, $id);
-		}
-		$this->set('title_for_layout', 'Edit ' . Inflector::humanize($this->data['ProgramInstruction']['type']) . ' Instructions');
-	}
-		
+	}	
 }

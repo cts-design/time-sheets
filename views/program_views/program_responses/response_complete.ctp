@@ -8,7 +8,7 @@
 ?>
 <?php if(!empty($programResponse) ) : ?>
 	<p>
-        <?php printf(__('Congratulations! Your $s certificate has been issued. Please download the certificate below', true), $programResponse['Program']['name']) ?>
+        <?php printf(__('Congratulations! Your %s certificate has been issued. Please download the certificate below', true), $programResponse['Program']['name']) ?>
 	</p>
     <p class="left"><strong><?php __('Program:') ?> </strong></p> 
 	<p class="left"><?php echo $programResponse['Program']['name'] ?></p>

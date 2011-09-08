@@ -361,6 +361,9 @@ class UsersController extends AppController {
 						$this->data['User']['ssn_3_confirm']; 
 				}				
 			}
+			if(Configure::read('Registration.ssn') == 'full') {
+				$this->User->setValidation('publicWebFormRules');				
+			}
 		    if ($this->User->save($this->data)) {
 				$userId = $this->User->getInsertId();
 				$last4 = substr($this->data['User']['ssn'], -4);

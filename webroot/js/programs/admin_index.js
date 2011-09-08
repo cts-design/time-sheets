@@ -15,21 +15,22 @@ var programGrid = new Ext.grid.GridPanel({
 	store: programStore,
 	height: 300,
 	title: 'Programs',
-	width: 375,
+	width: 600,
 	frame: true,
 	columns: [{
 		id: 'id',
 		header: 'Id',
 		dataIndex: 'id',
-		width: 30
+		width: 50
 
 	},{
 		header: 'Program Name',
 		dataIndex: 'name',
+		width: 220
 	},{
 		header: 'Actions',
 		dataIndex: 'actions',
-		width: 200
+		width: 300
 	}]
 });
 

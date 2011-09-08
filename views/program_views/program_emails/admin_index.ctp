@@ -10,13 +10,13 @@
 	var programId = <?php echo $this->params['pass'][0] ?>;
 <?php $html->scriptEnd() ?>
 
-<?php echo $html->script('programs/admin_instructions_index', array('inline' => false));?>
+<?php echo $html->script('program_emails/admin_index', array('inline' => false));?>
 
 <div id="crumbWrapper">
     <span><?php __('You are here') ?> > </span>
-    <?php echo $crumb->getHtml(__('Program Instructions', true), null, 'unique') ; ?>
+    <?php echo $crumb->getHtml(__('Program Emails', true), null, 'unique') ; ?>
 </div>
 
-<div id="instructionGrid">
+<div id="emails">
 
 </div>

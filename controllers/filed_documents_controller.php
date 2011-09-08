@@ -117,7 +117,7 @@ class FiledDocumentsController extends AppController {
 					'Edited filed document ID ' . $id . ' for ' . $user['User']['lastname'] .
 					', ' . $user['User']['firstname'] . ' - ' . substr($user['User']['ssn'], -4));
 				$this->Session->setFlash(__('The filed document has been saved', true), 'flash_success');
-				$this->redirect(array('action' => 'index', ($this->data['FiledDocument']['edit_type'] == 'user') ? $user['User']['id'] : ''));
+				$this->redirect(array('action' => 'index', (isset($this->data['FiledDocument']['edit_type']) == 'user') ? $user['User']['id'] : ''));
 		    }
 		    else {
 				$this->Session->setFlash(__('The filed document could not be saved. Please, try again.', true), 'flash_failure');
@@ -138,8 +138,9 @@ class FiledDocumentsController extends AppController {
 		    $id = $this->data['FiledDocument']['id'];
 		    $this->data['FiledDocument']['last_activity_admin_id'] = $this->Auth->user('id');
 		    $this->data['FiledDocument']['deleted_location_id'] = $this->Auth->user('location_id');
-		    $data = $this->data;
-		    $this->FiledDocument->set($data);
+			$filedDocument = $this->FiledDocument->read(null, $id);
+			$this->data['FiledDocument'] = array_merge($this->data['FiledDocument'], $filedDocument['FiledDocument']);
+		    $this->FiledDocument->set($this->data);
 		}
 		if(!isset($id)) {
 		    $this->Session->setFlash(__('Invalid id for filed document', true), 'flash_failure');
@@ -147,6 +148,18 @@ class FiledDocumentsController extends AppController {
 		}
 		if(isset($id)) {
 			if($this->FiledDocument->delete($id)) {
+				if($this->isModuleEnabled('Programs')) {	
+					$this->loadModel('ProgramResponseDoc');
+					$programResponseDoc = $this->ProgramResponseDoc->find('first', array('conditions' => array('ProgramResponseDoc.doc_id' => $id)));
+					if($programResponseDoc) {
+						$this->data['ProgramResponseDoc']['id'] = $programResponseDoc['ProgramResponseDoc']['id'];
+						$this->data['ProgramResponseDoc']['deleted'] = 1;
+						$this->data['ProgramResponseDoc']['deleted_reason'] = $this->data['FiledDocument']['reason'];
+						$this->ProgramResponseDoc->save($this->data);
+						$user = $this->FiledDocument->User->read(null, $this->data['FiledDocument']['user_id']);
+						$this->ProgramResponseDoc->processResponseDoc($this->data, $user);	
+					}
+				}
 			    $this->Transaction->createUserTransaction('Storage', null, null,
 				    'Deleted filed document ID ' . $id);
 			    $this->Session->setFlash(__('Filed document deleted', true), 'flash_success');
@@ -480,7 +493,7 @@ class FiledDocumentsController extends AppController {
 	
 	function _processResponseDoc($user) {
 		$this->loadModel('ProgramResponse');							
-		$processedDoc = $this->ProgramResponse->processResponseDoc($this->data, $user);	
+		$processedDoc = $this->ProgramResponse->ProgramResponseDoc->processResponseDoc($this->data, $user);	
 		if(isset($processedDoc['docFiledEmail'])) {
 			$this->Notifications->sendProgramEmail($processedDoc['docFiledEmail'], $user);
 		}				

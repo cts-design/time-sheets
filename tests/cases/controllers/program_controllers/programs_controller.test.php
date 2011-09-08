@@ -49,6 +49,7 @@ class ProgramsControllerTestCase extends AtlasTestCase {
 			'form_esign_required' => 1,
 			'conformation_id_length' => 9,
 			'response_expires_in' => 30,
+			'auth_required' => 1,
 			'created' => '2011-03-23 00:00:00',
 			'modified' => '2011-05-03 12:36:22',
 			'expires' => '2011-04-23 00:00:00'
@@ -73,8 +74,8 @@ class ProgramsControllerTestCase extends AtlasTestCase {
 		$this->Programs->beforeFilter();		
 	    $this->Programs->Component->startup($this->Programs);
 		$this->Programs->index(1);
-		$expectedResult = array('controller' => 'programs', 'action' => 'view_media', 0 => 1);
-		$this->assertEqual($this->Programs->redirectUrl, $expectedResult );
+		$expectedResult = array('controller' => 'programs', 'action' => 'view_media', 0 => 1, 1 => 'video');
+		$this->assertEqual($this->Programs->redirectUrl, $expectedResult);
 		$this->Programs->Session->destroy();		
 	}
 	
@@ -336,7 +337,7 @@ class ProgramsControllerTestCase extends AtlasTestCase {
 	}
 	
 	public function testLoadMediaNoId() {
-		$this->Programs->params = Router::parse('/programs/load_media');
+		$this->Programs->params = Router::parse('/programs/load_media/');
 		$this->Programs->Component->initialize($this->Programs);
 		$this->Programs->Session->write('Auth.User', array(
 	        'id' => 9,
@@ -364,62 +365,7 @@ class ProgramsControllerTestCase extends AtlasTestCase {
 		$this->assertTrue($result['data']['success']);
 	} 	
 	
-	public function testAdminInstructionsIndex() {
-		$this->Programs->Component->initialize($this->Programs);
-		$result = $this->testAction('/admin/programs/instructions_index', array('method' => 'get'));	
-		$this->assertEqual($result['title_for_layout'], 'Program Instructions');
-	}
-	
-	public function testAdminEditInstructionsBadData() {		
-		$this->Programs->params = Router::parse('/admin/programs/edit_instructions/1');
-		$this->Programs->Component->initialize($this->Programs);
-		$this->Programs->Session->write('Auth.User', array(
-	        'id' => 10,
-	        'role_id' => 1,
-	        'username' => 'test'
-	    ));
-		$this->Programs->data = array();
-		$this->mockAcl($this->Programs);		
-		$this->Programs->beforeFilter();		
-	    $this->Programs->Component->startup($this->Programs);			
-		$this->Programs->admin_edit_instructions(1);
-		$this->assertEqual($this->Programs->Session->read('Message.flash.element'), 'flash_failure');
-		$this->Programs->Session->destroy();	
-	}
 
-	public function testAdminEditInstructionsNoId() {		
-		$this->Programs->params = Router::parse('/admin/programs/edit_instructions/');
-		$this->Programs->Component->initialize($this->Programs);
-		$this->Programs->Session->write('Auth.User', array(
-	        'id' => 10,
-	        'role_id' => 1,
-	        'username' => 'test'
-	    ));
-		$this->mockAcl($this->Programs);		
-		$this->Programs->beforeFilter();		
-	    $this->Programs->Component->startup($this->Programs);			
-		$this->Programs->admin_edit_instructions();
-		$this->assertEqual($this->Programs->Session->read('Message.flash.element'), 'flash_failure');
-		$this->Programs->Session->destroy();	
-	}
-	
-	public function testAdminEditInstructions() {
-		$this->Programs->Component->initialize($this->Programs);
-		
-        $data = array(
-	        'ProgramInstruction' => array(
-	            'id' => 1,
-	            'text' => 'Updated instructions text',
-	            'program_id' => 1,
-	            'type' => 'main'			
-			)
-        );			
-		$result = $this->testAction('/admin/programs/edit_instructions/1', 
-			array('data' => $data));
-		$instructions = $this->Programs->Program->ProgramInstruction->read(null, 1);
-		$this->assertEqual($instructions['ProgramInstruction']['text'], 'Updated instructions text');		
-		$this->assertEqual($result['title_for_layout'], 'Edit Main Instructions');
-	}
 		
 	public function endTest() {
 		Configure::write('debug', 2);
