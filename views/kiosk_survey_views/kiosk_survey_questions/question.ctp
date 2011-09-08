@@ -22,9 +22,11 @@
             <?php endforeach ?>
         <?php endif ?>
     </div>
+
+    <div class="question-number"><?php echo "Question {$questionNumber} of {$totalCount}" ?></div>
     
     <div class="survey-nav button-row">
-    	<a href="#" class="">Cancel</a>
+    	<a href="/kiosk/survey/cancel" class="">Cancel</a>
     </div>
 
     <?php echo $this->Form->end('Next') ?>

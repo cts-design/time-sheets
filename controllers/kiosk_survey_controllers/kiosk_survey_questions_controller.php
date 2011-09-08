@@ -70,6 +70,8 @@ class KioskSurveyQuestionsController extends AppController {
         }
 
 
+        $this->set('questionNumber', $questionNumber);
+        $this->set('totalCount', count($survey[0]['KioskSurveyQuestion']));
         $this->set('survey', $survey);
         $this->set('question', $question[0]);
     }
