@@ -148,7 +148,6 @@ var surveyPanel = {
                 orderField = Ext.getCmp('orderField'),
 								saveButton = Ext.getCmp('saveButton');
 
-								
 							if (form.isValid()) {
                 questionField.disable();
                 typeField.disable();
@@ -165,9 +164,6 @@ var surveyPanel = {
                   rec.set('options', vals.options);
                   rec.set('order', vals.order);
                   rec.endEdit();
-
-                  console.log(rec);
-
                 } else {
                   rec = new NewRecord({
                     kiosk_survey_id: this.selectedSurvey.id,
@@ -293,7 +289,7 @@ var surveyPanel = {
 					},
 					scope: this
 				},
-				write: {
+				datachange: {
 					fn: function (store, action, result, res, rs) {
 						store.reload();
 					}

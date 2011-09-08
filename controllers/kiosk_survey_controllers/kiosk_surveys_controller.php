@@ -47,6 +47,8 @@ class KioskSurveysController extends AppController {
 	  $result = $this->KioskSurvey->save($this->data);
 	  if ($result) {
 		  $data['success'] = true;
+		  $data['surveys'] = $result['KioskSurvey'];
+		  $data['surveys']['id'] = $this->KioskSurvey->id;
 		  $this->Transaction->createUserTransaction('Self Sign Survey', null, null,
 			  'Created self sign survey ' . $params['name']);
 	  } else {
