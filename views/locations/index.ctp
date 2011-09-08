@@ -12,7 +12,7 @@
 			<?php echo $location['Location']['fax']; ?>
 			<br />
 			<br />
-            <strong><?php __('Hours:') ?></strong> <?php echo $location['Location']['hours'] ?>
+            <strong><?php __('Hours:') ?></strong><br /> <?php echo $location['Location']['hours'] ?>
 			<br />
 			<br />
 			<?php if (!empty($location['Location']['facilities'])): ?>

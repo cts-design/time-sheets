@@ -306,6 +306,16 @@
 				    'checked' => (isset($controllers['SelfSignLogArchives']['all'])) ? $controllers['SelfSignLogArchives']['all'] : '' ));?>
 			    </fieldset>
 			<?php endif; ?>	
+
+			    <?php if (!in_array('KioskSurveys', $disabledModules)): ?>
+			    <fieldset class="left right-mar-10">
+                <legend><?php __('Self Sign Surveys') ?></legend>
+			       <?php echo $this->Form->input('KioskSurveys.all', array(
+				    'type' => 'checkbox',
+				   'label' => 'Index',
+				    'checked' => (isset($controllers['KioskSurveys']['all'])) ? $controllers['KioskSurveys']['all'] : '' ));?>
+			    </fieldset>
+			<?php endif; ?>	
 			<br class="clear" />
 			<?php echo $this->Form->end(__('Submit', true))?>    
 	</div>

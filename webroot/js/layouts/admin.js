@@ -58,6 +58,16 @@ $('.view').button({
 	primary: 'ui-icon-search'
     }
 });
+$('.questions').button({
+  icons: {
+    primary: 'ui-icon-help'
+  }
+});
+$('.responses').button({
+  icons: {
+    primary: 'ui-icon-comment'
+  }
+});
 if($('.actions ul').text() == '') {
     $('div.actions').hide();
 }

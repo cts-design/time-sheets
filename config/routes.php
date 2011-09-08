@@ -21,6 +21,30 @@
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
+	Router::connect(
+		'/kiosk/survey/cancel',
+		array(
+			'controller' => 'kiosk_surveys',
+			'action' => 'cancel'
+		)
+	);
+	Router::connect(
+		'/kiosk/survey/:survey_id',
+		array(
+			'controller' => 'kiosk_surveys',
+			'action'	 => 'start'
+		)
+	);
+
+
+    Router::connect(
+        '/kiosk/survey/:survey_id/question/:question_number',
+        array(
+            'controller' => 'kiosk_survey_questions',
+            'action'     => 'question'
+        )
+    );
 /**
  * Here, we are connecting '/' (base path) to controller called 'Pages',
  * its action called 'display', and we pass a param to select the view file

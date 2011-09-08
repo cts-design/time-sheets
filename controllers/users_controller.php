@@ -258,6 +258,23 @@ class UsersController extends AppController {
     }
 
     function kiosk_self_sign_login() {
+    	$this->loadModel('Kiosk');
+		$oneStop = env('HTTP_USER_AGENT');
+		$arrOneStop = explode('##', $oneStop);
+		if(!isset($arrOneStop[1])) {
+			$oneStopLocation = '';
+		}
+		else {
+			$oneStopLocation = $arrOneStop[1];
+		}
+		$this->Kiosk->recursive = -1;
+		$this->Kiosk->Behaviors->attach('Containable');
+		$this->Kiosk->contain(array('KioskSurvey'));
+		
+		$kiosk = $this->Kiosk->find('first', array(
+			'conditions' => array(
+				'Kiosk.location_recognition_name' => $oneStopLocation, 'Kiosk.deleted' => 0)));
+				
 		if (isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'kiosk') {
 		    if ($this->Auth->user()) {
 			$this->Transaction->createUserTransaction('Self Sign', 
@@ -265,6 +282,8 @@ class UsersController extends AppController {
 			$this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_confirm'));
 		    }
 		}
+		$this->set('kioskHasSurvey', (empty($kiosk['KioskSurvey'])) ? false : true);
+		$this->set('kiosk', $kiosk);
 		$this->set('title_for_layout', 'Self Sign Kiosk');
 		$this->layout = 'kiosk';
     }

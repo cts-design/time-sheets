@@ -139,7 +139,12 @@ $(document).ready(function () {
 	        	icon: {
 	        		image: "/img/icons/clipboard.png"
 	        	}
-	        }
+	        },
+					selfSignSurvey: {
+						icon: {
+							image: "/img/icons/survey.png"
+						}
+					}
 	    }
 	},
 	cookies: {

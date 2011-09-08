@@ -16,11 +16,17 @@
 </div>
 <div id="manageButtons" class="admin">
     
+        <ul class="dropdown">
+            <li><?php echo $this->Html->link(__('One', true)) ?></li>
+            <li><?php echo $this->Html->link(__('Two', true)) ?></li>
+        </ul>
     <div class="actions ui-widget-header">
 	    <ul>
 		<li><?php echo $this->Html->link(__('Enable Button', true), '', array('id' => 'enableButton')) ?></li>
 		<li><?php echo $this->Html->link(__('Disable Button', true), '', array('id' => 'disableButton')) ?></li>
 		<li><?php echo $this->Html->link(__('Edit Button Logout Message', true), '', array('id' => 'EditMessageButton')) ?></li>
+        <li><?php echo $this->Html->link(__('Add Survey', true), '', array('id' => 'addSurveyButton')) ?></li>
+        <li><?php echo $this->Html->link(__('Select an action', true), '', array('id' => 'addSurveyDropdown')) ?></li>
 		<li><?php echo $this->Html->link(__('Done Managing Buttons', true),
 			array('controller' => 'kiosks', 'action' => 'index', 'admin' => true)) ?></li>
 		
