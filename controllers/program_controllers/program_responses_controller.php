@@ -160,7 +160,7 @@ class ProgramResponsesController extends AppController {
 			$this->Session->setFlash(__('An error has occured.', true), 'flash_failure');
 		}
 		$instructions = $this->ProgramResponse->Program->ProgramInstruction->getInstructions(
-			$programId, 'pending_approval');		
+			$id, 'complete');		
 		$title_for_layout = 'Program Certificate';
 		$this->set(compact('title_for_layout', 'programResponse', $instructions));
 	}
