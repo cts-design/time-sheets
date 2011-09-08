@@ -26,7 +26,7 @@
     <div class="question-number"><?php echo "Question {$questionNumber} of {$totalCount}" ?></div>
     
     <div class="survey-nav button-row">
-    	<a href="/kiosk/survey/cancel" class="">Cancel</a>
+    	<a href="/kiosk/survey/cancel" class="cancel-button">Cancel</a>
     </div>
 
     <?php echo $this->Form->end('Next') ?>

@@ -391,6 +391,10 @@ div.question-number {
 	right: 10px;
 }
 
+.cancel-button {
+	font-size: 16px;
+}
+
 /* debug stuffs */
 .cake-sql-log { font-family:monospace; position:fixed; top:99%; z-index:100000; width:100%; background:#000; color:#FFF; border-collapse:collapse; }
 .cake-sql-log caption { background:#900; color:#FFF; }
