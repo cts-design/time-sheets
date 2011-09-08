@@ -572,3 +572,8 @@ div.required label:after {
 #RequiredDocs .error-message {
 	margin-left: 0;
 }
+
+#ResponseComplete .label {
+	width:110px; 
+	text-align: right;
+}
