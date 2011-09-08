@@ -57,6 +57,23 @@ class ProgramsController extends AppController {
 					'action' => 'response_complete', $id));						
 			}
 		}
+		if($program['Program']['type'] == 'form') {
+			$data['redirect'] = '/program_responses/index/' . $id;
+			if($programResponse) {
+				if($programResponse['ProgramResponse']['answers'] == null &&
+					$programResponse['ProgramResponse']['complete'] != 1) {
+						$this->redirect(array('controller' => 'program_responses', 'action' => 'index', $id));
+				}
+				if($programResponse['ProgramResponse']['viewed_media'] == 1 && 
+					$programResponse['ProgramResponse']['complete'] == 0 &&
+					$programResponse['ProgramResponse']['needs_approval'] == 1) {
+						$this->redirect(array(
+							'controller' => 'program_responses', 
+							'action' => 'pending_approval', $id));
+				}	
+			}
+		
+		}
 		$mediaOnly = array('uri', 'pdf', 'video');
 		if(in_array($program['Program']['type'], $mediaOnly)) {
 			$this->Session->write('step2', 'complete');
