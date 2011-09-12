@@ -55,6 +55,59 @@ var hotJobsPanel = {
   initPanel: function() {
     "use strict";
 
+    var hotJobGridView = new Ext.grid.GridView({ forceFit: true }),
+
+      hotJobColModel = new Ext.grid.ColumnModel([
+        { header: 'Id', sortable: false, dataIndex: 'id', hidden: true },
+        { header: 'Employer', sortable: true, dataIndex: 'employer' },
+        { header: 'Title', sortable: true, dataIndex: 'title' },
+        { header: 'Description', sortable: false, dataIndex: 'description' },
+        { header: 'Location', sortable: true, dataIndex: 'location' },
+        { header: 'Contact', sortable: false, dataIndex: 'contact' },
+        { header: 'Url', sortable: false, dataIndex: 'url' },
+        { header: 'Reference Number', sortable: false, dataIndex: 'reference_number' },
+        { header: 'File', sortable: false, dataIndex: 'file' },
+        {
+          header: 'Created',
+          sortable: true,
+          dataIndex: 'created',
+          renderer: Ext.util.Format.dateRenderer()
+        }
+      ]),
+
+      hotJobSelModel = new Ext.grid.RowSelectionModel({
+        singleSelect: true
+      }),
+
+      hotJobGridToolbar = new Ext.Toolbar({
+        items: [{
+          text: 'New Hot Job',
+          icon: '/img/icons/add.png',
+          scope: this,
+          handler: function() {
+            alert('add hot job');
+          }
+        }, {
+          text: 'Delete Hot Job',
+          icon: '/img/icons/delete.png',
+          disabled: true,
+          scope: this,
+          handler: function() {
+            alert('delete hot job');
+          }
+        }]
+      });
+
+    this.hotJobGrid = new Ext.grid.GridPanel({
+      tbar: hotJobGridToolbar,
+      store: this.hotJobStore,
+      cm: hotJobColModel,
+      sm: hotJobSelModel,
+      view: hotJobGridView,
+      height: 175,
+      frame: false,
+      loadMask: true
+    });
   }
 };
 
