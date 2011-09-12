@@ -11,7 +11,12 @@ class HotJobsController extends AppController {
 	function index() {
 		$this->HotJob->recursive = 0;
 		$this->set('hotJobs', $this->paginate());
-	}
+    }
+
+    function admin_create() {}
+    function admin_read() {}
+    function admin_update() {}
+    function admin_destroy() {}
 
 	function admin_index() {
 		$this->HotJob->recursive = 0;
