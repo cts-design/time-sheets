@@ -5,11 +5,12 @@
  * @package ATLAS V3
  */
 
-var hotJobsPanel = {
+var hotJobs = {
   init: function() {
     this.initData();
     this.initGrid();
-
+    // this.initForm();
+    this.initPanel();
   },
   initData: function() {
     "use strict";
@@ -52,7 +53,7 @@ var hotJobsPanel = {
       autoSave: true
     });
   },
-  initPanel: function() {
+  initGrid: function() {
     "use strict";
 
     var hotJobGridView = new Ext.grid.GridView({ forceFit: true }),
@@ -108,6 +109,30 @@ var hotJobsPanel = {
       frame: false,
       loadMask: true
     });
+  },
+  initForm: function() {},
+  initPanel: function() {
+    this.hotJobPanel = new Ext.Panel({
+      layout: 'border',
+      renderTo: 'hotJobs',
+      height: 550,
+      width: '100%',
+      defaults: {
+        collapsible: false,
+        split: false
+      },
+      items: [/* {
+        title: 'New Hot Job',
+        height: 175,
+        region: 'north',
+        items: [ this.hotJobForm ]
+      }, */ {
+        title: 'Hot Jobs',
+        height: 346,
+        region: 'center',
+        items: [ this.hotJobGrid ]
+      }]
+    });
   }
 };
 
@@ -115,5 +140,5 @@ Ext.onReady(function() {
   "use strict";
 
   Ext.QuickTips.init();
-  hotJobsPanel.init();
+  hotJobs.init();
 });
