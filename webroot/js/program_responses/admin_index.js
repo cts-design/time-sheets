@@ -127,6 +127,7 @@ var openProgramResponsesGrid = new Atlas.grid.ProgramResponseGrid({
 				}
 				responseId = r.data.id;
 				editor.setValue(r.data.notes);
+				Ext.getCmp('save').enable();
 			}
 		}
 	})
