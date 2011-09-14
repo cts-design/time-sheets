@@ -25,8 +25,14 @@ class ProgramResponsesController extends AppController {
 				}			
 				$this->ProgramResponse->modifyValidate($validate);
 			}
-
 		}
+		// check if the logged in user has permission to approve responses
+		// if they do we allow them access to other actions relating to approval
+		if($this->Acl->check(array(
+			'model' => 'User', 
+			'foreign_key' => $this->Auth->user('id')), 'ProgramResponses/admin_approve', '*')) {
+				$this->Auth->allow('admin_not_approved', 'admin_reset_form', 'admin_allow_new_response');
+			}
 	}	
 	
 	function index($id = null) {
@@ -41,8 +47,12 @@ class ProgramResponsesController extends AppController {
 			$this->data['ProgramResponse']['answers'] = json_encode($this->data['ProgramResponse']);
 			$this->data['ProgramResponse']['id'] = $programResponse['ProgramResponse']['id'];
 			$this->data['ProgramResponse']['program_id'] = $id;
+			$this->data['ProgramResponse']['not_approved'] = 0;
 			if(!strpos($program['Program']['type'], 'docs', 0) && $program['Program']['approval_required'] == 0) {
 				$this->data['ProgramResponse']['complete'] = 1;
+			}
+			elseif(!strpos($program['Program']['type'], 'docs', 0) && $program['Program']['approval_required'] == 1) {
+				$this->data['ProgramResponse']['needs_approval'] = 1;
 			}
 			if($this->ProgramResponse->save($this->data)) {
 				$this->Transaction->createUserTransaction('Programs', null, null,
@@ -55,11 +65,18 @@ class ProgramResponsesController extends AppController {
 				$this->Notifications->sendProgramEmail($programEmail);
 				$this->Session->setFlash(__('Saved', true), 'flash_success');
 				if(strpos($program['Program']['type'], 'docs', 0)) {
-					$this->redirect(array('action' => 'required_docs', $id));
+					if($programResponse['ProgramResponse']['uploaded_docs']) {
+						$this->redirect(array('action' => 'provided_docs', $id, 'uploaded_docs'));
+					}
+					if($programResponse['ProgramResponse']['dropping_off_docs']) {
+						$this->redirect(array('action' => 'provided_docs', $id, 'dropping_off_docs'));
+					}
+					else {
+						$this->redirect(array('action' => 'required_docs', $id));
+					}				
 				}
 				elseif($program['Program']['approval_required']) {
-					//@TODO Redirect to a thank you page if the program does not require documents and 
-					// requires approval
+					$this->redirect(array('action' => 'pending_approval', $id));
 				}
 				else {
 					$this->redirect(array('action' => 'response_complete', $id, true));
@@ -142,8 +159,10 @@ class ProgramResponsesController extends AppController {
 		if(!$programResponse) {
 			$this->Session->setFlash(__('An error has occured.', true), 'flash_failure');
 		}
+		$instructions = $this->ProgramResponse->Program->ProgramInstruction->getInstructions(
+			$id, 'complete');		
 		$title_for_layout = 'Program Certificate';
-		$this->set(compact('title_for_layout', 'programResponse'));
+		$this->set(compact('title_for_layout', 'programResponse', $instructions));
 	}
 			
 	function view_cert($id=null) {
@@ -192,14 +211,23 @@ class ProgramResponsesController extends AppController {
 				}					
 			}
 	
-		$instructions = $this->ProgramResponse->Program->ProgramInstruction->find('first', array(
-			'conditions' => array(
-				'ProgramInstruction.program_id' => $id,
-				'ProgramInstruction.type' => $type
-			)
-		));
-		$data['instructions'] = $instructions['ProgramInstruction']['text'];
+		$data['instructions'] = $this->ProgramResponse->Program->ProgramInstruction->getInstructions(
+			$id, $type);
 		$data['title_for_layout'] = 'Program Response Documents';
+		$this->set($data);
+	}
+
+	function pending_approval($programId) {
+		$data['instructions'] = $this->ProgramResponse->Program->ProgramInstruction->getInstructions(
+			$programId, 'pending_approval');
+		$data['title_for_layout'] = 'Program Response Pending Approval';
+		$this->set($data);
+	}
+
+	function not_approved($programId) {
+		$data['title_for_layout'] = 'Program Response Not Approved';
+		$data['instructions'] = $this->ProgramResponse->Program->ProgramInstruction->getInstructions(
+			$programId, 'not_approved');	
 		$this->set($data);
 	} 
 	
@@ -241,21 +269,29 @@ class ProgramResponsesController extends AppController {
 						case 'open':
 							$conditions['ProgramResponse.complete'] = 0;
 							$conditions['ProgramResponse.needs_approval'] = 0;
-							$conditions['ProgramResponse.expires_on >'] = date('Y-m-d H:i:s');  
+							$conditions['ProgramResponse.expires_on >'] = date('Y-m-d H:i:s'); 
+							$conditions['ProgramResponse.not_approved'] = 0; 
 							break;
 						case 'closed':
 							$conditions['ProgramResponse.complete'] = 1;
-							$conditions['ProgramResponse.needs_approval'] = 0;							
+							$conditions['ProgramResponse.needs_approval'] = 0;
+							$conditions['ProgramResponse.not_approved'] = 0;							
 							break;
 						case 'expired':
 							$conditions['ProgramResponse.complete'] = 0;
+							$conditions['ProgramResponse.not_approved'] = 0;
 							$conditions['ProgramResponse.expires_on <'] = date('Y-m-d H:i:s');  
 							break;							
 						case 'pending_approval':
 							$conditions['ProgramResponse.complete'] = 0;
 							$conditions['ProgramResponse.expires_on >'] = date('Y-m-d H:i:s');  
 							$conditions['ProgramResponse.needs_approval'] = 1;
-							break;		 
+							$conditions['ProgramResponse.not_approved'] = 0;
+							break;
+						case 'not_approved':
+							$conditions['ProgramResponse.complete'] = 0; 
+							$conditions['ProgramResponse.not_approved'] = 1;
+							break;	
 					}
 				}
 
@@ -296,7 +332,16 @@ class ProgramResponsesController extends AppController {
 									$response['ProgramResponse']['id'].'">View</a> | ' . 
 									'<a href="/admin/program_responses/toggle_expired/' . 
 									$response['ProgramResponse']['id'] . '/unexpire'.'" class="expire">Mark Un-Expired</a>';							
-						}						
+						}
+						elseif($this->params['url']['tab'] == 'not_approved') {
+							$data['responses'][$i]['actions'] = 
+								'<a href="/admin/program_responses/view/'. 
+									$response['ProgramResponse']['id'].'">View</a> | ' .							
+								'<a href="/admin/program_responses/reset_form/'. 
+									$response['ProgramResponse']['id'].'" class="reset">Reset Form</a> | ' .
+									'<a href="/admin/program_responses/allow_new_response/' . 
+									$response['ProgramResponse']['id'] . '" class="allow-new">Allow New Response</a>';							
+						}
 						else {
 							$data['responses'][$i]['actions'] = 
 								'<a href="/admin/program_responses/view/'. 
@@ -336,8 +381,7 @@ class ProgramResponsesController extends AppController {
 				$this->set(compact('user'));
 				$this->Transaction->createUserTransaction('Programs', null, null,
 					'Viewed program response for ' . $programResponse['Program']['name'] . ' for customer ' . 
-					ucfirst($user['firstname']). ' ' . ucfirst($user['lastname']) . ' - '. 
-					substr($user['ssn'], '-4'));					
+					ucwords($user['name_last4']));					
  				$this->render('/elements/program_responses/user_info');
 			}
 			if($type == 'answers') {
@@ -434,8 +478,12 @@ class ProgramResponsesController extends AppController {
 		if($this->RequestHandler->isAjax()) {
 			if(!empty($this->data)) {
 				if($this->ProgramResponse->save($this->data)) {
+					$programResponse = $this->ProgramResponse->read(null, $this->data['ProgramResponse']['id']);
 					$data['success'] = true;
 					$data['message'] = 'Notes were saved successfully.';
+					$this->Transaction->createUserTransaction('Programs', null, null,
+						'Updated ' . $programResponse['Program']['name'] . ' response notes for customer ' . 
+						ucwords($programResponse['User']['name_last4']));						
 				}
 				else {
 					$data['success'] = true;
@@ -493,8 +541,7 @@ class ProgramResponsesController extends AppController {
 					$this->Notifications->sendProgramEmail($programEmail, $user);
 					$this->Transaction->createUserTransaction('Programs', null, null,
 						'Approved program response for ' . $programResponse['Program']['name'] . ' for customer ' . 
-						ucfirst($user['User']['firstname']). ' ' . ucfirst($user['User']['lastname']) . ' - '. 
-						substr($user['User']['ssn'], '-4'));										
+						ucwords($user['User']['name_last4']));										
 				}
 				else {
 					$data['success'] = false;
@@ -509,7 +556,53 @@ class ProgramResponsesController extends AppController {
 	}
 
 	function admin_not_approved() {
-		
+		if($this->RequestHandler->isAjax()) {
+			if(!empty($this->params['form']['id'])) {
+				$this->data['ProgramResponse']['id'] = $this->params['form']['id'];
+				$this->data['ProgramResponse']['not_approved'] = 1;
+				if(isset($this->params['form']['reset_form']) == 'on') {
+					$this->data['ProgramResponse']['answers'] = null;
+				}
+				if($this->ProgramResponse->save($this->data)) {
+					$data['success'] = true;
+					$data['message'] = 'Program response marked not approved.';
+					$programResponse = $this->ProgramResponse->read(null, $this->params['form']['id']);
+					
+					$programEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', 
+						array('conditions' => array(
+							'ProgramEmail.program_id' => $programResponse['Program']['id'],
+							'ProgramEmail.type' => 'not_approved'
+					)));
+					$user['User'] = $programResponse['User'];
+					if($programEmail) {
+						if(!empty($this->params['form']['email_comment'])) {
+							$programEmail['ProgramEmail']['body'] .= "\r\n\r\n\r\n" . 
+							'Comment: ' . $this->params['form']['email_comment'];  
+						}				
+						$this->Notifications->sendProgramEmail($programEmail, $user);						
+					}
+					$this->Transaction->createUserTransaction('Programs', null, null,
+						'Marked ' . $programResponse['Program']['name'] . 
+						' response not approved for ' . ucwords($user['User']['name_last4'])); 
+					if(isset($this->params['form']['reset_form']) == 'on') {
+						$this->Transaction->createUserTransaction('Programs', null, null,
+							'Reset program response form for ' . $programResponse['Program']['name'] . ' for customer ' . 
+							ucwords($programResponse['User']['name_last4']));					
+					}			
+				} 
+				else {
+					$data['success'] = false;
+					$data['message'] = 'An error occurred, please try again.';
+				} 				
+			}
+			else {
+				$data['success'] = false;
+				$data['message'] = 'Invalid response id';
+			}
+
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');	
+		}
 	}
 
 	function admin_generate_form($formId, $programResponseId, $docId=null) {
@@ -542,8 +635,7 @@ class ProgramResponsesController extends AppController {
 				$this->Transaction->createUserTransaction('Programs', null, null,
 					$generated[2] . ' ' . $generated[0]['ProgramPaperForm']['name'] . ' for ' . 
 					$generated[1]['Program']['name'] . ' for customer ' . 
-					ucfirst($generated[1]['User']['firstname']). ' ' . ucfirst($generated[1]['User']['lastname']) . ' - '. 
-					substr($generated[1]['User']['ssn'], '-4'));							
+					ucwords($generated[1]['User']['name_last4']));							
 			}
 			elseif(empty($data['message'])) {
 				$data['success'] = false;
@@ -584,15 +676,13 @@ class ProgramResponsesController extends AppController {
 							$data['message'] = 'Response marked un-expired successfully.';
 							$this->Transaction->createUserTransaction('Programs', null, null,
 								'Marked response un-expired for ' . $programResponse['Program']['name'] . ' for customer ' . 
-								ucfirst($programResponse['User']['firstname']). ' ' . ucfirst($programResponse['User']['lastname']) . ' - '. 
-								substr($programResponse['User']['ssn'], '-4'));							
+								ucwords($programResponse['User']['name_last4']));							
 							break;
 						case 'expired':
 							$data['message'] = 'Response marked expired successfully.';
 							$this->Transaction->createUserTransaction('Programs', null, null,
 								'Marked response expired for ' . $programResponse['Program']['name'] . ' for customer ' . 
-								ucfirst($programResponse['User']['firstname']). ' ' . ucfirst($programResponse['User']['lastname']) . ' - '. 
-								substr($programResponse['User']['ssn'], '-4'));							
+								ucwords($programResponse['User']['name_last4']));							
 							break;	
 					}
 				}
@@ -604,6 +694,60 @@ class ProgramResponsesController extends AppController {
 			$this->set(compact('data'));
 			$this->render(null, null, '/elements/ajaxreturn');
 		}
+	}
+
+	function admin_reset_form($id=null)	{
+		if($this->RequestHandler->isAjax()) {
+			if(!$id){
+				$data['success'] = false;
+				$data['message'] = 'Invalid program response id'; 
+			}
+			else {
+				$this->data['ProgramResponse']['id'] = $id;
+				$this->data['ProgramResponse']['answers'] = null;
+				if($this->ProgramResponse->save($this->data)) {
+					$programResponse = $this->ProgramResponse->read(null, $id);
+					$data['success'] = true;
+					$data['message'] = 'Customer program response form reset successfully.';
+					$this->Transaction->createUserTransaction('Programs', null, null,
+						'Reset program response form for ' . $programResponse['Program']['name'] . ' for customer ' . 
+						ucwords($programResponse['User']['name_last4']));	
+				}
+				else {
+					$data['success'] = false;
+					$data['message'] = 'An error occurred, please try again.';
+				}
+			}
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
+	
+	function admin_allow_new_response($id=null) {
+		if($this->RequestHandler->isAjax()) {
+			if(!$id){
+				$data['success'] = false;
+				$data['message'] = 'Invalid program response id'; 
+			}
+			else {
+				$this->data['ProgramResponse']['id'] = $id;
+				$this->data['ProgramResponse']['allow_new_response'] = 1;
+				if($this->ProgramResponse->save($this->data)) {
+					$programResponse = $this->ProgramResponse->read(null, $id);
+					$data['success'] = true;
+					$data['message'] = 'Customer can now create a new response for this program.';
+					$this->Transaction->createUserTransaction('Programs', null, null,
+						'Enabled allow new response for ' . $programResponse['Program']['name'] . ' for customer ' . 
+						ucwords($programResponse['User']['name_last4']));	
+				}
+				else {
+					$data['success'] = false;
+					$data['message'] = 'An error occurred, please try again.';
+				}
+			}
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}		
 	}
 
 	function _generateForm($formId, $programResponseId, $docId=null) {

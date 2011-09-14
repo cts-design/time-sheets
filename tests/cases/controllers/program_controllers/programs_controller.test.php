@@ -78,6 +78,95 @@ class ProgramsControllerTestCase extends AtlasTestCase {
 		$this->assertEqual($this->Programs->redirectUrl, $expectedResult);
 		$this->Programs->Session->destroy();		
 	}
+
+	public function testIndexProgramResponseNotApprroved() {
+		$this->Programs->Component->initialize($this->Programs);
+		$this->Programs->Session->write('Auth.User', array(
+	        'id' => 13,
+	        'role_id' => 1,
+	        'username' => 'marley'
+	    ));
+		$expectedResult = array('controller' => 'program_responses', 'action' => 'not_approved', 0 => 7);
+		$result = $this->testAction('/programs/index/7', array('method' => 'get'));
+		$this->assertEqual($this->Programs->redirectUrl, $expectedResult);
+	}
+
+	public function testIndexMediaOnlyProgramNoResponse() {
+		$this->Programs->Component->initialize($this->Programs);
+		$this->Programs->Session->write('Auth.User', array(
+	        'id' => 10,
+	        'role_id' => 1,
+	        'username' => 'test'
+	    ));
+		$result = $this->testAction('/programs/index/4', array('method' => 'get'));
+		$this->assertEqual($result['title_for_layout'], 'TEST URI');
+		$this->assertEqual($result['program']['Program']['id'], 4);	
+	}
+	
+	public function testIndexMediaOnlyProgramWithResponse() {
+		$this->Programs->Component->initialize($this->Programs);
+		$this->Programs->Session->write('Auth.User', array(
+	        'id' => 9,
+	        'role_id' => 1,
+	        'username' => 'smith'
+	    ));
+		$redirect = array('controller' => 'programs', 'action' => 'view_media', 0 => 4, 1 => 'uri');
+		$result = $this->testAction('/programs/index/4', array('method' => 'get'));
+		$this->assertEqual($redirect, $this->Programs->redirectUrl);
+	}
+	
+	public function testIndexMediaOnlyProgramWithResponseNeedsApproval() {
+		$this->Programs->Component->initialize($this->Programs);
+		$this->Programs->Session->write('Auth.User', array(
+	        'id' => 13,
+	        'role_id' => 1,
+	        'username' => 'marley'
+	    ));
+		$redirect = array('controller' => 'program_responses', 'action' => 'pending_approval', 0 => 4);
+		$result = $this->testAction('/programs/index/4', array('method' => 'get'));
+		$this->assertEqual($redirect, $this->Programs->redirectUrl);
+	}
+	
+	public function testIndexFormOnlyProgram() {		
+		$this->Programs->Component->initialize($this->Programs);
+		$this->Programs->Session->write('Auth.User', array(
+	        'id' => 9,
+	        'role_id' => 1,
+	        'username' => 'smith'
+	    ));
+
+		$result = $this->testAction('/programs/index/9', array('method' => 'get'));
+		$redirect = array('controller' => 'program_responses', 'action' => 'index', 0 => 9);
+		$this->assertEqual($this->Programs->redirectUrl, $redirect);
+		$this->assertEqual($result['program']['Program']['id'], 9);
+		$this->assertEqual($result['program']['Program']['name'], 'M.O.S.T.' );
+	}
+	
+	public function testIndexMediaFormProgramNoResponse() {		
+		$this->Programs->Component->initialize($this->Programs);
+		$this->Programs->Session->write('Auth.User', array(
+	        'id' => 9,
+	        'role_id' => 1,
+	        'username' => 'smith'
+	    ));
+
+		$result = $this->testAction('/programs/index/7', array('method' => 'get'));
+		$this->assertEqual($result['program']['Program']['id'], 7);
+		$this->assertEqual($result['program']['Program']['name'], 'TEST REG PDF FORM' );
+	}
+	
+	public function testIndexMediaFormProgramWithResponse() {		
+		$this->Programs->Component->initialize($this->Programs);
+		$this->Programs->Session->write('Auth.User', array(
+	        'id' => 9,
+	        'role_id' => 1,
+	        'username' => 'smith'
+	    ));
+		
+		$result = $this->testAction('/programs/index/7', array('method' => 'get'));
+		$this->assertEqual($result['program']['Program']['id'], 7);
+		$this->assertEqual($result['program']['ProgramResponse'][0]['id'], 12);	
+	}	
 	
 	public function testIndexDisabledProgram() {
 		$this->Programs->params = Router::parse('/programs/index/2');
@@ -234,7 +323,7 @@ class ProgramsControllerTestCase extends AtlasTestCase {
 			'ProgramResponse.program_id' => 1,
 			'ProgramResponse.user_id' => 10)));
 
-		$this->assertEqual($result['ProgramResponse']['id'], 9);
+		$this->assertEqual($result['ProgramResponse']['id'], 12);
 		$this->assertEqual($result['ProgramResponse']['user_id'], 10);
 		$this->assertEqual($this->Programs->redirectUrl, '/programs/view_media/1');
 		$this->Programs->Session->destroy();		

@@ -49,7 +49,12 @@ class ProgramEmailsController extends AppController {
 			if(!empty($this->data)) {
 				if($this->ProgramEmail->save($this->data)) {
 					$data['success'] = true;
-					$data['message'] = 'Email saved sucessfully.';	
+					$data['message'] = 'Email saved sucessfully.';
+					$this->ProgramEmail->Behaviors->disable('Disableable');
+					$this->data = $this->ProgramEmail->read(null, $this->data['ProgramEmail']['id']);
+					$this->Transaction->createUserTransaction('Programs', null, null,
+						'Edited ' . $this->data['ProgramEmail']['name'] . 
+						' email for ' . $this->data['Program']['name']);
 				}
 				else {
 					$data['success'] = false;
@@ -68,13 +73,21 @@ class ProgramEmailsController extends AppController {
 	function admin_toggle_disabled($id, $disabled) {
 		if($this->RequestHandler->isAjax()) {
 			if($this->ProgramEmail->toggleDisabled($id, $disabled)) {
+			 	$this->ProgramEmail->Behaviors->disable('Disableable');
+				$this->data = $this->ProgramEmail->read(null, $id);				
 				$data['success'] = true;
 				if($disabled == 1) {
 					$data['message'] = 'Email disabled successfully.';
+					$message = 'Disabled ' . $this->data['ProgramEmail']['name'] . 
+					' email for ' . $this->data['Program']['name'];
+					
 				}
 				else {
 					$data['message'] = 'Email enabled successfully.';
-				} 
+					$message = 'Enabled ' . $this->data['ProgramEmail']['name'] . 
+					' email for ' . $this->data['Program']['name'];					
+				}
+				$this->Transaction->createUserTransaction('Programs', null, null, $message);
 			}
 			else {
 				$data['success'] = false;
