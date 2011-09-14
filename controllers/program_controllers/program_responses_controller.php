@@ -212,7 +212,7 @@ class ProgramResponsesController extends AppController {
 			}
 	
 		$data['instructions'] = $this->ProgramResponse->Program->ProgramInstruction->getInstructions(
-			$programId, $type);
+			$id, $type);
 		$data['title_for_layout'] = 'Program Response Documents';
 		$this->set($data);
 	}
@@ -224,7 +224,7 @@ class ProgramResponsesController extends AppController {
 		$this->set($data);
 	}
 
-	function not_approved() {
+	function not_approved($programId) {
 		$data['title_for_layout'] = 'Program Response Not Approved';
 		$data['instructions'] = $this->ProgramResponse->Program->ProgramInstruction->getInstructions(
 			$programId, 'not_approved');	
@@ -573,18 +573,18 @@ class ProgramResponsesController extends AppController {
 							'ProgramEmail.program_id' => $programResponse['Program']['id'],
 							'ProgramEmail.type' => 'not_approved'
 					)));
+					$user['User'] = $programResponse['User'];
 					if($programEmail) {
 						if(!empty($this->params['form']['email_comment'])) {
 							$programEmail['ProgramEmail']['body'] .= "\r\n\r\n\r\n" . 
 							'Comment: ' . $this->params['form']['email_comment'];  
-						}
-						$user['User'] = $programResponse['User'];
+						}				
 						$this->Notifications->sendProgramEmail($programEmail, $user);						
 					}
 					$this->Transaction->createUserTransaction('Programs', null, null,
 						'Marked ' . $programResponse['Program']['name'] . 
 						' response not approved for ' . ucwords($user['User']['name_last4'])); 
-					if($this->params['form']['reset_form'] == 'on') {
+					if(isset($this->params['form']['reset_form']) == 'on') {
 						$this->Transaction->createUserTransaction('Programs', null, null,
 							'Reset program response form for ' . $programResponse['Program']['name'] . ' for customer ' . 
 							ucwords($programResponse['User']['name_last4']));					
