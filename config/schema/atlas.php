@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2011-09-08 15:27:52 : 1315510072*/
+/* atlas schema generated on: 2011-09-01 11:29:09 : 1314890949*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -464,11 +464,11 @@ class atlasSchema extends CakeSchema {
 		'conformation_id' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 12, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'uploaded_docs' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'dropping_off_docs' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'not_approved' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'allow_new_response' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'expires_on' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
-		'not_approved' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
-		'notes' => array('type' => 'text', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'prog_id' => array('column' => 'program_id', 'unique' => 0), 'user_id' => array('column' => 'user_id', 'unique' => 0)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);

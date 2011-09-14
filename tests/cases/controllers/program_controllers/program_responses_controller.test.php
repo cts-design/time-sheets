@@ -58,7 +58,7 @@ class ProgramResponsesControllerTestCase extends AtlasTestCase {
 				'validation' => '{\"rule\":\"notEmpty\"}',
 				'created' => '2011-03-24 15:01:17',
 				'modified' => '2011-03-24 15:01:22'
-			),
+			)
 		);
 		
 		$result = $this->testAction('/program_responses/index/1');
@@ -87,9 +87,63 @@ class ProgramResponsesControllerTestCase extends AtlasTestCase {
 	   		'ProgramResponse.user_id' => 11,
 			'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s') 
 	   	)));
-		$this->assertTrue($response['ProgramResponse']['id'], 2);
-		$this->assertTrue($response['ProgramResponse']['user_id'], 11);
-		$this->assertTrue($response['ProgramResponse']['answers'], '{"question":"answer"}')	;
+		$this->assertEqual($response['ProgramResponse']['id'], 2);
+		$this->assertEqual($response['ProgramResponse']['user_id'], 11);
+		$this->assertEqual($response['ProgramResponse']['answers'], '{"question":"answer"}')	;
+	}
+
+	public function testIndexPostResponseNoDocs() {
+		$this->ProgramResponses->Component->initialize($this->ProgramResponses);
+		$this->ProgramResponses->Session->write('Auth.User', array(
+	        'id' => 11,
+	        'role_id' => 1,
+	        'username' => 'duck'
+	    ));
+	    $data = array(
+	    	'ProgramResponse' => array(
+	    		'question' => 'answer'
+	    	)
+		);
+		$this->Programs->Email =& new MockEmailComponent();
+	    $this->Programs->Email->setReturnValue('send', true);
+		$this->Programs->Email->enabled = true;	    
+	    $result = $this->testAction('/program_responses/index/9', array('data' => $data));
+	    $response = $this->ProgramResponses->ProgramResponse->find('first', array('conditions' => array(
+	   		'ProgramResponse.program_id' => 9,
+	   		'ProgramResponse.user_id' => 11,
+			'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s') 
+	   	)));
+		$this->assertEqual($response['ProgramResponse']['id'], 10);
+		$this->assertEqual($response['ProgramResponse']['user_id'], 11);
+		$this->assertEqual($response['ProgramResponse']['answers'], '{"question":"answer"}')	;
+		$this->assertTrue($response['ProgramResponse']['needs_approval']);
+	}
+
+	public function testIndexPostResponseNoDocsAutoApprove() {
+		$this->ProgramResponses->Component->initialize($this->ProgramResponses);
+		$this->ProgramResponses->Session->write('Auth.User', array(
+	        'id' => 11,
+	        'role_id' => 1,
+	        'username' => 'duck'
+	    ));
+	    $data = array(
+	    	'ProgramResponse' => array(
+	    		'question' => 'answer'
+	    	)
+		);
+		$this->Programs->Email =& new MockEmailComponent();
+	    $this->Programs->Email->setReturnValue('send', true);
+		$this->Programs->Email->enabled = true;	    
+	    $result = $this->testAction('/program_responses/index/8', array('data' => $data));
+	    $response = $this->ProgramResponses->ProgramResponse->find('first', array('conditions' => array(
+	   		'ProgramResponse.program_id' => 8,
+	   		'ProgramResponse.user_id' => 11,
+			'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s') 
+	   	)));
+		$this->assertEqual($response['ProgramResponse']['id'], 9);
+		$this->assertEqual($response['ProgramResponse']['user_id'], 11);
+		$this->assertEqual($response['ProgramResponse']['answers'], '{"question":"answer"}')	;
+		$this->assertTrue($response['ProgramResponse']['complete']);
 	}
 	
 	public function testIndexNoId() {
@@ -197,6 +251,30 @@ class ProgramResponsesControllerTestCase extends AtlasTestCase {
 		$this->assertEqual($response['user_id'], 15);
 		$this->assertEqual($response['complete'], 1);			
 	}
+
+	public function testPendingApproval() {
+		$this->ProgramResponses->Component->initialize($this->ProgramResponses);
+		$this->ProgramResponses->Session->write('Auth.User', array(
+	        'id' => 15,
+	        'role_id' => 1,
+	        'username' => 'jim'
+	    ));
+		$titleForLayout = 'Program Response Pending Approval';
+		$result = $this->testAction('/program_responses/pending_approval/1');
+		$this->assertEqual($titleForLayout, $result['title_for_layout']);
+	}
+	
+	public function testNotApproved() {
+		$this->ProgramResponses->Component->initialize($this->ProgramResponses);
+		$this->ProgramResponses->Session->write('Auth.User', array(
+	        'id' => 15,
+	        'role_id' => 1,
+	        'username' => 'jim'
+	    ));
+		$titleForLayout = 'Program Response Not Approved';
+		$result = $this->testAction('/program_responses/not_approved/1');
+		$this->assertEqual($titleForLayout, $result['title_for_layout']);
+	}	
 	
 	public function testViewCertNoId() {
 		$this->ProgramResponses->Component->initialize($this->ProgramResponses);
@@ -330,7 +408,7 @@ class ProgramResponsesControllerTestCase extends AtlasTestCase {
 	        'username' => 'dnolan',
 	        'location_id' => 1
 	    ));
-		$data['tab'] = 'unapproved';
+		$data['tab'] = 'pending_approval';
 		$data['page'] = 1;	
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';	
 		$result = $this->testAction('/admin/program_responses/index/1/',  array('method' => 'get', 'data' => $data));
@@ -579,7 +657,6 @@ class ProgramResponsesControllerTestCase extends AtlasTestCase {
 		);		
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';	
 		$result = $this->testAction('/admin/program_responses/index/1/',  array('method' => 'get', 'data' => $data));
-		FireCake::log($result);
 		$this->assertTrue($result['data']['success']);
 		$this->assertEqual($result['data']['totalCount'], 1);
 		$this->assertEqual($result['data']['responses'][0], $expectedResult);		
@@ -805,8 +882,22 @@ class ProgramResponsesControllerTestCase extends AtlasTestCase {
 		$response = $this->ProgramResponses->ProgramResponse->findById(1);	
 		$this->assertTrue($result['data']['success']);
 		$this->assertEqual($response['ProgramResponse']['notes'], 'These are the test notes');
-	}	
+	}
 	
+	function testAdminNotApproved() {
+		$this->ProgramResponses->Component->initialize($this->ProgramResponses);
+		$this->ProgramResponses->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+		$data['id'] = 1;
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$result = $this->testAction('/admin/program_responses/not_approved', array('form_data' => $data));
+		$response = $this->ProgramResponses->ProgramResponse->findById(1);
+		$this->assertTrue($response['ProgramResponse']['not_approved']);
+	}
 		 
 	public function endTest() {
 		Configure::write('debug', 2);

@@ -1111,6 +1111,10 @@ class User extends AppModel {
 			)		
 		)
 	);
+	
+    var $virtualFields = array(
+     'name_last4' => 'CONCAT(User.lastname, ", ", User.firstname, " - ", RIGHT (User.ssn , 4))'
+    );	
 
 
     function parentNode() {

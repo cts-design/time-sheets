@@ -99,7 +99,7 @@ Atlas.grid.ProgramResponseGrid = Ext.extend(Ext.grid.GridPanel, {
 		store : programResponseStore,
 		displayInfo : true,
 		displayMsg : 'Displaying records {0} - {1} of {2}',
-		emptyMsg : "No documents to display",
+		emptyMsg : "No responses to display",
 		listeners : {
 			beforechange : function (paging, params) {
 				
@@ -127,6 +127,7 @@ var openProgramResponsesGrid = new Atlas.grid.ProgramResponseGrid({
 				}
 				responseId = r.data.id;
 				editor.setValue(r.data.notes);
+				Ext.getCmp('save').enable();
 			}
 		}
 	})
@@ -175,6 +176,7 @@ var closedProgramResponsesGrid = new Atlas.grid.ProgramResponseGrid({
 				}
 				responseId = r.data.id;
 				editor.setValue(r.data.notes);
+				Ext.getCmp('save').enable();
 			}
 		}
 	})
@@ -191,6 +193,7 @@ var expiredProgramResponsesGrid = new Atlas.grid.ProgramResponseGrid({
 				}
 				responseId = r.data.id;
 				editor.setValue(r.data.notes);
+				Ext.getCmp('save').enable();
 			}
 		}
 	})
@@ -207,6 +210,52 @@ var pendingApprovalProgramResponsesGrid = new Atlas.grid.ProgramResponseGrid({
 				}
 				responseId = r.data.id;
 				editor.setValue(r.data.notes);
+				Ext.getCmp('save').enable();
+			}
+		}
+	})
+});
+
+var notApprovedProgramResponsesGrid = new Atlas.grid.ProgramResponseGrid({
+	title : 'Not Approved',
+	columns : [{
+		id : 'id',
+		header : 'Id',
+		dataIndex : 'id',
+		width : 30,
+		sortable : true
+	}, {
+		header : 'Customer',
+		dataIndex : 'User-lastname',
+		width : 150,
+		sortable : true
+	}, {
+		header : 'Created',
+		dataIndex : 'created',
+		xtype : 'datecolumn',
+		format : 'm/d/Y g:i a',
+		sortable : true
+	}, {
+		header : 'Modified',
+		dataIndex : 'modified',
+		xtype : 'datecolumn',
+		format : 'm/d/Y g:i a',
+		sortable : true
+	}, {
+		header : 'Actions',
+		dataIndex : 'actions',
+		width : 150,
+	}],	
+	sm : new Ext.grid.RowSelectionModel({
+		singleSelect : true,
+		listeners : {
+			rowselect : function(sm, rowIdx, r) {
+				if(!r.data.text) {
+					r.data.text = ''
+				}
+				responseId = r.data.id;
+				editor.setValue(r.data.notes);
+				Ext.getCmp('save').enable();
 			}
 		}
 	})
@@ -231,6 +280,7 @@ var programResponseTabs = new Ext.TabPanel({
 	items : [openProgramResponsesGrid, closedProgramResponsesGrid, expiredProgramResponsesGrid],
 	listeners : {
 		tabchange : function(TabPanel, Panel) {
+			Ext.getCmp('save').disable();
 			programResponseSearch.getForm().reset()
 			editor.setValue('Please select a row in the grid above to see program response notes.');
 			switch (Panel.title) {
@@ -246,6 +296,9 @@ var programResponseTabs = new Ext.TabPanel({
 				case 'Pending Approval':
 					programResponseStore.setBaseParam('tab', 'pending_approval');
 					break;
+				case 'Not Approved':
+					programResponseStore.setBaseParam('tab', 'not_approved');
+					break;					
 			}
 			programResponseStore.load();
 		},
@@ -256,6 +309,7 @@ var programResponseTabs = new Ext.TabPanel({
 		},
 		beforerender : function() {
 			if(approvalPermission) {
+				this.add(notApprovedProgramResponsesGrid);
 				this.add(pendingApprovalProgramResponsesGrid);
 			}
 
@@ -425,7 +479,11 @@ var responsesPanel = new Ext.Panel({
 	items : [programResponseTabs, editor, programResponseSearch],
 	fbar : [{
 		text : 'Save',
+		id: 'save',
+		disabled: true,
+		icon : '/img/icons/save.png',
 		handler : function() {
+			Ext.Msg.wait('Please wait', 'Status');
 			Ext.Ajax.request({
 				url : '/admin/program_responses/edit',
 				success : function(response, opts) {
@@ -448,16 +506,17 @@ var responsesPanel = new Ext.Panel({
 			});
 		}
 	}]
+	
+	
 });
 
 Ext.onReady(function() {
-	Ext.QuickTips.init()
-
+	Ext.QuickTips.init();
 	responsesPanel.render('programResponseTabs');
 	Ext.get('programResponseTabs').on('click', function(e, t) {
 		t = Ext.get(t);
 		var url = '';
-		if(t.hasClass('expire')) {
+		if(t.hasClass('expire') || t.hasClass('reset') || t.hasClass('allow-new') ) {
 			Ext.Msg.wait('Please wait', 'Status');
 			e.preventDefault();
 			Ext.Ajax.request({
@@ -483,4 +542,5 @@ Ext.onReady(function() {
 			});
 		}
 	});
+
 });

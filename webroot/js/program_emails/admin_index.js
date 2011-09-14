@@ -142,6 +142,7 @@ var emailPanel = new Ext.Panel({
 		icon: '/img/icons/save.png',
 		id: 'save',
 		handler: function() {
+			Ext.Msg.wait('Please wait', 'Status');
 			Ext.Ajax.request({
 			   url: '/admin/program_emails/edit/' + emailId,
 		        success: function(response, opts){			        	
