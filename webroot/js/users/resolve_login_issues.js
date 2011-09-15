@@ -49,13 +49,14 @@ var searchForm = Ext.create('Ext.form.Panel',{
 			var f = searchForm.getForm();
         	if(f.isValid()) {
             	vals = f.getValues();
-				store.proxy.extraParams = {
-	            			search: vals.search,
-	            			searchType: vals.searchType,
-	            			from: vals.from,
-	            			to: vals.to
-            	}
-				store.load();            	        		
+				store.load({
+					params: {
+            			search: vals.search,
+            			searchType: vals.searchType,
+            			from: vals.from,
+            			to: vals.to						
+					}
+				});            	        		
         	}
         }
     }]
@@ -93,7 +94,14 @@ var store = Ext.create('Ext.data.Store', {
 	},
 	listeners : {
 		write:  function(store, operation, eOps) {
-			store.load();
+			store.load({
+				params: {
+        			search: vals.search,
+        			searchType: vals.searchType,
+        			from: vals.from,
+        			to: vals.to						
+				}
+			});
 			var res = Ext.JSON.decode(operation.response.responseText);
 			if(res.success == true) {
 				Ext.Msg.alert('Success', 'Changes saved successfully.');
