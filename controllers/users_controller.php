@@ -652,8 +652,6 @@ class UsersController extends AppController {
 
     function admin_resolve_login_issues() {
     	if($this->RequestHandler->isAjax()) {
-    		firecake::log($this->params);
-			firecake::log($this->data);
 			if($this->RequestHandler->isPost())  {
 				$postData = json_decode($this->params['form']['user'], true);
 				$this->data['User']['id'] = $postData['id'];
