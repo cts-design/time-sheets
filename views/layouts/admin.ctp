@@ -24,9 +24,7 @@
 
 	echo $this->Html->css('ui-redmond/jquery-ui-1.8.10.custom');
 
-    echo $this->Html->css('/js/ext/resources/css/ext-all');
-		
-	echo $this->Html->css('ext/atlas');
+   	echo $this->Html->css('/js/ext/resources/css/ext-all');
 
 	echo $this->Html->css('admin');
 	
