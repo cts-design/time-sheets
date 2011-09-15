@@ -652,8 +652,10 @@ class UsersController extends AppController {
 
     function admin_resolve_login_issues() {
     	if($this->RequestHandler->isAjax()) {
-			if($this->params['form']['xaction'] == 'update')  {
-				$postData = json_decode($this->params['form']['users'], true);
+    		firecake::log($this->params);
+			firecake::log($this->data);
+			if($this->RequestHandler->isPost())  {
+				$postData = json_decode($this->params['form']['user'], true);
 				$this->data['User']['id'] = $postData['id'];
 				$this->data['User']['lastname'] = $postData['lastname'];
 				$this->data['User']['username'] = $this->data['User']['lastname'];				
@@ -671,41 +673,41 @@ class UsersController extends AppController {
 				$this->set('data', $data);
 				$this->render(null, null,  '/elements/ajaxreturn');					
 			}	
-			if($this->params['form']['xaction'] == 'read') {
+			if($this->RequestHandler->isGet()) {
 				$useDate = false;
-				if(!empty($this->params['form']['from']) && !empty($this->params['form']['to'])) {
-					$from = date('Y-m-d H:i:s', strtotime($this->params['form']['from'] . ' 00:00:01'));
-					$to = date('Y-m-d H:i:s', strtotime($this->params['form']['to'] . '23:59:59'));
+				if(!empty($this->params['url']['from']) && !empty($this->params['url']['to'])) {
+					$from = date('Y-m-d H:i:s', strtotime($this->params['url']['from'] . ' 00:00:01'));
+					$to = date('Y-m-d H:i:s', strtotime($this->params['url']['to'] . '23:59:59'));
 					$useDate = true;					
 				}
 				$this->User->recursive = -1;
-				if($this->params['form']['searchType'] == 'ssn') {
+				if($this->params['url']['searchType'] == 'ssn') {
 					if($useDate){
 						$conditions = array(
-							'RIGHT (User.ssn , 4) LIKE' => '%'.$this->params['form']['search'].'%', 
+							'RIGHT (User.ssn , 4) LIKE' => '%'.$this->params['url']['search'].'%', 
 							'User.role_id' => 1,
 							'User.created BETWEEN ? AND ?' => array($from, $to)
 							);							
 					}
 					else {
 						$conditions = array(
-							'User.ssn LIKE' => '%'.$this->params['form']['search'].'%', 
+							'User.ssn LIKE' => '%'.$this->params['url']['search'].'%', 
 							'User.role_id' => 1
 							);						
 					}
 
 				}
-				if($this->params['form']['searchType'] == 'lastname') {
+				if($this->params['url']['searchType'] == 'lastname') {
 					if($useDate){
 						$conditions = array(
-							'User.lastname LIKE' => '%'.$this->params['form']['search'].'%', 
+							'User.lastname LIKE' => '%'.$this->params['url']['search'].'%', 
 							'User.role_id' => 1,
 							'User.created BETWEEN ? AND ?' => array($from, $to)
 							);
 					}
 					else {
 						$conditions = array(
-							'User.lastname LIKE' => '%'.$this->params['form']['search'].'%', 
+							'User.lastname LIKE' => '%'.$this->params['url']['search'].'%', 
 							'User.role_id' => 1);	
 					}
 				}    		
