@@ -13,7 +13,7 @@ class UsersController extends AppController {
     var $components = array('Email');
 
     function beforeFilter() {
-		parent::beforeFilter();
+		parent::beforeFilter();	
 		$this->Security->blackHoleCallback = 'forceSSL';
 		$this->Security->requireSecure();
 		$this->User->recursive = 0;
@@ -43,7 +43,12 @@ class UsersController extends AppController {
 			'login',
 			'registration',
 			'logout');
-			
+		if($this->Auth->user('role_id') > 1) {
+		    $this->Auth->allow(
+			    'admin_auto_complete_customer',
+			    'admin_auto_complete_ssn_ajax'
+			);
+		}			
 		if(!empty($this->data)) {
 			if(isset($this->params['prefix']) && $this->params['prefix'] == 'admin') {
 				return;	
@@ -819,6 +824,43 @@ class UsersController extends AppController {
 			$this->Session->setFlash(__('An error occured.', true), 'flash_failure');
 			$this->redirect($this->referer());
 		}
+	}
+	function admin_auto_complete_customer() {
+		if($this->RequestHandler->isAjax()) {
+			$this->User->recursive = -1;
+			$query = $this->User->find('all', array(
+				'conditions' => array(
+					'User.role_id' => 1, 
+					'User.lastname' =>  $this->params['url']['lastname'], 
+					'User.firstname LIKE' => '%' . $this->params['url']['term'] . '%')));
+			$this->_setAutoCompleteOptions($query);
+			$this->render('/elements/app_controller/auto_complete_ajax');			
+		}
+	}
+
+	function admin_auto_complete_ssn() {
+		if($this->RequestHandler->isAjax()) {
+			$this->User->recursive = -1;
+			$query = $this->User->find('all', array('conditions' => array('User.role_id' => 1, 'User.ssn LIKE' => '%' . $this->params['url']['term'] . '%')));
+			$this->_setAutoCompleteOptions($query);
+			$this->render('/elements/app_controller/auto_complete_ajax');
+		}
+	}
+
+
+    function _setAutoCompleteOptions($query) {
+		if(empty($query)) {
+			$options[0] = 'No Results';
+		}
+		$firsts = Set::extract('/User/firstname', $query);
+		$lasts = Set::extract('/User/lastname', $query);
+		$ssns = Set::extract('/User/ssn', $query);
+		$i = 0;
+		foreach($firsts as $fisrt) {
+			$options[$i] = $lasts[$i] . ', ' . $firsts[$i] . ', ' . $ssns[$i];
+			$i++;
+		}
+		$this -> set('options', $options);
 	}
 
 }
