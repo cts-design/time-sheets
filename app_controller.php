@@ -98,6 +98,7 @@ class AppController extends Controller {
 		if($this->Auth->user('role_id') > 1) {
 		    $this->Auth->allow(
 			    'display',
+			    'admin_auto_complete_customer',
 			    'admin_auto_complete_first_ajax',
 			    'admin_auto_complete_last_ajax',
 			    'admin_auto_complete_ssn_ajax'
@@ -171,53 +172,6 @@ class AppController extends Controller {
 		}
 		else return false;
 
-	}
-
-	function admin_auto_complete_first_ajax() {
-		if($this->RequestHandler->isAjax()) {
-			Configure::write('debug', 0);
-			$this->loadModel('User');
-			$query = $this->User->find('all', array('conditions' => array('User.role_id' => 1, 'User.firstname LIKE' => '%' . $this->params['url']['term'] . '%')));
-			$this->_setAutoCompleteOptions($query);
-			$this->render('/elements/app_controller/auto_complete_ajax');
-		}
-	}
-
-	function admin_auto_complete_last_ajax() {
-		if($this->RequestHandler->isAjax()) {
-			Configure::write('debug', 0);
-			$this->loadModel('User');
-			$query = $this->User->find('all', array('conditions' => array('User.role_id' => 1, 'User.lastname LIKE' => '%' . $this->params['url']['term'] . '%')));
-			$this->_setAutoCompleteOptions($query);
-			$this->render('/elements/app_controller/auto_complete_ajax');
-		}
-	}
-
-	function admin_auto_complete_ssn_ajax() {
-		if($this->RequestHandler->isAjax()) {
-			Configure::write('debug', 0);
-			$this->loadModel('User');
-			$query = $this->User->find('all', array('conditions' => array('User.role_id' => 1, 'User.ssn LIKE' => '%' . $this->params['url']['term'] . '%')));
-
-			$this->_setAutoCompleteOptions($query);
-			$this->render('/elements/app_controller/auto_complete_ajax');
-		}
-	}
-
-
-    function _setAutoCompleteOptions($query) {
-		if(empty($query)) {
-			$options[0] = 'No Results';
-		}
-		$firsts = Set::extract('/User/firstname', $query);
-		$lasts = Set::extract('/User/lastname', $query);
-		$ssns = Set::extract('/User/ssn', $query);
-		$i = 0;
-		foreach($firsts as $fisrt) {
-			$options[$i] = $lasts[$i] . ', ' . $firsts[$i] . ', ' . $ssns[$i];
-			$i++;
-		}
-		$this -> set('options', $options);
 	}
 
 /**
