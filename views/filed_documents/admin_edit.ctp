@@ -30,7 +30,7 @@
 <?php echo $this->Form->create('FiledDocument');?>
 	<fieldset>
  		<legend><?php __('Edit Filed Document'); ?></legend>
- 		<div class="bot-mar-10 instructions">Please type full last name and then at least 2 characters of first name to serch for customer, or use ssn field with at least 4 digits of ssn.</div>
+ 		<div class="bot-mar-10 instructions">Please type full last name and then at least 2 characters of first name to search for customer, or use ssn field with at least 4 digits of ssn.</div>
 	<?php
 		echo $this->Form->input('id');
 		if(isset($this->params['pass'][1])) {

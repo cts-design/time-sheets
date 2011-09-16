@@ -185,7 +185,7 @@ $this->Paginator->options(array(
 		<?php echo $this->Form->input('FiledDocument.description', array('label' => 'Other'))?>
 	    </div>
 	    <div class="cuInfo">
-	    	<div class="bot-mar-10 instructions">Please type full last name and then at least 2 characters of first name to serch for customer, or use ssn field with at least 4 digits of ssn.</div>
+	    	<div class="bot-mar-10 instructions">Please type full last name and then at least 2 characters of first name to search for customer, or use ssn field with at least 4 digits of ssn.</div>
 		<?php echo $this->Form->input('FiledDocument.lastname', array(
 			'class' => 'required',
 			'value' =>  (!empty($user['User']['lastname']) ? $user['User']['lastname'] : '')))?>
