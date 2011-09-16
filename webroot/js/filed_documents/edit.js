@@ -62,22 +62,26 @@ $(document).ready( function() {
 			}
 		});
 	});
+
 	$('#UserFirstname').autocomplete({
-		source: '/admin/filed_documents/auto_complete_first_ajax',
+		source: '/admin/users/auto_complete_customer?' +  'lastname=' + $('#UserLastname').attr('value'),
 		minLength: 2,
 		close: function() {
 			populateUserInfo($('#UserFirstname').val());
 		}
 	});
-	$('#UserLastname').autocomplete({
-		source: '/admin/filed_documents/auto_complete_last_ajax',
-		minLength: 2,
-		close: function() {
-			populateUserInfo($('#UserLastname').val());
-		}
+	
+	$('#UserLastname').blur(function(){
+		  $('#UserFirstname').autocomplete(
+		  	'option', 'source', '/admin/users/auto_complete_customer?' +  'lastname=' + $('#UserLastname').attr('value'));
 	});
+	
+	if($('#UserFirstname').val() != '' && $('#UserLastname').val() != '' && $('#UserSsn').val() != '') {
+		$('.instructions').hide();
+	}	
+
 	$('#UserSsn').autocomplete({
-		source: '/admin/filed_documents/auto_complete_ssn_ajax',
+		source: '/admin/users/auto_complete_ssn',
 		minLength: 2,
 		close: function() {
 			populateUserInfo($('#UserSsn').val());
