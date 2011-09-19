@@ -80,9 +80,7 @@ var searchPanel = {
                 var searchTerm1 = Ext.getCmp('SearchTerm1'),
                 searchFullSsn1  = Ext.getCmp('SearchFullSsn1'),
                 searchLast41    = Ext.getCmp('SearchLast41');
-				
-				console.log(record[0].data.label);
-				
+
                 if (record[0].data.type === 'firstname' || record[0].data.type === 'lastname') {
                   searchTerm1.enable().show()
                   searchFullSsn1.disable().hide();
