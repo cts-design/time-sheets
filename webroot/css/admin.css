@@ -760,7 +760,7 @@ div.actions .ui-button-text {
     margin-right: 10px;
 }
 
-#PermissionTabs fieldset{height: 125px; width: 150px; margin-bottom: 10px; margin-right: 10px;}
+#PermissionTabs fieldset{height: 150px; width: 160px; margin-bottom: 10px; margin-right: 10px;}
 #PermissionTabs legend{font-weight: bold;}
 #PermissionTabs .input{margin: 0}
 
