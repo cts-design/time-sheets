@@ -8,6 +8,34 @@
 var searchPanel = {
   init: function() {
     var windowUrl = window.location.pathname.replace(/\/page\:\d+/g, '');
+    
+    Ext.define('SearchType', {
+		extend: 'Ext.data.Model',
+		fields: [ 'type', 'label' ]
+    });
+    
+    Ext.define('Scope', {
+    	extend: 'Ext.data.Model',
+    	fields: [ 'scope', 'label' ]
+    });
+    
+    var searchFieldStore = Ext.create('Ext.data.Store', {
+    	model: 'SearchType',
+    	data: [
+    		{ 'type': 'firstname', 'label': 'First Name' },
+    		{ 'type': 'lastname',  'label': 'Last Name' },
+    		{ 'type': 'fullssn',   'label': 'Full SSN' },
+    		{ 'type': 'last4',     'label': 'Last 4 SSN' }
+    	]
+    });
+    
+    var searchScopeStore = Ext.create('Ext.data.Store', {
+    	model: 'Scope',
+    	data: [
+    		{ 'scope': 'containing', 'label': 'Containing' },
+    		{ 'scope': 'matching exactly', 'label': 'Matching Exactly' }
+    	]
+    });
 
     this.form = new Ext.FormPanel({
       id: 'searchFormPanel',
@@ -42,7 +70,9 @@ var searchPanel = {
             queryMode: 'local',
             id: 'SearchBy1',
             name: 'search_by1',
-            store: [['firstname', 'First Name'], ['lastname', 'Last Name'], ['fullssn', 'Full SSN'], ['last4', 'Last 4 SSN']],
+            store: searchFieldStore,
+            valueField: 'type',
+            displayField: 'label',
             triggerAction: 'all',
             allowBlank: false,
             listeners: {
@@ -73,7 +103,9 @@ var searchPanel = {
             queryMode: 'local',
             id: 'SearchBy2',
             name: 'search_by2',
-            store: [['firstname', 'First Name'], ['lastname', 'Last Name'], ['fullssn', 'Full SSN'], ['last4', 'Last 4 SSN']],
+            store: searchFieldStore,
+            valueField: 'type',
+            displayField: 'label',
             triggerAction: 'all',
             listeners: {
               select: function(combo, record, index) {
@@ -126,7 +158,10 @@ var searchPanel = {
             html: 'Where is:'
           },{
             xtype: 'combo',
-            store: ['containing','matching exactly'],
+            store: searchScopeStore,
+            queryMode: 'local',
+            valueField: 'scope',
+            displayField: 'label',
             id: 'SearchScope1',
             name: 'search_scope1',
             triggerAction: 'all',
@@ -145,7 +180,10 @@ var searchPanel = {
             }
           },{
             xtype: 'combo',
-            store: ['containing','matching exactly'],
+            store: searchScopeStore,
+            valueField: 'scope',
+            queryMode: 'local',
+            displayField: 'label',
             id: 'SearchScope2',
             name: 'search_scope2',
             triggerAction: 'all',
