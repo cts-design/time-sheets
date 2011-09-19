@@ -235,7 +235,6 @@ var searchPanel = {
       }],
       listeners: {
         afterrender: function (panel) {
-          console.log(panel);
           var form = panel.getForm();
 
           form.setValues({
