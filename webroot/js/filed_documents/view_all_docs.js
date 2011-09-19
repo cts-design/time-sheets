@@ -1,23 +1,5 @@
-var allFiledDocsProxy = new Ext.data.HttpProxy({
-	method: 'GET',
-	prettyUrls: true,
-	url: '/admin/filed_documents/view_all_docs'
-});
-
-var allFiledDocsStore = new Ext.data.JsonStore({
-	proxy: allFiledDocsProxy,
-	storeId: 'allFiledDocsStore',
-	remoteSort: true,
-	paramNames: {
-		start: 'start',
-		limit: 'limit',
-		sort: 'sort',
-		dir: 'direction'
-	},
-	totalProperty: 'totalCount',
-	baseParams: { page: 1, filters: '' },
-	root: 'docs',
-	idProperty: 'id',
+Ext.define('FiledDocuments', {
+	extend: 'Ext.data.Model',
 	fields: [
 		'id', 
 		'User-lastname', 
@@ -34,7 +16,25 @@ var allFiledDocsStore = new Ext.data.JsonStore({
 	]
 });
 
-var allDocsGrid = new Ext.grid.GridPanel({
+var allFiledDocsStore = Ext.create('Ext.data.Store', {
+	model: 'FiledDocuments',
+	storeId: 'allFiledDocsStore',
+	remoteSort: true,
+	proxy: {
+		type: 'ajax',
+		url: '/admin/filed_documents/view_all_docs',
+		reader: {
+			type: 'json',
+			root: 'docs',
+			idProperty: 'id',
+			totalProperty: 'totalCount'
+		},
+		simpleSortMode: true,
+		directionParam: 'direction'
+	}
+});
+
+var allDocsGrid = Ext.create('Ext.grid.GridPanel', {
 	store: allFiledDocsStore,
 	title: 'Documents',
 	frame: true,
@@ -103,8 +103,7 @@ var allDocsGrid = new Ext.grid.GridPanel({
 	viewConfig: {
 		
 	},
-	bbar: new Ext.PagingToolbar({
-		pageSize: 25,
+	bbar: new Ext.create('Ext.PagingToolbar', {
 	  store: allFiledDocsStore,
 	  displayInfo: true,
 	  displayMsg: 'Displaying documents {0} - {1} of {2}',
@@ -119,84 +118,112 @@ var allDocsGrid = new Ext.grid.GridPanel({
 	})
 });
 
-var searchTypeStore = new Ext.data.ArrayStore({
-	fields: ['type', 'label'],
-	id: 0,
-	data: [[
-    'firstname', 'First Name'
-  ], [
-		'lastname', 'Last Name'
-	], [
-		'last4', 'Last 4 SSN'
-	], [
-    'fullssn', 'Full SSN'
-  ]]
+Ext.define('SearchType', {
+	extend: 'Ext.data.Model',
+	fields: ['type', 'label']
 });
 
-var adminProxy = new Ext.data.HttpProxy({
-	url: '/admin/filed_documents/get_all_admins',
-	method: 'GET'
+var searchTypeStore = Ext.create('Ext.data.Store', {
+	model: 'SearchType',
+	data:[
+		{'type' : 'firstname', 'label' : 'First Name'},
+		{'type' : 'lastname', 'label' : 'Last Name'},
+		{'type' : 'last4', 'label' : 'Last 4 SSN'},
+		{'type' : 'fullssn', 'label' : 'Full SSN'}
+	]
 });
 
-var adminStore = new Ext.data.JsonStore({
-	proxy: adminProxy,
-	storeId: 'adminStore',
-	root: 'admins',
+Ext.define('Admin', {
+	extend: 'Ext.data.Model',
 	fields: ['id', 'name']
 });
 
-var locationProxy = new Ext.data.HttpProxy({
-	url: '/admin/locations/get_location_list',
-	method: 'GET'
+var adminStore = Ext.create('Ext.data.Store', {
+	model: 'Admin',
+	storeId: 'adminStore',	
+	proxy: {
+		type: 'ajax',
+		url: '/admin/filed_documents/get_all_admins',
+		reader: {
+			type: 'json',
+			root: 'admins'
+		}
+	}	
 });
 
-var locationStore = new Ext.data.JsonStore({
-	method: 'GET',
-	proxy: locationProxy,
-	storeId: 'locationStore',
-	root: 'locations',
+Ext.define('Location', {
+	extend: 'Ext.data.Model',
 	fields: ['id', 'name']
 });
 
-var docFilingCatProxy = new Ext.data.HttpProxy({
-	url: '/admin/document_filing_categories/get_cats',
-	method: 'GET'
-});
-
-var docFilingCatStore = new Ext.data.JsonStore({
-	method: 'GET',
-	proxy: docFilingCatProxy,
-	storeId: 'docFilingCatStore',
-	root: 'cats',
-	baseParams: {
-		parentId: 'parent'
+var locationStore = Ext.create('Ext.data.Store', {
+	model: 'Location',
+	proxy: {
+		type: 'ajax',
+		url: '/admin/locations/get_location_list',
+		reader: {
+			type: 'json',
+			root: 'locations'
+		}
 	},
-	fields: ['id', 'name']	
+	storeId: 'locationStore'
 });
 
-var docFilingChildCatStore = new Ext.data.JsonStore({
-	method: 'GET',
-	proxy: docFilingCatProxy,
+Ext.define('DocumentFilingCategory', {
+	extend: 'Ext.data.Model',
+	fields: ['id', 'name']
+});
+
+var docFilingCatStore = Ext.create('Ext.data.Store', {
+	model: 'DocumentFilingCategory',
+	storeId: 'docFilingCatStore',
+	proxy: {
+		type: 'ajax',
+		url: '/admin/document_filing_categories/get_cats',
+		reader: {
+			type: 'json',
+			root: 'cats'
+		},
+		extraParams: {
+			parentId: 'parent'
+		}		
+	}
+});
+
+var docFilingChildCatStore = Ext.create('Ext.data.Store', {
+	model: 'DocumentFilingCategory',
 	storeId: 'docFilingChildCatStore',
-	root: 'cats',	
-	fields: ['id', 'name']	
+	proxy: {
+		type: 'ajax',
+		url: '/admin/document_filing_categories/get_cats',
+		reader: {
+			type: 'json',
+			root: 'cats'
+		}
+	}		
 });
 
-var docFilingGrandChildCatStore = new Ext.data.JsonStore({
-	method: 'GET',
-	proxy: docFilingCatProxy,
-	storeId: 'docFilingGrandChildCatStore',
-	root: 'cats',	
-	fields: ['id', 'name']	
+var docFilingGrandChildCatStore = Ext.create('Ext.data.Store', {
+	model: 'DocumentFilingCategory',
+	storeId: 'docFilingGrandChildCatStore',	
+	proxy: {
+		type: 'ajax',
+		url: '/admin/document_filing_categories/get_cats',
+		reader: {
+			type: 'json',
+			root: 'cats'
+		}
+	}	
 });
 
-var dateSearchTb = new Ext.Toolbar({
+var dateSearchTb = Ext.create('Ext.Toolbar', {
+	width: 275,
 	items: [{
 		text: 'Today',
 		handler: function() {
 			var dt = new Date();		
-			Ext.getCmp('fromDate').setValue(dt.format('m/d/Y'));
-			Ext.getCmp('toDate').setValue(dt.format('m/d/Y'));		
+			Ext.getCmp('fromDate').setValue(Ext.Date.format(dt, 'm/d/Y'));
+			Ext.getCmp('toDate').setValue(Ext.Date.format(dt, 'm/d/Y'));		
 		}
 	}, {
 		xtype: 'tbseparator'
@@ -205,8 +232,8 @@ var dateSearchTb = new Ext.Toolbar({
 		handler: function() {
 			var dt = new Date();
 			dt.setDate(dt.getDate() - 1);
-			Ext.getCmp('fromDate').setValue(dt.format('m/d/Y'));
-			Ext.getCmp('toDate').setValue(dt.format('m/d/Y'));	
+			Ext.getCmp('fromDate').setValue(Ext.Date.format(dt, 'm/d/Y'));
+			Ext.getCmp('toDate').setValue(Ext.Date.format(dt, 'm/d/Y'));	
 		}
 	}, {
 		xtype: 'tbseparator'
@@ -214,10 +241,10 @@ var dateSearchTb = new Ext.Toolbar({
 		text: 'Last Week',
 		handler: function() {
 			var dt = new Date();
-			dt.setDate(dt.getDate() - (dt.format('N') + 6));
-			Ext.getCmp('fromDate').setValue(dt.format('m/d/Y'));
+			dt.setDate(dt.getDate() - (parseInt(Ext.Date.format(dt, 'N')) + 6));
+			Ext.getCmp('fromDate').setValue(Ext.Date.format(dt, 'm/d/Y'));
 			dt.setDate(dt.getDate() + 6);		
-			Ext.getCmp('toDate').setValue(dt.format('m/d/Y'));
+			Ext.getCmp('toDate').setValue(Ext.Date.format(dt, 'm/d/Y'));
 		}
 	}, {
 		xtype: 'tbseparator'
@@ -226,65 +253,79 @@ var dateSearchTb = new Ext.Toolbar({
 		handler: function() {
 			var now = new Date(),
 				firstDayPrevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1),
-				lastDayPrevMonth = firstDayPrevMonth.getLastDateOfMonth();
-			Ext.getCmp('fromDate').setValue(firstDayPrevMonth.format('m/d/Y'));
-			Ext.getCmp('toDate').setValue(lastDayPrevMonth.format('m/d/Y'));		
+				lastDayPrevMonth = Ext.Date.getLastDateOfMonth(firstDayPrevMonth);
+			Ext.getCmp('fromDate').setValue(Ext.Date.format(firstDayPrevMonth, 'm/d/Y'));
+			Ext.getCmp('toDate').setValue(Ext.Date.format(lastDayPrevMonth, 'm/d/Y'));		
 		}
 	}]
 });
 
-var allDocsSearch = new Ext.form.FormPanel({
+Ext.define('Scope', {
+	extend: 'Ext.data.Model',
+	fields: ['scope', 'label']
+});
+
+var scopeStore = Ext.create('Ext.data.Store', {
+	model: 'Scope',
+	data: [
+		{'scope' : 'containing', 'label' : 'Containing'},
+		{'scope' : 'matching exactly', 'label' : 'Matching Exactly'}
+	]
+});
+
+var allDocsSearch = Ext.create('Ext.form.FormPanel', {
 	frame: true,
 	collapsible: true,
-	labelWidth: 50,
+	fieldDefaults:{
+		labelWidth: 50,
+	},
 	title: 'Filters',
 	id: 'allDocsSearchForm',
 	items: [{
 		layout: 'column',
+		frame: true,
 		items: [{
-			layout: 'form',
-			columnWidth: 0.31,
-			height: 115,
+			layout: 'anchor',
+			columnWidth: 0.3333,
+			height: 125,
 			frame: true,
-      bodyStyle: 'padding: 0 10px',
+     		bodyStyle: 'padding: 0 10px',
 			title: 'Dates',
 			items: [{
 				xtype: 'datefield',
 				id: 'fromDate',
 				fieldLabel: 'From',
 				name: 'fromDate',
-        width: 200
+        		width: 200
 			}, {
 				xtype: 'datefield',
 				fieldLabel: 'To',
 				name: 'toDate',
 				id: 'toDate',
-        width: 200
+        		width: 200
 			}, dateSearchTb]
 		}, {
-			layout: 'form',
-      bodyStyle: 'padding: 0 10px',
+			layout: 'anchor',
+      		bodyStyle: 'padding: 0 10px',
 			title: 'Filing Categories',
 			frame: true,
-			height: 115,
+			height: 125,
 			defaults: {
 				width: 200
 			},
-			columnWidth: 0.31,
+			columnWidth: 0.3333,
 			items: [{
 				xtype: 'combo',
 				fieldLabel: 'Cat 1',
 				id: 'cat_1',
 				store: docFilingCatStore,
-				triggerAction: 'all',
-				mode: 'remote',
-				hiddenName: 'cat_1',
+				queryMode: 'remote',
 				valueField: 'id',
 				displayField: 'name',
 				name: 'cat_1',
 				listeners: {
-					select: function(combo, record, index) {
-						docFilingChildCatStore.load({params: {parentId: record.id }});
+					select: function(combo, records, index) {
+						docFilingChildCatStore.load({params: {parentId: records[0].data.id }});
 						docFilingChildCatStore.on('load', function(store, records, options) {
 							var catIds = ['cat_2', 'cat_3'];
 							if (store.data.length > 0) {
@@ -303,16 +344,14 @@ var allDocsSearch = new Ext.form.FormPanel({
 				fieldLabel: 'Cat 2',
 				disabled: 'true',
 				store: docFilingChildCatStore,
-				triggerAction: 'all',
 				id: 'cat_2',
-				mode: 'local',
-				hiddenName: 'cat_2',
+				queryMode: 'local',
 				valueField: 'id',
 				displayField: 'name',
 				name: 'cat_2',
 				listeners: {
-					select: function(combo, record, index) {
-						docFilingGrandChildCatStore.load({ params: { parentId: record.id }});
+					select: function(combo, records, index) {
+						docFilingGrandChildCatStore.load({ params: { parentId: records[0].data.id }});
 						docFilingGrandChildCatStore.on('load', function(store, records, options) {
 							var catId = ['cat_3'];
 							if(store.data.length > 0) {							
@@ -329,48 +368,46 @@ var allDocsSearch = new Ext.form.FormPanel({
 				xtype: 'combo',
 				fieldLabel: 'Cat 3',
 				disabled: 'true',
-				triggerAction: 'all',
-				mode: 'local',
+				queryMode: 'local',
 				store: docFilingGrandChildCatStore,
 				id: 'cat_3',
 				name: 'cat_3',
-				hiddenName: 'cat_3',
 				valueField: 'id',
 				displayField: 'name'				
 			}]
 		}, {
-			layout: 'form',
+			layout: 'anchor',
 			title: 'Additional Filters',
-      bodyStyle: 'padding: 0 10px',
+      		bodyStyle: 'padding: 0 10px',
 			frame: true,
-			height: 115,
-      anchor: '90%',
-			columnWidth: 0.31,
+			height: 125,
+     		anchor: '90%',
+			columnWidth: 0.3333,
 			items: [{
 				xtype: 'combo',
-				triggerAction: 'all',
-				mode: 'remote',
+				name: 'admin_id',
+				id: 'admin',
+				queryMode: 'remote',
 				fieldLabel: 'Admin',
-				hiddenName: 'admin_id',
 				store: adminStore,
 				valueField: 'id',
 				displayField: 'name'
 			}, {
 				xtype: 'combo',
 				id: 'location',
-				triggerAction: 'all',
-				mode: 'remote',
+				name: 'filed_location_id',
+				queryMode: 'remote',
 				fieldLabel: 'Location',
 				store: locationStore,
-				hiddenName: 'filed_location_id',
 				valueField: 'id',
 				displayField: 'name'
 			}]
 		}]
 	}, {
 		layout: 'column',
+		frame: true,
     items: [{
-      layout: 'form',
+      layout: 'anchor',
       id: 'cusSearch1',
       title: 'Customer Search Filter 1',
       bodyStyle: 'padding: 0 10px',
@@ -380,17 +417,15 @@ var allDocsSearch = new Ext.form.FormPanel({
       items: [{
         xtype: 'combo',
         fieldLabel: 'Type',
-        triggerAction: 'all',
         store: searchTypeStore,
-        mode: 'local',
-        hiddenName: 'searchType1',
+        queryMode: 'local',
         valueField: 'type',
         displayField: 'label',
         name: 'cusSearchType1',
         width: 200,
         listeners: {
-          select: function(combo, record, index) {
-            if (record.id === 'lastname' || record.id === 'firstname') {
+          select: function(combo, records, index) {
+            if (records[0].data.type === 'lastname' || records[0].data.type === 'firstname') {
               Ext.getCmp('cusLastname').enable();
               Ext.getCmp('cusLastname').show();
               Ext.getCmp('cusLast4').disable();
@@ -398,7 +433,7 @@ var allDocsSearch = new Ext.form.FormPanel({
               Ext.getCmp('cusFullSsn').disable();
               Ext.getCmp('cusFullSsn').hide();
             }
-            if (record.id === 'last4') {
+            if (records[0].data.type === 'last4') {
               Ext.getCmp('cusLast4').enable();
               Ext.getCmp('cusLast4').show();
               Ext.getCmp('cusLastname').disable();
@@ -406,7 +441,7 @@ var allDocsSearch = new Ext.form.FormPanel({
               Ext.getCmp('cusFullSsn').disable();
               Ext.getCmp('cusFullSsn').hide();
             }
-            if (record.id === 'fullssn') {
+            if (records[0].data.type === 'fullssn') {
               Ext.getCmp('cusFullSsn').enable();
               Ext.getCmp('cusFullSsn').show();
               Ext.getCmp('cusLastname').disable();
@@ -419,19 +454,20 @@ var allDocsSearch = new Ext.form.FormPanel({
       }, {
         xtype: 'combo',
         fieldLabel: 'Scope',
-        store: ['containing', 'matching exactly'],
-				triggerAction: 'all',
+        store: scopeStore,
+        queryMode: 'local',
         name: 'cusScope1',
-        hiddenName: 'cusScope1',
+		valueField: 'scope',
+		displayField: 'label',        
         width: 200,
         id: 'cusScope',
         listeners: {
-          select: function(combo, record, index) {
-            if (record.data.field1 === 'containing') {
+          select: function(combo, records, index) {
+            if (records[0].data.scope === 'containing') {
               Ext.getCmp('cusLast4').minLength = 1;
               Ext.getCmp('cusFullSsn').minLength = 3;
             }
-            if (record.data.field1 === 'matching exactly') {
+            if (records[0].data.scope === 'matching exactly') {
               Ext.getCmp('cusLast4').minLength = 4;
               Ext.getCmp('cusFullSsn').minLength = 9;
             }
@@ -463,7 +499,7 @@ var allDocsSearch = new Ext.form.FormPanel({
         width: 200
       }]
     }, {
-      layout: 'form',
+      layout: 'anchor',
       title: 'Customer Search Filter 2',
       id: 'cusSearch2',
       bodyStyle: 'padding: 0 10px',
@@ -472,17 +508,15 @@ var allDocsSearch = new Ext.form.FormPanel({
       items: [{
         xtype: 'combo',
         fieldLabel: 'Type',
-        triggerAction: 'all',
         store: searchTypeStore,
-        mode: 'local',
-        hiddenName: 'searchType2',
+        queryMode: 'local',
         valueField: 'type',
         displayField: 'label',
         name: 'cusSearchType2',
         width: 200,
         listeners: {
-          select: function(combo, record, index) {
-            if (record.id === 'lastname' || record.id === 'firstname') {
+          select: function(combo, records, index) {
+            if (records[0].data.type === 'lastname' || records[0].data.type === 'firstname') {
               Ext.getCmp('cusLastname2').enable();
               Ext.getCmp('cusLastname2').show();
               Ext.getCmp('cusLast4_2').disable();
@@ -490,7 +524,7 @@ var allDocsSearch = new Ext.form.FormPanel({
               Ext.getCmp('cusFullSsn_2').disable();
               Ext.getCmp('cusFullSsn_2').hide();
             }
-            if (record.id === 'last4') {
+            if (records[0].data.type === 'last4') {
               Ext.getCmp('cusLast4_2').enable();
               Ext.getCmp('cusLast4_2').show();
               Ext.getCmp('cusLastname2').disable();
@@ -498,7 +532,7 @@ var allDocsSearch = new Ext.form.FormPanel({
               Ext.getCmp('cusFullSsn_2').disable();
               Ext.getCmp('cusFullSsn_2').hide();
             }
-            if (record.id === 'fullssn') {
+            if (records[0].data.type === 'fullssn') {
               Ext.getCmp('cusFullSsn_2').enable();
               Ext.getCmp('cusFullSsn_2').show();
               Ext.getCmp('cusLast4_2').disable();
@@ -506,25 +540,25 @@ var allDocsSearch = new Ext.form.FormPanel({
               Ext.getCmp('cusLastname2').disable();
               Ext.getCmp('cusLastname2').hide();							
             }
-            console.log(record)
           }
         }
       }, {
         xtype: 'combo',
         fieldLabel: 'Scope',
-				store: ['containing', 'matching exactly'],
-				triggerAction: 'all',
-				name: 'cusScope2',
-				hiddenName: 'cusScope2',
-				width: 200,
-				id: 'cusScope1',
+        queryMode: 'local',
+		store: scopeStore,
+		name: 'cusScope2',
+		width: 200,
+		id: 'cusScope1',
+		valueField: 'scope',
+		displayField: 'label',  		
         listeners: {
-          select: function(combo, record, index) {
-            if (record.data.field1 === 'containing') {
+          select: function(combo, records, index) {
+            if (records[0].data.scope === 'containing') {
               Ext.getCmp('cusLast4_2').minLength = 1;
               Ext.getCmp('cusFullSsn_2').minLength = 3;
             }
-            if (record.data.field1 === 'matching exactly') {
+            if (records[0].data.scope === 'matching exactly') {
               Ext.getCmp('cusLast4_2').minLength = 4;
               Ext.getCmp('cusFullSsn_2').minLength = 9;
             }
@@ -564,8 +598,8 @@ var allDocsSearch = new Ext.form.FormPanel({
 		handler: function(){
 			var f = allDocsSearch.getForm();
 			var vals = f.getValues();
-			vals = Ext.util.JSON.encode(vals);
-			allFiledDocsStore.setBaseParam('filters', vals);
+			vals = Ext.JSON.encode(vals);
+			allFiledDocsStore.proxy.extraParams = {filters : vals};
 			allFiledDocsStore.load({params: {limit: 25, page: 1}});				
 		}
 	}, {
@@ -574,7 +608,7 @@ var allDocsSearch = new Ext.form.FormPanel({
 		handler: function() {
 			var f = allDocsSearch.getForm();
 			f.reset();
-			allFiledDocsStore.setBaseParam('filters', '');
+			allFiledDocsStore.proxy.extraParams = {filters : ''};
 			allFiledDocsStore.load();
 			var catIds = ['cat_2', 'cat_3'];
 			disableCatDropDown(catIds);		
@@ -585,12 +619,12 @@ var allDocsSearch = new Ext.form.FormPanel({
 		handler: function(){
 			var f = allDocsSearch.getForm();
 			var vals = f.getValues();
-			vals = Ext.util.JSON.encode(vals);
-			allFiledDocsStore.setBaseParam('filters', vals);			
+			vals = Ext.JSON.encode(vals);
+			allFiledDocsStore.proxy.extraParams = {filters : vals};	
 			window.location = '/admin/filed_documents/report?filters='+ vals
 		}
 	}]
-})
+});
 
 function resetCatDropDown(catIds){
 	if(catIds){
