@@ -17,30 +17,31 @@ var searchPanel = {
       collapsible: true,
       standardSubmit: true,
       url: windowUrl,
-      bodyStyle: 'padding: 5px',
+      bodyStyle: 'padding: 5px; background-color: #DFE9F6; border: 0',
       defaults: {
+      	bodyStyle: 'background-color: #DFE9F6; border: 0'
       },
       items: [{
         layout: 'column',
         defaults: {
           columnWidth: 0.33,
-          layout: 'form',
+          layout: 'anchor',
           border: false,
-          bodyStyle: 'padding: 0 18px'
+          bodyStyle: 'padding: 0 18px; background-color: #DFE9F6; border: 0'
         },
         items: [{
           defaults: {
             anchor: '100%',
-            hideLabel: true
+            hideLabel: true,
+            bodyStyle: 'background-color: #DFE9F6; border: 0'
           },
           items: [{
             html: 'Search for:'
           },{
             xtype: 'combo',
-            mode: 'local',
+            queryMode: 'local',
             id: 'SearchBy1',
             name: 'search_by1',
-            hiddenName: 'search_by1',
             store: [['firstname', 'First Name'], ['lastname', 'Last Name'], ['fullssn', 'Full SSN'], ['last4', 'Last 4 SSN']],
             triggerAction: 'all',
             allowBlank: false,
@@ -69,10 +70,9 @@ var searchPanel = {
             }
           },{
             xtype: 'combo',
-            mode: 'local',
+            queryMode: 'local',
             id: 'SearchBy2',
             name: 'search_by2',
-            hiddenName: 'search_by2',
             store: [['firstname', 'First Name'], ['lastname', 'Last Name'], ['fullssn', 'Full SSN'], ['last4', 'Last 4 SSN']],
             triggerAction: 'all',
             listeners: {
@@ -119,7 +119,8 @@ var searchPanel = {
         },{
           defaults: {
             anchor: '100%',
-            hideLabel: true
+            hideLabel: true,
+            bodyStyle: 'background-color: #DFE9F6; border: 0'
           },
           items: [{
             html: 'Where is:'
@@ -164,7 +165,8 @@ var searchPanel = {
         },{
           defaults: {
             anchor: '100%',
-            hideLabel: true
+            hideLabel: true,
+            bodyStyle: 'background-color: #DFE9F6; border: 0'
           },
           items: [{
             html: 'Search term:'
@@ -254,5 +256,6 @@ var searchPanel = {
 
 Ext.onReady(function() {
   Ext.QuickTips.init();
+  Ext.Compat.showErrors = true;
   searchPanel.init();
 });
