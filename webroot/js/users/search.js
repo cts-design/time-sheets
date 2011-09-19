@@ -80,18 +80,20 @@ var searchPanel = {
                 var searchTerm1 = Ext.getCmp('SearchTerm1'),
                 searchFullSsn1  = Ext.getCmp('SearchFullSsn1'),
                 searchLast41    = Ext.getCmp('SearchLast41');
-
-                if (record.data.field1 === 'firstname' || record.data.field1 === 'lastname') {
+				
+				console.log(record[0].data.label);
+				
+                if (record[0].data.type === 'firstname' || record[0].data.type === 'lastname') {
                   searchTerm1.enable().show()
                   searchFullSsn1.disable().hide();
                   searchLast41.disable().hide();
                 }
-                if (record.data.field1 === 'fullssn') {
+                if (record[0].data.type === 'fullssn') {
                   searchTerm1.disable().hide()
                   searchFullSsn1.enable().show();
                   searchLast41.disable().hide();
                 }
-                if (record.data.field1 === 'last4') {
+                if (record[0].data.type === 'last4') {
                   searchTerm1.disable().hide()
                   searchFullSsn1.disable().hide();
                   searchLast41.enable().show();
@@ -114,18 +116,18 @@ var searchPanel = {
                 searchLast42    = Ext.getCmp('SearchLast42'),
                 whereIs2        = Ext.getCmp('SearchScope2');
 
-                if (record.data.field1 === 'firstname' || record.data.field1 === 'lastname') {
+                if (record[0].data.type === 'firstname' || record[0].data.type === 'lastname') {
                   searchTerm2.allowBlank = false;
                   searchTerm2.enable().show();
                   searchFullSsn2.disable().hide();
                   searchLast42.disable().hide();
                 }
-                if (record.data.field1 === 'fullssn') {
+                if (record[0].data.type === 'fullssn') {
                   searchTerm2.disable().hide();
                   searchFullSsn2.enable().show().allowBlank = false;
                   searchLast42.disable().hide();
                 }
-                if (record.data.field1 === 'last4') {
+                if (record[0].data.type === 'last4') {
                   searchTerm2.disable().hide();
                   searchFullSsn2.disable().hide();
                   searchLast42.enable().show().allowBlank = false;
@@ -168,11 +170,11 @@ var searchPanel = {
             allowBlank: false,
             listeners: {
               select: function(combo, record, index) {
-                if (record.data.field1 === 'containing') {
+                if (record[0].data.scope === 'containing') {
                   Ext.getCmp('SearchFullSsn1').minLength = 3;
                   Ext.getCmp('SearchLast41').minLength = 1;
                 }
-                if (record.data.field1 === 'matching exactly') {
+                if (record[0].data.scope === 'matching exactly') {
                   Ext.getCmp('SearchFullSsn1').minLength = 9;
                   Ext.getCmp('SearchLast41').minLength = 4;
                 }
@@ -189,11 +191,11 @@ var searchPanel = {
             triggerAction: 'all',
             listeners: {
               select: function(combo, record, index) {
-                if (record.data.field1 === 'containing') {
+                if (record[0].data.scope === 'containing') {
                   Ext.getCmp('SearchFullSsn2').minLength = 3;
                   Ext.getCmp('SearchLast42').minLength = 1;
                 }
-                if (record.data.field1 === 'matching exactly') {
+                if (record[0].data.scope === 'matching exactly') {
                   Ext.getCmp('SearchFullSsn2').minLength = 9;
                   Ext.getCmp('SearchLast42').minLength = 4;
                 }

@@ -150,7 +150,7 @@ class UsersController extends AppController {
             $conditions1 = array($conditionScope => $conditionValue);
             $conditions = array_merge($conditions, $conditions1);
 
-            if ($submittedValues['search_by2'] !== '' && $submittedValues['search_term2'] !== '') {
+            if (isset($submittedValues['search_by2']) && $submittedValues['search_by2'] !== '' && $submittedValues['search_term2'] !== '') {
                 switch ($submittedValues['search_scope2']) {
                     case 'containing':
                         if ($submittedValues['search_by2'] === 'last4') {
