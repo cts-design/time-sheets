@@ -1620,7 +1620,7 @@ Ext.apply(Ext.menu.Menu.prototype, {
      *-------------------------------------------------------------*/
     if (Ext.data.ServerProxy) {
         Ext.apply(Ext.data.ServerProxy.prototype, {
-            getParams: Ext.Function.createInterceptor(Ext.data.ServerProxy.prototype.getParams, function(params, operation) {
+            getParams: Ext.Function.createInterceptor(Ext.data.ServerProxy.prototype.getParams, function(operation) {
                 if (this.sortParam && operation.sorters && operation.sorters.length > 0) {
                     if (!this.simpleSortMode) {
                         this.simpleSortMode = true;
