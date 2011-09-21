@@ -192,6 +192,7 @@ Ext.onReady(function(){
 	  	
 	var grid = Ext.create('Ext.grid.Panel', {
 		store: store,
+		forceFit: true,
 		height: 300,
 		title: 'Customers',
 		width: 325,
@@ -203,12 +204,12 @@ Ext.onReady(function(){
 		plugins: [cellEditing],
 		columns: [{
 			id: 'firstname',
-			header: 'First Name',
+			text: 'First Name',
 			dataIndex: 'firstname',
 			sortable: true
 	
 		},{
-			header: 'Last Name',
+			text: 'Last Name',
 			dataIndex: 'lastname',
 		 	editor: {
 		 		xtype: 'textfield'
@@ -216,14 +217,13 @@ Ext.onReady(function(){
 		 	sortable: true
 	
 		},{
-			header: 'SSN Last 4',
+			text: 'SSN Last 4',
 			dataIndex: 'ssn',
 			sortable: true
 	
 		}],
 		tbar: tb,
 		viewConfig: {
-			forceFit: true,
 			emptyText: 'No records found.'
 		}
 	});	
