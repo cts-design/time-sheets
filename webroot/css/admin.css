@@ -447,18 +447,7 @@ div.actions .ui-button-text {
 #SelfSignReassign {
 	margin-bottom: 20px;
 }
-/* remove the trigger and the mouse-cursor-hand from groupable-grid-headers */
-#selfSignGrid .x-grid-group-hd {
-    border-bottom: 2px solid #99bbe8;
-    cursor:default;
-    padding-top:6px;
-}
-#selfSignGrid .x-grid-group-hd div {
-    background-image: none;
-    padding:4px 4px 4px 4px;
-    color:#3764a0;
-    font:bold 11px tahoma, arial, helvetica, sans-serif;
-}
+
 
 #manageButtons label {
     margin-right: 10px;
@@ -888,17 +877,7 @@ div.actions .ui-button-text {
 
 
 
-.x-grid-group-hd {
-    border-bottom: 2px solid #99bbe8;
-    cursor:default;
-    padding-top:6px;
-}
-.x-grid-group-hd div {
-    background-image: none;
-    padding:4px 4px 4px 4px;
-    color:#3764a0;
-    font:bold 11px tahoma, arial, helvetica, sans-serif;
-}
+
 
 .reassign-menu {
 	overflow: visible !important;
