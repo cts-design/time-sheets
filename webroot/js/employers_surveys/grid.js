@@ -48,7 +48,9 @@ var EmployersSurvey = {
         },
         writer: {
           type: 'json',
-          encode: true
+          encode: true,
+					root: 'surveys',
+					writeAllFields: false
         }
       }
     });
