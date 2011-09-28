@@ -106,7 +106,7 @@ Ext.onReady(function(){
 		viewConfig: {
 			
 		},
-		bbar: new Ext.create('Ext.PagingToolbar', {
+		bbar: Ext.create('Ext.PagingToolbar', {
 		  store: allFiledDocsStore,
 		  displayInfo: true,
 		  displayMsg: 'Displaying documents {0} - {1} of {2}',
