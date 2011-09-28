@@ -6,6 +6,8 @@
  */
 
 var CareerSeekers = {
+  selectedRecord: null,
+
   init: function() {
     Ext.Compat.showErrors = true;
     Ext.QuickTips.init();
@@ -48,7 +50,9 @@ var CareerSeekers = {
         },
         writer: {
           type: 'json',
-          encode: true
+          encode: true,
+          root: 'surveys',
+          writeAllFields: false
         }
       }
     });
@@ -64,7 +68,7 @@ var CareerSeekers = {
         disabled: true,
         scope: this,
         handler: function() {
-          this.deleteSurvey(this.selectedRecord)
+          this.deleteSurvey(this.selectedRecord);
         }
       }]
     });
@@ -246,12 +250,13 @@ var CareerSeekers = {
   deleteSurvey: function(rec) {
     Ext.data.StoreManager.lookup('surveyStore').remove(rec);
     Ext.getCmp('deletebtn').disable();
+    this.selectedRecord = null;
   },
   showWindow: function(rec) {
     this.initWindow(rec);
     this.surveyWindow.show();
   }
-}
+};
 
 Ext.onReady(function() {
   CareerSeekers.init();

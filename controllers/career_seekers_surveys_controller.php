@@ -54,20 +54,17 @@ class CareerSeekersSurveysController extends AppController {
             return $this->render(null, null, '/elements/ajaxreturn');
     }
     
-    function admin_delete() {
-            FireCake::log($this->data);
-            $surveyId = str_replace("\"", "", $this->params['form']['surveys']);
-            $surveyId = intval($surveyId);
+    function admin_destroy() {
+            $surveyId = json_decode($this->params['form']['surveys'], true);
+            $surveyId = intval($surveyId['id']);
 
-            $data = array('TEST' => 'TEST');
-
-            // if ($this->CareerSeekersSurvey->delete($surveyId)) {
-            //         $data['success'] = true;
-			//         $this->Transaction->createUserTransaction('CareerSeekersSurvey', null, null,
-			//                                 'Delete survey ID ' . $surveyId);
-            // } else {
-            //         $data['success'] = false;
-            // }
+            if ($this->CareerSeekersSurvey->delete($surveyId)) {
+                    $data['success'] = true;
+                    $this->Transaction->createUserTransaction('CareerSeekersSurvey', null, null,
+                                            'Delete survey ID ' . $surveyId);
+            } else {
+                    $data['success'] = false;
+            }
 
             $this->set('data', $data);
             return $this->render(null, null, '/elements/ajaxreturn');
