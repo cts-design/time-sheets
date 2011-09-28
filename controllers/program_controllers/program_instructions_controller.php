@@ -51,6 +51,7 @@ class ProgramInstructionsController extends AppController {
 	function admin_edit() {
 		if($this->RequestHandler->isAjax()) {
 			if(!empty($this->data)) {
+				$this->data['ProgramInstruction'] = json_decode($this->data['ProgramInstruction'], true); 
 				if($this->ProgramInstruction->save($this->data)) {
 					$this->data = $this->ProgramInstruction->read(null, $this->data['ProgramInstruction']['id']);
 					$data['success'] = true;
