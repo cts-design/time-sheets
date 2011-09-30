@@ -361,7 +361,7 @@ legend {
 
 #information #help {	
 	border: 1px solid #B5D3DF;  
-	height: 100px; 
+	height: 125px; 
 	padding: 10px; 
 	background-color:#F1F8FB
 }
@@ -447,18 +447,7 @@ div.actions .ui-button-text {
 #SelfSignReassign {
 	margin-bottom: 20px;
 }
-/* remove the trigger and the mouse-cursor-hand from groupable-grid-headers */
-#selfSignGrid .x-grid-group-hd {
-    border-bottom: 2px solid #99bbe8;
-    cursor:default;
-    padding-top:6px;
-}
-#selfSignGrid .x-grid-group-hd div {
-    background-image: none;
-    padding:4px 4px 4px 4px;
-    color:#3764a0;
-    font:bold 11px tahoma, arial, helvetica, sans-serif;
-}
+
 
 #manageButtons label {
     margin-right: 10px;
@@ -760,7 +749,7 @@ div.actions .ui-button-text {
     margin-right: 10px;
 }
 
-#PermissionTabs fieldset{height: 125px; width: 150px; margin-bottom: 10px; margin-right: 10px;}
+#PermissionTabs fieldset{height: 150px; width: 160px; margin-bottom: 10px; margin-right: 10px;}
 #PermissionTabs legend{font-weight: bold;}
 #PermissionTabs .input{margin: 0}
 
@@ -888,17 +877,7 @@ div.actions .ui-button-text {
 
 
 
-.x-grid-group-hd {
-    border-bottom: 2px solid #99bbe8;
-    cursor:default;
-    padding-top:6px;
-}
-.x-grid-group-hd div {
-    background-image: none;
-    padding:4px 4px 4px 4px;
-    color:#3764a0;
-    font:bold 11px tahoma, arial, helvetica, sans-serif;
-}
+
 
 .reassign-menu {
 	overflow: visible !important;
