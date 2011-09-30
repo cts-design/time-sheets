@@ -36,7 +36,8 @@ Ext.onReady(function() {
 			searchType : '',
 			search : ''
 		},
-		directionParam : 'direction'	
+		directionParam : 'direction',
+		simpleSortMode: true	
 	});
 	
 	Ext.define('Atlas.grid.ProgramResponsePanel', {
@@ -186,26 +187,21 @@ Ext.onReady(function() {
 				switch (newCard.title) {
 					case 'Open':
 						programResponseProxy.extraParams.tab = 'open';
-						newCard.getStore().load();
 						break;
 					case 'Closed':
 						programResponseProxy.extraParams.tab = 'closed';
-						newCard.getStore().load();
 						break;
 					case 'Expired':
 						programResponseProxy.extraParams.tab = 'expired';
-						newCard.getStore().load();
 						break;
 					case 'Pending Approval':
 						programResponseProxy.extraParams.tab = 'pending_approval';
-						newCard.getStore().load();
 						break;
 					case 'Not Approved':
 						programResponseProxy.extraParams.tab = 'not_approved';
-						newCard.getStore().load();
 						break;					
 				}
-				
+				newCard.getStore().load();			
 			},
 			beforeadd : function(container, component, index) {
 				if(this.items.length == 5) {
