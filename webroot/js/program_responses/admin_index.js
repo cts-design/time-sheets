@@ -23,6 +23,7 @@ Ext.onReady(function() {
 	var programResponseStore = Ext.create('Ext.data.Store', {
 		storeId : 'programResponseStore',
 		model: 'ProgramResponse',
+		autoLoad: true,
 		pageSize: itemsPerPage,
 		proxy : {
 			type: 'ajax', 
@@ -53,7 +54,6 @@ Ext.onReady(function() {
 	
 	Ext.define('Atlas.grid.ProgramResponsePanel', {
 		extend: 'Ext.grid.Panel',
-		loadMask : true,
 		forceFit : true,
 		store : programResponseStore,
 		height : 300,
@@ -93,8 +93,9 @@ Ext.onReady(function() {
 		}],
 		viewConfig : {
 			deferEmptyText: false,
+			loadMask: false, // FIXME enable this after finding a fix to prevent duplicate load masks
 			emptyText : 'No responses at this time.'
-		},
+		},	
 		selType: 'rowmodel',
 		listeners: {
 			select: function(sm, record, index, eOpts) {
@@ -113,14 +114,14 @@ Ext.onReady(function() {
 					store: programResponseStore,
 					dock: 'bottom',
 					displayInfo: true
-				}]
+				}]		
 			});		
 			this.callParent(arguments);
 		}
 	});
 	
 	var openProgramResponsesGrid = Ext.create('Atlas.grid.ProgramResponsePanel', {
-		title : 'Open'
+		title : 'Open'	
 	});
 	
 	var closedProgramResponsesGrid = Ext.create('Atlas.grid.ProgramResponsePanel', {
@@ -182,7 +183,6 @@ Ext.onReady(function() {
 	var programResponseTabs = Ext.create('Ext.tab.Panel', {
 		region : 'center',
 		width : 800,
-		loadMask: false,
 		activeTab : 0,
 		frame : true,
 		items : [openProgramResponsesGrid, closedProgramResponsesGrid, expiredProgramResponsesGrid],
