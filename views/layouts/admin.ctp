@@ -30,10 +30,6 @@
 	
 	echo $this->Html->script('/js/ext/ext-all-debug');
 	
-	echo $this->Html->script('ext3-core-compat');
-	
-	echo $this->Html->script('ext3-compat');
-	
 	echo $this->Html->script('atlas');
 
 	echo $this->Html->script('https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js');
