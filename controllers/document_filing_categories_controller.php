@@ -21,8 +21,8 @@ class DocumentFilingCategoriesController extends AppController {
     }
 
     function admin_index() {
-    	if($this->RequestHandler->isAjax()) {
-			 $parent = intval($this->params['form']['node']);
+    	if($this->RequestHandler->isAjax()) {			
+			 $parent = intval($this->params['url']['node']);
 			 $nodes = $this->DocumentFilingCategory->children($parent, true);
 			 $data = array();
 			 if($nodes) {
@@ -109,34 +109,46 @@ class DocumentFilingCategoriesController extends AppController {
     function admin_reparent_categories() {
     	if($this->RequestHandler->isAjax()){
     		if(isset($this->params['form']['node'], 
-    		$this->params['form']['parent'], $this->params['form']['position'] )){
-   				$node = intval($this->params['form']['node']);
-		    	$parent = intval($this->params['form']['parent']);
-		    	$position = intval($this->params['form']['position']);
-		    
-			    // save the node with the new parent id
-			    // this will move the node to the bottom of the parent list
-			    
-			    $this->DocumentFilingCategory->id = $node;
-			    $this->DocumentFilingCategory->saveField('parent_id', $parent);
-			    
-			    // If position == 0, then we move it straight to the top
-			    // otherwise we calculate the distance to move ($delta).
-			    // We have to check if $delta > 0 before moving due to a bug
-			    // in the tree behavior (https://trac.cakephp.org/ticket/4037)
-			    
-				if($position == 0) {
-					$this->DocumentFilingCategory->moveup($node, true);
-				}
-				else {
-					$count = $this->DocumentFilingCategory->childcount($parent, true);
-					$delta = $count - $position - 1;
-					if($delta > 0) {
-						$this->DocumentFilingCategory->moveup($node, $delta);
+    			$this->params['form']['parent'], $this->params['form']['position'] )){
+					$node = intval($this->params['form']['node']);
+					$parent = intval($this->params['form']['parent']);
+					$position = intval($this->params['form']['position']);
+					
+					$parents = $this->DocumentFilingCategory->getpath($this->params['form']['parent']);
+					  
+					$children = $this->DocumentFilingCategory->children($node);
+					  
+					$result = Set::combine($children, '{n}.DocumentFilingCategory.parent_id');			   
+			  
+					if((count($parents) + count($result)) > 2 ) {
+						$data['success'] = false;
 					}
-				}
-			    // send success response
-			    $data['success'] = true;    			
+					else {		  
+						// save the node with the new parent id
+						// this will move the node to the bottom of the parent list
+						
+						$this->DocumentFilingCategory->id = $node;
+						$this->DocumentFilingCategory->saveField('parent_id', $parent);
+						
+						// If position == 0, then we move it straight to the top
+						// otherwise we calculate the distance to move ($delta).
+						// We have to check if $delta > 0 before moving due to a bug
+						// in the tree behavior (https://trac.cakephp.org/ticket/4037)
+						
+						if($position == 0) {
+							$this->DocumentFilingCategory->moveup($node, true);
+						}
+						else {
+							$count = $this->DocumentFilingCategory->childcount($parent, true);
+							$delta = $count - $position - 1;
+							if($delta > 0) {
+								$this->DocumentFilingCategory->moveup($node, $delta);
+							}
+						}
+						// send success response
+						$data['success'] = true;   			  	
+					}
+ 			
 	    	}
 			else {
 				$data['success'] = false;
@@ -148,7 +160,10 @@ class DocumentFilingCategoriesController extends AppController {
 
     function admin_edit() {
 		if($this->RequestHandler->isAjax()){
-			if(!empty($this->data)){
+			if(!empty($this->params['form']['category'])){
+				$params = json_decode($this->params['form']['category']);
+				$this->data['DocumentFilingCategory']['id'] = $params->id;
+				$this->data['DocumentFilingCategory']['name'] = $params->text;
 				if($this->DocumentFilingCategory->save($this->data)){
 					$data['success'] = true;
 				}
