@@ -82,7 +82,8 @@ Ext.onReady(function() {
 			sortable : true
 		}, {
 			text : 'Actions',
-			dataIndex : 'actions'
+			dataIndex : 'actions',
+			width: 150
 		}],
 		viewConfig : {
 			deferEmptyText: false,
@@ -147,7 +148,8 @@ Ext.onReady(function() {
 			sortable : true
 		}, {
 			text : 'Actions',
-			dataIndex : 'actions'
+			dataIndex : 'actions',
+			width: 150
 		}]
 	});
 		
