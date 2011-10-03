@@ -443,5 +443,6 @@ Ext.onReady(function() {
 			});
 		}
 	});
-	openProgramResponsesGrid.getStore().load({params: {tab: 'open'}});
+	programResponseProxy.extraParams.tab = 'open';
+	openProgramResponsesGrid.getStore().load();
 });
