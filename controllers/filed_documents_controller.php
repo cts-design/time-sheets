@@ -483,10 +483,12 @@ class FiledDocumentsController extends AppController {
 				$conditions['FiledDocument.cat_2'] = $filters['cat_2'];
 			if(isset($filters['cat_3'])) 
 				$conditions['FiledDocument.cat_3'] = $filters['cat_3'];
-			foreach($conditions as $k => $v) {
-				if(empty($v)){
-					unset($conditions[$k]);
-				}
+			if(isset($conditions))	 {
+				foreach($conditions as $k => $v) {
+					if(empty($v)){
+						unset($conditions[$k]);
+					}
+				}					
 			}
 		}
 		if(!empty($conditions)) {
