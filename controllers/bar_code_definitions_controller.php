@@ -1,13 +1,12 @@
 <?php
 class BarCodeDefinitionsController extends AppController {
 
-	var $name = 'BarCodeDefinitions';
+	public $name = 'BarCodeDefinitions';
 
-	function admin_index() {
+	public function admin_index() {
 		if($this->RequestHandler->isAjax()) {
 			$this->BarCodeDefinition->recursive = 0;
 			$definitions = $this->Paginate('BarCodeDefinition');
-			FireCake::log($definitions);
 			if(!empty($definitions)) {
 						$this->loadModel('DocumentFilingCategory');
 						$categories = $this->DocumentFilingCategory->find('list', array(
@@ -22,31 +21,28 @@ class BarCodeDefinitionsController extends AppController {
 					$data['definitions'][$i]['Cat1-name'] = $definition['Cat1']['name'];
 					$data['definitions'][$i]['Cat2-name'] = $definition['Cat2']['name'];
 					$data['definitions'][$i]['Cat3-name'] = $definition['Cat3']['name'];
-					$data['definitions'][$i]['cat_1'] = $definition['BarCodeDefinition']['cat_1'];
-					$data['definitions'][$i]['cat_2'] = $definition['BarCodeDefinition']['cat_2'];
-					$data['definitions'][$i]['cat_3'] = $definition['BarCodeDefinition']['cat_3'];
 					$i++;
 				}		
 			}
 			else {
 			 	$data['definitions'] = array();
 			}
-			$data['total'] = $this->BarCodeDefinition->paginateCount();
+			$data['total'] = $this->BarCodeDefinition->find('count');
 			$data['success'] = true;
 			$this->set(compact('data'));			
 			$this->render(null, null, '/elements/ajaxreturn');				
 		}	
 	}
 
-	function admin_add() {
+	public function admin_add() {
 		if($this->RequestHandler->isAjax()) {
 			if (!empty($this->data)) {
 				$this->data['BarCodeDefinition'] = json_decode($this->data['BarCodeDefinition'], true);
-				FireCake::log($this->data);
 				$this->BarCodeDefinition->create();
 				if ($this->BarCodeDefinition->save($this->data)) {
-					//@TODO return added record
-					$data['sucesss'] = true;
+					$data['definitions'] = $this->getDefinition($this->BarCodeDefinition->getLastInsertId());
+					$data['total'] = $this->BarCodeDefinition->find('count');
+					$data['success'] = true;
 					$data['message'] = 'Bar code definition added successfully.';
 				} else {
 					$data['success'] = false;
@@ -58,26 +54,19 @@ class BarCodeDefinitionsController extends AppController {
 		}
 	}
 
-	function admin_edit() {
+	public function admin_edit() {
 		if($this->RequestHandler->isAjax()) {
 			if (!empty($this->data)) {
 				$this->data['BarCodeDefinition'] = json_decode($this->data['BarCodeDefinition'], true);
-				if(isset($this->data['BarCodeDefinition']['Cat1-name'])) {
-					$this->data['BarCodeDefinition']['cat_1'] = $this->data['BarCodeDefinition']['Cat1-name'];
+				if(!isset($this->data['BarCodeDefinition']['cat_2'])) {
+					$this->data['BarCodeDefinition']['cat_2'] = null;
 				}
-				if(isset($this->data['BarCodeDefinition']['Cat2-name'])) {
-					$this->data['BarCodeDefinition']['cat_2'] = $this->data['BarCodeDefinition']['Cat2-name'];
-				}
-				if(isset($this->data['BarCodeDefinition']['Cat3-name'])) {
-					$this->data['BarCodeDefinition']['cat_3'] = $this->data['BarCodeDefinition']['Cat3-name'];
-				}
-				if ($this->BarCodeDefinition->save($this->data)) {
-					$definition = $this->BarCodeDefinition->findById($this->data['BarCodeDefinition']['id']);
-					$definition['BarCodeDefinition']['Cat1-name'] = $definition['Cat1']['name'];
-					$definition['BarCodeDefinition']['Cat2-name'] = $definition['Cat2']['name'];
-					$definition['BarCodeDefinition']['Cat3-name'] = $definition['Cat3']['name'];
-					$data['definitions'] = $definition['BarCodeDefinition'];
-					$data['sucesss'] = true;
+				if(!isset($this->data['BarCodeDefinition']['cat_3'])) {
+					$this->data['BarCodeDefinition']['cat_3'] = null;
+				}	
+				if ($this->BarCodeDefinition->save($this->data)) {				
+					$data['definitions'] = $this->getDefinition($this->data['BarCodeDefinition']['id']);
+					$data['success'] = true;
 					$data['message'] = 'Bar code definition updated successfully.';
 				} else {
 					$data['success'] = false;
@@ -89,17 +78,37 @@ class BarCodeDefinitionsController extends AppController {
 		}
 	}
 
-	function admin_delete($id = null) {
-		if (!$id) {
-			$this->Session->setFlash(__('Invalid id for bar code definition', true), 'flash_failure');
-			$this->redirect(array('action'=>'index'));
+	public function admin_delete() {
+		if($this->RequestHandler->isAjax()) {
+			if(!empty($this->data)) {
+				$this->data['BarCodeDefinition'] = json_decode($this->data['BarCodeDefinition'], true);	
+			}
+			if ($this->data['BarCodeDefinition']['id'] == '') {
+				$data['success'] = false;
+			}
+			elseif ($this->BarCodeDefinition->delete($this->data['BarCodeDefinition']['id'])) {
+				$data['definitions'] = $this->getDefinition($this->data['BarCodeDefinition']['id']);
+				$data['success'] = true;
+			}
+			else {
+				$data['success'] = false;
+			}
+			$this->set(compact('data'));			
+			$this->render(null, null, '/elements/ajaxreturn');			
 		}
-		if ($this->BarCodeDefinition->delete($id)) {
-			$this->Session->setFlash(__('Bar code definition deleted', true), 'flash_success');
-			$this->redirect(array('action'=>'index'));
+	}
+	
+	private function getDefinition($id) {
+		$this->BarCodeDefinition->recursive = 0;
+		$definition = $this->BarCodeDefinition->findById($id);
+		if($definition) {
+			$definition['BarCodeDefinition']['Cat1-name'] = $definition['Cat1']['name'];
+			$definition['BarCodeDefinition']['Cat2-name'] = $definition['Cat2']['name'];
+			$definition['BarCodeDefinition']['Cat3-name'] = $definition['Cat3']['name'];
+			return $definition['BarCodeDefinition'];			
 		}
-		$this->Session->setFlash(__('Bar code definition was not deleted', true), 'flash_failure');
-		$this->redirect(array('action' => 'index'));
+		else {
+			return array();
+		}	
 	}
 }
-?>
