@@ -22,8 +22,8 @@ class BarCodeDefinitionFixture extends CakeTestFixture {
 			'name' => 'Lorem ipsum dolor sit amet',
 			'number' => 1,
 			'cat_1' => 1,
-			'cat_2' => 1,
-			'cat_3' => 1,
+			'cat_2' => 3,
+			'cat_3' => 4,
 			'created' => '2011-10-04 11:42:00',
 			'modified' => '2011-10-04 11:42:00'
 		),
