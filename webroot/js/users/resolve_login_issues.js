@@ -1,6 +1,7 @@
 /**
  * @author dnolan
  */
+
 Ext.onReady(function(){
 	Ext.QuickTips.init();
 	var vals = null;
