@@ -235,10 +235,7 @@ var grid = new Ext.grid.GridPanel({
 			width: 100, 
 			sortable: true, 
 			dataIndex: 'description',
-			flex: 1,
-			renderer: function () {
-				return '<span style="color: #ccc">Hover mouse for full description</span>';
-			}
+			flex: 1
 		},
 		{ text: 'Deadline', width: 70, sortable: true, dataIndex: 'deadline' },
 		{ text: 'Expires', width: 70, sortable: true, dataIndex: 'expires' },
