@@ -27,8 +27,18 @@ class CareerSeekersSurveysController extends AppController {
     function success() {}
     
     function admin_index() {
-            $this->CareerSeekersSurvey->recursive = 0;
-            $this->set('careerSeekersSurveys', $this->paginate());
+        if ($this->RequestHandler->isAjax()) {
+            $surveys = $this->CareerSeekersSurvey->find('all');
+            $i = 0;
+            foreach ($surveys as $key => $value) {
+                    $value['CareerSeekersSurvey']['answers'] = json_decode($value['CareerSeekersSurvey']['answers'], true);
+                    $data['surveys'][] = $value['CareerSeekersSurvey'];
+                    $i++;
+            }
+
+            $this->set('data', $data);
+            return $this->render(null, null, '/elements/ajaxreturn');
+        }
     }
     
     function admin_read() {
@@ -45,19 +55,17 @@ class CareerSeekersSurveysController extends AppController {
     }
     
     function admin_destroy() {
-            $surveyId = str_replace("\"", "", $this->params['form']['surveys']);
-            $surveyId = intval($surveyId);
-			
-			
+            $surveyId = json_decode($this->params['form']['surveys'], true);
+            $surveyId = intval($surveyId['id']);
 
             if ($this->CareerSeekersSurvey->delete($surveyId)) {
                     $data['success'] = true;
-					$this->Transaction->createUserTransaction('CareerSeekersSurvey', null, null,
-	                                        'Delete survey ID ' . $surveyId);
+                    $this->Transaction->createUserTransaction('CareerSeekersSurvey', null, null,
+                                            'Delete survey ID ' . $surveyId);
             } else {
                     $data['success'] = false;
             }
-            
+
             $this->set('data', $data);
             return $this->render(null, null, '/elements/ajaxreturn');
     }

@@ -1,99 +1,114 @@
 /**
  * @author dnolan
  */
-
-var instructionId = null;
-
-var instructionStore = new Ext.data.JsonStore({
-	url: '/admin/program_instructions/index/' + programId,
-	autoLoad: true,
-	autoDestroy: true,
-	root: 'instructions',
-	idProperty: 'id',
-	fields: ['id', 'program_id', 'name', 'type', 'actions', 'text']
-});
-
-var instructionGrid = new Ext.grid.GridPanel({
-	store: instructionStore,
-	height: 210,
-	frame: true,
-	collapsible: true,
-	title: 'Program Instructions',
-	region: 'north',
-	columns: [{
-		header: 'Name',
-		dataIndex: 'name',
-		width: 250,
-		hideable: false,
-		sortable: false,
-		menuDisabled: true
-	}],
-	viewConfig: {
+Ext.onReady(function(){  
+	var instructionId = null;
+	
+	Ext.define('ProgramInstruction', {
+		extend: 'Ext.data.Model',
+		fields: ['id', 'program_id', 'name', 'type', 'actions', 'text']
+	});
+	
+	var instructionStore = Ext.create('Ext.data.Store', {
+		model: 'ProgramInstruction',
+		proxy: {
+			api:{
+				update: '/admin/program_instructions/edit/'
+			},
+			type: 'ajax',
+			url: '/admin/program_instructions/index/' + programId,
+			reader: {
+				type: 'json',
+				root: 'instructions'
+			},
+			writer: {
+				encode: true,
+				root: 'data[ProgramInstruction]',
+				writeAllFields: false
+			}	
+		},
+		autoLoad: true,
+		autoDestroy: true	
+	});
+	
+	var instructionGrid = Ext.create('Ext.grid.Panel', {
+		store: instructionStore,
+		height: 210,
 		forceFit: true,
-		scrollOffset: 0
-	},
-	sm: new Ext.grid.RowSelectionModel({singleSelect: true})
-});
-
-var editor = new Ext.form.HtmlEditor({
-	width: 600,
-	region: 'center',
-	bodyStyle: {
-		background: '#ffffff',
-		padding: '7px'
-	},
-	html: 'Please select a row to see instruction text.'		
-});
-
-var instructionPanel = new Ext.Panel({
-	frame: true,
-	width: 600,
-	height: 600,
-	layout: 'border',
-	items: [
-		instructionGrid,
-		editor		
-	],
-	fbar: [{	
-		text: 'Save',
-		disabled: true,
-		id: 'save',
-		icon:  '/img/icons/save.png',
-		handler: function() {
-			Ext.Msg.wait('Please wait', 'Status');
-			Ext.Ajax.request({
-			   url: '/admin/program_instructions/edit/' + instructionId,
-		        success: function(response, opts){			        	
-		        	var obj = Ext.decode(response.responseText);
-		        	if(obj.success) {
-		        		instructionStore.load();   	
+		frame: true,
+		collapsible: true,
+		title: 'Program Instructions',
+		region: 'north',
+		columns: [{
+			text: 'Name',
+			dataIndex: 'name',
+			width: 250,
+			hideable: false,
+			sortable: false,
+			menuDisabled: true
+		}],
+		selType: 'rowmodel'
+	});
+	
+	if(Ext.isIE) {
+		var editor = Ext.create('Ext.form.TextArea', {
+			width: 600,
+			region: 'center',
+			value: 'Please select a row in the grid above to edit instructions.'	
+		});		
+	}
+	else {
+		var editor = Ext.create('Ext.form.HtmlEditor', {
+			width: 600,
+			region: 'center',
+			value: 'Please select a row in the grid above to edit instructions.'	
+		});	
+	}	
+	
+	var instructionPanel = Ext.create('Ext.panel.Panel', {
+		frame: true,
+		renderTo: 'instructions',
+		width: 600,
+		height: 600,
+		layout: 'border',
+		items: [
+			instructionGrid,
+			editor		
+		],
+		fbar: [{	
+			text: 'Save',
+			disabled: true,
+			id: 'save',
+			icon:  '/img/icons/save.png',
+			handler: function() {
+				Ext.Msg.wait('Please wait', 'Status');
+				var record = instructionGrid.getSelectionModel().getLastSelected();
+				record.set('text', editor.getValue());
+				if(record.dirty) {
+					instructionStore.sync();	
+				}
+				else {
+					Ext.Msg.alert('Failure', 'Data has not changed.');
+				}						
+				instructionStore.on('write', function(store, operation, eOpts){
+					var obj = Ext.JSON.decode(operation.response.responseText);
+		        	if(obj.success) { 	
 						Ext.Msg.alert('Success', obj.message);					        		
 		        	}
 		        	else {
-		        		opts.failure();
-		        	}		            
-		        },
-		        failure: function(response, opts){
-		        	var obj = Ext.decode(response.responseText);
-		            Ext.Msg.alert('Error', obj.message);
-		        },
-			   params: { 
-				'data[ProgramInstruction][id]': instructionId, 
-				'data[ProgramInstruction][text]': editor.getValue()
-			   }
-			});			
+		        		Ext.Msg.alert('Failure', obj.message);
+		        	}					
+				});		
+			}
+		}]
+	});
+	
+	instructionGrid.getSelectionModel().on('select', function(rm, record, index, eOpts) {
+		if(!record.data.text) {
+			record.data.text = ''
 		}
-	}]
-});
-
-instructionGrid.getSelectionModel().on('rowselect', function(sm, rowIdx, r) {
-	if(!r.data.text) {
-		r.data.text = ''
-	}
-	instructionId = r.data.id;
-	editor.setValue(r.data.text);
-	Ext.getCmp('save').enable();
-});
-Ext.onReady(function(){  	
-	instructionPanel.render('instructions');
+		instructionId = record.data.id;
+		editor.setValue(record.data.text);
+		Ext.getCmp('save').enable();
+	});
 });

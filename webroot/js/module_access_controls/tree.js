@@ -6,33 +6,35 @@
 
 moduleAccessControl = {
   init: function() {
-    var loadingMask = new Ext.LoadMask('moduleAccessControlPanel', {
-      msg: 'Loading...'
+    var macStore;
+    
+    Ext.define('ModuleAccessControl', {
+    	extend: 'Ext.data.Model',
+    	fields: [ 'text' ]
+    });
+    
+    macStore = Ext.create('Ext.data.TreeStore', {
+    	model: 'ModuleAccessControl',
+    	root: {
+    		text: 'Modules',
+    		expanded: true
+    	},
+    	proxy: {
+    		type: 'ajax',
+    		url: '/admin/module_access_controls/read'
+    	}
     });
 
-    this.moduleAccessControlPanel = new Ext.tree.TreePanel({
+    this.moduleAccessControlPanel = Ext.create('Ext.tree.Panel', {
       renderTo: 'moduleAccessControlPanel',
       title: 'Module Access Control',
-      height: 300,
-      useArrows: true,
+      store: macStore,
+      height: 550,
       autoScroll: true,
-      animate: true,
-      enableDD: false,
-      containerScroll: true,
       rootVisible: false,
       frame: true,
-      dataUrl: '/admin/module_access_controls/read',
-      root: {
-        nodeType: 'async'
-      },
 
       listeners: {
-        beforeload: function() {
-          loadingMask.show();
-        },
-        load: function() {
-          loadingMask.hide();
-        },
         checkchange: function(node, checked) {
           if (checked) {
             // send activated
@@ -40,7 +42,7 @@ moduleAccessControl = {
               url: '/admin/module_access_controls/update',
               method: 'POST',
               params: {
-                module: node.text,
+                module: node.data.text,
                 state: 0
               },
               failure: function(response, opts) {
@@ -53,7 +55,7 @@ moduleAccessControl = {
               url: '/admin/module_access_controls/update',
               method: 'POST',
               params: {
-                module: node.text,
+                module: node.data.text,
                 state: 1
               },
               failure: function(response, opts) {

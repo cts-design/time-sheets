@@ -331,7 +331,9 @@ class FiledDocumentsController extends AppController {
 				$conditions = array('User.role_id >' => 2);
 			}
 			$this->FiledDocument->User->recursive = -1;
-			$admins = $this->FiledDocument->User->find('all', array('conditions' => $conditions));		
+			$admins = $this->FiledDocument->User->find('all', array(
+				'conditions' => $conditions,
+				'order' => array('User.lastname' => 'ASC')));		
 			if($admins) {
 				$i = 0;
 				foreach($admins as $admin) {
@@ -402,29 +404,29 @@ class FiledDocumentsController extends AppController {
 		if(isset($this->params['url']['filters'])){
 			$filters = json_decode($this->params['url']['filters'], true);
 
-            if (isset($filters['searchType1'])) {
-                if ($filters['searchType1'] == 'firstname' && (!empty($filters['cusSearch1']))) {
+            if (isset($filters['cusSearchType1'])) {
+                if ($filters['cusSearchType1'] == 'firstname' && (isset($filters['cusSearch1']))) {
                     if ($filters['cusScope1'] === 'containing') {
                         $conditions['User.firstname LIKE'] = '%'. $filters['cusSearch1'] . '%';
                     } else {
                         $conditions['User.firstname'] = $filters['cusSearch1'];
                     }
                 }
-                if($filters['searchType1'] == 'fullssn' && (!empty($filters['cusSearch1']))) {
+                if($filters['cusSearchType1'] == 'fullssn' && (isset($filters['cusSearch1']))) {
                     if ($filters['cusScope1'] === 'containing') {
                         $conditions['User.ssn LIKE'] = '%'.$filters['cusSearch1'].'%';
                     } else {
                         $conditions['User.ssn'] = $filters['cusSearch1'];
                     }
                 }
-                if($filters['searchType1'] == 'last4' && (!empty($filters['cusSearch1']))) {
+                if($filters['cusSearchType1'] == 'last4' && (isset($filters['cusSearch1']))) {
                     if ($filters['cusScope1'] === 'containing') {
                         $conditions['RIGHT (User.ssn , 4) LIKE'] = '%'.$filters['cusSearch1'].'%';
                     } else {
                         $conditions['RIGHT (User.ssn , 4)'] = $filters['cusSearch1'];
                     }
                 }
-                if($filters['searchType1'] == 'lastname' && (!empty($filters['cusSearch1']))) {
+                if($filters['cusSearchType1'] == 'lastname' && (isset($filters['cusSearch1']))) {
                     if ($filters['cusScope1'] === 'containing') {
                         $conditions['User.lastname LIKE'] = '%'. $filters['cusSearch1'] . '%';
                     } else {
@@ -433,29 +435,29 @@ class FiledDocumentsController extends AppController {
                 }
             }
 
-            if (isset($filters['searchType2'])) {
-                if ($filters['searchType2'] == 'firstname' && (!empty($filters['cusSearch2']))) {
+            if (isset($filters['cusSearchType2'])) {
+                if ($filters['cusSearchType2'] == 'firstname' && (isset($filters['cusSearch2']))) {
                     if ($filters['cusScope2'] === 'containing') {
                         $conditions['User.firstname LIKE'] = '%'. $filters['cusSearch2'] . '%';
                     } else {
                         $conditions['User.firstname'] = $filters['cusSearch2'];
                     }
                 }
-                if($filters['searchType2'] == 'fullssn' && (!empty($filters['cusSearch2']))) {
+                if($filters['cusSearchType2'] == 'fullssn' && (isset($filters['cusSearch2']))) {
                     if ($filters['cusScope2'] === 'containing') {
                         $conditions['User.ssn LIKE'] = '%'.$filters['cusSearch2'].'%';
                     } else {
                         $conditions['User.ssn'] = $filters['cusSearch2'];
                     }
                 }
-                if($filters['searchType2'] == 'last4' && (!empty($filters['cusSearch2']))) {
+                if($filters['cusSearchType2'] == 'last4' && (isset($filters['cusSearch2']))) {
                     if ($filters['cusScope2'] === 'containing') {
                         $conditions['RIGHT (User.ssn , 4) LIKE'] = '%'.$filters['cusSearch2'].'%';
                     } else {
                         $conditions['RIGHT (User.ssn , 4)'] = $filters['cusSearch2'];
                     }
                 }
-                if($filters['searchType2'] == 'lastname' && (!empty($filters['cusSearch2']))) {
+                if($filters['cusSearchType2'] == 'lastname' && (isset($filters['cusSearch2']))) {
                     if ($filters['cusScope2'] === 'containing') {
                         $conditions['User.lastname LIKE'] = '%'. $filters['cusSearch2'] . '%';
                     } else {
@@ -463,22 +465,30 @@ class FiledDocumentsController extends AppController {
                     }
                 }
             }
-			if(!empty($filters['fromDate']) && !empty($filters['toDate'])){
+			if(isset($filters['fromDate']) && isset($filters['toDate'])){
 				$from = date('Y-m-d H:i:m', strtotime($filters['fromDate'] . '12:00 AM'));
 				$to = date('Y-m-d H:i:m', strtotime($filters['toDate'] . '11:59 PM'));
 				$conditions['FiledDocument.created BETWEEN ? AND ?'] = array($from, $to);
-			}				
-			$conditions['FiledDocument.filed_location_id'] = $filters['filed_location_id'];
-			$conditions['FiledDocument.admin_id'] = $filters['admin_id'];
-			$conditions['FiledDocument.cat_1'] = $filters['cat_1'];
+			}
+			if(isset($filters['filed_location_id'])){
+				$conditions['FiledDocument.filed_location_id'] = $filters['filed_location_id'];
+			}			
+			if(isset($filters['admin_id'])){
+				$conditions['FiledDocument.admin_id'] = $filters['admin_id'];
+			}
+			if(isset($filters['cat_1'])){
+				$conditions['FiledDocument.cat_1'] = $filters['cat_1'];
+			}
 			if(isset($filters['cat_2'])) 
 				$conditions['FiledDocument.cat_2'] = $filters['cat_2'];
 			if(isset($filters['cat_3'])) 
 				$conditions['FiledDocument.cat_3'] = $filters['cat_3'];
-			foreach($conditions as $k => $v) {
-				if(empty($v)){
-					unset($conditions[$k]);
-				}
+			if(isset($conditions))	 {
+				foreach($conditions as $k => $v) {
+					if(empty($v)){
+						unset($conditions[$k]);
+					}
+				}					
 			}
 		}
 		if(!empty($conditions)) {

@@ -37,19 +37,16 @@ class EmployersSurveysController extends AppController {
 		foreach ($surveys as $key => $value) {
 			$value['EmployersSurvey']['answers'] = json_decode($value['EmployersSurvey']['answers'], true);
 			$data['surveys'][] = $value['EmployersSurvey'];
-			debug($value['EmployersSurvey']['answers']);
 			$i++;
 		}
-		
-		debug($data);
 		
 		$this->set('data', $data);
 		return $this->render(null, null, '/elements/ajaxreturn');
 	}
 	
 	function admin_destroy() {
-		$surveyId = str_replace("\"", "", $this->params['form']['surveys']);
-		$surveyId = intval($surveyId);
+		$surveyId = json_decode($this->params['form']['surveys'], true);
+		$surveyId = intval($surveyId['id']);
 
 		if ($this->EmployersSurvey->delete($surveyId)) {
 			$data['success'] = true;

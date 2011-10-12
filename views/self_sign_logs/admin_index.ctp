@@ -7,8 +7,8 @@
  */
 ?>
 
-<?php echo $this->Html->css('ext/superboxselect', 'stylesheet', array('inline' => false)); ?>
-<?php echo $this->Html->script('ext/ux/SuperBoxSelect', array('inline' => false)); ?>
+<?php echo $this->Html->css('/js/ext/resources/css/BoxSelect', 'stylesheet', array('inline' => false)); ?>
+<?php echo $this->Html->script('ext/ux/BoxSelect', array('inline' => false)); ?>
 <?php echo $this->Html->script('self_sign_logs/index', array('inline' => false)); ?>
 <div id="crumbWrapper">
     <span><?php __('You are here') ?> > </span>

@@ -8,6 +8,34 @@
 var searchPanel = {
   init: function() {
     var windowUrl = window.location.pathname.replace(/\/page\:\d+/g, '');
+    
+    Ext.define('SearchType', {
+		extend: 'Ext.data.Model',
+		fields: [ 'type', 'label' ]
+    });
+    
+    Ext.define('Scope', {
+    	extend: 'Ext.data.Model',
+    	fields: [ 'scope', 'label' ]
+    });
+    
+    var searchFieldStore = Ext.create('Ext.data.Store', {
+    	model: 'SearchType',
+    	data: [
+    		{ 'type': 'firstname', 'label': 'First Name' },
+    		{ 'type': 'lastname',  'label': 'Last Name' },
+    		{ 'type': 'fullssn',   'label': 'Full SSN' },
+    		{ 'type': 'last4',     'label': 'Last 4 SSN' }
+    	]
+    });
+    
+    var searchScopeStore = Ext.create('Ext.data.Store', {
+    	model: 'Scope',
+    	data: [
+    		{ 'scope': 'containing', 'label': 'Containing' },
+    		{ 'scope': 'matching exactly', 'label': 'Matching Exactly' }
+    	]
+    });
 
     this.form = new Ext.FormPanel({
       id: 'searchFormPanel',
@@ -17,31 +45,34 @@ var searchPanel = {
       collapsible: true,
       standardSubmit: true,
       url: windowUrl,
-      bodyStyle: 'padding: 5px',
+      bodyStyle: 'padding: 5px; background-color: #DFE9F6; border: 0',
       defaults: {
+      	bodyStyle: 'background-color: #DFE9F6; border: 0'
       },
       items: [{
         layout: 'column',
         defaults: {
           columnWidth: 0.33,
-          layout: 'form',
+          layout: 'anchor',
           border: false,
-          bodyStyle: 'padding: 0 18px'
+          bodyStyle: 'padding: 0 18px; background-color: #DFE9F6; border: 0'
         },
         items: [{
           defaults: {
             anchor: '100%',
-            hideLabel: true
+            hideLabel: true,
+            bodyStyle: 'background-color: #DFE9F6; border: 0'
           },
           items: [{
             html: 'Search for:'
           },{
             xtype: 'combo',
-            mode: 'local',
+            queryMode: 'local',
             id: 'SearchBy1',
             name: 'search_by1',
-            hiddenName: 'search_by1',
-            store: [['firstname', 'First Name'], ['lastname', 'Last Name'], ['fullssn', 'Full SSN'], ['last4', 'Last 4 SSN']],
+            store: searchFieldStore,
+            valueField: 'type',
+            displayField: 'label',
             triggerAction: 'all',
             allowBlank: false,
             listeners: {
@@ -50,17 +81,17 @@ var searchPanel = {
                 searchFullSsn1  = Ext.getCmp('SearchFullSsn1'),
                 searchLast41    = Ext.getCmp('SearchLast41');
 
-                if (record.data.field1 === 'firstname' || record.data.field1 === 'lastname') {
+                if (record[0].data.type === 'firstname' || record[0].data.type === 'lastname') {
                   searchTerm1.enable().show()
                   searchFullSsn1.disable().hide();
                   searchLast41.disable().hide();
                 }
-                if (record.data.field1 === 'fullssn') {
+                if (record[0].data.type === 'fullssn') {
                   searchTerm1.disable().hide()
                   searchFullSsn1.enable().show();
                   searchLast41.disable().hide();
                 }
-                if (record.data.field1 === 'last4') {
+                if (record[0].data.type === 'last4') {
                   searchTerm1.disable().hide()
                   searchFullSsn1.disable().hide();
                   searchLast41.enable().show();
@@ -69,11 +100,12 @@ var searchPanel = {
             }
           },{
             xtype: 'combo',
-            mode: 'local',
+            queryMode: 'local',
             id: 'SearchBy2',
             name: 'search_by2',
-            hiddenName: 'search_by2',
-            store: [['firstname', 'First Name'], ['lastname', 'Last Name'], ['fullssn', 'Full SSN'], ['last4', 'Last 4 SSN']],
+            store: searchFieldStore,
+            valueField: 'type',
+            displayField: 'label',
             triggerAction: 'all',
             listeners: {
               select: function(combo, record, index) {
@@ -82,18 +114,18 @@ var searchPanel = {
                 searchLast42    = Ext.getCmp('SearchLast42'),
                 whereIs2        = Ext.getCmp('SearchScope2');
 
-                if (record.data.field1 === 'firstname' || record.data.field1 === 'lastname') {
+                if (record[0].data.type === 'firstname' || record[0].data.type === 'lastname') {
                   searchTerm2.allowBlank = false;
                   searchTerm2.enable().show();
                   searchFullSsn2.disable().hide();
                   searchLast42.disable().hide();
                 }
-                if (record.data.field1 === 'fullssn') {
+                if (record[0].data.type === 'fullssn') {
                   searchTerm2.disable().hide();
                   searchFullSsn2.enable().show().allowBlank = false;
                   searchLast42.disable().hide();
                 }
-                if (record.data.field1 === 'last4') {
+                if (record[0].data.type === 'last4') {
                   searchTerm2.disable().hide();
                   searchFullSsn2.disable().hide();
                   searchLast42.enable().show().allowBlank = false;
@@ -119,24 +151,28 @@ var searchPanel = {
         },{
           defaults: {
             anchor: '100%',
-            hideLabel: true
+            hideLabel: true,
+            bodyStyle: 'background-color: #DFE9F6; border: 0'
           },
           items: [{
             html: 'Where is:'
           },{
             xtype: 'combo',
-            store: ['containing','matching exactly'],
+            store: searchScopeStore,
+            queryMode: 'local',
+            valueField: 'scope',
+            displayField: 'label',
             id: 'SearchScope1',
             name: 'search_scope1',
             triggerAction: 'all',
             allowBlank: false,
             listeners: {
               select: function(combo, record, index) {
-                if (record.data.field1 === 'containing') {
+                if (record[0].data.scope === 'containing') {
                   Ext.getCmp('SearchFullSsn1').minLength = 3;
                   Ext.getCmp('SearchLast41').minLength = 1;
                 }
-                if (record.data.field1 === 'matching exactly') {
+                if (record[0].data.scope === 'matching exactly') {
                   Ext.getCmp('SearchFullSsn1').minLength = 9;
                   Ext.getCmp('SearchLast41').minLength = 4;
                 }
@@ -144,17 +180,20 @@ var searchPanel = {
             }
           },{
             xtype: 'combo',
-            store: ['containing','matching exactly'],
+            store: searchScopeStore,
+            valueField: 'scope',
+            queryMode: 'local',
+            displayField: 'label',
             id: 'SearchScope2',
             name: 'search_scope2',
             triggerAction: 'all',
             listeners: {
               select: function(combo, record, index) {
-                if (record.data.field1 === 'containing') {
+                if (record[0].data.scope === 'containing') {
                   Ext.getCmp('SearchFullSsn2').minLength = 3;
                   Ext.getCmp('SearchLast42').minLength = 1;
                 }
-                if (record.data.field1 === 'matching exactly') {
+                if (record[0].data.scope === 'matching exactly') {
                   Ext.getCmp('SearchFullSsn2').minLength = 9;
                   Ext.getCmp('SearchLast42').minLength = 4;
                 }
@@ -164,7 +203,8 @@ var searchPanel = {
         },{
           defaults: {
             anchor: '100%',
-            hideLabel: true
+            hideLabel: true,
+            bodyStyle: 'background-color: #DFE9F6; border: 0'
           },
           items: [{
             html: 'Search term:'
@@ -233,7 +273,6 @@ var searchPanel = {
       }],
       listeners: {
         afterrender: function (panel) {
-          console.log(panel);
           var form = panel.getForm();
 
           form.setValues({
@@ -254,5 +293,6 @@ var searchPanel = {
 
 Ext.onReady(function() {
   Ext.QuickTips.init();
+  Ext.Compat.showErrors = true;
   searchPanel.init();
 });

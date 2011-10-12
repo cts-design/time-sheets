@@ -18,69 +18,145 @@ class HotJobsController extends AppController {
 		$this->set('hotJobs', $this->paginate());
 	}
 
-	function admin_add() {
-		if (!empty($this->data)) {
-			if ($this->data['HotJob']['file']['error'] === 4) {
-				unset($this->data['HotJob']['file']);
-			} else {
-				$file = $this->_uploadFile();
-	            if (!$file) {
-	                $this->Session->setFlash(__('The file could not be uploaded. Please, try again.', true), 'flash_failure');
-	                $this->redirect(array('action' => 'index'));
-	            }
-	            $this->data['HotJob']['file'] = Router::url('/', true) . $file;	
+  function admin_create() {
+		if ($this->RequestHandler->isAjax()) {
+		  FireCake::log($this->params);
+			if (!empty($this->params)) {
+				$this->data['HotJob'] = json_decode($this->params['form']['hot_jobs'], true);
+
+				$this->HotJob->create();
+				if ($this->HotJob->save($this->data)) {
+					$id = $this->HotJob->getLastInsertId();
+					$rfp = $this->HotJob->read(null, $id);
+					$this->Transaction->createUserTransaction('HotJob', null, null,
+                                        'Created rfp ID ' . $this->HotJob->id);
+
+					$data['hot_jobs'][] = $rfp['HotJob'];
+					$data['success'] = true;
+				} else {
+					$data['success'] = false;
+				}
+				$this->set(compact('data'));
 			}
-			$this->HotJob->create();
 			
-			if ($this->HotJob->save($this->data)) {
-				$this->Transaction->createUserTransaction('CMS', null, null,
-                                        'Created hot job ID ' . $this->HotJob->id);
-				$this->Session->setFlash(__('The hot job has been saved', true), 'flash_success');
-				$this->redirect(array('action' => 'index'));
+			return $this->render(null, null, '/elements/ajaxreturn');
+		} else {
+			FireCake::log($this->params);
+			exit;
+		}
+	}
+	
+	function admin_read() {
+		if ($this->RequestHandler->isAjax()) {
+			$hot_jobs = array();
+			$allHotJobs = $this->HotJob->find('all');
+			
+			if (!$allHotJobs) {
+				$hot_jobs['success'] = false;
 			} else {
-				$this->Session->setFlash(__('The hot job could not be saved. Please, try again.', true), 'flash_failure');
+				$i = 0;
+				foreach ($allHotJobs as $rfp) {
+					$hot_jobs['hot_jobs'][$i] = $rfp['HotJob'];
+					$i++;
+				}
+				
+				$hot_jobs['success'] = true;
+				$hot_jobs['total'] = count($hot_jobs);
 			}
-		}
+			
+			$this->set('data', $hot_jobs);
+			$this->render(null, null, '/elements/ajaxreturn');
+		}		
 	}
-
-	function admin_edit($id = null) {
-		if (!$id && empty($this->data)) {
-			$this->Session->setFlash(__('Invalid hot job', true), 'flash_failure');
-			$this->redirect(array('action' => 'index'));
-		}
-		if (!empty($this->data)) {
-			if ($this->data['HotJob']['file']['error'] === 4) {
-				unset($this->data['HotJob']['file']);
+	
+	function admin_update() {
+		if ($this->RequestHandler->isAjax()) {
+			if (!empty($this->params)) {
+				$this->data['HotJob'] = json_decode($this->params['form']['hot_jobs'], true);
+				
+				if ($this->HotJob->save($this->data)) {
+					$this->Transaction->createUserTransaction('HotJob', null, null,
+                                        'Updated rfp ID ' . $this->HotJob->id);
+					$rfp = $this->HotJob->read(null, $this->data['HotJob']['id']);
+					$data['hot_jobs'] = $rfp['HotJob'];
+					$data['success'] = true;
+				} else {
+					$data['success'] = false;
+				}
+				$this->set(compact('data'));
 			}
+			
+			return $this->render(null, null, '/elements/ajaxreturn');
+		} else {
+			exit;
+		}		
+	}
+	
+	function admin_destroy() {
+		if ($this->RequestHandler->isAjax()) {
+			$rfpId = json_decode($this->params['form']['hot_jobs'], true);
 
-			if ($this->HotJob->save($this->data)) {
-				$this->Transaction->createUserTransaction('CMS', null, null,
-                                        'Edited hot job ID ' . $id);
-				$this->Session->setFlash(__('The hot job has been saved', true), 'flash_success');
-				$this->redirect(array('action' => 'index'));
+			if ($this->HotJob->delete($rfpId)) {
+				$this->Transaction->createUserTransaction('HotJob', null, null,
+                                        'Deleted rfp ID ' . $this->HotJob->id);
+				$data['success'] = true;
 			} else {
-				$this->Session->setFlash(__('The hot job could not be saved. Please, try again.', true), 'flash_failure');
+				$data['success'] = false;
 			}
-		}
-		if (empty($this->data)) {
-			$this->data = $this->HotJob->read(null, $id);
+			
+			$this->set('data', $data);
+			return $this->render(null, null, '/elements/ajaxreturn');
+		} else {
+			exit;
 		}
 	}
-
-	function admin_delete($id = null) {
-		if (!$id) {
-			$this->Session->setFlash(__('Invalid id for hot job', true), 'flash_failure');
-			$this->redirect(array('action'=>'index'));
-		}
-		if ($this->HotJob->delete($id)) {
-			$this->Transaction->createUserTransaction('CMS', null, null,
-                                        'Deleted hot job ID ' . $id);
-			$this->Session->setFlash(__('Hot job deleted', true), 'flash_success');
-			$this->redirect(array('action'=>'index'));
-		}
-		$this->Session->setFlash(__('Hot job was not deleted', true), 'flash_failure');
-		$this->redirect(array('action' => 'index'));
-	}
+	
+	function admin_upload() {
+		// although this function doesnt get called from ajax,
+		// we need to return our data without a layout so that
+		// ext file upload doesnt break
+		$this->layout = 'ajax';
+		
+		// get the document relative path to the inital storage folder
+	    $abs_path = WWW_ROOT . 'files/public/hot_jobs/';
+	    $rel_path = 'files/public/hot_jobs/';
+	    $file_ext = '';
+	    $filename = '';
+		
+	    switch($_FILES['file']['type']) {
+	        case 'application/pdf':
+	            $file_ext = '.pdf';
+	            break;
+	        case 'application/msword':
+	            $file_ext = '.doc';
+	            break;
+	        case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+	            $file_ext = '.docx';
+	            break;
+	    }
+	
+	    $filename = date('YmdHis') . $file_ext;
+	
+	    // check to see if the directory exists
+	    if (!is_dir($abs_path)) {
+	        mkdir($abs_path);
+	    }
+	
+	    if (!file_exists($abs_path . $filename)) {
+	        $full_url = $abs_path . $filename;
+	        $url = $rel_path . $filename;
+	
+	        if (!move_uploaded_file($_FILES['file']['tmp_name'], $url)) {
+	            $data['success'] = false;
+			} else {
+				$data['success'] = true;
+				$data['url'] = $url;
+			}
+	    }
+	
+		$this->set(compact('data'));
+		return $this->render(null, null, '/elements/ajaxreturn');
+	}	
 	
 	function apply($jobId) {
 		if (!$jobId) {
@@ -98,43 +174,5 @@ class HotJobsController extends AppController {
 		
 		$this->set(compact('job'));
 	}
-	
-    function _uploadFile() {
-        // get the document relative path to the inital storage folder
-        $abs_path = WWW_ROOT . 'files/public/hot_jobs/';
-        $rel_path = 'files/public/hot_jobs/';
-        $file_ext = '';
-        $filename = '';
-
-        switch($this->data['HotJob']['file']['type']) {
-            case 'application/pdf':
-                $file_ext = '.pdf';
-                break;
-            case 'application/msword':
-                $file_ext = '.doc';
-                break;
-            case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-                $file_ext = '.docx';
-                break;
-        }
-		
-        $filename = date('YmdHis') . $file_ext;
-
-        // check to see if the directory exists
-        if (!is_dir($abs_path)) {
-            mkdir($abs_path);
-        }
-
-        if (!file_exists($abs_path . $filename)) {
-            $full_url = $abs_path . $filename;
-            $url = $rel_path . $filename;
-
-            if (!move_uploaded_file($this->data['HotJob']['file']['tmp_name'], $url)) {
-                return false;
-            }
-        }
-
-        return $url;
-    }
 }
 ?>

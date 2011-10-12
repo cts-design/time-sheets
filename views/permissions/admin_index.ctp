@@ -8,7 +8,8 @@
 ?>
 <script type="text/javascript">
 	Ext.onReady(function(){
-		var PermissionTabs = new Ext.TabPanel({
+		Ext.QuickTips.init();
+		var PermissionTabs = Ext.create('Ext.TabPanel', {
 			activeTab: 0,
 			bodyStyle: 'padding: 10px',
 			renderTo: 'PermissionTabs',

@@ -24,18 +24,21 @@
 
 	echo $this->Html->css('ui-redmond/jquery-ui-1.8.10.custom');
 
-    echo $this->Html->css('ext/ext-all');
-	
-	echo $this->Html->css('ext/RowEditor');
-	
-	echo $this->Html->css('ext/atlas');
+	if ($this->params['controller'] === 'events' && $this->params['admin']) {
+		echo $this->Html->css('ext/ext-all');	
+	} else {
+		echo $this->Html->css('/js/ext/resources/css/ext-all');
+	}
 
 	echo $this->Html->css('admin');
-	
-	echo $this->Html->script('ext/adapter/ext/ext-base-debug');
-	
-	echo $this->Html->script('ext-all-debug');
-	
+
+	if ($this->params['controller'] === 'events' && $this->params['admin']) {
+		echo $this->Html->script('ext/adapter/ext/ext-base');
+		echo $this->Html->script('ext-all');
+	} else {
+        echo $this->Html->script('/js/ext/bootstrap');
+	}
+
 	echo $this->Html->script('atlas');
 
 	echo $this->Html->script('https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js');
