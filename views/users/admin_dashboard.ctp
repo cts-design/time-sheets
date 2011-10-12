@@ -51,17 +51,18 @@
 			<li rel="settings" id="settings">
                 <a><?php __('Settings') ?></a>
 			    <ul>
-				<li rel="settings_1"><?php echo $html->link(__('Locations', true), array('controller' => 'locations', 'action' => 'index')); ?></li>
-				<li rel="settings_1"><?php echo $html->link(__('Roles', true), array('controller' => 'roles', 'action' => 'index')) ?></li>
-				<li rel="settings_1"><?php echo $html->link(__('Self Sign Kiosk/Location Settings', true), array('controller' => 'kiosks', 'action' => 'index')) ?></li>
-				<li rel="settings_1"><?php echo $html->link(__('Master Kiosk Buttons', true), array('controller' => 'master_kiosk_buttons', 'action' => 'index')) ?></li>
-				<li rel="settings_1"><?php echo $html->link(__('Document Filing Categories', true), array('controller' => 'document_filing_categories', 'action' => 'index')) ?></li>
-				<li rel="settings_1"><?php echo $html->link(__('FTP Document Scanners', true), array('controller' => 'ftp_document_scanners', 'action' => 'index')) ?></li>
+				<li rel="settings_1"><?php echo $html->link(__('Bar Code Definitions', true), array('controller' => 'bar_code_definitions', 'action' => 'index')) ?></li>			    	
+			    <li rel="settings_1"><?php echo $html->link(__('Document Filing Categories', true), array('controller' => 'document_filing_categories', 'action' => 'index')) ?></li>	
 				<li rel="settings_1"><?php echo $html->link(__('Document Queue Categories', true), array('controller' => 'document_queue_categories', 'action' => 'index')) ?></li>
-				<li rel="settings_1"><?php echo $html->link(__('Self Scan Categories', true), array('controller' => 'self_scan_categories', 'action' => 'index')) ?></li>
+				<li rel="settings_1"><?php echo $html->link(__('FTP Document Scanners', true), array('controller' => 'ftp_document_scanners', 'action' => 'index')) ?></li>
+				<li rel="settings_1"><?php echo $html->link(__('Locations', true), array('controller' => 'locations', 'action' => 'index')); ?></li>
+				<li rel="settings_1"><?php echo $html->link(__('Master Kiosk Buttons', true), array('controller' => 'master_kiosk_buttons', 'action' => 'index')) ?></li>
                 <?php if ($this->Session->read('Auth.User.role_id') == 2): ?>
 				<li rel="settings_1"><?php echo $html->link(__('Module Access Control', true), array('controller' => 'module_access_controls', 'action' => 'index')) ?></li>
-                <?php endif; ?>
+                <?php endif; ?>				
+				<li rel="settings_1"><?php echo $html->link(__('Roles', true), array('controller' => 'roles', 'action' => 'index')) ?></li>
+				<li rel="settings_1"><?php echo $html->link(__('Self Scan Categories', true), array('controller' => 'self_scan_categories', 'action' => 'index')) ?></li>
+				<li rel="settings_1"><?php echo $html->link(__('Self Sign Kiosk/Location Settings', true), array('controller' => 'kiosks', 'action' => 'index')) ?></li>			
                 </ul>
 			</li>
 		    <?php }?>

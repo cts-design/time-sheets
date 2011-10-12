@@ -5,6 +5,25 @@
  * @package Atlas V3
  */
 
+// Kludge to fix not being able to type spaces in context menu text fields 
+Ext.override(Ext.menu.KeyNav, {
+    constructor: function(menu) {
+        var me = this;
+        me.menu = menu;
+        me.callParent([menu.el, {
+            down: me.down,
+            enter: me.enter,
+            esc: me.escape,
+            left: me.left,
+            right: me.right,
+            //space: me.enter,
+            tab: me.tab,
+            up: me.up
+        }]);
+    }
+});
+
+
 Ext.onReady( function() {
 
 	var rowIndex = null,

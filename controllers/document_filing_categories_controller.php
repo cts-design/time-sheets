@@ -260,8 +260,8 @@ class DocumentFilingCategoriesController extends AppController {
 			$this->set(compact('data'));
 			return $this->render(null, null, '/elements/ajaxreturn');
 		}
-    }	
-	
+    }
+			
 	// @TODO remove this function when we switch the entire admin area to EXTJS 
     function admin_get_child_cats() {
 		if($this->RequestHandler->isAjax()) {

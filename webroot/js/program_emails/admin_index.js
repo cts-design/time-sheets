@@ -104,13 +104,23 @@ Ext.onReady(function(){
 		}
 	});
 	
-	var editor = Ext.create('Ext.form.HtmlEditor', {
-		region: 'south',
-		height: 300,
-		frame: true,
-		value: 'Please select a row to see the email body.'	
-	});
-	
+	if(Ext.isIE) {
+		var editor = Ext.create('Ext.form.TextArea', {
+			region: 'south',
+			height: 300,
+			frame: true,
+			value: 'Please select a row to see the email body.'	
+		});		
+	}
+	else {
+		var editor = Ext.create('Ext.form.HtmlEditor', {
+			region: 'south',
+			height: 300,
+			frame: true,
+			value: 'Please select a row to see the email body.'	
+		});		
+	}
+		
 	var formPanel = Ext.create('Ext.form.Panel', {
 		frame: true,
 		fieldDefaults: {

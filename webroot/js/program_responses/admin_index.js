@@ -19,46 +19,39 @@ Ext.onReady(function() {
 			dateFormat : 'Y-m-d H:i:s'
 		}, 'conformation_id', 'actions', 'notes']	
 	});
-
-	var programResponseStore = Ext.create('Ext.data.Store', {
-		storeId : 'programResponseStore',
-		model: 'ProgramResponse',
-		autoLoad: true,
-		pageSize: itemsPerPage,
-		proxy : {
-			type: 'ajax', 
-			url : '/admin/program_responses/index/' + progId,
-			reader: {
-				type: 'json',
-				root : 'responses',
-				totalProperty: 'totalCount'
-			},
-			extraParams : {
-				page : 1,
-				tab : 'open',
-				dateFrom : '',
-				dateTo : '',
-				id : '',
-				searchType : '',
-				search : ''
-			}
+	
+	var programResponseProxy = Ext.create('Ext.data.proxy.Ajax', {
+		url : '/admin/program_responses/index/' + progId,
+		reader: {
+			type: 'json',
+			root : 'responses',
+			totalProperty: 'totalCount'
 		},
-		remoteSort : true,
-		paramNames : {
-			start : 'start',
-			limit : 'limit',
-			sort : 'sort',
-			dir : 'direction'
-		}
+		extraParams : {
+			page : 1,
+			tab : '',
+			dateFrom : '',
+			dateTo : '',
+			id : '',
+			searchType : '',
+			search : ''
+		},
+		directionParam : 'direction',
+		simpleSortMode: true	
 	});
 	
 	Ext.define('Atlas.grid.ProgramResponsePanel', {
 		extend: 'Ext.grid.Panel',
 		forceFit : true,
-		store : programResponseStore,
 		height : 300,
 		width : 500,
 		frame : true,
+		store: {
+			model: 'ProgramResponse',
+			proxy: programResponseProxy,
+			pageSize: itemsPerPage,
+			remoteSort : true			
+		},
 		columns: [{
 			text : 'Id',
 			dataIndex : 'id',
@@ -89,18 +82,19 @@ Ext.onReady(function() {
 			sortable : true
 		}, {
 			text : 'Actions',
-			dataIndex : 'actions'
+			dataIndex : 'actions',
+			width: 150
 		}],
 		viewConfig : {
 			deferEmptyText: false,
-			loadMask: false, // FIXME enable this after finding a fix to prevent duplicate load masks
+			loadMask: true,
 			emptyText : 'No responses at this time.'
 		},	
 		selType: 'rowmodel',
 		listeners: {
 			select: function(sm, record, index, eOpts) {
 				if(!record.data.text) {
-					record.data.text = ''
+					record.data.text = '';
 				}
 				responseId = record.data.id;
 				editor.setValue(record.data.notes);
@@ -111,7 +105,7 @@ Ext.onReady(function() {
 			Ext.apply(this, {
 				dockedItems: [{
 					xtype: 'pagingtoolbar',
-					store: programResponseStore,
+					store: this.store,
 					dock: 'bottom',
 					displayInfo: true
 				}]		
@@ -119,10 +113,10 @@ Ext.onReady(function() {
 			this.callParent(arguments);
 		}
 	});
-	
+		
 	var openProgramResponsesGrid = Ext.create('Atlas.grid.ProgramResponsePanel', {
 		title : 'Open'	
-	});
+	});	
 	
 	var closedProgramResponsesGrid = Ext.create('Atlas.grid.ProgramResponsePanel', {
 		title : 'Closed',
@@ -154,10 +148,11 @@ Ext.onReady(function() {
 			sortable : true
 		}, {
 			text : 'Actions',
-			dataIndex : 'actions'
+			dataIndex : 'actions',
+			width: 150
 		}]
 	});
-	
+		
 	var expiredProgramResponsesGrid = Ext.create('Atlas.grid.ProgramResponsePanel', {
 		title : 'Expired'
 	});
@@ -165,21 +160,34 @@ Ext.onReady(function() {
 	var pendingApprovalProgramResponsesGrid = Ext.create('Atlas.grid.ProgramResponsePanel', {
 		title : 'Pending Approval'
 	});
-	
+		
 	var notApprovedProgramResponsesGrid = Ext.create('Atlas.grid.ProgramResponsePanel', {
 		title : 'Not Approved'
 	});
 	
-	var editor = Ext.create('Ext.form.HtmlEditor', {
-		width : 800,
-		height : 300,
-		region : 'south',
-		bodyStyle : {
-			padding : '7px'
-		},
-		value : 'Please select a row in the grid above to see program response notes.'
-	});
-	
+	if(Ext.isIE) {
+		var editor = Ext.create('Ext.form.TextArea', {
+			width : 800,
+			height : 300,
+			region : 'south',
+			bodyStyle : {
+				padding : '7px'
+			},
+			value : 'Please select a row in the grid above to see program response notes.'
+		});	
+	}
+	else {
+		var editor = Ext.create('Ext.form.HtmlEditor', {
+			width : 800,
+			height : 300,
+			region : 'south',
+			bodyStyle : {
+				padding : '7px'
+			},
+			value : 'Please select a row in the grid above to see program response notes.'
+		});
+	}		
+		
 	var programResponseTabs = Ext.create('Ext.tab.Panel', {
 		region : 'center',
 		width : 800,
@@ -187,28 +195,28 @@ Ext.onReady(function() {
 		frame : true,
 		items : [openProgramResponsesGrid, closedProgramResponsesGrid, expiredProgramResponsesGrid],
 		listeners : {
-			tabchange : function(TabPanel, Panel) {
+			tabchange : function(tabPanel, newCard, oldCard, eOpts) {
 				Ext.getCmp('save').disable();
 				programResponseSearch.getForm().reset()
 				editor.setValue('Please select a row in the grid above to see program response notes.');
-				switch (Panel.title) {
+				switch (newCard.title) {
 					case 'Open':
-						programResponseStore.getProxy().extraParams.tab = 'open';				
+						programResponseProxy.extraParams.tab = 'open';
 						break;
 					case 'Closed':
-						programResponseStore.getProxy().extraParams.tab = 'closed';
+						programResponseProxy.extraParams.tab = 'closed';
 						break;
 					case 'Expired':
-						programResponseStore.getProxy().extraParams.tab = 'expired';
+						programResponseProxy.extraParams.tab = 'expired';
 						break;
 					case 'Pending Approval':
-						programResponseStore.getProxy().extraParams.tab = 'pending_approval';
+						programResponseProxy.extraParams.tab = 'pending_approval';
 						break;
 					case 'Not Approved':
-						programResponseStore.getProxy().extraParams.tab = 'not_approved';
+						programResponseProxy.extraParams.tab = 'not_approved';
 						break;					
 				}
-				programResponseStore.load();
+				newCard.getStore().load();			
 			},
 			beforeadd : function(container, component, index) {
 				if(this.items.length == 5) {
@@ -363,9 +371,9 @@ Ext.onReady(function() {
 			handler : function() {
 				var f = programResponseSearch.getForm(), vals = f.getValues()			
 				Ext.iterate(vals, function (key, value){
-					programResponseStore.getProxy().extraParams[key] = value;
-				}) 
-				programResponseStore.load();
+					programResponseProxy.extraParams[key] = value;
+				});
+				programResponseTabs.getActiveTab().getStore().load();
 			}
 		}, {
 			text : 'Reset',
@@ -375,9 +383,9 @@ Ext.onReady(function() {
 				f.reset();
 				var vals = f.getValues();
 				Ext.iterate(vals, function (key, value){
-					programResponseStore.getProxy().extraParams[key] = value;
-				}) 			
-				programResponseStore.load();
+					programResponseProxy.extraParams[key] = value;
+				}); 			
+				programResponseTabs.getActiveTab().getStore().load();
 			}
 		}]
 	});
@@ -399,9 +407,10 @@ Ext.onReady(function() {
 				Ext.Ajax.request({
 					url : '/admin/program_responses/edit',
 					success : function(response, opts) {
+						
 						var obj = Ext.decode(response.responseText);
 						if(obj.success) {
-							programResponseStore.load();
+							programResponseTabs.getActiveTab().getStore().load();
 							Ext.Msg.alert('Success', obj.message);
 						} else {
 							opts.failure();
@@ -436,7 +445,7 @@ Ext.onReady(function() {
 							msg : obj.message,
 							buttons : Ext.Msg.OK,
 							fn : function() {
-								programResponseStore.reload();
+								programResponseTabs.getActiveTab().getStore().load();
 							}
 						});
 					} else {
@@ -449,4 +458,6 @@ Ext.onReady(function() {
 			});
 		}
 	});
+	programResponseProxy.extraParams.tab = 'open';
+	openProgramResponsesGrid.getStore().load();
 });

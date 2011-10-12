@@ -250,9 +250,7 @@ Ext.onReady( function() {
                 preventSelection: false
         }],
 		stateEvents: ['itemexpand', 'itemcollapse'],
-		selModel: {
-			mode: 'SINGLE'
-		},
+
 		selType: 'treemodel',
         viewConfig: {
             plugins: {
@@ -298,7 +296,7 @@ Ext.onReady( function() {
 						that.expandPath(nodes[i]);
 					}
 				}
-			}, this, {delay: 100});
+			}, this, {delay: 10, single: true});
 		},
 		animate: true,
 		containerScroll: true,

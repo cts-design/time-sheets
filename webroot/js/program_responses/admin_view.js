@@ -1,75 +1,80 @@
 /**
  * @author dnolan
  */
+Ext.onReady(function(){
+	Ext.QuickTips.init();
+	
+	var hideProgress = new Ext.util.DelayedTask(function(){
+	    progress.hide();
+	});
 
-var hideProgress = new Ext.util.DelayedTask(function(){
-    progress.hide();
-});
+	var approvalForm = Ext.create('Ext.form.Panel', {
+	    
+	    fieldDefaults: {
+	    	labelWidth: 90,
+	    	labelAlign: 'top',
+	    	width: 230	
+	    },
+	    frame:true,
+	    bodyStyle:'padding:5px 5px 0',
+	    width: 250,
+	    height: 180,
+	    defaultType: 'textarea',
+	    items: [{
+	       	fieldLabel: 'Not approved email comment',
+	       	name: 'email_comment'
+	       },{
+	       	fieldLabel : 'Reset customer program response form',
+	       	xtype: 'checkbox',
+	       	name: 'reset_form'
+	       }
+	    ],
+	    buttons: [{
+	        text: 'Not Approved',
+	        icon: '/img/icons/delete.png',
+	        handler: function() {
+	        	menu.hide();
+	       		Ext.MessageBox.wait();
+				approvalForm.getForm().doAction('submit', {
+					url: '/admin/program_responses/not_approved',
+					params: {
+						id: programResponseId
+					},
+					waitMsg : 'Please wait...',
+					waitTitle: 'Status',
+					success: function(form, action) {
+						var obj = Ext.decode(action.response.responseText);
+						if(obj.success) {
+							tb.hide();				
+							Ext.Msg.alert('Status', obj.message);						
+						}
+						else {
+							opts.failure(response, opts, obj); 						
+						}
+					},
+					failure: function(form, action, obj) {
+						var msg = '';
+						if(obj.message) {
+							msg = obj.message
+						}
+						else {
+							msg = "An error has occurred";
+						}
+						Ext.Msg.alert('Status', msg);
+					}
+				});
+	        }
+	    }]
+	});
 
-var approvalForm = new Ext.FormPanel({
-    labelWidth: 90, // label settings here cascade unless overridden
-    frame:true,
-    bodyStyle:'padding:5px 5px 0',
-    width: 250,
-    height: 180,
-    labelAlign: 'top',
-    defaults: {width: 230},
-    defaultType: 'textarea',
-    items: [{
-       	fieldLabel: 'Not approved email comment',
-       	name: 'email_comment'
-       },{
-       	fieldLabel : 'Reset customer program response form',
-       	xtype: 'checkbox',
-       	name: 'reset_form'
-       }
-    ],
-    buttons: [{
-        text: 'Not Approved',
-        icon: '/img/icons/delete.png',
-        handler: function() {
-        	menu.hide();
-       		Ext.MessageBox.wait();
-			approvalForm.getForm().doAction('submit', {
-				url: '/admin/program_responses/not_approved',
-				params: {
-					id: programResponseId
-				},
-				waitMsg : 'Please wait...',
-				waitTitle: 'Status',
-				success: function(form, action) {
-					var obj = Ext.decode(action.response.responseText);
-					if(obj.success) {
-						tb.hide();				
-						Ext.Msg.alert('Status', obj.message);						
-					}
-					else {
-						opts.failure(response, opts, obj); 						
-					}
-				},
-				failure: function(form, action, obj) {
-					var msg = '';
-					if(obj.message) {
-						msg = obj.message
-					}
-					else {
-						msg = "An error has occurred";
-					}
-					Ext.Msg.alert('Status', msg);
-				}
-			});
-        }
-    }]
-});
-
-var menu = new Ext.menu.Menu({
+var menu = Ext.create('Ext.menu.Menu', {
     layout: 'menu',
 	items: [
 		approvalForm
 	]
 });	
 
-var tb = new Ext.Toolbar({
+var tb = Ext.create('Ext.toolbar.Toolbar', {
 	hidden: true,
 	buttonAlign: 'center',
 	items: [{
@@ -111,39 +116,46 @@ var tb = new Ext.Toolbar({
 
 
 
-var programResponsePanel = new Ext.Panel({
+var programResponsePanel = Ext.create('Ext.panel.Panel', {
 	title: 'Program Response',
+	renderTo: 'ProgramResponsePanel',
 	width: 950,
+	height: 400,
 	layout: 'accordion',
+	layoutConfig: {
+		animate: true,
+	},
 	tbar: tb,
 	items: [{
 		title: 'Customer Info',
-		autoLoad: '/admin/program_responses/view/'+programResponseId+'/user',
-		autoHeight: true	
+		autoScroll: true,
+		autoLoad: '/admin/program_responses/view/'+programResponseId+'/user'
 	},{
 		title: 'Program Response',
-		autoHeight: true,
+		autoScroll: true,
+		loader: {
+			url: '/admin/program_responses/view/'+programResponseId+'/answers'
+		},
 		listeners: {
 			beforeexpand: updateResponse = function() {
-				this.getUpdater().update({
-					url: '/admin/program_responses/view/'+programResponseId+'/answers'
-				});
+				this.getLoader().load();
 				this.removeListener('beforeexpand', updateResponse);
 			}
 		}				
 	},{
 		title: 'Documents',
 		id: 'documents',
-		autoHeight: true,
+		autoScroll: true,
+		loader: {
+			url: '/admin/program_responses/view/'+programResponseId+'/documents'
+		},		
 		listeners: {
 			beforeexpand: updateDoc = function() {
-				this.getUpdater().update({
-					url: '/admin/program_responses/view/'+programResponseId+'/documents'
-				});
-				this.getUpdater().on('update', function(){
+				this.getLoader().load();
+				this.getLoader().on('load', function(){
 					Ext.get('ProgramPaperForms').on('click', function(e, t){						
 						t = Ext.get(t);
-						if(t.hasClass('generate') || t.hasClass('regenerate')) {
+						if(t.hasCls('generate') || t.hasCls('regenerate')) {
 							e.preventDefault();
 							Ext.Msg.progress('Status', 'Generating Form');					
 							Ext.Ajax.request({
@@ -153,9 +165,7 @@ var programResponsePanel = new Ext.Panel({
 									if(obj.success) {
 										progress = Ext.Msg.updateProgress(1, 'Complete', obj.message);
 										hideProgress.delay(2000);
-										Ext.getCmp('documents').getUpdater().update({
-											url: '/admin/program_responses/view/'+programResponseId+'/documents'
-										});											
+										Ext.getCmp('documents').getLoader().load();											
 									}
 									else {
 										opts.failure(response, opts);
@@ -183,7 +193,5 @@ var programResponsePanel = new Ext.Panel({
 if(requiresApproval) {
 	tb.show();
 }
-Ext.onReady(function(){
-	Ext.QuickTips.init();
-	programResponsePanel.render('ProgramResponsePanel');	
+
 });

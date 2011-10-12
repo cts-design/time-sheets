@@ -50,11 +50,20 @@ Ext.onReady(function(){
 		selType: 'rowmodel'
 	});
 	
-	var editor = Ext.create('Ext.form.HtmlEditor', {
-		width: 600,
-		region: 'center',
-		value: 'Please select a row in the grid above to edit instructions.'	
-	});
+	if(Ext.isIE) {
+		var editor = Ext.create('Ext.form.TextArea', {
+			width: 600,
+			region: 'center',
+			value: 'Please select a row in the grid above to edit instructions.'	
+		});		
+	}
+	else {
+		var editor = Ext.create('Ext.form.HtmlEditor', {
+			width: 600,
+			region: 'center',
+			value: 'Please select a row in the grid above to edit instructions.'	
+		});	
+	}	
 	
 	var instructionPanel = Ext.create('Ext.panel.Panel', {
 		frame: true,
