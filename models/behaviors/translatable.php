@@ -44,10 +44,12 @@ class TranslatableBehavior extends ModelBehavior {
 	 */
 	public function beforeValidate(&$Model) {
 		foreach ($this->fields[$Model->alias] as $key => $fieldName) {
-			$Model->data[$Model->alias][$fieldName] = array(
-				'en_us' => $Model->data[$Model->alias][$fieldName],
-				'es_es' => $this->translate($Model->data[$Model->alias][$fieldName])
-			);
+			if (isset($Model->data[$Model->alias][$fieldName])) {
+				$Model->data[$Model->alias][$fieldName] = array(
+					'en_us' => $Model->data[$Model->alias][$fieldName],
+					'es_es' => $this->translate($Model->data[$Model->alias][$fieldName])
+				);
+			}
 		}
 
 		$Model->schema(true);

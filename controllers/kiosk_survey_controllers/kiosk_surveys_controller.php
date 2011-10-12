@@ -185,6 +185,10 @@ class KioskSurveysController extends AppController {
 
 		$title = 'Self sign survey report: ' . $survey['KioskSurvey']['name'] . ' ' . date('m/d/Y');
 
+        foreach ($surveyQuestion as $key => $value) {
+            $report[0][$value] = null;
+        }
+
 		foreach($survey['KioskSurveyResponse'] as $key => $value) {
 			$skip = true;
 			foreach($value['KioskSurveyResponseAnswer'] as $k => $v) {

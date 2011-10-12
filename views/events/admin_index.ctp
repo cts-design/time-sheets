@@ -1,8 +1,8 @@
 <?php
-	$this->Html->css('ext/calendar/calendar', null, array('inline' => FALSE));
+	$this->Html->css('ext/calendar/calendar', null, array('inline' => false));
 	$this->Html->script('ext/ux/RowEditor', array('inline' => false));
-	$this->Html->script('ext/ux/calendar/calendar-all-debug', array('inline' => FALSE));
-	$this->Html->script('events/calendar', array('inline' => FALSE));
+	$this->Html->script('ext/ux/calendar/calendar-all-debug', array('inline' => false));
+	$this->Html->script('events/calendar', array('inline' => false));
 ?>
 <div id="crumbWrapper">
     <span><?php __('You are here') ?> > </span>

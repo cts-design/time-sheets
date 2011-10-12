@@ -15,11 +15,6 @@
     <?php echo $crumb->getHtml(__('Kiosk Buttons', true), null, 'unique'); ?>
 </div>
 <div id="manageButtons" class="admin">
-    
-        <ul class="dropdown">
-            <li><?php echo $this->Html->link(__('One', true)) ?></li>
-            <li><?php echo $this->Html->link(__('Two', true)) ?></li>
-        </ul>
     <div class="actions ui-widget-header">
 	    <ul>
 		<li><?php echo $this->Html->link(__('Enable Button', true), '', array('id' => 'enableButton')) ?></li>
