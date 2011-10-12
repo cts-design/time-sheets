@@ -165,16 +165,29 @@ Ext.onReady(function() {
 		title : 'Not Approved'
 	});
 	
-	var editor = Ext.create('Ext.form.HtmlEditor', {
-		width : 800,
-		height : 300,
-		region : 'south',
-		bodyStyle : {
-			padding : '7px'
-		},
-		value : 'Please select a row in the grid above to see program response notes.'
-	});
-	
+	if(Ext.isIE) {
+		var editor = Ext.create('Ext.form.TextArea', {
+			width : 800,
+			height : 300,
+			region : 'south',
+			bodyStyle : {
+				padding : '7px'
+			},
+			value : 'Please select a row in the grid above to see program response notes.'
+		});	
+	}
+	else {
+		var editor = Ext.create('Ext.form.HtmlEditor', {
+			width : 800,
+			height : 300,
+			region : 'south',
+			bodyStyle : {
+				padding : '7px'
+			},
+			value : 'Please select a row in the grid above to see program response notes.'
+		});
+	}		
+		
 	var programResponseTabs = Ext.create('Ext.tab.Panel', {
 		region : 'center',
 		width : 800,
