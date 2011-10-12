@@ -189,7 +189,7 @@ Ext.create('Ext.data.Store', {
 		datachanged: function (store, opts) {
 			Ext.getCmp('updateButton').hide();
 			Ext.getCmp('saveButton').show();
-			hotjobform.getForm().reset();
+			rfpForm.getForm().reset();
 		}
 	}
 });
