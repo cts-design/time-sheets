@@ -71,6 +71,5 @@ moduleAccessControl = {
 };
 
 Ext.onReady(function() {
-	Ext.Compat.showErrors = true;
   moduleAccessControl.init();
 });

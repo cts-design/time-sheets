@@ -5,8 +5,6 @@
  * @package ATLAS V3
  */
 
-Ext.Compat.showErrors = true;
-
 var selectedRecord;
 
 var alphaSpace = /^[-_0-9a-zA-Z ]+$/i;
@@ -115,7 +113,7 @@ var hotjobform = Ext.create('Ext.form.Panel', {
 	    	}]
         }]
      },{
-     	xtype: 'htmleditor',
+    xtype: (Ext.isIE) ? 'textarea' : 'htmleditor',
 		enableFont: false,
 		allowBlank: false,
 		fieldLabel: 'Description',

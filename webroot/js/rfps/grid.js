@@ -4,9 +4,6 @@
  * @link http://ctsfla.com
  * @package ATLAS V3
  */
-
-Ext.Compat.showErrors = true;
-
 var selectedRecord;
 
 var alphaSpace = /^[-_0-9a-zA-Z ]+$/i;
@@ -85,13 +82,13 @@ var rfpForm = Ext.create('Ext.form.Panel', {
 	    	}]
         }]
      },{
-     	xtype: 'htmleditor',
-		enableFont: false,
-		allowBlank: false,
-		fieldLabel: 'Description',
-		name: 'description',
-		width: 300,
-		anchor: '99%'
+	    xtype: (Ext.isIE) ? 'textarea' : 'htmleditor',
+			enableFont: false,
+			allowBlank: false,
+			fieldLabel: 'Description',
+			name: 'description',
+			width: 300,
+			anchor: '99%'
     }],
     buttons: [{
         text: 'Save',

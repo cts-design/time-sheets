@@ -9,7 +9,6 @@ var CareerSeekers = {
   selectedRecord: null,
 
   init: function() {
-    Ext.Compat.showErrors = true;
     Ext.QuickTips.init();
     Ext.BLANK_IMAGE_URL = '/img/ext/default/s.gif';
 
