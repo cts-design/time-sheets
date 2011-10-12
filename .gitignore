@@ -16,3 +16,4 @@ webroot/js/ckfinder/config.php
 webroot/files/pdftk.exe
 webroot/test.php
 *.sdocml
+*.DS_STORE

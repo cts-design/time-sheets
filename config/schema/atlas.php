@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2011-09-14 09:17:42 : 1316006262*/
+/* atlas schema generated on: 2011-10-12 16:41:31 : 1318452091*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -58,6 +58,18 @@ class atlasSchema extends CakeSchema {
 		'auto_lock_title' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'auto_lock_status' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 3),
 		'indexes' => array('PRIMARY' => array('column' => 'auto_lock_id', 'unique' => 1)),
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
+	);
+	var $bar_code_definitions = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+		'name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 50, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'number' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 5),
+		'cat_1' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'cat_2' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'cat_3' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
 	var $cake_sessions = array(
