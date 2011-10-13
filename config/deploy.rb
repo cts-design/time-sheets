@@ -43,7 +43,7 @@ namespace :cake do
   namespace :schema do
     desc "Update database schema create tables"
     	task :create, roles => [:web] do
-    	run "cd #{current_release} && cake schema create atlas < #{shared_path}/config/schema_create_prompt.txt"
+    	run "cd #{current_release} && cake schema create atlas < #{current_release}/config/schema_create_prompt.txt"
     end
     
     desc "Update database schema update tables"
@@ -69,9 +69,9 @@ end
 
 after "deploy:symlink", :finalize_deploy
 
-after("cake:database:symlink", "cake:schema:create")
+after("cake:database:symlink", "cake:cache:clear")
+after("cake:cache:clear", "cake:schema:create")
 after("cake:schema:create", "cake:schema:update")
 after("cake:schema:update", "cake:aco_update")
-after("cake:aco_update", "cake:cache:clear")
 
 capcake
