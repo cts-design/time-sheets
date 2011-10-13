@@ -7,7 +7,4 @@
     <?php echo $crumb->getHtml(__('Navigation', true), null, 'unique'); ?>
 </div>
 
-<div class="navigations">
-    <div id="window-div"></div>
-    <div id="tree-div"></div>
-</div>
+<div id="tree-div"></div>

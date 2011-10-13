@@ -1,11 +1,10 @@
 <?php
 /**
  * @author Brandon Cordell
- * @copyright Complete Technology Solutions 2010
+ * @copyright Complete Technology Solutions 2011
  * @link http://ctsfla.com
  * @package ATLAS V3
  */
-App::import('Vendor', 'DebugKit.FireCake'); // @TODO remove from production
 class NavigationsController extends AppController {
 
 	var $name = 'Navigations';
@@ -16,20 +15,39 @@ class NavigationsController extends AppController {
             parent::beforeFilter();
 
             // ensure our ajax methods are POSTed
-            $this->Security->requirePost('admin_get_nodes', 'admin_reorder', 'admin_reparent', 'admin_rename_node');
+            // $this->Security->requirePost('admin_get_nodes', 'admin_reorder', 'admin_reparent', 'admin_rename_node');
         }
 
-	function admin_index() {
-		$this->Navigation->recursive = 0;
-		$this->set('navigations', $this->paginate());
-	}
+        function admin_index() {}
+
+
+        function admin_read() {
+            $parent = intval($this->params['url']['node']);
+            $data = array();
+
+            $nodes = $this->Navigation->children($parent, true);
+
+            foreach ($nodes as $node) {
+                $data[] = array(
+                    'id'   => $node['Navigation']['id'],
+                    'text' => $node['Navigation']['title'],
+                    'link' => $node['Navigation']['link'],
+                    'leaf' => ($node['Navigation']['lft'] + 1 === $node['Navigation']['rght'])
+                );
+            }
+
+            $this->set('data', $data);
+            return $this->render(null, null, '/elements/ajaxreturn');
+        }
+
+        function admin_destroy() {}
 
         /**
          * Retrieves request from Ajax and finds the parent and it's children
          */
         function admin_get_nodes() {
             // retreive the node id that ExtJS posts via Ajax
-            $parent = intval($this->params['form']['node']);
+            $parent = intval($this->params['url']['node']);
 
             // find all the nodes underneath the parent node defined above
             // the second parameter (true) means we only want direct children
@@ -88,6 +106,8 @@ class NavigationsController extends AppController {
 		
 		function admin_update() {
 			$params = $this->params;
+
+            FireCake::log($params);
 			
 			if (substr($params['form']['link'], 0, 1) !== '/' && substr($params['form']['link'], 0, 4) !== 'http') {
 				$params['form']['link'] = '/' . $params['form']['link'];
@@ -98,7 +118,9 @@ class NavigationsController extends AppController {
 				'title' => $params['form']['name'],
 				'link' => $params['form']['link']
 			));
-			
+
+            die();
+
 			$record = $this->Navigation->save();
 			
 			if ($record) {

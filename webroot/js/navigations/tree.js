@@ -10,7 +10,40 @@ if (typeof console == "undefined") {
     };
 }
 
+Ext.define('BCToolkit.window.GrowlNotification', {
+  extend: 'Ext.window.Window',
+  requires: ['Ext.window.Window'],
+  alias: 'widget.growlnotification',
+
+  title: 'Notification',
+  icon: false,
+
+  hide: function() {},
+
+  initComponent: function() {
+    var me = this;
+
+    me.callParent(arguments);
+    me.addEvents(
+      /**
+       * @event click
+       * Fires after the notification has been clicked
+       * @param {BCToolkit.window.GrowlNotification} this
+       */
+      'click',
+
+      /**
+       * @event close
+       * Fires after the notification has been closed
+       * @param {BCToolkit.window.GrowlNotification} this
+       */
+       'close'
+    );
+  }
+});
+
 Ext.onReady(function() {
+	Ext.Compat.showErrors = true;
 	Ext.QuickTips.init();
 	Ext.BLANK_IMAGE_URL = "/img/ext/default/s.gif";
 	
@@ -24,18 +57,28 @@ Ext.onReady(function() {
     var oldPosition = null,
     oldNextSibling = null;
     
-    var cmsStore = new Ext.data.JsonStore({
-    	autoLoad: true,
-		url: '/admin/pages/get_short_list',
-		storeId: 'cmsStore',
-		root: 'pages',
-		idProperty: 'title',
-		fields: ['title', 'slug']
-	});
+    Ext.define('Page', {
+    	extend: 'Ext.data.Model',
+    	fields: [ 'title', 'slug' ]
+    });
+    
+    var pageStore = Ext.create('Ext.data.Store', {
+    	model: 'Page',
+    	storeId: 'pageStore',
+    	proxy: {
+    		type: 'ajax',
+    		reader: {
+    			type:'json',
+    			root: 'pages'
+    		},
+    		url: '/admin/pages/get_short_list'
+    	},
+    	autoLoad: true
+    });
 	
 	var cmsCombo = new Ext.form.ComboBox({
-		store: cmsStore,
-		mode: 'local',
+		store: pageStore,
+		queryMode: 'local',
 		name: 'cmscombo',
 		triggerAction: 'all',
 		typeAhead: true,
@@ -47,8 +90,8 @@ Ext.onReady(function() {
 	    	select: function(combo, record, index) {
 	    		var f = formPanel.getForm();
 	    		f.setValues({
-	    			name: record.data.title,
-	    			link: '/pages/' + record.data.slug
+	    			name: record[0].data.title,
+	    			link: '/pages/' + record[0].data.slug
 	    		});
 	    	}
 	    }
@@ -57,97 +100,99 @@ Ext.onReady(function() {
 	// form to place on the window
 	var formPanel = new Ext.FormPanel({
 		defaultType: 'field',
-		labelWidth: 150,
+		fieldDefaults: {
+			labelWidth: 150,
+      bodyStyle: 'margin: 10px'
+		},
 		autoScroll: true,
 		id: 'formpanel',
-		frame: true,
+		frame: false,
 		items: [
 		cmsCombo,
 		{
 			xtype: 'textfield',
 			fieldLabel: 'Name',
-			name: 'name'
+			name: 'name',
+			allowBlank: false
 		},{
 			xtype: 'textfield',
 			fieldLabel: 'URL',
-			name: 'link'
+			name: 'link',
+			allowBlank: false,
 		}],
 		buttons: [{
 			id: 'savebtn',
 			text: 'Save',
 			handler: function(b, e) {
-				var submitUrl = '/admin/navigations/create';
-				var f = formPanel.getForm();
-				var vals = f.getValues();
-				
-				var selectedNode = tree.selModel.selNode;
-				var parentId, parent;
+				var submitUrl = '/admin/navigations/create',
+				  f = formPanel.getForm(),
+				  vals = f.getValues(),
+          root = tree.getRootNode(),
+          selectedNode = tree.getSelectionModel().getSelection(),
+          parentId,
+          parent;
 
-	            if (!selectedNode || !selectedNode.parentNode) {
-	            	parent = tree.root.firstChild;
-	            } else if (selectedNode.leaf) {
-	            	// check to see if we're nesting too deep
-	            	if (selectedNode.parentNode.parentNode.parentNode && selectedNode.parentNode.parentNode.parentNode.isRoot) {
-	            		Ext.Msg.alert('Cannot add link', 'You may only nest one link deep');
-	            		return;
-	            	} else {
-	            		parent = selectedNode;
-	            	}
-	            } else {
-	            	parent = selectedNode;
-	            }
-	            
-	            parentId = parent.id;
+				if (f.isValid()) {
+          if (selectedNode.length === 0 || selectedNode[0].data.root) {
+            parent = root.childNodes[0];
+          } else if (selectedNode[0].data.leaf && selectedNode[0].data.depth > 2) {
+              Ext.Msg.alert('Cannot add link', 'Links cannot be nested that deep');
+          } else {
+            parent = selectedNode[0];
+          }
 
-				f.submit({
-					url: submitUrl,
-					params: {
-						parentId: parentId
-					},
-					success: function(form, action) {
-						if (action.result.success !== true) {
-							action.options.failure();
-						} else {
-							var newNode = new Ext.tree.TreeNode({
-								id: action.result.navigation.id, 
-								text: action.result.navigation.title,
-								linkUrl: action.result.navigation.link,
-								leaf: true
+          parentId = parent.data.id;
+	
+					f.submit({
+						url: submitUrl,
+						params: {
+							parentId: parentId
+						},
+						success: function(form, action) {
+							if (action.result.success !== true) {
+								action.options.failure();
+							} else {
+								var newNode = new Ext.tree.TreeNode({
+									id: action.result.navigation.id, 
+									text: action.result.navigation.title,
+									linkUrl: action.result.navigation.link,
+									leaf: true
+								});
+	
+								if (!parent.expanded) {
+									parent.expand();
+								}
+								
+								if (parent.isLeaf) {
+									parent.leaf = false;
+									parent.attributes.leaf = false;
+								}
+								
+								parent.appendChild(newNode);
+							}
+							
+							win.hide();
+							formPanel.getForm().setValues({
+								cmscombo: '',
+								name: '',
+								link: ''
 							});
-
-							if (!parent.expanded) {
-								parent.expand();
+						},
+						failure: function(form, action) {
+							switch (action.failureType) {
+								case Ext.form.Action.CLIENT_INVALID:
+									Ext.Msg.alert('Failure', 'Form fields may not be submitted with invalid keys');
+									break;
+								case Ext.form.Action.CONNECT_FAILURE:
+									Ext.Msg.alert('Failure', 'Ajax Communication Failed');
+									break;
+								case Ext.form.Action.SERVER_INVALID:
+									Ext.Msg.alert('Failure', action.result.msg);
+									break;
 							}
-							
-							if (parent.isLeaf) {
-								parent.leaf = false;
-								parent.attributes.leaf = false;
-							}
-							
-							parent.appendChild(newNode);
 						}
-						
-						win.hide();
-						formPanel.getForm().setValues({
-							cmscombo: '',
-							name: '',
-							link: ''
-						});
-					},
-					failure: function(form, action) {
-						switch (action.failureType) {
-							case Ext.form.Action.CLIENT_INVALID:
-								Ext.Msg.alert('Failure', 'Form fields may not be submitted with invalid keys');
-								break;
-							case Ext.form.Action.CONNECT_FAILURE:
-								Ext.Msg.alert('Failure', 'Ajax Communication Failed');
-								break;
-							case Ext.form.Action.SERVER_INVALID:
-								Ext.Msg.alert('Failure', action.result.msg);
-								break;
-						}
-					}
-				});
+					});
+				}
 			}
 		},{
 			id: 'updatebtn',
@@ -232,6 +277,7 @@ Ext.onReady(function() {
 							name: '',
 							link: ''
 						});
+						f.clearInvalid();
         			}
         		}
         	});
@@ -270,6 +316,7 @@ Ext.onReady(function() {
 								name: '',
 								link: ''
 							});
+							f.clearInvalid();
 							
 							Ext.getCmp('savebtn').show();
             				Ext.getCmp('updatebtn').hide();
@@ -345,24 +392,67 @@ Ext.onReady(function() {
         }
     });
 
-    var Tree = Ext.tree;
-    var tree = new Tree.TreePanel({
+    Ext.define('Navigation', {
+    	extend: 'Ext.data.Model',
+    	fields: [ 'text', 'linkUrl' ]
+    });
+    
+    Ext.create('Ext.data.TreeStore', {
+    	model: 'Navigation',
+    	storeId: 'navigationStore',
+    	proxy: {
+    		type: 'ajax',
+    		reader: {
+    			type: 'json'
+    		},
+    		url: getNodesUrl
+    	},
+    	root: {
+    		text: 'Navigation Positions',
+    		expanded: true
+    	},
+    	autoLoad: true,
+			listeners: {
+				load: function() {
+					tree.expandPath('/1');
+				}
+			}
+    })
+    
+    var tree = Ext.create('Ext.tree.TreePanel', {
         title: 'Site Navigation',
+        tools: [{
+          id: 'expandTool',
+          type: 'expand',
+          tooltip: 'Expand all nodes',
+          handler: function(event, toolEl, panel) {
+            tree.expandAll();
+            this.hide();
+            tree.down('#collapseTool').show();
+          }
+        }, {
+          id: 'collapseTool',
+          type: 'collapse',
+          tooltip: 'Collapse all nodes',
+          hidden: true,
+          handler: function(event, toolEl, panel) {
+            tree.collapseAll();
+            this.hide();
+            tree.down('#expandTool').show();
+          }
+        }, {
+          type: 'gear',
+          tooltip: 'Navigation Settings',
+          handler: function(event, toolEl, panel) {}
+        }],
+				id: 'treePanel',
         renderTo: 'tree-div',
+        store: Ext.data.StoreManager.lookup('navigationStore'),
         autoScroll: true,
         animate: true,
-        enableDD: true,
+        height: 500,
         containerScroll: true,
         rootVisible: true,
-        root: new Tree.AsyncTreeNode({
-	        editable: false,
-	        text: 'Navigation Positions',
-	        draggable: false,
-	        id: 'root'
-    	}),
-    	loader: new Ext.tree.TreeLoader({
-            dataUrl: getNodesUrl
-        }),
         tbar: new Ext.Toolbar({
         	items: [
         	{
@@ -390,14 +480,18 @@ Ext.onReady(function() {
         	]
         }),
         listeners: {
-        	click: function(node, e) {
-        		if (!node.parentNode || node.parentNode.isRoot == true) {
-        			editLinkButton.disable();
-        			removeLinkButton.disable();
-        		} else {
-        			editLinkButton.enable();
-        			removeLinkButton.enable();
-        		}
+        	itemclick: function(view, rec, item, index, e, opts) {
+				var black_list = ['Navigation Positions', 'Top', 'Left',
+					'Employers Middle', 'Career Seekers Middle', 'Programs Middle'];
+				
+				// check if the node can be deleted
+				if (Ext.Array.indexOf(black_list, rec.data.text) === -1) {
+					editLinkButton.enable();
+					removeLinkButton.enable();
+				} else {
+					editLinkButton.disable();
+					removeLinkButton.disable();
+				}
         	},
         	startdrag: function(tree, node, event) {
         		oldPosition = node.parentNode.indexOf(node);
@@ -454,5 +548,4 @@ Ext.onReady(function() {
         }
     });
 
-    tree.root.expand();
 });

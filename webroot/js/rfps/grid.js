@@ -133,7 +133,7 @@ var rfpForm = Ext.create('Ext.form.Panel', {
 					rec.endEdit();
 					f.reset();
 					Ext.getCmp('updateButton').hide();
-					Ext.getCmp('saveButto')
+					Ext.getCmp('saveButton')
     		}
     	}
     },{
@@ -246,7 +246,11 @@ var grid = new Ext.grid.GridPanel({
 			sortable: true, 
 			dataIndex: 'file',
 			renderer: function (value) {
-				return Ext.String.format('<a href="http://{0}/{1}" target="_blank"><img src="/img/icons/file.png" /></a>', window.location.host, value);
+        if (value) {
+          return Ext.String.format('<a href="http://{0}/{1}" target="_blank"><img src="/img/icons/file.png" /></a>', window.location.host, value);
+        } else {
+          return '';
+        }
 			}	
 		}
 	],
