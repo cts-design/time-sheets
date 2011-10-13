@@ -45,7 +45,8 @@ Ext.onReady(function(){
 					success: function(form, action) {
 						var obj = Ext.decode(action.response.responseText);
 						if(obj.success) {
-							tb.hide();				
+							Ext.getCmp('approved').hide();
+							Ext.getCmp('notApproved').hide();				
 							Ext.Msg.alert('Status', obj.message);						
 						}
 						else {
@@ -100,7 +101,8 @@ Ext.onReady(function(){
 						success: function(response, opts) {
 							var obj = Ext.decode(response.responseText);
 							if(obj.success) {
-								tb.hide();
+								Ext.getCmp('approved').hide();
+								Ext.getCmp('notApproved').hide();
 								Ext.Msg.alert('Status', obj.message);						
 							}
 							else {
