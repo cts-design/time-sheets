@@ -293,6 +293,5 @@ var searchPanel = {
 
 Ext.onReady(function() {
   Ext.QuickTips.init();
-  Ext.Compat.showErrors = true;
   searchPanel.init();
 });

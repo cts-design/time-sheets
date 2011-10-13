@@ -82,7 +82,7 @@ var rfpForm = Ext.create('Ext.form.Panel', {
 	    	}]
         }]
      },{
-	    xtype: (Ext.isIE) ? 'textarea' : 'htmleditor',
+	    xtype: 'htmleditor',
 			enableFont: false,
 			allowBlank: false,
 			fieldLabel: 'Description',
