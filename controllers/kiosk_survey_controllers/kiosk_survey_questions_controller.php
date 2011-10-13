@@ -138,6 +138,8 @@ class KioskSurveyQuestionsController extends AppController {
                 $params['options'] = null;
             }
         }
+        
+        FireCake::log($this->params);
 
         $this->KioskSurveyQuestion->read(null, $params['id']);
         $this->KioskSurveyQuestion->set($params);
@@ -155,8 +157,10 @@ class KioskSurveyQuestionsController extends AppController {
     }
 
 	function admin_destroy() {
-	  $recordIdString = json_decode($this->params['form']['surveyQuestions']);
-	  $recordId = intval($recordIdString);
+	  $recordIdString = json_decode($this->params['form']['surveyQuestions'], true);
+	  $recordId = intval($recordIdString['id']);
+	  
+	  FireCake::log($recordIdString);
 	  
 	  if ($this->KioskSurveyQuestion->delete($recordId)) {
 			$this->Transaction->createUserTransaction('Programs', null, null,

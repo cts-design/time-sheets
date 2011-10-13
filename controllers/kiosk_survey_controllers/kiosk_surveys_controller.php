@@ -75,8 +75,11 @@ class KioskSurveysController extends AppController {
 	}
 	
 	function admin_destroy() {
-	  $recordIdString = json_decode($this->params['form']['surveys']);
-	  $recordId = intval($recordIdString);
+	  $recordIdString = json_decode($this->params['form']['surveys'], true);
+	  $recordId = intval($recordIdString['id']);
+	  
+	  FireCake::log($recordIdString);
+	  FireCake::log($recordId);
 	  
 	  if ($this->KioskSurvey->delete($recordId)) {
 	    $data['success'] = true;
