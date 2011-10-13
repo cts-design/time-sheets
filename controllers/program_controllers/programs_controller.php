@@ -34,6 +34,7 @@ class ProgramsController extends AppController {
 			$this->redirect('/');
 		}
 		$programResponse = $this->Program->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
+
 		if($programResponse) {
 			$responseId = $programResponse['ProgramResponse']['id']; 
 		}
@@ -64,7 +65,7 @@ class ProgramsController extends AppController {
 					$programResponse['ProgramResponse']['complete'] != 1) {
 						$this->redirect(array('controller' => 'program_responses', 'action' => 'index', $id));
 				}
-				if($programResponse['ProgramResponse']['viewed_media'] == 1 && 
+				if($programResponse['ProgramResponse']['answers'] && 
 					$programResponse['ProgramResponse']['complete'] == 0 &&
 					$programResponse['ProgramResponse']['needs_approval'] == 1) {
 						$this->redirect(array(
