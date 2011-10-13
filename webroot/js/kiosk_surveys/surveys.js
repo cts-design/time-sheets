@@ -14,7 +14,21 @@ var surveyPanel = {
 		this.initGrid();
 
     Ext.define('SurveyType', {
-      extend: 'Ext.data.Model'
+      extend: 'Ext.data.Model',
+      fields: [
+        { name: 'shortname', type: 'string' },
+        { name: 'longname',  type: 'string' }
+      ]
+    });
+
+    Ext.create('Ext.data.ArrayStore', {
+      storeId: 'surveyTypeStore',
+      model: 'SurveyType',
+      data: [
+        [ 'yesno', 'Yes/No' ],
+        [ 'truefalse', 'True/False' ],
+        [ 'multi', 'Multiple Choice' ]
+      ]
     });
 
 		var questionGridToolbar = Ext.create('Ext.toolbar.Toolbar', {
@@ -33,7 +47,6 @@ var surveyPanel = {
 					}
 
 					form.getForm().reset();
-					form.items.items[1].buttons[0].enable();
 					form.enable();
 				}
 			}, {
@@ -50,23 +63,13 @@ var surveyPanel = {
 					this.surveyQuestionStore.remove(this.selectedQuestion);
 					this.selectedQuestion = null;
 					form.getForm().reset();
+					
+					this.surveyQuestionStore.sync();
 				}
 			}]
-		}),
+		});
 
-      surveyTypes = Ext.create('Ext.data.ArrayStore', {
-        storeId: 'surveyTypeStore',
-        model: 'SurveyType',
-        fields: [
-          { name: 'shortname', type: 'string' },
-          { name: 'longname',  type: 'string' }
-        ],
-        data: [
-          [ 'yesno', 'Yes/No' ],
-          [ 'truefalse', 'True/False' ],
-          [ 'multi', 'Multiple Choice' ]
-        ]
-      });
+
 
 			this.gridForm = Ext.create('Ext.form.Panel', {
         title: 'Survey Questions',
@@ -104,16 +107,16 @@ var surveyPanel = {
 						xtype: 'textfield',
 						fieldLabel: 'Question',
 						name: 'question',
-						disabled: true,
+						// disabled: true,
 						allowBlank: false
 					}, {
 						id: 'typeField',
 						xtype: 'combo',
 						fieldLabel: 'Type',
 						name: 'type',
-						disabled: true,
+						// disabled: true,
 						allowBlank: false,
-						store: surveyTypes,
+						store: Ext.data.StoreManager.lookup('surveyTypeStore'),
 						valueField: 'shortname',
 						displayField: 'longname',
 						queryMode: 'local',
@@ -122,7 +125,7 @@ var surveyPanel = {
 						selectOnFocus: true,
 						listeners: {
 							select: function (combo, rec, index) {
-								if (rec.data.shortname === 'yesno' || rec.data.shortname === 'truefalse') {
+								if (rec[0].data.shortname === 'yesno' || rec[0].data.shortname === 'truefalse') {
 									Ext.getCmp('optionsField').disable();
 								} else {
 									Ext.getCmp('optionsField').enable();
@@ -134,98 +137,52 @@ var surveyPanel = {
 						xtype: 'textfield',
 						fieldLabel: 'Options',
 						name: 'options',
-						disabled: true,
+						// disabled: true,
 						allowBlank: false
 					}, {
             id: 'orderField',
             xtype: 'textfield',
             fieldLabel: 'Order',
             name: 'order',
-            disabled: true,
+            // disabled: true,
             allowBlank: false
-          }],
-					buttons: [{
+          }, {
 						id: 'saveButton',
+						xtype: 'button',
 						text: 'Save',
-						disabled: true,
+						width: 75,
 						scope: this,
 						handler: function () {
 							var form = Ext.getCmp('questionForm').getForm(),
 								vals = form.getValues(),
-								NewRecord = Ext.data.Record.create(['kiosk_survey_id', 'question', 'type', 'options', 'order']),
-								rec,
-								questionField = Ext.getCmp('questionField'),
-								typeField = Ext.getCmp('typeField'),
-								optionsField = Ext.getCmp('optionsField'),
-                orderField = Ext.getCmp('orderField'),
-								saveButton = Ext.getCmp('saveButton');
-
+								rec;
+							
 							if (form.isValid()) {
-                questionField.disable();
-                typeField.disable();
-                optionsField.disable();
-                orderField.disable();
-                saveButton.disable();
-
 								if (this.selectedQuestion) {
-                  rec = this.surveyQuestionStore.getById(this.selectedQuestion.id);
-
-                  rec.beginEdit();
-                  rec.set('question', vals.question);
-                  rec.set('type', vals.type);
-                  rec.set('options', vals.options);
-                  rec.set('order', vals.order);
-                  rec.endEdit();
-                } else {
-                  rec = new NewRecord({
-                    kiosk_survey_id: this.selectedSurvey.id,
-                    question: vals.question,
-                    type: vals.type,
-                    options: vals.options,
-                    order: vals.order
-                  });
-
-                  this.surveyQuestionStore.add(rec);
-                }
-
-                this.surveyQuestionStore.commitChanges();
-                questionField.enable();
-                typeField.enable();
-                optionsField.enable();
-                orderField.enable();
-                saveButton.enable();
+									rec = this.surveyQuestionStore.getById(this.selectedQuestion.data.id);
+									
+									rec.beginEdit();
+									rec.set('question', vals.question);
+									rec.set('type', vals.type);
+									rec.set('options', vals.options);
+									rec.set('order', vals.order);
+									rec.endEdit();
+								} else {
+									this.surveyQuestionStore.add({
+										kiosk_survey_id: this.selectedSurvey.data.id,
+										question: vals.question,
+										type: vals.type,
+										options: vals.options,
+										order: vals.order
+									});
+								}
+								
+								this.surveyQuestionStore.sync();
 							}
 						}
 					}]
 				}]
 			});
-
-		// this.panel = Ext.create('Ext.panel.Panel', {
-		//   layout: 'border',
-		//   renderTo: 'surveys',
-		//   height: 550,
-		//   width: '100%',
-		//   defaults: {
-		//     collapsible: false,
-		//     split: false
-		//   },
-		//   items: [{
-		//     title: 'Surveys',
-		//     height: 175,
-		//     region: 'center',
-		//     items: [ this.surveyGrid ]
-		//   }, {
-		//     title: 'Survey Questions',
-		//     tbar: questionGridToolbar,
-    //     frame: false,
-		//     height: 346,
-		//     region: 'south',
-		//     bodyStyle: {
-		//       'background': '#DFE8F6'
-		//     },
-		//     items: [gridForm]
-		//   }]
-		// });
 	},
 	initData: function () {
 
@@ -262,13 +219,40 @@ var surveyPanel = {
           root: 'surveys',
           type: 'json'
         },
+				writer: {
+					encode: true,
+					root: 'surveys',
+					writeAllFields: false
+				},
         api: {
           create:  '/admin/kiosk_surveys/create',
           read:    '/admin/kiosk_surveys/read',
           update:  '/admin/kiosk_surveys/update',
           destroy: '/admin/kiosk_surveys/destroy'
         }
-      }
+      },
+		  listeners: {
+		    remove: {
+		      fn: function (store, rec, index) {
+						var toolbar = Ext.getCmp('surveyGrid').getDockedItems(),
+							questionStore = Ext.data.StoreManager.lookup('surveyQuestionStore');
+							
+						toolbar[1].items.items[1].disable();
+						toolbar[1].items.items[2].disable();
+						
+		        // check if there are questions
+		        if (questionStore.totalLength > 0) {
+		          questionStore.reload();
+		        }
+		      },
+		      scope: this
+		    },
+		    datachange: {
+		      fn: function (store, action, result, res, rs) {
+		        store.reload();
+		      }
+		    }
+		  }
     });
 
     this.surveyQuestionStore = Ext.create('Ext.data.Store', {
@@ -276,135 +260,30 @@ var surveyPanel = {
       model: 'SurveyQuestion',
       proxy: {
         type: 'ajax',
+				reader: {
+					root: 'surveyQuestions'
+				},
+				writer: {
+					type: 'json',
+					root: 'surveyQuestions',
+					encode: true,
+					writeAllFields: true
+				},
         api: {
           create:  '/admin/kiosk_survey_questions/create',
           read:    '/admin/kiosk_survey_questions/read',
           update:  '/admin/kiosk_survey_questions/update',
           destroy: '/admin/kiosk_survey_questions/destroy'
         }
-      }
+      },
+			listeners: {
+				write: function (store, operation, opts) {
+					Ext.getCmp('questionForm').getForm().reset();
+				}
+			}
     });
-
-		// this.surveyStore = new Ext.data.Store({
-		//   storeId: 'surveyStore',
-    //   model: 'Survey',
-		//   proxy: surveyProxy,
-		//   reader: surveyReader,
-		//   writer: surveyWriter,
-		//   autoSync: true,
-		//   listeners: {
-		//     remove: {
-		//       fn: function (store, rec, index) {
-		//         // disable delete button
-		//         this.surveyGrid.topToolbar.items.items[1].disable();
-
-		//         // check if there are questions
-		//         if (this.surveyQuestionStore.totalLength > 0) {
-		//           this.surveyQuestionStore.reload();
-		//         }
-		//       },
-		//       scope: this
-		//     },
-		//     datachange: {
-		//       fn: function (store, action, result, res, rs) {
-		//         store.reload();
-		//       }
-		//     }
-		//   }
-		// });
-
-		// this.surveyQuestionStore = new Ext.data.Store({
-		//   storeId: 'surveyQuestionStore',
-    //   model: 'SurveyQuestion',
-		//   proxy: surveyQuestionProxy,
-		//   reader: surveyQuestionReader,
-		//   writer: surveyQuestionWriter,
-    //   sortInfo: {
-    //     field: 'order',
-    //     direction: 'ASC'
-    //   },
-		//   write: {
-		//     fn: function (store, action, result, res, rs) {
-		//       store.reload();
-		//     }
-		//   }
-		// });
-
-
-			// surveyReader = new Ext.data.JsonReader({
-			//   messageProperty: 'message',
-			//   root: 'surveys'
-			// }),
-
-			// surveyWriter = new Ext.data.JsonWriter(),
-
-			// surveyQuestionProxy = new Ext.data.HttpProxy({
-			//   api: {
-			//   }
-			// }),
-
-			// surveyQuestionFields = Ext.data.Record.create([
-			//   { name: 'id', type: 'int' },
-			//   { name: 'kiosk_survey_id', type: 'int' },
-			//   'question',
-			//   'type',
-			//   'options',
-      //   { name: 'order', type: 'int' },
-			//   { name: 'created', type: 'date', dateFormat: 'Y-m-d H:i:s' }
-			// ]),
-
-			// surveyQuestionReader = new Ext.data.JsonReader({
-			//   messageProperty: 'message',
-			//   root: 'surveyQuestions'
-			// }),
-
-			// surveyQuestionWriter = new Ext.data.JsonWriter({
-      //   writeAllFields: true
-      // });
 	},
 	initGrid: function () {
-
-		// var surveyGridView = new Ext.grid.GridView({ forceFit: true }),
-
-
-			// surveySelModel = new Ext.grid.RowSelectionModel({
-			//   singleSelect: true,
-			//   listeners: {
-			//     rowdeselect: {
-			//       fn: function (sm, row, rec) {
-			//         this.selectedSurvey = null;
-			//       },
-			//       scope: this
-			//     },
-			//     rowselect: {
-			//       fn: function (sm, row, rec) {
-			//         var newQuestionButton = Ext.getCmp('newQuestionButton'),
-      //           form = Ext.getCmp('questionForm'),
-			//           questionField = Ext.getCmp('questionField'),
-			//           typeField = Ext.getCmp('typeField'),
-			//           optionsField = Ext.getCmp('optionsField'),
-      //           orderField = Ext.getCmp('orderField'),
-			//           saveButton = Ext.getCmp('saveButton');
-
-      //         form.getForm().reset();
-      //         questionField.disable();
-      //         typeField.disable();
-      //         optionsField.disable();
-      //         orderField.disable();
-      //         saveButton.disable();
-
-			//         this.selectedSurvey = rec;
-			//         sm.grid.topToolbar.items.items[1].enable(); // enable delete button
-      //         sm.grid.topToolbar.items.items[2].enable();
-			//         this.surveyQuestionStore.reload({ params: {kiosk_id: rec.id} }); // load any existing questions
-			//         newQuestionButton.enable(); // enable new question button
-
-			//       },
-			//       scope: this
-			//     }
-			//   }
-			// }),
-
     var surveyToolbar = Ext.create('Ext.toolbar.Toolbar', {
       items: [{
         text: 'New Survey',
@@ -413,7 +292,12 @@ var surveyPanel = {
         handler: function () {
           Ext.Msg.prompt('New Survey', 'Enter a name for the survey', function (btn, text) {
             if (btn === 'ok') {
-              this.surveyStore.add({ name: text, created: Ext.Date.format('m/d/Y') });
+							var currentTime = new Date(),
+								month = currentTime.getMonth() + 1,
+								day = currentTime.getDate(),
+								year = currentTime.getFullYear();
+								
+              this.surveyStore.add({ name: text, created: month + "/" + day + "/" + year });
               this.surveyStore.sync();
             }
           }, this);
@@ -433,6 +317,7 @@ var surveyPanel = {
             fn: function (btn) {
               if (btn === 'yes') {
                 this.surveyStore.remove(this.selectedSurvey);
+								this.surveyStore.sync();
               }
             }
           });
@@ -443,16 +328,11 @@ var surveyPanel = {
         disabled: true,
         scope: this,
         handler: function () {
-          var surveyId = this.selectedSurvey.id;
+          var surveyId = this.selectedSurvey.data.id;
           window.location = '/admin/kiosk_surveys/report?survey_id=' + surveyId;
         }
       }]
     });
-			// surveyQuestionsGridView = new Ext.grid.GridView({ forceFit: true }),
-
-			// surveyQuestionsSelModel = new Ext.grid.RowSelectionModel({
-			//   singleSelect: true,
-			// });
 
 		this.surveyGrid = Ext.create('Ext.grid.Panel', {
       id: 'surveyGrid',
@@ -472,14 +352,44 @@ var surveyPanel = {
           dataIndex: 'created',
           renderer: Ext.util.Format.dateRenderer()
         }
-      ]
+      ],
+			listeners: {
+		    deselect: {
+		      fn: function (rm, rec, index, opts) {
+		        this.selectedSurvey = null;
+		      },
+		      scope: this
+		    },
+		    select: {
+		      fn: function (rm, rec, index, opts) {
+		        var newQuestionButton = Ext.getCmp('newQuestionButton'),
+	              form = Ext.getCmp('questionForm'),
+		          questionField = Ext.getCmp('questionField'),
+		          typeField = Ext.getCmp('typeField'),
+		          optionsField = Ext.getCmp('optionsField'),
+	              orderField = Ext.getCmp('orderField');
+
+	            form.getForm().reset();
+	            questionField.disable();
+	            typeField.disable();
+	            optionsField.disable();
+	            orderField.disable();
+
+		        this.selectedSurvey = rec;
+		        surveyToolbar.items.items[1].enable(); // enable delete button
+	          surveyToolbar.items.items[2].enable();
+		        this.surveyQuestionStore.load({ params: {kiosk_id: rec.data.id} }); // load any existing questions
+		        newQuestionButton.enable(); // enable new question button
+
+		      },
+		      scope: this
+		    }
+			}
 		});
 
 		this.surveyQuestionsGrid = Ext.create('Ext.grid.Panel', {
 			id: 'questionsGrid',
       store: this.surveyQuestionStore,
-			// sm: surveyQuestionsSelModel,
-			// view: surveyQuestionsGridView,
 			height: 270,
 			frame: false,
       loadMask: true,
@@ -507,13 +417,48 @@ var surveyPanel = {
 				},
 				{ header: 'Options', sortable: true, dataIndex: 'options' },
         { header: 'Order', sortable: false, dataIndex: 'order' }
-      ]
+      ],
+			listeners: {
+		    deselect: {
+		      fn: function (rm, rec, index, opts) {
+		        this.selectedQuestion = null;
+		      },
+		      scope: this
+		    },
+		    select: {
+		      fn: function (rm, rec, index, opts) {
+						this.selectedQuestion = rec;
+						
+						var form = Ext.getCmp('questionForm').getForm(),
+		          questionField = Ext.getCmp('questionField'),
+		          typeField = Ext.getCmp('typeField'),
+		          optionsField = Ext.getCmp('optionsField'),
+              orderField = Ext.getCmp('orderField');
+
+							if (questionField.disabled) {
+              	questionField.enable();
+                typeField.enable();
+                orderField.enable();
+							} else {
+                if (rec.data.type === "yesno" || rec.data.type === "truefalse") {
+                  optionsField.disable();
+                }
+              }
+                if (rec.data.type !== "yesno" && rec.data.type !== 'truefalse') {
+                  optionsField.enable();
+                }
+
+								form.loadRecord(rec);
+                Ext.getCmp('deleteQuestionButton').enable();
+		      },
+		      scope: this
+		    }
+			}
 		});
 	}
 };
 
 Ext.onReady(function () {
-  Ext.Compat.showErrors = true;
 	Ext.QuickTips.init();
 	surveyPanel.init();
   surveyPanel.surveyGrid.render('survey-grid');
