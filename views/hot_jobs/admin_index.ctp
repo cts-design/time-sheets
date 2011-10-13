@@ -1,3 +1,4 @@
+<?php echo $this->Html->script('Atlas/form/field/HtmlEditor', array('inline' => false)) ?>
 <?php echo $this->Html->script('hot_jobs/grid', array('inline' => false))?>
 <div id="crumbWrapper">
     <span><?php __('You are here') ?> > </span>

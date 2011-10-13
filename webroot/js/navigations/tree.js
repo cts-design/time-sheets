@@ -1,404 +1,335 @@
 /**
  * @author Brandon Cordell
- * @copyright Complete Technology Solutions 2010
+ * @copyright Complete Technology Solutions 2011
  * @link http://ctsfla.com
  * @package ATLAS V3
  */
-if (typeof console == "undefined") {
-    window.console = {
-        log: function () {}
-    };
-}
+
+Ext.override(Ext.menu.KeyNav, {
+    constructor: function(menu) {
+        var me = this;
+        me.menu = menu;
+        me.callParent([menu.el, {
+            down: me.down,
+            enter: me.enter,
+            esc: me.escape,
+            left: me.left,
+            right: me.right,
+            //space: me.enter,
+            tab: me.tab,
+            up: me.up
+        }]);
+    }
+});
 
 Ext.onReady(function() {
 	Ext.QuickTips.init();
 	Ext.BLANK_IMAGE_URL = "/img/ext/default/s.gif";
 	
     var win; // holds the Ext.Window object
-    var getNodesUrl = '/admin/navigations/get_nodes/',
-    addNodeUrl = '/admin/navigations/add_node/',
-    reorderUrl = '/admin/navigations/reorder/',
-    reparentUrl = '/admin/navigations/reparent/',
-    deleteNodeUrl = '/admin/navigations/delete_node/';
+    var getNodesUrl = '/admin/navigations/read',
+    addNodeUrl = '/admin/navigations/add_node',
+    reorderUrl = '/admin/navigations/reorder',
+    reparentUrl = '/admin/navigations/reparent',
+    deleteNodeUrl = '/admin/navigations/delete_node';
     // track what nodes are moved and send to server to save
     var oldPosition = null,
     oldNextSibling = null;
-    
-    var cmsStore = new Ext.data.JsonStore({
-    	autoLoad: true,
-		url: '/admin/pages/get_short_list',
-		storeId: 'cmsStore',
-		root: 'pages',
-		idProperty: 'title',
-		fields: ['title', 'slug']
-	});
-	
-	var cmsCombo = new Ext.form.ComboBox({
-		store: cmsStore,
-		mode: 'local',
-		name: 'cmscombo',
-		triggerAction: 'all',
-		typeAhead: true,
-	    valueField: 'title',
-	    displayField: 'title',
-	    fieldLabel: 'Use an Existing CMS Page',
-	    disabledClass: 'test',
-	    listeners: {
-	    	select: function(combo, record, index) {
-	    		var f = formPanel.getForm();
-	    		f.setValues({
-	    			name: record.data.title,
-	    			link: '/pages/' + record.data.slug
-	    		});
-	    	}
-	    }
-	});
-    
-	// form to place on the window
-	var formPanel = new Ext.FormPanel({
-		defaultType: 'field',
-		labelWidth: 150,
-		autoScroll: true,
-		id: 'formpanel',
-		frame: true,
-		items: [
-		cmsCombo,
-		{
-			xtype: 'textfield',
-			fieldLabel: 'Name',
-			name: 'name'
-		},{
-			xtype: 'textfield',
-			fieldLabel: 'URL',
-			name: 'link'
-		}],
-		buttons: [{
-			id: 'savebtn',
-			text: 'Save',
-			handler: function(b, e) {
-				var submitUrl = '/admin/navigations/create';
-				var f = formPanel.getForm();
-				var vals = f.getValues();
-				
-				var selectedNode = tree.selModel.selNode;
-				var parentId, parent;
 
-	            if (!selectedNode || !selectedNode.parentNode) {
-	            	parent = tree.root.firstChild;
-	            } else if (selectedNode.leaf) {
-	            	// check to see if we're nesting too deep
-	            	if (selectedNode.parentNode.parentNode.parentNode && selectedNode.parentNode.parentNode.parentNode.isRoot) {
-	            		Ext.Msg.alert('Cannot add link', 'You may only nest one link deep');
-	            		return;
-	            	} else {
-	            		parent = selectedNode;
-	            	}
-	            } else {
-	            	parent = selectedNode;
-	            }
-	            
-	            parentId = parent.id;
+		var cp = Ext.create('Ext.state.CookieProvider', {
+		    expires: new Date(new Date().getTime()+(1000*60*60*24*30)), //30 days	
+		})
 
-				f.submit({
-					url: submitUrl,
-					params: {
-						parentId: parentId
-					},
-					success: function(form, action) {
-						if (action.result.success !== true) {
-							action.options.failure();
-						} else {
-							var newNode = new Ext.tree.TreeNode({
-								id: action.result.navigation.id, 
-								text: action.result.navigation.title,
-								linkUrl: action.result.navigation.link,
-								leaf: true
-							});
-
-							if (!parent.expanded) {
-								parent.expand();
-							}
-							
-							if (parent.isLeaf) {
-								parent.leaf = false;
-								parent.attributes.leaf = false;
-							}
-							
-							parent.appendChild(newNode);
-						}
-						
-						win.hide();
-						formPanel.getForm().setValues({
-							cmscombo: '',
-							name: '',
-							link: ''
-						});
-					},
-					failure: function(form, action) {
-						switch (action.failureType) {
-							case Ext.form.Action.CLIENT_INVALID:
-								Ext.Msg.alert('Failure', 'Form fields may not be submitted with invalid keys');
-								break;
-							case Ext.form.Action.CONNECT_FAILURE:
-								Ext.Msg.alert('Failure', 'Ajax Communication Failed');
-								break;
-							case Ext.form.Action.SERVER_INVALID:
-								Ext.Msg.alert('Failure', action.result.msg);
-								break;
-						}
-					}
-				});
-			}
-		},{
-			id: 'updatebtn',
-			text: 'Update',
-			hidden: true,
-			handler: function(b, e) {
-				var submitUrl = '/admin/navigations/update';
-				var f = formPanel.getForm();
-				var vals = f.getValues();
-				
-				var selectedNode = tree.selModel.selNode;
-				var nodeId = selectedNode.id;
-
-				console.log(selectedNode);
+		Ext.state.Manager.setProvider(cp);
 		
+    Ext.define('Page', {
+    	extend: 'Ext.data.Model',
+    	fields: [ 'title', 'slug' ]
+    });
+		
+    var pageStore = Ext.create('Ext.data.Store', {
+    	model: 'Page',
+    	storeId: 'pageStore',
+    	proxy: {
+    		type: 'ajax',
+				api: {
+					read: '/admin/pages/get_short_list'
+				},
+    		reader: {
+    			type:'json',
+    			root: 'pages'
+    		}
+    	},
+			autoLoad: true
+    });
 
-				f.submit({
-					url: submitUrl,
-					params: {
-						id: nodeId
-					},
-					success: function(form, action) {
-						//console.log(action);
-					
-						if (action.result.success !== true) {
-							action.options.failure();
-						} else {
-							selectedNode.setText(action.result.navigation.title);
-							selectedNode.attributes.linkUrl = action.result.navigation.link;
-						}
-						
-						win.hide();
-						formPanel.getForm().setValues({
-							cmscombo: '',
-							name: '',
-							link: ''
-						});
-					},
-					failure: function(form, action) {
-						switch (action.failureType) {
-							case Ext.form.Action.CLIENT_INVALID:
-								Ext.Msg.alert('Failure', 'Form fields may not be submitted with invalid keys');
-								break;
-							case Ext.form.Action.CONNECT_FAILURE:
-								Ext.Msg.alert('Failure', 'Ajax Communication Failed');
-								break;
-							case Ext.form.Action.SERVER_INVALID:
-								Ext.Msg.alert('Failure', action.result.msg);
-								break;
-						}
-					}
-				});
-			}			
-		},{
-			text: 'Cancel',
-			handler: function(b, e) {
-				win.hide();
-				formPanel.getForm().setValues({
-					cmscombo: '',
-					name: '',
-					link: ''
-				});
-			}			
-		}],
-		buttonAlign: 'right'
-	});
-
-    var addLinkButton = new Ext.Button({
-        text: 'Add Link',
-        handler: function() {        	
-    		win = new Ext.Window({
-    			title: 'Add Link',
-    			width: 350,
-    			modal: true,
-    			closeAction: 'hide',
-        		items: [formPanel],
-        		listeners: {
-        			beforehide: function(c) {
-        				var f = formPanel.getForm();
-		        		f.setValues({
-							cmscombo: '',
-							name: '',
-							link: ''
-						});
-        			}
-        		}
-        	});
-
-        	win.show();
-        }
+    Ext.define('Navigation', {
+    	extend: 'Ext.data.Model',
+    	fields: [ 'text', 'linkUrl' ]
     });
     
-    var editLinkButton = new Ext.Button({
-        text: 'Edit Link',
-        disabled: true,
-        handler: function() {
-        	var f = formPanel.getForm();
-        	var selectedNode = tree.selModel.selNode;
-        	
-        	if (selectedNode || selectedNode.parentNode || !selectedNode.parentNode.isRoot) {
-                f.setValues({
-                	name: selectedNode.attributes.text,
-                	link: selectedNode.attributes.linkUrl
-                });
-                
-                Ext.getCmp('savebtn').hide();
-                Ext.getCmp('updatebtn').show();
-                
-	    		win = new Ext.Window({
-	    			title: 'Edit Link',
-	    			width: 350,
-	    			modal: true,
-	    			closeAction: 'hide',
-	        		items: [formPanel],
-		        	listeners: {
-	        			beforehide: function(c) {
-	        				var f = formPanel.getForm();
-			        		f.setValues({
-								cmscombo: '',
-								name: '',
-								link: ''
-							});
-							
-							Ext.getCmp('savebtn').show();
-            				Ext.getCmp('updatebtn').hide();
-	        			}
-	        		}
-	        	});
-	
-	        	win.show();
-            }
-        }
+    Ext.create('Ext.data.TreeStore', {
+    	model: 'Navigation',
+    	storeId: 'navigationStore',
+    	proxy: {
+    		type: 'ajax',
+    		reader: {
+    			type: 'json'
+    		},
+    		api: {
+					read: getNodesUrl,
+					update: '/admin/navigations/update'
+				}
+    	},
+    	root: {
+    		text: 'Navigation Positions',
+    		expanded: true
+    	},
+    	autoLoad: true
     });
 
-    var removeLinkButton = new Ext.Button({
-        text: 'Remove Link',
-        disabled: true,
-        handler: function() {
-            var selectedNode = tree.selModel.selNode;
+		var cmsCombo = Ext.create('Ext.form.field.ComboBox', {
+			store: pageStore,
+			queryMode: 'local',
+			name: 'cmscombo',
+			triggerAction: 'all',
+			typeAhead: true,
+		    valueField: 'title',
+		    displayField: 'title',
+		    fieldLabel: 'CMS Page',
+		    disabledClass: 'test',
+		    listeners: {
+		    	select: function(combo, record, index) {
+		    		var f = this.up('form').getForm();
+		    		f.setValues({
+		    			name: record[0].data.title,
+		    			link: '/pages/' + record[0].data.slug
+		    		});
+		    	}
+		    }
+		});
+		
+		var addForm = Ext.create('Ext.form.Panel', {
+			width: 300,
+			frame: true,
+			items: [{
+				xtype: 'combo',
+				store: Ext.data.StoreManager.lookup('pageStore'),
+				queryMode: 'remote',
+				name: 'cmscombo',
+				triggerAction: 'all',
+				typeAhead: true,
+		    valueField: 'title',
+		    displayField: 'title',
+		    fieldLabel: 'CMS Page',
+		    listeners: {
+		    	select: function(combo, record, index) {
+		    		var f = this.up('form').getForm();
+		    		f.setValues({
+		    			name: record[0].data.title,
+		    			link: '/pages/' + record[0].data.slug
+		    		});
+		    	}
+		    }
+			}, {
+				xtype: 'textfield',
+				fieldLabel: 'Link Name',
+				name: "name",
+				allowBlank: false
+			}, {	
+				xtype: 'textfield',
+				fieldLabel: 'Link URL',
+				name: "link",
+				allowBlank: false
+			}],
+			buttons: [{
+				text: 'Save',
+				formBind: true,
+				disabled: true,
+				handler: function()	{
+					Ext.MessageBox.wait('Please Wait..', 'Status');
+					if(addForm.getForm().isValid()) {
 
-            if (!selectedNode) {
-                Ext.MessageBox.show({
-                            title: 'Error',
-                            msg: 'Please select a link to delete',
-                            buttons: Ext.MessageBox.OK,
-                            icon: Ext.MessageBox.ERROR
-                });
-            } else if (!selectedNode.parentNode || selectedNode.parentNode.isRoot == true) {
-                Ext.MessageBox.show({
-                            title: 'Error',
-                            msg: 'Cannot delete link positions',
-                            buttons: Ext.MessageBox.OK,
-                            icon: Ext.MessageBox.ERROR
-                });
-            } else {
-                tree.disable();
-                
-                var params = {'id':selectedNode.id};
+						var vals = addForm.getForm().getValues();
+						var parent = tree.getSelectionModel().getLastSelected();	
+						if(parent == null) {
+							Ext.MessageBox.alert('Error', 'Please select a parent to add link to.');
+							return false;
+						}
 
-                Ext.Ajax.request({
-                    url:deleteNodeUrl,
-                    params:params,
-                    success:function(response, request) {
-                        if (response.responseText.charAt(0) != 1){
-                            request.failure();
-                        } else {
-                        	var parent = selectedNode.parentNode;
-                            selectedNode.destroy();
-                            
-                            if (!parent.hasChildNodes()) {
-                            	parent.leaf = false;
-                            	parent.attributes.leaf = false;
-                            }
-                            
-                            tree.enable();
-                            editLinkButton.disable();
-                            removeLinkButton.disable();
-                        }
-                    },
-                    failure:function() {
-                        tree.suspendEvents();
-                        tree.resumeEvents();
-                        tree.enable();
+						Ext.Ajax.request({
+							url: '/admin/navigations/create',
+							params: {
+								parentId: parent.data.id,
+								name: vals.name,
+								link: vals.link,
+								parentPath: parent.getPath()
+							},
+							scope: this,
+							success: function(response, options) {
+								var o = {};
+								try {
+									o = Ext.decode(response.responseText);
+								} catch(e) {
+									Ext.Msg.alert('Error','Unable to save category, please try again.');
+									return;
+								}
+								if(o.success !== true) {
+									Ext.Msg.alert('Error', o.message);
+								} else {					
+									Ext.data.StoreManager.lookup('navigationStore').load();													
+									tree.on('load', function() {
+										tree.expandPath(o.node);
+										tree.selectPath(o.node);
+										Ext.Msg.alert('Success', o.message);								
+									}, this, {
+										delay: 100,
+										single: true
+									});
+								}
+							},
+							failure: function() {
+								Ext.Msg.alert('Error','Unable to save category, please try again.');
+							}
+						});
+					}
+				}
+			}]
+		});	
 
-                        Ext.MessageBox.show({
-                            title: 'Error',
-                            msg: 'Unable to delete your link. Please try again.',
-                            buttons: Ext.MessageBox.OK,
-                            icon: Ext.MessageBox.ERROR
-                        });
-                    }
+		var editForm = Ext.create('Ext.form.Panel', {
+			width: 300,
+			frame: true,
+			items: [{
+				xtype: 'combo',
+				store: Ext.data.StoreManager.lookup('pageStore'),
+				queryMode: 'remote',
+				name: 'cmscombo',
+				triggerAction: 'all',
+				typeAhead: true,
+		    valueField: 'title',
+		    displayField: 'title',
+		    fieldLabel: 'CMS Page',
+		    listeners: {
+		    	select: function(combo, record, index) {
+		    		var f = this.up('form').getForm();
+		    		f.setValues({
+		    			name: record[0].data.title,
+		    			link: '/pages/' + record[0].data.slug
+		    		});
+		    	}
+		    }
+			}, {
+				xtype: 'textfield',
+				fieldLabel: 'Link Name',
+				name: "name",
+				allowBlank: false
+			}, {	
+				xtype: 'textfield',
+				fieldLabel: 'Link URL',
+				name: "link",
+				allowBlank: false
+			}],
+			buttons: [{
+				text: 'Save',
+				formBind: true,
+				disabled: true,
+				handler: function()	{
+					Ext.MessageBox.wait('Please Wait..', 'Status');
+					var selected = tree.getSelectionModel().getLastSelected();			
+					var form = this.up('form').getForm();					
+					var id =  selected.internalId;
+		      if (form.isValid()) {
+						var vals = form.getValues();
+						selected.beginEdit();
+						selected.set('name', vals.name);
+						selected.set('link', vals.link);
+						selected.endEdit();
+						Ext.data.StoreManager.lookup('navigationStore').sync();
+					}
+				}
+			}]
+		});
 
-                });
-            }
-        }
-    });
-
-    var Tree = Ext.tree;
-    var tree = new Tree.TreePanel({
+		var contextMenu	 = Ext.create('Ext.menu.Menu', {
+		    items: [{
+		    	text: 'Add Link',
+		    	id: 'addLink',
+		    	icon : '/img/icons/add.png',
+		    	menu: {
+		    		plain: true,
+		    		items: [addForm]
+		    	}
+		    },		
+		    {
+		    	text: 'Edit Link',
+		    	id: 'editLink',
+		    	icon : '/img/icons/application_form_edit.png',
+					menu: {
+						plain: true,
+						items: [editForm]
+					}
+		    }, {
+					text: 'Delete Link',
+					id: 'deleteLink',
+					icon: '/img/icons/delete.png',
+					handler: function () {
+						var selected = tree.getSelectionModel().getLastSelected();
+						// delete selected
+					}
+				}]
+		});
+    
+    var tree = Ext.create('Ext.tree.TreePanel', {
         title: 'Site Navigation',
+				stateful: true,
+				stateId: 'navTree',
+				stateEvents: ['itemexpand', 'itemcollapse'],
+        tools: [{
+          id: 'expandTool',
+          type: 'expand',
+          tooltip: 'Expand all nodes',
+          handler: function(event, toolEl, panel) {
+            tree.expandAll();
+            this.hide();
+            tree.down('#collapseTool').show();
+          }
+        }, {
+          id: 'collapseTool',
+          type: 'collapse',
+          tooltip: 'Collapse all nodes',
+          hidden: true,
+          handler: function(event, toolEl, panel) {
+            tree.collapseAll();
+            this.hide();
+            tree.down('#expandTool').show();
+          }
+        }, {
+          type: 'gear',
+          tooltip: 'Navigation Settings',
+          handler: function(event, toolEl, panel) {}
+        }],
+				id: 'treePanel',
         renderTo: 'tree-div',
+        store: Ext.data.StoreManager.lookup('navigationStore'),
         autoScroll: true,
         animate: true,
-        enableDD: true,
+        height: 500,
         containerScroll: true,
         rootVisible: true,
-        root: new Tree.AsyncTreeNode({
-	        editable: false,
-	        text: 'Navigation Positions',
-	        draggable: false,
-	        id: 'root'
-    	}),
-    	loader: new Ext.tree.TreeLoader({
-            dataUrl: getNodesUrl
-        }),
-        tbar: new Ext.Toolbar({
-        	items: [
-        	{
-        		icon: '/img/icons/expand.png',
-        		id: 'expandall',
-        		handler: function() {
-        			tree.expandAll();
-        			Ext.getCmp('expandall').setVisible(false);
-        			Ext.getCmp('collapseall').setVisible(true);
-        		}
-        	},
-        	{
-        		icon: '/img/icons/collapse.png',
-        		id: 'collapseall',
-        		hidden: true,
-        		handler: function() {
-        			tree.collapseAll();
-        			Ext.getCmp('collapseall').setVisible(false);
-        			Ext.getCmp('expandall').setVisible(true);
-        		}
-        	},
-        		addLinkButton,
-        		editLinkButton,
-				removeLinkButton
-        	]
-        }),
+		   	viewConfig: {
+			    plugins: {
+				    ptype: 'treeviewdragdrop'
+			    },
+					listeners : {
+					  itemcontextmenu: function(view, rec, node, index, e) {
+						  e.stopEvent();
+						  contextMenu.showAt(e.getXY());
+						  return false;
+					  }              				
+					}            
+		    },
         listeners: {
-        	click: function(node, e) {
-        		if (!node.parentNode || node.parentNode.isRoot == true) {
-        			editLinkButton.disable();
-        			removeLinkButton.disable();
-        		} else {
-        			editLinkButton.enable();
-        			removeLinkButton.enable();
-        		}
-        	},
         	startdrag: function(tree, node, event) {
         		oldPosition = node.parentNode.indexOf(node);
         		oldNextSibling = node.nextSibling;
@@ -454,5 +385,71 @@ Ext.onReady(function() {
         }
     });
 
-    tree.root.expand();
+		tree.on('beforeitemmove', function(ni, oldParent, newParent, index, eOpts) {
+			oldPosition = ni.parentNode.indexOf(ni);
+			oldNextSibling = ni.nextSibling;
+		});
+
+		tree.on('itemmove', function(ni, oldParent, newParent, index, eOpts) {
+
+			if (oldParent == newParent) {
+				var url = reorderUrl;
+				var params = {'node':ni.data.id, 'delta':(index-oldPosition)};
+			} else {
+				var url = reparentUrl;
+				var params = {'node':ni.data.id, 'parent':newParent.data.id, 'position':index};
+			}
+
+			// we disable tree interaction until we've heard a response from the server
+			// this prevents concurrent requests which could yield unusual results
+
+			tree.disable();
+
+			Ext.Ajax.request({
+				url:url,
+				params:params,
+
+				success: function(response, request) {
+					var o = {};
+					try {
+						o = Ext.decode(response.responseText);
+					} catch(e) {
+						Ext.Msg.alert('Error','Unable to move category, please try again.');
+						return;
+					}
+					if(o.success == true) {
+						tree.enable();
+					} else {
+						request.failure();
+					}
+				},
+				failure: function() {
+					// we move the node back to where it was beforehand and
+					// we suspendEvents() so that we don't get stuck in a possible infinite loop
+
+					tree.suspendEvents();
+					oldParent.appendChild(ni);
+					if (oldNextSibling) {
+						oldParent.insertBefore(ni, oldNextSibling);
+					}
+
+					tree.resumeEvents();
+					tree.enable();
+
+					Ext.MessageBox.alert('Error', 'Changes could not be saved');
+				}
+			});
+
+		});
+
+		tree.getView().on('beforeitemcontextmenu', function(view, record, item, index, e, eOpts){
+			var black_list = ['Navigation Positions', 'Top', 'Left', 'Employers Middle', 'Career Seekers Middle', 'Programs Middle'];
+	
+			// check if the node can be deleted
+			if (Ext.Array.indexOf(black_list, record.data.text) === -1) {
+				Ext.getCmp('deleteLink').enable();
+			} else {
+				Ext.getCmp('deleteLink').disable();
+			}
+		});
 });
