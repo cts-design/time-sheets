@@ -52,7 +52,7 @@
 	echo $scripts_for_layout;
 	?>
     </head>
-    <body>
+    <body class="admin-layout">
 	<div id="container" style="display: none">
 	    <div id="header">
 		<div id="logo" class="left">
@@ -76,11 +76,13 @@
 		</div>
 	    </div>
 	    <div id="content">
+	    <div>
 		<h1 class="left"><?php echo $title_for_layout; ?></h1>
 		<?php echo $this->Session->flash(); ?>
 		<?php echo $session->flash('auth'); ?>
 		<br class="clear"/>
 		<?php echo $content_for_layout; ?>
+	    </div>
 	    </div>
 	    <div  id="footer">
 		<p>

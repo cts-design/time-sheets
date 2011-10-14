@@ -16,6 +16,7 @@
     </p>
 
     <div id="administration" class="left">
+        <div>
 	    <h3><?php echo $html->image('icons/user_suit.png')?> Administration</h3>
 	    <p class="expand-wrap"><?php echo $this->Html->link(__('Expand All', true), '', array('id' => 'expand')) ?></p>
 	    <div id="dashboardAdminTree" style="background-color: transparent">
@@ -103,7 +104,9 @@
 		</ul>
 	    </div>
     </div>
+    </div>
     <div id="information" class="left">
+        <div>
 	    <div id='help'>
             <h3><?php echo $html->image('icons/help.png')?> <?php __('Help') ?></h3>
             <?php if($this->Session->read('Auth.User.role_id') <= 3) : ?>
@@ -125,7 +128,7 @@
 	    		<?php echo $html->link('Atlas 3.1.2', array('controller' => 'release_notes', 'admin' => true))?>
 	    	</p>    	
 	    </div>
-
+        </div>
     </div>
 </div>
 
