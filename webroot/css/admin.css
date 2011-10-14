@@ -1091,3 +1091,5 @@ p.checkbox {
 
 .x-careerseeker-row li {list-style-type: disc;}
 
+.inTheNews div.date p.date { width: 310px }
+.inTheNews div.date select { width: 100px }
