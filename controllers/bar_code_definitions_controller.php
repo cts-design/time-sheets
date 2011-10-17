@@ -44,6 +44,9 @@ class BarCodeDefinitionsController extends AppController {
 					$data['total'] = $this->BarCodeDefinition->find('count');
 					$data['success'] = true;
 					$data['message'] = 'Bar code definition added successfully.';
+                    $this->Transaction->createUserTransaction('BarCodeDefinition', null, null,
+                                            'Added bar code definition ID ' . 
+                                            $this->BarCodeDefinition->getLastInsertId());					
 				} else {
 					$data['success'] = false;
 					$data['message'] = 'Unable to add bar code definition.';
@@ -68,6 +71,9 @@ class BarCodeDefinitionsController extends AppController {
 					$data['definitions'] = $this->getDefinition($this->data['BarCodeDefinition']['id']);
 					$data['success'] = true;
 					$data['message'] = 'Bar code definition updated successfully.';
+                    $this->Transaction->createUserTransaction('BarCodeDefinition', null, null,
+                                            'Edited bar code definition ID ' . 
+                                            $this->data['BarCodeDefinition']['id']);					
 				} else {
 					$data['success'] = false;
 					$data['message'] = 'Unable to update bar code definition.';
@@ -89,6 +95,9 @@ class BarCodeDefinitionsController extends AppController {
 			elseif ($this->BarCodeDefinition->delete($this->data['BarCodeDefinition']['id'])) {
 				$data['definitions'] = $this->getDefinition($this->data['BarCodeDefinition']['id']);
 				$data['success'] = true;
+                $this->Transaction->createUserTransaction('BarCodeDefinition', null, null,
+                                        'Deleted bar code definition ID ' . 
+                                        $this->data['BarCodeDefinition']['id']);				
 			}
 			else {
 				$data['success'] = false;
