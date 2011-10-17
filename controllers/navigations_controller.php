@@ -15,7 +15,6 @@ class NavigationsController extends AppController {
 
         function admin_index() {}
 
-
         function admin_read() {
             $parent = intval($this->params['url']['node']);
             $data = array();
@@ -27,7 +26,7 @@ class NavigationsController extends AppController {
                     'id'   => $node['Navigation']['id'],
                     'text' => $node['Navigation']['title'],
                     'link' => $node['Navigation']['link'],
-                    'leaf' => ($node['Navigation']['lft'] + 1 === $node['Navigation']['rght'])
+                    'leaf' => ($node['Navigation']['lft'] + 1 == $node['Navigation']['rght'])
                 );
             }
 
@@ -35,20 +34,8 @@ class NavigationsController extends AppController {
             return $this->render(null, null, '/elements/ajaxreturn');
         }
 
-        function admin_destroy() {}
-
-        /**
-         * Retrieves request from Ajax and finds the parent and it's children
-         */
-        function admin_get_nodes() {
-            // retreive the node id that ExtJS posts via Ajax
-            $parent = intval($this->params['url']['node']);
-
-            // find all the nodes underneath the parent node defined above
-            // the second parameter (true) means we only want direct children
-            $nodes = $this->Navigation->children($parent, true);
-
-            $this->set(compact('nodes'));
+        function admin_destroy() {
+            
         }
 
         function admin_reorder() {
@@ -175,6 +162,7 @@ class NavigationsController extends AppController {
 			
 			if ($record) {
 				$data['success'] = true;
+				$record['Navigation']['leaf'] = true;
 				$data['navigation'] = $record['Navigation'];
 				$data['navigation']['id'] = $this->Navigation->getLastInsertId();
 				$data['message'] = 'Navigation link saved successfully';
@@ -186,29 +174,13 @@ class NavigationsController extends AppController {
 			$this->set(compact('data'));
 			return $this->render(null, null, '/elements/ajaxreturn');			
 		}
-
-        function admin_rename_node() {
-            $success = false;
-            $nodeId = intval($this->params['form']['id']);
-            $nodeTitle = $this->params['form']['title'];
+        
+        function admin_repair() {
+            $this->Navigation->recover();
+            $data['success'] = true;
             
-            $this->Navigation->read(null, $nodeId);
-            $this->Navigation->set('title', $nodeTitle);
-            if ($this->Navigation->save()) {
-                $success = true;
-            }
-
-            $this->set(compact('success'));
-        }
-
-        function admin_delete_node() {
-            $success = false;
-            $nodeId = intval($this->params['form']['id']);
-            if ($this->Navigation->delete($nodeId)) {
-                $success = true;
-            }
-
-            $this->set(compact('success'));
+            $this->set(compact('data'));
+            return $this->render(null, null, '/elements/ajaxreturn');
         }
 }
 ?>
