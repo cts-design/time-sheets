@@ -143,9 +143,11 @@ class SelfSignLogArchivesController extends AppController {
 			$report[$k]['Closed In'] = $v['SelfSignLogArchive']['closed_in'];
 			
 			// get the time to close in seconds
-			$created = strtotime(str_replace("-", "", $v['SelfSignLogArchive']['created']));
-			$closed  = strtotime(str_replace("-", "", $v['SelfSignLogArchive']['closed']));
-            $closedInTimes[] = $closed - $created;
+			if ($v['SelfSignLogArchive']['closed_in']) {
+    			$created = strtotime(str_replace("-", "", $v['SelfSignLogArchive']['created']));
+    			$closed  = strtotime(str_replace("-", "", $v['SelfSignLogArchive']['closed']));
+                $closedInTimes[] = $closed - $created;
+			}
 		}
 		
 		$averageTimeInSeconds = $this->_calculateAverageTimeInSeconds($closedInTimes);
