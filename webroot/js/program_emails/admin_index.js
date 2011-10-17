@@ -106,12 +106,12 @@ Ext.onReady(function(){
 	});
 	
 
-		var editor = Ext.create('Ext.form.HtmlEditor', {
-			region: 'south',
-			height: 300,
-			frame: true,
-			value: 'Please select a row to see the email body.'	
-		});		
+	var editor = Ext.create('Ext.form.TextArea', {
+		region: 'south',
+		height: 310,
+		frame: true,
+		value: 'Please select a row to see the email body.'	
+	});		
 
 		
 	var formPanel = Ext.create('Ext.form.Panel', {
