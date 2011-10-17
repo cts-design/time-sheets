@@ -76,15 +76,17 @@
 		<?php if($user['User']['disabled'] == 0) :?>
 			<?php echo $this->Html->link(__('Upload', true), array('controller' => 'filed_documents',  'action' => 'upload_document', $user['User']['id']), array('class' => 'docs')); ?>
 			<?php echo $this->Html->link(__('Scan', true), array('controller' => 'filed_documents',  'action' => 'scan_document', $user['User']['id']), array('class' => 'docs')); ?>
-			<?php if($user['User']['role_id'] > 3 ) : ?>
-			    <?php echo $this->Html->link(__('Permissions', true), array('controller' => 'permissions', 'action' => 'index', $user['User']['id'], 'User'), array('class'=>'permissions')); ?>
-			<?php endif ?>
+			<?php if($this->Session->read('Auth.User.role_id') < 3)	: ?>
+				<?php if($user['User']['role_id'] > 3 ) : ?>
+				    <?php echo $this->Html->link(__('Permissions', true), array('controller' => 'permissions', 'action' => 'index', $user['User']['id'], 'User'), array('class'=>'permissions')); ?>
+				<?php endif ?>
+			<?php endif ?>				
 	    <?php endif ?>
 	    <?php echo $this->Html->link(__('Edit', true), array('action' => 'edit_admin', $user['User']['id'], 'admin' => true), array('class' => 'edit')); ?>
     	<?php if($user['User']['disabled'] == 0) :?>
-    		<?php echo $this->Html->link(__('Disable', true), array('controller' => 'users',  'action' => 'toggle_disabled', $user['User']['id'], 1, 'Administrator')); ?>
+    		<?php echo $this->Html->link(__('Disable', true), array('controller' => 'users',  'action' => 'toggle_disabled_admin', $user['User']['id'], 1)); ?>
     	<?php else : ?>
-    		<?php echo $this->Html->link(__('Enable', true), array('controller' => 'users',  'action' => 'toggle_disabled', $user['User']['id'], 0, 'Administrator')); ?> 
+    		<?php echo $this->Html->link(__('Enable', true), array('controller' => 'users',  'action' => 'toggle_disabled_admin', $user['User']['id'], 0)); ?> 
     	<?php endif ?>
 	    </td>
 	</tr>
