@@ -60,6 +60,25 @@
 				    'label' => 'Toggle Disabled',
 				    'checked' => (isset($controllers['Users']['admin_toggle_disabled']) ? $controllers['Users']['admin_toggle_disabled'] : '' )));?>				    
 			    </fieldset>
+		    <fieldset class="left right-mar-10">
+            <legend><?php __('Administrators') ?></legend>
+			<?php echo $this->Form->input('Users.admin_index_admin', array(
+			    'type' => 'checkbox',
+			    'label' => 'Index',
+			    'checked' => (isset($controllers['Users']['admin_index_admin'])) ? $controllers['Users']['admin_index_admin'] : '' ));?>
+			<?php echo $this->Form->input('Users.admin_add_admin', array(
+			    'type' => 'checkbox',
+			    'label' => 'Add',
+			    'checked' => (isset($controllers['Users']['admin_add_admin'])) ? $controllers['Users']['admin_add_admin'] : ''));?>
+			<?php echo $this->Form->input('Users.admin_edit_admin', array(
+			    'type' => 'checkbox',
+			    'label' => 'Edit',
+			    'checked' => (isset($controllers['Users']['admin_edit_admin']) ? $controllers['Users']['admin_edit_admin'] : '' )));?>
+			<?php echo $this->Form->input('Users.admin_toggle_disabled_admin', array(
+			    'type' => 'checkbox',
+			    'label' => 'Toggle Disabled',
+			    'checked' => (isset($controllers['Users']['admin_toggle_disabled_admin']) ? $controllers['Users']['admin_toggle_disabled_admin'] : '' )));?>				    
+		    </fieldset>			    
 			    <?php if (!in_array('UserTransactions', $disabledModules)): ?>
 			    <fieldset class="left right-mar-10">
                 <legend><?php __('Activity') ?></legend>
