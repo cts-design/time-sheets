@@ -518,6 +518,9 @@ class UsersController extends AppController {
 				'limit' => Configure::read('Pagination.admin.limit'), 'order' => array('User.lastname' => 'asc'));
 			if($this->Auth->user('role_id') == 2) {
 				$this->paginate['conditions']['User.role_id >'] = 1;
+			}
+			elseif($this->Auth->user('role_id') > 3) {
+				$this->paginate['conditions']['User.role_id >'] = 3;
 			}			
 			$data = array('users' => $this->paginate('User'), 'perms' => $filteredPerms, 'title_for_layout' => 'Administrators');
 			$this->set($data);
@@ -555,7 +558,10 @@ class UsersController extends AppController {
 		if($this->Auth->user('role_id') == 2) {
 			$conditions = array("NOT" => array(array('Role.id' => array(1))));
 		}
-		else $conditions = array("NOT" => array(array('Role.id' => array(1,2))));
+		if($this->Auth->user('role_id') == 3) {
+			$conditions = array("NOT" => array(array('Role.id' => array(1,2))));
+		}
+		else $conditions = array("NOT" => array(array('Role.id' => array(1,2,3))));
 		
 		$data = array(
 		    'roles' => $this->User->Role->find('list', array(
@@ -601,7 +607,10 @@ class UsersController extends AppController {
 		if($this->Auth->user('role_id') == 2) {
 			$conditions = array("NOT" => array(array('Role.id' => array(1))));
 		}
-		else $conditions = array("NOT" => array(array('Role.id' => array(1,2))));		
+		if($this->Auth->user('role_id') == 3){
+			$conditions = array("NOT" => array(array('Role.id' => array(1,2))));
+		}
+		else $conditions = array("NOT" => array(array('Role.id' => array(1,2,3))));		
 		$data = array(
 		    'roles' => $this->User->Role->find('list', array(
 			'conditions' => $conditions)),
@@ -792,7 +801,37 @@ class UsersController extends AppController {
 		}
 	}
 	
-	function admin_toggle_disabled($id=null, $disabled, $userType) {	
+	function admin_toggle_disabled($id=null, $disabled) {	
+		$this->_toggleDisabled($id, $disabled, 'Customer');
+	}
+	
+	function admin_toggle_disabled_admin($id=null, $disabled) {	
+		$this->_toggleDisabled($id, $disabled, 'Administrator');
+	}	
+	
+	function admin_auto_complete_customer() {
+		if($this->RequestHandler->isAjax()) {
+			$this->User->recursive = -1;
+			$query = $this->User->find('all', array(
+				'conditions' => array(
+					'User.role_id' => 1, 
+					'User.lastname' =>  $this->params['url']['lastname'], 
+					'User.firstname LIKE' => '%' . $this->params['url']['term'] . '%')));
+			$this->_setAutoCompleteOptions($query);
+			$this->render('/elements/app_controller/auto_complete_ajax');			
+		}
+	}
+
+	function admin_auto_complete_ssn() {
+		if($this->RequestHandler->isAjax()) {
+			$this->User->recursive = -1;
+			$query = $this->User->find('all', array('conditions' => array('User.role_id' => 1, 'User.ssn LIKE' => '%' . $this->params['url']['term'] . '%')));
+			$this->_setAutoCompleteOptions($query);
+			$this->render('/elements/app_controller/auto_complete_ajax');
+		}
+	}
+	
+	function _toggleDisabled($id, $disabled, $userType) {
 		if(!$id) {
 			$this->Session->setFlash(__('Invalid user id', true), 'flash_failure');
 			$this->redirect($this->referer());
@@ -823,28 +862,7 @@ class UsersController extends AppController {
 		else {
 			$this->Session->setFlash(__('An error occured.', true), 'flash_failure');
 			$this->redirect($this->referer());
-		}
-	}
-	function admin_auto_complete_customer() {
-		if($this->RequestHandler->isAjax()) {
-			$this->User->recursive = -1;
-			$query = $this->User->find('all', array(
-				'conditions' => array(
-					'User.role_id' => 1, 
-					'User.lastname' =>  $this->params['url']['lastname'], 
-					'User.firstname LIKE' => '%' . $this->params['url']['term'] . '%')));
-			$this->_setAutoCompleteOptions($query);
-			$this->render('/elements/app_controller/auto_complete_ajax');			
-		}
-	}
-
-	function admin_auto_complete_ssn() {
-		if($this->RequestHandler->isAjax()) {
-			$this->User->recursive = -1;
-			$query = $this->User->find('all', array('conditions' => array('User.role_id' => 1, 'User.ssn LIKE' => '%' . $this->params['url']['term'] . '%')));
-			$this->_setAutoCompleteOptions($query);
-			$this->render('/elements/app_controller/auto_complete_ajax');
-		}
+		}		
 	}
 
 
