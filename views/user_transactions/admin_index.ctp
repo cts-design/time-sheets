@@ -14,6 +14,7 @@
     <div class="actions ui-widget-header">
 	<ul>
 	    <li><?php echo $this->Html->link(__('Docs', true), array('controller' => 'filed_documents', 'action' => 'index', $this->params['pass'][0])); ?></li>
+	    <li><?php echo $this->Html->link(__('Activity Report', true), array('controller' => 'user_transactions', 'action' => 'report', 'admin' => true, $this->params['pass'][0])); ?></li>
 	</ul>
     </div>
     <table cellpadding="0" cellspacing="0">
