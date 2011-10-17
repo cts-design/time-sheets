@@ -85,6 +85,7 @@
 	    </div>
 	    </div>
 	    <div  id="footer">
+	    <div>
 		<p>
 		    <?php echo Configure::read('Company.name')?> is an equal opportunity employer/program.
 		    Auxiliary aids and services are available upon request to individuals with disabilities.
@@ -95,6 +96,7 @@
 		    Copyright &copy; <?php echo date('Y')?> - Complete Technology Solutions.
 		    All Rights Reserved.
 		</p>
+		</div>
 	    </div>
 	</div>
 	<?php echo $this->Js->writeBuffer(); ?>

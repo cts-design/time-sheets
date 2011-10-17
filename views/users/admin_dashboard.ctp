@@ -106,7 +106,6 @@
     </div>
     </div>
     <div id="information" class="left">
-        <div>
 	    <div id='help'>
             <h3><?php echo $html->image('icons/help.png')?> <?php __('Help') ?></h3>
             <?php if($this->Session->read('Auth.User.role_id') <= 3) : ?>
@@ -128,7 +127,7 @@
 	    		<?php echo $html->link('Atlas 3.1.2', array('controller' => 'release_notes', 'admin' => true))?>
 	    	</p>    	
 	    </div>
-        </div>
     </div>
+    <div class="clear"></div>
 </div>
 

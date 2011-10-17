@@ -79,8 +79,7 @@ strong {
 #header {
     width: 970px;
     color: #333;
-
-    height: 105px;
+    height: 90px;
     margin: 0px 0 5px 0;
     background: #FFF;
 }
@@ -113,7 +112,8 @@ strong {
 }
 
 #content > div,
-#content #dashboardAdminTree > div,
+#footer > div,
+#content #administration > div,
 #content #information > div {
 	padding: 10px;
 }
@@ -126,7 +126,6 @@ strong {
     width: 970px;
     border: none;
     margin: 0px 0px 10px 0px;
-
 }
 
 .left {
