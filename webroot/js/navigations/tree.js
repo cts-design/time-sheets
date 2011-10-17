@@ -26,6 +26,7 @@ Ext.onReady(function() {
 	Ext.QuickTips.init();
 	Ext.BLANK_IMAGE_URL = "/img/ext/default/s.gif";
 	
+		var selectedRecord = null;
     var win; // holds the Ext.Window object
     var getNodesUrl = '/admin/navigations/read',
     addNodeUrl = '/admin/navigations/add_node',
@@ -268,6 +269,23 @@ Ext.onReady(function() {
 					menu: {
 						plain: true,
 						items: [editForm]
+					},
+					listeners: {
+						show: function () {
+							console.log('show')
+						},
+						render: function () {
+							console.log('render')
+						},
+						activate: function () {
+							console.log('activated!');
+							
+							if (selectedRecord) {
+								console.log(selectedRecord);
+								editForm.loadRecord(selectedRecord);
+								editForm.doLayout();
+							}
+						}
 					}
 		    }, {
 					text: 'Delete Link',
@@ -275,12 +293,38 @@ Ext.onReady(function() {
 					icon: '/img/icons/delete.png',
 					handler: function () {
 						var selected = tree.getSelectionModel().getLastSelected();
-						// delete selected
+						
+						Ext.data.StoreManager.lookup('navigationStore').remove(selected);
+						Ext.data.StoreManager.lookup('navigationStore').sync();
 					}
 				}]
 		});
+		
+		var settingsWindow = Ext.create('Ext.window.Window', {
+			closeAction: 'hide',
+			id: 'settingsWindow',
+			items: [{
+				xtype: 'button',
+				text: 'Repair Navigation Tree',
+				x: 30,
+				y: 10,
+				handler: function () {
+					Ext.Ajax.request({
+						url: '/admin/Navigations/repair',
+						success: function (response) {
+							Ext.Msg.alert('Success', 'Navigation tree succesfully repaired');
+						}
+					});
+				}
+			}],
+			height: 100,
+			layout: 'absolute',
+			title: 'Tools',
+			width: 100
+		});
     
     var tree = Ext.create('Ext.tree.TreePanel', {
+				id: 'navigationTree',
         title: 'Site Navigation',
 				stateful: true,
 				stateId: 'navTree',
@@ -305,9 +349,14 @@ Ext.onReady(function() {
             tree.down('#expandTool').show();
           }
         }, {
+					id: 'settingsTool',
           type: 'gear',
           tooltip: 'Navigation Settings',
-          handler: function(event, toolEl, panel) {}
+					scope: this,
+					hidden: (userRoleId=2) ? false : true,
+          handler: function(event, toolEl, panel) {
+						settingsWindow.show();
+					}
         }],
 				id: 'treePanel',
         renderTo: 'tree-div',
@@ -448,8 +497,14 @@ Ext.onReady(function() {
 			// check if the node can be deleted
 			if (Ext.Array.indexOf(black_list, record.data.text) === -1) {
 				Ext.getCmp('deleteLink').enable();
+				Ext.getCmp('editLink').enable();
+				selectedRecord = record;
 			} else {
 				Ext.getCmp('deleteLink').disable();
+				Ext.getCmp('editLink').disable(); 
 			}
+			
+			console.log(record);
+			console.log(editForm);
 		});
 });
