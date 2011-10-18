@@ -558,7 +558,7 @@ class UsersController extends AppController {
 		if($this->Auth->user('role_id') == 2) {
 			$conditions = array("NOT" => array(array('Role.id' => array(1))));
 		}
-		if($this->Auth->user('role_id') == 3) {
+		elseif($this->Auth->user('role_id') == 3) {
 			$conditions = array("NOT" => array(array('Role.id' => array(1,2))));
 		}
 		else $conditions = array("NOT" => array(array('Role.id' => array(1,2,3))));
@@ -607,7 +607,7 @@ class UsersController extends AppController {
 		if($this->Auth->user('role_id') == 2) {
 			$conditions = array("NOT" => array(array('Role.id' => array(1))));
 		}
-		if($this->Auth->user('role_id') == 3){
+		elseif($this->Auth->user('role_id') == 3){
 			$conditions = array("NOT" => array(array('Role.id' => array(1,2))));
 		}
 		else $conditions = array("NOT" => array(array('Role.id' => array(1,2,3))));		
