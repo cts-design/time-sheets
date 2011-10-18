@@ -7,7 +7,7 @@
  */
 ?>
 <?php if(isset ($active)) {$active = $active;} else $active = 0 ?>
-<?php echo $this->Html->script('pdfobject', array('inline' => false)) ?>
+<?php echo $this->Html->script('pdfobject_min', array('inline' => false)) ?>
 <?php echo $this->Html->script('queued_documents/index', array('inline' => false)) ?>
 <?php $this->Html->scriptStart(array('inline' => false)); ?>
     $(document).ready(function(){
@@ -25,7 +25,13 @@
     var myPDF = new PDFObject({
       url: '/admin/queued_documents/view/<?php echo $lockedDoc['QueuedDocument']['id']?>',
       height: "800px",
-      pdfOpenParams: { scrollbars: '1', toolbar: '1', statusbar: '0', messages: '0', navpanes: '0' }
+      pdfOpenParams: { 
+      	scrollbars: '1', 
+      	toolbar: '1', 
+      	statusbar: '0', 
+      	messages: '0', 
+      	navpanes: '0' 
+      }
 
     }).embed('queuedDocumentsPdf');
   }
@@ -227,7 +233,8 @@ $this->Paginator->options(array(
     </div>
       <?php if(isset($lockedDoc)) { ?>
 	<div  id="queuedDocumentsPdf" >
-	    
+  		It appears you don't have Adobe Reader or PDF support in this web browser. 
+   		<a href="/admin/queued_documents/view/<?php echo $lockedDoc['QueuedDocument']['id']?>">Click here to download the PDF</a>	    
 	</div>
     <?php } else echo '<br /><p><strong>There is no loaded document at this time, try changing your filters.</strong></p>'?>
 </div>
