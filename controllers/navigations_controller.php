@@ -35,7 +35,19 @@ class NavigationsController extends AppController {
         }
 
         function admin_destroy() {
-            
+			$params = $this->params;
+			
+			if ($this->Navigation->delete($params['form']['id'])) {
+				$data['success'] = true;
+				$data['message'] = 'Navigation link deleted successfully.';
+				$data['node'] = $this->params['form']['parentPath'];                
+			} else {
+			    $data['success'] = false;
+			    $data['message'] = 'Navigation link could not be deleted.';
+			}
+			
+			$this->set(compact('data'));
+			return $this->render(null, null, '/elements/ajaxreturn');
         }
 
         function admin_reorder() {
@@ -117,8 +129,6 @@ class NavigationsController extends AppController {
 		function admin_update() {
 			$params = $this->params;
 
-            FireCake::log($params);
-			
 			if (substr($params['form']['link'], 0, 1) !== '/' && substr($params['form']['link'], 0, 4) !== 'http') {
 				$params['form']['link'] = '/' . $params['form']['link'];
 			}
@@ -136,6 +146,7 @@ class NavigationsController extends AppController {
 				$data['message'] = 'Navigation link edited successfully.';
 				$data['navigation'] = $record['Navigation'];
 				$data['navigation']['id'] = $params['form']['id'];
+				$data['node'] = $this->params['form']['parentPath'];
 			} else {
 				$data['success'] = false;
 			}

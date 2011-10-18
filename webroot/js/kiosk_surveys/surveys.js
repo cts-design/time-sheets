@@ -37,10 +37,13 @@ var surveyPanel = {
 				text: 'New Question',
 				icon: '/img/icons/add.png',
 				disabled: true,
+				scope: this,
 				handler: function () {
 					var form = Ext.getCmp('questionForm'),
 						questionsGrid = Ext.getCmp('questionsGrid'),
 						questionsSelModel = questionsGrid.getSelectionModel();
+						
+					this.selectedQuestion = null;
 
 					if (!questionsSelModel.isLocked()) {
 						questionsSelModel.clearSelections();
@@ -126,7 +129,7 @@ var surveyPanel = {
 						listeners: {
 							select: function (combo, rec, index) {
 								if (rec[0].data.shortname === 'yesno' || rec[0].data.shortname === 'truefalse') {
-									Ext.getCmp('optionsField').disable();
+									Ext.getCmp('optionsField').disable().reset();
 								} else {
 									Ext.getCmp('optionsField').enable();
 								}
@@ -258,6 +261,9 @@ var surveyPanel = {
     this.surveyQuestionStore = Ext.create('Ext.data.Store', {
       storeId: 'surveyQuestionStore',
       model: 'SurveyQuestion',
+			sorters: [
+				{ property: 'order', direction: 'ASC' }
+			],
       proxy: {
         type: 'ajax',
 				reader: {
@@ -323,10 +329,22 @@ var surveyPanel = {
           });
         }
       }, {
+				xtype: 'splitbutton',
         text: 'Report',
-        icon: '/img/icons/excel.png',
+        icon: '/img/icons/chairman_reports.png',
         disabled: true,
         scope: this,
+				menu: new Ext.menu.Menu({
+					items: [{
+						text: 'View Responses',
+						icon: '/img/icons/chairman_reports.png',
+						handler: function () {}
+					}, {
+						text: 'Download as Excel',
+						icon: '/img/icons/excel.png',
+						handler: function () {}
+					}]
+				}),
         handler: function () {
           var surveyId = this.selectedSurvey.data.id;
           window.location = '/admin/kiosk_surveys/report?survey_id=' + surveyId;
@@ -363,24 +381,30 @@ var surveyPanel = {
 		    select: {
 		      fn: function (rm, rec, index, opts) {
 		        var newQuestionButton = Ext.getCmp('newQuestionButton'),
-	              form = Ext.getCmp('questionForm'),
+	            form = Ext.getCmp('questionForm'),
 		          questionField = Ext.getCmp('questionField'),
 		          typeField = Ext.getCmp('typeField'),
 		          optionsField = Ext.getCmp('optionsField'),
-	              orderField = Ext.getCmp('orderField');
+	            orderField = Ext.getCmp('orderField');
 
-	            form.getForm().reset();
-	            questionField.disable();
-	            typeField.disable();
-	            optionsField.disable();
-	            orderField.disable();
+            form.getForm().reset();
+            questionField.disable();
+            typeField.disable();
+            optionsField.disable();
+            orderField.disable();
 
 		        this.selectedSurvey = rec;
 		        surveyToolbar.items.items[1].enable(); // enable delete button
 	          surveyToolbar.items.items[2].enable();
-		        this.surveyQuestionStore.load({ params: {kiosk_id: rec.data.id} }); // load any existing questions
+		        
+						// load any existing questions
+						this.surveyQuestionStore.load({
+							params: { 
+								kiosk_id: rec.data.id
+							} 
+						});
+						
 		        newQuestionButton.enable(); // enable new question button
-
 		      },
 		      scope: this
 		    }
@@ -397,7 +421,7 @@ var surveyPanel = {
 				emptyText: '<br/><br/><center><div class="no_data">No data available...</div></center>'
 			},
       columns: [
-				{ header: 'Question', sortable: true, dataIndex: 'question' },
+				{ header: 'Question', sortable: true, dataIndex: 'question', flex: 1 },
 				{
 					header: 'Type',
 					sortable: true,
@@ -416,7 +440,7 @@ var surveyPanel = {
 					}
 				},
 				{ header: 'Options', sortable: true, dataIndex: 'options' },
-        { header: 'Order', sortable: false, dataIndex: 'order' }
+        { header: 'Order', sortable: true, dataIndex: 'order', width: 75, align: 'center' }
       ],
 			listeners: {
 		    deselect: {
