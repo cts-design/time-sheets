@@ -9,7 +9,8 @@ Ext.onReady(function(){
             {name: 'number', type: 'int'},
             {name: 'Cat1-name', serverKey: 'cat_1'},
             {name: 'Cat2-name', serverKey: 'cat_2'},
-            {name: 'Cat3-name', serverKey: 'cat_3'},          
+            {name: 'Cat3-name', serverKey: 'cat_3'},     
+            {name: 'DocumentQueueCategory-name', serverKey: 'document_queue_category_id'},        
             {name: 'created', type: 'date', dateFormat: 'n/j h:ia'},
             {name: 'modified', type: 'date', dateFormat: 'n/j h:ia'}
         ]		
@@ -126,6 +127,23 @@ Ext.onReady(function(){
     		}
     	}    	
     });
+    
+    Ext.define('DocumentQueueCategory', {
+    	extend: 'Ext.data.Model',
+		fields: [{name: 'id', type: 'int'}, {name: 'name'}]    	
+    });
+    
+  	var docCatStore = Ext.create('Ext.data.Store', {
+    	model: 'DocumentQueueCategory',
+    	proxy: {
+    		type: 'ajax',
+			url: '/admin/document_queue_categories/get_cats',
+			reader: {
+				type: 'json',
+				root: 'cats'
+			}     		
+    	}
+    });    
 	
     var gridForm = Ext.create('Ext.form.Panel', {
         id: 'barCodeDefinitionsForm',
@@ -139,7 +157,7 @@ Ext.onReady(function(){
             msgTarget: 'side'
         },
         items: [{
-            columnWidth: 0.60,
+            columnWidth: 0.7,
             xtype: 'gridpanel',
             id: 'barCodeDefGrid',
             store: store,
@@ -155,6 +173,10 @@ Ext.onReady(function(){
             },{
             	text: 'Number',
             	dataIndex: 'number'
+            },{
+            	text: 'Queue Cat',
+            	dataIndex: 'DocumentQueueCategory-name',
+            	flex: 1          	
             },{
             	text: 'Cat 1',
             	dataIndex: 'Cat1-name',
@@ -216,14 +238,14 @@ Ext.onReady(function(){
                 }
             }
         }, {
-            columnWidth: 0.4,
+            columnWidth: 0.3,
             margin: '0 0 0 10',
             padding: 10,
             xtype: 'fieldset',
             frame: true,
             title:'Add / Edit Form',
             defaults: {
-                width: 300,
+                width: 245,
                 labelWidth: 50
             },
             defaultType: 'textfield',
@@ -246,6 +268,17 @@ Ext.onReady(function(){
                 enforceMaxLength: true,
                 hideTrigger: true,
                 name: 'number',
+                allowBlank: false
+            },{
+                fieldLabel: 'Queue Cat',
+                name: 'DocumentQueueCategory-name',
+                id: 'queueCat',
+                xtype: 'combo',
+                store: docCatStore,
+                displayField: 'name',
+                valueField: 'id',
+                queryMode: 'remote',
+                value: null,
                 allowBlank: false
             },{
                 fieldLabel: 'Cat 1',
