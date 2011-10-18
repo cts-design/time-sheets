@@ -37,6 +37,10 @@ var searchPanel = {
     	]
     });
 
+		function submitOnEnter() {
+			
+		}
+
     this.form = new Ext.FormPanel({
       id: 'searchFormPanel',
       renderTo: 'searchForm',
@@ -61,7 +65,14 @@ var searchPanel = {
           defaults: {
             anchor: '100%',
             hideLabel: true,
-            bodyStyle: 'background-color: #DFE9F6; border: 0'
+            bodyStyle: 'background-color: #DFE9F6; border: 0',
+						listeners: {
+							specialkey: function (field, event) {
+								if (event.getKey() == event.ENTER) {
+									field.up('form').getForm().submit();
+								}
+							}
+						}
           },
           items: [{
             html: 'Search for:'
@@ -152,7 +163,14 @@ var searchPanel = {
           defaults: {
             anchor: '100%',
             hideLabel: true,
-            bodyStyle: 'background-color: #DFE9F6; border: 0'
+            bodyStyle: 'background-color: #DFE9F6; border: 0',
+						listeners: {
+							specialkey: function (field, event) {
+								if (event.getKey() == event.ENTER) {
+									field.up('form').getForm().submit();
+								}
+							}
+						}
           },
           items: [{
             html: 'Where is:'
@@ -204,7 +222,14 @@ var searchPanel = {
           defaults: {
             anchor: '100%',
             hideLabel: true,
-            bodyStyle: 'background-color: #DFE9F6; border: 0'
+            bodyStyle: 'background-color: #DFE9F6; border: 0',
+						listeners: {
+							specialkey: function (field, event) {
+								if (event.getKey() == event.ENTER) {
+									field.up('form').getForm().submit();
+								}
+							}
+						}
           },
           items: [{
             html: 'Search term:'
@@ -288,10 +313,18 @@ var searchPanel = {
         }
       }
     });
-  }
+  },
+
+	setDefaultsAndFocus: function () {
+		this.form.down('#SearchBy1').select('lastname');
+		this.form.down('#SearchScope1').select('containing');
+		this.form.down('#SearchTerm1').focus('', 10);
+		this.form.getForm().clearInvalid();
+	}
 };
 
 Ext.onReady(function() {
   Ext.QuickTips.init();
   searchPanel.init();
+	searchPanel.setDefaultsAndFocus();
 });
