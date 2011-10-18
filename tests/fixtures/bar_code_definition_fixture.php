@@ -7,6 +7,7 @@ class BarCodeDefinitionFixture extends CakeTestFixture {
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 		'name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 50, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'number' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 5),
+		'document_queue_category_id' => array('type' => 'integer', 'null' => false),
 		'cat_1' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'cat_2' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'cat_3' => array('type' => 'integer', 'null' => false, 'default' => NULL),
@@ -20,6 +21,7 @@ class BarCodeDefinitionFixture extends CakeTestFixture {
 		array(
 			'id' => 1,
 			'name' => 'Lorem ipsum dolor sit amet',
+			'document_queue_category_id' => 1,
 			'number' => 1,
 			'cat_1' => 1,
 			'cat_2' => 3,
