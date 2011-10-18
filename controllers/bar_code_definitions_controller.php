@@ -21,6 +21,7 @@ class BarCodeDefinitionsController extends AppController {
 					$data['definitions'][$i]['Cat1-name'] = $definition['Cat1']['name'];
 					$data['definitions'][$i]['Cat2-name'] = $definition['Cat2']['name'];
 					$data['definitions'][$i]['Cat3-name'] = $definition['Cat3']['name'];
+					$data['definitions'][$i]['DocumentQueueCategory-name'] = $definition['DocumentQueueCategory']['name'];
 					$i++;
 				}		
 			}
@@ -61,12 +62,14 @@ class BarCodeDefinitionsController extends AppController {
 		if($this->RequestHandler->isAjax()) {
 			if (!empty($this->data)) {
 				$this->data['BarCodeDefinition'] = json_decode($this->data['BarCodeDefinition'], true);
-				if(!isset($this->data['BarCodeDefinition']['cat_2'])) {
-					$this->data['BarCodeDefinition']['cat_2'] = null;
+				if(isset($this->data['BarCodeDefinition']['cat_1'])) {
+					if(!isset($this->data['BarCodeDefinition']['cat_2'])) {
+						$this->data['BarCodeDefinition']['cat_2'] = null;
+					}
+					if(!isset($this->data['BarCodeDefinition']['cat_3'])) {
+						$this->data['BarCodeDefinition']['cat_3'] = null;
+					}						
 				}
-				if(!isset($this->data['BarCodeDefinition']['cat_3'])) {
-					$this->data['BarCodeDefinition']['cat_3'] = null;
-				}	
 				if ($this->BarCodeDefinition->save($this->data)) {				
 					$data['definitions'] = $this->getDefinition($this->data['BarCodeDefinition']['id']);
 					$data['success'] = true;
@@ -114,6 +117,7 @@ class BarCodeDefinitionsController extends AppController {
 			$definition['BarCodeDefinition']['Cat1-name'] = $definition['Cat1']['name'];
 			$definition['BarCodeDefinition']['Cat2-name'] = $definition['Cat2']['name'];
 			$definition['BarCodeDefinition']['Cat3-name'] = $definition['Cat3']['name'];
+			$definition['BarCodeDefinition']['DocumentQueueCategory-name'] = $definition['DocumentQueueCategory']['name'];
 			return $definition['BarCodeDefinition'];			
 		}
 		else {
