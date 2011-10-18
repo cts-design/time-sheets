@@ -39,7 +39,8 @@ class BarCodeDefinitionsControllerTestCase extends AtlasTestCase {
 					'number'=>'1',
 					'Cat1-name'=>'Valid Category',
 					'Cat2-name'=>'A Nested Valid Category',
-					'Cat3-name'=>'Another Nested Category'
+					'Cat3-name'=>'Another Nested Category',
+					'DocumentQueueCategory-name' => 'Name1'
 				)
 			),
 			'total'=>1,
@@ -62,6 +63,7 @@ class BarCodeDefinitionsControllerTestCase extends AtlasTestCase {
 	        'BarCodeDefinition' => array(
 	            'name' => 'New Bar Code Definition',
 	            'number' => 54321,
+	            'document_queue_category_id' => 1,
 	            'cat_1' => 1,
 	            'cat_2' => 3,
 	            'cat_3' => 4			
@@ -79,7 +81,8 @@ class BarCodeDefinitionsControllerTestCase extends AtlasTestCase {
 					'cat_3'=>'4',
 					'Cat1-name'=>'Valid Category',
 					'Cat2-name'=>'A Nested Valid Category',
-					'Cat3-name'=>'Another Nested Category'
+					'Cat3-name'=>'Another Nested Category',
+					'DocumentQueueCategory-name'=>'Name1'
 				),
 			'success'=>TRUE,
 			'total' => 2,
@@ -90,6 +93,7 @@ class BarCodeDefinitionsControllerTestCase extends AtlasTestCase {
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';			
 		$result = $this->testAction('/admin/bar_code_definitions/add', array('data' => $data));
 		unset($result['data']['definitions']['created']);
+		unset($result['data']['definitions']['document_queue_category_id']);
 		unset($result['data']['definitions']['modified']);
 		$this->assertEqual($expectedResult, $result);
 	}
@@ -109,7 +113,8 @@ class BarCodeDefinitionsControllerTestCase extends AtlasTestCase {
 	            'number' => 12345,
 	            'cat_1' => 3,
 	            'cat_2' => 2,
-	            'cat_3' => 1			
+	            'cat_3' => 1,
+	            'document_queue_category_id' => 1			
 			)
         );
 		$data['BarCodeDefinition'] = json_encode($data['BarCodeDefinition']);
@@ -125,7 +130,8 @@ class BarCodeDefinitionsControllerTestCase extends AtlasTestCase {
 					'created'=>'2011-10-04 11:42:00',
 					'Cat1-name'=>'A Nested Valid Category',
 					'Cat2-name'=>'Disabled Category',
-					'Cat3-name'=>'Valid Category'
+					'Cat3-name'=>'Valid Category',
+					'DocumentQueueCategory-name'=>'Name1'
 				),
 			'success'=>TRUE,
 			'message'=>'Bar code definition updated successfully.'
@@ -135,6 +141,7 @@ class BarCodeDefinitionsControllerTestCase extends AtlasTestCase {
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';			
 		$result = $this->testAction('/admin/bar_code_definitions/edit', array('data' => $data));
 		unset($result['data']['definitions']['modified']);
+		unset($result['data']['definitions']['document_queue_category_id']);
 		$this->assertEqual($expectedResult, $result);
 	}
 
