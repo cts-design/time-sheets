@@ -77,6 +77,12 @@ Ext.onReady(function() {
     		reader: {
     			type: 'json'
     		},
+				writer: {
+					type: 'json',
+					root: 'navigations',
+					encoded: true,
+					writeAllFields: true
+				},
     		api: {
 					read: getNodesUrl,
 					update: '/admin/navigations/update'
@@ -172,7 +178,7 @@ Ext.onReady(function() {
 								try {
 									o = Ext.decode(response.responseText);
 								} catch(e) {
-									Ext.Msg.alert('Error','Unable to save category, please try again.');
+									Ext.Msg.alert('Error','Unable to save link, please try again.');
 									return;
 								}
 								if(o.success !== true) {
@@ -190,7 +196,7 @@ Ext.onReady(function() {
 								}
 							},
 							failure: function() {
-								Ext.Msg.alert('Error','Unable to save category, please try again.');
+								Ext.Msg.alert('Error','Unable to save link, please try again.');
 							}
 						});
 					}
@@ -237,22 +243,51 @@ Ext.onReady(function() {
 				disabled: true,
 				handler: function()	{
 					Ext.MessageBox.wait('Please Wait..', 'Status');
-					var selected = tree.getSelectionModel().getLastSelected();			
-					var form = this.up('form').getForm();					
-					var id =  selected.internalId;
-		      if (form.isValid()) {
-						var vals = form.getValues();
-						selected.beginEdit();
-						selected.set('name', vals.name);
-						selected.set('link', vals.link);
-						selected.endEdit();
-						Ext.data.StoreManager.lookup('navigationStore').sync();
-					}
+					var selected = tree.getSelectionModel().getLastSelected(),
+						form = this.up('form').getForm(),
+						store = Ext.data.StoreManager.lookup('navigationStore'),
+						vals = form.getValues();
+
+						Ext.Ajax.request({
+							url: '/admin/navigations/update',
+							params: {
+								id: selected.data.id,
+								name: vals.name,
+								link: vals.link,
+								parentPath: selected.parentNode.getPath()
+							},
+							scope: this,
+							success: function(response, options) {
+								var o = {};
+								try {
+									o = Ext.decode(response.responseText);
+								} catch(e) {
+									Ext.Msg.alert('Error','Unable to save link, please try again.');
+									return;
+								}
+								if(o.success !== true) {
+									Ext.Msg.alert('Error', o.message);
+								} else {					
+									Ext.data.StoreManager.lookup('navigationStore').load();													
+									tree.on('load', function() {
+										tree.expandPath(o.node);
+										tree.selectPath(o.node);
+										Ext.Msg.alert('Success', o.message);								
+									}, this, {
+										delay: 100,
+										single: true
+									});
+								}
+							},
+							failure: function() {
+								Ext.Msg.alert('Error','Unable to save link, please try again.');
+							}
+						});
 				}
 			}]
 		});
 
-		var contextMenu	 = Ext.create('Ext.menu.Menu', {
+		var contextMenu	= Ext.create('Ext.menu.Menu', {
 		    items: [{
 		    	text: 'Add Link',
 		    	id: 'addLink',
@@ -281,7 +316,6 @@ Ext.onReady(function() {
 							console.log('activated!');
 							
 							if (selectedRecord) {
-								console.log(selectedRecord);
 								editForm.loadRecord(selectedRecord);
 								editForm.doLayout();
 							}
@@ -292,10 +326,42 @@ Ext.onReady(function() {
 					id: 'deleteLink',
 					icon: '/img/icons/delete.png',
 					handler: function () {
+						Ext.MessageBox.wait('Please Wait..', 'Status');
 						var selected = tree.getSelectionModel().getLastSelected();
-						
-						Ext.data.StoreManager.lookup('navigationStore').remove(selected);
-						Ext.data.StoreManager.lookup('navigationStore').sync();
+
+							Ext.Ajax.request({
+								url: '/admin/navigations/destroy',
+								params: {
+									id: selected.data.id,
+									parentPath: selected.parentNode.getPath()
+								},
+								scope: this,
+								success: function(response, options) {
+									var o = {};
+									try {
+										o = Ext.decode(response.responseText);
+									} catch(e) {
+										Ext.Msg.alert('Error','Unable to delete link, please try again.');
+										return;
+									}
+									if(o.success !== true) {
+										Ext.Msg.alert('Error', o.message);
+									} else {					
+										Ext.data.StoreManager.lookup('navigationStore').load();													
+										tree.on('load', function() {
+											tree.expandPath(o.node);
+											tree.selectPath(o.node);
+											Ext.Msg.alert('Success', o.message);								
+										}, this, {
+											delay: 100,
+											single: true
+										});
+									}
+								},
+								failure: function() {
+									Ext.Msg.alert('Error','Unable to save delete, please try again.');
+								}
+							});
 					}
 				}]
 		});
@@ -353,7 +419,7 @@ Ext.onReady(function() {
           type: 'gear',
           tooltip: 'Navigation Settings',
 					scope: this,
-					hidden: (userRoleId=2) ? false : true,
+					hidden: (userRoleId = 2) ? false : true,
           handler: function(event, toolEl, panel) {
 						settingsWindow.show();
 					}
@@ -503,8 +569,5 @@ Ext.onReady(function() {
 				Ext.getCmp('deleteLink').disable();
 				Ext.getCmp('editLink').disable(); 
 			}
-			
-			console.log(record);
-			console.log(editForm);
 		});
 });
