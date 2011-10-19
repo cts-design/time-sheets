@@ -262,7 +262,7 @@ Ext.onReady(function(){
             },{
                 fieldLabel: 'Number',
                 xtype: 'numberfield',
-                width: 100,
+                width: 110,
                 minValue: 0,
                 maxValue: 99999,
                 minLength: 5,
@@ -270,7 +270,17 @@ Ext.onReady(function(){
                 enforceMaxLength: true,
                 hideTrigger: true,
                 name: 'number',
-                allowBlank: false
+                allowBlank: false,
+                validateOnChange: true,
+                validator: function(value) {
+                	var val = store.find('number', value);
+                	if(val === -1) {
+                		return true;
+                	}
+                	else {
+                		return 'Bar code number must be unique.';
+                	}
+                }
             },{
                 fieldLabel: 'Queue Cat',
                 name: 'DocumentQueueCategory-name',
