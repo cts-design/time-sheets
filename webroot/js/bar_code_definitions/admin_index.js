@@ -172,7 +172,8 @@ Ext.onReady(function(){
             	dataIndex: 'name'
             },{
             	text: 'Number',
-            	dataIndex: 'number'
+            	dataIndex: 'number',
+            	minLength: 5
             },{
             	text: 'Queue Cat',
             	dataIndex: 'DocumentQueueCategory-name',
@@ -264,6 +265,7 @@ Ext.onReady(function(){
                 width: 100,
                 minValue: 0,
                 maxValue: 99999,
+                minLength: 5,
                 maxLength: 5,
                 enforceMaxLength: true,
                 hideTrigger: true,
