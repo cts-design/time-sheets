@@ -44,7 +44,6 @@ Ext.onReady(function() {
 		extend: 'Ext.grid.Panel',
 		forceFit : true,
 		height : 300,
-		width : 500,
 		frame : true,
 		store: {
 			model: 'ProgramResponse',
