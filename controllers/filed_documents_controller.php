@@ -117,7 +117,7 @@ class FiledDocumentsController extends AppController {
 					'Edited filed document ID ' . $id . ' for ' . $user['User']['lastname'] .
 					', ' . $user['User']['firstname'] . ' - ' . substr($user['User']['ssn'], -4));
 				$this->Session->setFlash(__('The filed document has been saved', true), 'flash_success');
-				$this->redirect(array('action' => 'index', ($this->data['FiledDocument']['edit_type'] == 'user') ? $user['User']['id'] : ''));
+				$this->redirect(array('action' => 'index', (isset($this->data['FiledDocument']['edit_type']) == 'user') ? $user['User']['id'] : ''));
 		    }
 		    else {
 				$this->Session->setFlash(__('The filed document could not be saved. Please, try again.', true), 'flash_failure');
@@ -138,8 +138,9 @@ class FiledDocumentsController extends AppController {
 		    $id = $this->data['FiledDocument']['id'];
 		    $this->data['FiledDocument']['last_activity_admin_id'] = $this->Auth->user('id');
 		    $this->data['FiledDocument']['deleted_location_id'] = $this->Auth->user('location_id');
-		    $data = $this->data;
-		    $this->FiledDocument->set($data);
+			$filedDocument = $this->FiledDocument->read(null, $id);
+			$this->data['FiledDocument'] = array_merge($this->data['FiledDocument'], $filedDocument['FiledDocument']);
+		    $this->FiledDocument->set($this->data);
 		}
 		if(!isset($id)) {
 		    $this->Session->setFlash(__('Invalid id for filed document', true), 'flash_failure');
@@ -147,6 +148,18 @@ class FiledDocumentsController extends AppController {
 		}
 		if(isset($id)) {
 			if($this->FiledDocument->delete($id)) {
+				if($this->isModuleEnabled('Programs')) {	
+					$this->loadModel('ProgramResponseDoc');
+					$programResponseDoc = $this->ProgramResponseDoc->find('first', array('conditions' => array('ProgramResponseDoc.doc_id' => $id)));
+					if($programResponseDoc) {
+						$this->data['ProgramResponseDoc']['id'] = $programResponseDoc['ProgramResponseDoc']['id'];
+						$this->data['ProgramResponseDoc']['deleted'] = 1;
+						$this->data['ProgramResponseDoc']['deleted_reason'] = $this->data['FiledDocument']['reason'];
+						$this->ProgramResponseDoc->save($this->data);
+						$user = $this->FiledDocument->User->read(null, $this->data['FiledDocument']['user_id']);
+						$this->ProgramResponseDoc->processResponseDoc($this->data, $user);	
+					}
+				}
 			    $this->Transaction->createUserTransaction('Storage', null, null,
 				    'Deleted filed document ID ' . $id);
 			    $this->Session->setFlash(__('Filed document deleted', true), 'flash_success');
@@ -246,6 +259,7 @@ class FiledDocumentsController extends AppController {
 					$data['docs'][$k]['Cat3-name'] = $v['Cat3']['name'];
 					$data['docs'][$k]['description'] = $v['FiledDocument']['description'];
 					$data['docs'][$k]['created'] = date('m-d-Y g:i a', strtotime($v['FiledDocument']['created']));
+					$data['docs'][$k]['modified'] = date('m-d-Y g:i a', strtotime($v['FiledDocument']['modified']));
 					$data['docs'][$k]['LastActAdmin-lastname'] = 
 						trim(ucwords($v['LastActAdmin']['lastname'] . ', ' . $v['LastActAdmin']['firstname']), ', ');
 					$data['docs'][$k]['view'] = '<a target="_blank" href="/admin/filed_documents/view/'.$v['FiledDocument']['id'].'">View</a>';
@@ -284,7 +298,8 @@ class FiledDocumentsController extends AppController {
 			$report[$k]['Third Cat'] = $v['Cat3']['name'];
 			$report[$k]['Description'] = $v['FiledDocument']['description'];
 			$report[$k]['Last Activity Admin'] = trim(ucwords($v['LastActAdmin']['lastname'] . ', '. $v['LastActAdmin']['firstname']), ' ,');
-			$report[$k]['Created'] = date('m/d/y h:i a', strtotime($v['FiledDocument']['created']));		
+			$report[$k]['Created'] = date('m/d/y h:i a', strtotime($v['FiledDocument']['created']));
+			$report[$k]['Modified'] = date('m/d/y h:i a', strtotime($v['FiledDocument']['modified']));		
 		}
 
 		if(empty($report[0])) {
@@ -316,7 +331,9 @@ class FiledDocumentsController extends AppController {
 				$conditions = array('User.role_id >' => 2);
 			}
 			$this->FiledDocument->User->recursive = -1;
-			$admins = $this->FiledDocument->User->find('all', array('conditions' => $conditions));		
+			$admins = $this->FiledDocument->User->find('all', array(
+				'conditions' => $conditions,
+				'order' => array('User.lastname' => 'ASC')));		
 			if($admins) {
 				$i = 0;
 				foreach($admins as $admin) {
@@ -341,14 +358,14 @@ class FiledDocumentsController extends AppController {
 		// check to see if the directory for the current year exists
 		if(!file_exists($path . date('Y') . '/')) {
 		    // if directory does not exist, create it
-		    mkdir($path . date('Y'), 0755);
+		    mkdir($path . date('Y'), 0777);
 		}
 		// add the current year to our path string
 		$path .= date('Y') . '/';
 		// check to see if the directory for the current month exists
 		if(!file_exists($path . date('m') . '/')) {
 		    // if directory does not exist, create it
-		    mkdir($path . date('m'), 0755);
+		    mkdir($path . date('m'), 0777);
 		}
 		// add the current month to our path string
 		$path .= date('m') . '/';
@@ -387,29 +404,29 @@ class FiledDocumentsController extends AppController {
 		if(isset($this->params['url']['filters'])){
 			$filters = json_decode($this->params['url']['filters'], true);
 
-            if (isset($filters['searchType1'])) {
-                if ($filters['searchType1'] == 'firstname' && (!empty($filters['cusSearch1']))) {
+            if (isset($filters['cusSearchType1'])) {
+                if ($filters['cusSearchType1'] == 'firstname' && (isset($filters['cusSearch1']))) {
                     if ($filters['cusScope1'] === 'containing') {
                         $conditions['User.firstname LIKE'] = '%'. $filters['cusSearch1'] . '%';
                     } else {
                         $conditions['User.firstname'] = $filters['cusSearch1'];
                     }
                 }
-                if($filters['searchType1'] == 'fullssn' && (!empty($filters['cusSearch1']))) {
+                if($filters['cusSearchType1'] == 'fullssn' && (isset($filters['cusSearch1']))) {
                     if ($filters['cusScope1'] === 'containing') {
                         $conditions['User.ssn LIKE'] = '%'.$filters['cusSearch1'].'%';
                     } else {
                         $conditions['User.ssn'] = $filters['cusSearch1'];
                     }
                 }
-                if($filters['searchType1'] == 'last4' && (!empty($filters['cusSearch1']))) {
+                if($filters['cusSearchType1'] == 'last4' && (isset($filters['cusSearch1']))) {
                     if ($filters['cusScope1'] === 'containing') {
                         $conditions['RIGHT (User.ssn , 4) LIKE'] = '%'.$filters['cusSearch1'].'%';
                     } else {
                         $conditions['RIGHT (User.ssn , 4)'] = $filters['cusSearch1'];
                     }
                 }
-                if($filters['searchType1'] == 'lastname' && (!empty($filters['cusSearch1']))) {
+                if($filters['cusSearchType1'] == 'lastname' && (isset($filters['cusSearch1']))) {
                     if ($filters['cusScope1'] === 'containing') {
                         $conditions['User.lastname LIKE'] = '%'. $filters['cusSearch1'] . '%';
                     } else {
@@ -418,29 +435,29 @@ class FiledDocumentsController extends AppController {
                 }
             }
 
-            if (isset($filters['searchType2'])) {
-                if ($filters['searchType2'] == 'firstname' && (!empty($filters['cusSearch2']))) {
+            if (isset($filters['cusSearchType2'])) {
+                if ($filters['cusSearchType2'] == 'firstname' && (isset($filters['cusSearch2']))) {
                     if ($filters['cusScope2'] === 'containing') {
                         $conditions['User.firstname LIKE'] = '%'. $filters['cusSearch2'] . '%';
                     } else {
                         $conditions['User.firstname'] = $filters['cusSearch2'];
                     }
                 }
-                if($filters['searchType2'] == 'fullssn' && (!empty($filters['cusSearch2']))) {
+                if($filters['cusSearchType2'] == 'fullssn' && (isset($filters['cusSearch2']))) {
                     if ($filters['cusScope2'] === 'containing') {
                         $conditions['User.ssn LIKE'] = '%'.$filters['cusSearch2'].'%';
                     } else {
                         $conditions['User.ssn'] = $filters['cusSearch2'];
                     }
                 }
-                if($filters['searchType2'] == 'last4' && (!empty($filters['cusSearch2']))) {
+                if($filters['cusSearchType2'] == 'last4' && (isset($filters['cusSearch2']))) {
                     if ($filters['cusScope2'] === 'containing') {
                         $conditions['RIGHT (User.ssn , 4) LIKE'] = '%'.$filters['cusSearch2'].'%';
                     } else {
                         $conditions['RIGHT (User.ssn , 4)'] = $filters['cusSearch2'];
                     }
                 }
-                if($filters['searchType2'] == 'lastname' && (!empty($filters['cusSearch2']))) {
+                if($filters['cusSearchType2'] == 'lastname' && (isset($filters['cusSearch2']))) {
                     if ($filters['cusScope2'] === 'containing') {
                         $conditions['User.lastname LIKE'] = '%'. $filters['cusSearch2'] . '%';
                     } else {
@@ -448,22 +465,30 @@ class FiledDocumentsController extends AppController {
                     }
                 }
             }
-			if(!empty($filters['fromDate']) && !empty($filters['toDate'])){
+			if(isset($filters['fromDate']) && isset($filters['toDate'])){
 				$from = date('Y-m-d H:i:m', strtotime($filters['fromDate'] . '12:00 AM'));
 				$to = date('Y-m-d H:i:m', strtotime($filters['toDate'] . '11:59 PM'));
 				$conditions['FiledDocument.created BETWEEN ? AND ?'] = array($from, $to);
-			}				
-			$conditions['FiledDocument.filed_location_id'] = $filters['filed_location_id'];
-			$conditions['FiledDocument.admin_id'] = $filters['admin_id'];
-			$conditions['FiledDocument.cat_1'] = $filters['cat_1'];
+			}
+			if(isset($filters['filed_location_id'])){
+				$conditions['FiledDocument.filed_location_id'] = $filters['filed_location_id'];
+			}			
+			if(isset($filters['admin_id'])){
+				$conditions['FiledDocument.admin_id'] = $filters['admin_id'];
+			}
+			if(isset($filters['cat_1'])){
+				$conditions['FiledDocument.cat_1'] = $filters['cat_1'];
+			}
 			if(isset($filters['cat_2'])) 
 				$conditions['FiledDocument.cat_2'] = $filters['cat_2'];
 			if(isset($filters['cat_3'])) 
 				$conditions['FiledDocument.cat_3'] = $filters['cat_3'];
-			foreach($conditions as $k => $v) {
-				if(empty($v)){
-					unset($conditions[$k]);
-				}
+			if(isset($conditions))	 {
+				foreach($conditions as $k => $v) {
+					if(empty($v)){
+						unset($conditions[$k]);
+					}
+				}					
 			}
 		}
 		if(!empty($conditions)) {
@@ -480,7 +505,7 @@ class FiledDocumentsController extends AppController {
 	
 	function _processResponseDoc($user) {
 		$this->loadModel('ProgramResponse');							
-		$processedDoc = $this->ProgramResponse->processResponseDoc($this->data, $user);	
+		$processedDoc = $this->ProgramResponse->ProgramResponseDoc->processResponseDoc($this->data, $user);	
 		if(isset($processedDoc['docFiledEmail'])) {
 			$this->Notifications->sendProgramEmail($processedDoc['docFiledEmail'], $user);
 		}				

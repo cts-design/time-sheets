@@ -11,9 +11,12 @@ class DocumentQueueCategory extends AppModel {
 
 	var $hasMany = array(
 	    'QueuedDocument' => array(
-		'className' => 'QueuedDocument',
-		'foreignKey' => 'queue_category_id'
-	    ));
+			'className' => 'QueuedDocument',
+			'foreignKey' => 'queue_category_id'
+	    ),
+	    'BarCodeDefinition' => array(
+			'className' => 'BarCodeDefinition'
+		));
 
 	var $validate = array(
 	    'ftp_path' => array(

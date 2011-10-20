@@ -1,4 +1,3 @@
-<?php echo $this->Html->script('ext/ux/FileUploadField', array('inline' => FALSE)) ?>
 <?php echo $this->Html->script('rfps/grid', array('inline' => FALSE)) ?>
 
 <div id="crumbWrapper">

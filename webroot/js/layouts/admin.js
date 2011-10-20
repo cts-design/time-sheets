@@ -3,6 +3,9 @@
  * @copyright Complete Technology Solutions 2010
  * @link http://ctsfla.com
  */
+
+Ext.SSL_SECURE_URL = "about:blank";
+
 $(document).ready(function(){
     $('th a').live('click', function(){
 	$(this).parent().addClass('ui-state-active')
@@ -57,6 +60,16 @@ $('.view').button({
     icons:{
 	primary: 'ui-icon-search'
     }
+});
+$('.questions').button({
+  icons: {
+    primary: 'ui-icon-help'
+  }
+});
+$('.responses').button({
+  icons: {
+    primary: 'ui-icon-comment'
+  }
 });
 if($('.actions ul').text() == '') {
     $('div.actions').hide();

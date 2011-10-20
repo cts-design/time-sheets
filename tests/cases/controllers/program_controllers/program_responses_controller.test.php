@@ -58,7 +58,7 @@ class ProgramResponsesControllerTestCase extends AtlasTestCase {
 				'validation' => '{\"rule\":\"notEmpty\"}',
 				'created' => '2011-03-24 15:01:17',
 				'modified' => '2011-03-24 15:01:22'
-			),
+			)
 		);
 		
 		$result = $this->testAction('/program_responses/index/1');
@@ -87,9 +87,63 @@ class ProgramResponsesControllerTestCase extends AtlasTestCase {
 	   		'ProgramResponse.user_id' => 11,
 			'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s') 
 	   	)));
-		$this->assertTrue($response['ProgramResponse']['id'], 2);
-		$this->assertTrue($response['ProgramResponse']['user_id'], 11);
-		$this->assertTrue($response['ProgramResponse']['answers'], '{"question":"answer"}')	;
+		$this->assertEqual($response['ProgramResponse']['id'], 2);
+		$this->assertEqual($response['ProgramResponse']['user_id'], 11);
+		$this->assertEqual($response['ProgramResponse']['answers'], '{"question":"answer"}')	;
+	}
+
+	public function testIndexPostResponseNoDocs() {
+		$this->ProgramResponses->Component->initialize($this->ProgramResponses);
+		$this->ProgramResponses->Session->write('Auth.User', array(
+	        'id' => 11,
+	        'role_id' => 1,
+	        'username' => 'duck'
+	    ));
+	    $data = array(
+	    	'ProgramResponse' => array(
+	    		'question' => 'answer'
+	    	)
+		);
+		$this->Programs->Email =& new MockEmailComponent();
+	    $this->Programs->Email->setReturnValue('send', true);
+		$this->Programs->Email->enabled = true;	    
+	    $result = $this->testAction('/program_responses/index/9', array('data' => $data));
+	    $response = $this->ProgramResponses->ProgramResponse->find('first', array('conditions' => array(
+	   		'ProgramResponse.program_id' => 9,
+	   		'ProgramResponse.user_id' => 11,
+			'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s') 
+	   	)));
+		$this->assertEqual($response['ProgramResponse']['id'], 10);
+		$this->assertEqual($response['ProgramResponse']['user_id'], 11);
+		$this->assertEqual($response['ProgramResponse']['answers'], '{"question":"answer"}')	;
+		$this->assertTrue($response['ProgramResponse']['needs_approval']);
+	}
+
+	public function testIndexPostResponseNoDocsAutoApprove() {
+		$this->ProgramResponses->Component->initialize($this->ProgramResponses);
+		$this->ProgramResponses->Session->write('Auth.User', array(
+	        'id' => 11,
+	        'role_id' => 1,
+	        'username' => 'duck'
+	    ));
+	    $data = array(
+	    	'ProgramResponse' => array(
+	    		'question' => 'answer'
+	    	)
+		);
+		$this->Programs->Email =& new MockEmailComponent();
+	    $this->Programs->Email->setReturnValue('send', true);
+		$this->Programs->Email->enabled = true;	    
+	    $result = $this->testAction('/program_responses/index/8', array('data' => $data));
+	    $response = $this->ProgramResponses->ProgramResponse->find('first', array('conditions' => array(
+	   		'ProgramResponse.program_id' => 8,
+	   		'ProgramResponse.user_id' => 11,
+			'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s') 
+	   	)));
+		$this->assertEqual($response['ProgramResponse']['id'], 9);
+		$this->assertEqual($response['ProgramResponse']['user_id'], 11);
+		$this->assertEqual($response['ProgramResponse']['answers'], '{"question":"answer"}')	;
+		$this->assertTrue($response['ProgramResponse']['complete']);
 	}
 	
 	public function testIndexNoId() {
@@ -197,6 +251,30 @@ class ProgramResponsesControllerTestCase extends AtlasTestCase {
 		$this->assertEqual($response['user_id'], 15);
 		$this->assertEqual($response['complete'], 1);			
 	}
+
+	public function testPendingApproval() {
+		$this->ProgramResponses->Component->initialize($this->ProgramResponses);
+		$this->ProgramResponses->Session->write('Auth.User', array(
+	        'id' => 15,
+	        'role_id' => 1,
+	        'username' => 'jim'
+	    ));
+		$titleForLayout = 'Program Response Pending Approval';
+		$result = $this->testAction('/program_responses/pending_approval/1');
+		$this->assertEqual($titleForLayout, $result['title_for_layout']);
+	}
+	
+	public function testNotApproved() {
+		$this->ProgramResponses->Component->initialize($this->ProgramResponses);
+		$this->ProgramResponses->Session->write('Auth.User', array(
+	        'id' => 15,
+	        'role_id' => 1,
+	        'username' => 'jim'
+	    ));
+		$titleForLayout = 'Program Response Not Approved';
+		$result = $this->testAction('/program_responses/not_approved/1');
+		$this->assertEqual($titleForLayout, $result['title_for_layout']);
+	}	
 	
 	public function testViewCertNoId() {
 		$this->ProgramResponses->Component->initialize($this->ProgramResponses);
@@ -268,7 +346,7 @@ class ProgramResponsesControllerTestCase extends AtlasTestCase {
 	        'username' => 'dnolan',
 	        'location_id' => 1
 	    ));
-		$data['filter'] = 'open';
+		$data['tab'] = 'open';
 		$data['page'] = 1;	
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';	
 		$result = $this->testAction('/admin/program_responses/index/1/',  array('method' => 'get', 'data' => $data));
@@ -294,7 +372,7 @@ class ProgramResponsesControllerTestCase extends AtlasTestCase {
 	        'username' => 'dnolan',
 	        'location_id' => 1
 	    ));
-		$data['filter'] = 'closed';
+		$data['tab'] = 'closed';
 		$data['page'] = 1;	
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';	
 		$result = $this->testAction('/admin/program_responses/index/1/',  array('method' => 'get', 'data' => $data));
@@ -312,7 +390,7 @@ class ProgramResponsesControllerTestCase extends AtlasTestCase {
 	        'username' => 'dnolan',
 	        'location_id' => 1
 	    ));
-		$data['filter'] = 'expired';
+		$data['tab'] = 'expired';
 		$data['page'] = 1;	
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';	
 		$result = $this->testAction('/admin/program_responses/index/1/',  array('method' => 'get', 'data' => $data));
@@ -330,7 +408,7 @@ class ProgramResponsesControllerTestCase extends AtlasTestCase {
 	        'username' => 'dnolan',
 	        'location_id' => 1
 	    ));
-		$data['filter'] = 'unapproved';
+		$data['tab'] = 'pending_approval';
 		$data['page'] = 1;	
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';	
 		$result = $this->testAction('/admin/program_responses/index/1/',  array('method' => 'get', 'data' => $data));
@@ -347,7 +425,7 @@ class ProgramResponsesControllerTestCase extends AtlasTestCase {
 	        'username' => 'dnolan',
 	        'location_id' => 1
 	    ));
-		$data['filter'] = 'open';
+		$data['tab'] = 'open';
 		$data['page'] = 1;	
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';	
 		$result = $this->testAction('/admin/program_responses/index/2/',  array('method' => 'get', 'data' => $data));
@@ -356,6 +434,233 @@ class ProgramResponsesControllerTestCase extends AtlasTestCase {
 		$this->assertFalse($result['data']['responses']);
 		$this->assertEqual($result['data']['message'], 'No results at this time.');
 	}
+
+	public function testAdminIndexSearchDates() {
+		$this->ProgramResponses->Component->initialize($this->ProgramResponses);
+		$this->ProgramResponses->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+		$data['tab'] = 'expired';
+		$data['page'] = 1;
+		$data['fromDate'] =	'5/4/2011';
+		$data['toDate'] = '5/4/2011';
+		
+		$expectedResult = array(
+				'id'=>'7',
+				'User-lastname'=>'Jim, Slim - 1244',
+				'conformation_id'=>'23eff2343',
+				'created'=>'2011-05-04 09:09:08',
+				'modified'=>'2011-05-12 11:12:24',
+				'expires_on'=>'2011-06-08 16:13:30',
+				'notes'=>NULL,
+				'status'=>'Open',
+				'actions'=>'<a href="/admin/program_responses/view/7">View</a> | <a href="/admin/program_responses/toggle_expired/7/unexpire" class="expire">Mark Un-Expired</a>'
+		);
+		
+				
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';	
+		$result = $this->testAction('/admin/program_responses/index/1/',  array('method' => 'get', 'data' => $data));
+		$this->assertTrue($result['data']['success']);
+		$this->assertEqual($result['data']['totalCount'], 1);
+		$this->assertEqual($result['data']['responses'][0], $expectedResult);		
+	}
+
+	public function testAdminIndexSearchId() {
+		$this->ProgramResponses->Component->initialize($this->ProgramResponses);
+		$this->ProgramResponses->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+		$data['tab'] = 'open';
+		$data['page'] = 1;
+		$data['id'] =	1;	
+		$expectedResult = array(
+			'id'=>'1',
+			'User-lastname'=>'Smith, Daniel - 1234',
+			'conformation_id'=>'',
+			'created'=>'2011-05-04 09:09:08',
+			'modified'=>'2011-05-12 11:12:24',
+			'expires_on'=>'2120-06-10 16:13:30',
+			'notes'=>NULL,
+			'status'=>'Open',
+			'actions'=>'<a href="/admin/program_responses/view/1">View</a> | <a href="/admin/program_responses/toggle_expired/1/expire" class="expire">Mark Expired</a>'
+		);			
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';	
+		$result = $this->testAction('/admin/program_responses/index/1/',  array('method' => 'get', 'data' => $data));
+		$this->assertTrue($result['data']['success']);
+		$this->assertEqual($result['data']['totalCount'], 1);
+		$this->assertEqual($result['data']['responses'][0], $expectedResult);		
+	}
+
+	public function testAdminIndexSearchFirstname() {
+		$this->ProgramResponses->Component->initialize($this->ProgramResponses);
+		$this->ProgramResponses->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+		$data['tab'] = 'open';
+		$data['page'] = 1;
+		$data['searchType'] = 'firstname';
+		$data['search'] = 'Daniel';	
+		$expectedResult = array(
+			'id'=>'1',
+			'User-lastname'=>'Smith, Daniel - 1234',
+			'conformation_id'=>'',
+			'created'=>'2011-05-04 09:09:08',
+			'modified'=>'2011-05-12 11:12:24',
+			'expires_on'=>'2120-06-10 16:13:30',
+			'notes'=>NULL,
+			'status'=>'Open',
+			'actions'=>'<a href="/admin/program_responses/view/1">View</a> | <a href="/admin/program_responses/toggle_expired/1/expire" class="expire">Mark Expired</a>'
+		);			
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';	
+		$result = $this->testAction('/admin/program_responses/index/1/',  array('method' => 'get', 'data' => $data));
+		$this->assertTrue($result['data']['success']);
+		$this->assertEqual($result['data']['totalCount'], 1);
+		$this->assertEqual($result['data']['responses'][0], $expectedResult);		
+	}
+
+	public function testAdminIndexSearchLastname() {
+		$this->ProgramResponses->Component->initialize($this->ProgramResponses);
+		$this->ProgramResponses->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+		$data['tab'] = 'open';
+		$data['page'] = 1;
+		$data['searchType'] = 'lastname';
+		$data['search'] = 'smith';	
+		$expectedResult = array(
+			'id'=>'1',
+			'User-lastname'=>'Smith, Daniel - 1234',
+			'conformation_id'=>'',
+			'created'=>'2011-05-04 09:09:08',
+			'modified'=>'2011-05-12 11:12:24',
+			'expires_on'=>'2120-06-10 16:13:30',
+			'notes'=>NULL,
+			'status'=>'Open',
+			'actions'=>'<a href="/admin/program_responses/view/1">View</a> | <a href="/admin/program_responses/toggle_expired/1/expire" class="expire">Mark Expired</a>'
+		);			
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';	
+		$result = $this->testAction('/admin/program_responses/index/1/',  array('method' => 'get', 'data' => $data));
+		$this->assertTrue($result['data']['success']);
+		$this->assertEqual($result['data']['totalCount'], 1);
+		$this->assertEqual($result['data']['responses'][0], $expectedResult);		
+	}
+
+	public function testAdminIndexSearchLast4() {
+		$this->ProgramResponses->Component->initialize($this->ProgramResponses);
+		$this->ProgramResponses->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+		$data['tab'] = 'open';
+		$data['page'] = 1;
+		$data['searchType'] = 'last4';
+		$data['search'] = '1234';	
+		$expectedResult = array(
+				array(
+				'id'=>'1',
+				'User-lastname'=>'Smith, Daniel - 1234',
+				'conformation_id'=>'',
+				'created'=>'2011-05-04 09:09:08',
+				'modified'=>'2011-05-12 11:12:24',
+				'expires_on'=>'2120-06-10 16:13:30',
+				'notes'=>NULL,
+				'status'=>'Open',
+				'actions'=>'<a href="/admin/program_responses/view/1">View</a> | <a href="/admin/program_responses/toggle_expired/1/expire" class="expire">Mark Expired</a>'
+				),
+				array(
+				'id'=>'2',
+				'User-lastname'=>'Duck, Daffy - 1234',
+				'conformation_id'=>'',
+				'created'=>'2011-05-04 09:09:08',
+				'modified'=>'2011-05-12 11:12:24',
+				'expires_on'=>'2120-06-08 16:13:30',
+				'notes'=>NULL,
+				'status'=>'Open',
+				'actions'=>'<a href="/admin/program_responses/view/2">View</a> | <a href="/admin/program_responses/toggle_expired/2/expire" class="expire">Mark Expired</a>'
+				),
+				array(
+				'id'=>'3',
+				'User-lastname'=>'Rabbit, Roger - 1234',
+				'conformation_id'=>'dasf234f34',
+				'created'=>'2011-05-04 09:09:08',
+				'modified'=>'2011-05-12 11:12:24',
+				'expires_on'=>'2120-06-08 16:13:30',
+				'notes'=>NULL,
+				'status'=>'Open',
+				'actions'=>'<a href="/admin/program_responses/view/3">View</a> | <a href="/admin/program_responses/toggle_expired/3/expire" class="expire">Mark Expired</a>'
+				),
+				array(
+				'id'=>'4',
+				'User-lastname'=>'Marley, Bob - 1234',
+				'conformation_id'=>'ddasf4354',
+				'created'=>'2011-05-04 09:09:08',
+				'modified'=>'2011-05-12 11:12:24',
+				'expires_on'=>'2120-06-08 16:13:30',
+				'notes'=>NULL,
+				'status'=>'Open',
+				'actions'=>'<a href="/admin/program_responses/view/4">View</a> | <a href="/admin/program_responses/toggle_expired/4/expire" class="expire">Mark Expired</a>'
+				),
+				array(
+				'id'=>'5',
+				'User-lastname'=>'Bush, George - 1234',
+				'conformation_id'=>'5dfdasf34',
+				'created'=>'2011-05-04 09:09:08',
+				'modified'=>'2011-05-12 11:12:24',
+				'expires_on'=>'2120-06-08 16:13:30',
+				'notes'=>NULL,
+				'status'=>'Open',
+				'actions'=>'<a href="/admin/program_responses/view/5">View</a> | <a href="/admin/program_responses/toggle_expired/5/expire" class="expire">Mark Expired</a>'
+				));			
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';	
+		$result = $this->testAction('/admin/program_responses/index/1/',  array('method' => 'get', 'data' => $data));
+		$this->assertTrue($result['data']['success']);
+		$this->assertEqual($result['data']['totalCount'], 5);
+		$this->assertEqual($result['data']['responses'], $expectedResult);		
+	}
+
+	public function testAdminIndexSearchFullSsn() {
+		$this->ProgramResponses->Component->initialize($this->ProgramResponses);
+		$this->ProgramResponses->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+		$data['tab'] = 'open';
+		$data['page'] = 1;
+		$data['searchType'] = 'fullssn';
+		$data['search'] = '123441234';	
+		$expectedResult = array(
+			'id'=>'1',
+			'User-lastname'=>'Smith, Daniel - 1234',
+			'conformation_id'=>'',
+			'created'=>'2011-05-04 09:09:08',
+			'modified'=>'2011-05-12 11:12:24',
+			'expires_on'=>'2120-06-10 16:13:30',
+			'notes'=>NULL,
+			'status'=>'Open',
+			'actions'=>'<a href="/admin/program_responses/view/1">View</a> | <a href="/admin/program_responses/toggle_expired/1/expire" class="expire">Mark Expired</a>'
+		);		
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';	
+		$result = $this->testAction('/admin/program_responses/index/1/',  array('method' => 'get', 'data' => $data));
+		$this->assertTrue($result['data']['success']);
+		$this->assertEqual($result['data']['totalCount'], 1);
+		$this->assertEqual($result['data']['responses'][0], $expectedResult);		
+	}		
 	
 	public function testAdminViewNoAjax() {
 		$this->ProgramResponses->Component->initialize($this->ProgramResponses);
@@ -431,13 +736,13 @@ class ProgramResponsesControllerTestCase extends AtlasTestCase {
 	    ));	
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';		
 		$result = $this->testAction('/admin/program_responses/view/2/documents',  array('method' => 'get'));
+		unset($result['docs'][0]['link']);
 		$doc = array(
-			'name' => 'Birth Proof',
-			'filedDate' => '2011-05-06 10:15:29',
-			'id' => 9,
-			'link' => '<a href="/admin/filed_documents/view/9" target="_blank">View Doc</a>');
-		$this->assertEqual($result['docs'][0], $doc);
-		
+				'id'=>'9',
+				'name'=>'Birth Proof',
+				'filedDate'=>'2011-05-06 10:15:29'
+			);
+		$this->assertEqual($result['docs'][0], $doc);	
 	}
 	
 	public function testAdminViewNoDocuments() {
@@ -449,7 +754,7 @@ class ProgramResponsesControllerTestCase extends AtlasTestCase {
 	        'location_id' => 1
 	    ));	
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';		
-		$result = $this->testAction('/admin/program_responses/view/5/documents',  array('method' => 'get'));
+		$result = $this->testAction('/admin/program_responses/view/7/documents',  array('method' => 'get'));
 		$this->assertEqual($result['docs'], 'No program response documents filed for this user.');
 	}
 	
@@ -509,11 +814,26 @@ class ProgramResponsesControllerTestCase extends AtlasTestCase {
 	        'location_id' => 1
 	    ));	
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';		
-		$result = $this->testAction('/admin/program_responses/approve/5',  array('method' => 'get'));
+		$result = $this->testAction('/admin/program_responses/approve/7',  array('method' => 'get'));
 		$this->assertFalse($result['data']['success']);
 		$this->assertEqual($result['data']['message'],
 			'All required documents must be filed to customer before approving response.');
 	}
+	
+	public function testAdminApproveNoGeneratedForms() {
+		$this->ProgramResponses->Component->initialize($this->ProgramResponses);
+		$this->ProgramResponses->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));	
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';		
+		$result = $this->testAction('/admin/program_responses/approve/5',  array('method' => 'get'));
+		$this->assertFalse($result['data']['success']);
+		$this->assertEqual($result['data']['message'],
+			'You must generate all program forms before approving response.');
+	}	
 	
 	public function testAdminGenerateForm() {
 		$this->ProgramResponses->Component->initialize($this->ProgramResponses);
@@ -545,8 +865,39 @@ class ProgramResponsesControllerTestCase extends AtlasTestCase {
 		$result = $this->testAction('/admin/program_responses/toggle_expired/5/unexpire',  array('method' => 'get'));
 		$this->assertTrue($result['data']['success']);
 		$this->assertEqual($result['data']['message'], 'Response marked un-expired successfully.');				
-	}	
+	}
 	
+	public function testAdminEdit() {
+		$this->ProgramResponses->Component->initialize($this->ProgramResponses);
+		$this->ProgramResponses->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));	
+		$data['ProgramResponse']['id'] = 1;
+		$data['ProgramResponse']['notes'] = 'These are the test notes';
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';		
+		$result = $this->testAction('/admin/program_responses/edit/1',  array('data' => $data));
+		$response = $this->ProgramResponses->ProgramResponse->findById(1);	
+		$this->assertTrue($result['data']['success']);
+		$this->assertEqual($response['ProgramResponse']['notes'], 'These are the test notes');
+	}
+	
+	function testAdminNotApproved() {
+		$this->ProgramResponses->Component->initialize($this->ProgramResponses);
+		$this->ProgramResponses->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+		$data['id'] = 1;
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$result = $this->testAction('/admin/program_responses/not_approved', array('form_data' => $data));
+		$response = $this->ProgramResponses->ProgramResponse->findById(1);
+		$this->assertTrue($response['ProgramResponse']['not_approved']);
+	}
 		 
 	public function endTest() {
 		Configure::write('debug', 2);

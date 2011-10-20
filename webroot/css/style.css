@@ -73,6 +73,10 @@ strong {
 	margin-top: 10px;
 }
 
+.top-mar-20 {
+	margin-top: 20px;
+}
+
 /* Structure Elements */
 
 #container {
@@ -567,4 +571,9 @@ div.required label:after {
 
 #RequiredDocs .error-message {
 	margin-left: 0;
+}
+
+#ResponseComplete .label {
+	width:110px; 
+	text-align: right;
 }

@@ -129,6 +129,14 @@ $(document).ready(function () {
 	        	icon: {
 	        		image: "/img/icons/survey.png"
 	        	}
+			}, careerSeekersSurveys: {
+				icon: {
+					image: '/img/icons/survey.png'
+				}
+			}, employersSurveys: {
+				icon: {
+					image: '/img/icons/survey.png'
+				}
 			},
 	        featured: {
 	        	icon: {
@@ -139,7 +147,12 @@ $(document).ready(function () {
 	        	icon: {
 	        		image: "/img/icons/clipboard.png"
 	        	}
-	        }
+	        },
+					selfSignSurvey: {
+						icon: {
+							image: "/img/icons/survey.png"
+						}
+					}
 	    }
 	},
 	cookies: {

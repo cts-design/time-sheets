@@ -110,6 +110,17 @@ class DeletedDocumentsController extends AppController {
 	    $this->loadModel('FiledDocument');
 	    if($this->FiledDocument->save($doc)) {
 		$this->DeletedDocument->delete($id);
+		if($this->isModuleEnabled('Programs')) {	
+			$this->loadModel('ProgramResponseDoc');
+			$programResponseDoc = $this->ProgramResponseDoc->find('first', array('conditions' => array('ProgramResponseDoc.doc_id' => $id)));
+			if($programResponseDoc) {
+				$this->data['ProgramResponseDoc']['id'] = $programResponseDoc['ProgramResponseDoc']['id'];
+				$this->data['ProgramResponseDoc']['deleted'] = 0;
+				$this->data['ProgramResponseDoc']['deleted_reason'] = null;
+				$this->ProgramResponseDoc->save($this->data);
+				$this->ProgramResponseDoc->processResponseDoc($doc, $doc);
+			}
+		}			
 	    $this->Transaction->createUserTransaction('Storage', null, null ,
 		    'Restored deleted document ID '. $id . ' to the filed documents.');
 		$this->Session->setFlash(__('Document was restored to filed documents successfully', true), 'flash_success');

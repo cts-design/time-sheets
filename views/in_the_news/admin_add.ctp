@@ -27,12 +27,13 @@
 		echo $this->Form->input('link', array(
 							'before' => '<p class="left">',
 							'between' => '</p><p class="left">',
-							'after' => '</p>'));
+							'after' => '</p>',
+							'maxLength' => 255));
 		echo '<br class="clear" />';
 		echo $this->Form->input('posted_date', array(
 							'maxYear' => date('Y'),
 							'before' => '<p class="left">',
-							'between' => '</p><p class="left">',
+							'between' => '</p><p class="date left">',
 							'after' => '</p>'));
 		echo '<br class="clear" />';
 	?>

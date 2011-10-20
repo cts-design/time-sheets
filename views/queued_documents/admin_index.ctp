@@ -7,7 +7,7 @@
  */
 ?>
 <?php if(isset ($active)) {$active = $active;} else $active = 0 ?>
-<?php echo $this->Html->script('pdfobject', array('inline' => false)) ?>
+<?php echo $this->Html->script('pdfobject_min', array('inline' => false)) ?>
 <?php echo $this->Html->script('queued_documents/index', array('inline' => false)) ?>
 <?php $this->Html->scriptStart(array('inline' => false)); ?>
     $(document).ready(function(){
@@ -25,15 +25,21 @@
     var myPDF = new PDFObject({
       url: '/admin/queued_documents/view/<?php echo $lockedDoc['QueuedDocument']['id']?>',
       height: "800px",
-      pdfOpenParams: { scrollbars: '1', toolbar: '1', statusbar: '0', messages: '0', navpanes: '0' }
+      pdfOpenParams: { 
+      	scrollbars: '1', 
+      	toolbar: '1', 
+      	statusbar: '0', 
+      	messages: '0', 
+      	navpanes: '0' 
+      }
 
     }).embed('queuedDocumentsPdf');
   }
   window.onload = embedPDF; 
     var cat2 = <?php echo $this->Js->value(
-	    (isset($selfScanCat['SelfScanCategory']['cat_2']))? $selfScanCat['SelfScanCategory']['cat_2'] : '' );?>;
+	    (isset($categories['cat_2']))? $categories['cat_2'] : '' );?>;
     var cat3 = <?php echo $this->Js->value(
-	    (isset($selfScanCat['SelfScanCategory']['cat_3']))? $selfScanCat['SelfScanCategory']['cat_3'] : '');?>;
+	    (isset($categories['cat_3']))? $categories['cat_3'] : '');?>;
 <?php $this->Html->scriptEnd(); ?>
 <?php echo $this->Html->script('jquery.idleTimer', array('inline' => false)) ?>
 <?php echo $this->Html->script('jquery.validate', array('inline' => false)) ?>
@@ -179,18 +185,19 @@ $this->Paginator->options(array(
 			    'empty' => 'Select Main Cat',
 			    'options' => $cat1,
 			    'class' => 'required',
-			    'selected' =>  (!empty($selfScanCat['SelfScanCategory']['cat_1']) ? $selfScanCat['SelfScanCategory']['cat_1'] : '')))?>
+			    'selected' =>  (!empty($categories['cat_1']) ? $categories['cat_1'] : '')))?>
 		<?php echo $this->Form->input('FiledDocument.cat_2', array('type' => 'select', 'label' => false))?>
 		<?php echo $this->Form->input('FiledDocument.cat_3', array('type' => 'select', 'label' => false))?>
 		<?php echo $this->Form->input('FiledDocument.description', array('label' => 'Other'))?>
 	    </div>
 	    <div class="cuInfo">
-		<?php echo $this->Form->input('FiledDocument.firstname', array(
-			'class' => 'required',
-			'value' => (!empty($user['User']['firstname']) ? $user['User']['firstname'] : '')))?>
+	    	<div class="bot-mar-10 instructions">Please type full last name and then at least 2 characters of first name to search for customer, or use ssn field with at least 4 digits of ssn.</div>
 		<?php echo $this->Form->input('FiledDocument.lastname', array(
 			'class' => 'required',
 			'value' =>  (!empty($user['User']['lastname']) ? $user['User']['lastname'] : '')))?>
+		<?php echo $this->Form->input('FiledDocument.firstname', array(
+			'class' => 'required',
+			'value' => (!empty($user['User']['firstname']) ? $user['User']['firstname'] : '')))?>			
 		<?php echo $this->Form->input('FiledDocument.ssn', array(
 			'class' => 'required',
 			'value' =>  (!empty($user['User']['ssn']) ? $user['User']['ssn'] : '')))?>
@@ -226,7 +233,8 @@ $this->Paginator->options(array(
     </div>
       <?php if(isset($lockedDoc)) { ?>
 	<div  id="queuedDocumentsPdf" >
-	    
+  		It appears you don't have Adobe Reader or PDF support in this web browser. 
+   		<a href="/admin/queued_documents/view/<?php echo $lockedDoc['QueuedDocument']['id']?>">Click here to download the PDF</a>	    
 	</div>
     <?php } else echo '<br /><p><strong>There is no loaded document at this time, try changing your filters.</strong></p>'?>
 </div>

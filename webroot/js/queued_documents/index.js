@@ -139,26 +139,32 @@ $(document).ready(function(){
 	return false;
     });
     $('#FiledDocumentFirstname').autocomplete({
-	source: '/admin/queued_documents/auto_complete_first_ajax',
-	minLength: 2,
-	close: function(){
-	    populateUserInfo($('#FiledDocumentFirstname').val());
-	}
+		source: '/admin/users/auto_complete_customer?' + 'lastname=' + $('#FiledDocumentLastname').attr('value'),
+		minLength: 2,
+		close: function(){
+		    populateUserInfo($('#FiledDocumentFirstname').val());
+		}
     });
-    $('#FiledDocumentLastname').autocomplete({
-	source: '/admin/queued_documents/auto_complete_last_ajax',
-	minLength: 2,
-	close: function(){
-	    populateUserInfo($('#FiledDocumentLastname').val());
-	}
-    });
+    
+	$('#FiledDocumentLastname').blur(function(){
+		  $('#FiledDocumentFirstname').autocomplete(
+		  	'option', 'source', '/admin/users/auto_complete_customer?' +  'lastname=' + $('#FiledDocumentLastname').attr('value'));
+	});    
+
     $('#FiledDocumentSsn').autocomplete({
-	source: '/admin/queued_documents/auto_complete_ssn_ajax',
-	minLength: 2,
-	close: function(){
-	    populateUserInfo($('#FiledDocumentSsn').val());
-	}
+		source: '/admin/users/auto_complete_ssn',
+		minLength: 4,
+		close: function(){
+		    populateUserInfo($('#FiledDocumentSsn').val());
+		}
     });
+    
+	if($('#FiledDocumentFirstname').val() != '' && $('#FiledDocumentLastname').val() != '' && $('#FiledDocumentSsn').val() != '') {
+		$('.instructions').hide();
+	}	    
+    
+    
+    
     $('.add-customer').bind('click', function(){
 	$('#customerAddForm').slideDown('slow');
 	$('#cusNotfound').hide();

@@ -56,6 +56,16 @@ class Kiosk extends AppModel {
 	    )
     );
     
+	var $hasAndBelongsToMany = array(
+		'KioskSurvey' => array(
+			'className' => 'KioskSurvey',
+			'joinTable' => 'kiosks_kiosk_surveys',
+			'foreign_key' => 'kiosk_id',
+			'associationForeignKey' => 'kiosk_survey_id',
+			'unique' => false
+		)
+	);
+	
     function getKioskLocationId() {
 	$oneStop = env('HTTP_USER_AGENT');
 	$arrOneStop = explode('##', $oneStop);

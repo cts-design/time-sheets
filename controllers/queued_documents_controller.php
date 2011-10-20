@@ -169,9 +169,22 @@ class QueuedDocumentsController extends AppController {
 		if(!empty($lockedDoc['QueuedDocument']['user_id'])) {
 		    $data['user'] = $this->QueuedDocument->User->read(null,$lockedDoc['QueuedDocument']['user_id'] );
 		}
-		if(!empty($lockedDoc['QueuedDocument']['self_scan_cat_id'])) {
-		    $data['selfScanCat'] = $this->QueuedDocument->SelfScanCategory->read(null,$lockedDoc['QueuedDocument']['self_scan_cat_id']);
+		if(!empty($lockedDoc['QueuedDocument']['bar_code_definition_id'])) {
+			$this->loadModel('BarCodeDefinition');
+			 $definition = $this->BarCodeDefinition->findById(
+				$lockedDoc['QueuedDocument']['bar_code_definition_id'], array('cat_1', 'cat_2', 'cat_3'));	
+			if($definition) {
+				$data['categories'] = $definition['BarCodeDefinition'];
+			}		
+		}		
+		else if(!empty($lockedDoc['QueuedDocument']['self_scan_cat_id'])) {
+		    $category = $this->QueuedDocument->SelfScanCategory->findById(
+		    	$lockedDoc['QueuedDocument']['self_scan_cat_id'], array('cat_1', 'cat_2', 'cat_3'));
+			if($category) {
+				$data['categories'] = $category['SelfScanCategory'];
+			}	
 		}
+
 		$this->set($data);
 		if($this->RequestHandler->isAjax()) {
 		    $this->layout = 'ajax';
@@ -257,7 +270,7 @@ class QueuedDocumentsController extends AppController {
 			$this->QueuedDocument->delete($this->data['FiledDocument']['id']);		
 			
 			$this->loadModel('ProgramResponse');							
-			$processedDoc = $this->ProgramResponse->processResponseDoc($this->data, $user);	
+			$processedDoc = $this->ProgramResponse->ProgramResponseDoc->processResponseDoc($this->data, $user);	
 			if(isset($processedDoc['docFiledEmail'])) {
 				$this->Notifications->sendProgramEmail($processedDoc['docFiledEmail'], $user);
 			}				

@@ -8,7 +8,8 @@
 ?>
 <script type="text/javascript">
 	Ext.onReady(function(){
-		var PermissionTabs = new Ext.TabPanel({
+		Ext.QuickTips.init();
+		var PermissionTabs = Ext.create('Ext.TabPanel', {
 			activeTab: 0,
 			bodyStyle: 'padding: 10px',
 			renderTo: 'PermissionTabs',
@@ -59,6 +60,25 @@
 				    'label' => 'Toggle Disabled',
 				    'checked' => (isset($controllers['Users']['admin_toggle_disabled']) ? $controllers['Users']['admin_toggle_disabled'] : '' )));?>				    
 			    </fieldset>
+		    <fieldset class="left right-mar-10">
+            <legend><?php __('Administrators') ?></legend>
+			<?php echo $this->Form->input('Users.admin_index_admin', array(
+			    'type' => 'checkbox',
+			    'label' => 'Index',
+			    'checked' => (isset($controllers['Users']['admin_index_admin'])) ? $controllers['Users']['admin_index_admin'] : '' ));?>
+			<?php echo $this->Form->input('Users.admin_add_admin', array(
+			    'type' => 'checkbox',
+			    'label' => 'Add',
+			    'checked' => (isset($controllers['Users']['admin_add_admin'])) ? $controllers['Users']['admin_add_admin'] : ''));?>
+			<?php echo $this->Form->input('Users.admin_edit_admin', array(
+			    'type' => 'checkbox',
+			    'label' => 'Edit',
+			    'checked' => (isset($controllers['Users']['admin_edit_admin']) ? $controllers['Users']['admin_edit_admin'] : '' )));?>
+			<?php echo $this->Form->input('Users.admin_toggle_disabled_admin', array(
+			    'type' => 'checkbox',
+			    'label' => 'Toggle Disabled',
+			    'checked' => (isset($controllers['Users']['admin_toggle_disabled_admin']) ? $controllers['Users']['admin_toggle_disabled_admin'] : '' )));?>				    
+		    </fieldset>			    
 			    <?php if (!in_array('UserTransactions', $disabledModules)): ?>
 			    <fieldset class="left right-mar-10">
                 <legend><?php __('Activity') ?></legend>
@@ -284,7 +304,6 @@
 			<?php echo $this->Form->end(__('Submit', true))?>    
 	</div>
 	<div id="SelfSign" class="x-hide-display">
-		<?php if(isset($controllers)) :?>
 		    <?php echo $this->Form->create('permission', array('action' => 'set_permissions')) ?>
 		    <?php echo $this->Form->hidden('id', array('value' => $id));?>
 		    <?php echo $this->Form->hidden('model', array('value' => $model));?>
@@ -307,6 +326,16 @@
 				    'checked' => (isset($controllers['SelfSignLogArchives']['all'])) ? $controllers['SelfSignLogArchives']['all'] : '' ));?>
 			    </fieldset>
 			<?php endif; ?>	
+
+			    <?php if (!in_array('KioskSurveys', $disabledModules)): ?>
+			    <fieldset class="left right-mar-10">
+                <legend><?php __('Self Sign Surveys') ?></legend>
+			       <?php echo $this->Form->input('KioskSurveys.all', array(
+				    'type' => 'checkbox',
+				   'label' => 'Index',
+				    'checked' => (isset($controllers['KioskSurveys']['all'])) ? $controllers['KioskSurveys']['all'] : '' ));?>
+			    </fieldset>
+			<?php endif; ?>	
 			<br class="clear" />
 			<?php echo $this->Form->end(__('Submit', true))?>    
 	</div>
@@ -320,10 +349,18 @@
 				    'type' => 'checkbox',
 				   	'label' => 'Index',
 				    'checked' => (isset($controllers['Programs']['admin_index'])) ? $controllers['Programs']['admin_index'] : '' ));?>
-			       <?php echo $this->Form->input('Programs.admin_edit_instructions', array(
+			       <?php echo $this->Form->input('ProgramInstructions.admin_edit', array(
 				    'type' => 'checkbox',
 				   	'label' => 'Edit Instructions',
-				    'checked' => (isset($controllers['Programs']['admin_edit_instructions'])) ? $controllers['Programs']['admin_edit_instructions'] : '' ));?>		    
+				    'checked' => (isset($controllers['ProgramInstructions']['admin_edit'])) ? $controllers['ProgramInstructions']['admin_edit'] : '' ));?>		    
+			       <?php echo $this->Form->input('ProgramEmails.admin_edit', array(
+				    'type' => 'checkbox',
+				   	'label' => 'Edit Emails',
+				    'checked' => (isset($controllers['ProgramEmails']['admin_edit'])) ? $controllers['ProgramEmails']['admin_edit'] : '' ));?>			    
+     	 		  <?php echo $this->Form->input('ProgramEmails.admin_toggle_disabled', array(
+				    'type' => 'checkbox',
+				   	'label' => 'Enable/Disable Emails',
+				    'checked' => (isset($controllers['ProgramEmails']['admin_toggle_disabled'])) ? $controllers['ProgramEmails']['admin_toggle_disabled'] : '' ));?>			    
 			    </fieldset>
 		    <fieldset class="left right-mar-10">
                 <legend><?php __('Program Responses') ?></legend>
@@ -337,7 +374,7 @@
 				    'checked' => (isset($controllers['ProgramResponses']['admin_view'])) ? $controllers['ProgramResponses']['admin_view'] : '' ));?>			       
 			       <?php echo $this->Form->input('ProgramResponses.admin_approve', array(
 				    'type' => 'checkbox',
-				   	'label' => 'Approve',
+				   	'label' => 'Approve / Not Approve',
 				    'checked' => (isset($controllers['ProgramResponses']['admin_approve'])) ? $controllers['ProgramResponses']['admin_approve'] : '' ));?>
 				   <?php echo $this->Form->input('ProgramResponses.admin_toggle_expired', array(
 				    'type' => 'checkbox',
@@ -348,8 +385,6 @@
 		    <br class="clear" />
 			<?php echo $this->Form->end(__('Submit', true))?>    
 	</div>
- 
-	    <?php endif; ?>		
 	<div id="Tools" class="x-hide-display">
 		    <?php echo $this->Form->create('permission', array('action' => 'set_permissions')) ?>
 		    <?php echo $this->Form->hidden('id', array('value' => $id));?>

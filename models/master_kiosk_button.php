@@ -43,7 +43,7 @@ class MasterKioskButton extends AppModel {
 	if($id) {
 	    $data['MasterKioskButton']['id'] = $id;
 	    $data['MasterKioskButton']['deleted'] = 1;
-	    if ($this->save($data)) {
+	    if ($this->save($data, false)) {
 		return true;
 	    }
 	}

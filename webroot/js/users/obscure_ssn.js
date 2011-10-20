@@ -1,3 +1,10 @@
+// Fix trim() support in IE
+if (typeof String.prototype.trim !== 'function') {
+  String.prototype.trim = function() {
+    return this.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+  }
+}
+
 $(function() {
   $('td.ssn').each(function(index) {
     var me = $(this),

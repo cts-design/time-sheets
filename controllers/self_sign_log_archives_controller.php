@@ -112,6 +112,8 @@ class SelfSignLogArchivesController extends AppController {
 			'Closed', 'Not Helped');
 		$locations = $this->SelfSignLogArchive->Kiosk->Location->find('list');
 		$buttons = $this->SelfSignLogArchive->Kiosk->KioskButton->MasterKioskButton->find('list', array('fields' => array('MasterKioskButton.name')));
+		
+		$closedInTimes = array();
 
 		foreach($data as $k => $v) {
 			$report[$k]['Name'] = $v['User']['firstname'] . ' ' . $v['User']['lastname'];
@@ -133,12 +135,37 @@ class SelfSignLogArchivesController extends AppController {
 			}
 			else
 				$report[$k]['Button 3'] = '';
+
 			$report[$k]['Other'] = $v['SelfSignLogArchive']['other'];
 			$report[$k]['Status'] = $statuses[$v['SelfSignLogArchive']['status']];
 			$report[$k]['Created'] = $v['SelfSignLogArchive']['created'];
 			$report[$k]['Closed'] = $v['SelfSignLogArchive']['closed'];
 			$report[$k]['Closed In'] = $v['SelfSignLogArchive']['closed_in'];
+			
+			// get the time to close in seconds
+			if ($v['SelfSignLogArchive']['closed_in']) {
+    			$created = strtotime(str_replace("-", "", $v['SelfSignLogArchive']['created']));
+    			$closed  = strtotime(str_replace("-", "", $v['SelfSignLogArchive']['closed']));
+                $closedInTimes[] = $closed - $created;
+			}
 		}
+		
+		$averageTimeInSeconds = $this->_calculateAverageTimeInSeconds($closedInTimes);
+		$average = $this->SelfSignLogArchive->_time_duration($averageTimeInSeconds);
+		
+        $report[(count($report) + 3)] = array(
+            'Name' => '',
+            'Location' => '',
+            'Button 1' => '',
+            'Button 2' => '',
+            'Button 3' => '',
+            'Other' => '',
+            'Status' => '',
+            'Created' => '',
+            'Closed' => '',
+            'Closed In' => "Average close time: {$average}"
+        );
+		
 		if(empty($report[0])) {
 		    $this->Session->setFlash(__('There are no results to generate a report', true), 'flash_failure');
 		    $this->redirect(array('action' => 'index'));
@@ -157,9 +184,9 @@ class SelfSignLogArchivesController extends AppController {
 
 		$data = array('data' => $report,
 			'title' => $title);
-		Configure::write('debug', 0);
-		$this->layout = 'ajax';
-		$this->set($data);
+        Configure::write('debug', 0);
+        $this->layout = 'ajax';
+        $this->set($data);
 	}
 
 	function admin_get_parent_buttons_ajax() {
@@ -290,6 +317,14 @@ class SelfSignLogArchivesController extends AppController {
 		if(isset($conditions)) {
 			return $conditions;
 		}
+	}
+	
+	function _calculateAverageTimeInSeconds($arrayOfTimesInSeconds) {
+        $count = count($arrayOfTimesInSeconds);
+        $sum   = array_sum($arrayOfTimesInSeconds);
+        $averageInSeconds = ($sum / $count);
+        
+        return $averageInSeconds;
 	}
 
 }

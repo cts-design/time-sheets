@@ -13,11 +13,13 @@ html {
 	background: #1875BB;
 }
 
-body {
+body.admin-layout {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 13px;
     overflow-y: scroll;
 }
+
+
 
 a {
     color: #3B71A0;
@@ -71,13 +73,12 @@ strong {
 
 #container { 
     margin: 0 auto;
-    width: 977px;
+    width: 970px;
 }
 
 #header {
     width: 970px;
     color: #333;
-    padding: 0 0 0 0;
     height: 90px;
     margin: 0px 0 5px 0;
     background: #FFF;
@@ -102,13 +103,19 @@ strong {
 }
 
 #content { 
-    width: 950px;
+    width: 970px;
     color: #333;
     background: #fff;
     margin: 0px 0px 5px 0px;
-    padding: 10px;
     min-height: 400px;
     overflow: hidden;
+}
+
+#content > div,
+#footer > div,
+#content #administration > div,
+#content #information > div {
+	padding: 10px;
 }
 
 #footer {
@@ -116,10 +123,9 @@ strong {
     font-size: 10px;
     font-weight: normal;
     color: #000;
-    width: 950px;
+    width: 970px;
     border: none;
     margin: 0px 0px 10px 0px;
-    padding: 10px;
 }
 
 .left {
@@ -319,7 +325,7 @@ legend {
 
 #logo{
     font-size: 40px;
-    margin: 10px 0 0 10px;
+    margin: 5px 0 0 10px;
 }
 
 #logoLogout {
@@ -329,7 +335,7 @@ legend {
 
 #logoLogout img{
     margin-top: 15px;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
 
 #logoLogout p{
@@ -345,7 +351,6 @@ legend {
     width: 350px;
     margin: 10px 175px 0 25px;
 	border: 1px solid #B5D3DF; 
-	padding: 10px; 
 	background-color:#F1F8FB    
 }
 
@@ -361,7 +366,7 @@ legend {
 
 #information #help {	
 	border: 1px solid #B5D3DF;  
-	height: 100px; 
+	height: 125px; 
 	padding: 10px; 
 	background-color:#F1F8FB
 }
@@ -447,18 +452,7 @@ div.actions .ui-button-text {
 #SelfSignReassign {
 	margin-bottom: 20px;
 }
-/* remove the trigger and the mouse-cursor-hand from groupable-grid-headers */
-#selfSignGrid .x-grid-group-hd {
-    border-bottom: 2px solid #99bbe8;
-    cursor:default;
-    padding-top:6px;
-}
-#selfSignGrid .x-grid-group-hd div {
-    background-image: none;
-    padding:4px 4px 4px 4px;
-    color:#3764a0;
-    font:bold 11px tahoma, arial, helvetica, sans-serif;
-}
+
 
 #manageButtons label {
     margin-right: 10px;
@@ -539,7 +533,7 @@ div.actions .ui-button-text {
 
 
 #search .ui-accordion-content{
-    height: 115px;
+    height: 145px;
     overflow: hidden;
 }
 
@@ -622,7 +616,7 @@ div.actions .ui-button-text {
 
 .cuInfo .input{
     display: inline-block;
-    margin-right: 10px;
+    margin-right: 2px;
 }
 
 #queuedDocumentsPdf {
@@ -760,7 +754,7 @@ div.actions .ui-button-text {
     margin-right: 10px;
 }
 
-#PermissionTabs fieldset{height: 125px; width: 150px; margin-bottom: 10px; margin-right: 10px;}
+#PermissionTabs fieldset{height: 150px; width: 160px; margin-bottom: 10px; margin-right: 10px;}
 #PermissionTabs legend{font-weight: bold;}
 #PermissionTabs .input{margin: 0}
 
@@ -888,17 +882,7 @@ div.actions .ui-button-text {
 
 
 
-.x-grid-group-hd {
-    border-bottom: 2px solid #99bbe8;
-    cursor:default;
-    padding-top:6px;
-}
-.x-grid-group-hd div {
-    background-image: none;
-    padding:4px 4px 4px 4px;
-    color:#3764a0;
-    font:bold 11px tahoma, arial, helvetica, sans-serif;
-}
+
 
 .reassign-menu {
 	overflow: visible !important;
@@ -1112,3 +1096,5 @@ p.checkbox {
 
 .x-careerseeker-row li {list-style-type: disc;}
 
+.inTheNews div.date p.date { width: 310px }
+.inTheNews div.date select { width: 100px }

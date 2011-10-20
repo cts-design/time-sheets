@@ -7,7 +7,6 @@
  */
 ?>
 <?php
-	$this->Html->script('ext/ux/RowEditor', array('inline' => FALSE));
 	$this->Html->script('users/resolve_login_issues', array('inline' => FALSE));
 ?>
 

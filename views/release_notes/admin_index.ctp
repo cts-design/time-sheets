@@ -3,6 +3,63 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+	<h1>Release 3.1.3 (10/19/11)</h1>
+	<h2>Main Feature Releases</h2>
+	<ol>
+		<li>Upgraded all EXT3 views to EXT4. (Resolution to reported context and dropdown bug issues within IE 9).</li>
+		<li>Development of bar-code definition interface.</li>
+	</ol>
+	<h2>Minor Feature Enhancements</h2>
+	<ol>
+		<li>Deprecated the CKEditor component.</li>
+		<li>Implemented a fix for .XLSX headers not being shown correctly within the Survey Module.</li>
+		<li>Implemented “reject feature” within the approval tab of the programs module.</li>
+		<li>Implemented real-time sorting enhancement within the storage queue. Filter now requires multiple fields to begin live query.</li>
+		<li>Redesign of the CMS editor to integrate with the new version of EXT4.</li>
+		<li>Implemented feature request to define additional administrator permissions to role admins.</li>
+		<li>Added “average wait time” to the self-sign archive .XLSX report.</li>
+		<li>Added default dropdown selections and focus to search term within the customer search component.</li>
+		<li>Added increased functionality for the “In The News” section of the website module.</li>
+		<li>Added right click context menus to website navigation.</li>
+		<li>Added right click context menus to filing tree navigation.</li>
+		<li>Implemented an .XLSX activity report within the admin activity view.</li>
+		<li>Modified the "programs" module email notifications to send status and confirmation emails using plain text format.</li>
+	</ol>
+	<h2>Bug Fixes</h2>
+	<ol>
+		<li>Implemented PDFOBJECT version 1.2 to resolve compatibility issues between Adobe X and Internet Explorer 9.</li>
+		<li>Migrated from EXT3 to EXT4 to resolve drop downs other context menus not rendering correctly within IE9.</li>
+	</ol>
+	<hr />	
+	<h1>Release 3.1.2 (9/8/11)</h1>
+	<h2>Main Feature Releases</h2>
+	<ol>
+		<li>Deployment of the ATLAS Self-Sign Survey Module.</li>
+		<li>Release of Training Provider Application to specific ATLAS workforce regions.</li>
+	</ol>
+	<h2>Minor Feature Enhancements</h2>
+	<ol>
+		<li>Added notes display panel to program responses.</li>
+		<li>Adjusted program response "docs" panel to display all filed, rejected and deleted documents. Ordered display to keep "filed" documents on top.</li>
+		<li>Added functionality that will not allow an "expired" response to overwrite a newer "un-expired" response.</li>
+		<li>Added functionality that only allows admins to "approve" an application after all "watched categories" requirements are met.</li>
+		<li>Added ability to “edit document” directly from the program response Document panel. This will allow staff to review and “file” or “reject” documents much easier.</li>
+		<li>Updated breadcrumb helper to allow for direct link back to Document panel after “edit” has been completed.</li>
+		<li>Implemented a search feature within the program response module.</li>
+		<li>Added ability to "decline" - labeled (not-approved) to the program response. Staff has ability to decline an application and note the reason why. Not-approved email is sent to customer with reason.</li>
+		<li>Added "date modified" to the document archive and document archive XLS report</li>
+	</ol>
+	<h2>Bug Fixes</h2>
+	<ol>
+		<li>Revisited "mark expired" action based on customers input. Determined the "mark expired" action must be available in a scenario where customer is automatically expired, then needs to be "unexpired". Determination was made that the mark expired would only add an addition feature and does not affect automatic expiration duration.</li>
+		<li>Fixed bug that was causing edited documents not to trigger watched filing categories</li>
+		<li>Verified functionality, ability to download CERT if expiration of application occurred between the application being approved and customer login in to download CERT.</li>
+		<li>Verified functionality, if customer is expired, new application documents are filed correctly.</li>
+		<li>Fixed bug which was causing issues with "expired" responses that were marked "un-expired".</li>
+		<li>Verified functionality, the same document was showing up more than once, tested OK.</li>
+		<li>Fixed bug that was causing an issue after documents were "restored" after being deleted from the queue or from filed docs.</li>
+	</ol>
+	<hr />
 	<h1>Release 3.1.1 (8/18/11)</h1>
 	<ol>
 		<li>Implemented a dynamic text resizing tool for website CMS pages.</li>

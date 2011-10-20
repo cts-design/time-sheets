@@ -13,7 +13,11 @@ class DocumentFilingCategory extends AppModel {
 	var $hasMany = array(
 		'WatchedFilingCat' => array(
 			'className' => 'WatchedFilingCat'
-		)
+		),
+		'BarCodeDefinition' => array(
+			'className' => 'BarCodeDefinition'
+		)		
+		
 	);
 	
 	var $validate = array(

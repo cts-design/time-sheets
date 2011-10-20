@@ -13,7 +13,7 @@ class UsersController extends AppController {
     var $components = array('Email');
 
     function beforeFilter() {
-		parent::beforeFilter();
+		parent::beforeFilter();	
 		$this->Security->blackHoleCallback = 'forceSSL';
 		$this->Security->requireSecure();
 		$this->User->recursive = 0;
@@ -43,7 +43,12 @@ class UsersController extends AppController {
 			'login',
 			'registration',
 			'logout');
-			
+		if($this->Auth->user('role_id') > 1) {
+		    $this->Auth->allow(
+			    'admin_auto_complete_customer',
+			    'admin_auto_complete_ssn_ajax'
+			);
+		}			
 		if(!empty($this->data)) {
 			if(isset($this->params['prefix']) && $this->params['prefix'] == 'admin') {
 				return;	
@@ -150,7 +155,7 @@ class UsersController extends AppController {
             $conditions1 = array($conditionScope => $conditionValue);
             $conditions = array_merge($conditions, $conditions1);
 
-            if ($submittedValues['search_by2'] !== '' && $submittedValues['search_term2'] !== '') {
+            if (isset($submittedValues['search_by2']) && $submittedValues['search_by2'] !== '' && $submittedValues['search_term2'] !== '') {
                 switch ($submittedValues['search_scope2']) {
                     case 'containing':
                         if ($submittedValues['search_by2'] === 'last4') {
@@ -258,6 +263,23 @@ class UsersController extends AppController {
     }
 
     function kiosk_self_sign_login() {
+    	$this->loadModel('Kiosk');
+		$oneStop = env('HTTP_USER_AGENT');
+		$arrOneStop = explode('##', $oneStop);
+		if(!isset($arrOneStop[1])) {
+			$oneStopLocation = '';
+		}
+		else {
+			$oneStopLocation = $arrOneStop[1];
+		}
+		$this->Kiosk->recursive = -1;
+		$this->Kiosk->Behaviors->attach('Containable');
+		$this->Kiosk->contain(array('KioskSurvey'));
+		
+		$kiosk = $this->Kiosk->find('first', array(
+			'conditions' => array(
+				'Kiosk.location_recognition_name' => $oneStopLocation, 'Kiosk.deleted' => 0)));
+				
 		if (isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'kiosk') {
 		    if ($this->Auth->user()) {
 			$this->Transaction->createUserTransaction('Self Sign', 
@@ -265,6 +287,8 @@ class UsersController extends AppController {
 			$this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_confirm'));
 		    }
 		}
+		$this->set('kioskHasSurvey', (empty($kiosk['KioskSurvey'])) ? false : true);
+		$this->set('kiosk', $kiosk);
 		$this->set('title_for_layout', 'Self Sign Kiosk');
 		$this->layout = 'kiosk';
     }
@@ -341,6 +365,9 @@ class UsersController extends AppController {
 						$this->data['User']['ssn_2_confirm'] . 
 						$this->data['User']['ssn_3_confirm']; 
 				}				
+			}
+			if(Configure::read('Registration.ssn') == 'full') {
+				$this->User->setValidation('publicWebFormRules');				
 			}
 		    if ($this->User->save($this->data)) {
 				$userId = $this->User->getInsertId();
@@ -491,6 +518,9 @@ class UsersController extends AppController {
 				'limit' => Configure::read('Pagination.admin.limit'), 'order' => array('User.lastname' => 'asc'));
 			if($this->Auth->user('role_id') == 2) {
 				$this->paginate['conditions']['User.role_id >'] = 1;
+			}
+			elseif($this->Auth->user('role_id') > 3) {
+				$this->paginate['conditions']['User.role_id >'] = 3;
 			}			
 			$data = array('users' => $this->paginate('User'), 'perms' => $filteredPerms, 'title_for_layout' => 'Administrators');
 			$this->set($data);
@@ -528,7 +558,10 @@ class UsersController extends AppController {
 		if($this->Auth->user('role_id') == 2) {
 			$conditions = array("NOT" => array(array('Role.id' => array(1))));
 		}
-		else $conditions = array("NOT" => array(array('Role.id' => array(1,2))));
+		elseif($this->Auth->user('role_id') == 3) {
+			$conditions = array("NOT" => array(array('Role.id' => array(1,2))));
+		}
+		else $conditions = array("NOT" => array(array('Role.id' => array(1,2,3))));
 		
 		$data = array(
 		    'roles' => $this->User->Role->find('list', array(
@@ -574,7 +607,10 @@ class UsersController extends AppController {
 		if($this->Auth->user('role_id') == 2) {
 			$conditions = array("NOT" => array(array('Role.id' => array(1))));
 		}
-		else $conditions = array("NOT" => array(array('Role.id' => array(1,2))));		
+		elseif($this->Auth->user('role_id') == 3){
+			$conditions = array("NOT" => array(array('Role.id' => array(1,2))));
+		}
+		else $conditions = array("NOT" => array(array('Role.id' => array(1,2,3))));		
 		$data = array(
 		    'roles' => $this->User->Role->find('list', array(
 			'conditions' => $conditions)),
@@ -630,8 +666,8 @@ class UsersController extends AppController {
 
     function admin_resolve_login_issues() {
     	if($this->RequestHandler->isAjax()) {
-			if($this->params['form']['xaction'] == 'update')  {
-				$postData = json_decode($this->params['form']['users'], true);
+			if($this->RequestHandler->isPost())  {
+				$postData = json_decode($this->params['form']['user'], true);
 				$this->data['User']['id'] = $postData['id'];
 				$this->data['User']['lastname'] = $postData['lastname'];
 				$this->data['User']['username'] = $this->data['User']['lastname'];				
@@ -649,41 +685,41 @@ class UsersController extends AppController {
 				$this->set('data', $data);
 				$this->render(null, null,  '/elements/ajaxreturn');					
 			}	
-			if($this->params['form']['xaction'] == 'read') {
+			if($this->RequestHandler->isGet()) {
 				$useDate = false;
-				if(!empty($this->params['form']['from']) && !empty($this->params['form']['to'])) {
-					$from = date('Y-m-d H:i:s', strtotime($this->params['form']['from'] . ' 00:00:01'));
-					$to = date('Y-m-d H:i:s', strtotime($this->params['form']['to'] . '23:59:59'));
+				if(!empty($this->params['url']['from']) && !empty($this->params['url']['to'])) {
+					$from = date('Y-m-d H:i:s', strtotime($this->params['url']['from'] . ' 00:00:01'));
+					$to = date('Y-m-d H:i:s', strtotime($this->params['url']['to'] . '23:59:59'));
 					$useDate = true;					
 				}
 				$this->User->recursive = -1;
-				if($this->params['form']['searchType'] == 'ssn') {
+				if($this->params['url']['searchType'] == 'ssn') {
 					if($useDate){
 						$conditions = array(
-							'RIGHT (User.ssn , 4) LIKE' => '%'.$this->params['form']['search'].'%', 
+							'RIGHT (User.ssn , 4) LIKE' => '%'.$this->params['url']['search'].'%', 
 							'User.role_id' => 1,
 							'User.created BETWEEN ? AND ?' => array($from, $to)
 							);							
 					}
 					else {
 						$conditions = array(
-							'User.ssn LIKE' => '%'.$this->params['form']['search'].'%', 
+							'User.ssn LIKE' => '%'.$this->params['url']['search'].'%', 
 							'User.role_id' => 1
 							);						
 					}
 
 				}
-				if($this->params['form']['searchType'] == 'lastname') {
+				if($this->params['url']['searchType'] == 'lastname') {
 					if($useDate){
 						$conditions = array(
-							'User.lastname LIKE' => '%'.$this->params['form']['search'].'%', 
+							'User.lastname LIKE' => '%'.$this->params['url']['search'].'%', 
 							'User.role_id' => 1,
 							'User.created BETWEEN ? AND ?' => array($from, $to)
 							);
 					}
 					else {
 						$conditions = array(
-							'User.lastname LIKE' => '%'.$this->params['form']['search'].'%', 
+							'User.lastname LIKE' => '%'.$this->params['url']['search'].'%', 
 							'User.role_id' => 1);	
 					}
 				}    		
@@ -765,7 +801,37 @@ class UsersController extends AppController {
 		}
 	}
 	
-	function admin_toggle_disabled($id=null, $disabled, $userType) {	
+	function admin_toggle_disabled($id=null, $disabled) {	
+		$this->_toggleDisabled($id, $disabled, 'Customer');
+	}
+	
+	function admin_toggle_disabled_admin($id=null, $disabled) {	
+		$this->_toggleDisabled($id, $disabled, 'Administrator');
+	}	
+	
+	function admin_auto_complete_customer() {
+		if($this->RequestHandler->isAjax()) {
+			$this->User->recursive = -1;
+			$query = $this->User->find('all', array(
+				'conditions' => array(
+					'User.role_id' => 1, 
+					'User.lastname' =>  $this->params['url']['lastname'], 
+					'User.firstname LIKE' => '%' . $this->params['url']['term'] . '%')));
+			$this->_setAutoCompleteOptions($query);
+			$this->render('/elements/app_controller/auto_complete_ajax');			
+		}
+	}
+
+	function admin_auto_complete_ssn() {
+		if($this->RequestHandler->isAjax()) {
+			$this->User->recursive = -1;
+			$query = $this->User->find('all', array('conditions' => array('User.role_id' => 1, 'User.ssn LIKE' => '%' . $this->params['url']['term'] . '%')));
+			$this->_setAutoCompleteOptions($query);
+			$this->render('/elements/app_controller/auto_complete_ajax');
+		}
+	}
+	
+	function _toggleDisabled($id, $disabled, $userType) {
 		if(!$id) {
 			$this->Session->setFlash(__('Invalid user id', true), 'flash_failure');
 			$this->redirect($this->referer());
@@ -796,7 +862,23 @@ class UsersController extends AppController {
 		else {
 			$this->Session->setFlash(__('An error occured.', true), 'flash_failure');
 			$this->redirect($this->referer());
+		}		
+	}
+
+
+    function _setAutoCompleteOptions($query) {
+		if(empty($query)) {
+			$options[0] = 'No Results';
 		}
+		$firsts = Set::extract('/User/firstname', $query);
+		$lasts = Set::extract('/User/lastname', $query);
+		$ssns = Set::extract('/User/ssn', $query);
+		$i = 0;
+		foreach($firsts as $fisrt) {
+			$options[$i] = $lasts[$i] . ', ' . $firsts[$i] . ', ' . $ssns[$i];
+			$i++;
+		}
+		$this -> set('options', $options);
 	}
 
 }

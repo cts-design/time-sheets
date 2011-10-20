@@ -24,10 +24,23 @@ class KiosksController extends AppController {
 
     function admin_index() {
 		$this->Kiosk->recursive = 0;
+        $this->Kiosk->KioskSurvey->recursive = 0;
+		$this->Kiosk->Behaviors->attach('Containable');
+
 		$this->paginate = array(
+			'contain' => array(
+				'Location',
+				'KioskSurvey', 
+				'KioskSurvey.KioskSurveyQuestion'
+			),
 			'limit' => Configure::read('Pagination.kiosk.limit'), 
-			'conditions' => array('Kiosk.deleted !=' => 1));
+			'conditions' => array('Kiosk.deleted !=' => 1)
+		);
+
+        $surveys = $this->Kiosk->KioskSurvey->find('all');
+			
 		$this->set('kiosks', $this->paginate('Kiosk'));
+        $this->set('surveys', $surveys);
 	}
 
     function admin_add() {
@@ -380,14 +393,14 @@ class KiosksController extends AppController {
 		// check to see if the directory for the current year exists
 		if(!file_exists($path . date('Y') . '/')) {
 		    // if directory does not exist, create it
-		    mkdir($path . date('Y'), 0755);
+		    mkdir($path . date('Y'), 0777);
 		}
 		// add the current year to our path string
 		$path .= date('Y') . '/';
 		// check to see if the directory for the current month exists
 		if(!file_exists($path . date('m') . '/')) {
 		    // if directory does not exist, create it
-		    mkdir($path . date('m'), 0755);
+		    mkdir($path . date('m'), 0777);
 		}
 		// add the current month to our path string
 		$path .= date('m') . '/';

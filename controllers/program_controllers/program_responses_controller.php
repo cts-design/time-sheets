@@ -25,27 +25,38 @@ class ProgramResponsesController extends AppController {
 				}			
 				$this->ProgramResponse->modifyValidate($validate);
 			}
-
 		}
+		// check if the logged in user has permission to approve responses
+		// if they do we allow them access to other actions relating to approval
+		if($this->Acl->check(array(
+			'model' => 'User', 
+			'foreign_key' => $this->Auth->user('id')), 'ProgramResponses/admin_approve', '*')) {
+				$this->Auth->allow('admin_not_approved', 'admin_reset_form', 'admin_allow_new_response');
+			}
 	}	
 	
 	function index($id = null) {
 		if(!$id) {
 			$this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');
 			$this->redirect($this->referer());
-		} 
+		}
+		$program = $this->ProgramResponse->Program->findById($id); 
 		if(!empty($this->data)) {
-			$response = $this->ProgramResponse->find('first', array('conditions' => array(
-				'ProgramResponse.user_id' => $this->Auth->user('id'),
-				'ProgramResponse.program_id' => $id,
-				'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s') 
-			)));
+			$programResponse = 
+				$this->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
 			$this->data['ProgramResponse']['answers'] = json_encode($this->data['ProgramResponse']);
-			$this->data['ProgramResponse']['id'] = $response['ProgramResponse']['id'];
+			$this->data['ProgramResponse']['id'] = $programResponse['ProgramResponse']['id'];
 			$this->data['ProgramResponse']['program_id'] = $id;
+			$this->data['ProgramResponse']['not_approved'] = 0;
+			if(!strpos($program['Program']['type'], 'docs', 0) && $program['Program']['approval_required'] == 0) {
+				$this->data['ProgramResponse']['complete'] = 1;
+			}
+			elseif(!strpos($program['Program']['type'], 'docs', 0) && $program['Program']['approval_required'] == 1) {
+				$this->data['ProgramResponse']['needs_approval'] = 1;
+			}
 			if($this->ProgramResponse->save($this->data)) {
 				$this->Transaction->createUserTransaction('Programs', null, null,
-					'Completed form for ' . $response['Program']['name']);				
+					'Completed form for ' . $programResponse['Program']['name']);				
 				$programEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array(
 					'conditions' => array(
 						'ProgramEmail.program_id' => $id,
@@ -53,17 +64,28 @@ class ProgramResponsesController extends AppController {
 					)));
 				$this->Notifications->sendProgramEmail($programEmail);
 				$this->Session->setFlash(__('Saved', true), 'flash_success');
-				$program = $this->ProgramResponse->Program->findById($id);
 				if(strpos($program['Program']['type'], 'docs', 0)) {
-					$this->redirect(array('action' => 'required_docs', $id));
+					if($programResponse['ProgramResponse']['uploaded_docs']) {
+						$this->redirect(array('action' => 'provided_docs', $id, 'uploaded_docs'));
+					}
+					if($programResponse['ProgramResponse']['dropping_off_docs']) {
+						$this->redirect(array('action' => 'provided_docs', $id, 'dropping_off_docs'));
+					}
+					else {
+						$this->redirect(array('action' => 'required_docs', $id));
+					}				
 				}
-			//	@TODO Redirect to a thank you page if the program does not require documents 
+				elseif($program['Program']['approval_required']) {
+					$this->redirect(array('action' => 'pending_approval', $id));
+				}
+				else {
+					$this->redirect(array('action' => 'response_complete', $id, true));
+				}
 			}
 			else {
 				$this->Session->setFlash(__('Unable to save', true), 'flash_failure');
 			}			
 		}
-		$program = $this->ProgramResponse->Program->findById($id);
 		$instructions = Set::extract('/ProgramInstruction[type=form]/text', $program);
 		if($instructions) {
 			$data['instructions'] = $instructions[0];
@@ -78,10 +100,8 @@ class ProgramResponsesController extends AppController {
 			$this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');
 			$this->redirect($this->referer());
 		}
+		$programResponse = $this->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));	
 		if($reset == 1) {
-		$programResponse = $this->ProgramResponse->find('first', array('conditions' => array(
-				'ProgramResponse.user_id' => $this->Auth->user('id'),
-				'ProgramResponse.program_id' => $id)));
 			$this->ProgramResponse->id = $programResponse['ProgramResponse']['id'];
 			$this->ProgramResponse->saveField('uploaded_docs', 0);
 			$this->ProgramResponse->saveField('dropping_off_docs', 0);
@@ -94,7 +114,7 @@ class ProgramResponsesController extends AppController {
 			if($this->QueuedDocument->validates()) {
 				if($this->QueuedDocument->uploadDocument($this->data, 'Program Upload', $this->Auth->user('id'))) {
 					$this->Transaction->createUserTransaction('Programs', null, null,
-						'Uploaded document for ' . $response['Program']['name']);							
+						'Uploaded document for ' . $programResponse['Program']['name']);							
 					$this->Session->setFlash(__('Document uploaded successfully.', true), 'flash_success');
 					$this->redirect(array('action' => 'required_docs', $id));
 				}
@@ -119,17 +139,30 @@ class ProgramResponsesController extends AppController {
 		$this->set($data);
 	}
 
-	function response_complete($id=null) {
-		$programResponse = $this->ProgramResponse->find('first', array('conditions' => array(
-			'ProgramResponse.user_id' => $this->Auth->user('id'),
-			'ProgramResponse.program_id' => $id,
-			'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s') 
-		)));
+	function response_complete($id=null, $autoApprove=false) {
+		$programResponse = $this->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
+		if($autoApprove) {
+			$form = $this->ProgramResponse->Program->ProgramPaperForm->find('first', array(
+				'conditions' => array(
+					'ProgramPaperForm.program_id' => $programResponse['Program']['id'],
+					'ProgramPaperForm.cert' => 1)));
+			$generated = $this->_generateForm($form['ProgramPaperForm']['id'], $programResponse['ProgramResponse']['id']);
+			$this->Transaction->createUserTransaction('Programs', null, null,
+				'Completed program ' . $programResponse['Program']['name']);
+			$programEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', 
+				array('conditions' => array(
+					'ProgramEmail.program_id' => $programResponse['Program']['id'],
+					'ProgramEmail.type' => 'final'
+			)));
+			$this->Notifications->sendProgramEmail($programEmail);
+		}
 		if(!$programResponse) {
 			$this->Session->setFlash(__('An error has occured.', true), 'flash_failure');
 		}
+		$instructions = $this->ProgramResponse->Program->ProgramInstruction->getInstructions(
+			$id, 'complete');		
 		$title_for_layout = 'Program Certificate';
-		$this->set(compact('title_for_layout', 'programResponse'));
+		$this->set(compact('title_for_layout', 'programResponse', $instructions));
 	}
 			
 	function view_cert($id=null) {
@@ -137,11 +170,7 @@ class ProgramResponsesController extends AppController {
 		    $this->Session->setFlash(__('Invalid Program', true), 'flash_failure');
 		    $this->redirect(array('action' => 'index'));
 		}
-		$programResponse = $this->ProgramResponse->find('first', array('conditions' => array(
-			'ProgramResponse.user_id' => $this->Auth->user('id'),
-			'ProgramResponse.program_id' => $id,
-			'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s') 
-		)));
+		$programResponse = $this->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
 		$docId = Set::extract('/ProgramResponseDoc[cert=1]/doc_id', $programResponse);
 		$this->view = 'Media';
 		$this->loadModel('FiledDocument');
@@ -164,12 +193,7 @@ class ProgramResponsesController extends AppController {
 	}
 
 	function provided_docs($id, $type) {
-		$programResponse = $this->ProgramResponse->find('first', array(
-			'conditions' => array(
-				'ProgramResponse.user_id' => $this->Auth->user('id'),
-				'ProgramResponse.program_id' => $id
-			)
-		));
+		$programResponse = $this->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
 		$this->ProgramResponse->Program->ProgramInstruction->recursive = -1;
 		if($programResponse['ProgramResponse']['uploaded_docs'] == 0 && 
 			$programResponse['ProgramResponse']['dropping_off_docs'] == 0) {
@@ -187,14 +211,23 @@ class ProgramResponsesController extends AppController {
 				}					
 			}
 	
-		$instructions = $this->ProgramResponse->Program->ProgramInstruction->find('first', array(
-			'conditions' => array(
-				'ProgramInstruction.program_id' => $id,
-				'ProgramInstruction.type' => $type
-			)
-		));
-		$data['instructions'] = $instructions['ProgramInstruction']['text'];
+		$data['instructions'] = $this->ProgramResponse->Program->ProgramInstruction->getInstructions(
+			$id, $type);
 		$data['title_for_layout'] = 'Program Response Documents';
+		$this->set($data);
+	}
+
+	function pending_approval($programId) {
+		$data['instructions'] = $this->ProgramResponse->Program->ProgramInstruction->getInstructions(
+			$programId, 'pending_approval');
+		$data['title_for_layout'] = 'Program Response Pending Approval';
+		$this->set($data);
+	}
+
+	function not_approved($programId) {
+		$data['title_for_layout'] = 'Program Response Not Approved';
+		$data['instructions'] = $this->ProgramResponse->Program->ProgramInstruction->getInstructions(
+			$programId, 'not_approved');	
 		$this->set($data);
 	} 
 	
@@ -204,26 +237,61 @@ class ProgramResponsesController extends AppController {
 			$program = $this->ProgramResponse->Program->findById($id);
 			if($this->RequestHandler->isAjax()){
 				$conditions = array('ProgramResponse.program_id' => $id);
-				if(!empty($this->params['url']['filter'])) {
-					switch($this->params['url']['filter']) {
+				if(!empty($this->params['url']['fromDate']) && !empty($this->params['url']['toDate'])) {
+					$from = date('Y-m-d H:i:m', strtotime($this->params['url']['fromDate'] . '12:00 AM'));
+					$to = date('Y-m-d H:i:m', strtotime($this->params['url']['toDate'] . '11:59 PM'));
+					$conditions['ProgramResponse.created BETWEEN ? AND ?'] = array($from, $to);
+				}
+				if(!empty($this->params['url']['id'])) {
+					$conditions['ProgramResponse.id'] = $this->params['url']['id'];
+				}
+				if(!empty($this->params['url']['searchType']) && !empty($this->params['url']['search'])) {
+					switch($this->params['url']['searchType']) {
+						case 'firstname' : 
+							$conditions['User.firstname LIKE'] = '%' . 
+								$this->params['url']['search'] . '%';
+							break;
+						case 'lastname'	:
+							$conditions['User.lastname LIKE'] = '%' . 
+								$this->params['url']['search'] . '%';
+							break;
+						case 'last4' :
+							$conditions['RIGHT (User.ssn , 4) LIKE'] = '%' .
+								$this->params['url']['search'] . '%';
+							break;	
+						case 'fullssn' : 
+							$conditions['User.ssn LIKE'] = '%' . $this->params['url']['search'] . '%';
+							break;		
+					}
+				} 
+				if(!empty($this->params['url']['tab'])) {
+					switch($this->params['url']['tab']) {
 						case 'open':
 							$conditions['ProgramResponse.complete'] = 0;
 							$conditions['ProgramResponse.needs_approval'] = 0;
-							$conditions['ProgramResponse.expires_on >'] = date('Y-m-d H:i:s');  
+							$conditions['ProgramResponse.expires_on >'] = date('Y-m-d H:i:s'); 
+							$conditions['ProgramResponse.not_approved'] = 0; 
 							break;
 						case 'closed':
 							$conditions['ProgramResponse.complete'] = 1;
-							$conditions['ProgramResponse.needs_approval'] = 0;							
+							$conditions['ProgramResponse.needs_approval'] = 0;
+							$conditions['ProgramResponse.not_approved'] = 0;							
 							break;
 						case 'expired':
 							$conditions['ProgramResponse.complete'] = 0;
+							$conditions['ProgramResponse.not_approved'] = 0;
 							$conditions['ProgramResponse.expires_on <'] = date('Y-m-d H:i:s');  
 							break;							
-						case 'unapproved':
+						case 'pending_approval':
 							$conditions['ProgramResponse.complete'] = 0;
 							$conditions['ProgramResponse.expires_on >'] = date('Y-m-d H:i:s');  
 							$conditions['ProgramResponse.needs_approval'] = 1;
-							break;		 
+							$conditions['ProgramResponse.not_approved'] = 0;
+							break;
+						case 'not_approved':
+							$conditions['ProgramResponse.complete'] = 0; 
+							$conditions['ProgramResponse.not_approved'] = 1;
+							break;	
 					}
 				}
 
@@ -250,26 +318,44 @@ class ProgramResponsesController extends AppController {
 							'created' => $response['ProgramResponse']['created'],
 							'modified' => $response['ProgramResponse']['modified'],
 							'expires_on' => $response['ProgramResponse']['expires_on'],
+							'notes' => $response['ProgramResponse']['notes'],
 							'status' => $status
 						);
-						if($this->params['url']['filter'] == 'closed'){
+						if($this->params['url']['tab'] == 'closed'){
 							$data['responses'][$i]['actions'] = 
 								'<a href="/admin/program_responses/view/'. 
 									$response['ProgramResponse']['id'].'">View</a>';							
 						}
-						elseif($this->params['url']['filter'] == 'expired'){
+						elseif($this->params['url']['tab'] == 'expired'){
 							$data['responses'][$i]['actions'] = 
 								'<a href="/admin/program_responses/view/'. 
 									$response['ProgramResponse']['id'].'">View</a> | ' . 
 									'<a href="/admin/program_responses/toggle_expired/' . 
 									$response['ProgramResponse']['id'] . '/unexpire'.'" class="expire">Mark Un-Expired</a>';							
-						}						
+						}
+						elseif($this->params['url']['tab'] == 'not_approved') {
+							if($response['ProgramResponse']['allow_new_response'] || !$response['ProgramResponse']['answers']) {
+								$data['responses'][$i]['actions'] = 
+									'<a href="/admin/program_responses/view/'. 
+										$response['ProgramResponse']['id'].'">View</a>';								
+							}
+							else {
+								$data['responses'][$i]['actions'] = 
+									'<a href="/admin/program_responses/view/'. 
+										$response['ProgramResponse']['id'].'">View</a> | ' .							
+									'<a href="/admin/program_responses/reset_form/'. 
+										$response['ProgramResponse']['id'].'" class="reset">Reset Form</a> | ' .
+										'<a href="/admin/program_responses/allow_new_response/' . 
+										$response['ProgramResponse']['id'] . '" class="allow-new">Allow New Response</a>';								
+							}
+							
+						}
 						else {
 							$data['responses'][$i]['actions'] = 
 								'<a href="/admin/program_responses/view/'. 
-									$response['ProgramResponse']['id'].'">View</a> | ' .
+									$response['ProgramResponse']['id'].'">View</a> | ' . 
 									'<a href="/admin/program_responses/toggle_expired/' . 
-									$response['ProgramResponse']['id'] . '/expired'.'" class="expire">Mark Expired</a>';
+									$response['ProgramResponse']['id'] . '/expire'.'" class="expire">Mark Expired</a>';
 						}
 						$i++;		
 					}				
@@ -282,13 +368,16 @@ class ProgramResponsesController extends AppController {
 				$this->set('data', $data);
 				$this->render('/elements/ajaxreturn');				
 			}
-
 			if($program['Program']['approval_required'] == 1){
 				$approvalPermission = $this->Acl->check(array(
 					'model' => 'User', 
 					'foreign_key' => $this->Auth->user('id')), 'ProgramResponses/admin_approve', '*');
-				$this->set(compact('approvalPermission'));
-			}			
+				
+			}
+			else {
+				$approvalPermission = null;
+			}
+			$this->set(compact('approvalPermission'));		
 		}	
 	}
 
@@ -300,8 +389,7 @@ class ProgramResponsesController extends AppController {
 				$this->set(compact('user'));
 				$this->Transaction->createUserTransaction('Programs', null, null,
 					'Viewed program response for ' . $programResponse['Program']['name'] . ' for customer ' . 
-					ucfirst($user['firstname']). ' ' . ucfirst($user['lastname']) . ' - '. 
-					substr($user['ssn'], '-4'));					
+					ucwords($user['name_last4']));					
  				$this->render('/elements/program_responses/user_info');
 			}
 			if($type == 'answers') {
@@ -323,11 +411,23 @@ class ProgramResponsesController extends AppController {
 					$filedForms = Set::extract('/ProgramResponseDoc[paper_form=1]',  $programResponse);
 					$i = 0;
 					foreach($docs as $doc) {
-						$data['docs'][$i]['name'] = $filingCatList[$doc['ProgramResponseDoc']['cat_id']];
-						$data['docs'][$i]['filedDate'] = $doc['ProgramResponseDoc']['created'];
-						$data['docs'][$i]['link'] = '<a href="/admin/filed_documents/view/'.
-							$doc['ProgramResponseDoc']['doc_id'] . '" target="_blank">View Doc</a>';
-						$data['docs'][$i]['id'] = $doc['ProgramResponseDoc']['doc_id'];
+						
+						$data['docs'][$i]['id'] = $doc['ProgramResponseDoc']['doc_id'];	
+						if($doc['ProgramResponseDoc']['deleted']) {
+							$data['docs'][$i]['name'] = 'Deleted';
+							$data['docs'][$i]['deletedReason'] = $doc['ProgramResponseDoc']['deleted_reason'];
+							$data['docs'][$i]['deletedDate'] = $doc['ProgramResponseDoc']['modified'];
+							$data['docs'][$i]['link'] = '<a href="/admin/deleted_documents/view/'.
+								$doc['ProgramResponseDoc']['doc_id'] . '" target="_blank">View Doc</a>';							
+						}
+						else {
+							$data['docs'][$i]['name'] = $filingCatList[$doc['ProgramResponseDoc']['cat_id']];
+							$data['docs'][$i]['filedDate'] = $doc['ProgramResponseDoc']['created'];
+							$data['docs'][$i]['link'] = '<a href="/admin/filed_documents/view/'.
+								$doc['ProgramResponseDoc']['doc_id'] . '" target="_blank">View Doc</a> | 
+									<a href="/admin/filed_documents/edit/'.
+								$doc['ProgramResponseDoc']['doc_id'] . '">Edit Doc</a>';						
+						}
 						$i++;
 					}							
 				}
@@ -371,7 +471,8 @@ class ProgramResponsesController extends AppController {
 		}
 
 		if($programResponse['Program']['approval_required'] && 
-			$programResponse['ProgramResponse']['needs_approval'] == 1) {
+			$programResponse['ProgramResponse']['needs_approval'] == 1
+			&& $programResponse['ProgramResponse']['not_approved'] == 0) {
 				$approval = true;				
 		}
 		else {
@@ -381,38 +482,58 @@ class ProgramResponsesController extends AppController {
 		$this->set(compact('title_for_layout', 'approval'));
 	}
 
-	function admin_approve($programResponseId=null) {
+
+	function admin_edit() {
 		if($this->RequestHandler->isAjax()) {
-			
+			if(!empty($this->data)) {
+				if($this->ProgramResponse->save($this->data)) {
+					$programResponse = $this->ProgramResponse->read(null, $this->data['ProgramResponse']['id']);
+					$data['success'] = true;
+					$data['message'] = 'Notes were saved successfully.';
+					$this->Transaction->createUserTransaction('Programs', null, null,
+						'Updated ' . $programResponse['Program']['name'] . ' response notes for customer ' . 
+						ucwords($programResponse['User']['name_last4']));						
+				}
+				else {
+					$data['success'] = true;
+					$data['message'] = 'Unable to update notes at this time';
+				}
+			}
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
+
+	function admin_approve($programResponseId=null) {
+		if($this->RequestHandler->isAjax()) {		
 			if(!$programResponseId) {
 				$data['success'] = false;
 				$data['message'] = 'Invalid program response id.';
 			}
 			else {
-				$programResponse = $this->ProgramResponse->findById($programResponseId);
-				$forms = $this->ProgramResponse->
-					Program->ProgramPaperForm->findAllByProgramId($programResponse['Program']['id']);					
-				if(!empty($programResponse['ProgramResponseDoc'])) {
-
-					$catIds = Set::extract('/ProgramResponseDoc[paper_form=1]/cat_id', $programResponse);
-					
-					$formCatIds = Set::extract('/ProgramPaperForm/cat_3', $forms);
-					
-					if(!empty($formCatIds)) {
-						$result = array_diff($formCatIds, $catIds);
-						if(!empty($result)) {
-							$data['success'] = false;
-							$data['message'] = 'You must generate all program forms before approving response.';
-							$this->set(compact('data'));
-							return $this->render(null, null, '/elements/ajaxreturn');	
+				$programResponse = $this->ProgramResponse->findById($programResponseId);					
+				if(strpos($programResponse['Program']['type'], 'docs')) {
+					if(!empty($programResponse['ProgramResponseDoc'])) {
+						$forms = $this->ProgramResponse->
+							Program->ProgramPaperForm->findAllByProgramId($programResponse['Program']['id']);
+						$catIds = Set::extract('/ProgramResponseDoc[paper_form=1]/cat_id', $programResponse);						
+						$formCatIds = Set::extract('/ProgramPaperForm/cat_3', $forms);				
+						if(!empty($formCatIds)) {
+							$result = array_diff($formCatIds, $catIds);
+							if(!empty($result)) {
+								$data['success'] = false;
+								$data['message'] = 'You must generate all program forms before approving response.';
+								$this->set(compact('data'));
+								return $this->render(null, null, '/elements/ajaxreturn');	
+							}
 						}
 					}
-				}
-				else {
-					$data['success'] = false;
-					$data['message'] = 'All required documents must be filed to customer before approving response.';
-					$this->set(compact('data'));
-					return $this->render(null, null, '/elements/ajaxreturn');
+					else {
+						$data['success'] = false;
+						$data['message'] = 'All required documents must be filed to customer before approving response.';
+						$this->set(compact('data'));
+						return $this->render(null, null, '/elements/ajaxreturn');
+					}
 				}			
 				$this->data['ProgramResponse']['id'] = $programResponseId;
 				$this->data['ProgramResponse']['needs_approval'] = 0;
@@ -429,8 +550,7 @@ class ProgramResponsesController extends AppController {
 					$this->Notifications->sendProgramEmail($programEmail, $user);
 					$this->Transaction->createUserTransaction('Programs', null, null,
 						'Approved program response for ' . $programResponse['Program']['name'] . ' for customer ' . 
-						ucfirst($user['User']['firstname']). ' ' . ucfirst($user['User']['lastname']) . ' - '. 
-						substr($user['User']['ssn'], '-4'));										
+						ucwords($user['User']['name_last4']));										
 				}
 				else {
 					$data['success'] = false;
@@ -444,8 +564,202 @@ class ProgramResponsesController extends AppController {
 		}	
 	}
 
+	function admin_not_approved() {
+		if($this->RequestHandler->isAjax()) {
+			if(!empty($this->params['form']['id'])) {
+				$this->data['ProgramResponse']['id'] = $this->params['form']['id'];
+				$this->data['ProgramResponse']['not_approved'] = 1;
+				if(isset($this->params['form']['reset_form']) == 'on') {
+					$this->data['ProgramResponse']['answers'] = null;
+				}
+				if($this->ProgramResponse->save($this->data)) {
+					$data['success'] = true;
+					$data['message'] = 'Program response marked not approved.';
+					$programResponse = $this->ProgramResponse->read(null, $this->params['form']['id']);
+					
+					$programEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', 
+						array('conditions' => array(
+							'ProgramEmail.program_id' => $programResponse['Program']['id'],
+							'ProgramEmail.type' => 'not_approved'
+					)));
+					$user['User'] = $programResponse['User'];
+					if($programEmail) {
+						if(!empty($this->params['form']['email_comment'])) {
+							$programEmail['ProgramEmail']['body'] .= "\r\n\r\n\r\n" . 
+							'Comment: ' . $this->params['form']['email_comment'];  
+						}				
+						$this->Notifications->sendProgramEmail($programEmail, $user);						
+					}
+					$this->Transaction->createUserTransaction('Programs', null, null,
+						'Marked ' . $programResponse['Program']['name'] . 
+						' response not approved for ' . ucwords($user['User']['name_last4'])); 
+					if(isset($this->params['form']['reset_form']) == 'on') {
+						$this->Transaction->createUserTransaction('Programs', null, null,
+							'Reset program response form for ' . $programResponse['Program']['name'] . ' for customer ' . 
+							ucwords($programResponse['User']['name_last4']));					
+					}			
+				} 
+				else {
+					$data['success'] = false;
+					$data['message'] = 'An error occurred, please try again.';
+				} 				
+			}
+			else {
+				$data['success'] = false;
+				$data['message'] = 'Invalid response id';
+			}
+
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');	
+		}
+	}
+
 	function admin_generate_form($formId, $programResponseId, $docId=null) {
 		if($this->RequestHandler->isAjax()) {
+			$programResponse = $this->ProgramResponse->findById($programResponseId);
+			if(strpos($programResponse['Program']['type'], 'docs')) {
+				$allWatchedCats = $this->ProgramResponse->Program->WatchedFilingCat->find('all', array('conditions' => array(
+					'WatchedFilingCat.program_id' => $programResponse['Program']['id'],
+					'DocumentFilingCategory.name !=' => 'rejected',
+					'DocumentFilingCategory.name !=' => 'Rejected')));
+				$watchedCats = Set::classicExtract($allWatchedCats, '{n}.WatchedFilingCat.cat_id');	
+				$filedResponseDocCats = $this->ProgramResponse->ProgramResponseDoc->getFiledResponseDocCats(
+					$programResponse['Program']['id'], $programResponse['ProgramResponse']['id']);	
+				$result = array_diff($watchedCats, $filedResponseDocCats);
+				$generated = false;
+				if(empty($result)) {
+					$generated = $this->_generateForm($formId, $programResponseId, $docId);	
+				}
+				else {
+					$data['success'] = false;
+					$data['message'] = 'All required documents must be filed before generating forms.';				
+				}				
+			}
+			else {
+				$generated = $this->_generateForm($formId, $programResponseId, $docId);
+			}
+			if($generated) {
+				$data['success'] = true;
+				$data['message'] = 'Form generated and filed successfully.';
+				$this->Transaction->createUserTransaction('Programs', null, null,
+					$generated[2] . ' ' . $generated[0]['ProgramPaperForm']['name'] . ' for ' . 
+					$generated[1]['Program']['name'] . ' for customer ' . 
+					ucwords($generated[1]['User']['name_last4']));							
+			}
+			elseif(empty($data['message'])) {
+				$data['success'] = false;
+				$data['message'] = 'Unable to file form at this time.';
+			}			
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}		
+	}
+
+	function admin_toggle_expired($programResponseId, $toggle) {
+		if($this->RequestHandler->isAjax()) {
+			$programResponse = $this->ProgramResponse->findById($programResponseId);
+			$allProgramResponses = null;
+			if($toggle == 'expired') {
+				$this->data['ProgramResponse']['expires_on'] = 
+					date('Y-m-d H:i:s', strtotime('-' . ($programResponse['Program']['response_expires_in']+1) . ' days'));	
+			}
+			elseif($toggle == 'unexpire') {
+				$this->data['ProgramResponse']['expires_on'] = date('Y-m-d H:i:s', 
+					strtotime('+' . ($programResponse['Program']['response_expires_in']) . ' days'));
+				$allProgramResponses = $this->ProgramResponse->find('all', array(
+					'conditions' => array(
+						'ProgramResponse.user_id' => $programResponse['ProgramResponse']['user_id'],
+						'ProgramResponse.program_id' => $programResponse['ProgramResponse']['program_id'],
+						'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s'))));									
+			}
+			if($allProgramResponses) {
+				$data['success'] = false;
+				$data['message'] = 'Customer already has an non-expired response for this program.';
+			}
+			else {
+				$this->data['ProgramResponse']['id'] = $programResponseId;		
+				if($this->ProgramResponse->save($this->data)) {
+					$data['success'] = true;
+					switch($toggle) {
+						case 'unexpire':
+							$data['message'] = 'Response marked un-expired successfully.';
+							$this->Transaction->createUserTransaction('Programs', null, null,
+								'Marked response un-expired for ' . $programResponse['Program']['name'] . ' for customer ' . 
+								ucwords($programResponse['User']['name_last4']));							
+							break;
+						case 'expired':
+							$data['message'] = 'Response marked expired successfully.';
+							$this->Transaction->createUserTransaction('Programs', null, null,
+								'Marked response expired for ' . $programResponse['Program']['name'] . ' for customer ' . 
+								ucwords($programResponse['User']['name_last4']));							
+							break;	
+					}
+				}
+				else {
+					$data['success'] = false;
+					$data['message'] = 'An error has occured, please try again.';
+				}				
+			}			
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
+
+	function admin_reset_form($id=null)	{
+		if($this->RequestHandler->isAjax()) {
+			if(!$id){
+				$data['success'] = false;
+				$data['message'] = 'Invalid program response id'; 
+			}
+			else {
+				$this->data['ProgramResponse']['id'] = $id;
+				$this->data['ProgramResponse']['answers'] = null;
+				if($this->ProgramResponse->save($this->data)) {
+					$programResponse = $this->ProgramResponse->read(null, $id);
+					$data['success'] = true;
+					$data['message'] = 'Customer program response form reset successfully.';
+					$this->Transaction->createUserTransaction('Programs', null, null,
+						'Reset program response form for ' . $programResponse['Program']['name'] . ' for customer ' . 
+						ucwords($programResponse['User']['name_last4']));	
+				}
+				else {
+					$data['success'] = false;
+					$data['message'] = 'An error occurred, please try again.';
+				}
+			}
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
+	
+	function admin_allow_new_response($id=null) {
+		if($this->RequestHandler->isAjax()) {
+			if(!$id){
+				$data['success'] = false;
+				$data['message'] = 'Invalid program response id'; 
+			}
+			else {
+				$this->data['ProgramResponse']['id'] = $id;
+				$this->data['ProgramResponse']['allow_new_response'] = 1;
+				if($this->ProgramResponse->save($this->data)) {
+					$programResponse = $this->ProgramResponse->read(null, $id);
+					$data['success'] = true;
+					$data['message'] = 'Customer can now create a new response for this program.';
+					$this->Transaction->createUserTransaction('Programs', null, null,
+						'Enabled allow new response for ' . $programResponse['Program']['name'] . ' for customer ' . 
+						ucwords($programResponse['User']['name_last4']));	
+				}
+				else {
+					$data['success'] = false;
+					$data['message'] = 'An error occurred, please try again.';
+				}
+			}
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}		
+	}
+
+	function _generateForm($formId, $programResponseId, $docId=null) {
 				
 			$programResponse = $this->ProgramResponse->findById($programResponseId);
 			
@@ -458,21 +772,24 @@ class ProgramResponsesController extends AppController {
 			$data = $programResponse['User'];
 			
 			$programPaperForm = $this->ProgramResponse->Program->ProgramPaperForm->findById($formId);	
-		
-			$answers = json_decode($programResponse['ProgramResponse']['answers'], true);
 			
-			foreach($answers as $k => $v) {
-				if(!preg_match('[\@]', $v)) {
-					$data[$k] = ucwords($v);
-				}
+			if($programResponse['ProgramResponse']['answers']) {
+				$answers = json_decode($programResponse['ProgramResponse']['answers'], true);
+				
+				foreach($answers as $k => $v) {
+					if(!preg_match('[\@]', $v)) {
+						$data[$k] = ucwords($v);
+					}
+				}				
 			}
-			
+
 			$data['masked_ssn'] = '***-**-' . substr($data['ssn'], -4);
 			$data['conformation_id'] = $programResponse['ProgramResponse']['conformation_id'];			
 			$data['dob'] = date('m/d/Y', strtotime($data['dob']));		
 			$data['admin'] = $this->Auth->user('firstname') . ' ' . $this->Auth->user('lastname');
 			$data['todays_date'] = date('m/d/Y');
 			$data['form_completed'] = date('m/d/Y', strtotime($programResponse['ProgramResponse']['created']));
+			$data['program_name'] = $programResponse['Program']['name'];
 			
 			if($programPaperForm) {				
 				$pdf = $this->_createPDF($data, $programPaperForm['ProgramPaperForm']['template']);
@@ -497,14 +814,16 @@ class ProgramResponsesController extends AppController {
 					$this->data['FiledDocument']['id'] = $docId;
 					$this->data['FiledDocument']['created'] = date('Y-m-d H:i:s');
 					$this->data['FiledDocument']['filename'] = $pdf;
-					$this->data['FiledDocument']['admin_id'] = $this->Auth->user('id');
+					if($this->Auth->user('role_id')!= 1) {
+						$this->data['FiledDocument']['admin_id'] = $this->Auth->user('id');
+						$this->data['FiledDocument']['filed_location_id'] = $this->Auth->user('location_id');
+						$this->data['FiledDocument']['last_activity_admin_id'] = $this->Auth->user('id');
+					}
 					$this->data['FiledDocument']['user_id'] = $data['id'];
-					$this->data['FiledDocument']['filed_location_id'] = $this->Auth->user('location_id');
 					$this->data['FiledDocument']['cat_1'] = $programPaperForm['ProgramPaperForm']['cat_1'];
 					$this->data['FiledDocument']['cat_2'] = $programPaperForm['ProgramPaperForm']['cat_2'];
 					$this->data['FiledDocument']['cat_3'] = $programPaperForm['ProgramPaperForm']['cat_3'];
 					$this->data['FiledDocument']['entry_method'] = 'Program Generated';
-					$this->data['FiledDocument']['last_activity_admin_id'] = $this->Auth->user('id');
 					$this->data['ProgramResponseDoc']['created'] = date('Y-m-d H:i:s');					
 					$this->data['ProgramResponseDoc']['cat_id'] = $programPaperForm['ProgramPaperForm']['cat_3'];
 					$this->data['ProgramResponseDoc']['program_response_id'] =  $programResponseId;
@@ -515,71 +834,21 @@ class ProgramResponsesController extends AppController {
 					}									
 					if($this->FiledDocument->save($this->data['FiledDocument']) && 
 					$this->ProgramResponse->ProgramResponseDoc->save($this->data['ProgramResponseDoc'])) {
-						$data['success'] = true;
-						$data['message'] = 'Form generated and filed successfully.';
-						$this->Transaction->createUserTransaction('Programs', null, null,
-							$genType . ' ' . $programPaperForm['ProgramPaperForm']['name'] . ' for ' . 
-							$programResponse['Program']['name'] . ' for customer ' . 
-							ucfirst($programResponse['User']['firstname']). ' ' . ucfirst($programResponse['User']['lastname']) . ' - '. 
-							substr($programResponse['User']['ssn'], '-4'));							
+						return array($programPaperForm, $programResponse, $genType);	
 					}
 					else {
-						$data['success'] = false;
-						$data['message'] = 'Unable to file form at this time.';
 						$path = Configure::read('Document.storage.uploadPath');
 						$path .= substr($pdf, 0, 4) . DS;
 						$path .= substr($pdf, 4, 2) . DS;
 						$file = $path . $pdf;
 						unlink($file);
+						return false;
 					}			
 				}
 				else {
-					$data['success'] = false;
-					$data['message'] = 'Unable to create pdf form at this time.';						
+					return false;
 				}	
 			}
-			$this->set(compact('data'));
-			$this->render(null, null, '/elements/ajaxreturn');
-		}		
-	}
-
-	function admin_toggle_expired($programResponseId, $toggle) {
-		if($this->RequestHandler->isAjax()) {
-			$programResponse = $this->ProgramResponse->findById($programResponseId);
-			if($toggle == 'expired') {
-				$this->data['ProgramResponse']['expires_on'] = 
-					date('Y-m-d H:i:s', strtotime('-' . ($programResponse['Program']['response_expires_in']+1) . ' days'));	
-			}
-			elseif($toggle == 'unexpire') {
-				$this->data['ProgramResponse']['expires_on'] = date('Y-m-d H:i:s', strtotime('+' . ($programResponse['Program']['response_expires_in']) . ' days'));	
-			}
-			$this->data['ProgramResponse']['id'] = $programResponseId;		
-			if($this->ProgramResponse->save($this->data)) {
-				$data['success'] = true;
-				switch($toggle) {
-					case 'unexpire':
-						$data['message'] = 'Response marked un-expired successfully.';
-						$this->Transaction->createUserTransaction('Programs', null, null,
-							'Marked response un-expired for ' . $programResponse['Program']['name'] . ' for customer ' . 
-							ucfirst($programResponse['User']['firstname']). ' ' . ucfirst($programResponse['User']['lastname']) . ' - '. 
-							substr($programResponse['User']['ssn'], '-4'));							
-						break;
-					case 'expired':
-						$data['message'] = 'Response marked expired successfully.';
-						$this->Transaction->createUserTransaction('Programs', null, null,
-							'Marked response expired for ' . $programResponse['Program']['name'] . ' for customer ' . 
-							ucfirst($programResponse['User']['firstname']). ' ' . ucfirst($programResponse['User']['lastname']) . ' - '. 
-							substr($programResponse['User']['ssn'], '-4'));							
-						break;	
-				}
-			}
-			else {
-				$data['success'] = false;
-				$data['message'] = 'An error has occured, please try again.';
-			}
-			$this->set(compact('data'));
-			$this->render(null, null, '/elements/ajaxreturn');			
-		}
 	}
 
 	function _createFDF($file,$info){

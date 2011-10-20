@@ -73,9 +73,9 @@
 			    <?php endif ?>
 			    <?php echo $this->Html->link(__('Edit', true), array('action' => 'edit', $user['User']['id']), array('class' => 'edit')); ?>
 			   	<?php if($user['User']['disabled'] == 0) :?>
-		    		<?php echo $this->Html->link(__('Disable', true), array('controller' => 'users',  'action' => 'toggle_disabled', $user['User']['id'], 1, 'Customer')); ?>
+		    		<?php echo $this->Html->link(__('Disable', true), array('controller' => 'users',  'action' => 'toggle_disabled', $user['User']['id'], 1)); ?>
 		    	<?php else : ?>
-		    		<?php echo $this->Html->link(__('Enable', true), array('controller' => 'users',  'action' => 'toggle_disabled', $user['User']['id'], 0, 'Customer')); ?> 
+		    		<?php echo $this->Html->link(__('Enable', true), array('controller' => 'users',  'action' => 'toggle_disabled', $user['User']['id'], 0)); ?> 
 		    	<?php endif ?>
     		</td>
     	</tr>
