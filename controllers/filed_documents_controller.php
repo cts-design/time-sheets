@@ -358,14 +358,14 @@ class FiledDocumentsController extends AppController {
 		// check to see if the directory for the current year exists
 		if(!file_exists($path . date('Y') . '/')) {
 		    // if directory does not exist, create it
-		    mkdir($path . date('Y'), 0755);
+		    mkdir($path . date('Y'), 0777);
 		}
 		// add the current year to our path string
 		$path .= date('Y') . '/';
 		// check to see if the directory for the current month exists
 		if(!file_exists($path . date('m') . '/')) {
 		    // if directory does not exist, create it
-		    mkdir($path . date('m'), 0755);
+		    mkdir($path . date('m'), 0777);
 		}
 		// add the current month to our path string
 		$path .= date('m') . '/';

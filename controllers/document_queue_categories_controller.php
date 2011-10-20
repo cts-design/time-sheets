@@ -8,7 +8,14 @@
 class DocumentQueueCategoriesController extends AppController {
 
 	var $name = 'DocumentQueueCategories';
-
+	
+    function beforeFilter() {
+		parent::beforeFilter();
+		if($this->Auth->user('role_id') > 1) {
+		    $this->Auth->allow('admin_get_cats');
+		}
+    }
+		
 	function admin_index() {
 		$this->DocumentQueueCategory->recursive = 0;
 		$this->paginate = array(
@@ -59,4 +66,26 @@ class DocumentQueueCategoriesController extends AppController {
 		$this->Session->setFlash(__('Document queue category was not deleted', true), 'flash_failure');
 		$this->redirect(array('action' => 'index'));
 	}
+	
+    function admin_get_cats() {
+		if($this->RequestHandler->isAjax()) {
+		    $query = $this->DocumentQueueCategory->find('list', array(
+				'fields' => array('DocumentQueueCategory.id', 'DocumentQueueCategory.name')));
+			$i = 0;
+			foreach($query as $k => $v){
+				$data['cats'][$i]['id'] = $k;
+				$data['cats'][$i]['name'] = $v;
+				$i++;
+			}
+			if(!empty($data['cats'])){
+				$data['success'] = true;
+			}
+			else {
+				$data['success'] = true;
+				$data['cats'] = array();
+			}		
+			$this->set(compact('data'));
+			return $this->render(null, null, '/elements/ajaxreturn');
+		}
+    }
 }

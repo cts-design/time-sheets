@@ -1,6 +1,26 @@
 /**
  * @author dnolan
  */
+
+
+// Kludge to fix not being able to type spaces in context menu text fields 
+Ext.override(Ext.menu.KeyNav, {
+    constructor: function(menu) {
+        var me = this;
+        me.menu = menu;
+        me.callParent([menu.el, {
+            down: me.down,
+            enter: me.enter,
+            esc: me.escape,
+            left: me.left,
+            right: me.right,
+            //space: me.enter,
+            tab: me.tab,
+            up: me.up
+        }]);
+    }
+});
+
 Ext.onReady(function(){
 	Ext.QuickTips.init();
 	
@@ -34,7 +54,6 @@ Ext.onReady(function(){
 	        icon: '/img/icons/delete.png',
 	        handler: function() {
 	        	menu.hide();
-	       		Ext.MessageBox.wait();
 				approvalForm.getForm().doAction('submit', {
 					url: '/admin/program_responses/not_approved',
 					params: {

@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2011-10-12 16:41:31 : 1318452091*/
+/* atlas schema generated on: 2011-10-18 15:18:49 : 1318965529*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -64,6 +64,7 @@ class atlasSchema extends CakeSchema {
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 		'name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 50, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'number' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 5),
+		'document_queue_category_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'cat_1' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'cat_2' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'cat_3' => array('type' => 'integer', 'null' => true, 'default' => NULL),
@@ -510,6 +511,7 @@ class atlasSchema extends CakeSchema {
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 		'filename' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'queue_category_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'bar_code_definition_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'scanned_location_id' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 11, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'locked_by' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'locked_status' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
