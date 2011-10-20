@@ -3,6 +3,34 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+	<h1>Release 3.1.3 (10/19/11)</h1>
+	<h2>Main Feature Releases</h2>
+	<ol>
+		<li>Upgraded all EXT3 views to EXT4. (Resolution to reported context and dropdown bug issues within IE 9).</li>
+		<li>Development of bar-code definition interface.</li>
+	</ol>
+	<h2>Minor Feature Enhancements</h2>
+	<ol>
+		<li>Deprecated the CKEditor component.</li>
+		<li>Implemented a fix for .XLSX headers not being shown correctly within the Survey Module.</li>
+		<li>Implemented “reject feature” within the approval tab of the programs module.</li>
+		<li>Implemented real-time sorting enhancement within the storage queue. Filter now requires multiple fields to begin live query.</li>
+		<li>Redesign of the CMS editor to integrate with the new version of EXT4.</li>
+		<li>Implemented feature request to define additional administrator permissions to role admins.</li>
+		<li>Added “average wait time” to the self-sign archive .XLSX report.</li>
+		<li>Added default dropdown selections and focus to search term within the customer search component.</li>
+		<li>Added increased functionality for the “In The News” section of the website module.</li>
+		<li>Added right click context menus to website navigation.</li>
+		<li>Added right click context menus to filing tree navigation.</li>
+		<li>Implemented an .XLSX activity report within the admin activity view.</li>
+		<li>Modified the "programs" module email notifications to send status and confirmation emails using plain text format.</li>
+	</ol>
+	<h2>Bug Fixes</h2>
+	<ol>
+		<li>Implemented PDFOBJECT version 1.2 to resolve compatibility issues between Adobe X and Internet Explorer 9.</li>
+		<li>Migrated from EXT3 to EXT4 to resolve drop downs other context menus not rendering correctly within IE9.</li>
+	</ol>
+	<hr />	
 	<h1>Release 3.1.2 (9/8/11)</h1>
 	<h2>Main Feature Releases</h2>
 	<ol>
