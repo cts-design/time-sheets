@@ -289,11 +289,13 @@ var searchPanel = {
       },{
         text: 'Reset',
         icon:  '/img/icons/arrow_redo.png',
+				scope: this,
         handler: function() {
           var fp = Ext.getCmp('searchFormPanel'),
           form = fp.getForm();
 
           form.reset();
+					this.setDefaultsAndFocus();
         }
       }],
       listeners: {

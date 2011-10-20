@@ -334,13 +334,21 @@ class ProgramResponsesController extends AppController {
 									$response['ProgramResponse']['id'] . '/unexpire'.'" class="expire">Mark Un-Expired</a>';							
 						}
 						elseif($this->params['url']['tab'] == 'not_approved') {
-							$data['responses'][$i]['actions'] = 
-								'<a href="/admin/program_responses/view/'. 
-									$response['ProgramResponse']['id'].'">View</a> | ' .							
-								'<a href="/admin/program_responses/reset_form/'. 
-									$response['ProgramResponse']['id'].'" class="reset">Reset Form</a> | ' .
-									'<a href="/admin/program_responses/allow_new_response/' . 
-									$response['ProgramResponse']['id'] . '" class="allow-new">Allow New Response</a>';							
+							if($response['ProgramResponse']['allow_new_response'] || !$response['ProgramResponse']['answers']) {
+								$data['responses'][$i]['actions'] = 
+									'<a href="/admin/program_responses/view/'. 
+										$response['ProgramResponse']['id'].'">View</a>';								
+							}
+							else {
+								$data['responses'][$i]['actions'] = 
+									'<a href="/admin/program_responses/view/'. 
+										$response['ProgramResponse']['id'].'">View</a> | ' .							
+									'<a href="/admin/program_responses/reset_form/'. 
+										$response['ProgramResponse']['id'].'" class="reset">Reset Form</a> | ' .
+										'<a href="/admin/program_responses/allow_new_response/' . 
+										$response['ProgramResponse']['id'] . '" class="allow-new">Allow New Response</a>';								
+							}
+							
 						}
 						else {
 							$data['responses'][$i]['actions'] = 
@@ -463,7 +471,8 @@ class ProgramResponsesController extends AppController {
 		}
 
 		if($programResponse['Program']['approval_required'] && 
-			$programResponse['ProgramResponse']['needs_approval'] == 1) {
+			$programResponse['ProgramResponse']['needs_approval'] == 1
+			&& $programResponse['ProgramResponse']['not_approved'] == 0) {
 				$approval = true;				
 		}
 		else {

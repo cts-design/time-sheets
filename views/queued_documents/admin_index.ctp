@@ -37,9 +37,9 @@
   }
   window.onload = embedPDF; 
     var cat2 = <?php echo $this->Js->value(
-	    (isset($selfScanCat['SelfScanCategory']['cat_2']))? $selfScanCat['SelfScanCategory']['cat_2'] : '' );?>;
+	    (isset($categories['cat_2']))? $categories['cat_2'] : '' );?>;
     var cat3 = <?php echo $this->Js->value(
-	    (isset($selfScanCat['SelfScanCategory']['cat_3']))? $selfScanCat['SelfScanCategory']['cat_3'] : '');?>;
+	    (isset($categories['cat_3']))? $categories['cat_3'] : '');?>;
 <?php $this->Html->scriptEnd(); ?>
 <?php echo $this->Html->script('jquery.idleTimer', array('inline' => false)) ?>
 <?php echo $this->Html->script('jquery.validate', array('inline' => false)) ?>
@@ -185,7 +185,7 @@ $this->Paginator->options(array(
 			    'empty' => 'Select Main Cat',
 			    'options' => $cat1,
 			    'class' => 'required',
-			    'selected' =>  (!empty($selfScanCat['SelfScanCategory']['cat_1']) ? $selfScanCat['SelfScanCategory']['cat_1'] : '')))?>
+			    'selected' =>  (!empty($categories['cat_1']) ? $categories['cat_1'] : '')))?>
 		<?php echo $this->Form->input('FiledDocument.cat_2', array('type' => 'select', 'label' => false))?>
 		<?php echo $this->Form->input('FiledDocument.cat_3', array('type' => 'select', 'label' => false))?>
 		<?php echo $this->Form->input('FiledDocument.description', array('label' => 'Other'))?>
