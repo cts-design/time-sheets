@@ -1,7 +1,7 @@
 Ext.onReady(function() {
 	Ext.QuickTips.init();
 
-	var responseId = null, CurrentPage = null, Atlas = {}, itemsPerPage = 20;
+	var responseId = null, CurrentPage = null, Atlas = {}, itemsPerPage = 10;
 
 	Ext.define('ProgramResponse', {
 		extend: 'Ext.data.Model',
@@ -40,17 +40,21 @@ Ext.onReady(function() {
 		simpleSortMode: true	
 	});
 	
-	Ext.define('Atlas.grid.ProgramResponsePanel', {
-		extend: 'Ext.grid.Panel',
-		forceFit : true,
-		height : 300,
-		frame : true,
-		store: {
+	var store = Ext.create('Ext.data.Store', {
 			model: 'ProgramResponse',
 			proxy: programResponseProxy,
 			pageSize: itemsPerPage,
 			remoteSort : true			
-		},
+	}); 
+	
+	
+	
+	Ext.define('Atlas.grid.ProgramResponsePanel', {
+		extend: 'Ext.grid.Panel',
+		forceFit : true,
+		height : 600,
+		frame : true,
+		store: store,
 		columns: [{
 			text : 'Id',
 			dataIndex : 'id',
@@ -99,22 +103,17 @@ Ext.onReady(function() {
 				editor.setValue(record.data.notes);
 				Ext.getCmp('save').enable();				
 			}
-		},	
-		constructor : function () {
-			Ext.apply(this, {
-				dockedItems: [{
-					xtype: 'pagingtoolbar',
-					store: this.store,
-					dock: 'bottom',
-					displayInfo: true
-				}]		
-			});		
-			this.callParent(arguments);
 		}
 	});
 		
 	var openProgramResponsesGrid = Ext.create('Atlas.grid.ProgramResponsePanel', {
-		title : 'Open'	
+		title : 'Open',
+		bbar: Ext.create('Ext.PagingToolbar', {
+			store: store,
+			displayInfo: true,
+			displayMsg: 'Displaying responses {0} - {1} of {2}',
+			emptyMsg: "No responses to display"
+		})		
 	});	
 	
 	var closedProgramResponsesGrid = Ext.create('Atlas.grid.ProgramResponsePanel', {
@@ -149,24 +148,48 @@ Ext.onReady(function() {
 			text : 'Actions',
 			dataIndex : 'actions',
 			width: 150
-		}]
+		}],
+		bbar: Ext.create('Ext.PagingToolbar', {
+			store: store,
+			displayInfo: true,
+			displayMsg: 'Displaying responses {0} - {1} of {2}',
+			emptyMsg: "No responses to display"
+		})		
 	});
 		
 	var expiredProgramResponsesGrid = Ext.create('Atlas.grid.ProgramResponsePanel', {
-		title : 'Expired'
+		title : 'Expired',
+		bbar: Ext.create('Ext.PagingToolbar', {
+			store: store,
+			displayInfo: true,
+			displayMsg: 'Displaying responses {0} - {1} of {2}',
+			emptyMsg: "No responses to display"
+		})		
 	});
 	
 	var pendingApprovalProgramResponsesGrid = Ext.create('Atlas.grid.ProgramResponsePanel', {
-		title : 'Pending Approval'
+		title : 'Pending Approval',
+		bbar: Ext.create('Ext.PagingToolbar', {
+			store: store,
+			displayInfo: true,
+			displayMsg: 'Displaying responses {0} - {1} of {2}',
+			emptyMsg: "No responses to display"
+		})		
 	});
 		
 	var notApprovedProgramResponsesGrid = Ext.create('Atlas.grid.ProgramResponsePanel', {
-		title : 'Not Approved'
+		title : 'Not Approved',
+		bbar: Ext.create('Ext.PagingToolbar', {
+			store: store,
+			displayInfo: true,
+			displayMsg: 'Displaying responses {0} - {1} of {2}',
+			emptyMsg: "No responses to display"
+		})		
 	});
 	
 	var editor = Ext.create('Ext.form.HtmlEditor', {
 		width : 800,
-		height : 300,
+		height : 250,
 		region : 'south',
 		bodyStyle : {
 			padding : '7px'
