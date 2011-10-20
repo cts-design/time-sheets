@@ -39,11 +39,10 @@ class ProgramsController extends AppController {
 			$responseId = $programResponse['ProgramResponse']['id']; 
 		}
 		if($programResponse['ProgramResponse']['not_approved']) {
-			if(isset($programResponse['ProgramResponse']['allow_new_response']) 
-				&& $programResponse['ProgramResponse']['allow_new_response'] == 1) {
+			if($programResponse['ProgramResponse']['allow_new_response']) {
 					$programResponse = null;
 			}
-			if(strpos($programResponse['Program']['type'], 'form') 
+			elseif(strpos($programResponse['Program']['type'], 'form') 
 				&& !$programResponse['ProgramResponse']['answers']) {
 					$this->redirect(array('controller' => 'program_responses', 'action' => 'index', $id));
 			}
