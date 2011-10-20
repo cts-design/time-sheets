@@ -111,7 +111,7 @@ Ext.onReady(function(){
 			items: [{
 				text: 'Approved',
 				id: 'approved',
-				hidden: false,
+				hidden: true,
 				icon: '/img/icons/accept.png',
 				handler: function() {
 					Ext.Msg.wait('Please wait', 'Status');
@@ -143,7 +143,7 @@ Ext.onReady(function(){
 			},{
 				text: 'Not Approved',
 				id: 'notApproved',
-				hidden: false,				
+				hidden: true,				
 				icon: '/img/icons/delete.png',
 				id: 'notApproved',
 				menu: menu
@@ -217,9 +217,9 @@ Ext.onReady(function(){
 			}			
 		}]
 	});
-	if(!requiresApproval) {
-		Ext.getCmp('approved').hide();
-		Ext.getCmp('notApproved').hide();
+	if(requiresApproval) {
+		Ext.getCmp('approved').show();
+		Ext.getCmp('notApproved').show();
 	}
 
 
