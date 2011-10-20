@@ -69,9 +69,9 @@ end
 
 after "deploy:symlink", :finalize_deploy
 
-after("cake:database:symlink", "cake:schema:create")
+after("cake:database:symlink", "cake:cache:clear")
+after("cake:cache:clear", "cake:schema:create")
 after("cake:schema:create", "cake:schema:update")
 after("cake:schema:update", "cake:aco_update")
-after("cake:aco_update", "cake:cache:clear")
 
 capcake
