@@ -11,6 +11,8 @@ webroot/files/public/*
 webroot/img/public/*
 webroot/img/_thumbs/*
 webroot/img/default/*
+webroot/img/admin/admin_header_logo.jpg
+webroot/img/kiosk/kiosk_header.jpg
 config/atlas.php
 webroot/index.php
 webroot/css/style.css
