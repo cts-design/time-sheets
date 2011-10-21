@@ -4,16 +4,18 @@ require 'capcake'
 set :application, 'atlas' # Your app's location (domain or sub-domain name)
 set :repository, "git@git.assembla.com:CTSATLAS.git"
 
-set :branch, 'staging'
 set :deploy_via, :export
 
 set :default_shell, '/bin/bash'
 
-set :deploy_to, "/var/www/vhosts/development.ctsfla.com/atlas"
-
-server "development.ctsfla.com", :app, :web, :db, :primary => true
-
-set :user, 'dev4cts'
+namespace :cts do 
+  task :staging do  
+    set :deploy_to, "/var/www/vhosts/development.ctsfla.com/#{application}"
+    set :user, 'dev4cts'
+    set :branch, 'staging'
+    server "development.ctsfla.com", :app, :web, :db, :primary => true
+  end
+end
 
 # Cake Settings
 set :cake_branch, "master"
@@ -35,7 +37,15 @@ namespace :deploy do
       run "ln -s #{shared_path}/storage #{current_release}/storage"
       run "ln -s #{shared_path}/webroot/files/public #{current_release}/webroot/files/public"
       run "ln -s #{shared_path}/webroot/img/public #{current_release}/webroot/img/public"
-      run "rm -f #{current_path} && ln -s #{latest_release} #{current_path}"    
+      run "ln -s #{shared_path}/webroot/img/default #{current_release}/webroot/img/default"
+      run "ln -s #{shared_path}/config/core.php #{current_release}/config/core.php"
+      run "ln -s #{shared_path}/config/atlas.php #{current_release}/config/atlas.php"
+      run "ln -s #{shared_path}/webroot/index.php #{current_release}/webroot/index.php"
+      run "ln -s #{shared_path}/webroot/test.php #{current_release}/webroot/test.php" 
+      run "ln -s #{shared_path}/webroot/css/style.css #{current_release}/webroot/css/style.css"
+      run "ln -s #{shared_path}/webroot/js/ckfinder/config.php #{current_release}/webroot/js/ckfinder/config.php"
+      run "rm -f #{current_path} && ln -s #{latest_release} #{current_path}" 
+      cake.database.symlink if (remote_file_exists?(database_path))   
     end	
 end
 
@@ -60,19 +70,18 @@ end
 
 task :finalize_deploy, :roles => [:web] do
 	run "chmod 755 -R #{release_path}"	
-	run "mv #{release_path}/webroot/index.default.php #{release_path}/webroot/index.php"
-	run "mv #{release_path}/webroot/test.default.php #{release_path}/webroot/test.php"
-	run "mv #{release_path}/config/atlas.default.php #{release_path}/config/atlas.php"
-	run "mv #{release_path}/config/core.default.php #{release_path}/config/core.php"
-	run "mv #{release_path}/webroot/js/ckfinder/config.default.php #{release_path}/webroot/js/ckfinder/config.php"
+	#run "mv #{release_path}/webroot/index.default.php #{release_path}/webroot/index.php"
+	#run "mv #{release_path}/webroot/test.default.php #{release_path}/webroot/test.php"
+	#run "mv #{release_path}/config/atlas.default.php #{release_path}/config/atlas.php"
+	#run "mv #{release_path}/config/core.default.php #{release_path}/config/core.php"
+	#run "mv #{release_path}/webroot/js/ckfinder/config.default.php #{release_path}/webroot/js/ckfinder/config.php"
 end	
 
 after "deploy:symlink", :finalize_deploy
 
-after("cake:database:symlink", "cake:cache:clear")
+after("finalize_deploy", "cake:cache:clear")
 after("cake:cache:clear", "cake:schema:create")
 after("cake:schema:create", "cake:schema:update")
 after("cake:schema:update", "cake:aco_update")
-fter("cake:aco_update", "cake:cache:clear")
 
 capcake
