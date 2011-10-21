@@ -110,14 +110,7 @@ Ext.onReady(function(){
 		  store: allFiledDocsStore,
 		  displayInfo: true,
 		  displayMsg: 'Displaying documents {0} - {1} of {2}',
-		  emptyMsg: "No documents to display",
-		  listeners: {
-				beforechange: function(paging, params) {
-					var pagingData = paging.getPageData(),
-						CurrentPage = Math.ceil(params.start / paging.pageSize);
-					this.store.setBaseParam('page', CurrentPage + 1);
-				}
-			}
+		  emptyMsg: "No documents to display"
 		})
 	});
 	
