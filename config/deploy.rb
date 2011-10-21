@@ -43,6 +43,7 @@ namespace :deploy do
       run "ln -s #{shared_path}/webroot/index.php #{current_release}/webroot/index.php"
       run "ln -s #{shared_path}/webroot/test.php #{current_release}/webroot/test.php" 
       run "ln -s #{shared_path}/webroot/css/style.css #{current_release}/webroot/css/style.css"
+      run "ln -s #{shared_path}/views/layouts/default.ctp #{current_release}/views/layouts/default.ctp"
       run "ln -s #{shared_path}/webroot/js/ckfinder/config.php #{current_release}/webroot/js/ckfinder/config.php"
       run "rm -f #{current_path} && ln -s #{latest_release} #{current_path}" 
       cake.database.symlink if (remote_file_exists?(database_path))   
