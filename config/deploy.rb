@@ -73,5 +73,6 @@ after("cake:database:symlink", "cake:cache:clear")
 after("cake:cache:clear", "cake:schema:create")
 after("cake:schema:create", "cake:schema:update")
 after("cake:schema:update", "cake:aco_update")
+fter("cake:aco_update", "cake:cache:clear")
 
 capcake
