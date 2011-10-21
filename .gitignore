@@ -10,10 +10,13 @@ storage/
 webroot/files/public/*
 webroot/img/public/*
 webroot/img/_thumbs/*
+webroot/img/default/*
 config/atlas.php
 webroot/index.php
+webroot/css/style.css
 webroot/js/ckfinder/config.php
 webroot/files/pdftk.exe
 webroot/test.php
+views/layouts/default.ctp
 *.sdocml
 *.DS_STORE
