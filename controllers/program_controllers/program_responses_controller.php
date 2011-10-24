@@ -659,7 +659,7 @@ class ProgramResponsesController extends AppController {
 		if($this->RequestHandler->isAjax()) {
 			$programResponse = $this->ProgramResponse->findById($programResponseId);
 			$allProgramResponses = null;
-			if($toggle == 'expired') {
+			if($toggle == 'expire') {
 				$this->data['ProgramResponse']['expires_on'] = 
 					date('Y-m-d H:i:s', strtotime('-' . ($programResponse['Program']['response_expires_in']+1) . ' days'));	
 			}
@@ -687,7 +687,7 @@ class ProgramResponsesController extends AppController {
 								'Marked response un-expired for ' . $programResponse['Program']['name'] . ' for customer ' . 
 								ucwords($programResponse['User']['name_last4']));							
 							break;
-						case 'expired':
+						case 'expire':
 							$data['message'] = 'Response marked expired successfully.';
 							$this->Transaction->createUserTransaction('Programs', null, null,
 								'Marked response expired for ' . $programResponse['Program']['name'] . ' for customer ' . 
