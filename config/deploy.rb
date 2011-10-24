@@ -21,7 +21,7 @@ end
 
 namespace :cccp do 
   task :staging do
-    set :deploy_to, "/var/www/vhosts/ccc.atlasforworkforce.com/atlas"
+    set :deploy_to, "/var/www/vhosts/ccc.atlasforworkforce.com/#{application}"
     set :user, 'b78ghfp6y'
     set :branch, 'staging'
     server "ccc.atlasforworkforce.com", :app, :web, :db, :primary => true    
