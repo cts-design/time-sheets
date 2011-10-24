@@ -19,6 +19,15 @@ namespace :cts do
   end
 end
 
+namespace :cccp do 
+  task :staging do
+    set :deploy_to, "/var/www/vhosts/ccc.atlasforworkforce.com/atlas"
+    set :user, 'b78ghfp6y'
+    set :branch, 'staging'
+    server "ccc.atlasforworkforce.com", :app, :web, :db, :primary => true    
+  end
+end
+
 namespace :tbwa do
   task :staging do
     set :deploy_to, "/var/www/vhosts/tbwa.ctsfla.com/#{application}"
