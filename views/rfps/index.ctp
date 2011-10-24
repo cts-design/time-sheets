@@ -1,3 +1,7 @@
+<?php if (Configure::read('Rfps.title') && Configure::read('Rfps.description')) {
+    echo Configure::read('Rfps.title');
+    echo Configure::read('Rfps.description');
+} ?>
 <div class="rfps">
 	<?php foreach ($rfps as $rfp): ?>
 	<div class="rfp">

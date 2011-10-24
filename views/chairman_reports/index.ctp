@@ -1,3 +1,7 @@
+<?php if (Configure::read('ChairmanReports.title') && Configure::read('ChairmanReports.description')) {
+    echo Configure::read('ChairmanReports.title');
+    echo Configure::read('ChairmanReports.description');
+} ?>
 <div class="chairmanReports admin">
 <div class="actions ui-widget-header">
 	<ul></ul>
