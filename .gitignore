@@ -20,5 +20,6 @@ webroot/js/ckfinder/config.php
 webroot/files/pdftk.exe
 webroot/test.php
 views/layouts/default.ctp
+views/pages/home.ctp
 *.sdocml
 *.DS_STORE
