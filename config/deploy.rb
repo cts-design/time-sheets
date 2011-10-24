@@ -8,6 +8,8 @@ set :deploy_via, :export
 
 set :default_shell, '/bin/bash'
 
+# Server Settings. Be sure to wrap each region in it's own namespace. 
+
 namespace :cts do 
   task :staging do  
     set :deploy_to, "/var/www/vhosts/development.ctsfla.com/#{application}"
