@@ -28,6 +28,15 @@ namespace :cccp do
   end
 end
 
+namespace :cc do
+  task :staging do
+    set :deploy_to, "/var/www/vhosts/cc.atlasforworkforce.com/#{application}"
+    set :user, 'ftp_cc_stage'
+    set :branch, 'staging'
+    server "cc.atlasforworkforce.com", :app, :web, :db, :primary => true
+  end
+end
+
 namespace :tbwa do
   task :staging do
     set :deploy_to, "/var/www/vhosts/tbwa.ctsfla.com/#{application}"
