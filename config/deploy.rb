@@ -53,6 +53,15 @@ namespace :chipola do
   end
 end
 
+namespace :clm do
+  task :staging do
+    set :deploy_to, "/var/www/vhosts/clmdev.ctsfla.com/#{application}"
+    set :user, 'dev4clm'
+    set :branch, 'staging'
+    server "clmdev.ctsfla.com", :app, :web, :db, :primary => true     
+  end
+end
+
 namespace :elcm do
   task :staging do 
     set :deploy_to, "/var/www/vhosts/elcm.atlasforworkforce.com/#{application}"
