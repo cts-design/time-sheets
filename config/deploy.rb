@@ -19,6 +19,15 @@ namespace :cts do
   end
 end
 
+namespace :tbwa do
+  task :staging do
+    set :deploy_to, "/var/www/vhosts/tbwa.ctsfla.com/#{application}"
+    set :user, 'tbwaftp'
+    set :branch, 'staging'
+    server "tbwa.ctsfla.com", :app, :web, :db, :primary => true
+  end
+end
+
 # Cake Settings
 set :cake_branch, "master"
 
