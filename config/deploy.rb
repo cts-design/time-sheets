@@ -37,6 +37,15 @@ namespace :cc do
   end
 end
 
+namespace :demo do
+  task :staging do
+    set :deploy_to, "/var/www/vhosts/demo.atlasforworkforce.com/#{application}"
+    set :user, 'adidas_salad'
+    set :branch, 'staging'
+    server "demo.atlasforworkforce.com", :app, :web, :db, :primary => true
+  end
+end
+
 namespace :tbwa do
   task :staging do
     set :deploy_to, "/var/www/vhosts/tbwa.ctsfla.com/#{application}"
