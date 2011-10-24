@@ -37,7 +37,7 @@
 		echo '<br class="clear" />';
 		echo $this->Form->input('posted_date', array(
 							'before' => '<p class="left">',
-							'between' => '</p><p class="left">',
+							'between' => '</p><p class="date left">',
 							'after' => '</p>'));
 		echo '<br class="clear" />';
 	?>

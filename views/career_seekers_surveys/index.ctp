@@ -25,19 +25,11 @@
 												  'div' => 'input date tall')) ?>
 			<br class="clear" />
 			<div class="input select tall">
-				<?php $options = array('Location 1' => 'Location 1', 
-									   'Location 2' => 'Location 2', 
-									   'Location 3' => 'Location 3', 
-									   'Location 4' => 'Location 4', 
-									   'Location 5' => 'Location 5', 
-									   'Location 6' => 'Location 6', 
-									   'Location 7' => 'Location 7', 
-									   'Location 8' => 'Location 8', ) ?>
 				<p class="left label">
 					<?php echo $form->label(null, 'Are your comments related to the ' . Configure::read('Company.name') . ' Business Services Team or the ' . Configure::read('Company.name') . ' Website?') ?>
 				</p>
 				<p class="left">
-					<?php echo $form->select('are_your_comments_related_to_the_business_services_team_or_the_website', $options); ?>
+					<?php echo $form->select('are_your_comments_related_to_the_business_services_team_or_the_website', $locations); ?>
 				</p>
 			</div>
 			<br class="clear" />

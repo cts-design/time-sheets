@@ -65,5 +65,11 @@ class Location extends AppModel {
 	}
 	return false;
     }
-
+    
+    function findAllNotHidden() {
+        return $this->find('list', array(
+            'fields' => array('Location.public_name', 'Location.public_name'),
+            'conditions' => array('Location.hidden !=' => '1')
+        ));
+    }
 }
