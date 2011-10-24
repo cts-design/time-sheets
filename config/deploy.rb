@@ -55,6 +55,15 @@ namespace :demo do
   end
 end
 
+namespace :elcm do
+  task :staging do 
+    set :deploy_to, "/var/www/vhosts/elcm.atlasforworkforce.com/#{application}"
+    set :user, 'ion_mar9'
+    set :branch, 'staging'
+    server "elcm.atlasforworkforce.com", :app, :web, :db, :primary => true    
+  end
+end
+
 namespace :tbwa do
   task :staging do
     set :deploy_to, "/var/www/vhosts/tbwa.ctsfla.com/#{application}"
