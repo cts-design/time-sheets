@@ -10,7 +10,14 @@ set :default_shell, '/bin/bash'
 
 # Server Settings. Be sure to wrap each region in it's own namespace. 
 
-namespace :cts do 
+namespace :cts do
+  task :demo do
+    set :deploy_to, "/var/www/vhosts/demo.atlasforworkforce.com/#{application}"
+    set :user, 'adidas_salad'
+    set :branch, 'staging'
+    server "demo.atlasforworkforce.com", :app, :web, :db, :primary => true
+  end
+  
   task :staging do  
     set :deploy_to, "/var/www/vhosts/development.ctsfla.com/#{application}"
     set :user, 'dev4cts'
@@ -43,15 +50,6 @@ namespace :chipola do
     set :user, 'ola_chip0'
     set :branch, 'staging'
     server "chipola.atlasforworkforce.com", :app, :web, :db, :primary => true
-  end
-end
-
-namespace :demo do
-  task :staging do
-    set :deploy_to, "/var/www/vhosts/demo.atlasforworkforce.com/#{application}"
-    set :user, 'adidas_salad'
-    set :branch, 'staging'
-    server "demo.atlasforworkforce.com", :app, :web, :db, :primary => true
   end
 end
 
