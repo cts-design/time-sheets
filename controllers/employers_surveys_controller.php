@@ -8,7 +8,10 @@ class EmployersSurveysController extends AppController {
 		$this->Auth->allow('index', 'success', 'add');
 	}
 
-    function index() {}
+    function index() {
+	    $this->loadModel('Location');
+	    $this->set('locations', $this->Location->findAllNotHidden());
+    }
 
 	function add() {
 		if (!empty($this->data)) {
