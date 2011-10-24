@@ -37,6 +37,15 @@ namespace :cc do
   end
 end
 
+namespace :chipola do
+  task :staging do
+    set :deploy_to, "/var/www/vhosts/chipola.atlasforworkforce.com/#{application}"
+    set :user, 'ola_chip0'
+    set :branch, 'staging'
+    server "chipola.atlasforworkforce.com", :app, :web, :db, :primary => true
+  end
+end
+
 namespace :demo do
   task :staging do
     set :deploy_to, "/var/www/vhosts/demo.atlasforworkforce.com/#{application}"
