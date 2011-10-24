@@ -28,7 +28,6 @@ Ext.onReady(function() {
 			totalProperty: 'totalCount'
 		},
 		extraParams : {
-			page : 1,
 			tab : '',
 			dateFrom : '',
 			dateTo : '',

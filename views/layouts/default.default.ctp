@@ -43,7 +43,7 @@
 	<div id="container">
 	    <div id="header">
 		<div id="logo" class="left">
-		    <?php echo $this->Html->link($this->Html->image('/img/admin/admin_header_logo.jpg'),
+		    <?php echo $this->Html->link($this->Html->image('/img/default/default_header_logo.jpg'),
 				array('controller' => 'pages',
 					'action' => 'display',
 					'admin' => false, 'home'), array('escape' => false));
