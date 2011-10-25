@@ -165,7 +165,7 @@ class ProgramResponsesController extends AppController {
 		$instructions = $this->ProgramResponse->Program->ProgramInstruction->getInstructions(
 			$id, 'complete');		
 		$title_for_layout = 'Program Certificate';
-		$this->set(compact('title_for_layout', 'programResponse', $instructions));
+		$this->set(compact('title_for_layout', 'programResponse', 'instructions'));
 	}
 			
 	function view_cert($id=null) {
