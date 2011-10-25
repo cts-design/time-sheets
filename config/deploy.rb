@@ -34,7 +34,7 @@ namespace :cccp do
     server "ccc.atlasforworkforce.com", :app, :web, :db, :primary => true    
   end
   task :production do
-    set :deploy_to, "/var/www/vhosts/vpk.childcarepinellas.org/atlas"
+    set :deploy_to, "/var/www/vhosts/vpk.childcarepinellas.org/#{application}"
     set :user, 'vpk_ftp'
     set :branch, 'master'  
     server "vpk.childcarepinellas.org", :app, :web, :db, :primary => true       
@@ -47,6 +47,12 @@ namespace :cc do
     set :user, 'ftp_cc_stage'
     set :branch, 'staging'
     server "cc.atlasforworkforce.com", :app, :web, :db, :primary => true
+  end
+  task :production do
+    set :deploy_to, "/var/www/vhosts/atlasv3.careercentral.jobs/#{application}"
+    set :user, 'ccv3prod_ftp'
+    set :branch, 'master'
+    server "192.168.200.46", :app, :web, :db, :primary => true
   end
 end
 
@@ -66,6 +72,12 @@ namespace :clm do
     set :branch, 'staging'
     server "clmdev.ctsfla.com", :app, :web, :db, :primary => true     
   end
+  task :production do
+    set :deploy_to, "/var/www/vhosts/atlas.clmworkforce.com/#{application}"
+    set :user, 'clm_ftp' 
+    set :branch, 'master'
+    server "atlas.clmworkforce.com", :app, :web, :db, :primary => true
+  end
 end
 
 namespace :elcm do
@@ -75,6 +87,12 @@ namespace :elcm do
     set :branch, 'staging'
     server "elcm.atlasforworkforce.com", :app, :web, :db, :primary => true    
   end
+  task :production do
+    set :deploy_to, "/var/www/vhosts/atlas.elc-marion.org/#{application}"
+    set :user, 'elcm_ftp'
+    set :branch, 'master' 
+    server "atlas.elc-marion.org", :app, :web, :db, :primary => true       
+  end
 end
 
 namespace :tbwa do
@@ -83,6 +101,13 @@ namespace :tbwa do
     set :user, 'tbwaftp'
     set :branch, 'staging'
     server "tbwa.ctsfla.com", :app, :web, :db, :primary => true
+  end
+  
+  task :production do
+    set :branch, 'master'
+    set :deploy_to, "/var/www/vhosts/workforcetampa.com/atlas"
+    set :user, 'ftp_tbwa'
+    server "workforcetampa.com", :app, :web, :db, :primary => true    
   end
 end
 
