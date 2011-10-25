@@ -34,7 +34,7 @@ namespace :cccp do
     server "ccc.atlasforworkforce.com", :app, :web, :db, :primary => true    
   end
   task :production do
-    set :deploy_to, "/var/www/vhosts/vpk.childcarepinellas.org/atlas"
+    set :deploy_to, "/var/www/vhosts/vpk.childcarepinellas.org/#{application}"
     set :user, 'vpk_ftp'
     set :branch, 'master'  
     server "vpk.childcarepinellas.org", :app, :web, :db, :primary => true       
@@ -47,6 +47,12 @@ namespace :cc do
     set :user, 'ftp_cc_stage'
     set :branch, 'staging'
     server "cc.atlasforworkforce.com", :app, :web, :db, :primary => true
+  end
+  task :production do
+    set :deploy_to, "/var/www/vhosts/atlasv3.careercentral.jobs/atlas"
+    set :user, 'ccv3prod_ftp'
+    set :branch, 'master'
+    server "192.168.200.46", :app, :web, :db, :primary => true
   end
 end
 
