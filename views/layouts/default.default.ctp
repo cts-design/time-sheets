@@ -55,7 +55,8 @@
 		   <p>
 		   <?php
 			if ($session->read('Auth.User')) {
-                printf(__('<strong>Logged in as: %s %s</strong> | ', true), $session->read('Auth.User.firstname'), $session->read('Auth.User.lastname'));
+                printf(__('<strong>Logged in as: %s %s</strong> | ', true), $this->Session->read('Auth.User.firstname'), $this->Session->read('Auth.User.lastname'));
+				echo $this->Html->link(__('Edit Profile', true), array('controller' => 'users', 'action' => 'edit', 'kiosk' => false, $this->Session->read('Auth.User.id'))) . ' | ';
 				echo $this->Html->link(__('Logout', true), array('controller' => 'users', 'action' => 'logout', 'kiosk' => false, 'web'));
             }
 			?>
