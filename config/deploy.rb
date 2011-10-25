@@ -49,7 +49,7 @@ namespace :cc do
     server "cc.atlasforworkforce.com", :app, :web, :db, :primary => true
   end
   task :production do
-    set :deploy_to, "/var/www/vhosts/atlasv3.careercentral.jobs/atlas"
+    set :deploy_to, "/var/www/vhosts/atlasv3.careercentral.jobs/#{application}"
     set :user, 'ccv3prod_ftp'
     set :branch, 'master'
     server "192.168.200.46", :app, :web, :db, :primary => true
