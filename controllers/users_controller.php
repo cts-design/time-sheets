@@ -342,6 +342,7 @@ class UsersController extends AppController {
 			$this->Transaction->createUserTransaction('Website', 
 				null, null, 'Logged in using website.' );
 			if($this->Auth->user('email') == null || preg_match('(none|nobody|noreply)', $this->Auth->user('email'))) {
+				$this->Session->setFlash(__('Please complete your profile to continue.', true), 'flash_success');	
 				$this->redirect(array('controller' => 'users', 'action' => 'edit', $this->Auth->user('id')));
 			}
 			if($this->Session->read('Auth.redirect') != '') {	
