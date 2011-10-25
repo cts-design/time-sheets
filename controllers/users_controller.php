@@ -53,7 +53,7 @@ class UsersController extends AppController {
 			if(isset($this->params['prefix']) && $this->params['prefix'] == 'admin') {
 				return;	
 			}
-			else {	
+			elseif(isset($this->data['User']['login_type'])) {	
 				$this->User->setValidation('customerLogin');
 				$this->User->set($this->data);
 				if($this->User->validates()) {
@@ -262,6 +262,46 @@ class UsersController extends AppController {
 		$this->set($data);
     }
 
+    function edit($id=null) {
+    	$this->Auth->user('id');	
+    	$this->User->Behaviors->disable('Disableable');
+		$this->set('title_for_layout', 'Edit Profile');
+		if (!$id && empty($this->data) || $id != $this->Auth->user('id')) {
+		    $this->Session->setFlash(__('Invalid profile', true), 'flash_failure');
+		    $this->redirect('/');
+		}
+		if (!empty($this->data)) {
+			$this->User->setValidation('cusEditProfile');
+		    if ($this->User->save($this->data)) {
+				$this->Transaction->createUserTransaction('Customer',
+					null, null, 'Edited profile '. $this->data['User']['lastname'] . 
+					', ' . $this->data['User']['firstname'] . ' - ' . substr($this->data['User']['ssn'],-4));
+				$this->Session->setFlash(__('profile has been saved', true), 'flash_success');
+				if($this->Session->read('Auth.redirect') != '') {	
+					$this->redirect($this->Session->read('Auth.redirect'));
+				}
+				else {
+					$this->redirect('/');
+				}			
+		    } 
+		    else {
+				$this->Session->setFlash(__('Profile could not be saved. Please, try again.', true), 'flash_failure');
+		    }
+		}
+		if (empty($this->data)) {
+		    $this->data = $this->User->read(null, $id);
+		    if($this->data['User']['role_id'] != 1) {
+				$this->Session->setFlash(__('Invalid profile', true), 'flash_failure');
+				$this->redirect('/');
+		    }
+		}
+		$data = array(
+		    'states' => $this->states,
+		    'genders' => $this->genders
+		    );
+		$this->set($data);
+    }
+
     function kiosk_self_sign_login() {
     	$this->loadModel('Kiosk');
 		$oneStop = env('HTTP_USER_AGENT');
@@ -300,7 +340,10 @@ class UsersController extends AppController {
 		}
 		if($this->Auth->user()){
 			$this->Transaction->createUserTransaction('Website', 
-				null, null, 'Logged in using website.' );				
+				null, null, 'Logged in using website.' );
+			if($this->Auth->user('email') == null || preg_match('(none|nobody|noreply)', $this->Auth->user('email'))) {
+				$this->redirect(array('controller' => 'users', 'action' => 'edit', $this->Auth->user('id')));
+			}
 			if($this->Session->read('Auth.redirect') != '') {	
 				$this->redirect($this->Session->read('Auth.redirect'));
 			}
@@ -312,8 +355,7 @@ class UsersController extends AppController {
 			isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'child_website') {
 			$this->set('title_for_layout', 'Child Login');	
 			$this->render('child_login');
-		}
-					
+		}				
 	}
 
     function logout($type=null, $logoutMsg=null) {
