@@ -22,8 +22,11 @@ class ProgramResponsesController extends AppController {
 					$validate['form_esignature'] = array(
 						'rule' => 'notempty',
 						'message' => 'You must put your first & last name in the box.');
+				}
+				if($validate) {
+					$this->ProgramResponse->modifyValidate($validate);
 				}			
-				$this->ProgramResponse->modifyValidate($validate);
+				
 			}
 		}
 		// check if the logged in user has permission to approve responses
