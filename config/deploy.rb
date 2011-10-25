@@ -84,6 +84,13 @@ namespace :tbwa do
     set :branch, 'staging'
     server "tbwa.ctsfla.com", :app, :web, :db, :primary => true
   end
+  
+  task :production do
+    set :branch, 'master'
+    set :deploy_to, "/var/www/vhosts/workforcetampa.com/atlas"
+    set :user, 'ftp_tbwa'
+    server "workforcetampa.com", :app, :web, :db, :primary => true    
+  end
 end
 
 # Cake Settings
