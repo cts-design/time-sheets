@@ -11,7 +11,9 @@
 			<li><strong><?php __('Contact:') ?></strong> <?php echo $hotJob['HotJob']['contact'] ?></li>
 		</ul>
 		
-		<?php echo $this->Html->link(__('Apply for this job', true), array('controller' => 'hot_jobs', 'action' => 'apply', $hotJob['HotJob']['id'])) ?>
+		<?php if (!empty($hotJob['HotJob']['url'])): ?>
+			<?php echo $this->Html->link('Interested? Click Here', $hotJob['HotJob']['url']) ?>
+		<?php endif; ?>
 	</div>
 	<?php endforeach; ?>
 	

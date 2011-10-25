@@ -28,13 +28,16 @@ class ProgramsController extends AppController {
 			$this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');
 			$this->redirect('/');
 		}
+		if($this->Auth->user('email') == null || preg_match('(none|nobody|noreply)', $this->Auth->user('email'))) {
+			$this->Session->setFlash(__('Please complete your profile to continue.', true), 'flash_success');	
+			$this->redirect(array('controller' => 'users', 'action' => 'edit', $this->Auth->user('id')));
+		}		
 		$program = $this->Program->findById($id);
 		if($program['Program']['disabled'] == 1){
 			$this->Session->setFlash(__('This program is disabled', true), 'flash_failure');
 			$this->redirect('/');
 		}
 		$programResponse = $this->Program->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
-
 		if($programResponse) {
 			$responseId = $programResponse['ProgramResponse']['id']; 
 		}

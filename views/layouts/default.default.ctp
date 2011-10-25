@@ -43,7 +43,7 @@
 	<div id="container">
 	    <div id="header">
 		<div id="logo" class="left">
-		    <?php echo $this->Html->link($this->Html->image('/img/admin/admin_header_logo.jpg'),
+		    <?php echo $this->Html->link($this->Html->image('/img/default/default_header_logo.jpg'),
 				array('controller' => 'pages',
 					'action' => 'display',
 					'admin' => false, 'home'), array('escape' => false));
@@ -55,7 +55,8 @@
 		   <p>
 		   <?php
 			if ($session->read('Auth.User')) {
-                printf(__('<strong>Logged in as: %s %s</strong> | ', true), $session->read('Auth.User.firstname'), $session->read('Auth.User.lastname'));
+                printf(__('<strong>Logged in as: %s %s</strong> | ', true), $this->Session->read('Auth.User.firstname'), $this->Session->read('Auth.User.lastname'));
+				echo $this->Html->link(__('Edit Profile', true), array('controller' => 'users', 'action' => 'edit', 'kiosk' => false, $this->Session->read('Auth.User.id'))) . ' | ';
 				echo $this->Html->link(__('Logout', true), array('controller' => 'users', 'action' => 'logout', 'kiosk' => false, 'web'));
             }
 			?>

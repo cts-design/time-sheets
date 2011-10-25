@@ -1,7 +1,6 @@
 <?php
 class ProgramResponseDoc extends AppModel {
 	var $name = 'ProgramResponseDoc';
-	//The Associations below have been created with all possible keys, those that are not needed can be removed
 
 	var $belongsTo = array(
 		'ProgramResponse' => array(
@@ -18,23 +17,28 @@ class ProgramResponseDoc extends AppModel {
 		$this->data = $data;
 		$watchedCat = $Program->WatchedFilingCat->findByCatId($this->data['FiledDocument']['cat_3']);
 		$return['cat_id'] = $this->data['FiledDocument']['cat_3'];
-		$rejectedReason = $this->data['FiledDocument']['description'];
+		$rejectedReason = null;
+		if(isset($this->data['FiledDocument']['description'])) {
+			$rejectedReason = $this->data['FiledDocument']['description'];
+		}
 		$programResponseDocId = $this->field('id', array('doc_id' => $this->data['FiledDocument']['id']));
 		if($programResponseDocId) {
 			$this->data['ProgramResponseDoc']['id'] = $programResponseDocId;
 		}
+		if(!$watchedCat) {
+			$programResponseDoc = $this->findByDocId($this->data['FiledDocument']['id']);
+			if($programResponseDoc) {
+				$programResponse = $this->ProgramResponse->getProgramResponse($programResponseDoc['ProgramResponse']['program_id'], $user['User']['id']);
+				$this->delete($programResponseDoc['ProgramResponseDoc']['id']);
+				$this->updateResponse($Program, $programResponse);								
+			}
+		}		
 		if($watchedCat) {	
 			$programResponse = $this->ProgramResponse->getProgramResponse($watchedCat['Program']['id'], $user['User']['id']);	
 			$return['program_id'] = $watchedCat['Program']['id'];				
 			$this->data['ProgramResponseDoc']['cat_id'] = $this->data['FiledDocument']['cat_3'];
 			$this->data['ProgramResponseDoc']['doc_id'] = $this->data['FiledDocument']['id'];
 			$this->data['ProgramResponseDoc']['program_response_id'] = $programResponse['ProgramResponse']['id'];
-			$allWatchedCats = $Program->WatchedFilingCat->find('all', array('conditions' => array(
-				'WatchedFilingCat.program_id' => $watchedCat['Program']['id'],
-				'DocumentFilingCategory.name !=' => 'rejected',
-				'DocumentFilingCategory.name !=' => 'Rejected')));
-			$watchedCats = Set::classicExtract($allWatchedCats, '{n}.WatchedFilingCat.cat_id');
-
 			if($this->save($this->data)) {					
 				$docFiledEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array(
 					'conditions' => array(
@@ -47,34 +51,9 @@ class ProgramResponseDoc extends AppModel {
 				if($docFiledEmail) {
 					$return['docFiledEmail'] = $docFiledEmail;	
 				}
-				$filedResponseDocCats = 
-					$this->getFiledResponseDocCats(
-						$watchedCat['Program']['id'], $programResponse['ProgramResponse']['id']);																
-				$result = array_diff($watchedCats, $filedResponseDocCats);
-				if(empty($result)){
-					$this->ProgramResponse->id = $programResponse['ProgramResponse']['id'];					
-					if($watchedCat['Program']['approval_required'] == 1 && $programResponse['ProgramResponse']['complete'] == 0) {
-						$this->ProgramResponse->saveField('needs_approval', 1);
-					}
-					else{
-						$this->ProgramResponse->saveField('complete', 1);
-						$finalEmail = $Program->ProgramEmail->find('first', array(
-							'conditions' => array(
-								'ProgramEmail.program_id' => $watchedCat['Program']['id'],
-								'ProgramEmail.type' => 'final')));
-						if($finalEmail) {
-							$return['finalEmail'] = $finalEmail;
-						}						
-					} 
-				}
-				if(!empty($result)) {
-					$this->ProgramResponse->id = $programResponse['ProgramResponse']['id'];					
-					if($watchedCat['Program']['approval_required'] == 1 && !$programResponse['ProgramResponse']['complete']) {
-						$this->ProgramResponse->saveField('needs_approval', 0);
-					}					
-				}	
+				$this->updateResponse($Program, $programResponse)	;
 			}				
-		}		
+		}
 		return $return;		
 	}
 
@@ -98,7 +77,39 @@ class ProgramResponseDoc extends AppModel {
 			}
 		}
 		return 	$filedResponseDocCats;	
+	}
+
+	private function updateResponse($Program, $programResponse) {
+		$allWatchedCats = $Program->WatchedFilingCat->find('all', array('conditions' => array(
+			'WatchedFilingCat.program_id' => $programResponse['Program']['id'],
+			'DocumentFilingCategory.name !=' => 'rejected',
+			'DocumentFilingCategory.name !=' => 'Rejected')));
+		$watchedCats = Set::classicExtract($allWatchedCats, '{n}.WatchedFilingCat.cat_id');
+		$filedResponseDocCats = 
+		$this->getFiledResponseDocCats(
+			$programResponse['Program']['id'], $programResponse['ProgramResponse']['id']);																
+		$result = array_diff($watchedCats, $filedResponseDocCats);
+		if(empty($result)){
+			$this->ProgramResponse->id = $programResponse['ProgramResponse']['id'];					
+			if($programResponse['Program']['approval_required'] == 1 && $programResponse['ProgramResponse']['complete'] == 0) {
+				$this->ProgramResponse->saveField('needs_approval', 1);
+			}
+			else{
+				$this->ProgramResponse->saveField('complete', 1);
+				$finalEmail = $Program->ProgramEmail->find('first', array(
+					'conditions' => array(
+						'ProgramEmail.program_id' => $programResponse['Program']['id'],
+						'ProgramEmail.type' => 'final')));
+				if($finalEmail) {
+					$return['finalEmail'] = $finalEmail;
+				}						
+			} 
+		}
+		if(!empty($result)) {
+			$this->ProgramResponse->id = $programResponse['ProgramResponse']['id'];					
+			if($programResponse['Program']['approval_required'] == 1 && !$programResponse['ProgramResponse']['complete']) {
+				$this->ProgramResponse->saveField('needs_approval', 0);
+			}					
+		}					
 	}	
-	
 }
-?>
