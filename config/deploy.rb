@@ -72,6 +72,12 @@ namespace :clm do
     set :branch, 'staging'
     server "clmdev.ctsfla.com", :app, :web, :db, :primary => true     
   end
+  task :production do
+    set :deploy_to, "/var/www/vhosts/atlas.clmworkforce.com/#{application}"
+    set :user, 'clm_ftp' 
+    set :branch, 'master'
+    server "atlas.clmworkforce.com", :app, :web, :db, :primary => true
+  end
 end
 
 namespace :elcm do
