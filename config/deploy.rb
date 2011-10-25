@@ -63,6 +63,13 @@ namespace :chipola do
     set :branch, 'staging'
     server "chipola.atlasforworkforce.com", :app, :web, :db, :primary => true
   end
+
+	task :production do
+		set :branch, 'master'
+		set :deploy_to, "/var/www/vhosts/atlas.onestopahead.com/atlas"
+		set :user, 'ola_chip0'
+		server "69.68.156.141", :app, :web, :db, :primary => true
+	end
 end
 
 namespace :clm do
