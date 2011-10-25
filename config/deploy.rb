@@ -137,19 +137,14 @@ namespace :cake do
 end
 
 task :finalize_deploy, :roles => [:web] do
-	run "chmod 755 -R #{release_path}"	
-	#run "mv #{release_path}/webroot/index.default.php #{release_path}/webroot/index.php"
-	#run "mv #{release_path}/webroot/test.default.php #{release_path}/webroot/test.php"
-	#run "mv #{release_path}/config/atlas.default.php #{release_path}/config/atlas.php"
-	#run "mv #{release_path}/config/core.default.php #{release_path}/config/core.php"
-	#run "mv #{release_path}/webroot/js/ckfinder/config.default.php #{release_path}/webroot/js/ckfinder/config.php"
+	run "chmod 755 -R #{release_path}"
+	cake.cache.clear
+	cake.schema.create
+	cake.schema.update
+	cake.aco_update
+	cake.cache.clear
 end	
 
 after "deploy:symlink", :finalize_deploy
-
-after("finalize_deploy", "cake:cache:clear")
-after("cake:cache:clear", "cake:schema:create")
-after("cake:schema:create", "cake:schema:update")
-after("cake:schema:update", "cake:aco_update")
 
 capcake
