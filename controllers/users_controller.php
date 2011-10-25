@@ -273,6 +273,7 @@ class UsersController extends AppController {
 		if (!empty($this->data)) {
 			$this->User->setValidation('cusEditProfile');
 		    if ($this->User->save($this->data)) {
+		    	$this->Session->write('Auth.User.email', $this->data['User']['email']);
 				$this->Transaction->createUserTransaction('Customer',
 					null, null, 'Edited profile '. $this->data['User']['lastname'] . 
 					', ' . $this->data['User']['firstname'] . ' - ' . substr($this->data['User']['ssn'],-4));
