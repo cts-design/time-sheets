@@ -23,7 +23,7 @@ class ProgramResponsesController extends AppController {
 						'rule' => 'notempty',
 						'message' => 'You must put your first & last name in the box.');
 				}
-				if($validate) {
+				if(isset($validate)) {
 					$this->ProgramResponse->modifyValidate($validate);
 				}			
 				
