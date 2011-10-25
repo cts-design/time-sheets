@@ -3,6 +3,18 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+	<h1>Release 3.1.3.1 (10/25/11)</h1>
+	<h2>Main Feature Releases</h2>
+	<ol>
+		<li>Development of shared config strategy to utilize production server based config file.</li>
+		<li>Development of profile edit capabilities. Requires customers that were originally registered at kiosk to update profile when accessing Self Service Programs.</li>
+		<li>Fixed loophole that would allow customer to register at kiosk and the register for program, without updating profile.#2 - Specifically email address which is mandatory in the program section.</li>
+		<li>Added "Edit Profile" link to navigation header.</li>
+		<li>Absorbed legacy registration process from customers not using the programs module to track program registrations.</li>
+		<li>Added functionality to allow documents that were orignally filed as a non watch document to be "edited" and moved to a filing category outside of the program response documents controller.</li>
+		<li>Resolved deployment caching issue that would retain cache and make areas of the program response module funtion incorrectly.</li>
+	</ol>
+	<hr />
 	<h1>Release 3.1.3 (10/19/11)</h1>
 	<h2>Main Feature Releases</h2>
 	<ol>
