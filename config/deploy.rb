@@ -87,6 +87,12 @@ namespace :elcm do
     set :branch, 'staging'
     server "elcm.atlasforworkforce.com", :app, :web, :db, :primary => true    
   end
+  task :production do
+    set :deploy_to, "/var/www/vhosts/atlas.elc-marion.org/#{application}"
+    set :user, 'elcm_ftp'
+    set :branch, 'master' 
+    server "70.166.79.98", :app, :web, :db, :primary => true       
+  end
 end
 
 namespace :tbwa do
