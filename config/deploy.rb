@@ -101,6 +101,7 @@ namespace :deploy do
       run "ln -s #{shared_path}/webroot/files/public #{current_release}/webroot/files/public"
       run "ln -s #{shared_path}/webroot/img/public #{current_release}/webroot/img/public"
       run "ln -s #{shared_path}/webroot/img/default #{current_release}/webroot/img/default"
+      run "ln -s #{shared_path}/webroot/js/default #{current_release}/webroot/js/default"
       run "ln -s #{shared_path}/webroot/img/admin/admin_header_logo.jpg #{current_release}/webroot/img/admin/admin_header_logo.jpg"
       run "ln -s #{shared_path}/webroot/img/kiosk/kiosk_header.jpg #{current_release}/webroot/img/kiosk/kiosk_header.jpg"
       run "ln -s #{shared_path}/config/core.php #{current_release}/config/core.php"
