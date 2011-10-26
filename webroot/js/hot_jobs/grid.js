@@ -131,7 +131,7 @@ var hotjobform = Ext.create('Ext.form.Panel', {
 				var vals = f.getValues();
 				f.submit({
 					url: '/admin/hot_jobs/upload',
-					waitMsg: 'uploading',
+					waitMsg: 'Saving',
 					success: function(form,action) {
 						f.reset();						
 						Ext.data.StoreManager.lookup('hotJobStore').add({
@@ -148,7 +148,17 @@ var hotjobform = Ext.create('Ext.form.Panel', {
 
 					},
 					failure: function(form, action) {
-						Ext.msg.Alert('Error', 'Your file could not be uploaded, please try again.');
+						f.reset();						
+						Ext.data.StoreManager.lookup('hotJobStore').add({
+						 	employer: vals.employer,
+						 	title: vals.title,
+						 	description: vals.description,
+						 	contact: vals.contact,
+						 	location: vals.location,
+						 	contact: vals.contact,
+							reference_number: vals.reference_number,
+							url: vals.url
+						});
 					}
 				});
 			}
