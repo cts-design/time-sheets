@@ -317,7 +317,7 @@ class ProgramResponsesController extends AppController {
 							'User-lastname' => trim(ucwords($response['User']['lastname'] . ', ' . 
 								$response['User']['firstname']) . ' - ' . 
 								substr($response['User']['ssn'], -4), ' , -'),
-							'conformation_id' => $response['ProgramResponse']['conformation_id'],	
+							'confirmation_id' => $response['ProgramResponse']['confirmation_id'],	
 							'created' => $response['ProgramResponse']['created'],
 							'modified' => $response['ProgramResponse']['modified'],
 							'expires_on' => $response['ProgramResponse']['expires_on'],
@@ -787,7 +787,7 @@ class ProgramResponsesController extends AppController {
 			}
 
 			$data['masked_ssn'] = '***-**-' . substr($data['ssn'], -4);
-			$data['conformation_id'] = $programResponse['ProgramResponse']['conformation_id'];			
+			$data['confirmation_id'] = $programResponse['ProgramResponse']['confirmation_id'];			
 			$data['dob'] = date('m/d/Y', strtotime($data['dob']));		
 			$data['admin'] = $this->Auth->user('firstname') . ' ' . $this->Auth->user('lastname');
 			$data['todays_date'] = date('m/d/Y');

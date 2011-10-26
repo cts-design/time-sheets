@@ -47,7 +47,7 @@ class ProgramsControllerTestCase extends AtlasTestCase {
 			'cert_type' => 'coe',
 			'approval_required' => 1,
 			'form_esign_required' => 1,
-			'conformation_id_length' => 9,
+			'confirmation_id_length' => 9,
 			'response_expires_in' => 30,
 			'auth_required' => 1,
 			'created' => '2011-03-23 00:00:00',
