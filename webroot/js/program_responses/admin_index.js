@@ -128,7 +128,7 @@ Ext.onReady(function() {
 			width : 150,
 			sortable : true
 		}, {
-			text : 'Conformation Id',
+			text : 'Confirmation Id',
 			dataIndex : 'confirmation_id',
 			sortable : false
 		}, {
