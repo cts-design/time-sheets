@@ -43,16 +43,19 @@
 App::build(
     array(
         'controllers' => array(
-            CONTROLLERS. DS . 'program_controllers' . DS,
-            CONTROLLERS . DS . 'kiosk_survey_controllers' . DS
+            CONTROLLERS . DS . 'program_controllers' . DS,
+            CONTROLLERS . DS . 'kiosk_survey_controllers' . DS,
+            CONTROLLERS . DS . 'website_controllers' . DS
         ),
         'models' => array(
             MODELS . DS . 'program_models' . DS,
-            MODELS . DS . 'kiosk_survey_models' . DS
+            MODELS . DS . 'kiosk_survey_models' . DS,
+            MODELS . DS . 'website_models' . DS
         ),
         'views' => array(
             VIEWS . DS . 'program_views' . DS,
             VIEWS . DS . 'kiosk_survey_views' . DS,
+            VIEWS . DS . 'website_views' . DS
         )
     )
 );
