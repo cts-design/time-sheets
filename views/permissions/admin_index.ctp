@@ -349,10 +349,18 @@
 				    'type' => 'checkbox',
 				   	'label' => 'Index',
 				    'checked' => (isset($controllers['Programs']['admin_index'])) ? $controllers['Programs']['admin_index'] : '' ));?>
+			       <?php echo $this->Form->input('ProgramInstructions.admin_index', array(
+				    'type' => 'checkbox',
+				   	'label' => 'Instructions Index',
+				    'checked' => (isset($controllers['ProgramInstructions']['admin_index'])) ? $controllers['ProgramInstructions']['admin_index'] : '' ));?>				    
 			       <?php echo $this->Form->input('ProgramInstructions.admin_edit', array(
 				    'type' => 'checkbox',
 				   	'label' => 'Edit Instructions',
-				    'checked' => (isset($controllers['ProgramInstructions']['admin_edit'])) ? $controllers['ProgramInstructions']['admin_edit'] : '' ));?>		    
+				    'checked' => (isset($controllers['ProgramInstructions']['admin_edit'])) ? $controllers['ProgramInstructions']['admin_edit'] : '' ));?>
+			       <?php echo $this->Form->input('ProgramEmails.admin_index', array(
+				    'type' => 'checkbox',
+				   	'label' => 'Emails Index',
+				    'checked' => (isset($controllers['ProgramEmails']['admin_index'])) ? $controllers['ProgramEmails']['admin_index'] : '' ));?>
 			       <?php echo $this->Form->input('ProgramEmails.admin_edit', array(
 				    'type' => 'checkbox',
 				   	'label' => 'Edit Emails',
