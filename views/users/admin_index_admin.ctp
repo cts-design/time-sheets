@@ -76,7 +76,7 @@
 		<?php if($user['User']['disabled'] == 0) :?>
 			<?php echo $this->Html->link(__('Upload', true), array('controller' => 'filed_documents',  'action' => 'upload_document', $user['User']['id']), array('class' => 'docs')); ?>
 			<?php echo $this->Html->link(__('Scan', true), array('controller' => 'filed_documents',  'action' => 'scan_document', $user['User']['id']), array('class' => 'docs')); ?>
-			<?php if($this->Session->read('Auth.User.role_id') < 3)	: ?>
+			<?php if($this->Session->read('Auth.User.role_id') < 4)	: ?>
 				<?php if($user['User']['role_id'] > 3 ) : ?>
 				    <?php echo $this->Html->link(__('Permissions', true), array('controller' => 'permissions', 'action' => 'index', $user['User']['id'], 'User'), array('class'=>'permissions')); ?>
 				<?php endif ?>
