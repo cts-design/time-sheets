@@ -17,7 +17,7 @@ Ext.onReady(function() {
 			name : 'expires_on',
 			type : 'date',
 			dateFormat : 'Y-m-d H:i:s'
-		}, 'conformation_id', 'actions', 'notes']	
+		}, 'confirmation_id', 'actions', 'notes']	
 	});
 	
 	var programResponseProxy = Ext.create('Ext.data.proxy.Ajax', {
@@ -128,8 +128,8 @@ Ext.onReady(function() {
 			width : 150,
 			sortable : true
 		}, {
-			text : 'Conformation Id',
-			dataIndex : 'conformation_id',
+			text : 'Confirmation Id',
+			dataIndex : 'confirmation_id',
 			sortable : false
 		}, {
 			text : 'Created',

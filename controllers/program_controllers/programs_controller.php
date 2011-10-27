@@ -220,8 +220,8 @@ class ProgramsController extends AppController {
 			$program = $this->Program->findById($this->data['ProgramResponse']['program_id']);
 			if($program) {
 				$string = sha1(date('ymdhisu'));
-				$this->data['ProgramResponse']['conformation_id'] = 
-					substr($string, 0, $program['Program']['conformation_id_length']);				
+				$this->data['ProgramResponse']['confirmation_id'] = 
+					substr($string, 0, $program['Program']['confirmation_id_length']);				
 			}
 			$this->data['ProgramResponse']['expires_on'] = 
 				date('Y-m-d H:i:s', strtotime('+' . $program['Program']['response_expires_in'] . ' days'));
