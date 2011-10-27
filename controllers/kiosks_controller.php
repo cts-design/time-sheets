@@ -162,9 +162,12 @@ class KiosksController extends AppController {
 			$message = $this->Kiosk->KioskButton->getLogoutMessage($buttonId, null, $this->Cookie->read('kioskId'));
 			if($message) {
 				$this->Cookie->write('logout_message', $message);
-			}			
-			if($masterButtonList[$buttonId] === 'Scan Documents') {
-				$this->redirect( array('action' => 'self_scan_program_selection'));
+			}
+			
+						
+			if(preg_match('(Scan Documents|scan documents|Escanear Documentos|escanear documentos)', 
+				$masterButtonList[$buttonId])) {
+					$this->redirect( array('action' => 'self_scan_program_selection'));
 			}
 			$possibleChildren = $this->Kiosk->KioskButton->find('all', array(
 				'conditions' => array(
