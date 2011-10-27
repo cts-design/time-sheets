@@ -426,6 +426,10 @@ class ProgramResponsesController extends AppController {
 						else {
 							$data['docs'][$i]['name'] = $filingCatList[$doc['ProgramResponseDoc']['cat_id']];
 							$data['docs'][$i]['filedDate'] = $doc['ProgramResponseDoc']['created'];
+							if($doc['ProgramResponseDoc']['rejected_reason'])	{
+								$data['docs'][$i]['rejectedReason'] = $doc['ProgramResponseDoc']['rejected_reason'];
+							}
+							
 							$data['docs'][$i]['link'] = '<a href="/admin/filed_documents/view/'.
 								$doc['ProgramResponseDoc']['doc_id'] . '" target="_blank">View Doc</a> | 
 									<a href="/admin/filed_documents/edit/'.
