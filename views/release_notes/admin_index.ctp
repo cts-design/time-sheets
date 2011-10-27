@@ -3,6 +3,27 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+	<h1>Release 3.1.4 (10/27/11)</h1>
+	<h2>Minor Feature Enhancements</h2>	
+	<ol>
+		<li>Added the “other” field to the program response docs view to allow staff working program responses to view the reason the document was rejected.</li>
+		<li>Added additional logic within the profile edit function to check customer record for email address on none@email.com, no@email.com or "none". 
+			This will prompt the edit profile function after a customer logs into any self service module.</li>
+		<li>Added “edit profile” and “logout” capabilities to customers who are logged into the On-Line self service system.</li>	
+	</ol>
+	<h1>Bug Fixes</h1>
+	<ol>
+		<li>Fixed issue that was causing the “scan documents” self-scan interface to not be triggered when user is in a Spanish session.</li>
+		<li>Resolved issue with roles that hid the Permissions tab from certain Admin level users.</li>
+		<li>Resolved issue with role based admins not having access to Edit Instructions and Edit Emails section of the programs management console.</li>
+		<li>Corrected a mislabel within the programs module. Programs with Confirmation numbers were being labled conformation instead of confirmation. Adjusted controller, table and view labels.</li>
+		<li>Resolved issue that was causing the first level of the filing tree within the Self-Sign archive to display the first option rather that “All Buttons”.	</li>	
+	</ol>
+	<h1>Known Issues</h1>
+	<ol>
+		<li>Specific self-scan buttons within the self-scan module are not being translated to Spanish.</li>
+	</ol>
+	<hr />
 	<h1>Release 3.1.3.1 (10/25/11)</h1>
 	<h2>Main Feature Releases</h2>
 	<ol>

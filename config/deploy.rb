@@ -63,6 +63,13 @@ namespace :chipola do
     set :branch, 'staging'
     server "chipola.atlasforworkforce.com", :app, :web, :db, :primary => true
   end
+
+	task :production do
+		set :branch, 'master'
+		set :deploy_to, "/var/www/vhosts/atlas.onestopahead.com/atlas"
+		set :user, 'ola_chip0'
+		server "69.68.156.141", :app, :web, :db, :primary => true
+	end
 end
 
 namespace :clm do
@@ -128,21 +135,21 @@ namespace :deploy do
         end
       end
       run "ln -s #{shared_path}/system #{latest_release}/webroot/system && ln -s #{shared_path}/tmp #{latest_release}/tmp";
-      run "ln -s #{shared_path}/storage #{current_release}/storage"
-      run "ln -s #{shared_path}/webroot/files/public #{current_release}/webroot/files/public"
-      run "ln -s #{shared_path}/webroot/img/public #{current_release}/webroot/img/public"
-      run "ln -s #{shared_path}/webroot/img/default #{current_release}/webroot/img/default"
-      run "ln -s #{shared_path}/webroot/js/default #{current_release}/webroot/js/default"
-      run "ln -s #{shared_path}/webroot/img/admin/admin_header_logo.jpg #{current_release}/webroot/img/admin/admin_header_logo.jpg"
-      run "ln -s #{shared_path}/webroot/img/kiosk/kiosk_header.jpg #{current_release}/webroot/img/kiosk/kiosk_header.jpg"
-      run "ln -s #{shared_path}/config/core.php #{current_release}/config/core.php"
-      run "ln -s #{shared_path}/config/atlas.php #{current_release}/config/atlas.php"
-      run "ln -s #{shared_path}/webroot/index.php #{current_release}/webroot/index.php"
-      run "ln -s #{shared_path}/webroot/test.php #{current_release}/webroot/test.php" 
-      run "ln -s #{shared_path}/webroot/css/style.css #{current_release}/webroot/css/style.css"
-      run "ln -s #{shared_path}/views/layouts/default.ctp #{current_release}/views/layouts/default.ctp"
-      run "ln -s #{shared_path}/views/pages/home.ctp #{current_release}/views/pages/home.ctp"
-      run "ln -s #{shared_path}/webroot/js/ckfinder/config.php #{current_release}/webroot/js/ckfinder/config.php"
+      run "ln -s #{shared_path}/storage #{latest_release}/storage"
+      run "ln -s #{shared_path}/webroot/files/public #{latest_release}/webroot/files/public"
+      run "ln -s #{shared_path}/webroot/img/public #{latest_release}/webroot/img/public"
+      run "ln -s #{shared_path}/webroot/img/default #{latest_release}/webroot/img/default"
+      run "ln -s #{shared_path}/webroot/js/default #{latest_release}/webroot/js/default"
+      run "ln -s #{shared_path}/webroot/img/admin/admin_header_logo.jpg #{latest_release}/webroot/img/admin/admin_header_logo.jpg"
+      run "ln -s #{shared_path}/webroot/img/kiosk/kiosk_header.jpg #{latest_release}/webroot/img/kiosk/kiosk_header.jpg"
+      run "ln -s #{shared_path}/config/core.php #{latest_release}/config/core.php"
+      run "ln -s #{shared_path}/config/atlas.php #{latest_release}/config/atlas.php"
+      run "ln -s #{shared_path}/webroot/index.php #{latest_release}/webroot/index.php"
+      run "ln -s #{shared_path}/webroot/test.php #{latest_release}/webroot/test.php" 
+      run "ln -s #{shared_path}/webroot/css/style.css #{latest_release}/webroot/css/style.css"
+      run "ln -s #{shared_path}/views/layouts/default.ctp #{latest_release}/views/layouts/default.ctp"
+      run "ln -s #{shared_path}/views/pages/home.ctp #{latest_release}/views/website_views/pages/home.ctp"
+      run "ln -s #{shared_path}/webroot/js/ckfinder/config.php #{latest_release}/webroot/js/ckfinder/config.php"
       run "rm -f #{current_path} && ln -s #{latest_release} #{current_path}" 
       cake.database.symlink if (remote_file_exists?(database_path))   
     end	

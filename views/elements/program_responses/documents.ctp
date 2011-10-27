@@ -16,6 +16,9 @@
 					<div class="response-doc">
 						<p><strong>Doc id:</strong> <?php echo $doc['id'] ?></p>
 						<p><strong>Doc type:</strong> <?php echo $doc['name'] ?></p>
+						<?php if($doc['rejectedReason'] && $doc['name'] == 'Rejected') : ?>
+							<p><strong>Rejected reason:</strong> <?php echo $doc['rejectedReason'] ?></p>
+						<?php endif ?>	
 						<?php if(isset($doc['filedDate'])) : ?>
 							<p><strong>Filed on:</strong> <?php echo $doc['filedDate']; ?></p>
 						<?php endif ?>						

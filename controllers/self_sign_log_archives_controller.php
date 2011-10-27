@@ -190,7 +190,6 @@ class SelfSignLogArchivesController extends AppController {
 	}
 
 	function admin_get_parent_buttons_ajax() {
-		App::import('Vendor', 'DebugKit.FireCake');
 		if($this->RequestHandler->isAjax()) {
 			$masterButtonList = $this->SelfSignLogArchive->Kiosk->KioskButton->MasterKioskButton->find('list', array(
 				'fields' => array('MasterKioskButton.name')
@@ -205,11 +204,8 @@ class SelfSignLogArchivesController extends AppController {
 			$buttonList = $this->SelfSignLogArchive->find('list', array('fields' => array('SelfSignLogArchive.id',
 				'SelfSignLogArchive.level_1'),
 				'conditions' => $conditions));
-			FireCake::log($buttonList);
-			FireCake::log($masterButtonList);
 			if(isset($buttonList)) {
 				$buttonList = array_unique($buttonList);
-				$button[''] = 'All Buttons';
 				foreach($buttonList as $k => $v) {
 					$button[$v] = $masterButtonList[$v];
 				}

@@ -257,6 +257,10 @@ margin-bottom: 10px;
     margin: 60px auto 60px auto;
 }
 
+#scanForm {
+	width: 480px;
+}
+
 #selfSignConfirm .actions a:first-child {
     margin-right: 50px;
 }

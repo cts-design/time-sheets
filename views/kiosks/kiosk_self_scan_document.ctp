@@ -34,7 +34,7 @@
 	    ?>
 	<h3>4. <input class="save" name="save"  type="button" value="Save"/></h3>
     </div>
-    <div id="scanWrapper" class="left left-mar-100">
+    <div id="scanWrapper" class="left left-mar-20">
 	<object 
 		width="400"
 		height="450"

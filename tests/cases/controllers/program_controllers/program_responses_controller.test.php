@@ -451,7 +451,7 @@ class ProgramResponsesControllerTestCase extends AtlasTestCase {
 		$expectedResult = array(
 				'id'=>'7',
 				'User-lastname'=>'Jim, Slim - 1244',
-				'conformation_id'=>'23eff2343',
+				'confirmation_id'=>'23eff2343',
 				'created'=>'2011-05-04 09:09:08',
 				'modified'=>'2011-05-12 11:12:24',
 				'expires_on'=>'2011-06-08 16:13:30',
@@ -482,7 +482,7 @@ class ProgramResponsesControllerTestCase extends AtlasTestCase {
 		$expectedResult = array(
 			'id'=>'1',
 			'User-lastname'=>'Smith, Daniel - 1234',
-			'conformation_id'=>'',
+			'confirmation_id'=>'',
 			'created'=>'2011-05-04 09:09:08',
 			'modified'=>'2011-05-12 11:12:24',
 			'expires_on'=>'2120-06-10 16:13:30',
@@ -512,7 +512,7 @@ class ProgramResponsesControllerTestCase extends AtlasTestCase {
 		$expectedResult = array(
 			'id'=>'1',
 			'User-lastname'=>'Smith, Daniel - 1234',
-			'conformation_id'=>'',
+			'confirmation_id'=>'',
 			'created'=>'2011-05-04 09:09:08',
 			'modified'=>'2011-05-12 11:12:24',
 			'expires_on'=>'2120-06-10 16:13:30',
@@ -542,7 +542,7 @@ class ProgramResponsesControllerTestCase extends AtlasTestCase {
 		$expectedResult = array(
 			'id'=>'1',
 			'User-lastname'=>'Smith, Daniel - 1234',
-			'conformation_id'=>'',
+			'confirmation_id'=>'',
 			'created'=>'2011-05-04 09:09:08',
 			'modified'=>'2011-05-12 11:12:24',
 			'expires_on'=>'2120-06-10 16:13:30',
@@ -573,7 +573,7 @@ class ProgramResponsesControllerTestCase extends AtlasTestCase {
 				array(
 				'id'=>'1',
 				'User-lastname'=>'Smith, Daniel - 1234',
-				'conformation_id'=>'',
+				'confirmation_id'=>'',
 				'created'=>'2011-05-04 09:09:08',
 				'modified'=>'2011-05-12 11:12:24',
 				'expires_on'=>'2120-06-10 16:13:30',
@@ -584,7 +584,7 @@ class ProgramResponsesControllerTestCase extends AtlasTestCase {
 				array(
 				'id'=>'2',
 				'User-lastname'=>'Duck, Daffy - 1234',
-				'conformation_id'=>'',
+				'confirmation_id'=>'',
 				'created'=>'2011-05-04 09:09:08',
 				'modified'=>'2011-05-12 11:12:24',
 				'expires_on'=>'2120-06-08 16:13:30',
@@ -595,7 +595,7 @@ class ProgramResponsesControllerTestCase extends AtlasTestCase {
 				array(
 				'id'=>'3',
 				'User-lastname'=>'Rabbit, Roger - 1234',
-				'conformation_id'=>'dasf234f34',
+				'confirmation_id'=>'dasf234f34',
 				'created'=>'2011-05-04 09:09:08',
 				'modified'=>'2011-05-12 11:12:24',
 				'expires_on'=>'2120-06-08 16:13:30',
@@ -606,7 +606,7 @@ class ProgramResponsesControllerTestCase extends AtlasTestCase {
 				array(
 				'id'=>'4',
 				'User-lastname'=>'Marley, Bob - 1234',
-				'conformation_id'=>'ddasf4354',
+				'confirmation_id'=>'ddasf4354',
 				'created'=>'2011-05-04 09:09:08',
 				'modified'=>'2011-05-12 11:12:24',
 				'expires_on'=>'2120-06-08 16:13:30',
@@ -617,7 +617,7 @@ class ProgramResponsesControllerTestCase extends AtlasTestCase {
 				array(
 				'id'=>'5',
 				'User-lastname'=>'Bush, George - 1234',
-				'conformation_id'=>'5dfdasf34',
+				'confirmation_id'=>'5dfdasf34',
 				'created'=>'2011-05-04 09:09:08',
 				'modified'=>'2011-05-12 11:12:24',
 				'expires_on'=>'2120-06-08 16:13:30',
@@ -647,7 +647,7 @@ class ProgramResponsesControllerTestCase extends AtlasTestCase {
 		$expectedResult = array(
 			'id'=>'1',
 			'User-lastname'=>'Smith, Daniel - 1234',
-			'conformation_id'=>'',
+			'confirmation_id'=>'',
 			'created'=>'2011-05-04 09:09:08',
 			'modified'=>'2011-05-12 11:12:24',
 			'expires_on'=>'2120-06-10 16:13:30',
