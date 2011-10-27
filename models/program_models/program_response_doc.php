@@ -35,8 +35,9 @@ class ProgramResponseDoc extends AppModel {
 		}		
 		if($watchedCat) {	
 			$programResponse = $this->ProgramResponse->getProgramResponse($watchedCat['Program']['id'], $user['User']['id']);	
-			$return['program_id'] = $watchedCat['Program']['id'];				
-			$this->data['ProgramResponseDoc']['cat_id'] = $this->data['FiledDocument']['cat_3'];
+			$return['program_id'] = $watchedCat['Program']['id'];
+			$this->data['ProgramResponseDoc']['rejected_reason'] = $rejectedReason;				
+			$this->data['ProgramResponseDoc']['cat_id'] = $this->data['FiledDocument']['cat_3'];			
 			$this->data['ProgramResponseDoc']['doc_id'] = $this->data['FiledDocument']['id'];
 			$this->data['ProgramResponseDoc']['program_response_id'] = $programResponse['ProgramResponse']['id'];
 			if($this->save($this->data)) {					
