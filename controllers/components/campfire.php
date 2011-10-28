@@ -18,7 +18,7 @@
 		protected $settings = array(
 		
 			// Campfire API token
-			'token' => 'fe60001196978c55c19092b452e4c6386801a490',
+			'token' => '36dc1453e792f7226bdb60d7c5f787a44eb76fdf',
 			
 			// Campfire account name
 			'account' => 'ctsfla'

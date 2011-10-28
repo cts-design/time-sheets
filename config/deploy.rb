@@ -180,7 +180,7 @@ task :finalize_deploy, :roles => [:web] do
 	cake.schema.create
 	cake.schema.update
 	cake.aco_update
-	run "cd #{current_release} && cake campfire 'Deployed#{application}'"
+	run "cd #{current_release} && cake campfire 'Deployed #{branch} to #{deploy_to}'"
 	cake.cache.clear
 end	
 
