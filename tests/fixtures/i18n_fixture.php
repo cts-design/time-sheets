@@ -96,6 +96,62 @@ class I18nFixture extends CakeTestFixture {
 			'field' => 'title',
 			'content' => 'Fuerza de trabajo de reuniones'
 		),
+		array(
+			'id' => 11,
+			'locale' => 'en_us',
+			'model' => 'MasterKioskButton',
+			'foreign_key' => 14,
+			'field' => 'name',
+			'content' => 'Orientations'
+		),	
+		array(
+			'id' => 13,
+			'locale' => 'en_us',
+			'model' => 'MasterKioskButton',
+			'foreign_key' => 1,
+			'field' => 'name',
+			'content' => 'Cash Assistance & Food Stamps'
+		),
+		array(
+			'id' => 15,
+			'locale' => 'en_us',
+			'model' => 'MasterKioskButton',
+			'foreign_key' => 10,
+			'field' => 'name',
+			'content' => 'Veteran Services'
+		),
+		array(
+			'id' => 17,
+			'locale' => 'en_us',
+			'model' => 'MasterKioskButton',
+			'foreign_key' => 45,
+			'field' => 'name',
+			'content' => 'Scan Documents'
+		),
+		array(
+			'id' => 19,
+			'locale' => 'en_us',
+			'model' => 'MasterKioskButton',
+			'foreign_key' => 6,
+			'field' => 'name',
+			'content' => 'Look For A Job'
+		),
+		array(
+			'id' => 21,
+			'locale' => 'en_us',
+			'model' => 'MasterKioskButton',
+			'foreign_key' => 73,
+			'field' => 'name',
+			'content' => 'Register To Win A Kindle'
+		),
+		array(
+			'id' => 23,
+			'locale' => 'en_us',
+			'model' => 'MasterKioskButton',
+			'foreign_key' => 26,
+			'field' => 'name',
+			'content' => 'Cash Assistance (WTP)'
+		)		
 	);
 }
 ?>
