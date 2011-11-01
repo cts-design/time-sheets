@@ -235,6 +235,7 @@ Ext.onReady( function() {
 	
 	var other = Ext.create('Ext.form.field.Text', {
 		id: 'other',
+		name: 'other',
 		hideLabel: false,
 		allowBlank: false,
 		disabled: true,
@@ -339,7 +340,7 @@ Ext.onReady( function() {
 	    }	
 	});
 	
-	var other2 = other.cloneConfig({id: 'other2'});
+	var other2 = other.cloneConfig({id: 'other2', name: 'other'});
 		
 	var newRecord = Ext.create('Ext.form.Panel', {
 		width: 285,
@@ -361,6 +362,7 @@ Ext.onReady( function() {
 					var form = newRecord.getForm();
 					if(form.isValid()) {
 						var values = form.getValues();
+						console.log(values);
 					    form.reset();
 						level2Buttons2.disable();
 						level3Buttons2.disable();
@@ -377,7 +379,7 @@ Ext.onReady( function() {
 					        	'data[SelfSignLog][level_1]': values.level1,
 					        	'data[SelfSignLog][level_2]': values.level2,
 					        	'data[SelfSignLog][level_3]': values.level3,
-					        	'data[SelfSignLog][other]': values.other2
+					        	'data[SelfSignLog][other]': values.other
 					        },
 					        success: function(response, opts){			        	
 					        	var obj = Ext.decode(response.responseText);
