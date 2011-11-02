@@ -234,83 +234,187 @@ class User extends AppModel {
 			'firstname' => array(
 			    'notEmpty' => array(
 					'rule' => 'notEmpty',
-					'message' => 'Please provide a first name.'
+					'message' => 'Please provide a first name.',
+					'required' => true
 			    ),
 			    'maxlength' => array(
 					'rule' => array('maxlength', 50),
-					'message' => 'This field cannot excced 50 characters.'
-			    )
+					'message' => 'This field cannot excced 50 characters.',
+					'required' => true
+			    ),
 			),
 			'lastname' => array(
 			    'notEmpty' => array(
 					'rule' => 'notEmpty',
-					'message' => 'Please provide a last name.'
+					'message' => 'Please provide a last name.',
+					'required' => true
 			    ),
 			    'maxlength' => array(
 					'rule' => array('maxlength', 50),
-					'message' => 'This field cannot excced 50 characters.'
-			    )
+					'message' => 'This field cannot excced 50 characters.',
+					'required' => true
+			    ),
 			),
 			'ssn' => array(
 			    'notEmpty' => array(
 					'rule' => 'notEmpty',
-					'message' => 'Please provide a SSN.'
+					'message' => 'Please provide a SSN.',
+					'required' => true
 			    ),
 			    'numeric' => array(
 					'rule' => 'numeric',
-					'message' => 'Please provide only numbers, no spaces or dashes.'
+					'message' => 'Please provide only numbers, no spaces or dashes.',
+					'required' => true
 			    ),
 			    'unique' => array(
 					'rule' => 'isUnique',
-					'message' => 'The system is unable to register you at this time. Please see a representative for assistance'
+					'message' => 'The SSN entered already exists in the system.',
+					'required' => true
 			    ),
 			    'minLength' => array(
 					'rule' => array('minLength', 9),
-					'message' => 'SSN must be 9 characters.',
-			    )
+					'message' => 'SSN must be full 9 digits.',
+					'required' => true
+				)
 			),
 			'ssn_confirm' => array(
 			    'notEmpty' => array(
 					'rule' => 'notEmpty',
 					'message' => 'Please confirm the SSN.',
+					'required' => true
 			    ),
 			    'numeric' => array(
 					'rule' => 'numeric',
 					'message' => 'Please provide only numbers, no spaces or dashes.',
+					'required' => true
 			    ),
 			    'verify' => array(
 					'rule' => array('verifies', 'ssn'),
-					'message' => 'SSNs do not match.'
+					'message' => 'SSNs do not match.',
+					'required' => true
 			    ),
 			    'minLength' => array(
 					'rule' => array('minLength', 9),
-					'message' => 'SSN must be 9 characters.'
+					'message' => 'SSN must be full 9 digits.',
+					'required' => true
+				)		    
+			),
+			'address_1' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a street address.',
+					'required' => false
+				)
+			),
+			'city' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a city.',
+					'required' => false
+				)
+			),
+			'county' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a county.',
+					'required' => false
+				)
+			),
+			'state' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a state',
+					'required' => false
+				)
+			),
+			'zip' => array(
+			    'numeric' => array(
+					'rule' => 'numeric',
+					'message' => 'Please provide only numbers, no spaces or dashes.',
+					'required' => false
+			    ),
+			    'minLength' => array(
+					'rule' => array('minLength', 5),
+					'message' => 'Please enter 5 digit zip code.',
+					'required' => false
+			    ),
+			    'maxLength' => array(
+					'rule' => array('maxLength', 5),
+					'message' => 'Please enter 5 digit zip code.',
+					'required' => false
+			    )
+			),
+			'phone' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a phone number',
+					'required' => false
+				),
+			    'phone' => array(
+					'rule' => array('maxLength', 20),
+					'message' => 'Please no more than 20 characters.',
+					'required' => false
+			    )
+			),
+			'alt_phone' => array(
+			    'phone' => array(
+					'rule' => array('maxLength', 20),
+					'message' => 'Please no more than 20 characters.',
+					'required' => false
+			    )
+			),
+			'gender' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please select a gender.',
+					'required' => false
 			    )
 			),
 			'dob' => array(
 			    'notEmpty' => array(
 					'rule' => 'notEmpty',
-					'message' => 'Please provide date of birth.'
+					'message' => 'Please provide date of birth.',
+					'required' => false
 			    ),
 			    'date' => array(
 					'rule' => array('date', 'mdy'),
-					'message' => 'Please provide a valid date in this format mm/dd/yyyy.'
+					'message' => 'Please provide a valid date in this format mm/dd/yyyy.',
+					'required' => false
 			    )
 			),
-			'zip' => array(
-			    'numeric' => array(
-					'rule' => 'numeric',
-					'message' => 'Please provide only numbers, no spaces or dashes.'
-			    ),
-			    'minLength' => array(
-					'rule' => array('minLength', 5),
-					'message' => 'Please enter 5 digit zip code.'
-			    ),
-			    'maxLength' => array(
-					'rule' => array('maxLength', 5),
-					'message' => 'Please enter 5 digit zip code.'
-			    )
-			)		
+			'email' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide an email address.',
+					'required' => false
+				),
+			    'email' => array(
+					'rule' => 'email',
+					'message' => 'Must be a vaild email like bob@test.com.',
+				    'required' => false
+				)
+			),
+			'language' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a language.',
+					'required' => false
+				)
+			),
+			'ethnicity' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please select a ethnicity.',
+					'required' => false
+				)
+			),
+			'race' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please select race.',
+					'required' => false
+				)
+			) 		
 		),
 		'selfSignEdit' => array(
 			'firstname' => array(
