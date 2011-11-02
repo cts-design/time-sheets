@@ -81,16 +81,22 @@ class AppController extends Controller {
 		'WY'=>"Wyoming");
 		
     function beforeFilter() {
-		parent::beforeFilter();
-
+		parent::beforeFilter();	
 		if(! defined('CAKEPHP_TEST_SUITE')) {
 			define('CAKEPHP_TEST_SUITE', false);
 		}
-		
+		if(!Cache::read('settings')) {
+			$this->loadModel('Setting');
+			$settings = $this->Setting->find('all', array('fields' => array('name', 'module', 'value')));
+			foreach($settings as $setting) {
+				$arr[$setting['Setting']['module']][$setting['Setting']['name']] = 
+					$setting['Setting']['value'];
+			}
+			Cache::write('settings', $arr);
+		}
 		if ($this->RequestHandler->isAjax()) {
 			Configure::write('debug', 0);
-		}
-		
+		}	
 		$this->Auth->autoRedirect = false;
 		$this->Auth->authorize = 'actions';
 		$this->Auth->actionPath = 'controllers/';
