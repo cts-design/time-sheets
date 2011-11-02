@@ -97,7 +97,9 @@ class KiosksController extends AppController {
 	}
 
 	function kiosk_self_sign_confirm() {
-		$this->set('title_for_layout', 'Self Sign Kiosk');
+		$fields = $this->getKioskRegistraionFields();
+		$title_for_layout = 'Self Sign Kiosk';		
+		$this->set(compact('title_for_layout', 'fields'));
 		$this->layout = 'kiosk';
 	}
 
@@ -112,7 +114,7 @@ class KiosksController extends AppController {
 			if($this->User->save($this->data)) {
 				$this->Transaction->createUserTransaction('Self Sign', $id, $this->Kiosk->getKioskLocationId(), 'Edited information');
 				$this->Session->setFlash(__('The information has been saved', true), 'flash_success');
-				$this->redirect( array('action' => 'self_sign_service_selection'));
+				$this->redirect( array('action' => 'self_sign_service_selection', 'kiosk' => true));
 			}
 			else {
 				$this->Session->setFlash(__('The information could not be saved. Please, try again.', true), 'flash_failure');
@@ -121,7 +123,10 @@ class KiosksController extends AppController {
 		if(empty($this->data)) {
 			$this->data = $this->User->read(null, $id);
 		}
-		$this->set('title_for_layout', 'Self Sign Kiosk');
+		$title_for_layout = 'Self Sign Kiosk';
+		$states = $this->states;
+		$fields = $this->getKioskRegistraionFields();
+		$this->set(compact('title_for_layout', 'states', 'fields'));
 		$this->layout = 'kiosk';
 	}
 
@@ -432,5 +437,11 @@ class KiosksController extends AppController {
 		}
 		
 		$this->redirect($this->referer(), null, true); 
+	}
+	
+	private function getKioskRegistraionFields() {
+		$settings = Cache::read('settings');	
+		return Set::extract('/field',  json_decode($settings['SelfSign']['KioskRegistration'], true));
+				
 	}
 }
