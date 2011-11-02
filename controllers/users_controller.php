@@ -477,7 +477,11 @@ class UsersController extends AppController {
 		if (empty($this->data)) {
 		    $this->data['User']['lastname'] = $lastname;
 		}
-		$this->set('title_for_layout', 'Self Sign Kiosk');
+		$settings = Cache::read('settings');	
+		$fields = Set::extract('/field',  json_decode($settings['SelfSign']['KioskRegistration'], true));			
+		$title_for_layout = 'Self Sign Kiosk';
+		$states = $this->states;
+		$this->set(compact('title_for_layout', 'states', 'fields'));
 		$this->layout = 'kiosk';
     }
     
