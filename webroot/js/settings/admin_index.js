@@ -107,7 +107,7 @@ Ext.onReady(function(){
 	});
 	
 	var settingsTabs = Ext.create('Ext.tab.Panel', {
-		height: 400,
+		height: 500,
 		width: 950,
 		frame: true,
 		renderTo: 'settingsTabs',
