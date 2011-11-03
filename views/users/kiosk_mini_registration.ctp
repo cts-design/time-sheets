@@ -52,7 +52,8 @@
 				'options' => array('Jr' => 'Jr', 'Sr' => 'Sr', 'III' => 'III'),
 				'before' => '<p class="left">',
 				'between' => '</p><p class="left">',
-				'after' => '</p>'));		
+				'after' => '</p>'));
+			echo '<br class="clear"/>';				
 		}
 		if(in_array('gender', $fields))	{
 			echo $this->Form->input('gender', array(
@@ -60,7 +61,8 @@
 				'type' => 'select',
 				'before' => '<p class="left">',
 				'between' => '</p><p class="left">',
-				'after' => '</p>'));			
+				'after' => '</p>'));
+			echo '<br class="clear"/>';					
 		}
 		
 		// required fields
@@ -94,49 +96,56 @@
 				'label' => __('Address', true),
 				'before' => '<p class="left">',
 				'between' => '</p><p class="left">',
-				'after' => '</p>'));			
+				'after' => '</p>'));
+			echo '<br class="clear"/>';					
 		}
 		if(in_array('city', $fields)) {
 			echo $this->Form->input('city', array(
 				'label' => __('City', true),
 				'before' => '<p class="left">',
 				'between' => '</p><p class="left">',
-				'after' => '</p>'));			
+				'after' => '</p>'));
+			echo '<br class="clear"/>';					
 		}
 		if(in_array('county', $fields)) {
 			echo $this->Form->input('county', array(
 				'label' => __('County', true),
 				'before' => '<p class="left">',
 				'between' => '</p><p class="left">',
-				'after' => '</p>'));		
+				'after' => '</p>'));	
+			echo '<br class="clear"/>';		
 		}
 		if(in_array('state', $fields)) {
 			echo $this->Form->input('state', array(
 				'empty' => 'Please Select',
 				'before' => '<p class="left">',
 				'between' => '</p><p class="left">',
-				'after' => '</p>'));		
+				'after' => '</p>'));
+			echo '<br class="clear"/>';				
 		}
 		if(in_array('zip', $fields)) {
 		    echo $this->Form->input('zip', array(
 				'label' => __('Zip Code', true),
 				'before' => '<p class="left">',
 				'between' => '</p><p class="left">',
-				'after' => '</p>'));			
+				'after' => '</p>'));
+			echo '<br class="clear"/>';					
 		}
 		if(in_array('phone', $fields)) {
 		    echo $this->Form->input('phone', array(
 				'label' => __('Phone', true),
 				'before' => '<p class="left">',
 				'between' => '</p><p class="left">',
-				'after' => '</p>'));			
+				'after' => '</p>'));
+			echo '<br class="clear"/>';				
 		}
 		if(in_array('email', $fields)) {
 			echo $this->Form->input('email', array(
 				'label' => __('Email Address', true),
 				'before' => '<p class="left">',
 				'between' => '</p><p class="left">',
-				'after' => '</p>'));			
+				'after' => '</p>'));
+			echo '<br class="clear"/>';					
 		}
 		if(in_array('language', $fields)) {
 			echo $this->Form->input('language', array(
@@ -146,7 +155,8 @@
 				'options' => array('English' => 'English', 'Spanish' => 'Spanish', 'Other' => 'Other'), 
 				'before' => '<p class="left">',
 				'between' => '</p><p class="left">',
-				'after' => '</p>'));			
+				'after' => '</p>'));	
+			echo '<br class="clear"/>';				
 		}
 		if(in_array('ethnicity', $fields)) {
 			echo $this->Form->input('ethnicity', array(
@@ -158,7 +168,8 @@
 					'Not Hispanic or Latino' => 'Not Hispanic or Latino'), 
 				'before' => '<p class="left">',
 				'between' => '</p><p class="left">',
-				'after' => '</p>'));		
+				'after' => '</p>'));	
+			echo '<br class="clear"/>';			
 		}
 		if(in_array('race', $fields)) {
 			echo $this->Form->input('race', array(
@@ -173,10 +184,9 @@
 					'White' => 'White'),
 				'before' => '<p class="left">',
 				'between' => '</p><p class="left">',
-				'after' => '</p>'));				
+				'after' => '</p>'));
+			echo '<br class="clear"/>';						
 		}
-	
-	
 	    echo $this->Form->hidden('mini_registration', array('value' => 'kiosk'));
 	    ?>
 	</fieldset>
