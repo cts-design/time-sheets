@@ -208,7 +208,7 @@ class UsersController extends AppController {
 		$this->set('title_for_layout', 'Add Customer');
 		if (!empty($this->data)) {
 		    $this->User->create();
-			$this->User->setValidation('adminAddCustomer');
+			$this->User->editValidation('customer');
 		    if ($this->User->save($this->data)) {
 				$this->Transaction->createUserTransaction('Customer', 
 					null, null, 'Added customer '. $this->data['User']['lastname'] . 
@@ -236,6 +236,7 @@ class UsersController extends AppController {
 		    $this->redirect(array('action' => 'index'));
 		}
 		if (!empty($this->data)) {
+			$this->User->editValidation('customer');
 		    if ($this->User->save($this->data)) {
 				$this->Transaction->createUserTransaction('Customer',
 					null, null, 'Edited customer '. $this->data['User']['lastname'] . 
@@ -271,7 +272,6 @@ class UsersController extends AppController {
 		    $this->redirect('/');
 		}
 		if (!empty($this->data)) {
-			$this->User->setValidation('cusEditProfile');
 		    if ($this->User->save($this->data)) {
 		    	$this->Session->write('Auth.User.email', $this->data['User']['email']);
 				$this->Transaction->createUserTransaction('Customer',
@@ -394,10 +394,10 @@ class UsersController extends AppController {
 		    $this->User->create();
 			if(Configure::read('Registration.ssn') == 'last4') {
 				if($this->data['User']['registration'] == 'child_website') {
-					$this->User->setValidation('childLast4Rules');
+					$this->User->editValidation('last4');
 				}	
 				else {
-					$this->User->setValidation('last4Rules');
+					$this->User->editValidation('last4');
 				}
 				if(Configure::read('Registration.ssn') == 'last4'){
 					$this->data['User']['ssn'] = 
@@ -409,9 +409,6 @@ class UsersController extends AppController {
 						$this->data['User']['ssn_2_confirm'] . 
 						$this->data['User']['ssn_3_confirm']; 
 				}				
-			}
-			if(Configure::read('Registration.ssn') == 'full') {
-				$this->User->setValidation('publicWebFormRules');				
 			}
 		    if ($this->User->save($this->data)) {
 				$userId = $this->User->getInsertId();
@@ -458,7 +455,6 @@ class UsersController extends AppController {
 		if (!empty($this->data)) {
 			$this->User->Behaviors->disable('Disableable');	
 		    $this->User->create();
-			$this->User->setValidation('miniRegistration');
 		    if ($this->User->save($this->data)) {
 				$userId = $this->User->getInsertId();
 				$last4 = substr($this->data['User']['ssn'], -4);
@@ -486,7 +482,6 @@ class UsersController extends AppController {
     }
     
     function admin_login() {
-    	$this->User->setValidation('adminLogin');
 		if($this->RequestHandler->isAjax()) {
 		    $this->Auth->login($this->data);
 		    if($this->Auth->user()) {
