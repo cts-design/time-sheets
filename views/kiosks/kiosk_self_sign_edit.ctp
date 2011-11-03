@@ -23,6 +23,7 @@
 	));
 	echo $this->Form->input('User.lastname', array(
 	    'label' => __('Last Name', true),
+	    'readonly' => 'readonly',
 	    'before' => '<p class="left">',
 	    'between' => '</p><p class="left">',
 	    'after' => '</p><br class="clear"/>'
