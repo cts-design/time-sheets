@@ -66,19 +66,74 @@
 		}
 		
 		// required fields
-	    echo $this->Form->input('ssn', array(
-		'label' => __('SSN', true),
-		'before' => '<p class="left">',
-		'between' => '</p><p class="left">',
-		'after' => '</p>'));
-	    echo '<br class="clear"/>';
-	    echo $this->Form->input('ssn_confirm', array(
-		'label' => __('SSN Confirm', true),
-		'maxlength' => 9,
-		'before' => '<p class="left">',
-		'between' => '</p><p class="left">',
-		'after' => '</p>'));
-	    echo '<br class="clear"/>';
+		
+		if(Configure::read('Registration.ssn') == 'full') {
+			
+		    echo $this->Form->input('ssn', array(
+			'label' => __('SSN', true),
+			'before' => '<p class="left">',
+			'between' => '</p><p class="left">',
+			'after' => '</p>'));
+		    echo '<br class="clear"/>';
+		    echo $this->Form->input('ssn_confirm', array(
+			'label' => __('SSN Confirm', true),
+			'maxlength' => 9,
+			'before' => '<p class="left">',
+			'between' => '</p><p class="left">',
+			'after' => '</p>'));
+		    echo '<br class="clear"/>';
+		}
+		elseif(Configure::read('Registration.ssn') == 'last4') {
+			echo '<div class="input required">';
+				echo $this->Form->label(__('Social Security Number', true));
+				echo '<br />';	
+				echo $this->Form->input('ssn_1', array(
+					'type' => 'text',
+					'div' => false,
+					'maxlength' => 3, 
+					'label' => false));
+				echo $this->Form->input('ssn_2', array(
+					'type' => 'text',
+					'maxlength' => 2,
+					'label' => false,
+					'div' => false));
+				echo $this->Form->input('ssn_3', array(
+					'type' => 'text',
+					'maxLength' => 4,
+					'label' => false,
+					'div' => false));
+				echo "<br class='clear' />";
+				echo '<div class="small">Please see the <a href="#">privacy act</a> statement concerning social security numbers.</div>';	
+				echo $this->Form->error('ssn');
+			echo '</div>';
+			echo '<div class="input required">';
+				echo $this->Form->label(__('Please confirm your Social Security Number', true));
+				echo '<br />';			
+				echo $this->Form->input('ssn_1_confirm', array(
+					'type' => 'text',
+					'maxlength' => 3,
+					'label' => false,
+					'div' => false));
+				echo $this->Form->input('ssn_2_confirm', array(
+					'type' => 'text',
+					'maxlength' => 2,
+					'label' => false,
+					'div' => false));
+				echo $this->Form->input('ssn_3_confirm', array(
+					'type' => 'text',
+					'maxlength' => 4,
+					'label' => false,
+					'div' => false,
+					'after' => '<br />'));
+				echo $this->Form->error('ssn_confirm');
+			echo '</div>';					
+		}		
+		
+		
+		
+		
+		
+
 		
 		//dynamic fields
 		if(in_array('dob', $fields)) {
