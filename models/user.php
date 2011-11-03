@@ -437,19 +437,121 @@ class User extends AppModel {
 					'message' => 'This field cannot excced 50 characters.'
 			    ),
 			),
+			'address_1' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a street address.',
+					'required' => false
+				)
+			),
+			'city' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a city.',
+					'required' => false
+				)
+			),
+			'county' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a county.',
+					'required' => false
+				)
+			),
+			'state' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a state',
+					'required' => false
+				)
+			),
 			'zip' => array(
 			    'numeric' => array(
 					'rule' => 'numeric',
-					'message' => 'Please provide only numbers, no spaces or dashes.'
+					'message' => 'Please provide only numbers, no spaces or dashes.',
+					'required' => false
 			    ),
 			    'minLength' => array(
 					'rule' => array('minLength', 5),
-					'message' => 'Please enter 5 digit zip code.'
+					'message' => 'Please enter 5 digit zip code.',
+					'required' => false
 			    ),
 			    'maxLength' => array(
 					'rule' => array('maxLength', 5),
-					'message' => 'Please enter 5 digit zip code.'
+					'message' => 'Please enter 5 digit zip code.',
+					'required' => false
 			    )
+			),
+			'phone' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a phone number',
+					'required' => false
+				),
+			    'phone' => array(
+					'rule' => array('maxLength', 20),
+					'message' => 'Please no more than 20 characters.',
+					'required' => false
+			    )
+			),
+			'alt_phone' => array(
+			    'phone' => array(
+					'rule' => array('maxLength', 20),
+					'message' => 'Please no more than 20 characters.',
+					'required' => false
+			    )
+			),
+			'gender' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please select a gender.',
+					'required' => false
+			    )
+			),
+			'dob' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide date of birth.',
+					'required' => false
+			    ),
+			    'date' => array(
+					'rule' => array('date', 'mdy'),
+					'message' => 'Please provide a valid date in this format mm/dd/yyyy.',
+					'required' => false
+			    )
+			),
+			'email' => array(
+			    'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide an email address.',
+					'required' => false
+				),
+			    'email' => array(
+					'rule' => 'email',
+					'message' => 'Must be a vaild email like bob@test.com.',
+				    'required' => false
+				)
+			),
+			'language' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a language.',
+					'required' => false
+				)
+			),
+			'ethnicity' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please select a ethnicity.',
+					'required' => false
+				)
+			),
+			'race' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please select race.',
+					'required' => false
+				)
 			)			
 		),
 		'admin' => array(
