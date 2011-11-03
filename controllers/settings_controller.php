@@ -1,54 +1,43 @@
 <?php
 class SettingsController extends AppController {
 
-	var $name = 'Settings';
+	public $name = 'Settings';
 
-	function admin_index() {
+	public function admin_index() {
 		$this->Setting->recursive = 0;
 		$this->set('settings', $this->paginate());
 	}
+	
+	public function admin_kiosk_registration() {
+		if($this->RequestHandler->isAjax()) {
+			$settings = $this->Setting->findByName('KioskRegistration', array('id','value'));
+			$fields = array();
+			if(isset($this->params['form']['fields']) && $this->params['form']['fields'] != '') {
+				$arr = explode(',', $this->params['form']['fields']);
+				$i = 0;
+				foreach ($arr as $key => $value) {
+					$fields[$i]['field'] = $value;
+					$i++;
+				}
+				$this->data['Setting']['id'] = $settings['Setting']['id'];
+				$this->data['Setting']['value'] = json_encode($fields);
+				if($this->Setting->save($this->data)) {
+					Cache::delete('settings');
+					$data['success'] = true;
+					$data['message'] = 'Kiosk registration settings updated successfully';
+					$settings = $this->Setting->findByName('KioskRegistration', array('id','value'));
+				}
+				else {
+					$data['success'] = false;
+					$data['message'] = 'Kiosk registration settings could not be updated';					
+				}				
+			}			
+			$data['fields'] = json_decode($settings['Setting']['value'], true);
 
-	function admin_add() {
-		if (!empty($this->data)) {
-			$this->Setting->create();
-			if ($this->Setting->save($this->data)) {
-				$this->Session->setFlash(__('The setting has been saved', true), 'flash_success');
-				$this->redirect(array('action' => 'index'));
-			} else {
-				$this->Session->setFlash(__('The setting could not be saved. Please, try again.', true), 'flash_failure');
-			}
-		}
-	}
 
-	function admin_edit($id = null) {
-		if (!$id && empty($this->data)) {
-			$this->Session->setFlash(__('Invalid setting', true), 'flash_failure');
-			$this->redirect(array('action' => 'index'));
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
 		}
-		if (!empty($this->data)) {
-			if ($this->Setting->save($this->data)) {
-				$this->Session->setFlash(__('The setting has been saved', true), 'flash_success');
-				$this->redirect(array('action' => 'index'));
-			} else {
-				$this->Session->setFlash(__('The setting could not be saved. Please, try again.', true), 'flash_failure');
-			}
-		}
-		if (empty($this->data)) {
-			$this->data = $this->Setting->read(null, $id);
-		}
-	}
-
-	function admin_delete($id = null) {
-		if (!$id) {
-			$this->Session->setFlash(__('Invalid id for setting', true), 'flash_failure');
-			$this->redirect(array('action'=>'index'));
-		}
-		if ($this->Setting->delete($id)) {
-			$this->Session->setFlash(__('Setting deleted', true), 'flash_success');
-			$this->redirect(array('action'=>'index'));
-		}
-		$this->Session->setFlash(__('Setting was not deleted', true), 'flash_failure');
-		$this->redirect(array('action' => 'index'));
 	}
 }
 ?>
