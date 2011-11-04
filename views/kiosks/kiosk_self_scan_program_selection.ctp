@@ -6,7 +6,12 @@
  */
 
 ?>
-<div id="selfScanProgram" class="self-scan-wrapper">
+<?php if($this->Session->read('Config.language') == 'es-es')  : ?>
+	<div id="selfScanProgram" class="self-scan-wrapper spanish">
+<?php else : ?>
+	<div id="selfScanProgram" class="self-scan-wrapper">
+<?php endif ?>	
+
 	<h1><?php printf(__('Select program to scan document for %s, %s', true), $this->Session->read('Auth.User.lastname'), $this->Session->read('Auth.User.firstname')) ?></h1>
     <?php echo $this->Session->flash(); ?>
     <div class="actions">
