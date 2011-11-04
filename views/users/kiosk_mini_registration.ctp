@@ -7,7 +7,7 @@
  */
 ?>
 
-<?php echo $this->Html->script('users/mini.registration', array('inline' => 'false')) ?>
+<?php echo $this->Html->script('users/mini.registration', array('inline' => false)) ?>
 <div id="miniRegistration" class="self-sign-wrapper">
     <h2>
     <?php __('It appears that we don\'t have a record for you in our database.') ?>
@@ -84,48 +84,52 @@
 		    echo '<br class="clear"/>';
 		}
 		elseif(Configure::read('Registration.ssn') == 'last4') {
-			echo '<div class="input required">';
-				echo $this->Form->label(__('Social Security Number', true));
-				echo '<br />';	
-				echo $this->Form->input('ssn_1', array(
-					'type' => 'text',
-					'div' => false,
-					'maxlength' => 3, 
-					'label' => false));
-				echo $this->Form->input('ssn_2', array(
-					'type' => 'text',
-					'maxlength' => 2,
-					'label' => false,
-					'div' => false));
-				echo $this->Form->input('ssn_3', array(
-					'type' => 'text',
-					'maxLength' => 4,
-					'label' => false,
-					'div' => false));
-				echo "<br class='clear' />";
-				echo '<div class="small">Please see the <a href="#">privacy act</a> statement concerning social security numbers.</div>';	
+			echo '<div class="input text required ssn4">';
+				echo '<p class="left">';
+					echo $this->Form->label(__('Social Security Number', true));
+				echo '</p><p class="left">';
+					echo $this->Form->input('ssn_1', array(
+						'type' => 'text',
+						'div' => false,
+						'maxlength' => 3, 
+						'label' => false));
+					echo $this->Form->input('ssn_2', array(
+						'type' => 'text',
+						'maxlength' => 2,
+						'label' => false,
+						'div' => false));
+					echo $this->Form->input('ssn_3', array(
+						'type' => 'text',
+						'maxLength' => 4,
+						'label' => false,
+						'div' => false));
+				
+				echo '</p>';	
 				echo $this->Form->error('ssn');
 			echo '</div>';
-			echo '<div class="input required">';
-				echo $this->Form->label(__('Please confirm your Social Security Number', true));
-				echo '<br />';			
-				echo $this->Form->input('ssn_1_confirm', array(
-					'type' => 'text',
-					'maxlength' => 3,
-					'label' => false,
-					'div' => false));
-				echo $this->Form->input('ssn_2_confirm', array(
-					'type' => 'text',
-					'maxlength' => 2,
-					'label' => false,
-					'div' => false));
-				echo $this->Form->input('ssn_3_confirm', array(
-					'type' => 'text',
-					'maxlength' => 4,
-					'label' => false,
-					'div' => false,
-					'after' => '<br />'));
-				echo $this->Form->error('ssn_confirm');
+			echo "<br class='clear' />";
+			echo '<div class="input required ssn4">';
+				echo '<p class="left">';
+					echo $this->Form->label(__('Confirm Social Security Number', true));
+				echo '</p><p class="left">';			
+					echo $this->Form->input('ssn_1_confirm', array(
+						'type' => 'text',
+						'maxlength' => 3,
+						'label' => false,
+						'div' => false));
+					echo $this->Form->input('ssn_2_confirm', array(
+						'type' => 'text',
+						'maxlength' => 2,
+						'label' => false,
+						'div' => false));
+					echo $this->Form->input('ssn_3_confirm', array(
+						'type' => 'text',
+						'maxlength' => 4,
+						'label' => false,
+						'div' => false,
+						'after' => '<br />'));
+				echo '</p>';	
+					echo $this->Form->error('ssn_confirm');
 			echo '</div>';					
 		}		
 		
@@ -248,5 +252,6 @@
 	<?php echo $this->Form->end(array('label' => __('Submit', true), 'class' => 'self-sign-kiosk-button left')); ?>
 	<?php echo $this->Html->link(__('Cancel', true), array('controller' => 'users', 'action' => 'self_sign_login'),
 		 array('class' => 'self-sign-kiosk-link left'))?>
+		 <br class='clear' />
     </div>
 </div>
