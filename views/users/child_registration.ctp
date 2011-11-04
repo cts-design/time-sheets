@@ -169,11 +169,13 @@ $(document).ready(function() {
 			'https://www.google.com/accounts/NewAccount?service=mail&continue=
 			http://mail.google.com/mail/e-11-149ff52bbc80936376c01275ce56c7-f2297e1257c13b74d3ba16b09f1177fc98da2414&type=2',
 			array('target' => '_blank')) . '</p>'));	
-
 		echo $this->Form->input('language', array(
 			'label' => __('Child\'s Primary Spoken Language', true),
+			'type' => 'select',
+			'empty' => 'Please Select',
+			'options' => array('English' => 'English', 'Spanish' => 'Spanish', 'Other' => 'Other'), 
 			'between' => '<br />',
-			'after' => '<br />'));	
+			'after' => '<br />'));
 		echo $this->Form->input('ethnicity', array(
 			'label' => __('Child\'s Ethnicity', true),
 			'type' => 'select',

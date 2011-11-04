@@ -130,11 +130,13 @@
 		    'after' => '</p>'
 	    ));
 	    echo '<br class="clear" />' ;
-	    echo $this->Form->input('language', array(
+		echo $this->Form->input('language', array(
+			'type' => 'select',
+			'empty' => 'Please Select',
+			'options' => array('English' => 'English', 'Spanish' => 'Spanish', 'Other' => 'Other'), 
 		    'before' => '<p class="left">',
 		    'between' => '</p><p class="left">',
-		    'after' => '</p>'
-	    ));		
+		    'after' => '</p>'));	
 	    echo '<br class="clear" />' ;
 	    echo $this->Form->input('race', array(
 	    	'type' => 'select',
