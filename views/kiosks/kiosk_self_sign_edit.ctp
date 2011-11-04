@@ -7,7 +7,7 @@
  */
 ?>
 
-<div class="self-sign-wrapper">
+<div id="selfSignEdit" class="self-sign-wrapper">
 	<h1><?php __('Please correct the information we have on file.') ?></h1>
     <?php echo $this->Session->flash(); ?>
     <?php echo $this->Form->create('Kiosk'); ?>
@@ -23,6 +23,7 @@
 	));
 	echo $this->Form->input('User.lastname', array(
 	    'label' => __('Last Name', true),
+	    'class' => 'readonly',
 	    'readonly' => 'readonly',
 	    'before' => '<p class="left">',
 	    'between' => '</p><p class="left">',
