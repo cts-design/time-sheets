@@ -6,7 +6,14 @@
  * @package ATLAS V3
  */
 ?>
-
+<?php echo $this->Html->scriptStart() ?>
+	$(document).ready(function(){
+		$('#UserSelfSignLoginForm').submit(function(){
+			$('.self-sign-kiosk-button').button("disable");
+			return true;
+		});
+	});
+<?php echo $this->Html->scriptEnd() ?>
 <div class="self-sign-wrapper">
     <h1><?php printf(__('Welcome to %s. Please sign in here.', true), Configure::read('Company.name')) ?></h1>
     <div id="errorMessage"></div>
