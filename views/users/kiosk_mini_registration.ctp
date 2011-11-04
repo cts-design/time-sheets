@@ -59,6 +59,7 @@
 			echo $this->Form->input('gender', array(
 				'label' => __('Gender', true),
 				'type' => 'select',
+				'empty' => 'Select Gender',
 				'before' => '<p class="left">',
 				'between' => '</p><p class="left">',
 				'after' => '</p>'));

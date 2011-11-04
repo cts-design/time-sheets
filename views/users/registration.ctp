@@ -56,6 +56,7 @@ $(document).ready(function() {
 		echo $this->Form->input('gender', array(
 			'label' => __('Gender', true),
 			'type' => 'select',
+			'empty' => 'Select Gender',
 			'options' => array('Male' => 'Male', 'Female' => 'Female'),
 			'between' => '<br />',
 			'after' => '<br />'));
