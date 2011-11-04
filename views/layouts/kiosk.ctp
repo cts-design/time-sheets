@@ -74,13 +74,14 @@
 	    		<p style="font-family: Arial, 'sans-serif'; font-size: 16px; text-align: center;"><a class="translate-button" href="/kiosk/kiosks/set_language/en">English</a></p> </div>
 	    	<?php endif ?>
 	    <div id="footer">
-        <span id="copyright" class="left">
-        <?php printf(__('%s is an equal opportunity employer/program. Auxiliary aids and services are available upon request to individuals with disabilities.', true), Configure::read('Company.name')) ?>
-		<br />
-        <?php __('All voice telephone numbers listed on this website may be reached by persons using TTY/TDD equipment via the Florida Relay Service at 711.') ?>
-		<br />
-        <?php printf(__('ATLAS is a trademark of Complete Technology Solutions Copyright &copy; %s - Complete Technology Solutions. All Rights Reserved.</span>', true), date('Y')) ?>
-		<?php echo $this->Html->image('employ_florida_logo.jpg', array('class' => 'right'))?>
+	        <p id="copyright" class="left">
+		        <?php printf(__('%s is an equal opportunity employer/program. Auxiliary aids and services are available upon request to individuals with disabilities.', true), Configure::read('Company.name')) ?>
+				<br />
+		        <?php __('All voice telephone numbers listed on this website may be reached by persons using TTY/TDD equipment via the Florida Relay Service at 711.') ?>
+				<br />
+		        <?php printf(__('ATLAS is a trademark of Complete Technology Solutions Copyright &copy; %s - Complete Technology Solutions. All Rights Reserved.</span>', true), date('Y')) ?>
+			</p>
+			<?php echo $this->Html->image('employ_florida_logo.jpg', array('class' => 'right'))?>
 	    </div>
 	</div>
 	<?php echo $this->Js->writeBuffer(); ?>
