@@ -497,15 +497,15 @@ div.required label:after {
 
 /* Registration */
 
-#UserSsn1, #UserSsn1Confirm  {
+#password_UserSsn1, #password_UserSsn1Confirm  {
 	width: 25px;
 }
 
-#UserSsn2Confirm, #UserSsn2 {
+#password_UserSsn2Confirm, #password_UserSsn2 {
 	width: 20px;
 }
 
-#UserSsn3, #UserSsn3Confirm {
+#password_UserSsn3, #password_UserSsn3Confirm {
 	width: 30px;
 }
 
