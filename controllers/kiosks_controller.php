@@ -386,7 +386,8 @@ class KiosksController extends AppController {
 			}
 		}
 		$locationId = $this->Kiosk->getKioskLocationId();
-		$this->set(compact('selfScanCatId', 'queueCatId', 'locationId'));
+		$referer = '/kiosk/kiosks/self_scan_program_selection';
+		$this->set(compact('selfScanCatId', 'queueCatId', 'locationId', 'referer'));
 		$this->layout = 'kiosk';
 	}
 
