@@ -316,6 +316,8 @@ class UsersController extends AppController {
 		$this->Kiosk->recursive = -1;
 		$this->Kiosk->Behaviors->attach('Containable');
 		$this->Kiosk->contain(array('KioskSurvey'));
+		$settings = Cache::read('settings');	
+		$fields = Set::extract('/field',  json_decode($settings['SelfSign']['KioskRegistration'], true));
 		
 		$kiosk = $this->Kiosk->find('first', array(
 			'conditions' => array(
@@ -323,9 +325,16 @@ class UsersController extends AppController {
 				
 		if (isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'kiosk') {
 		    if ($this->Auth->user()) {
-			$this->Transaction->createUserTransaction('Self Sign', 
-				null, $this->User->SelfSignLog->Kiosk->getKioskLocationId(), 'Logged in at self sign kiosk' );
-			$this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_confirm'));
+		    	$user = $this->Auth->user();
+				foreach($user['User'] as $k => $v) {
+					if(in_array($k, $fields) && empty($v)) {
+						$this->redirect(
+							array('controller' => 'kiosks', 'action' => 'self_sign_edit', $user['User']['id']));
+					} 
+				}
+				$this->Transaction->createUserTransaction('Self Sign', 
+					null, $this->User->SelfSignLog->Kiosk->getKioskLocationId(), 'Logged in at self sign kiosk' );
+				$this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_confirm'));
 		    }
 		}
 		$this->set('kioskHasSurvey', (empty($kiosk['KioskSurvey'])) ? false : true);
