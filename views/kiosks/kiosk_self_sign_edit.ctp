@@ -6,7 +6,14 @@
  * @package ATLAS V3
  */
 ?>
-
+<?php echo $this->Html->scriptStart() ?>
+	$(document).ready(function(){
+		$('#KioskKioskSelfSignEditForm').submit(function(){
+			$('.self-sign-kiosk-button').button("disable");
+			return true;
+		});
+	});
+<?php echo $this->Html->scriptEnd() ?>
 <div id="selfSignEdit" class="self-sign-wrapper">
 	<h1><?php __('Please correct the information we have on file.') ?></h1>
     <?php echo $this->Session->flash(); ?>
