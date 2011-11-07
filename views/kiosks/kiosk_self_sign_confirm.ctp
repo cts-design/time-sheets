@@ -6,7 +6,16 @@
  * @package ATLAS V3
  */
 ?>
-
+<?php echo $this->Html->scriptStart() ?>
+	$(document).ready(function(){	
+		$('a').click(function(e){
+			e.preventDefault();
+			var link = $(this).attr('href');
+			$('.self-sign-kiosk-link').button("disable");
+			window.location.href = link;
+		});
+	});
+<?php echo $this->Html->scriptEnd() ?>
 <div id="selfSignConfirm" class="self-sign-wrapper">
 	<h1><?php __('Please verify that the information we have in our records is correct.') ?> </h1>
     <br />
