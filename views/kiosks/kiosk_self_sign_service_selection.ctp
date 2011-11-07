@@ -6,6 +6,18 @@
  * @package ATLAS V3
  */
 ?>
+<?php echo $this->Html->scriptStart() ?>
+	$(document).ready(function(){	
+		$('a').click(function(e){
+			e.preventDefault();
+			var link = $(this).attr('href');
+			$('.self-sign-kiosk-link').button("disable");
+			if(link) {
+				window.location.href = link;	
+			}	
+		});
+	});
+<?php echo $this->Html->scriptEnd() ?>
 <?php if($this->Session->read('Config.language') == 'es-es')  : ?>
 	<div id="selfSignService" class="self-sign-wrapper spanish">
 <?php else : ?>
