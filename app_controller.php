@@ -92,7 +92,7 @@ class AppController extends Controller {
 				$arr[$setting['Setting']['module']][$setting['Setting']['name']] = 
 					$setting['Setting']['value'];
 			}
-			if($arr) {
+			if(isset($arr)) {
 				Cache::write('settings', $arr);
 			}
 			
