@@ -17,12 +17,12 @@ class SettingFixture extends CakeTestFixture {
 	var $records = array(
 		array(
 			'id' => 1,
-			'module' => 'Lorem ipsum dolor sit amet',
-			'name' => 'Lorem ipsum dolor sit amet',
-			'value' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
+			'module' => 'SelfSign',
+			'name' => 'KioskRegistration',
+			'value' => '[{"field":"phone"},{"field":"race"},{"field":"address_1"}]',
 			'created' => '2011-11-01 17:01:04',
 			'modified' => '2011-11-01 17:01:04'
-		),
+		)
 	);
 }
 ?>
