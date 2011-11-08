@@ -18,9 +18,14 @@ class SettingsController extends AppController {
 				foreach ($arr as $key => $value) {
 					$fields[$i]['field'] = $value;
 					$i++;
+				}
+				if($settings) {
+					$this->data['Setting']['id'] = $settings['Setting']['id'];
 				}			
-				$this->data['Setting']['id'] = $settings['Setting']['id'];
-				$this->data['Setting']['value'] = json_encode($fields);			
+				
+				$this->data['Setting']['value'] = json_encode($fields);
+				$this->data['Setting']['module'] = 'SelfSign';
+				$this->data['Setting']['name'] = 'KioskRegistration';				
 				if($this->Setting->save($this->data)) {
 					Cache::delete('settings');
 					$data['success'] = true;
