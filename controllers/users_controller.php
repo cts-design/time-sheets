@@ -495,7 +495,8 @@ class UsersController extends AppController {
 		$fields = Set::extract('/field',  json_decode($settings['SelfSign']['KioskRegistration'], true));			
 		$title_for_layout = 'Self Sign Kiosk';
 		$states = $this->states;
-		$this->set(compact('title_for_layout', 'states', 'fields'));
+		$genders = $this->genders;
+		$this->set(compact('title_for_layout', 'states', 'fields', 'genders'));
 		$this->layout = 'kiosk';
     }
     

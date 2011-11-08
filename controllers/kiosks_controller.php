@@ -124,8 +124,9 @@ class KiosksController extends AppController {
 		}
 		$title_for_layout = 'Self Sign Kiosk';
 		$states = $this->states;
+		$genders = $this->genders;
 		$fields = $this->getKioskRegistraionFields();
-		$this->set(compact('title_for_layout', 'states', 'fields'));
+		$this->set(compact('title_for_layout', 'states', 'fields', 'genders'));
 		$this->layout = 'kiosk';
 	}
 
