@@ -2,7 +2,7 @@
 class SettingsController extends AppController {
 
 	public $name = 'Settings';
-
+	
 	public function admin_index() {
 		$this->Setting->recursive = 0;
 		$this->set('settings', $this->paginate());
@@ -18,9 +18,9 @@ class SettingsController extends AppController {
 				foreach ($arr as $key => $value) {
 					$fields[$i]['field'] = $value;
 					$i++;
-				}
+				}			
 				$this->data['Setting']['id'] = $settings['Setting']['id'];
-				$this->data['Setting']['value'] = json_encode($fields);
+				$this->data['Setting']['value'] = json_encode($fields);			
 				if($this->Setting->save($this->data)) {
 					Cache::delete('settings');
 					$data['success'] = true;
@@ -31,12 +31,12 @@ class SettingsController extends AppController {
 					$data['success'] = false;
 					$data['message'] = 'Kiosk registration settings could not be updated';					
 				}				
-			}			
-			$data['fields'] = json_decode($settings['Setting']['value'], true);
-
-
-			$this->set(compact('data'));
-			$this->render(null, null, '/elements/ajaxreturn');
+			}
+			else {
+				$data['fields'] = json_decode($settings['Setting']['value'], true);
+			}
+			$this->set(compact('data'));	
+			$this->render(null, null, '/elements/ajaxreturn');	
 		}
 	}
 }
