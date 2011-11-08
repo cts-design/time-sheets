@@ -688,7 +688,7 @@ Ext.onReady( function() {
 					msgTarget: 'under',
 					width: 400,
 					listeners: {
-						'change': function() {
+						change: function() {
 							Ext.getCmp('servicesSelect').reset();
 							servicesStore.load({params: {
 								locations: Ext.util.Format.htmlEncode(this.getValue())
@@ -717,8 +717,9 @@ Ext.onReady( function() {
 					width: 400,
 					listeners: {
 						beforequery: function() {
-							var val = Ext.getCmp('locationsSelect').getValue();					
-							if(val !== []) {
+							var val = Ext.getCmp('locationsSelect').getValue();	
+							console.log(val);				
+							if(val == '') {
 								this.markInvalid('Please select a location first');
 							}			
 						}
