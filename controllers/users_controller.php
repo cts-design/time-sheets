@@ -42,7 +42,8 @@ class UsersController extends AppController {
 			'kiosk_self_sign_login',
 			'login',
 			'registration',
-			'logout');
+			'logout',
+			'kiosk_auto_logout');
 		if($this->Auth->user('role_id') > 1) {
 		    $this->Auth->allow(
 			    'admin_auto_complete_customer',
