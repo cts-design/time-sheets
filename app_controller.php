@@ -88,6 +88,7 @@ class AppController extends Controller {
 		if(!Cache::read('settings')) {
 			$this->loadModel('Setting');
 			$settings = $this->Setting->find('all', array('fields' => array('name', 'module', 'value')));
+			$arr = array();
 			foreach($settings as $setting) {
 				$arr[$setting['Setting']['module']][$setting['Setting']['name']] = 
 					$setting['Setting']['value'];
