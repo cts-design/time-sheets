@@ -9,6 +9,8 @@ storage/
 .project
 webroot/files/public/*
 webroot/img/public/*
+webroot/img/default/*
+webroot/img/default
 webroot/img/_thumbs/*
 */default
 webroot/img/admin/admin_header_logo.jpg
