@@ -3,6 +3,38 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+	
+	<h1>Release 3.1.5 (11/16/11)</h1>
+	<h2>Main Feature Releases</h2>
+	<ol>
+		<li>Development of customizable kiosk registration and edit screens.</li>
+		<li>Added Open, Closed, Not Helped tabs to self-sign queue.</li>
+		<li>Added ATLAS Module Preferences and Settings.</li>
+		<li>Added SSHkey deployment strategy to production deployment model. (Internal to CTS)</li>
+		<li>Finalized production layout files deployment strategy (Internal to CTS)</li>
+	</ol>	
+	<h2>Minor Feature Enhancements</h2>
+	<ol>
+		<li>Added alphanumeric sorting to admin list in Document Archive.</li>
+		<li>Added ability for customer to edit ATLAS registration data on kiosk based on required registration fields set forth on kiosk registration customization.</li>
+		<li>Added “touch trigger” to disable kiosk button after press/click.</li>
+	</ol>
+	<h2>Bug Fixes</h2>
+	<ol>
+		<li>Resolved bug that was causing the “other” field to not populate during “reassign” and “new sign-in” actions within the self-sign queue.</li>
+		<li>Fixed issue within the self-sign archive that was causing the “second” button selection to not default to “all buttons”</li>
+		<li>Added “Go Back” button on the self-scan scan interface page.</li>
+		<li>Adjusted Self-Sign button height to allow for Spanish translations to wrap.</li>
+		<li>Resolved issue that was causing time-out feature within kiosk applications to not execute under certain conditions.</li>
+		<li>Resolution to deleted document archive not displaying correct “last activity admin”.</li>
+	</ol>
+	<h2>Known Issues</h2>
+	<ol>
+		<li>Java-script issue causing scroll bar to occasionally not respond within the document archive. Ticket #280</li>
+		<li>Erroneous flash message indicating “Not authorized to view this location” to certain Role Admins that have custom permissions. Ticket #284</li>
+		<li>Java-script issue that is causing the open “Programs” window to hide the scroll bar in firefox.</li>
+	</ol>
+	<hr />
 	<h1>Release 3.1.4 (10/27/11)</h1>
 	<h2>Minor Feature Enhancements</h2>	
 	<ol>
@@ -11,7 +43,7 @@
 			This will prompt the edit profile function after a customer logs into any self service module.</li>
 		<li>Added “edit profile” and “logout” capabilities to customers who are logged into the On-Line self service system.</li>	
 	</ol>
-	<h1>Bug Fixes</h1>
+	<h2>Bug Fixes</h2>
 	<ol>
 		<li>Fixed issue that was causing the “scan documents” self-scan interface to not be triggered when user is in a Spanish session.</li>
 		<li>Resolved issue with roles that hid the Permissions tab from certain Admin level users.</li>
@@ -19,7 +51,7 @@
 		<li>Corrected a mislabel within the programs module. Programs with Confirmation numbers were being labled conformation instead of confirmation. Adjusted controller, table and view labels.</li>
 		<li>Resolved issue that was causing the first level of the filing tree within the Self-Sign archive to display the first option rather that “All Buttons”.	</li>	
 	</ol>
-	<h1>Known Issues</h1>
+	<h2>Known Issues</h2>
 	<ol>
 		<li>Specific self-scan buttons within the self-scan module are not being translated to Spanish.</li>
 	</ol>
