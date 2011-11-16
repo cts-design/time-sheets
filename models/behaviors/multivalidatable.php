@@ -35,6 +35,25 @@ class MultivalidatableBehavior extends ModelBehavior {
             $this->setValidation($Model, $Model->validationSets[$rules]);
         }
     }
+	
+	
+    /**
+     * Edits the default validation rule set
+     *
+     * If $rules is an array, it will be set as current validation ruleset,
+     * otherwise it will look into Model::validationEdits[$rules] for the ruleset to install
+     *
+     * @param Object $Model
+     * @param Mixed $rules
+     */
+    function editValidation(&$Model, $rules = array()) {
+        if (is_array($rules)){
+            $this->_setValidation($Model, $rules);
+        } elseif (isset($Model->validationEdits[$rules])) {
+        	$rules = am($this->__defaultRules[$Model->alias], $Model->validationEdits[$rules]);
+            $this->editValidation($Model, $rules);
+        }
+    }	
 
     /**
      * Restores previous validation ruleset

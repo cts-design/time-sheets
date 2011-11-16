@@ -42,7 +42,8 @@ class UsersController extends AppController {
 			'kiosk_self_sign_login',
 			'login',
 			'registration',
-			'logout');
+			'logout',
+			'kiosk_auto_logout');
 		if($this->Auth->user('role_id') > 1) {
 		    $this->Auth->allow(
 			    'admin_auto_complete_customer',
@@ -208,7 +209,7 @@ class UsersController extends AppController {
 		$this->set('title_for_layout', 'Add Customer');
 		if (!empty($this->data)) {
 		    $this->User->create();
-			$this->User->setValidation('adminAddCustomer');
+			$this->User->editValidation('customer');
 		    if ($this->User->save($this->data)) {
 				$this->Transaction->createUserTransaction('Customer', 
 					null, null, 'Added customer '. $this->data['User']['lastname'] . 
@@ -236,6 +237,7 @@ class UsersController extends AppController {
 		    $this->redirect(array('action' => 'index'));
 		}
 		if (!empty($this->data)) {
+			$this->User->editValidation('customer');
 		    if ($this->User->save($this->data)) {
 				$this->Transaction->createUserTransaction('Customer',
 					null, null, 'Edited customer '. $this->data['User']['lastname'] . 
@@ -271,7 +273,6 @@ class UsersController extends AppController {
 		    $this->redirect('/');
 		}
 		if (!empty($this->data)) {
-			$this->User->setValidation('cusEditProfile');
 		    if ($this->User->save($this->data)) {
 		    	$this->Session->write('Auth.User.email', $this->data['User']['email']);
 				$this->Transaction->createUserTransaction('Customer',
@@ -316,6 +317,8 @@ class UsersController extends AppController {
 		$this->Kiosk->recursive = -1;
 		$this->Kiosk->Behaviors->attach('Containable');
 		$this->Kiosk->contain(array('KioskSurvey'));
+		$settings = Cache::read('settings');	
+		$fields = Set::extract('/field',  json_decode($settings['SelfSign']['KioskRegistration'], true));
 		
 		$kiosk = $this->Kiosk->find('first', array(
 			'conditions' => array(
@@ -323,9 +326,16 @@ class UsersController extends AppController {
 				
 		if (isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'kiosk') {
 		    if ($this->Auth->user()) {
-			$this->Transaction->createUserTransaction('Self Sign', 
-				null, $this->User->SelfSignLog->Kiosk->getKioskLocationId(), 'Logged in at self sign kiosk' );
-			$this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_confirm'));
+		    	$user = $this->Auth->user();
+				foreach($user['User'] as $k => $v) {
+					if(in_array($k, $fields) && empty($v)) {
+						$this->redirect(
+							array('controller' => 'kiosks', 'action' => 'self_sign_edit', $user['User']['id']));
+					} 
+				}
+				$this->Transaction->createUserTransaction('Self Sign', 
+					null, $this->User->SelfSignLog->Kiosk->getKioskLocationId(), 'Logged in at self sign kiosk' );
+				$this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_confirm'));
 		    }
 		}
 		$this->set('kioskHasSurvey', (empty($kiosk['KioskSurvey'])) ? false : true);
@@ -394,24 +404,19 @@ class UsersController extends AppController {
 		    $this->User->create();
 			if(Configure::read('Registration.ssn') == 'last4') {
 				if($this->data['User']['registration'] == 'child_website') {
-					$this->User->setValidation('childLast4Rules');
+					$this->User->editValidation('last4');
 				}	
 				else {
-					$this->User->setValidation('last4Rules');
+					$this->User->editValidation('last4');
 				}
-				if(Configure::read('Registration.ssn') == 'last4'){
-					$this->data['User']['ssn'] = 
-						$this->data['User']['ssn_1'] . 
-						$this->data['User']['ssn_2'] . 
-						$this->data['User']['ssn_3'];
-					$this->data['User']['ssn_confirm'] = 
-						$this->data['User']['ssn_1_confirm'] . 
-						$this->data['User']['ssn_2_confirm'] . 
-						$this->data['User']['ssn_3_confirm']; 
-				}				
-			}
-			if(Configure::read('Registration.ssn') == 'full') {
-				$this->User->setValidation('publicWebFormRules');				
+				$this->data['User']['ssn'] = 
+					$this->data['User']['ssn_1'] . 
+					$this->data['User']['ssn_2'] . 
+					$this->data['User']['ssn_3'];
+				$this->data['User']['ssn_confirm'] = 
+					$this->data['User']['ssn_1_confirm'] . 
+					$this->data['User']['ssn_2_confirm'] . 
+					$this->data['User']['ssn_3_confirm']; 			
 			}
 		    if ($this->User->save($this->data)) {
 				$userId = $this->User->getInsertId();
@@ -456,9 +461,19 @@ class UsersController extends AppController {
 
     function kiosk_mini_registration($lastname=null) {
 		if (!empty($this->data)) {
-			$this->User->Behaviors->disable('Disableable');	
+			$this->User->Behaviors->disable('Disableable');
+			if(Configure::read('Registration.ssn') == 'last4') {
+				$this->User->editValidation('last4');
+				$this->data['User']['ssn'] = 
+					$this->data['User']['ssn_1'] . 
+					$this->data['User']['ssn_2'] . 
+					$this->data['User']['ssn_3'];
+				$this->data['User']['ssn_confirm'] = 
+					$this->data['User']['ssn_1_confirm'] . 
+					$this->data['User']['ssn_2_confirm'] . 
+					$this->data['User']['ssn_3_confirm']; 			
+			}				
 		    $this->User->create();
-			$this->User->setValidation('miniRegistration');
 		    if ($this->User->save($this->data)) {
 				$userId = $this->User->getInsertId();
 				$last4 = substr($this->data['User']['ssn'], -4);
@@ -477,12 +492,16 @@ class UsersController extends AppController {
 		if (empty($this->data)) {
 		    $this->data['User']['lastname'] = $lastname;
 		}
-		$this->set('title_for_layout', 'Self Sign Kiosk');
+		$settings = Cache::read('settings');	
+		$fields = Set::extract('/field',  json_decode($settings['SelfSign']['KioskRegistration'], true));			
+		$title_for_layout = 'Self Sign Kiosk';
+		$states = $this->states;
+		$genders = $this->genders;
+		$this->set(compact('title_for_layout', 'states', 'fields', 'genders'));
 		$this->layout = 'kiosk';
     }
     
     function admin_login() {
-    	$this->User->setValidation('adminLogin');
 		if($this->RequestHandler->isAjax()) {
 		    $this->Auth->login($this->data);
 		    if($this->Auth->user()) {

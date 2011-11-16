@@ -10,8 +10,6 @@
 html {
     Overflow-y:hidden;
     Overflow-x:hidden;
-
-
 }
 
 body {
@@ -75,8 +73,8 @@ strong {
 
 #footer {
     font-family: Arial,Helvetica,sans-serif;
-    margin: 50px auto ;
-    width: 900px;
+    margin: 20px auto ;
+    width: 890px;
     font-size: 11px;
 }
 
@@ -96,6 +94,10 @@ margin-left: 100px;
 
 /* Specific Styles */
 
+.readonly {
+	background-color: #BCBCBC;
+}
+
 .self-sign-wrapper .submit {
     width: 284px;
     margin: 15px auto 10px;
@@ -111,7 +113,7 @@ margin-left: 100px;
 }
 
 #SelfScanDoument h1 {
-margin-bottom: 10px;
+	margin-bottom: 10px;
 }
 
 .self-sign-survey-wrapper h2, .self-sign-wrapper h2, .self-scan-wrapper h2 {
@@ -132,7 +134,7 @@ margin-bottom: 10px;
     text-align: right;
 }
 
-.input input {
+.input input, select {
     width: 300px;
     margin-left: 10px;
 }
@@ -140,7 +142,7 @@ margin-bottom: 10px;
 .message {
     background-color: #fff;
     padding: 10px;
-    font-size: 25px; 
+    font-size: 25px;
 }
 
 .flash-failure {
@@ -194,7 +196,7 @@ margin-bottom: 10px;
 
 .self-sign-kiosk-button, .self-scan-kiosk-button {
     width:284px;
-    height: 60px;
+    height: 62px;
     font-size: 18px;
 }
 
@@ -214,14 +216,38 @@ margin-bottom: 10px;
   font-size: 16px;
 }
 
+.spanish .ui-button-text {
+	white-space: normal;	
+	width: 250px;
+}
+
+.spanish .self-sign-kiosk-link {
+    width:284px;
+    height: 75px;
+}
+
+.spanish .self-scan-kiosk-link {
+	    width:284px;
+    height: 75px;
+}
+
+#UserSelfSignLoginForm .error-message{
+    margin-left: 415px;
+}
+
 #miniRegistration.self-sign-wrapper {
     margin-top: 0;
 }
 
 #miniRegistration p{
-    width: 280px;
+    width: 400px;
     margin: 0;
-    margin-top: 10px;
+    margin-top: 5px;
+}
+
+#miniRegistration.input p:first-child {
+    width: 500px;
+    text-align: right;
 }
 
 #miniRegistration br {
@@ -230,14 +256,42 @@ margin-bottom: 10px;
 
 #miniRegistration .self-sign-kiosk-link {
 	display: block;
-	margin: 0 auto 10px;
+	margin: 0 0 10px;
+}
+
+#miniRegistration .self-sign-kiosk-button{
+	margin-right: 10px;
 }
 
 #miniRegistration .self-sign-kiosk-link .ui-button-text{
 	font-size: 18px;
-	padding: 0.8em 1em;
+	padding: 20px 100px;
 }
 
+#miniRegistration .submit {
+	margin: 10px 0 0 165px;
+}
+
+#miniRegistration .error-message {
+	margin-left: 415px;
+}
+
+#miniRegistration .ssn4 .error-message {
+	margin-left: 250px;
+	width: 565px;
+}
+
+#password_UserSsn1, #password_UserSsn1Confirm  {
+	width: 70px;
+}
+
+#password_UserSsn2Confirm, #password_UserSsn2 {
+	width: 50px;
+}
+
+#password_UserSsn3, #password_UserSsn3Confirm {
+	width: 90px;
+}
 
 #selfSignConfirm  {
     text-align: center;
@@ -252,6 +306,15 @@ margin-bottom: 10px;
     display: inline-block;
 }
 
+
+#selfSignEdit p {
+	margin: 5px 0 0 0; 
+}
+
+#selfSignEdit .error-message {
+	margin-left: 415px; 
+}
+
 #selfScanAnother .actions {
         width: 600px;
     margin: 60px auto 60px auto;
@@ -259,6 +322,10 @@ margin-bottom: 10px;
 
 #scanForm {
 	width: 480px;
+}
+
+#selfSignConfirm  p {
+    margin: 5px 0 0 0;
 }
 
 #selfSignConfirm .actions a:first-child {
@@ -296,9 +363,8 @@ margin-bottom: 10px;
     margin-left: 225px;
 }
 
-#footer span {
+#copyright {
     width: 775px;
-    margin-right: 20px;
 }
 
 #idletimeout {

@@ -52,6 +52,7 @@
 			<li rel="settings" id="settings">
                 <a><?php __('Settings') ?></a>
 			    <ul>
+				<li rel="settings_1"><?php echo $html->link(__('Atlas Module Preferences & Settings', true), array('controller' => 'settings', 'action' => 'index')) ?></li>
 				<li rel="settings_1"><?php echo $html->link(__('Bar Code Definitions', true), array('controller' => 'bar_code_definitions', 'action' => 'index')) ?></li>			    	
 			    <li rel="settings_1"><?php echo $html->link(__('Document Filing Categories', true), array('controller' => 'document_filing_categories', 'action' => 'index')) ?></li>	
 				<li rel="settings_1"><?php echo $html->link(__('Document Queue Categories', true), array('controller' => 'document_queue_categories', 'action' => 'index')) ?></li>
@@ -124,7 +125,7 @@
 	    	<?php endif ?> 
 	    	<p>
 	    		<?php echo $html->image('icons/application_xp_terminal.png')?>
-	    		<?php echo $html->link('Atlas 3.1.4', array('controller' => 'release_notes', 'admin' => true))?>
+	    		<?php echo $html->link('Atlas 3.1.5', array('controller' => 'release_notes', 'admin' => true))?>
 	    	</p>    	
 	    </div>
     </div>

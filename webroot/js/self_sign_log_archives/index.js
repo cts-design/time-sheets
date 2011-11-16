@@ -19,7 +19,9 @@ $(document).ready(function() {
 		}
 	})
 	$('.scrollingCheckboxes').change(function() {
-		allVals = []
+		allVals = [];
+		resetDropdown2();
+		resetDropdown3();
 		$('.scrollingCheckboxes :checked').each(function() {
 			allVals.push($(this).val());
 		});
@@ -114,6 +116,11 @@ function populateButton3Dropdown(buttons) {
 		});
 		$('#SelfSignLogArchiveButton3').html(options);
 	}
+}
+
+function resetDropdown2() {
+	var options = '<option value="">All Buttons</option>';
+	$('#SelfSignLogArchiveButton2').html(options);
 }
 
 function resetDropdown3() {

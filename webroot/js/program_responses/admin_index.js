@@ -224,7 +224,7 @@ Ext.onReady(function() {
 						programResponseProxy.extraParams.tab = 'not_approved';
 						break;					
 				}
-				newCard.getStore().load();			
+				newCard.getStore().loadPage(1, {start: 0, limit: 10});			
 			},
 			beforeadd : function(container, component, index) {
 				if(this.items.length == 5) {
@@ -381,7 +381,7 @@ Ext.onReady(function() {
 				Ext.iterate(vals, function (key, value){
 					programResponseProxy.extraParams[key] = value;
 				});
-				programResponseTabs.getActiveTab().getStore().load();
+				programResponseTabs.getActiveTab().getStore().loadPage(1, {start: 0, limit: 10});
 			}
 		}, {
 			text : 'Reset',
@@ -393,7 +393,7 @@ Ext.onReady(function() {
 				Ext.iterate(vals, function (key, value){
 					programResponseProxy.extraParams[key] = value;
 				}); 			
-				programResponseTabs.getActiveTab().getStore().load();
+				programResponseTabs.getActiveTab().getStore().loadPage(1, {start: 0, limit: 10});
 			}
 		}]
 	});
@@ -418,7 +418,7 @@ Ext.onReady(function() {
 						
 						var obj = Ext.decode(response.responseText);
 						if(obj.success) {
-							programResponseTabs.getActiveTab().getStore().load();
+							programResponseTabs.getActiveTab().getStore().loadPage(1, {start: 0, limit: 10});
 							Ext.Msg.alert('Success', obj.message);
 						} else {
 							opts.failure();
@@ -453,7 +453,7 @@ Ext.onReady(function() {
 							msg : obj.message,
 							buttons : Ext.Msg.OK,
 							fn : function() {
-								programResponseTabs.getActiveTab().getStore().load();
+								programResponseTabs.getActiveTab().getStore().loadPage(1, {start: 0, limit: 10});
 							}
 						});
 					} else {
@@ -467,5 +467,5 @@ Ext.onReady(function() {
 		}
 	});
 	programResponseProxy.extraParams.tab = 'open';
-	openProgramResponsesGrid.getStore().load();
+	openProgramResponsesGrid.getStore().loadPage(1, {start: 0, limit: 10});
 });

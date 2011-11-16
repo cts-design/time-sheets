@@ -16,7 +16,12 @@
 			alive_url: '/js_sandbox/',
 			logout_url: '/js_sandbox/'
 		}
-
+	 $(document.body).mousemove(function(){
+	 	start_liveTimeout();
+	 });
+	 $(document.body).keydown(function(){
+	 	start_liveTimeout();
+	 });
     //##############################
     //## Private Variables
     //##############################

@@ -19,6 +19,7 @@ Ext.onReady(function(){
 	});
 	
 	var allFiledDocsStore = Ext.create('Ext.data.Store', {
+		pageSize: 25,
 		model: 'FiledDocuments',
 		storeId: 'allFiledDocsStore',
 		remoteSort: true,
@@ -599,7 +600,7 @@ Ext.onReady(function(){
 				var vals = f.getValues();
 				vals = Ext.JSON.encode(vals);
 				allFiledDocsStore.proxy.extraParams = {filters : vals};
-				allFiledDocsStore.load({params: {limit: 25, page: 1}});				
+				allFiledDocsStore.loadPage(1, {limit: 25, start: 0});				
 			}
 		}, {
 			text: 'Reset',
@@ -608,7 +609,7 @@ Ext.onReady(function(){
 				var f = allDocsSearch.getForm();
 				f.reset();
 				allFiledDocsStore.proxy.extraParams = {filters : ''};
-				allFiledDocsStore.load();
+				allFiledDocsStore.loadPage(1, {limit: 25, start: 0});
 				var catIds = ['cat_2', 'cat_3'];
 				disableCatDropDown(catIds);		
 			}
@@ -649,5 +650,5 @@ Ext.onReady(function(){
 		}
 	}
 	
-	allFiledDocsStore.load({params: {limit:25}});
+	allFiledDocsStore.load();
 });

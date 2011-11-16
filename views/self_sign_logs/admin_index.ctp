@@ -16,6 +16,5 @@
 </div>
 <div>
 	<div id="SelfSignSearch"></div>
-	<div id="SelfSignReassign"></div>
     <div id="SelfSignLogs"></div>
 </div>

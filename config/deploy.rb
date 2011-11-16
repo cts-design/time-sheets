@@ -8,6 +8,9 @@ set :deploy_via, :export
 
 set :default_shell, '/bin/bash'
 
+# branch to pull atlas design files from
+set :design_branch, "master"
+
 # Server Settings. Be sure to wrap each region in it's own namespace. 
 
 namespace :cts do
@@ -104,6 +107,7 @@ end
 
 namespace :tbwa do
   task :staging do
+    set :design_branch, "tbwa"
     set :deploy_to, "/var/www/vhosts/tbwa.ctsfla.com/#{application}"
     set :user, 'tbwaftp'
     set :branch, 'staging'
@@ -111,6 +115,7 @@ namespace :tbwa do
   end
   
   task :production do
+    set :design_branch, "tbwa"
     set :branch, 'master'
     set :deploy_to, "/var/www/vhosts/workforcetampa.com/atlas"
     set :user, 'ftp_tbwa'
@@ -138,21 +143,19 @@ namespace :deploy do
       run "ln -s #{shared_path}/storage #{latest_release}/storage"
       run "ln -s #{shared_path}/webroot/files/public #{latest_release}/webroot/files/public"
       run "ln -s #{shared_path}/webroot/img/public #{latest_release}/webroot/img/public"
-      run "ln -s #{shared_path}/webroot/img/default #{latest_release}/webroot/img/default"
-      run "ln -s #{shared_path}/webroot/js/default #{latest_release}/webroot/js/default"
+      if (remote_file_exists?("#{shared_path}/webroot/img/default/default_header_logo.jpg"))
+        run "ln -s #{shared_path}/webroot/img/default/default_header_logo.jpg #{latest_release}/webroot/img/default/default_header_logo.jpg"
+      end 
       run "ln -s #{shared_path}/webroot/img/admin/admin_header_logo.jpg #{latest_release}/webroot/img/admin/admin_header_logo.jpg"
       run "ln -s #{shared_path}/webroot/img/kiosk/kiosk_header.jpg #{latest_release}/webroot/img/kiosk/kiosk_header.jpg"
       run "ln -s #{shared_path}/config/core.php #{latest_release}/config/core.php"
       run "ln -s #{shared_path}/config/atlas.php #{latest_release}/config/atlas.php"
       run "ln -s #{shared_path}/webroot/index.php #{latest_release}/webroot/index.php"
-      run "ln -s #{shared_path}/webroot/test.php #{latest_release}/webroot/test.php" 
-      run "ln -s #{shared_path}/webroot/css/style.css #{latest_release}/webroot/css/style.css"
-      run "ln -s #{shared_path}/views/layouts/default.ctp #{latest_release}/views/layouts/default.ctp"
-      run "ln -s #{shared_path}/views/pages/home.ctp #{latest_release}/views/website_views/pages/home.ctp"
+      run "ln -s #{shared_path}/webroot/test.php #{latest_release}/webroot/test.php"
       run "ln -s #{shared_path}/webroot/js/ckfinder/config.php #{latest_release}/webroot/js/ckfinder/config.php"
       run "rm -f #{current_path} && ln -s #{latest_release} #{current_path}" 
       cake.database.symlink if (remote_file_exists?(database_path))   
-    end	
+    end  
 end
 
 namespace :cake do
@@ -174,15 +177,31 @@ namespace :cake do
   end  
 end
 
+task :design do
+  transaction do
+    on_rollback { run "rm -rf #{release_path}; true" } 
+    run "cd #{release_path} && git clone --depth 1 git@git.assembla.com:CTSATLAS.5.git design"
+    set :git_flag_quiet, "-q "  
+    stream "cd #{release_path}/design && git checkout #{git_flag_quiet}#{design_branch}"
+    run "mv #{release_path}/design/img/default/ #{release_path}/webroot/img/"
+    run "mv #{release_path}/design/js/default/ #{release_path}/webroot/js/"  
+    run "mv #{release_path}/design/css/style.css #{release_path}/webroot/css/style.css"
+    run "mv #{release_path}/design/views/layouts/default.ctp #{release_path}/views/layouts/default.ctp"
+    run "mv #{release_path}/design/views/website_views/pages/home.ctp #{release_path}/views/website_views/pages/home.ctp"  
+  end
+end  
+
 task :finalize_deploy, :roles => [:web] do
 	run "chmod 755 -R #{release_path}"
 	cake.cache.clear
 	cake.schema.create
 	cake.schema.update
 	cake.aco_update
+	run "cd #{current_release} && cake campfire 'Deployed #{branch} to #{deploy_to}'"
 	cake.cache.clear
-end	
-
+end
+	
+after "deploy:update_code", :design
 after "deploy:symlink", :finalize_deploy
 
 capcake

@@ -36,6 +36,7 @@ Ext.onReady( function() {
 		services = [];
 		
 	Ext.QuickTips.init();
+	
 	Ext.define('SelfSignLog', {
 		extend: 'Ext.data.Model',
 		fields: [
@@ -44,46 +45,69 @@ Ext.onReady( function() {
 			'location', 'service', 'kioskId', 'userId', 'locationId'
 		]
 	});
-	
-	var selfSignLogsStore = Ext.create('Ext.data.Store', {
-		model: 'SelfSignLog',
-		proxy: {
-			type: 'ajax',
+		
+	var selfSignProxy = Ext.create('Ext.data.proxy.Ajax', {
 			url: '/admin/self_sign_logs/',
 			simpleSortMode: true,
 			extraParams: {
 				locations: locations,
-				services: services			
+				services: services,
+				status: 0			
 			},
 			reader: {
 				type: 'json',
 				idProperty: 'id',
 				root: 'logs',
 				totalProperty: 'results'		
-			}
-		},
-		storeId: 'SelfSignLogsStore',
-		groupField: 'status',
-		groupDir: 'DESC',
-		autoDestroy: true
+			},
+			limitParam: undefined,
+			pageParam: undefined,
+			startParam: undefined		
 	});
+	
+	Ext.define('Atlas.data.SelfSignLogStore', {
+		extend: 'Ext.data.Store',
+		model: 'SelfSignLog',
+		proxy: selfSignProxy,
+		autoDestroy: true		
+	});
+	
+	var openSelfSignLogsStore = Ext.create('Atlas.data.SelfSignLogStore', {
+		storeId: 'OpenSelfSignLogsStore'
+	});
+	
+	var closedSelfSignLogsStore = Ext.create('Atlas.data.SelfSignLogStore', {
+		storeId: 'ClosedSelfSignLogsStore'
+	});
+	
+	var notHelpedSelfSignLogsStore = Ext.create('Atlas.data.SelfSignLogStore', {
+		storeId: 'NotHelpedSelfSignLogsStore'
+	});	
 	
 	Ext.define('KioskButton', {
 		extend: 'Ext.data.Model',
 		fields:['id', 'name']
 	});
 	
-	var level1ButtonsStore = Ext.create('Ext.data.Store', {
+	var kioskButtonProxy = Ext.create('Ext.data.proxy.Ajax', {	
+		url: '/admin/self_sign_logs/get_kiosk_buttons/',
+		reader: {
+			type: 'json',
+			root: 'buttons'
+		},
+		limitParam: undefined,
+		pageParam: undefined,
+		startParam: undefined
+	});
+	
+	Ext.define('Atlas.data.KioskButtonStore', {
+		extend: 'Ext.data.Store',
 		model: 'KioskButton',
 		autoDestroy: true,
-		proxy: {
-			type: 'ajax',
-			url: '/admin/self_sign_logs/get_kiosk_buttons/',
-			reader: {
-				type: 'json',
-				root: 'buttons'
-			}
-		},
+		proxy: kioskButtonProxy
+	});
+	
+	var level1ButtonsStore = Ext.create('Atlas.data.KioskButtonStore', {
 		storeId: 'level1ButtonsStore',
 		listeners: {
 			beforeload: function() {
@@ -92,17 +116,7 @@ Ext.onReady( function() {
 		}
 	});
 	
-	var level2ButtonsStore = Ext.create('Ext.data.Store', {
-		model: 'KioskButton',
-		autoDestroy: true,
-		proxy: {
-			type: 'ajax',
-			url: '/admin/self_sign_logs/get_kiosk_buttons/',
-			reader: {
-				type: 'json',
-				root: 'buttons'
-			}
-		},
+	var level2ButtonsStore = Ext.create('Atlas.data.KioskButtonStore', {
 		storeId: 'level2ButtonsStore',
 		listeners: {
 			beforeload: function() {
@@ -117,21 +131,8 @@ Ext.onReady( function() {
 		}
 	});
 	
-	var level3ButtonsStore = Ext.create('Ext.data.Store', {
-		model: 'KioskButton',
-		autoDestroy: true,
-		proxy: {
-			type: 'ajax',
-			url: '/admin/self_sign_logs/get_kiosk_buttons/',
-			reader: {
-				type: 'json',
-				root: 'buttons'
-			}
-		},
+	var level3ButtonsStore = Ext.create('Atlas.data.KioskButtonStore', {
 		storeId: 'level3ButtonsStore',
-		root: 'buttons',
-		idProperty: 'id',
-		fields:['id', 'name'],
 		listeners: {
 			beforeload: function() {
 				this.getProxy().url = '/admin/self_sign_logs/get_kiosk_buttons/'+kioskId+'/'+buttonParentId;
@@ -234,6 +235,7 @@ Ext.onReady( function() {
 	
 	var other = Ext.create('Ext.form.field.Text', {
 		id: 'other',
+		name: 'other',
 		hideLabel: false,
 		allowBlank: false,
 		disabled: true,
@@ -280,7 +282,7 @@ Ext.onReady( function() {
 					        success: function(response, opts){			        	
 					        	var obj = Ext.decode(response.responseText);
 					        	if(obj.success) {
-									selfSignLogsStore.load();
+									selfSignTabs.getActiveTab().getStore().load();
 									Ext.Msg.alert('Success', obj.message);					        		
 					        	}
 					        	else {
@@ -337,9 +339,9 @@ Ext.onReady( function() {
 	    	}	    	
 	    }	
 	});
-	var other2 = other.cloneConfig({id: 'other2'});
 	
-	
+	var other2 = other.cloneConfig({id: 'other2', name: 'other'});
+		
 	var newRecord = Ext.create('Ext.form.Panel', {
 		width: 285,
 		frame: true,
@@ -360,6 +362,7 @@ Ext.onReady( function() {
 					var form = newRecord.getForm();
 					if(form.isValid()) {
 						var values = form.getValues();
+						console.log(values);
 					    form.reset();
 						level2Buttons2.disable();
 						level3Buttons2.disable();
@@ -376,13 +379,13 @@ Ext.onReady( function() {
 					        	'data[SelfSignLog][level_1]': values.level1,
 					        	'data[SelfSignLog][level_2]': values.level2,
 					        	'data[SelfSignLog][level_3]': values.level3,
-					        	'data[SelfSignLog][other]': values.other2
+					        	'data[SelfSignLog][other]': values.other
 					        },
 					        success: function(response, opts){			        	
 					        	var obj = Ext.decode(response.responseText);
 					        	
 					        	if(obj.success) { 	
-									selfSignLogsStore.load();
+									selfSignTabs.getActiveTab().getStore().load();
 									Ext.Msg.alert('Success', obj.message);					        		
 					        	}
 					        	else {
@@ -407,7 +410,7 @@ Ext.onReady( function() {
 	    icon:  '/img/icons/note_add.png',
 	    iconCls: 'edit',
 	    handler: function() {
-	    	var record = selfSignLogsGrid.store.getAt(rowIndex);
+	    	var record = selfSignTabs.getActiveTab().getStore().getAt(rowIndex);
 	    	updateStatus(record.data.id, 0);	
 	    }
 	  },{
@@ -415,7 +418,7 @@ Ext.onReady( function() {
 	  	id: 'cmClose',
 	  	icon:  '/img/icons/note_delete.png',
 	    handler: function() {
-	    	var record = selfSignLogsGrid.store.getAt(rowIndex);
+	    	var record = selfSignTabs.getActiveTab().getStore().getAt(rowIndex);
 	    	updateStatus(record.data.id, 1);	
 	    }  	
 	  },{
@@ -423,7 +426,7 @@ Ext.onReady( function() {
 	  	id: 'cmNotHelped',
 	  	icon:  '/img/icons/note_error.png',
 	    handler: function() {
-	    	var record = selfSignLogsGrid.store.getAt(rowIndex);
+	    	var record = selfSignTabs.getActiveTab().getStore().getAt(rowIndex);
 	    	updateStatus(record.data.id, 2);	
 	    }   	
 	  },{
@@ -469,18 +472,12 @@ Ext.onReady( function() {
 	  }]
 	});
 	
-	var groupingFeature = Ext.create('Ext.grid.feature.Grouping',{
-	    groupHeaderTpl: '{name} ({rows.length} Item{[values.rows.length > 1 ? "s" : ""]})'
-	});
-	
-	var selfSignLogsGrid = Ext.create('Ext.grid.Panel', {
-		store: selfSignLogsStore,
-		id: 'selfSignGrid',
+	Ext.define('Atlas.grid.SelfSignLogsPanel', {
+		extend: 'Ext.grid.Panel',
 		height: 500,
 		width: 950,
 		frame: true,
-		features: [groupingFeature],
-		renderTo: 'SelfSignLogs',
+		invalidateScrollerOnRefresh: false,
 		columns: [{
 			text: 'Id',
 			dataIndex: 'id',
@@ -528,42 +525,26 @@ Ext.onReady( function() {
 			xtype: 'datecolumn',
 			sortable: true,
 			width: 100
-		}],
+		}]		
+	});
+			
+	var openSelfSignLogsGrid = Ext.create('Atlas.grid.SelfSignLogsPanel', {
+		title: 'Open',
+		store: openSelfSignLogsStore,
+		id: 'selfSignGrid',
 		viewConfig: {
 			loadMask: false,
 			singleSelect: true,
-			onStoreLoad: Ext.emptyFn,
 			emptyText: 'No records at this time.',
 	        listeners: {
 	            itemcontextmenu: function(view, rec, node, index, e) {
 	                e.stopEvent();
 	                contextMenu.showAt(e.getXY());
-			    	switch(rec.data.status) {
-			    		case 'Open': {
-			    			Ext.getCmp('cmOpen').hide();
-			    			Ext.getCmp('cmNotHelped').show();
-			    			Ext.getCmp('cmClose').show();
-			    			Ext.getCmp('cmReassign').show();
-			    			Ext.getCmp('cmNewRecord').hide();
-			    			break;
-			    		}
-			    		case 'Closed': {
-			    			Ext.getCmp('cmClose').hide();
-			    			Ext.getCmp('cmOpen').show();
-			    			Ext.getCmp('cmNotHelped').show();
-			    			Ext.getCmp('cmReassign').hide();
-			    			Ext.getCmp('cmNewRecord').show();
-			    			break;
-			    		}
-			    		case 'Not Helped': {
-			    			Ext.getCmp('cmNotHelped').hide();
-			    			Ext.getCmp('cmClose').show();
-			    			Ext.getCmp('cmOpen').show();
-			    			Ext.getCmp('cmReassign').hide();
-			    			Ext.getCmp('cmNewRecord').show();	    			
-			    			break;	    			
-			    		}
-			    	}		
+	    			Ext.getCmp('cmOpen').hide();
+	    			Ext.getCmp('cmNotHelped').show();
+	    			Ext.getCmp('cmClose').show();
+	    			Ext.getCmp('cmReassign').show();
+	    			Ext.getCmp('cmNewRecord').hide();		
 		     		rowIndex = index;
 		     		recordId = rec.data.id;
 		     		kioskId = rec.data.kioskId; 
@@ -572,8 +553,64 @@ Ext.onReady( function() {
 		            return false;
 	            }
 	        }		
-		}
+		}		
 	});
+		
+	var closedSelfSignLogsGrid = Ext.create('Atlas.grid.SelfSignLogsPanel', {
+		title: 'Closed',
+		store: closedSelfSignLogsStore,
+		id: 'closedSelfSignGrid',
+		viewConfig: {
+			loadMask: true,
+			singleSelect: true,
+			emptyText: 'No records at this time.',
+	        listeners: {
+	            itemcontextmenu: function(view, rec, node, index, e) {
+	                e.stopEvent();
+	                contextMenu.showAt(e.getXY());
+	    			Ext.getCmp('cmClose').hide();
+	    			Ext.getCmp('cmOpen').show();
+	    			Ext.getCmp('cmNotHelped').show();
+	    			Ext.getCmp('cmReassign').hide();
+	    			Ext.getCmp('cmNewRecord').show();		
+		     		rowIndex = index;
+		     		recordId = rec.data.id;
+		     		kioskId = rec.data.kioskId; 
+		     		userId = rec.data.userId;
+		     		locationId = rec.data.locationId;                
+		            return false;
+	            }
+	        }		
+		}				
+	});	
+	
+	var notHepledSelfSignLogsGrid = Ext.create('Atlas.grid.SelfSignLogsPanel', {
+		title: 'Not Helped',
+		store: notHelpedSelfSignLogsStore,
+		id: 'notHelpedSelfSignGrid',
+		viewConfig: {
+			loadMask: true,
+			singleSelect: true,
+			emptyText: 'No records at this time.',
+	        listeners: {
+	            itemcontextmenu: function(view, rec, node, index, e) {
+	                e.stopEvent();
+	                contextMenu.showAt(e.getXY());
+	    			Ext.getCmp('cmNotHelped').hide();
+	    			Ext.getCmp('cmClose').show();
+	    			Ext.getCmp('cmOpen').show();
+	    			Ext.getCmp('cmReassign').hide();
+	    			Ext.getCmp('cmNewRecord').show();	    			    			
+		     		rowIndex = index;
+		     		recordId = rec.data.id;
+		     		kioskId = rec.data.kioskId; 
+		     		userId = rec.data.userId;
+		     		locationId = rec.data.locationId;                
+		            return false;
+		        }
+	    	}
+		}
+	});	
 	
 	Ext.define('Location', {
 		extend: 'Ext.data.Model',
@@ -588,7 +625,10 @@ Ext.onReady( function() {
 			reader: {
 				type: 'json',
 				root: 'locations'
-			}
+			},
+			limitParam: undefined,
+			pageParam: undefined,
+			startParam: undefined				
 		},
 		autoLoad: true
 	});
@@ -606,7 +646,10 @@ Ext.onReady( function() {
 			reader: {
 				type: 'json',
 				root: 'services'
-			}	
+			},
+			limitParam: undefined,
+			pageParam: undefined,
+			startParam: undefined	
 		},
 		autoLoad: false	
 	});
@@ -645,7 +688,7 @@ Ext.onReady( function() {
 					msgTarget: 'under',
 					width: 400,
 					listeners: {
-						'change': function() {
+						change: function() {
 							Ext.getCmp('servicesSelect').reset();
 							servicesStore.load({params: {
 								locations: Ext.util.Format.htmlEncode(this.getValue())
@@ -674,8 +717,9 @@ Ext.onReady( function() {
 					width: 400,
 					listeners: {
 						beforequery: function() {
-							var val = Ext.getCmp('locationsSelect').getValue();					
-							if(val !== []) {
+							var val = Ext.getCmp('locationsSelect').getValue();	
+							console.log(val);				
+							if(val == '') {
 								this.markInvalid('Please select a location first');
 							}			
 						}
@@ -692,11 +736,21 @@ Ext.onReady( function() {
 				if(form.isValid()) {
 					locations = Ext.util.Format.htmlEncode(Ext.getCmp('locationsSelect').getValue());
 					services = Ext.util.Format.htmlEncode(Ext.getCmp('servicesSelect').getValue());
-					selfSignLogsStore.getProxy().extraParams = {
-						locations: locations,
-						services: services
+					var grid = selfSignTabs.getActiveTab();
+					var status = 0;
+					switch(grid.title) {
+						case 'Closed' : 
+							status = 1;
+							break;
+						case 'Not Helped' :
+							status = 2;
 					}
-					selfSignLogsStore.load();	
+					selfSignProxy.extraParams = {
+						locations: locations,
+						services: services,
+						status: status
+					}
+					selfSignTabs.getActiveTab().getStore().load();
 				}	
 			}
 		},{
@@ -705,22 +759,43 @@ Ext.onReady( function() {
 			handler: function() {
 				locations = [];
 				services = [];
-				selfSignLogsStore.getProxy().extraParams = {
-					locations: [],
-					services: []
-				}			
+				selfSignProxy.extraParams.locations = [];
+				selfSignProxy.extraParams.services = [];
 				Ext.getCmp('servicesSelect').reset();
 				Ext.getCmp('locationsSelect').reset();
-				selfSignLogsStore.load();
+				selfSignTabs.getActiveTab().getStore().load();
 			}
 		}]
+	});
+	
+	
+	var selfSignTabs = Ext.create('Ext.tab.Panel', {
+		renderTo: 'SelfSignLogs',
+		items: [openSelfSignLogsGrid, closedSelfSignLogsGrid, notHepledSelfSignLogsGrid],
+		listeners: {
+			tabchange: function() {
+				var grid = this.getActiveTab();
+				switch(grid.title) {
+					case 'Open':
+						selfSignProxy.extraParams.status = 0;
+						break;
+					case 'Closed':
+						selfSignProxy.extraParams.status = 1;
+						break;
+					case 'Not Helped':
+						selfSignProxy.extraParams.status = 2;
+						break;	
+				}
+				grid.getStore().load();
+			}
+		}	
 	});
 	
 	function updateStatus(id, status) {
 	    Ext.Ajax.request({
 	        url: '/admin/self_sign_logs/update_status/' + id + '/' + status,
 	        success: function(response){ 
-				selfSignLogsStore.load();
+				selfSignTabs.getActiveTab().getStore().load();
 	        },
 	        failure: function(response){
 	            Ext.Msg.alert('Error', 'An error has occured, please try again.');
@@ -730,10 +805,11 @@ Ext.onReady( function() {
 	
 	var loadLogs = {
 		run: function() {
-			selfSignLogsStore.load();		
+			if(selfSignTabs.getActiveTab().title == 'Open') {
+				openSelfSignLogsStore.load({params: {status: 0}});		
+			}		
 		},
-		interval: 10000
+		interval: 15000
 	}
-
 	Ext.TaskManager.start(loadLogs);
 });

@@ -40,7 +40,13 @@ class SelfSignLogsController extends AppController {
 			}
 			if($serviceIds){
 				$conditions['SelfSignLog.level_1'] = $serviceIds;
-			}				
+			}
+			$status = 0;
+			if(isset($this->params['url']['status']) && $this->params['url']['status'] != '' ) {
+				$status = $this->params['url']['status'];
+			}
+			$conditions['SelfSignLog.status'] = $status;				
+				
 			$selfSignLogs = $this->SelfSignLog->find('all', array(
 				'conditions' => $conditions,
 				'order' => array('SelfSignLog.created DESC')));

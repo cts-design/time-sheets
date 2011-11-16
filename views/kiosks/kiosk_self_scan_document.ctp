@@ -33,6 +33,12 @@
 		echo $this->Form->end();
 	    ?>
 	<h3>4. <input class="save" name="save"  type="button" value="Save"/></h3>
+	<br />
+	<div class="top-mar-20"> 
+		<?php if($referer != null) :?>
+			<?php echo $this->Html->link(__('Go Back', true), $referer, array('class' => 'self-sign-kiosk-link')); ?>
+		<?php endif ?> 		
+	</div>
     </div>
     <div id="scanWrapper" class="left left-mar-20">
 	<object 

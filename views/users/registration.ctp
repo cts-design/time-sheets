@@ -56,6 +56,7 @@ $(document).ready(function() {
 		echo $this->Form->input('gender', array(
 			'label' => __('Gender', true),
 			'type' => 'select',
+			'empty' => 'Select Gender',
 			'options' => array('Male' => 'Male', 'Female' => 'Female'),
 			'between' => '<br />',
 			'after' => '<br />'));
@@ -151,8 +152,11 @@ $(document).ready(function() {
 			'after' => '<br />'));
 		echo $this->Form->input('language', array(
 			'label' => __('Primary Spoken Language', true),
+			'type' => 'select',
+			'empty' => 'Please Select',
+			'options' => array('English' => 'English', 'Spanish' => 'Spanish', 'Other' => 'Other'), 
 			'between' => '<br />',
-			'after' => '<br />'));
+			'after' => '<br />'));	
 		echo $this->Form->input('ethnicity', array(
 			'label' => __('Ethnicity', true),
 			'type' => 'select',

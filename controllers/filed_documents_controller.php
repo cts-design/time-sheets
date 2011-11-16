@@ -139,7 +139,7 @@ class FiledDocumentsController extends AppController {
 		    $this->data['FiledDocument']['last_activity_admin_id'] = $this->Auth->user('id');
 		    $this->data['FiledDocument']['deleted_location_id'] = $this->Auth->user('location_id');
 			$filedDocument = $this->FiledDocument->read(null, $id);
-			$this->data['FiledDocument'] = array_merge($this->data['FiledDocument'], $filedDocument['FiledDocument']);
+			$this->data['FiledDocument'] = array_merge($filedDocument['FiledDocument'], $this->data['FiledDocument']);
 		    $this->FiledDocument->set($this->data);
 		}
 		if(!isset($id)) {
