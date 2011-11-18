@@ -27,6 +27,13 @@ namespace :cts do
     set :branch, 'staging'
     server "development.ctsfla.com", :app, :web, :db, :primary => true
   end
+  
+  task :tradeshow do
+    set :deploy_to, "/var/www/vhosts/www.ctsdemo.local/#{application}"
+    set :user, 'demo_ftp'
+    set :branch, 'master'
+    server "www.ctsdemo.local", :app, :web, :db, :primary => true    
+  end
 end
 
 namespace :cccp do 
@@ -124,7 +131,7 @@ namespace :tbwa do
 end
 
 # Cake Settings
-set :cake_branch, "master"
+set :cake_branch, "1.3"
 
 set :shared_children,       %w(config system tmp tmp/fdf webroot/files/public webroot/img/public storage 
                                storage/thumbnails storage/program_forms storage/program_media)
