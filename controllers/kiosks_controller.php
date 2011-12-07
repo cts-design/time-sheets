@@ -6,10 +6,14 @@
  * @link http://ctsfla.com
  * @package ATLAS V3
  */
+
+App::import('Core', 'HttpSocket'); 
+ 
 class KiosksController extends AppController {
 
     var $name = 'Kiosks';
     var $components = array('Cookie', 'Transaction');
+	var $uses = array('Kiosk', 'Alert');
 
     function beforeFilter() {
 		parent::beforeFilter();
@@ -113,7 +117,7 @@ class KiosksController extends AppController {
 			if($this->User->save($this->data)) {
 				$this->Transaction->createUserTransaction('Self Sign', $id, $this->Kiosk->getKioskLocationId(), 'Edited information');
 				$this->Session->setFlash(__('The information has been saved', true), 'flash_success');
-				$this->redirect( array('action' => 'self_sign_service_selection', 'kiosk' => true));
+				$this->redirect(array('action' => 'self_sign_service_selection', 'kiosk' => true));
 			}
 			else {
 				$this->Session->setFlash(__('The information could not be saved. Please, try again.', true), 'flash_failure');
@@ -200,7 +204,7 @@ class KiosksController extends AppController {
 					$this->Kiosk->SelfSignLogArchive->create();
 					$this->Kiosk->SelfSignLogArchive->save($data['SelfSignLog']);
 					$this->Transaction->createUserTransaction('Self Sign');
-
+					$this->sendSelfSignAlert($data['SelfSignLog']);
 					$this->redirect( array(
 						'controller' => 'users', 
 						'action' => 'logout', 
@@ -444,5 +448,16 @@ class KiosksController extends AppController {
 		$settings = Cache::read('settings');	
 		return Set::extract('/field',  json_decode($settings['SelfSign']['KioskRegistration'], true));
 				
+	}
+	
+	private function sendSelfSignAlert($selfSignLog) {
+		$kioskName = $this->Kiosk->getKioskName($this->Cookie->read('kioskId'));
+		$data = $this->Alert->getSelfSignAlerts($selfSignLog, $kioskName);
+		if($data) {
+			$HttpSocket = new HttpSocket();
+			$results = $HttpSocket->post('localhost:3000/new', 
+				array('data' => $data));
+			//TODO SEND EMAILS AS NESSESARY				
+		}
 	}
 }
