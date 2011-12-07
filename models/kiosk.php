@@ -83,6 +83,15 @@ class Kiosk extends AppModel {
 	else return false;
     }
 
+	function getKioskName($kioskId) {
+		$this->id = $kioskId;
+		$name = $this->field('location_description');
+		if($name) {
+			return $name;
+		}
+		else return false;
+	}
+
     function delete($id = null) {
 	if($id) {
 	    $data['Kiosk']['id'] = $id;
