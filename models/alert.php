@@ -34,12 +34,9 @@ class Alert extends AppModel {
 			$data = array();
 			$i = 0;
 			foreach($alerts as $alert) {
-				if($alert['Alert']['message_config']) {
-					$array = json_decode($alert['Alert']['message_config'], true);
-					if(! in_array($selfSign['location_id'], $array['locations'])) {
-						continue;
-					}
-				}				
+				if($selfSign['location_id'] !== $alert['Alert']['location_id']) {
+					continue;
+				}			
 				$data[$i]['username'] = strtolower($alert['User']['windows_username']);
 				$data[$i]['email'] = $alert['User']['email'];
 				$data[$i]['send_email'] = $alert['Alert']['send_email'];
