@@ -66,6 +66,8 @@ class Kiosk extends AppModel {
 		)
 	);
 	
+	var $actsAs = array('Containable');
+	
     function getKioskLocationId() {
 	$oneStop = env('HTTP_USER_AGENT');
 	$arrOneStop = explode('##', $oneStop);
