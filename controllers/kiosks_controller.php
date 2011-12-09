@@ -12,7 +12,7 @@ App::import('Core', 'HttpSocket');
 class KiosksController extends AppController {
 
     var $name = 'Kiosks';
-    var $components = array('Cookie', 'Transaction');
+    var $components = array('Cookie', 'Transaction', 'Email');
 
     function beforeFilter() {
 		parent::beforeFilter();
@@ -502,7 +502,14 @@ class KiosksController extends AppController {
 			$HttpSocket = new HttpSocket();
 			$results = $HttpSocket->post('localhost:3000/new', 
 				array('data' => $data));
-			//TODO SEND EMAILS AS NESSESARY				
+			foreach($data as $alert) {
+				if($alert['send_email']) {
+					$this->Email->to = $alert['email'];
+					$this->Email->from = Configure::read('System.email');
+					$this->Email->subject = 'Self Sign Alert';
+					$this->Email->send($alert['message'] . "\r\n" . $alert['url']);
+				}
+			}
 		}
 	}
 }
