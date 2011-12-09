@@ -29,12 +29,18 @@ Ext.define('Atlas.form.SelfSignAlertPanel', {
 		listeners: {
 			select: function() {
 				locationId = this.getValue();
-				var level1Buttons = this.nextNode();
-				level1Buttons.reset();
+				var level1Buttons = this.nextNode()
+				,   level2Buttons = level1Buttons.nextNode()
+				,   level3Buttons = level2Buttons.nextNode();
 				level1Buttons.getStore().load();
-				if(level1Buttons.isDisabled()) {
-					level1Buttons.enable();	
-				}		
+				if(!level2Buttons.isDisabled()) {
+					level2Buttons.reset();
+					level2Buttons.disable();
+				}
+				if(!level3Buttons.isDisabled()) {
+					level3Buttons.reset();
+					level3Buttons.disable();					
+				}
 			}
 		}
 	},{
@@ -52,10 +58,8 @@ Ext.define('Atlas.form.SelfSignAlertPanel', {
 		listeners: {
 			select: function() {
 				parentId = this.getValue();
-				var level2Buttons = this.nextNode();
-				level2Buttons.reset();
-				level2Buttons.getStore().load();
-				level2Buttons.fireEvent('select');				
+				var level2Buttons = this.nextNode();				
+				level2Buttons.getStore().load();				
 			}
 		}
 	},{
@@ -72,9 +76,7 @@ Ext.define('Atlas.form.SelfSignAlertPanel', {
 		listeners: {
 			select: function() {
 				parentId = this.getValue();
-				console.log(parentId);
 				var level3Buttons = this.nextNode();
-				level3Buttons.reset();
 				level3Buttons.getStore().load();						
 			}
 		}		
@@ -114,6 +116,14 @@ Ext.define('Atlas.form.SelfSignAlertPanel', {
 					}
 				});
 			}
+		}
+	},{
+		xtype: 'button',
+		text: 'Reset',
+		margin: '0 0 0 10',
+		handler: function() {
+			this.up('form').getForm().reset();
+			disableAndResetButtons(['1', '2', '3']);
 		}
 	}]
 });	
@@ -168,6 +178,16 @@ Ext.create('Atlas.data.KioskButtonStore', {
 		beforeload: function() {
 			this.getProxy().url = 
 				'/admin/kiosks/get_kiosk_buttons_by_location/'+locationId+'/';
+		},
+		load: function(store, records, successful, operation, eOpts) {
+			var level1Buttons = Ext.getCmp('level1Buttons');
+			level1Buttons.reset();
+			if(level1Buttons.isDisabled() && records[0] !== undefined) {
+			 	level1Buttons.enable();
+			}
+			if(!level1Buttons.isDisabled() && records[0] === undefined) {
+				level1Buttons.disable();	
+			}				  
 		}
 	}
 });
@@ -181,11 +201,13 @@ Ext.create('Atlas.data.KioskButtonStore', {
 		},
 		load: function(store, records, successful, operation, eOpts) {
 			var level2Buttons = Ext.getCmp('level2Buttons');
+			level2Buttons.reset();
 			if(level2Buttons.isDisabled() && records[0] !== undefined) {
 			 	level2Buttons.enable();	
 			}
 			if(!level2Buttons.isDisabled() && records[0] === undefined) {
-				level2Buttons.disable();	
+				level2Buttons.disable();
+				disableAndResetButtons(['3']);
 			}
 		} 
 	}
@@ -200,6 +222,7 @@ Ext.create('Atlas.data.KioskButtonStore', {
 		},
 		load: function(store, records, successful, operation, eOpts) {
 			var level3Buttons = Ext.getCmp('level3Buttons');
+			level3Buttons.reset();
 			if(level3Buttons.isDisabled() && records[0] !== undefined) {
 			 	level3Buttons.enable();	
 			}
@@ -214,13 +237,20 @@ Ext.create('Ext.data.Store', {
 	id: 'alertTypes',
 	fields: ['name', 'label'],
 	data: [
-		{'name': 'selfSign', 'label': 'Self Sign'},
-		{'name': 'user', 'label': 'User'}
+		{'name': 'selfSignAlertFormPanel', 'label': 'Self Sign'},
+		{'name': 'userAlertFormPanel', 'label': 'User'}
 	]
 });	
 
-Ext.onReady(function(){
-			
+function disableAndResetButtons(level) {
+	for(var i in level) {
+		var buttons = Ext.getCmp('level' + level[i] + 'Buttons');
+		buttons.reset();
+		buttons.disable();		
+	}
+}
+
+Ext.onReady(function(){			
 	Ext.create('Ext.Panel', {
 	    width: 950,
 	    height: 400,
@@ -233,11 +263,18 @@ Ext.onReady(function(){
 	    items: [{
 	        xtype: 'panel',
 	        flex: 1,
-	        layout: 'fit',
+	        layout: 'card',
+	        activeItem: 0,
 	        items: [{
 	        	xtype: 'selfsignalertformpanel',
-	        	id: 'selfSignAlertPanel',
+	        	id: 'selfSignAlertFormPanel',
 	        	url: '/admin/alerts/add_self_sign_alert'
+	        },{
+	        	xtype: 'panel',
+	        	padding: 10,
+	        	border: 0,
+	        	html: 'User Form Here.....',
+	        	id: 'userAlertFormPanel'
 	        }],
 	        dockedItems: [{
 	        	xtype: 'toolbar',
@@ -252,9 +289,7 @@ Ext.onReady(function(){
 	        		value: 'Self Sign',
 	        		listeners: {
 	        			select: function() {
-							if(this.getValue() == 'selfSign') {
-								Ext.getCmp('selfSignAlertPanel').show();
-							}						
+							this.up('panel').getLayout().setActiveItem(this.getValue());					
 	        			}
 	        		}
 	        	}]	        	
