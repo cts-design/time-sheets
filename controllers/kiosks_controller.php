@@ -472,7 +472,10 @@ class KiosksController extends AppController {
 				}
 				$data['success'] = true;
 			}
-			else $data['success'] = false;
+			else {
+				$data['success'] = true;
+				$data['buttons'] = array();
+			}	
 			$this->set(compact('data'));
 			$this->render(null, null, '/elements/ajaxreturn');				
 		}
@@ -490,8 +493,7 @@ class KiosksController extends AppController {
 	
 	private function getKioskRegistraionFields() {
 		$settings = Cache::read('settings');	
-		return Set::extract('/field',  json_decode($settings['SelfSign']['KioskRegistration'], true));
-				
+		return Set::extract('/field',  json_decode($settings['SelfSign']['KioskRegistration'], true));			
 	}
 	
 	private function sendSelfSignAlert($selfSignLog) {
