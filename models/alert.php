@@ -42,7 +42,7 @@ class Alert extends AppModel {
 				$data[$i]['send_email'] = $alert['Alert']['send_email'];
  				$data[$i]['title'] = 'Self Sign';
 				$message = $user['User']['firstname'] . ' ' . $user['User']['lastname'];
-				$message .= ' self signed into ' . $user['UserTransaction']['details'] . ' ';
+				$message .= ' self signed into ' . $user['UserTransaction']['details'];
 				$message .= ' on ' . $kioskName .  ' at ' .  $user['UserTransaction']['location'];
 				$data[$i]['message'] = $message;
 				$data[$i]['url'] = Router::url('/admin/self_sign_logs', true);							
