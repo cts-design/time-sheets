@@ -1,43 +1,95 @@
 <?php
-/* Alerts Test cases generated on: 2011-12-06 13:29:13 : 1323196153*/
+
 App::import('Controller', 'Alerts');
 App::import('Lib', 'AtlasTestCase');
 class TestAlertsController extends AlertsController {
-	var $autoRender = false;
+	public $autoRender = false;
 
-	function redirect($url, $status = null, $exit = true) {
+	public function redirect($url, $status = null, $exit = true) {
 		$this->redirectUrl = $url;
 	}
 }
 
 class AlertsControllerTestCase extends AtlasTestCase {
-	var $fixtures = array('app.alert', 'app.user', 'app.role', 'app.location', 'app.ftp_document_scanner', 'app.kiosk', 'app.kiosk_button', 'app.master_kiosk_button', 'app.self_sign_log', 'app.self_sign_log_archive', 'app.kiosk_survey', 'app.kiosk_survey_question', 'app.kiosk_survey_response', 'app.kiosk_survey_response_answer', 'app.kiosks_kiosk_survey', 'app.queued_document', 'app.document_queue_category', 'app.bar_code_definition', 'app.document_filing_category', 'app.watched_filing_cat', 'app.program', 'app.program_field', 'app.program_response', 'app.program_response_doc', 'app.program_email', 'app.program_paper_form', 'app.program_instruction', 'app.self_scan_category', 'app.user_transaction', 'app.filed_document');
-
-	function startTest() {
+		
+	public function startTest() {
 		$this->Alerts =& new TestAlertsController();
 		$this->Alerts->constructClasses();
+        $this->Alerts->params['controller'] = 'alerts';
+        $this->Alerts->params['pass'] = array();
+        $this->Alerts->params['named'] = array();	
+		$this->testController = $this->Alerts;	
 	}
 
-	function endTest() {
+	public function testAdminIndexAjax() {
+		$this->Alerts->Component->initialize($this->Alerts);	
+		$this->Alerts->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+		$expectedResult = array(
+			'data' => array (
+				'alerts'=>array(
+					array(
+						'id' => '20',
+						'name' => 'Vets',
+						'user_id' => '2',
+						'watched_id' => '10',
+						'type' => 'Self Sign',
+						'location_id' => '1',
+						'send_email' => true,
+						'disabled' => false,
+						'created' => '2011-12-13 11:54:05',
+						'modified' => '2011-12-13 14:05:06'
+					),
+					array(
+						'id' => '17',
+						'name' => 'Test',
+						'user_id' => '2',
+						'watched_id' => '22',
+						'type' => 'Self Sign',
+						'location_id' => '1',
+						'send_email' => true,
+						'disabled' => true,
+						'created' => '2011-12-12 16:11:38',
+						'modified' => '2011-12-13 14:04:52'
+					)				
+				)
+			, 'success' => true));
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$result = $this->testAction('/admin/alerts/index/', array('method' => 'get'));
+		$this->assertEqual($expectedResult, $result);
+	}
+
+	public function testAdminAddSelfSignAlert() {
+		$this->Alerts->Component->initialize($this->Alerts);	
+		$this->Alerts->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+		$data = array(
+			'name' => 'Test Alert Add',
+			'type' => 'self_sign',
+			'send_email' => 1,
+			'level1' => 10
+			);
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$result = $this->testAction('/admin/alerts/add_self_sign_alert/', 
+			array('method' => 'post', 'form_data' => $data));
+		$id = $this->Alerts->Alert->getLastInsertId();
+		$alert = $this->Alerts->Alert->read(null, $id);
+		$this->assertEqual(23, $alert['Alert']['id']);		
+	}
+		
+	public function endTest() {
+		Configure::write('debug', 2);
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);		
 		unset($this->Alerts);
 		ClassRegistry::flush();
-	}
-
-	function testAdminIndex() {
-
-	}
-
-	function testAdminAdd() {
-
-	}
-
-	function testAdminEdit() {
-
-	}
-
-	function testAdminDelete() {
-
-	}
+	}	
 
 }
-?>
