@@ -68,6 +68,9 @@
                 </ul>
 			</li>
 		    <?php }?>
+		    <li rel="alerts" id="alerts">
+		    	<?php echo $html->link(__('Alerts', true), array('controller' => 'alerts', 'action' => 'index', 'admin' => true)); ?>
+		    </li>	
 		    <li rel="group" id="users">
             <a><?php __('Users') ?></a>
 			<ul>
