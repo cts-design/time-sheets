@@ -24,7 +24,7 @@ class Alert extends AppModel {
 		}
 		$alerts = $this->find('all', array(
 			'conditions' => array(
-				'Alert.type' => 'selfSign',
+				'Alert.type' => 'self_sign',
 				'Alert.disabled' => 0,
 				'Alert.watched_id' => $buttons)));
 		$user = $this->User->UserTransaction->find('first', 
