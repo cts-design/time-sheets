@@ -367,7 +367,11 @@ Ext.onReady(function(){
 	        layout: 'card',
 	        activeItem: 0,
 	        items: [{
-	        	html: '<p>Please select an alert type to add from the dropdown above.</p>',
+	        	html: [
+	        		'<p>Please select an alert type to add from the dropdown above. ',
+	        		'If no alert types appear in the dropdown menu, please have your ',
+	        		'supervisor check your permissions.</p>'
+	        	],
 	        	padding: 10,
 	        	border: 0
 	        },{
