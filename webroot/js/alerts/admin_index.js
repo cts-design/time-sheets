@@ -236,11 +236,15 @@ Ext.create('Atlas.data.KioskButtonStore', {
 	
 Ext.create('Ext.data.Store', {
 	id: 'alertTypes',
-	fields: ['name', 'label'],
-	data: [
-		{'name': 'selfSignAlertFormPanel', 'label': 'Self Sign'},
-		{'name': 'userAlertFormPanel', 'label': 'User'}
-	]
+	fields: ['id', 'label'],
+	proxy: {
+		type: 'ajax',
+		url: '/admin/alerts/get_alert_types',
+		reader: {
+			type: 'json',		
+			root: 'types'
+		}
+	}
 });	
 
 function disableAndResetButtons(level) {
@@ -272,6 +276,7 @@ Ext.create('Ext.data.Store', {
 });	
 
 Ext.create('Ext.menu.Menu', {
+	title: 'Actions',
 	id: 'contextMenu',
 	items: [{
 		text: 'Send Email',
@@ -362,15 +367,13 @@ Ext.onReady(function(){
 	        layout: 'card',
 	        activeItem: 0,
 	        items: [{
+	        	html: '<p>Please select an alert type to add from the dropdown above.</p>',
+	        	padding: 10,
+	        	border: 0
+	        },{
 	        	xtype: 'selfsignalertformpanel',
 	        	id: 'selfSignAlertFormPanel',
 	        	url: '/admin/alerts/add_self_sign_alert'
-	        },{
-	        	xtype: 'panel',
-	        	padding: 10,
-	        	border: 0,
-	        	html: 'User Form Here.....',
-	        	id: 'userAlertFormPanel'
 	        }],
 	        dockedItems: [{
 	        	xtype: 'toolbar',
@@ -380,16 +383,14 @@ Ext.onReady(function(){
 	        		fieldLabel: 'Select Alert Type',
 	        		store: 'alertTypes',
 	        		displayField: 'label',
-	        		valueField: 'name',
+	        		valueField: 'id',
 	        		emptyText: 'Please Select',
-	        		value: 'Self Sign',
 	        		listeners: {
 	        			select: function() {
 							this.up('panel').getLayout().setActiveItem(this.getValue());					
 	        			}
 	        		}
-	        	}]	        	
-	        	
+	        	}]
 	        }]
 	    },{
 	        xtype: 'gridpanel',
