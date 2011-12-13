@@ -3,9 +3,9 @@
 /**
  * Alerts Controller
  *
- * @package Atlas
+ * @package AtlasV3
  * @author  Daniel Nolan
- * 
+ * @copyright 2011 Complete Technology Solutions
  */
 
 class AlertsController extends AppController {
@@ -68,8 +68,15 @@ class AlertsController extends AppController {
 				$this->data['Alert']['watched_id'] = $this->params['form']['level2'];
 			}
 			if($this->Alert->save($this->data)) {
+				$id = $this->Alert->getLastInsertId();
 				$data['success'] = true;
-				$data['message'] = 'Alert added successfully';				
+				$data['message'] = 'Alert added successfully';
+				$this->Transaction->createUserTransaction(
+					'Alerts', 
+					$this->Auth->user('id'),
+					$this->Auth->user('location_id'), 
+					'Added Self Sign alert. name: ' . $this->data['Alert']['name'] . ' id: ' . $id 
+				);				
 			}
 			else {
 				$data['success'] = false;
@@ -91,7 +98,19 @@ class AlertsController extends AppController {
 					$this->data['Alert']['send_email'] = 0;
 				}
 				if($this->Alert->save($this->data))	{
+					$alert = $this->Alert->read(null, $this->params['form']['id']);
 					$data['success'] = true;
+					$status = 'Disabled';
+					if($alert['Alert']['send_email']) {
+						$status = 'Enabled';
+					}
+					$this->Transaction->createUserTransaction(
+						'Alerts', 
+						$this->Auth->user('id'),
+						$this->Auth->user('location_id'), 
+						$status . ' email for Self Sign alert, name: ' . $alert['Alert']['name'] . ' id: ' . $alert['Alert']['id'] 
+					);						
+					
 				}
 				else $data['success'] = false;
 			}
@@ -111,7 +130,18 @@ class AlertsController extends AppController {
 					$this->data['Alert']['disabled'] = 0;
 				}
 				if($this->Alert->save($this->data))	{
+					$alert = $this->Alert->read(null, $this->params['form']['id']);
 					$data['success'] = true;
+					$status = 'Disabled';
+					if(!$alert['Alert']['disabled']) {
+						$status = 'Enabled';
+					}
+					$this->Transaction->createUserTransaction(
+						'Alerts', 
+						$this->Auth->user('id'),
+						$this->Auth->user('location_id'), 
+						$status . ' Self Sign alert, name: ' . $alert['Alert']['name'] . ' id: ' . $alert['Alert']['id'] 
+					);					
 				}
 				else $data['success'] = false;
 			}
@@ -146,8 +176,14 @@ class AlertsController extends AppController {
 		if($this->RequestHandler->isAjax()) {
 			if(isset($this->params['form']['id'])) {
 				if($this->Alert->delete($this->params['form']['id'])){
-					$data['success'] = true;
+					$data['success'] = true;					
 					$data['message'] = 'Alert deleted successfully';
+					$this->Transaction->createUserTransaction(
+						'Alerts', 
+						$this->Auth->user('id'),
+						$this->Auth->user('location_id'), 
+						'Deleted Self Sign alert, id: ' . $this->params['form']['id']
+					);					
 				}
 				else {
 					$data['success'] = false;
