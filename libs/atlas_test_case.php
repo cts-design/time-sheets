@@ -20,6 +20,7 @@ class AtlasTestCase extends CakeTestCase {
 	var $fixtures = array(
             'aco',
             'aro',
+            'alert',
             'aros_aco',
             'bar_code_definition',
             'chairman_report',
