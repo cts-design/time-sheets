@@ -11,6 +11,19 @@
 class AlertsController extends AppController {
 
 	public $name = 'Alerts';
+		
+	public function beforeFilter() {
+		parent::beforeFilter();
+		if($this->Acl->check(array(
+			'model' => 'User', 
+			'foreign_key' => $this->Auth->user('id')), 'Alerts/admin_index', '*')) {
+				$this->Auth->allow(
+				'admin_toggle_email', 
+				'admin_toggle_disabled', 
+				'admin_get_alert_types', 
+				'admin_delete');
+	    }
+	}
 	
 	public function admin_index() {
 		if($this->RequestHandler->isAjax()) {
@@ -109,7 +122,8 @@ class AlertsController extends AppController {
 	
 	public function admin_get_alert_types() {
 		if($this->RequestHandler->isAjax()) {
-			// if adding a new alert add action, it needs to be added to the available types array
+			// if adding a new alert add action to controller, 
+			// it needs to be added to the available types array
 			$avaliableTypes = array(
 				0 => array(
 					'action' => 'Alerts/admin_add_self_sign_alert',
