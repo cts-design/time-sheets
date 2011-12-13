@@ -6,7 +6,8 @@ Ext.define('Atlas.form.SelfSignAlertPanel', {
 	padding: 10,
 	border: 0,
 	defaults: {
-		labelWidth: 100
+		labelWidth: 100,
+		width: 350
 	},
 	items: [{
 		fieldLabel: 'Alert Name',
@@ -96,12 +97,9 @@ Ext.define('Atlas.form.SelfSignAlertPanel', {
 		xtype: 'checkbox',
 		name: 'send_email'
 	},{
-		xtype: 'hiddenfield',
-		name: 'user_id',
-		value: 2		
-	},{
 		xtype: 'button',
 		text: 'Save',
+		width: 100,
 		formBind: true,
 		handler: function() {
 			var form = this.up('form').getForm();
@@ -110,6 +108,8 @@ Ext.define('Atlas.form.SelfSignAlertPanel', {
 					success: function(form, action) {
 						Ext.Msg.alert('Success', action.result.message);
 						form.reset();
+						disableAndResetButtons(['1', '2', '3']);
+						Ext.getCmp('myAlertsGrid').getStore().load();
 					},
 					failure: function(form, action)	{
 						Ext.Msg.alert('Failed', action.result.message);
@@ -119,6 +119,7 @@ Ext.define('Atlas.form.SelfSignAlertPanel', {
 		}
 	},{
 		xtype: 'button',
+		width: 100,
 		text: 'Reset',
 		margin: '0 0 0 10',
 		handler: function() {
@@ -250,7 +251,102 @@ function disableAndResetButtons(level) {
 	}
 }
 
-Ext.onReady(function(){			
+
+Ext.define('Alert', {
+	extend: 'Ext.data.Model',
+	fields: ['id', 'name', 'type', 'send_email', 'disabled']
+});
+
+Ext.create('Ext.data.Store', {
+	id: 'alerts',
+	model: 'Alert',
+	proxy: {
+		type: 'ajax',
+		url: '/admin/alerts/index',
+		reader: {
+			type: 'json',
+			root: 'alerts'
+		}		
+	},
+	autoLoad: true
+});	
+
+Ext.create('Ext.menu.Menu', {
+	id: 'contextMenu',
+	items: [{
+		text: 'Send Email',
+		id: 'sendEmail',
+		xtype: 'menucheckitem',
+		handler: function() {
+			var selected = Ext.getCmp('myAlertsGrid').getSelectionModel().getLastSelected();
+			Ext.getCmp('contextMenu').hide();
+			Ext.Ajax.request({
+			    url: '/admin/alerts/toggle_email',
+			    params: {
+			        id: selected.data.id,
+			        send_email: this.checked
+			    },
+			    success: function(response){
+			    	Ext.getCmp('myAlertsGrid').getStore().load();
+			    },
+			    failure: function() {
+			    	Ext.Msg.alert('Error', 'An erorr has occured.');
+			    }
+			});
+		}
+	},{
+		text: 'Disabled',
+		xtype: 'menucheckitem',
+		handler: function() {
+			var selected = Ext.getCmp('myAlertsGrid').getSelectionModel().getLastSelected();
+			Ext.getCmp('contextMenu').hide();
+			Ext.Ajax.request({
+			    url: '/admin/alerts/toggle_disabled',
+			    params: {
+			        id: selected.data.id,
+			        disabled: this.checked
+			    },
+			    success: function(response){
+			    	Ext.getCmp('myAlertsGrid').getStore().load();
+			    },
+			    failure: function() {
+			    	Ext.Msg.alert('Error', 'An erorr has occured.');		    	
+			    }
+			});			
+		}
+	},{
+		text: 'Delete',
+		icon: '/img/icons/delete.png',
+		handler: function() {
+			Ext.Msg.confirm('Confirm Delete', 'Are you sure you want to delete this alert', function(button){
+				if(button === 'yes') {
+					var selected = Ext.getCmp('myAlertsGrid').getSelectionModel().getLastSelected();
+					Ext.getCmp('contextMenu').hide();
+					Ext.Ajax.request({
+					    url: '/admin/alerts/delete',
+					    params: {
+					        id: selected.data.id
+					    },
+					    success: function(response){
+					    	console.log(response.responseText.message);
+					    	var responseText = Ext.JSON.decode(response.responseText);
+					    	Ext.Msg.alert('Success', responseText.message);
+					    	Ext.getCmp('myAlertsGrid').getStore().load();
+					    },
+					    failure: function(response) {
+					    	var responseText = Ext.JSON.decode(response.responseText);
+					    	Ext.Msg.alert('Success', responseText.message);					    	
+					    	Ext.Msg.alert('Error', response.responseText.message);		    	
+					    }
+					});						
+				}
+			});		
+		}		
+	}]
+});
+
+Ext.onReady(function(){	
+				
 	Ext.create('Ext.Panel', {
 	    width: 950,
 	    height: 400,
@@ -262,7 +358,7 @@ Ext.onReady(function(){
 	    renderTo: 'alerts',
 	    items: [{
 	        xtype: 'panel',
-	        flex: 1,
+	        flex: 1.5,
 	        layout: 'card',
 	        activeItem: 0,
 	        items: [{
@@ -298,13 +394,41 @@ Ext.onReady(function(){
 	    },{
 	        xtype: 'gridpanel',
 	        flex: 2,
-	        title: 'User Alerts',
+	        title: 'My Alerts',
+	        id: 'myAlertsGrid',
+			viewConfig: {
+				loadMask: true,
+				singleSelect: true,
+				emptyText: 'No records at this time.',
+		        listeners: {
+		            itemcontextmenu: function(view, rec, node, index, e) {
+		                e.stopEvent();
+		                var cm = Ext.getCmp('contextMenu');
+		                cm.items.items[0].setChecked(Boolean(rec.data.send_email));
+		                cm.items.items[1].setChecked(Boolean(rec.data.disabled));
+		                cm.showAt(e.getXY());
+			            return false;
+		            }
+		        }		
+			},	        
 	        columns: [
-		        { header: 'Name',  dataIndex: 'name' },
-		        { header: 'Type', dataIndex: 'type' },
-		        { header: 'Send Email', dataIndex: 'send_email' },
-		        { header: 'Disabled', dataIndex: 'disabled' }
-    		]
+	        	{ text: 'Id', dataIndex: 'id', hidden: true},
+		        { text: 'Name',  dataIndex: 'name', flex: 1 },
+		        { text: 'Type', dataIndex: 'type' },
+		        { text: 'Send Email',
+		          dataIndex: 'send_email',
+		          xtype: 'booleancolumn',
+		          trueText: 'Yes',
+            	  falseText: 'No' 
+		        },
+		        { text: 'Disabled',
+		          dataIndex: 'disabled', 
+		          xtype: 'booleancolumn',
+		          trueText: 'Yes',
+            	  falseText: 'No' 
+		       }
+    		],
+    		store: 'alerts'
 	    }]
 	});
 });
