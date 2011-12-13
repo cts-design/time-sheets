@@ -12,19 +12,18 @@ class AlertsController extends AppController {
 
 	public $name = 'Alerts';
 	
-	private $bools = array(0 => false, 1 => true);
-	
 	public function admin_index() {
 		if($this->RequestHandler->isAjax()) {
 			$alerts = $this->Alert->find('all', array(
 				'conditions' => array('Alert.user_id' => $this->Auth->user('id'))));
 			if($alerts) {
 				$i = 0;
+				$bools = array(0 => false, 1 => true);
 				foreach($alerts as $alert) {
-					$data['alerts'][$i] = $alert['Alert'];
+					$data['alerts'][$i] = $alert['Alert'];				
 					$data['alerts'][$i]['type'] = Inflector::humanize($data['alerts'][$i]['type']);
-					$data['alerts'][$i]['send_email'] = $this->bools[$data['alerts'][$i]['send_email']];
-					$data['alerts'][$i]['disabled'] = $this->bools[$data['alerts'][$i]['disabled']];				
+					$data['alerts'][$i]['send_email'] = $bools[$data['alerts'][$i]['send_email']];
+					$data['alerts'][$i]['disabled'] = $bools[$data['alerts'][$i]['disabled']];				
 					$i++;
 				}
 			}
@@ -106,6 +105,27 @@ class AlertsController extends AppController {
 			$this->set(compact('data'));
 			$this->render(null, null, '/elements/ajaxreturn');
 		}		
+	}
+	
+	public function admin_get_alert_types() {
+		if($this->RequestHandler->isAjax()) {
+			// if adding a new alert add action, it needs to be added to the available types array
+			$avaliableTypes = array(
+				0 => array(
+					'action' => 'Alerts/admin_add_self_sign_alert',
+					'label' => 'Self Sign',
+					'id' => 'selfSignAlertFormPanel'));
+			$data['types'] = array();	
+			foreach($avaliableTypes as $k => $v) {
+				if($this->Acl->check(array(
+					'model' => 'User', 
+					'foreign_key' => $this->Auth->user('id')), $v['action'], '*')) {
+						$data['types'][$k] = array('label' => $v['label'], 'id' => $v['id']);
+			    }				
+			}
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');	
+		}
 	}
 
 	public function admin_delete() {
