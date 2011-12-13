@@ -1,18 +1,47 @@
 <?php
+
+/**
+ * Alerts Controller
+ *
+ * @package Atlas
+ * @author  Daniel Nolan
+ * 
+ */
+
 class AlertsController extends AppController {
 
-	var $name = 'Alerts';
-
-	function admin_index() {
+	public $name = 'Alerts';
+	
+	private $bools = array(0 => false, 1 => true);
+	
+	public function admin_index() {
+		if($this->RequestHandler->isAjax()) {
+			$alerts = $this->Alert->find('all', array(
+				'conditions' => array('Alert.user_id' => $this->Auth->user('id'))));
+			if($alerts) {
+				$i = 0;
+				foreach($alerts as $alert) {
+					$data['alerts'][$i] = $alert['Alert'];
+					$data['alerts'][$i]['type'] = Inflector::humanize($data['alerts'][$i]['type']);
+					$data['alerts'][$i]['send_email'] = $this->bools[$data['alerts'][$i]['send_email']];
+					$data['alerts'][$i]['disabled'] = $this->bools[$data['alerts'][$i]['disabled']];				
+					$i++;
+				}
+			}
+			else {
+				$data['alerts'] = array();
+			}
+			$data['success'] = true;
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');	
+		} 
 	}
 
-	function admin_add_self_sign_alert() {
+	public function admin_add_self_sign_alert() {
 		if($this->RequestHandler->isAjax())	{
-			//TODO add security check to make sure a admin or the logged in user is adding the alert
-			ChromePhp::log($this->params);
 			$this->data['Alert']['name'] = $this->params['form']['name'];
-			$this->data['Alert']['type'] = 'selfSign';
-			$this->data['Alert']['user_id'] = $this->params['form']['user_id'];
+			$this->data['Alert']['type'] = 'self_sign';
+			$this->data['Alert']['user_id'] = $this->Auth->user('id');
 			$this->data['Alert']['location_id'] = $this->params['form']['location'];
 			if(isset($this->params['form']['send_email'])) {
 				$this->data['Alert']['send_email'] = 1;
@@ -39,37 +68,64 @@ class AlertsController extends AppController {
 		}
 	}
 
-	function admin_edit($id = null) {
-		if (!$id && empty($this->data)) {
-			$this->Session->setFlash(__('Invalid alert', true), 'flash_failure');
-			$this->redirect(array('action' => 'index'));
-		}
-		if (!empty($this->data)) {
-			if ($this->Alert->save($this->data)) {
-				$this->Session->setFlash(__('The alert has been saved', true), 'flash_success');
-				$this->redirect(array('action' => 'index'));
-			} else {
-				$this->Session->setFlash(__('The alert could not be saved. Please, try again.', true), 'flash_failure');
+	public function admin_toggle_email() {
+		if($this->RequestHandler->isAjax()) {
+			if(isset($this->params['form']['id'])) {
+				$this->data['Alert']['id'] = $this->params['form']['id'];
+				if($this->params['form']['send_email'] === 'true') {
+					$this->data['Alert']['send_email'] = 1;
+				}
+				else {
+					$this->data['Alert']['send_email'] = 0;
+				}
+				if($this->Alert->save($this->data))	{
+					$data['success'] = true;
+				}
+				else $data['success'] = false;
 			}
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
 		}
-		if (empty($this->data)) {
-			$this->data = $this->Alert->read(null, $id);
-		}
-		$users = $this->Alert->User->find('list');
-		$this->set(compact('users'));
+	}
+	
+	public function admin_toggle_disabled() {
+		if($this->RequestHandler->isAjax()) {
+			if(isset($this->params['form']['id'])) {
+				$this->data['Alert']['id'] = $this->params['form']['id'];
+				if($this->params['form']['disabled'] === 'true') {
+					$this->data['Alert']['disabled'] = 1;
+				}
+				else {
+					$this->data['Alert']['disabled'] = 0;
+				}
+				if($this->Alert->save($this->data))	{
+					$data['success'] = true;
+				}
+				else $data['success'] = false;
+			}
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}		
 	}
 
-	function admin_delete($id = null) {
-		if (!$id) {
-			$this->Session->setFlash(__('Invalid id for alert', true), 'flash_failure');
-			$this->redirect(array('action'=>'index'));
+	public function admin_delete() {
+		if($this->RequestHandler->isAjax()) {
+			if(isset($this->params['form']['id'])) {
+				if($this->Alert->delete($this->params['form']['id'])){
+					$data['success'] = true;
+					$data['message'] = 'Alert deleted successfully';
+				}
+				else {
+					$data['success'] = false;
+					$data['message'] = 'Unable to delete alert at this time.';
+				}
+			}
+			else {
+				$data['success'] = false;
+				$data['message'] = 'Invalid alert id.';				
+			}
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');	
 		}
-		if ($this->Alert->delete($id)) {
-			$this->Session->setFlash(__('Alert deleted', true), 'flash_success');
-			$this->redirect(array('action'=>'index'));
-		}
-		$this->Session->setFlash(__('Alert was not deleted', true), 'flash_failure');
-		$this->redirect(array('action' => 'index'));
 	}
 }
-?>
