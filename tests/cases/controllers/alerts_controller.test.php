@@ -97,12 +97,12 @@ class AlertsControllerTestCase extends AtlasTestCase {
 	    ));
 		$data = array(
 			'send_email' => 'true',
-			'id' => 2
+			'id' => '20'
 			);
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
 		$result = $this->testAction('/admin/alerts/toggle_email/', 
 			array('method' => 'post', 'form_data' => $data));
-		$alert = $this->Alerts->Alert->read(null, 2);
+		$alert = $this->Alerts->Alert->read(null, 20);
 		$this->assertEqual(1, $alert['Alert']['send_email']);			
 	}
 	
@@ -116,12 +116,12 @@ class AlertsControllerTestCase extends AtlasTestCase {
 	    ));
 		$data = array(
 			'disabled' => 'true',
-			'id' => 2
+			'id' => '20'
 			);
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
 		$result = $this->testAction('/admin/alerts/toggle_disabled/', 
 			array('method' => 'post', 'form_data' => $data));
-		$alert = $this->Alerts->Alert->read(null, 2);
+		$alert = $this->Alerts->Alert->read(null, 20);
 		$this->assertEqual(1, $alert['Alert']['disabled']);			
 	}
 
