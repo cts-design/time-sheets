@@ -29,9 +29,11 @@ class Alert extends AppModel {
 				'Alert.watched_id' => $buttons)));
 		$user = $this->User->UserTransaction->find('first', 
 			array('conditions' => array('UserTransaction.user_id' => $selfSign['user_id']),
-				  'order' => array('UserTransaction.id DESC')));  			
+				  'order' => array('UserTransaction.id DESC')));
+		$this->log('got hrere', 'debug');		    			
 		if($alerts && $user) {
 			$data = array();
+			
 			$i = 0;
 			foreach($alerts as $alert) {
 				if($selfSign['location_id'] !== $alert['Alert']['location_id']) {
