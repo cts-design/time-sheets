@@ -82,7 +82,85 @@ class AlertsControllerTestCase extends AtlasTestCase {
 			array('method' => 'post', 'form_data' => $data));
 		$id = $this->Alerts->Alert->getLastInsertId();
 		$alert = $this->Alerts->Alert->read(null, $id);
-		$this->assertEqual(23, $alert['Alert']['id']);		
+		$this->assertEqual(23, $alert['Alert']['id']);
+		$this->assertEqual('Test Alert Add', $alert['Alert']['name']);			
+	}
+	
+	
+	public function testAdminToggleEmail() {
+		$this->Alerts->Component->initialize($this->Alerts);	
+		$this->Alerts->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+		$data = array(
+			'send_email' => 'true',
+			'id' => 2
+			);
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$result = $this->testAction('/admin/alerts/toggle_email/', 
+			array('method' => 'post', 'form_data' => $data));
+		$alert = $this->Alerts->Alert->read(null, 2);
+		$this->assertEqual(1, $alert['Alert']['send_email']);			
+	}
+	
+	public function testAdminToggleDisabled() {
+		$this->Alerts->Component->initialize($this->Alerts);	
+		$this->Alerts->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+		$data = array(
+			'disabled' => 'true',
+			'id' => 2
+			);
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$result = $this->testAction('/admin/alerts/toggle_disabled/', 
+			array('method' => 'post', 'form_data' => $data));
+		$alert = $this->Alerts->Alert->read(null, 2);
+		$this->assertEqual(1, $alert['Alert']['disabled']);			
+	}
+
+	public function testAdminGetAlertTypes() {
+		$this->Alerts->Component->initialize($this->Alerts);	
+		$this->Alerts->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+		$expectedResult = array(
+			'data' => array(
+				'types' => array( 
+					array(
+						'id' => 'selfSignAlertFormPanel',
+						'label' => 'Self Sign'))));
+						
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$result = $this->testAction('/admin/alerts/get_alert_types/', 
+			array('method' => 'get'));
+		$this->assertEqual($result, $expectedResult);			
+	}
+
+	public function testAdminDelete() {
+		$this->Alerts->Component->initialize($this->Alerts);	
+		$this->Alerts->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+		
+		$data = array('id' => '20');
+		
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$result = $this->testAction('/admin/alerts/delete/', 
+			array('method' => 'post', 'form_data' => $data));	
+		$this->assertTrue($result['data']['success']);			
 	}
 		
 	public function endTest() {
