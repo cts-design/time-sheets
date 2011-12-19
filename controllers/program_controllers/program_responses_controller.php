@@ -34,7 +34,11 @@ class ProgramResponsesController extends AppController {
 		if($this->Acl->check(array(
 			'model' => 'User', 
 			'foreign_key' => $this->Auth->user('id')), 'ProgramResponses/admin_approve', '*')) {
-				$this->Auth->allow('admin_not_approved', 'admin_reset_form', 'admin_allow_new_response');
+				$this->Auth->allow(
+					'admin_not_approved',
+					'admin_reset_form', 
+					'admin_allow_new_response',
+					'admin_generate_form');
 			}
 	}	
 	
