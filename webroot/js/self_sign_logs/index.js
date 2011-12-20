@@ -707,6 +707,7 @@ Ext.onReady( function() {
 					},
 			        applyState: function(state) {
 			        	if(state[0] != undefined) {
+			        		// have to manually remove empty text, most likely a bug
 			        		Ext.apply(this, {emptyText: ''});
 							this.getStore().on('load', function(){
 								var selected = '';
@@ -755,6 +756,7 @@ Ext.onReady( function() {
 					},
 			        applyState: function(state) {
 			        	if(state[0] != undefined) {
+			  				// have to manually remove empty text, most likely a bug
 			        		Ext.apply(this, {emptyText: ''});        	
 							this.getStore().on('load', function(){
 								var selected = '';
@@ -812,10 +814,11 @@ Ext.onReady( function() {
 				selfSignProxy.extraParams.services = [];
 				var services = Ext.getCmp('servicesSelect');
 				var locations = Ext.getCmp('locationsSelect');
+				// kludge to put empty text back
+				Ext.apply(locations, {emptyText: 'Please make a selection'});
+				Ext.apply(services, {emptyText: 'Please make a selection'});				
 				locations.reset();
 				services.reset();
-				Ext.apply(locations, {emptyText: 'Please make a selection'});
-				Ext.apply(services, {emptyText: 'Please make a selection'});
 				selfSignTabs.getActiveTab().getStore().load();
 				var cp = Ext.state.Manager.getProvider();
 				cp.clear('ext-servicesSelect');
