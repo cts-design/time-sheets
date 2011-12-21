@@ -76,15 +76,30 @@ Ext.onReady( function() {
 	});
 	
 	var openSelfSignLogsStore = Ext.create('Atlas.data.SelfSignLogStore', {
-		storeId: 'OpenSelfSignLogsStore'
+		storeId: 'OpenSelfSignLogsStore',
+		listeners: {
+			load: function() {
+				Ext.getCmp('openItems').setText('Open: ' + this.getCount());
+			}
+		}
 	});
 	
 	var closedSelfSignLogsStore = Ext.create('Atlas.data.SelfSignLogStore', {
-		storeId: 'ClosedSelfSignLogsStore'
+		storeId: 'ClosedSelfSignLogsStore',
+		listeners: {
+			load: function() {
+				Ext.getCmp('closedItems').setText('Closed: ' + this.getCount());
+			}
+		}		
 	});
 	
 	var notHelpedSelfSignLogsStore = Ext.create('Atlas.data.SelfSignLogStore', {
-		storeId: 'NotHelpedSelfSignLogsStore'
+		storeId: 'NotHelpedSelfSignLogsStore',
+		listeners: {
+			load: function() {
+				Ext.getCmp('notHelpedItems').setText('Not Helped: ' + this.getCount());
+			}
+		}			
 	});	
 	
 	Ext.define('KioskButton', {
@@ -536,6 +551,11 @@ Ext.onReady( function() {
 		title: 'Open',
 		store: openSelfSignLogsStore,
 		id: 'selfSignGrid',
+		tbar: [{
+			xtype: 'tbtext',
+			id: 'openItems',
+			text: 'Open: ' + openSelfSignLogsStore.getCount()	
+		}],
 		viewConfig: {
 			loadMask: false,
 			singleSelect: true,
@@ -557,13 +577,18 @@ Ext.onReady( function() {
 		            return false;
 	            }
 	        }		
-		}		
+		}
 	});
 		
 	var closedSelfSignLogsGrid = Ext.create('Atlas.grid.SelfSignLogsPanel', {
 		title: 'Closed',
 		store: closedSelfSignLogsStore,
 		id: 'closedSelfSignGrid',
+		tbar: [{
+			xtype: 'tbtext',
+			id: 'closedItems',
+			text: 'Closed: ' + closedSelfSignLogsStore.getCount()	
+		}],		
 		viewConfig: {
 			loadMask: true,
 			singleSelect: true,
@@ -592,6 +617,11 @@ Ext.onReady( function() {
 		title: 'Not Helped',
 		store: notHelpedSelfSignLogsStore,
 		id: 'notHelpedSelfSignGrid',
+		tbar: [{
+			xtype: 'tbtext',
+			id: 'notHelpedItems',
+			text: 'Not Helped: ' + notHelpedSelfSignLogsStore.getCount()	
+		}],		
 		viewConfig: {
 			loadMask: true,
 			singleSelect: true,
