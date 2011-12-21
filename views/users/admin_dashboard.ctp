@@ -128,7 +128,7 @@
 	    	<?php endif ?> 
 	    	<p>
 	    		<?php echo $html->image('icons/application_xp_terminal.png')?>
-	    		<?php echo $html->link('Atlas 3.1.5', array('controller' => 'release_notes', 'admin' => true))?>
+	    		<?php echo $html->link('Atlas 3.1.6', array('controller' => 'release_notes', 'admin' => true))?>
 	    	</p>    	
 	    </div>
     </div>
