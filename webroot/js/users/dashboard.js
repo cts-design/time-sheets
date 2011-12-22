@@ -152,6 +152,11 @@ $(document).ready(function () {
 						icon: {
 							image: "/img/icons/survey.png"
 						}
+					},
+					reports: {
+						icon: {
+							image: '/img/icons/reports.png'
+						}
 					}
 	    }
 	},
