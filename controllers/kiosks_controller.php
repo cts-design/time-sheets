@@ -504,13 +504,18 @@ class KiosksController extends AppController {
 			$HttpSocket = new HttpSocket();
 			$results = $HttpSocket->post('localhost:3000/new', 
 				array('data' => $data));
+			$to = '';
 			foreach($data as $alert) {
 				if($alert['send_email']) {
-					$this->Email->to = $alert['email'];
-					$this->Email->from = Configure::read('System.email');
-					$this->Email->subject = 'Self Sign Alert';
-					$this->Email->send($alert['message'] . "\r\n" . $alert['url']);
-				}
+					$to .= $alert['email'] . ',';
+				}			
+			}
+			if(!empty($to)) {
+				$to = trim($to, ',');
+				$this->Email->to = $to;
+				$this->Email->from = Configure::read('System.email');
+				$this->Email->subject = 'Self Sign alert';
+				$this->Email->send($alert['message'] . "\r\n" . $alert['url']);				
 			}
 		}
 	}
