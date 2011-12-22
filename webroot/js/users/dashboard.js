@@ -158,6 +158,11 @@ $(document).ready(function () {
 					image: "/img/icons/email.png"
 				}
 			}
+			reports: {
+				icon: {
+					image: '/img/icons/reports.png'
+				}
+			}
 	    }
 	},
 	cookies: {

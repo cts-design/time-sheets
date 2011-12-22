@@ -103,6 +103,7 @@
             <a><?php __('Tools') ?></a>
 			<ul>
 			    <li rel="loginIssues"><?php echo $html->link(__('Resolve Login Issues', true), array('controller' => 'users', 'action' => 'resolve_login_issues')) ?></li>
+                <li rel="reports"><?php echo $html->link(__('Reports', true), array('controller' => 'reports', 'action' => 'index')) ?></li>
 			</ul>
 		    </li>		    
 		</ul>
