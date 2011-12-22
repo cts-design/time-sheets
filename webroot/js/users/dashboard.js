@@ -157,7 +157,7 @@ $(document).ready(function () {
 				icon: {
 					image: "/img/icons/email.png"
 				}
-			}
+			},
 			reports: {
 				icon: {
 					image: '/img/icons/reports.png'
