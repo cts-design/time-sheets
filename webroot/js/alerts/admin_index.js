@@ -208,8 +208,7 @@ Ext.create('Ext.data.ArrayStore', {
 	idIndex: 0,
 	fields: ['label', 'detail'],
 	data: [
-		['Is Veteran', 'is_veteran'],
-		['English', 'english'],
+		['Veteran', 'veteran'],
 		['Spanish', 'spanish']
 	]
 });
