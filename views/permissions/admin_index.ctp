@@ -19,7 +19,8 @@
 				{contentEl: 'Storage', title: 'Storage'},
 				{contentEl: 'SelfSign', title: 'Self Sign'},
 				{contentEl: 'Programs', title: 'Programs'},
-				{contentEl: 'Tools', title: 'Tools'}
+				{contentEl: 'Tools', title: 'Tools'},
+				{contentEl: 'Reports', title: 'Reports'}
 			]
 		})
 	});
@@ -403,6 +404,32 @@
 			    'type' => 'checkbox',
 			   	'label' => 'Resolve Login Issues',
 			    'checked' => (isset($controllers['Users']['admin_resolve_login_issues'])) ? $controllers['Users']['admin_resolve_login_issues'] : '' ));?>
+		    </fieldset>
+		    <br class="clear" />
+			<?php echo $this->Form->end(__('Submit', true))?>    
+	</div>
+	<div id="Reports" class="x-hide-display">
+		    <?php echo $this->Form->create('permission', array('action' => 'set_permissions')) ?>
+		    <?php echo $this->Form->hidden('id', array('value' => $id));?>
+		    <?php echo $this->Form->hidden('model', array('value' => $model));?>		
+		    <fieldset class="left right-mar-10">
+            <legend><?php __('Reports') ?></legend>
+		       <?php echo $this->Form->input('Reports.admin_index', array(
+			    'type' => 'checkbox',
+			   	'label' => 'Index',
+			    'checked' => (isset($controllers['Reports']['admin_index'])) ? $controllers['Reports']['admin_index'] : '' ));?>
+ 		       <?php echo $this->Form->input('Reports.admin_self_sign_logs', array(
+ 			    'type' => 'checkbox',
+ 			   	'label' => 'Self Sign Logs Report',
+ 			    'checked' => (isset($controllers['Reports']['admin_self_sign_logs'])) ? $controllers['Reports']['admin_self_sign_logs'] : '' ));?>
+                <?php echo $this->Form->input('Reports.admin_self_sign_logs', array(
+ 			    'type' => 'checkbox',
+ 			   	'label' => 'Self Sign Logs Report',
+ 			    'checked' => (isset($controllers['Reports']['admin_self_sign_logs'])) ? $controllers['Reports']['admin_self_sign_logs'] : '' ));?>
+                <?php echo $this->Form->input('Reports.admin_self_sign_logs', array(
+ 			    'type' => 'checkbox',
+ 			   	'label' => 'Self Sign Logs Report',
+ 			    'checked' => (isset($controllers['Reports']['admin_self_sign_logs'])) ? $controllers['Reports']['admin_self_sign_logs'] : '' ));?>
 		    </fieldset>
 		    <br class="clear" />
 			<?php echo $this->Form->end(__('Submit', true))?>    
