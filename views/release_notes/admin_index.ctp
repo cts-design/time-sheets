@@ -7,7 +7,6 @@
 	<h2>Major Feature Enhancements</h2>
 	<ol>
 		<li>Implementation of ALERTS module. This module will allow ATLAS users to setup specific ALERTS to be generated based on preset conditions within ATLAS.</li>
-		<li>Implementation of REPORTS module. Module allows for in-depth reporting and charting.	</li>	
 	</ol>
 	<h2>Minor Feature Enhancements</h2>
 	<ol>
