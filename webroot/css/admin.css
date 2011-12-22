@@ -892,6 +892,11 @@ div.actions .ui-button-text {
 	overflow: visible !important;
 }
 
+
+#modalDeleteForm .input select {
+	width: 300px;
+}
+
 /** Debugging **/
 pre {
     color: #000;

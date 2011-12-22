@@ -10,7 +10,7 @@
 
 <div>
 	<p>
-        <?php printf(__("Welcome to the %s Online Services System. To being, please log in with
+        <?php printf(__("Welcome to the %s Online Services System. To begin, please log in with
                          your last name and the last 4 digits of your social security
                          number", true), Configure::read('Company.name')) ?>
 	</p>

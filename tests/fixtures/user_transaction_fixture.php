@@ -25,6 +25,15 @@ class UserTransactionFixture extends CakeTestFixture {
 			'details' => 'Lorem ipsum dolor sit amet',
 			'created' => '2010-10-19 16:02:28'
 		),
+		array(
+			'id' => 2,
+			'admin_id' => 1,
+			'user_id' => 9,
+			'location' => 1,
+			'module' => 'Lorem ipsum dolor sit amet',
+			'details' => 'Lorem ipsum dolor sit amet',
+			'created' => '2010-10-19 16:02:28'
+		)		
 	);
 }
 ?>

@@ -148,11 +148,16 @@ $(document).ready(function () {
 	        		image: "/img/icons/clipboard.png"
 	        	}
 	        },
-					selfSignSurvey: {
-						icon: {
-							image: "/img/icons/survey.png"
-						}
-					}
+			selfSignSurvey: {
+				icon: {
+					image: "/img/icons/survey.png"
+				}
+			},
+			alerts: {
+				icon: {
+					image: "/img/icons/email.png"
+				}
+			}
 	    }
 	},
 	cookies: {

@@ -65,6 +65,17 @@ class Location extends AppModel {
 	}
 	return false;
     }
+	
+	function getLocationName($locationId) {
+		$this->id = $locationId;
+		$name = $this->field('name');
+		if($name) {
+			return $name;
+		}
+		else {
+			return false;
+		}
+	}
     
     function findAllNotHidden() {
         return $this->find('list', array(

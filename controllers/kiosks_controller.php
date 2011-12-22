@@ -6,15 +6,21 @@
  * @link http://ctsfla.com
  * @package ATLAS V3
  */
+
+App::import('Core', 'HttpSocket'); 
+ 
 class KiosksController extends AppController {
 
     var $name = 'Kiosks';
-    var $components = array('Cookie', 'Transaction');
+    var $components = array('Cookie', 'Transaction', 'Email');
 
     function beforeFilter() {
 		parent::beforeFilter();
 		if($this->params['action'] == 'kiosk_self_scan_document') {
 			$this->Security->validatePost = false;
+		}
+		if($this->Auth->user('role_id') > 1) {
+			$this->Auth->allow('admin_get_kiosk_buttons_by_location');
 		}
 		$this->Cookie->name = 'self_sign';
 		$this->Cookie->domain = Configure::read('domain'); 
@@ -113,7 +119,7 @@ class KiosksController extends AppController {
 			if($this->User->save($this->data)) {
 				$this->Transaction->createUserTransaction('Self Sign', $id, $this->Kiosk->getKioskLocationId(), 'Edited information');
 				$this->Session->setFlash(__('The information has been saved', true), 'flash_success');
-				$this->redirect( array('action' => 'self_sign_service_selection', 'kiosk' => true));
+				$this->redirect(array('action' => 'self_sign_service_selection', 'kiosk' => true));
 			}
 			else {
 				$this->Session->setFlash(__('The information could not be saved. Please, try again.', true), 'flash_failure');
@@ -200,7 +206,7 @@ class KiosksController extends AppController {
 					$this->Kiosk->SelfSignLogArchive->create();
 					$this->Kiosk->SelfSignLogArchive->save($data['SelfSignLog']);
 					$this->Transaction->createUserTransaction('Self Sign');
-
+					$this->sendSelfSignAlert($data['SelfSignLog']);
 					$this->redirect( array(
 						'controller' => 'users', 
 						'action' => 'logout', 
@@ -250,6 +256,7 @@ class KiosksController extends AppController {
 								$this->Kiosk->SelfSignLogArchive->create();
 								$this->Kiosk->SelfSignLogArchive->save($data['SelfSignLog']);
 								$this->Transaction->createUserTransaction('Self Sign');
+								$this->sendSelfSignAlert($data['SelfSignLog']);
 								$this->redirect(array(
 									'controller' => 'users', 
 									'action' => 'logout', 'selfSign', $this->Cookie->read('logout_message'), 'kiosk' => false));
@@ -275,6 +282,7 @@ class KiosksController extends AppController {
 							$this->Kiosk->SelfSignLogArchive->create();
 							$this->Kiosk->SelfSignLogArchive->save($data['SelfSignLog']);
 							$this->Transaction->createUserTransaction('Self Sign');
+							$this->sendSelfSignAlert($data['SelfSignLog']);
 							$this->redirect( array(
 								'controller' => 'users', 
 								'action' => 'logout', 'selfSign', $this->Cookie->read('logout_message'), 'kiosk' => false));
@@ -323,6 +331,7 @@ class KiosksController extends AppController {
 				$this->Kiosk->SelfSignLogArchive->save($data['SelfSignLog']);
 				$this->Cookie->write('details.other', $this->data['SelfSignLog']['other']);
 				$this->Transaction->createUserTransaction('Self Sign');
+				$this->sendSelfSignAlert($data['SelfSignLog']);
 				$this->redirect( array('controller' => 'users', 'action' => 'logout', 'selfSign', $this->Cookie->read('logout_message'), 'kiosk' => false));
 			}
 			else {
@@ -430,6 +439,48 @@ class KiosksController extends AppController {
 		}
     }
 
+	function admin_get_kiosk_buttons_by_location($locationId, $parentId=NULL) {
+		if($this->RequestHandler->isAjax()) {
+			//TODO move this masterkiosk crap to it's own function
+			$this->loadModel('MasterKioskButton');
+			$this->MasterKioskButton->recursive = -1;
+			$masterButtonList = $this->MasterKioskButton->find('list', array(
+				'fields' => 'MasterKioskButton.name'));			
+				$kiosks = $this->Kiosk->find('all', array(
+					'conditions' => array(
+						'Kiosk.location_id' => $locationId,
+						'Kiosk.deleted' => 0),
+					'fields' => array('Kiosk.id'),
+					'contain' => array('KioskButton' => array(
+						'conditions' => array(
+							'KioskButton.parent_id' => $parentId,
+							'KioskButton.status' => 0),
+						'fields' => array('KioskButton.id')))));
+			$data = array();
+			if($kiosks && $masterButtonList) {
+				$i = 0;
+				foreach($kiosks as $kiosk) {
+					foreach ($kiosk['KioskButton'] as $k => $v) {
+						if(!in_array($kiosk['KioskButton'][$k]['id'], $data)) {
+							$data['buttons'][$i]['id'] = $kiosk['KioskButton'][$k]['id'];
+							if($masterButtonList[$kiosk['KioskButton'][$k]['id']] != 'Scan Documents') {
+								$data['buttons'][$i]['name'] = $masterButtonList[$kiosk['KioskButton'][$k]['id']];	
+							}					
+							$i++;
+						}
+					}
+				}
+				$data['success'] = true;
+			}
+			else {
+				$data['success'] = true;
+				$data['buttons'] = array();
+			}	
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');				
+		}
+	}
+
 	function kiosk_set_language($lang) {
 		if ($lang === 'en') {
 			$this->Session->delete('Config.language');
@@ -442,7 +493,30 @@ class KiosksController extends AppController {
 	
 	private function getKioskRegistraionFields() {
 		$settings = Cache::read('settings');	
-		return Set::extract('/field',  json_decode($settings['SelfSign']['KioskRegistration'], true));
-				
+		return Set::extract('/field',  json_decode($settings['SelfSign']['KioskRegistration'], true));			
+	}
+	
+	private function sendSelfSignAlert($selfSignLog) {
+		$kioskName = $this->Kiosk->getKioskName($this->Cookie->read('kioskId'));
+		$this->loadModel('Alert');
+		$data = $this->Alert->getSelfSignAlerts($selfSignLog, $kioskName);
+		if($data) {
+			$HttpSocket = new HttpSocket();
+			$results = $HttpSocket->post('localhost:3000/new', 
+				array('data' => $data));
+			$to = '';
+			foreach($data as $alert) {
+				if($alert['send_email']) {
+					$to .= $alert['email'] . ',';
+				}			
+			}
+			if(!empty($to)) {
+				$to = trim($to, ',');
+				$this->Email->to = $to;
+				$this->Email->from = Configure::read('System.email');
+				$this->Email->subject = 'Self Sign alert';
+				$this->Email->send($alert['message'] . "\r\n" . $alert['url']);				
+			}
+		}
 	}
 }

@@ -318,8 +318,10 @@ class SelfSignLogArchivesController extends AppController {
 	function _calculateAverageTimeInSeconds($arrayOfTimesInSeconds) {
         $count = count($arrayOfTimesInSeconds);
         $sum   = array_sum($arrayOfTimesInSeconds);
-        $averageInSeconds = ($sum / $count);
-        
+		$averageInSeconds = 0;
+       	if($count > 0 && $sum > 0) {
+       		$averageInSeconds = ($sum / $count);
+       	}      
         return $averageInSeconds;
 	}
 

@@ -68,6 +68,9 @@
                 </ul>
 			</li>
 		    <?php }?>
+		    <li rel="alerts" id="alerts">
+		    	<?php echo $html->link(__('Alerts', true), array('controller' => 'alerts', 'action' => 'index', 'admin' => true)); ?>
+		    </li>	
 		    <li rel="group" id="users">
             <a><?php __('Users') ?></a>
 			<ul>
@@ -125,7 +128,7 @@
 	    	<?php endif ?> 
 	    	<p>
 	    		<?php echo $html->image('icons/application_xp_terminal.png')?>
-	    		<?php echo $html->link('Atlas 3.1.5', array('controller' => 'release_notes', 'admin' => true))?>
+	    		<?php echo $html->link('Atlas 3.1.6', array('controller' => 'release_notes', 'admin' => true))?>
 	    	</p>    	
 	    </div>
     </div>

@@ -66,6 +66,8 @@ class Kiosk extends AppModel {
 		)
 	);
 	
+	var $actsAs = array('Containable');
+	
     function getKioskLocationId() {
 	$oneStop = env('HTTP_USER_AGENT');
 	$arrOneStop = explode('##', $oneStop);
@@ -82,6 +84,15 @@ class Kiosk extends AppModel {
 	}
 	else return false;
     }
+
+	function getKioskName($kioskId) {
+		$this->id = $kioskId;
+		$name = $this->field('location_description');
+		if($name) {
+			return $name;
+		}
+		else return false;
+	}
 
     function delete($id = null) {
 	if($id) {

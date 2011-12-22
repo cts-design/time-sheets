@@ -3,7 +3,22 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
-	
+	<h1>Release 3.1.6 (12/22/11)</h1>
+	<h2>Major Feature Enhancements</h2>
+	<ol>
+		<li>Implementation of ALERTS module. This module will allow ATLAS users to setup specific ALERTS to be generated based on preset conditions within ATLAS.</li>
+	</ol>
+	<h2>Minor Feature Enhancements</h2>
+	<ol>
+		<li>Implemented a “save state” feature that retains the selected Self-Sign Queue filter settings.</li>
+		<li>Implemented a status bar and added counts to the Self-Sign Queue.</li>		
+	</ol>
+	<h2>Bug Fixes</h2>
+	<ol>
+		<li>Resolved issue with “generate” function not working for Role level admins.</li>
+		<li>Increased "deleted reason" text box size.</li>
+	</ol>
+	<hr />
 	<h1>Release 3.1.5 (11/16/11)</h1>
 	<h2>Main Feature Releases</h2>
 	<ol>

@@ -14,6 +14,7 @@
 			bodyStyle: 'padding: 10px',
 			renderTo: 'PermissionTabs',
 			items:[
+				{contentEl: 'Alerts', title: 'Alerts'},
 				{contentEl: 'Users', title: 'Users'},
 				{contentEl: 'Website', title: 'Website'},
 				{contentEl: 'Storage', title: 'Storage'},
@@ -30,6 +31,24 @@
     <?php echo $crumb->getHtml(__('Edit Permissions', true), null, 'unique'); ?>
 </div>
 <div id="PermissionTabs">
+	<div id="Alerts" class="x-hide-display">
+		    <?php echo $this->Form->create('permission', array('action' => 'set_permissions')) ?>
+		    <?php echo $this->Form->hidden('id', array('value' => $id));?>
+		    <?php echo $this->Form->hidden('model', array('value' => $model));?>		
+		    <fieldset class="left right-mar-10">
+            <legend><?php __('Alerts') ?></legend>
+		       <?php echo $this->Form->input('Alerts.admin_index', array(
+			    'type' => 'checkbox',
+			   	'label' => 'Index',
+			    'checked' => (isset($controllers['Alerts']['admin_index'])) ? $controllers['Alerts']['admin_index'] : '' ));?>
+		       <?php echo $this->Form->input('Alerts.admin_add_self_sign_alert', array(
+			    'type' => 'checkbox',
+			   	'label' => 'Add Self Sign Alerts',
+			    'checked' => (isset($controllers['Alerts']['admin_add_self_sign_alert'])) ? $controllers['Alerts']['admin_add_self_sign_alert'] : '' ));?>			    
+		    </fieldset>
+		    <br class="clear" />
+			<?php echo $this->Form->end(__('Submit', true))?>		
+	</div>
 	<div id="Users" class="x-hide-display">
 		    <?php echo $this->Form->create('permission', array('action' => 'set_permissions')) ?>
 		    <?php echo $this->Form->hidden('id', array('value' => $id));?>

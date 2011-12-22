@@ -64,6 +64,12 @@
 		    'between' => '</p><p class="left">',
 		    'after' => '</p>'
 		)); ?>
+	    <?php echo  '<br class="clear"/>' ?>
+	    <?php echo $this->Form->input('windows_username', array(
+		    'before' => '<p class="left">',
+		    'between' => '</p><p class="left">',
+		    'after' => '</p>'
+		)); ?>			
 	    <?php echo $this->Form->hidden('admin_registration', array('value' => 'admin')); ?>
 	</fieldset>
 	<?php echo $this->Form->end(__('Submit', true)); ?>

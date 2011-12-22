@@ -25,7 +25,10 @@ Ext.override(Ext.menu.KeyNav, {
 
 
 Ext.onReady( function() {
-
+    Ext.state.Manager.setProvider(new Ext.state.CookieProvider({
+        expires: new Date(new Date().getTime()+(1000*60*60*24*365)) // 1 year
+    }));
+    
 	var rowIndex = null,
 		recordId = null,
 		userId = null,
@@ -73,15 +76,30 @@ Ext.onReady( function() {
 	});
 	
 	var openSelfSignLogsStore = Ext.create('Atlas.data.SelfSignLogStore', {
-		storeId: 'OpenSelfSignLogsStore'
+		storeId: 'OpenSelfSignLogsStore',
+		listeners: {
+			load: function() {
+				Ext.getCmp('openItems').setText('Open: ' + this.getCount());
+			}
+		}
 	});
 	
 	var closedSelfSignLogsStore = Ext.create('Atlas.data.SelfSignLogStore', {
-		storeId: 'ClosedSelfSignLogsStore'
+		storeId: 'ClosedSelfSignLogsStore',
+		listeners: {
+			load: function() {
+				Ext.getCmp('closedItems').setText('Closed: ' + this.getCount());
+			}
+		}		
 	});
 	
 	var notHelpedSelfSignLogsStore = Ext.create('Atlas.data.SelfSignLogStore', {
-		storeId: 'NotHelpedSelfSignLogsStore'
+		storeId: 'NotHelpedSelfSignLogsStore',
+		listeners: {
+			load: function() {
+				Ext.getCmp('notHelpedItems').setText('Not Helped: ' + this.getCount());
+			}
+		}			
 	});	
 	
 	Ext.define('KioskButton', {
@@ -475,6 +493,7 @@ Ext.onReady( function() {
 	Ext.define('Atlas.grid.SelfSignLogsPanel', {
 		extend: 'Ext.grid.Panel',
 		height: 500,
+		stateful: false,
 		width: 950,
 		frame: true,
 		invalidateScrollerOnRefresh: false,
@@ -532,6 +551,11 @@ Ext.onReady( function() {
 		title: 'Open',
 		store: openSelfSignLogsStore,
 		id: 'selfSignGrid',
+		tbar: [{
+			xtype: 'tbtext',
+			id: 'openItems',
+			text: 'Open: ' + openSelfSignLogsStore.getCount()	
+		}],
 		viewConfig: {
 			loadMask: false,
 			singleSelect: true,
@@ -553,13 +577,18 @@ Ext.onReady( function() {
 		            return false;
 	            }
 	        }		
-		}		
+		}
 	});
 		
 	var closedSelfSignLogsGrid = Ext.create('Atlas.grid.SelfSignLogsPanel', {
 		title: 'Closed',
 		store: closedSelfSignLogsStore,
 		id: 'closedSelfSignGrid',
+		tbar: [{
+			xtype: 'tbtext',
+			id: 'closedItems',
+			text: 'Closed: ' + closedSelfSignLogsStore.getCount()	
+		}],		
 		viewConfig: {
 			loadMask: true,
 			singleSelect: true,
@@ -588,6 +617,11 @@ Ext.onReady( function() {
 		title: 'Not Helped',
 		store: notHelpedSelfSignLogsStore,
 		id: 'notHelpedSelfSignGrid',
+		tbar: [{
+			xtype: 'tbtext',
+			id: 'notHelpedItems',
+			text: 'Not Helped: ' + notHelpedSelfSignLogsStore.getCount()	
+		}],		
 		viewConfig: {
 			loadMask: true,
 			singleSelect: true,
@@ -657,6 +691,7 @@ Ext.onReady( function() {
 	var selfSignSearch = Ext.create('Ext.form.FormPanel', {
 		frame: true,
 		collapsible: true,
+		stateful: false,
 		renderTo: 'SelfSignSearch',
 		fieldDefautls: {
 			labelWidth: 55
@@ -684,6 +719,8 @@ Ext.onReady( function() {
 					allowAddNewData: true,
 					emptyText: 'Please make a selection',
 					name: 'locations',
+					stateful: true, 
+					stateEvents: ['change'],
 					allowBlank: true,
 					msgTarget: 'under',
 					width: 400,
@@ -692,9 +729,28 @@ Ext.onReady( function() {
 							Ext.getCmp('servicesSelect').reset();
 							servicesStore.load({params: {
 								locations: Ext.util.Format.htmlEncode(this.getValue())
-							}});
+							}});							
 						}
-					}
+					},
+					getState: function() {					
+			            return this.getValue();					
+					},
+			        applyState: function(state) {
+			        	if(state[0] != undefined) {
+			        		// have to manually remove empty text, most likely a bug
+			        		Ext.apply(this, {emptyText: ''});
+							this.getStore().on('load', function(){
+								var selected = '';
+								for(var i in state) {
+									selected += state[i] += ', ';
+								}
+								if(selected !== '') {
+									this.select(selected);																		
+								}
+				
+							}, this);
+						}
+			        }				
 				}]
 			},{
 				layout: 'anchor',
@@ -711,47 +767,72 @@ Ext.onReady( function() {
 					displayField: 'name',
 					name: 'services',
 					fieldLabel: 'Services',
+					stateful: true,
+					stateEvents: ['change'],					
 					emptyText: 'Please make a selection',
 					allowBlank: true,
 					msgTarget: 'under',
 					width: 400,
 					listeners: {
 						beforequery: function() {
-							var val = Ext.getCmp('locationsSelect').getValue();	
-							console.log(val);				
+							var val = Ext.getCmp('locationsSelect').getValue();				
 							if(val == '') {
 								this.markInvalid('Please select a location first');
 							}			
 						}
-					}
+					},
+					getState: function() {
+			            return this.getValue();					
+					},
+			        applyState: function(state) {
+			        	if(state[0] != undefined) {
+			  				// have to manually remove empty text, most likely a bug
+			        		Ext.apply(this, {emptyText: ''});        	
+							this.getStore().on('load', function(){
+								var selected = '';
+								for(var i in state) {
+									selected += state[i] += ', ';
+								}
+								if(selected !== '') {
+									this.select(selected);																		
+								}						
+								Ext.getCmp('filter').fireEvent('click');				
+							}, this, {single: true});
+						}
+			        }					
 				}]
 			}]
 		}],
 		
 		fbar: [{
 			text: 'Filter',
+			id: 'filter',
+			stateful: false,
 			icon:  '/img/icons/find.png',
-			handler: function() {
-				var form = selfSignSearch.getForm();
-				if(form.isValid()) {
-					locations = Ext.util.Format.htmlEncode(Ext.getCmp('locationsSelect').getValue());
-					services = Ext.util.Format.htmlEncode(Ext.getCmp('servicesSelect').getValue());
-					var grid = selfSignTabs.getActiveTab();
-					var status = 0;
-					switch(grid.title) {
-						case 'Closed' : 
-							status = 1;
-							break;
-						case 'Not Helped' :
-							status = 2;
+			listeners: {
+				click: function() {
+					var form = selfSignSearch.getForm();
+					if(form.isValid()) {
+						locations = Ext.util.Format.htmlEncode(Ext.getCmp('locationsSelect').getValue());
+						services = Ext.util.Format.htmlEncode(Ext.getCmp('servicesSelect').getValue());
+						var grid = selfSignTabs.getActiveTab();
+						var status = 0;
+						switch(grid.title) {
+							case 'Closed' : 
+								status = 1;
+								break;
+							case 'Not Helped' :
+								status = 2;
+						}
+						selfSignProxy.extraParams = {
+							locations: locations,
+							services: services,
+							status: status
+						}
+						selfSignTabs.getActiveTab().getStore().load();
 					}
-					selfSignProxy.extraParams = {
-						locations: locations,
-						services: services,
-						status: status
-					}
-					selfSignTabs.getActiveTab().getStore().load();
-				}	
+										
+				}
 			}
 		},{
 			text: 'Reset',
@@ -761,9 +842,17 @@ Ext.onReady( function() {
 				services = [];
 				selfSignProxy.extraParams.locations = [];
 				selfSignProxy.extraParams.services = [];
-				Ext.getCmp('servicesSelect').reset();
-				Ext.getCmp('locationsSelect').reset();
+				var services = Ext.getCmp('servicesSelect');
+				var locations = Ext.getCmp('locationsSelect');
+				// kludge to put empty text back
+				Ext.apply(locations, {emptyText: 'Please make a selection'});
+				Ext.apply(services, {emptyText: 'Please make a selection'});				
+				locations.reset();
+				services.reset();
 				selfSignTabs.getActiveTab().getStore().load();
+				var cp = Ext.state.Manager.getProvider();
+				cp.clear('ext-servicesSelect');
+				cp.clear('ext-locationsSelect');
 			}
 		}]
 	});
