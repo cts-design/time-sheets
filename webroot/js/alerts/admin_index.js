@@ -129,6 +129,91 @@ Ext.define('Atlas.form.SelfSignAlertPanel', {
 	}]
 });	
 
+Ext.define('Atlas.form.CustomerDetailsAlertPanel', {
+	extend: 'Ext.form.Panel',
+	alias: 'widget.customerdetailsalertformpanel',	
+	padding: 10,
+	border: 0,
+	defaults: {
+		labelWidth: 100,
+		width: 350
+	},
+	items: [{
+		fieldLabel: 'Alert Name',
+		xtype: 'textfield',
+		allowBlank: false,
+		msgTarget: 'under',
+		name: 'name'		
+	},{
+		xtype: 'combobox',
+		fieldLabel: 'Location',
+		displayField: 'name',
+		valueField: 'id',
+		store: 'locations',			
+		queryMode: 'remote',
+		emptyText: 'Please Select',
+		name: 'location',
+		allowBlank: false,
+		msgTarget: 'under'	
+	},{
+		xtype: 'combobox',
+		id: 'detailsSelect',
+		fieldLabel: 'Detail',
+		displayField: 'label',
+		valueField: 'detail',
+		store: 'details',
+		queryMode: 'local',
+		emptyText: 'Please Select',
+		name: 'detail',
+		allowBlank: false,
+		msgTarget: 'under'
+	},{
+		fieldLabel: 'Also send email',
+		xtype: 'checkbox',
+		name: 'send_email'		
+	},{
+		xtype: 'button',
+		text: 'Save',
+		width: 100,
+		formBind: true,
+		handler: function() {
+			var form = this.up('form').getForm();
+			if(form.isValid()){
+				form.submit({
+					success: function(form, action) {
+						Ext.Msg.alert('Success', action.result.message);
+						form.reset();
+						Ext.getCmp('myAlertsGrid').getStore().load();						
+					},
+					failure: function(form, action) {
+						Ext.Msg.alert('Failed', action.result.message);
+					}
+				});
+			}
+		}
+	}, {
+		xtype: 'button',
+		text: 'Reset',
+		width: 100,
+		margin: '0 0 0 10',
+		handler: function() {
+			this.up('form').getForm().reset();
+		}
+	}]
+});
+
+Ext.create('Ext.data.ArrayStore', {
+	storeId: 'details',
+	autoLoad: true,
+	idIndex: 0,
+	fields: ['label', 'detail'],
+	data: [
+		['Is Veteran', 'is_veteran'],
+		['English', 'english'],
+		['Spanish', 'spanish']
+	]
+});
+
 Ext.define('Location', {
 	extend: 'Ext.data.Model',
 	fields: ['id', 'name']
@@ -136,7 +221,7 @@ Ext.define('Location', {
 
 Ext.create('Ext.data.Store', {
 	model: 'Location',
-	id: 'locations',
+	storeId: 'locations',
 	proxy: {
 		type: 'ajax',
 		url: '/admin/locations/get_location_list',
@@ -235,7 +320,7 @@ Ext.create('Atlas.data.KioskButtonStore', {
 });
 	
 Ext.create('Ext.data.Store', {
-	id: 'alertTypes',
+	storeId: 'alertTypes',
 	fields: ['id', 'label'],
 	proxy: {
 		type: 'ajax',
@@ -262,7 +347,7 @@ Ext.define('Alert', {
 });
 
 Ext.create('Ext.data.Store', {
-	id: 'alerts',
+	storeId: 'alerts',
 	model: 'Alert',
 	proxy: {
 		type: 'ajax',
@@ -378,6 +463,10 @@ Ext.onReady(function(){
 	        	xtype: 'selfsignalertformpanel',
 	        	id: 'selfSignAlertFormPanel',
 	        	url: '/admin/alerts/add_self_sign_alert'
+	        },{
+	        	xtype: 'customerdetailsalertformpanel',
+	        	id: 'customerDetailsAlertFromPanel',
+	        	url: '/admin/alerts/add_customer_details_alert'	        	
 	        }],
 	        dockedItems: [{
 	        	xtype: 'toolbar',
