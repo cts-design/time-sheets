@@ -1,17 +1,17 @@
 <?php
 
 class Alert extends AppModel {
-	var $name = 'Alert';
-	var $displayField = 'title';
+	public $name = 'Alert';
+	public  $displayField = 'title';
 
-	var $belongsTo = array(
+	public $belongsTo = array(
 		'User' => array(
 			'className' => 'User',
 			'foreignKey' => 'user_id'
 		)
 	);
 	
-	function getSelfSignAlerts($selfSign, $kioskName) {
+	public function getSelfSignAlerts($selfSign, $kioskName) {
 		$buttons = array();	
 		if(isset($selfSign['level_1'])) {
 			$buttons[0] = $selfSign['level_1'];
@@ -53,4 +53,30 @@ class Alert extends AppModel {
 		}
 		else return false;
 	}
+
+	public function getCustomerDetailsAlerts($detail, $user, $kiosk)	{
+		$alerts = $this->find('all', array(
+			'conditions' => array(
+				'Alert.type'  => 'customer_details',
+				'Alert.detail' => $detail,
+				'Alert.location_id' => $kiosk['Kiosk']['location_id'])));
+		if($alerts) {
+			$data = array();
+			$i = 0;
+			foreach($alerts as $alert) {
+				$data[$i]['username'] = strtolower($alert['User']['windows_username']);
+				$data[$i]['email'] = $alert['User']['email'];
+				$data[$i]['send_email'] = $alert['Alert']['send_email'];
+ 				$data[$i]['title'] = 'Customer Details';
+				$message = 'Customer ' . $user['User']['firstname'] . ' ' . $user['User']['lastname'];
+				$message .= ' logged in to ' . $kiosk['Kiosk']['location_description']; 
+				$message .= ' with detail ' . '"' . ucfirst($detail) . '".';
+				$data[$i]['message'] = $message;
+				$data[$i]['url'] = Router::url('/admin/users/self_sign_logs', true);							
+				$i++;				
+			}
+			return $data;
+		}
+		else return false;		
+	}	
 }

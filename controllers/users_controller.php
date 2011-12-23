@@ -6,7 +6,9 @@
  * @link http://ctsfla.com
  * @package ATLAS V3
  */
- 
+
+App::import('Core', 'HttpSocket');
+
 class UsersController extends AppController {
 
     var $name = 'Users';
@@ -327,7 +329,13 @@ class UsersController extends AppController {
 		if (isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'kiosk') {
 		    if ($this->Auth->user()) {
 		    	$user = $this->Auth->user();
+				if($user['User']['veteran']) {
+					$this->sendCustomerDetailsAlert('veteran', $user, $kiosk);
+				}						
 				foreach($user['User'] as $k => $v) {
+					if($v === 'Spanish') {
+						$this->sendCustomerDetailsAlert('spanish', $user, $kiosk);
+					}
 					if(in_array($k, $fields) && empty($v)) {
 						$this->redirect(
 							array('controller' => 'kiosks', 'action' => 'self_sign_edit', $user['User']['id']));
@@ -943,5 +951,27 @@ class UsersController extends AppController {
 		}
 		$this -> set('options', $options);
 	}
+	
+	private function sendCustomerDetailsAlert($detail, $user, $kiosk) {
+		$this->loadModel('Alert');
+		$data = $this->Alert->getCustomerDetailsAlerts($detail, $user, $kiosk);
+		if($data) {
+			$HttpSocket = new HttpSocket();
+			$HttpSocket->post('localhost:3000/new', array('data' => $data));
+			$to = '';
+			foreach($data as $alert) {
+				if($alert['send_email']) {
+					$to .= $alert['email'] . ',';
+				}			
+			}
+			if(!empty($to)) {
+				$to = trim($to, ',');
+				$this->Email->to = $to;
+				$this->Email->from = Configure::read('System.email');
+				$this->Email->subject = 'Customer Details alert';
+				$this->Email->send($alert['message'] . "\r\n" . $alert['url']);				
+			}
+		}
+	}	
 
 }

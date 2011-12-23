@@ -38,6 +38,7 @@ class AlertsControllerTestCase extends AtlasTestCase {
 						'user_id' => '2',
 						'watched_id' => '10',
 						'type' => 'Self Sign',
+						'detail' => null,
 						'location_id' => '1',
 						'send_email' => true,
 						'disabled' => false,
@@ -52,6 +53,7 @@ class AlertsControllerTestCase extends AtlasTestCase {
 						'type' => 'Self Sign',
 						'location_id' => '1',
 						'send_email' => true,
+						'detail' => null,
 						'disabled' => true,
 						'created' => '2011-12-12 16:11:38',
 						'modified' => '2011-12-13 14:04:52'
@@ -86,6 +88,29 @@ class AlertsControllerTestCase extends AtlasTestCase {
 		$this->assertEqual('Test Alert Add', $alert['Alert']['name']);			
 	}
 	
+	
+	public function testAdminAddCustomerDetailsAlert() {
+		$this->Alerts->Component->initialize($this->Alerts);	
+		$this->Alerts->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+		$data = array(
+			'name' => 'Cutomer Detail Alert',
+			'type' => 'customer_detail',
+			'send_email' => 1,
+			'detail' => 'veteran'
+		);
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$result = $this->testAction('/admin/alerts/add_customer_details_alert/', 
+			array('method' => 'post', 'form_data' => $data));
+		$id = $this->Alerts->Alert->getLastInsertId();
+		$alert = $this->Alerts->Alert->read(null, $id);
+		$this->assertEqual(23, $alert['Alert']['id']);
+		$this->assertEqual('Cutomer Detail Alert', $alert['Alert']['name']);			
+	}	
 	
 	public function testAdminToggleEmail() {
 		$this->Alerts->Component->initialize($this->Alerts);	
@@ -138,7 +163,10 @@ class AlertsControllerTestCase extends AtlasTestCase {
 				'types' => array( 
 					array(
 						'id' => 'selfSignAlertFormPanel',
-						'label' => 'Self Sign'))));
+						'label' => 'Self Sign'),
+					array(
+						'id' => 'customerDetailsAlertFromPanel',
+						'label' => 'Customer Details'))));
 						
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
 		$result = $this->testAction('/admin/alerts/get_alert_types/', 

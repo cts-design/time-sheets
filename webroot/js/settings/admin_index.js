@@ -49,7 +49,8 @@ Ext.onReady(function(){
 	        {"field":"email", "label": "Email Address"},	        
 	        {"field":"language", "label":"Language"},
 	        {"field":"race", "label":"Race"},
-	        {"field":"ethnicity", "label":"Ethnicity"}  
+	        {"field":"ethnicity", "label":"Ethnicity"},
+	        {"field":"veteran", "label":"Veteran"}
 	    ]
 	});	
 	
