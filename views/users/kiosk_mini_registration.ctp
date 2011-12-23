@@ -247,6 +247,17 @@
 				'after' => '</p>'));
 			echo '<br class="clear"/>';						
 		}
+		if(in_array('veteran', $fields)) {
+			echo $this->Form->input('veteran', array(
+				'label' => __('Are you a veteran', true),
+				'type' => 'select',
+				'empty' => 'Please Select',
+				'options' => array(1 => 'Yes', 0 => 'No'), 
+				'before' => '<p class="left">',
+				'between' => '</p><p class="left">',
+				'after' => '</p>'));	
+			echo '<br class="clear"/>';				
+		}		
 	    echo $this->Form->hidden('mini_registration', array('value' => 'kiosk'));
 	    ?>
 	</fieldset>
