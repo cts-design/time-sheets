@@ -13,6 +13,13 @@ class AlertTestCase extends AtlasTestCase {
 			array('level_1' => '10', 'user_id' => '9', 'location_id' => '1'), 'Test');
 		$this->assertEqual($result[0]['username'], 'dnolan');
 	}
+	
+	public function testGetCustomerDetailsAlerts() {
+		$user['User'] = array('id' => 9, 'firstname' => 'Daniel', 'lastname' => 'Smith');
+		$kiosk['Kiosk'] = array('location_description' => 'Test Kiosk Desc', 'location_id' => 1);
+		$result = $this->Alert->getCustomerDetailsAlerts('veteran', $user, $kiosk);
+		$this->assertEqual($result[0]['username'], 'dnolan');
+	}	
 
 	public function endTest() {
 		unset($this->Alert);
