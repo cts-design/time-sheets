@@ -1,5 +1,68 @@
 var locationId, parentId;
 
+Ext.define('Atlas.form.field.AlertNameText', {
+	extend: 'Ext.form.field.Text',
+	alias: 'widget.alertnametextfield',	
+	fieldLabel: 'Alert Name',
+	allowBlank: false,
+	msgTarget: 'under',
+	name: 'name'
+});
+
+Ext.define('Atlas.form.field.LocationComboBox', {
+	extend: 'Ext.form.field.ComboBox',
+	alias: 'widget.locationcombobox',	
+	xtype: 'combobox',
+	fieldLabel: 'Location',
+	displayField: 'name',
+	valueField: 'id',
+	store: 'locations',			
+	queryMode: 'remote',
+	emptyText: 'Please Select',
+	name: 'location',
+	allowBlank: false,
+	msgTarget: 'under'
+});
+
+Ext.define('Atlas.form.field.SendEmailCheckbox', {
+	extend: 'Ext.form.field.Checkbox',
+	alias: 'widget.sendemailcheckbox',
+	fieldLabel: 'Also send email',
+	name: 'send_email'	
+});
+
+Ext.define('Atlas.button.AlertSaveButton', {
+	extend: 'Ext.button.Button',
+	alias: 'widget.alertsavebutton',
+	xtype: 'button',
+	text: 'Save',
+	formBind: true,
+	handler: function() {
+		var form = this.up('form').getForm();
+		if(form.isValid()){
+			form.submit({
+				success: function(form, action) {
+					Ext.Msg.alert('Success', action.result.message);
+					form.reset();
+					Ext.getCmp('myAlertsGrid').getStore().load();						
+				},
+				failure: function(form, action) {
+					Ext.Msg.alert('Failed', action.result.message);
+				}
+			});
+		}
+	}
+});
+
+Ext.define('Atlas.button.AlertResetButton', {
+	extend: 'Ext.button.Button',
+	alias: 'widget.alertresetbutton',
+	text: 'Reset',
+	handler: function() {
+		this.up('form').getForm().reset();
+	}	
+});
+
 Ext.define('Atlas.form.SelfSignAlertPanel', {
 	extend: 'Ext.form.Panel',
 	alias: 'widget.selfsignalertformpanel',	
@@ -10,23 +73,10 @@ Ext.define('Atlas.form.SelfSignAlertPanel', {
 		width: 350
 	},
 	items: [{
-		fieldLabel: 'Alert Name',
-		xtype: 'textfield',
-		allowBlank: false,
-		msgTarget: 'under',
-		name: 'name'		
+		xtype: 'alertnametextfield',		
 	},{
-		xtype: 'combobox',
+		xtype: 'locationcombobox',
 		id: 'locationSelect',
-		fieldLabel: 'Location',
-		displayField: 'name',
-		valueField: 'id',
-		store: 'locations',			
-		queryMode: 'remote',
-		emptyText: 'Please Select',
-		name: 'location',
-		allowBlank: false,
-		msgTarget: 'under',
 		listeners: {
 			select: function() {
 				locationId = this.getValue();
@@ -93,14 +143,10 @@ Ext.define('Atlas.form.SelfSignAlertPanel', {
 		queryMode: 'local',
 		name: 'level3'
 	},{
-		fieldLabel: 'Also send email',
-		xtype: 'checkbox',
-		name: 'send_email'
+		xtype: 'sendemailcheckbox'
 	},{
-		xtype: 'button',
-		text: 'Save',
+		xtype: 'alertsavebutton',
 		width: 100,
-		formBind: true,
 		handler: function() {
 			var form = this.up('form').getForm();
 			if(form.isValid()) {
@@ -118,9 +164,8 @@ Ext.define('Atlas.form.SelfSignAlertPanel', {
 			}
 		}
 	},{
-		xtype: 'button',
+		xtype: 'alertresetbutton',
 		width: 100,
-		text: 'Reset',
 		margin: '0 0 0 10',
 		handler: function() {
 			this.up('form').getForm().reset();
@@ -139,22 +184,9 @@ Ext.define('Atlas.form.CustomerDetailsAlertPanel', {
 		width: 350
 	},
 	items: [{
-		fieldLabel: 'Alert Name',
-		xtype: 'textfield',
-		allowBlank: false,
-		msgTarget: 'under',
-		name: 'name'		
+		xtype: 'alertnametextfield',	
 	},{
-		xtype: 'combobox',
-		fieldLabel: 'Location',
-		displayField: 'name',
-		valueField: 'id',
-		store: 'locations',			
-		queryMode: 'remote',
-		emptyText: 'Please Select',
-		name: 'location',
-		allowBlank: false,
-		msgTarget: 'under'	
+		xtype: 'locationcombobox',
 	},{
 		xtype: 'combobox',
 		id: 'detailsSelect',
@@ -168,37 +200,14 @@ Ext.define('Atlas.form.CustomerDetailsAlertPanel', {
 		allowBlank: false,
 		msgTarget: 'under'
 	},{
-		fieldLabel: 'Also send email',
-		xtype: 'checkbox',
-		name: 'send_email'		
+		xtype: 'sendemailcheckbox'	
 	},{
-		xtype: 'button',
-		text: 'Save',
-		width: 100,
-		formBind: true,
-		handler: function() {
-			var form = this.up('form').getForm();
-			if(form.isValid()){
-				form.submit({
-					success: function(form, action) {
-						Ext.Msg.alert('Success', action.result.message);
-						form.reset();
-						Ext.getCmp('myAlertsGrid').getStore().load();						
-					},
-					failure: function(form, action) {
-						Ext.Msg.alert('Failed', action.result.message);
-					}
-				});
-			}
-		}
+		xtype: 'alertsavebutton',
+		width: 100
 	}, {
-		xtype: 'button',
-		text: 'Reset',
+		xtype: 'alertresetbutton',
 		width: 100,
-		margin: '0 0 0 10',
-		handler: function() {
-			this.up('form').getForm().reset();
-		}
+		margin: '0 0 0 10'
 	}]
 });
 
