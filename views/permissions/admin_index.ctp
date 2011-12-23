@@ -46,6 +46,10 @@
 			    'type' => 'checkbox',
 			   	'label' => 'Add Self Sign Alerts',
 			    'checked' => (isset($controllers['Alerts']['admin_add_self_sign_alert'])) ? $controllers['Alerts']['admin_add_self_sign_alert'] : '' ));?>			    
+		       <?php echo $this->Form->input('Alerts.admin_add_customer_details_alert', array(
+			    'type' => 'checkbox',
+			   	'label' => 'Add Customer Details Alerts',
+			    'checked' => (isset($controllers['Alerts']['admin_add_customer_details_alert'])) ? $controllers['Alerts']['admin_add_customer_details_alert'] : '' ));?>		    
 		    </fieldset>
 		    <br class="clear" />
 			<?php echo $this->Form->end(__('Submit', true))?>		
