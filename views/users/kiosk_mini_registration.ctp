@@ -249,7 +249,7 @@
 		}
 		if(in_array('veteran', $fields)) {
 			echo $this->Form->input('veteran', array(
-				'label' => __('Are you a veteran', true),
+				'label' => __('Are you a U.S. veteran', true),
 				'type' => 'select',
 				'empty' => 'Please Select',
 				'options' => array(1 => 'Yes', 0 => 'No'), 

@@ -179,7 +179,7 @@ $(document).ready(function() {
 			'between' => '<br />',
 			'after' => '<br />'));
 		echo $this->Form->input('veteran', array(
-			'label' => __('Are you a veteran', true),
+			'label' => __('Are you a US veteran', true),
 			'type' => 'select',
 			'empty' => 'Please Select',
 			'options' => array('1' => 'Yes', '0' => 'No'), 
