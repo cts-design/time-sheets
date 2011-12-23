@@ -1,5 +1,5 @@
 <?php
-/* Alert Fixture generated on: 2011-12-13 15:10:55 : 1323807055 */
+/* Alert Fixture generated on: 2011-12-23 10:55:50 : 1324655750 */
 class AlertFixture extends CakeTestFixture {
 	var $name = 'Alert';
 	var $import = array('model' => 'Alert');
@@ -11,6 +11,7 @@ class AlertFixture extends CakeTestFixture {
 			'name' => 'Vets',
 			'user_id' => '2',
 			'watched_id' => '10',
+			'detail' => NULL,
 			'type' => 'self_sign',
 			'location_id' => '1',
 			'send_email' => '1',
@@ -23,6 +24,7 @@ class AlertFixture extends CakeTestFixture {
 			'name' => 'Test Freddy Filer Alert',
 			'user_id' => '3',
 			'watched_id' => '22',
+			'detail' => NULL,
 			'type' => 'self_sign',
 			'location_id' => '1',
 			'send_email' => '0',
@@ -35,6 +37,7 @@ class AlertFixture extends CakeTestFixture {
 			'name' => 'Test',
 			'user_id' => '2',
 			'watched_id' => '22',
+			'detail' => NULL,
 			'type' => 'self_sign',
 			'location_id' => '1',
 			'send_email' => '1',
@@ -43,28 +46,43 @@ class AlertFixture extends CakeTestFixture {
 			'modified' => '2011-12-13 14:04:52'
 		),
 		array(
-			'id' => '18',
-			'name' => 'veteran alert',
+			'id' => '25',
+			'name' => 'Veteran',
 			'user_id' => '1',
 			'watched_id' => '10',
+			'detail' => NULL,
 			'type' => 'self_sign',
 			'location_id' => '1',
 			'send_email' => '1',
 			'disabled' => 0,
-			'created' => '2011-12-12 16:18:54',
-			'modified' => '2011-12-12 16:19:15'
+			'created' => '2011-12-14 10:03:44',
+			'modified' => '2011-12-14 10:03:44'
 		),
 		array(
 			'id' => '22',
 			'name' => 'Appointment with Maurice',
 			'user_id' => '1',
 			'watched_id' => '86',
+			'detail' => NULL,
 			'type' => 'self_sign',
 			'location_id' => '1',
 			'send_email' => '1',
 			'disabled' => 0,
 			'created' => '2011-12-13 12:16:09',
 			'modified' => '2011-12-13 12:16:09'
+		),
+		array(
+			'id' => '29',
+			'name' => 'Veterans',
+			'user_id' => '2',
+			'watched_id' => '0',
+			'detail' => 'veteran',
+			'type' => 'customer_details',
+			'location_id' => '1',
+			'send_email' => '1',
+			'disabled' => 0,
+			'created' => '2011-12-22 11:59:20',
+			'modified' => '2011-12-22 11:59:20'
 		),
 	);
 }
