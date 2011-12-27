@@ -336,7 +336,6 @@ class QueuedDocumentsController extends AppController {
     function admin_desktop_scan_document() {
 		if(!empty($this->data)) {
 		    $id = $this->QueuedDocument->uploadDocument($this->data, 'Desktop Scan', $this->Auth->User('id'));
-			$this->log($id, 'debug');
 		    if($id) {
 				$this->Transaction->createUserTransaction('Storage', null, null,
 					trim('Scanned document ID ' . $id . ' to ' . $user['User']['lastname'] .
