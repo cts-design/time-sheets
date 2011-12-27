@@ -117,6 +117,36 @@ class AlertsController extends AppController {
 		}
 	}
 
+	public function admin_add_queued_document_alert() {
+		if($this->RequestHandler->isAjax())	{
+			$this->data['Alert']['name'] = $this->params['form']['name'];
+			$this->data['Alert']['type'] = 'queued_document';
+			$this->data['Alert']['location_id'] = $this->params['form']['location'];
+			$this->data['Alert']['watched_id'] = $this->params['form']['queue_cat'];
+			$this->data['Alert']['user_id'] = $this->Auth->user('id');
+			if(isset($this->params['form']['send_email'])) {
+				$this->data['Alert']['send_email'] = 1;
+			}
+			if($this->Alert->save($this->data)) {
+				$id = $this->Alert->getLastInsertId();
+				$data['success'] = true;
+				$data['message'] = 'Alert added successfully';
+				$this->Transaction->createUserTransaction(
+					'Alerts', 
+					$this->Auth->user('id'),
+					$this->Auth->user('location_id'), 
+					'Added Queued Document alert. name: ' . $this->data['Alert']['name'] . ' id: ' . $id 
+				);				
+			}
+			else {
+				$data['success'] = false;
+				$data['message'] = 'Unable to add alert, please try again.';					
+			}
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');	
+		}		
+	}
+
 	public function admin_toggle_email() {
 		if($this->RequestHandler->isAjax()) {
 			if(isset($this->params['form']['id'])) {
@@ -192,7 +222,11 @@ class AlertsController extends AppController {
 				array(
 					'action' => 'Alerts/admin_add_customer_details_alert',
 					'label' => 'Customer Details',
-					'id' => 'customerDetailsAlertFromPanel'));
+					'id' => 'customerDetailsAlertFromPanel'),
+				array(
+					'action' => 'Alerts/admin_add_queued_document_alert',
+					'label' => 'Queued Document',
+					'id' => 'queuedDocumentAlertFormPanel'));
 			$data['types'] = array();	
 			foreach($avaliableTypes as $k => $v) {
 				if($this->Acl->check(array(
