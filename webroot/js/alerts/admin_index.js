@@ -211,6 +211,62 @@ Ext.define('Atlas.form.CustomerDetailsAlertPanel', {
 	}]
 });
 
+Ext.define('Atlas.form.QueuedDocumentAlertPanel', {
+	extend: 'Ext.form.Panel',
+	alias: 'widget.queueddocumentalertformpanel',
+	padding: 10,
+	border: 0,
+	defaults: {
+		labelWidth: 100,
+		width: 350
+	},
+	items: [{
+		xtype: 'alertnametextfield'
+	},{
+		xtype: 'locationcombobox'
+	},{
+		xtype: 'combobox',
+		fieldLabel: 'Queued Doc Cat:',
+		queryMode: 'remote',
+		valueField: 'id',
+		labelField: 'name',
+		store: 'queueCats',
+		name: 'queue_cat'
+	},{
+		xtype: 'sendemailcheckbox'
+	},{
+		xtype: 'alertsavebutton',
+		width: 100
+	},{
+		xtype: 'alertresetbutton',
+		width: 100,
+		margin: '0 0 0 10'
+	}]
+});
+
+Ext.define('DocumentQueueCategory', {
+	extend: 'Ext.data.Model',
+	fields: ['id', 'name']
+});
+
+Ext.create('Ext.data.Store', {
+	model: 'DocumentQueueCategory',
+	storeId: 'queueCats',
+	proxy: {
+		type: 'ajax',
+		url: '/admin/document_queue_categories/get_cats',
+		reader: {
+			type: 'json',
+			root: 'cats'
+		},
+		limitParam: undefined,
+		pageParam: undefined,
+		startParam: undefined				
+	}
+});	
+
+
+
 Ext.create('Ext.data.ArrayStore', {
 	storeId: 'details',
 	autoLoad: true,
@@ -475,6 +531,10 @@ Ext.onReady(function(){
 	        	xtype: 'customerdetailsalertformpanel',
 	        	id: 'customerDetailsAlertFromPanel',
 	        	url: '/admin/alerts/add_customer_details_alert'	        	
+	        },{
+	        	xtype: 'queueddocumentalertformpanel',
+	        	id: 'queuedDocumentAlertFormPanel',
+	        	url: '/admin/alerts/add_queued_document_alert'
 	        }],
 	        dockedItems: [{
 	        	xtype: 'toolbar',
