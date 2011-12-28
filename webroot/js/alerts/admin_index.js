@@ -31,6 +31,147 @@ Ext.define('Atlas.form.field.SendEmailCheckbox', {
 	name: 'send_email'	
 });
 
+Ext.define('Atlas.form.field.LastNameText', {
+	extend: 'Ext.form.field.Text',
+	alias: 'widget.lastnametextfield',
+	emptyText: 'Please enter customer last name',
+	fieldLabel: 'Last Name',
+	disabled: true,
+	allowBlank: false,
+	msgTarget: 'under',
+	name: 'lastname'	
+});
+
+Ext.define('Atlas.form.field.FirstNameComboBox', {
+	extend: 'Ext.form.field.ComboBox',
+	alias: 'widget.firstnamecombobox',
+	fieldLabel: 'First Name',
+	disabled: true,
+	allowBlank: false,
+	valueField: 'id',
+	displayField: 'firstname',
+	msgTarget: 'under',
+	triggerAction: 'query',
+	minChars: 2,
+	emptyText: 'Please enter at least two letters of first name',
+	name: 'firstname',
+	store: 'customerFirstname',
+	listConfig: {
+		getInnerTpl: function() {
+			return '<div>{fullname}</div>';
+		}
+	},
+	listeners: {
+		beforequery: function(queryEvent, eOpts) {
+ 			queryEvent.query = this.prev().getValue() + ',' + queryEvent.query;
+		}
+	}	
+});
+
+Ext.define('Customer', {
+	extend: 'Ext.data.Model',
+	fields: ['id', 'firstname', 'lastname', 'fullname', 'ssn']
+});
+
+Ext.create('Ext.data.Store', {
+	model: 'Customer',
+	storeId: 'customerFirstname',
+	proxy: {
+		type: 'ajax',
+		url: '/admin/users/get_customers_by_first_and_last_name',
+		reader: {
+			type: 'json',
+			root: 'users'
+		},
+		limitParam: undefined,
+		pageParam: undefined,
+		startParam: undefined				
+	}
+});	
+
+
+Ext.define('Atlas.form.field.SsnComboBox', {
+	extend: 'Ext.form.field.ComboBox',
+	alias: 'widget.ssncombobox',
+	fieldLabel: 'Last 4 of SSN',
+	disabled: true,
+	allowBlank: false,
+	emptyText: 'Please enter last 4 of customer ssn',
+	msgTarget: 'under',
+	name: 'ssn',
+	allowBlank: false,
+	triggerAction: 'query',
+	msgTarget: 'under',
+	name: 'ssn',
+	store: 'customerSsn',
+	valueField: 'id',
+	displayField: 'ssn',
+	listConfig: {
+		getInnerTpl: function() {
+			return '<div>{fullname}</div>';
+		}
+	},		
+});
+
+Ext.create('Ext.data.Store', {
+	model: 'Customer',
+	storeId: 'customerSsn',
+	proxy: {
+		type: 'ajax',
+		url: '/admin/users/get_customers_by_ssn',
+		reader: {
+			type: 'json',
+			root: 'users'
+		},
+		limitParam: undefined,
+		pageParam: undefined,
+		startParam: undefined				
+	}
+});	
+
+Ext.define('Atlas.form.field.FindCusByComboBox', {
+	extend: 'Ext.form.field.ComboBox',
+	alias: 'widget.findcusbycombobox',
+	fieldLabel: 'Find customer by',
+	store: 'findCusBy',
+	emptyText: 'Please Select',
+	valueField: 'type',
+	displayField: 'type',
+	listeners: {
+		change: function(combo, newValue, oldValue, eOpts) {
+			var first = this.next(),
+				last = first.next(),
+				ssn = last.next();
+			if(!newValue){
+				first.disable();
+				last.disable();
+				ssn.disable();
+			}
+			if(newValue === 'Name') {
+				first.enable();
+				last.enable();
+				ssn.disable();				
+			}
+			if(newValue === 'Last 4 SSN') {
+				first.disable();
+				last.disable();
+				ssn.enable();
+			}
+		}
+	}
+});
+
+Ext.create('Ext.data.ArrayStore', {
+	storeId: 'findCusBy',
+	autoLoad: true,
+	idIndex: 0,
+	fields: ['type'],
+	data: [
+		['Name'],
+		['Last 4 SSN']
+	]
+});
+
 Ext.define('Atlas.button.AlertSaveButton', {
 	extend: 'Ext.button.Button',
 	alias: 'widget.alertsavebutton',
@@ -63,6 +204,39 @@ Ext.define('Atlas.button.AlertResetButton', {
 	}	
 });
 
+Ext.define('Atlas.form.SelfScanAlertPanel', {
+	extend: 'Ext.form.Panel',
+	alias: 'widget.selfscanalertformpanel',
+	padding: 10,
+	border: 0,
+	defaults: {
+		labelWidth: 100,
+		width: 375
+	},
+	items: [{
+		xtype: 'alertnametextfield'
+	},{
+		xtype: 'locationcombobox'
+	},{
+		xtype: 'findcusbycombobox'
+	},{
+		xtype: 'lastnametextfield'
+	},{
+		xtype: 'firstnamecombobox'		
+	},{
+		xtype: 'ssncombobox'
+	},{
+		xtype: 'sendemailcheckbox'
+	},{
+		xtype: 'alertsavebutton',
+		width: 100
+	},{
+		xtype: 'alertresetbutton',
+		width: 100,
+		margin: '0 0 0 10'
+	}]
+});	
+
 Ext.define('Atlas.form.SelfSignAlertPanel', {
 	extend: 'Ext.form.Panel',
 	alias: 'widget.selfsignalertformpanel',	
@@ -73,7 +247,7 @@ Ext.define('Atlas.form.SelfSignAlertPanel', {
 		width: 350
 	},
 	items: [{
-		xtype: 'alertnametextfield',		
+		xtype: 'alertnametextfield'
 	},{
 		xtype: 'locationcombobox',
 		id: 'locationSelect',
@@ -535,6 +709,10 @@ Ext.onReady(function(){
 	        	xtype: 'queueddocumentalertformpanel',
 	        	id: 'queuedDocumentAlertFormPanel',
 	        	url: '/admin/alerts/add_queued_document_alert'
+	        },{
+	        	xtype: 'selfscanalertformpanel',
+	        	id: 'selfScanAlertFormPanel',
+	        	url: '/admin/alerts/add_self_scan_alert'	        	
 	        }],
 	        dockedItems: [{
 	        	xtype: 'toolbar',
