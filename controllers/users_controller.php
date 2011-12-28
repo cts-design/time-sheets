@@ -49,7 +49,9 @@ class UsersController extends AppController {
 		if($this->Auth->user('role_id') > 1) {
 		    $this->Auth->allow(
 			    'admin_auto_complete_customer',
-			    'admin_auto_complete_ssn_ajax'
+			    'admin_auto_complete_ssn_ajax',
+			    'admin_get_customers_by_first_and_last_name',
+			    'admin_get_customers_by_ssn'
 			);
 		}			
 		if(!empty($this->data)) {
@@ -899,6 +901,64 @@ class UsersController extends AppController {
 			$query = $this->User->find('all', array('conditions' => array('User.role_id' => 1, 'User.ssn LIKE' => '%' . $this->params['url']['term'] . '%')));
 			$this->_setAutoCompleteOptions($query);
 			$this->render('/elements/app_controller/auto_complete_ajax');
+		}
+	}
+	
+	function admin_get_customers_by_first_and_last_name() {
+		if($this->RequestHandler->isAjax()) {
+			$this->User->recursive = -1;
+			if(isset($this->params['url']['query'])) {
+				$params = explode(',', $this->params['url']['query']);
+				$users = $this->User->find('all', array(
+					'conditions' => array(
+						'User.role_id' => 1,
+						'User.lastname' => $params[0],
+						'User.firstname LIKE' => '%' . $params[1] . '%')));
+				$data = array();				
+			}	
+			if(isset($users)) {
+				$i = 0;
+				foreach($users as $user) {
+					$data['users'][$i]['id'] = $user['User']['id'];
+					$data['users'][$i]['firstname'] = $user['User']['firstname'];
+					$data['users'][$i]['fullname'] = $user['User']['name_last4'];
+					$i++;
+				}
+			}
+			else {
+				$data['users'] = array();
+			}
+			$data['success'] = true;
+			$this->set(compact('data'));
+			$this->render('/elements/ajaxreturn');
+		}
+	}
+	
+	function admin_get_customers_by_ssn() {
+		if($this->RequestHandler->isAjax()) {
+			$this->User->recursive = -1;
+			if(isset($this->params['url']['query'])) {
+				$users = $this->User->find('all', array(
+					'conditions' => array(
+						'User.role_id' => 1,
+						'RIGHT (User.ssn , 4)' => $this->params['url']['query'])));
+				$data = array();				
+			}	
+			if(isset($users)) {
+				$i = 0;
+				foreach($users as $user) {
+					$data['users'][$i]['id'] = $user['User']['id'];
+					$data['users'][$i]['ssn'] = substr($user['User']['ssn'], -4);
+					$data['users'][$i]['fullname'] = $user['User']['name_last4'];
+					$i++;
+				}
+			}
+			else {
+				$data['users'] = array();
+			}
+			$data['success'] = true;
+			$this->set(compact('data'));
+			$this->render('/elements/ajaxreturn');
 		}
 	}
 	
