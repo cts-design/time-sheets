@@ -380,10 +380,12 @@ class KiosksController extends AppController {
 	}
 
     function kiosk_self_scan_document($selfScanCatId=null, $queueCatId=null) {
+		$locationId = $this->Kiosk->getKioskLocationId();	
 		if(!empty($this->data)) {
 			$id = $this->_queueScannedDocument();
 			if($id) {
 				$this->loadModel('User');
+				$this->sendSelfScanAlert($this->Auth->user(), $id, $locationId);
 				$this->Transaction->createUserTransaction('Self Scan', null, $this->data['QueuedDocument']['scanned_location_id'], 'Self scanned document ID ' . $id);
 				$this->Session->setFlash(__('Scanned document was saved successfully.', true), 'flash_success');
 				$this->autoRender = false;
@@ -395,7 +397,7 @@ class KiosksController extends AppController {
 				return 'false';
 			}
 		}
-		$locationId = $this->Kiosk->getKioskLocationId();
+		
 		$referer = '/kiosk/kiosks/self_scan_program_selection';
 		$this->set(compact('selfScanCatId', 'queueCatId', 'locationId', 'referer'));
 		$this->layout = 'kiosk';
@@ -519,4 +521,27 @@ class KiosksController extends AppController {
 			}
 		}
 	}
+	
+	private function sendSelfScanAlert($user, $docId, $locationId) {
+		$this->loadModel('Alert');
+		$data = $this->Alert->getSelfScanAlerts($user, $docId, $locationId);
+		if($data) {
+			$HttpSocket = new HttpSocket();
+			$results = $HttpSocket->post('localhost:3000/new', 
+				array('data' => $data));
+			$to = '';
+			foreach($data as $alert) {
+				if($alert['send_email']) {
+					$to .= $alert['email'] . ',';
+				}			
+			}
+			if(!empty($to)) {
+				$to = trim($to, ',');
+				$this->Email->to = $to;
+				$this->Email->from = Configure::read('System.email');
+				$this->Email->subject = 'Self Scan alert';
+				$this->Email->send($alert['message'] . "\r\n" . $alert['url']);				
+			}
+		}
+	}	
 }
