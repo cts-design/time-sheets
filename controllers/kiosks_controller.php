@@ -379,13 +379,12 @@ class KiosksController extends AppController {
 		$this->set(compact('title_for_layout', 'parentButtons', 'referer'));
 	}
 
-    function kiosk_self_scan_document($selfScanCatId=null, $queueCatId=null) {
-		$locationId = $this->Kiosk->getKioskLocationId();	
+    function kiosk_self_scan_document($selfScanCatId=null, $queueCatId=null) {	
 		if(!empty($this->data)) {
 			$id = $this->_queueScannedDocument();
 			if($id) {
 				$this->loadModel('User');
-				$this->sendSelfScanAlert($this->Auth->user(), $id, $locationId);
+				$this->sendSelfScanAlert($this->Auth->user(), $id, $this->data['QueuedDocument']['scanned_location_id']);
 				$this->Transaction->createUserTransaction('Self Scan', null, $this->data['QueuedDocument']['scanned_location_id'], 'Self scanned document ID ' . $id);
 				$this->Session->setFlash(__('Scanned document was saved successfully.', true), 'flash_success');
 				$this->autoRender = false;
@@ -397,7 +396,7 @@ class KiosksController extends AppController {
 				return 'false';
 			}
 		}
-		
+		$locationId = $this->Kiosk->getKioskLocationId();
 		$referer = '/kiosk/kiosks/self_scan_program_selection';
 		$this->set(compact('selfScanCatId', 'queueCatId', 'locationId', 'referer'));
 		$this->layout = 'kiosk';
