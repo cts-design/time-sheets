@@ -418,6 +418,38 @@ Ext.define('Atlas.form.QueuedDocumentAlertPanel', {
 	}]
 });
 
+Ext.define('Atlas.form.CusFiledDocAlertPanel', {
+	extend: 'Ext.form.Panel',
+	alias: 'widget.cusfileddocalertformpanel',
+	padding: 10,
+	border: 0,
+	defaults: {
+		labelWidth: 100,
+		width: 375
+	},
+	items: [{
+		xtype: 'alertnametextfield'
+	},{
+		xtype: 'findcusbycombobox'
+	},{
+		xtype: 'lastnametextfield'
+	},{
+		xtype: 'firstnamecombobox'		
+	},{
+		xtype: 'ssncombobox'
+	},{
+		xtype: 'sendemailcheckbox'
+	},{
+		xtype: 'alertsavebutton',
+		width: 100
+	},{
+		xtype: 'alertresetbutton',
+		width: 100,
+		margin: '0 0 0 10'
+	}]
+});	
+
+
 Ext.define('DocumentQueueCategory', {
 	extend: 'Ext.data.Model',
 	fields: ['id', 'name']
@@ -593,7 +625,10 @@ Ext.create('Ext.data.Store', {
 		reader: {
 			type: 'json',
 			root: 'alerts'
-		}		
+		},
+		limitParam: undefined,
+		pageParam: undefined,
+		startParam: undefined
 	},
 	autoLoad: true
 });	
@@ -713,12 +748,17 @@ Ext.onReady(function(){
 	        	xtype: 'selfscanalertformpanel',
 	        	id: 'selfScanAlertFormPanel',
 	        	url: '/admin/alerts/add_self_scan_alert'	        	
+	        },{
+	        	xtype: 'cusfileddocalertformpanel',
+	        	id: 'cusFiledDocAlertFormPanel',
+	        	url: '/admin/alerts/add_cus_filed_doc_alert'		        	
 	        }],
 	        dockedItems: [{
 	        	xtype: 'toolbar',
 	        	dock: 'top',
 	        	items: [{
 	        		xtype: 'combobox',
+	        		width: 300,
 	        		fieldLabel: 'Select Alert Type',
 	        		store: 'alertTypes',
 	        		displayField: 'label',
@@ -751,23 +791,37 @@ Ext.onReady(function(){
 		            }
 		        }		
 			},	        
-	        columns: [
-	        	{ text: 'Id', dataIndex: 'id', hidden: true},
-		        { text: 'Name',  dataIndex: 'name', flex: 1 },
-		        { text: 'Type', dataIndex: 'type' },
-		        { text: 'Send Email',
-		          dataIndex: 'send_email',
-		          xtype: 'booleancolumn',
-		          trueText: 'Yes',
-            	  falseText: 'No' 
-		        },
-		        { text: 'Disabled',
-		          dataIndex: 'disabled', 
-		          xtype: 'booleancolumn',
-		          trueText: 'Yes',
-            	  falseText: 'No' 
-		       }
-    		],
+	        columns: [{ 
+	        	text: 'Id',
+	        	dataIndex: 'id',
+	        	hidden: true
+	        },
+		    {
+		    	text: 'Name',
+		    	dataIndex: 'name',
+		    	flex: 1 
+		    },
+		    { 
+		    	text: 'Type', 
+		    	dataIndex: 'type', 
+		    	width: 150 
+		    },
+		    { 
+		    	text: 'Send Email',
+		        dataIndex: 'send_email',
+		        xtype: 'booleancolumn',
+		        trueText: 'Yes',
+            	falseText: 'No',
+            	width: 70 
+		    },
+		    { 
+		    	text: 'Disabled',
+		        dataIndex: 'disabled', 
+		        xtype: 'booleancolumn',
+		        trueText: 'Yes',
+            	falseText: 'No',
+            	width: 60 
+		    }],
     		store: 'alerts'
 	    }]
 	});
