@@ -32,7 +32,6 @@ class Alert extends AppModel {
 				  'order' => array('UserTransaction.id DESC')));	    			
 		if($alerts && $user) {
 			$data = array();
-			
 			$i = 0;
 			foreach($alerts as $alert) {
 				if($selfSign['location_id'] !== $alert['Alert']['location_id']) {
@@ -53,6 +52,59 @@ class Alert extends AppModel {
 		}
 		else return false;
 	}
+
+	public function getSelfScanAlerts($user, $docId, $locationId) {
+		$alerts = $this->find('all', array(
+			'conditions' => array(
+				'Alert.type' => 'self_scan',
+				'Alert.disabled' => 0,
+				'Alert.watched_id' => $user['User']['id'])));
+		if($alerts && $user) {
+			$data = array();			
+			$i = 0;
+			foreach($alerts as $alert) {
+				if($locationId !== $alert['Alert']['location_id']) {
+					continue;
+				}			
+				$data[$i]['username'] = strtolower($alert['User']['windows_username']);
+				$data[$i]['email'] = $alert['User']['email'];
+				$data[$i]['send_email'] = $alert['Alert']['send_email'];
+ 				$data[$i]['title'] = 'Self Scan';
+				$message = $user['User']['firstname'] . ' ' . $user['User']['lastname'];
+				$message .= ' self scanned document id: ' . $docId;
+				$data[$i]['message'] = $message;
+				$data[$i]['url'] = Router::url('/admin/queued_documents', true);							
+				$i++;
+			}
+			return $data;	
+		}
+		else return false;
+	}
+	
+	public function getCusFiledDocAlerts($user, $docId) {
+		$alerts = $this->find('all', array(
+			'conditions' => array(
+				'Alert.type' => 'customer_filed_document',
+				'Alert.disabled' => 0,
+				'Alert.watched_id' => $user['User']['id'])));
+		if($alerts && $user) {
+			$data = array();			
+			$i = 0;
+			foreach($alerts as $alert) {		
+				$data[$i]['username'] = strtolower($alert['User']['windows_username']);
+				$data[$i]['email'] = $alert['User']['email'];
+				$data[$i]['send_email'] = $alert['Alert']['send_email'];
+ 				$data[$i]['title'] = 'Document filed to customer';
+				$message = 'Document id: ' . $docId . ' filed to customer ';
+				$message .= $user['User']['firstname'] . ' ' . $user['User']['lastname'];				
+				$data[$i]['message'] = $message;
+				$data[$i]['url'] = Router::url('/admin/filed_documents/index/'.$user['User']['id'], true);							
+				$i++;
+			}
+			return $data;	
+		}
+		else return false;
+	}	
 
 	public function getCustomerDetailsAlerts($detail, $user, $kiosk)	{
 		$alerts = $this->find('all', array(

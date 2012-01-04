@@ -45,11 +45,19 @@
 		       <?php echo $this->Form->input('Alerts.admin_add_self_sign_alert', array(
 			    'type' => 'checkbox',
 			   	'label' => 'Add Self Sign Alerts',
-			    'checked' => (isset($controllers['Alerts']['admin_add_self_sign_alert'])) ? $controllers['Alerts']['admin_add_self_sign_alert'] : '' ));?>			    
+			    'checked' => (isset($controllers['Alerts']['admin_add_self_sign_alert'])) ? $controllers['Alerts']['admin_add_self_sign_alert'] : '' ));?>
+		       <?php echo $this->Form->input('Alerts.admin_add_self_scan_alert', array(
+			    'type' => 'checkbox',
+			   	'label' => 'Add Self Scan Alerts',
+			    'checked' => (isset($controllers['Alerts']['admin_add_self_scan_alert'])) ? $controllers['Alerts']['admin_add_self_scan_alert'] : '' ));?>			    			    
 		       <?php echo $this->Form->input('Alerts.admin_add_customer_details_alert', array(
 			    'type' => 'checkbox',
 			   	'label' => 'Add Customer Details Alerts',
-			    'checked' => (isset($controllers['Alerts']['admin_add_customer_details_alert'])) ? $controllers['Alerts']['admin_add_customer_details_alert'] : '' ));?>		    
+			    'checked' => (isset($controllers['Alerts']['admin_add_customer_details_alert'])) ? $controllers['Alerts']['admin_add_customer_details_alert'] : '' ));?>
+		       <?php echo $this->Form->input('Alerts.admin_add_cus_filed_doc_alert', array(
+			    'type' => 'checkbox',
+			   	'label' => 'Add Cus. Filed Doc. Alerts',
+			    'checked' => (isset($controllers['Alerts']['admin_add_cus_filed_doc_alert'])) ? $controllers['Alerts']['admin_add_cus_filed_doc_alert'] : '' ));?>			    		    
 		    </fieldset>
 		    <br class="clear" />
 			<?php echo $this->Form->end(__('Submit', true))?>		
