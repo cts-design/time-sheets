@@ -336,7 +336,7 @@ class UsersController extends AppController {
 					if($v === 'Spanish') {
 						$this->sendCustomerDetailsAlert('spanish', $user, $kiosk);
 					}
-					if(in_array($k, $fields) && empty($v)) {
+					if(in_array($k, $fields) && empty($v) && $v != 0) {
 						$this->redirect(
 							array('controller' => 'kiosks', 'action' => 'self_sign_edit', $user['User']['id']));
 					} 
