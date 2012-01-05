@@ -124,7 +124,7 @@ class Alert extends AppModel {
 				$message .= ' logged in to ' . $kiosk['Kiosk']['location_description']; 
 				$message .= ' with detail ' . '"' . ucfirst($detail) . '".';
 				$data[$i]['message'] = $message;
-				$data[$i]['url'] = Router::url('/admin/users/self_sign_logs', true);							
+				$data[$i]['url'] = Router::url('/admin/self_sign_logs', true);							
 				$i++;				
 			}
 			return $data;
