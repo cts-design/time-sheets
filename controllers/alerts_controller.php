@@ -5,7 +5,7 @@
  *
  * @package AtlasV3
  * @author  Daniel Nolan
- * @copyright 2011 Complete Technology Solutions
+ * @copyright 2012 Complete Technology Solutions
  */
 
 class AlertsController extends AppController {
