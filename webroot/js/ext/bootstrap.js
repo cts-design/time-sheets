@@ -27,6 +27,8 @@ If you are unsure which license is appropriate for your use, please contact the 
     var scripts = document.getElementsByTagName('script'),
         localhostTests = [
             /^localhost$/,
+            /^atlas.local$/,
+            /^atlas.brandon$/,
             /\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(:\d{1,5})?\b/ // IP v4
         ],
         host = window.location.hostname,
