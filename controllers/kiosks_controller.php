@@ -23,8 +23,7 @@ class KiosksController extends AppController {
 			$this->Auth->allow('admin_get_kiosk_buttons_by_location');
 		}
 		$this->Cookie->name = 'self_sign';
-		$this->Cookie->domain = Configure::read('domain'); 
-
+		$this->Cookie->domain = Configure::read('domain');
         $this->Auth->allow('kiosk_set_language');
 	}
 
@@ -152,7 +151,9 @@ class KiosksController extends AppController {
 					'Kiosk.location_recognition_name' => $oneStopLocation, 'Kiosk.deleted' => 0)));
 			$this->Cookie->write('location', $kiosk['Kiosk']['location_id']);
 			$this->Cookie->write('kioskId', $kiosk['Kiosk']['id']);
-			$this->Cookie->write('logout_message', $kiosk['Kiosk']['logout_message']);
+			if($kiosk['Kiosk']['logout_message']) {
+				$this->Cookie->write('logout_message', $kiosk['Kiosk']['logout_message']);	
+			}
 			$this->Kiosk->KioskButton->recursive = -1;
 			$rootButtons = $this->Kiosk->KioskButton->find('all', array(
 				'conditions' => array(
