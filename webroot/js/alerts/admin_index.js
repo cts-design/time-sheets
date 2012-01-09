@@ -358,9 +358,11 @@ Ext.define('Atlas.form.CustomerDetailsAlertPanel', {
 		width: 350
 	},
 	items: [{
-		xtype: 'alertnametextfield',	
+		xtype: 'alertnametextfield'
 	},{
 		xtype: 'locationcombobox',
+		allowBlank: true,
+		emptyText: 'Select a specific location if nessesary'
 	},{
 		xtype: 'combobox',
 		id: 'detailsSelect',
