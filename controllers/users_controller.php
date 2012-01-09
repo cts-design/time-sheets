@@ -320,7 +320,7 @@ class UsersController extends AppController {
 		}
 		$this->Kiosk->recursive = -1;
 		$this->Kiosk->Behaviors->attach('Containable');
-		$this->Kiosk->contain(array('KioskSurvey'));
+		$this->Kiosk->contain(array('KioskSurvey', 'Location'));
 		$settings = Cache::read('settings');	
 		$fields = Set::extract('/field',  json_decode($settings['SelfSign']['KioskRegistration'], true));
 		
