@@ -91,7 +91,9 @@ class AlertsController extends AppController {
 		if($this->RequestHandler->isAjax())	{
 			$this->data['Alert']['name'] = $this->params['form']['name'];
 			$this->data['Alert']['type'] = 'customer_details';
-			$this->data['Alert']['location_id'] = $this->params['form']['location'];
+			if(!empty($this->params['form']['location'])) {
+				$this->data['Alert']['location_id'] = $this->params['form']['location'];	
+			}			
 			$this->data['Alert']['detail'] = $this->params['form']['detail'];
 			$this->data['Alert']['user_id'] = $this->Auth->user('id');
 			if(isset($this->params['form']['send_email'])) {
