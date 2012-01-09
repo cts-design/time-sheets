@@ -106,22 +106,27 @@ class Alert extends AppModel {
 		else return false;
 	}	
 
-	public function getCustomerDetailsAlerts($detail, $user, $kiosk)	{
+	public function getCustomerDetailsAlerts($detail, $user, $kiosk) {
 		$alerts = $this->find('all', array(
 			'conditions' => array(
 				'Alert.type'  => 'customer_details',
-				'Alert.detail' => $detail,
-				'Alert.location_id' => $kiosk['Kiosk']['location_id'])));
+				'Alert.detail' => $detail)));
 		if($alerts) {
 			$data = array();
 			$i = 0;
 			foreach($alerts as $alert) {
+				if($alert['Alert']['location_id']) {
+					if($alert['Alert']['location_id'] !== $kiosk['Kiosk']['location_id']) {
+						continue;
+					}
+				}
 				$data[$i]['username'] = strtolower($alert['User']['windows_username']);
 				$data[$i]['email'] = $alert['User']['email'];
 				$data[$i]['send_email'] = $alert['Alert']['send_email'];
  				$data[$i]['title'] = 'Customer Details';
 				$message = 'Customer ' . $user['User']['firstname'] . ' ' . $user['User']['lastname'];
-				$message .= ' logged in to ' . $kiosk['Kiosk']['location_description']; 
+				$message .= ' logged in to ' . $kiosk['Kiosk']['location_description'];
+				$message .= ' at ' . $kiosk['Location']['name']; 
 				$message .= ' with detail ' . '"' . ucfirst($detail) . '".';
 				$data[$i]['message'] = $message;
 				$data[$i]['url'] = Router::url('/admin/self_sign_logs', true);							
