@@ -53,7 +53,7 @@ class Alert extends AppModel {
 		else return false;
 	}
 
-	public function getSelfScanAlerts($user, $docId, $locationId) {
+	public function getSelfScanAlerts($user, $docId) {
 		$alerts = $this->find('all', array(
 			'conditions' => array(
 				'Alert.type' => 'self_scan',
