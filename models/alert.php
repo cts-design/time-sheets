@@ -62,10 +62,7 @@ class Alert extends AppModel {
 		if($alerts && $user) {
 			$data = array();			
 			$i = 0;
-			foreach($alerts as $alert) {
-				if($locationId !== $alert['Alert']['location_id']) {
-					continue;
-				}			
+			foreach($alerts as $alert) {			
 				$data[$i]['username'] = strtolower($alert['User']['windows_username']);
 				$data[$i]['email'] = $alert['User']['email'];
 				$data[$i]['send_email'] = $alert['Alert']['send_email'];
