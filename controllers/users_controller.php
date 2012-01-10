@@ -331,6 +331,7 @@ class UsersController extends AppController {
 		if (isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'kiosk') {
 		    if ($this->Auth->user()) {
 		    	$user = $this->Auth->user();
+				$this->sendCustomerLoginAlert($user, $kiosk);
 				if($user['User']['veteran']) {
 					$this->sendCustomerDetailsAlert('veteran', $user, $kiosk);
 				}						
@@ -1016,6 +1017,20 @@ class UsersController extends AppController {
 		$this->loadModel('Alert');
 		$data = $this->Alert->getCustomerDetailsAlerts($detail, $user, $kiosk);
 		if($data) {
+			$this->sendAlert($data, 'Cusomter Deatils alert');
+		}
+	}
+	
+	private function sendCustomerLoginAlert($user, $kiosk) {
+		$this->loadModel('Alert');
+		$data = $this->Alert->getCustomerLoginAlerts($user, $kiosk);
+		if($data) {
+			$this->sendAlert($data, 'Customer Login alert');
+		}
+	}
+	
+	private function sendAlert($data, $subject) {
+		if($data && $subject) {
 			$HttpSocket = new HttpSocket();
 			$HttpSocket->post('localhost:3000/new', array('data' => $data));
 			$to = '';
@@ -1028,7 +1043,7 @@ class UsersController extends AppController {
 				$to = trim($to, ',');
 				$this->Email->to = $to;
 				$this->Email->from = Configure::read('System.email');
-				$this->Email->subject = 'Customer Details alert';
+				$this->Email->subject = $subject;
 				$this->Email->send($alert['message'] . "\r\n" . $alert['url']);				
 			}
 		}
