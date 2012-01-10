@@ -33,19 +33,6 @@ class AlertsControllerTestCase extends AtlasTestCase {
 			'data' => array (
 				'alerts'=>array(
 					array(
-						'id' => '20',
-						'name' => 'Vets',
-						'user_id' => '2',
-						'watched_id' => '10',
-						'type' => 'Self Sign',
-						'detail' => null,
-						'location_id' => '1',
-						'send_email' => true,
-						'disabled' => false,
-						'created' => '2011-12-13 11:54:05',
-						'modified' => '2011-12-13 14:05:06'
-					),
-					array(
 						'id' => '17',
 						'name' => 'Test',
 						'user_id' => '2',
@@ -57,6 +44,19 @@ class AlertsControllerTestCase extends AtlasTestCase {
 						'disabled' => true,
 						'created' => '2011-12-12 16:11:38',
 						'modified' => '2011-12-13 14:04:52'
+					),
+					array(
+						'id' => '20',
+						'name' => 'Vets',
+						'user_id' => '2',
+						'watched_id' => '10',
+						'type' => 'Self Sign',
+						'detail' => null,
+						'location_id' => '1',
+						'send_email' => true,
+						'disabled' => false,
+						'created' => '2011-12-13 11:54:05',
+						'modified' => '2011-12-13 14:05:06'
 					),
 					array(
 						'id' => '29',
@@ -191,6 +191,29 @@ class AlertsControllerTestCase extends AtlasTestCase {
 		$alert = $this->Alerts->Alert->read(null, 20);
 		$this->assertEqual(1, $alert['Alert']['send_email']);			
 	}
+
+	public function testAdminAddCustomerLoginAlert() {
+		$this->Alerts->Component->initialize($this->Alerts);	
+		$this->Alerts->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+		$data = array(
+			'name' => 'Cus Login Alert',
+			'type' => 'customer_login',
+			'send_email' => 1,
+			'firstname' => 9
+		);
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$result = $this->testAction('/admin/alerts/add_customer_login_alert/', 
+			array('method' => 'post', 'form_data' => $data));
+		$id = $this->Alerts->Alert->getLastInsertId();
+		$alert = $this->Alerts->Alert->read(null, $id);
+		$this->assertEqual(30, $alert['Alert']['id']);
+		$this->assertEqual('Cus Login Alert', $alert['Alert']['name']);			
+	}
 	
 	public function testAdminToggleDisabled() {
 		$this->Alerts->Component->initialize($this->Alerts);	
@@ -233,7 +256,11 @@ class AlertsControllerTestCase extends AtlasTestCase {
 						'id' => 'selfScanAlertFormPanel'), 
 					array(
 						'label' => 'Customer Filed Document',
-						'id' => 'cusFiledDocAlertFormPanel'))));
+						'id' => 'cusFiledDocAlertFormPanel'),
+					array(
+						'label' => 'Customer Login',
+						'id' => 'customerLoginAlertFormPanel'
+					))));
 															
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
 		$result = $this->testAction('/admin/alerts/get_alert_types/', 
