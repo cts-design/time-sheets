@@ -153,7 +153,6 @@ class AlertsController extends AppController {
 		if($this->RequestHandler->isAjax())	{
 			$this->data['Alert']['name'] = $this->params['form']['name'];
 			$this->data['Alert']['type'] = 'self_scan';
-			$this->data['Alert']['location_id'] = $this->params['form']['location'];
 			if(!empty($this->params['form']['firstname'])) {
 				$this->data['Alert']['watched_id'] = $this->params['form']['firstname'];
 			}
