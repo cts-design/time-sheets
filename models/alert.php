@@ -107,7 +107,8 @@ class Alert extends AppModel {
 		$alerts = $this->find('all', array(
 			'conditions' => array(
 				'Alert.type'  => 'customer_details',
-				'Alert.detail' => $detail)));
+				'Alert.detail' => $detail,
+				'Alert.disabled' => 0)));
 		if($alerts) {
 			$data = array();
 			$i = 0;
@@ -126,11 +127,37 @@ class Alert extends AppModel {
 				$message .= ' at ' . $kiosk['Location']['name']; 
 				$message .= ' with detail ' . '"' . ucfirst($detail) . '".';
 				$data[$i]['message'] = $message;
-				$data[$i]['url'] = Router::url('/admin/self_sign_logs', true);							
+				$data[$i]['url'] = '';							
 				$i++;				
 			}
 			return $data;
 		}
 		else return false;		
+	}
+
+	public function getCustomerLoginAlerts($user, $kiosk) {
+		$alerts = $this->find('all', array(
+			'conditions' => array(
+				'Alert.type' => 'customer_login',
+				'Alert.disabled' => 0,
+				'Alert.watched_id' => $user['User']['id'])));
+		if($alerts && $user) {
+			$data = array();			
+			$i = 0;
+			foreach($alerts as $alert) {			
+				$data[$i]['username'] = strtolower($alert['User']['windows_username']);
+				$data[$i]['email'] = $alert['User']['email'];
+				$data[$i]['send_email'] = $alert['Alert']['send_email'];
+ 				$data[$i]['title'] = 'Customer Login';
+				$message = $user['User']['firstname'] . ' ' . $user['User']['lastname'];
+				$message .= ' loggned in to ' . $kiosk['Kiosk']['location_description'];
+				$message .= ' at ' . $kiosk['Location']['name'];
+				$data[$i]['message'] = $message;
+				$data[$i]['url'] = '';
+				$i++;
+			}
+			return $data;	
+		}
+		else return false;
 	}	
 }
