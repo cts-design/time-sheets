@@ -32,45 +32,110 @@ class AlertsControllerTestCase extends AtlasTestCase {
 		$expectedResult = array(
 			'data' => array (
 				'alerts'=>array(
-					array(
-						'id' => '17',
-						'name' => 'Test',
-						'user_id' => '2',
-						'watched_id' => '22',
-						'type' => 'Self Sign',
-						'location_id' => '1',
-						'send_email' => true,
-						'detail' => null,
-						'disabled' => true,
-						'created' => '2011-12-12 16:11:38',
-						'modified' => '2011-12-13 14:04:52'
-					),
-					array(
-						'id' => '20',
-						'name' => 'Vets',
-						'user_id' => '2',
-						'watched_id' => '10',
-						'type' => 'Self Sign',
-						'detail' => null,
-						'location_id' => '1',
-						'send_email' => true,
-						'disabled' => false,
-						'created' => '2011-12-13 11:54:05',
-						'modified' => '2011-12-13 14:05:06'
-					),
-					array(
-						'id' => '29',
-						'name' => 'Veterans',
-						'user_id' => '2',
-						'watched_id' => '0',
-						'detail' => 'veteran',
-						'type' => 'Customer Details',
-						'location_id' => '1',
-						'send_email' => '1',
-						'disabled' => 0,
-						'created' => '2011-12-22 11:59:20',
-						'modified' => '2011-12-22 11:59:20'
-					)								
+						array(
+							'id' => '17',
+							'name' => 'Test',
+							'user_id' => '2',
+							'watched_id' => '22',
+							'detail' => NULL,
+							'type' => 'Self Sign',
+							'location_id' => '1',
+							'send_email' => '1',
+							'disabled' => 1,
+							'created' => '2011-12-12 16:11:38',
+							'modified' => '2011-12-13 14:04:52'
+						),				
+						array(
+							'id' => '20',
+							'name' => 'Vets',
+							'user_id' => '2',
+							'watched_id' => '10',
+							'detail' => NULL,
+							'type' => 'Self Sign',
+							'location_id' => '1',
+							'send_email' => '1',
+							'disabled' => 0,
+							'created' => '2011-12-13 11:54:05',
+							'modified' => '2011-12-13 14:05:06'
+						),
+						array(
+							'id' => '33',
+							'name' => 'Test 1 More Time',
+							'user_id' => '2',
+							'watched_id' => '9',
+							'detail' => NULL,
+							'type' => 'Self Scan',
+							'location_id' => '1',
+							'send_email' => '0',
+							'disabled' => 0,
+							'created' => '2011-12-28 11:39:03',
+							'modified' => '2011-12-28 11:39:03'
+						),
+						array(
+							'id' => '34',
+							'name' => 'Ya',
+							'user_id' => '2',
+							'watched_id' => '9',
+							'detail' => NULL,
+							'type' => 'Self Scan',
+							'location_id' => '1',
+							'send_email' => '1',
+							'disabled' => 0,
+							'created' => '2011-12-28 11:39:40',
+							'modified' => '2011-12-30 08:58:37'
+						),
+						array(
+							'id' => '35',
+							'name' => 'Test ',
+							'user_id' => '2',
+							'watched_id' => '36',
+							'detail' => NULL,
+							'type' => 'Self Scan',
+							'location_id' => '1',
+							'send_email' => '0',
+							'disabled' => 0,
+							'created' => '2011-12-28 13:33:00',
+							'modified' => '2011-12-28 13:33:00'
+						),						
+						array(
+							'id' => '38',
+							'name' => 'Test Cus Filed Doc',
+							'user_id' => '2',
+							'watched_id' => '9',
+							'detail' => NULL,
+							'type' => 'Customer Filed Document',
+							'location_id' => NULL,
+							'send_email' => '1',
+							'disabled' => 0,
+							'created' => '2011-12-30 15:35:30',
+							'modified' => '2011-12-30 15:35:30'
+						),
+						array(
+							'id' => '40',
+							'name' => 'Test Detail',
+							'user_id' => '2',
+							'watched_id' => '0',
+							'detail' => 'veteran',
+							'type' => 'Customer Details',
+							'location_id' => NULL,
+							'send_email' => '1',
+							'disabled' => 0,
+							'created' => '2012-01-09 09:49:31',
+							'modified' => '2012-01-09 09:55:03'
+						),
+						array(
+							'id' => '41',
+							'name' => 'Test Login Alert',
+							'user_id' => '2',
+							'watched_id' => '9',
+							'detail' => NULL,
+							'type' => 'Customer Login',
+							'location_id' => NULL,
+							'send_email' => '1',
+							'disabled' => 0,
+							'created' => '2012-01-10 13:09:14',
+							'modified' => '2012-01-10 13:09:14'
+						)								
 				)
 			, 'success' => true));
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
@@ -97,7 +162,7 @@ class AlertsControllerTestCase extends AtlasTestCase {
 			array('method' => 'post', 'form_data' => $data));
 		$id = $this->Alerts->Alert->getLastInsertId();
 		$alert = $this->Alerts->Alert->read(null, $id);
-		$this->assertEqual(30, $alert['Alert']['id']);
+		$this->assertEqual(42, $alert['Alert']['id']);
 		$this->assertEqual('Test Alert Add', $alert['Alert']['name']);			
 	}
 	
@@ -121,7 +186,7 @@ class AlertsControllerTestCase extends AtlasTestCase {
 			array('method' => 'post', 'form_data' => $data));
 		$id = $this->Alerts->Alert->getLastInsertId();
 		$alert = $this->Alerts->Alert->read(null, $id);
-		$this->assertEqual(30, $alert['Alert']['id']);
+		$this->assertEqual(42, $alert['Alert']['id']);
 		$this->assertEqual('Cutomer Detail Alert', $alert['Alert']['name']);			
 	}
 
@@ -145,7 +210,7 @@ class AlertsControllerTestCase extends AtlasTestCase {
 			array('method' => 'post', 'form_data' => $data));
 		$id = $this->Alerts->Alert->getLastInsertId();
 		$alert = $this->Alerts->Alert->read(null, $id);
-		$this->assertEqual(30, $alert['Alert']['id']);
+		$this->assertEqual(42, $alert['Alert']['id']);
 		$this->assertEqual('Self Scan Alert', $alert['Alert']['name']);			
 	}
 	
@@ -169,7 +234,7 @@ class AlertsControllerTestCase extends AtlasTestCase {
 			array('method' => 'post', 'form_data' => $data));
 		$id = $this->Alerts->Alert->getLastInsertId();
 		$alert = $this->Alerts->Alert->read(null, $id);
-		$this->assertEqual(30, $alert['Alert']['id']);
+		$this->assertEqual(42, $alert['Alert']['id']);
 		$this->assertEqual('Cus Filed Doc', $alert['Alert']['name']);			
 	}	
 	
@@ -211,7 +276,7 @@ class AlertsControllerTestCase extends AtlasTestCase {
 			array('method' => 'post', 'form_data' => $data));
 		$id = $this->Alerts->Alert->getLastInsertId();
 		$alert = $this->Alerts->Alert->read(null, $id);
-		$this->assertEqual(30, $alert['Alert']['id']);
+		$this->assertEqual(42, $alert['Alert']['id']);
 		$this->assertEqual('Cus Login Alert', $alert['Alert']['name']);			
 	}
 	
