@@ -216,8 +216,6 @@ Ext.define('Atlas.form.SelfScanAlertPanel', {
 	items: [{
 		xtype: 'alertnametextfield'
 	},{
-		xtype: 'locationcombobox'
-	},{
 		xtype: 'findcusbycombobox'
 	},{
 		xtype: 'lastnametextfield'
