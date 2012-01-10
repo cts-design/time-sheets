@@ -447,7 +447,43 @@ Ext.define('Atlas.form.CusFiledDocAlertPanel', {
 		width: 100,
 		margin: '0 0 0 10'
 	}]
-});	
+});
+
+
+Ext.define('Atlas.form.CustomerLoginAlertPanel', {
+	extend: 'Ext.form.Panel',
+	alias: 'widget.customerloginalertformpanel',
+	padding: 10,
+	border: 0,
+	defaults: {
+		labelWidth: 100,
+		width: 375
+	},
+	items: [{
+		xtype: 'alertnametextfield'
+	},{
+		xtype: 'locationcombobox',
+		allowBlank: true,
+		emptyText: 'Select a specific location if nessesary'
+	},{
+		xtype: 'findcusbycombobox'
+	},{
+		xtype: 'lastnametextfield'
+	},{
+		xtype: 'firstnamecombobox'		
+	},{
+		xtype: 'ssncombobox'
+	},{
+		xtype: 'sendemailcheckbox'
+	},{
+		xtype: 'alertsavebutton',
+		width: 100
+	},{
+		xtype: 'alertresetbutton',
+		width: 100,
+		margin: '0 0 0 10'
+	}]
+});		
 
 
 Ext.define('DocumentQueueCategory', {
@@ -752,6 +788,10 @@ Ext.onReady(function(){
 	        	xtype: 'cusfileddocalertformpanel',
 	        	id: 'cusFiledDocAlertFormPanel',
 	        	url: '/admin/alerts/add_cus_filed_doc_alert'		        	
+	        },{
+	        	xtype: 'customerloginalertformpanel',
+	        	id: 'customerLoginAlertFormPanel',
+	        	url: '/admin/alerts/add_customer_login_alert'
 	        }],
 	        dockedItems: [{
 	        	xtype: 'toolbar',
