@@ -54,7 +54,9 @@ class AlertsController extends AppController {
 			$this->data['Alert']['name'] = $this->params['form']['name'];
 			$this->data['Alert']['type'] = 'self_sign';
 			$this->data['Alert']['user_id'] = $this->Auth->user('id');
-			$this->data['Alert']['location_id'] = $this->params['form']['location'];
+			if(!empty($this->params['form']['location'])) {
+				$this->data['Alert']['location_id'] = $this->params['form']['location'];	
+			}
 			if(isset($this->params['form']['send_email'])) {
 				$this->data['Alert']['send_email'] = 1;
 			}
@@ -350,7 +352,7 @@ class AlertsController extends AppController {
 				),
 				array(
 					'action' => 'Alerts/admin_add_customer_login_alert',
-					'label' => 'Customer Login Alert',
+					'label' => 'Customer Login',
 					'id' => 'customerLoginAlertFormPanel'
 				));
 			$data['types'] = array();	
