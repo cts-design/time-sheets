@@ -20,7 +20,31 @@ class AlertTestCase extends AtlasTestCase {
 		$kiosk['Location'] = array('name' => 'test location'); 
 		$result = $this->Alert->getCustomerDetailsAlerts('veteran', $user, $kiosk);
 		$this->assertEqual($result[0]['username'], 'dnolan');
+	}
+	
+	public function testGetSelfScanAlerts() {
+		$user['User'] = array('id' => 9, 'firstname' => 'Daniel', 'lastname' => 'Smith');
+		$kiosk['Kiosk'] = array('location_description' => 'Test Kiosk Desc');
+		$kiosk['Location'] = array('name' => 'test location'); 
+		$result = $this->Alert->getSelfScanAlerts($user, $kiosk);
+		$this->assertEqual($result[0]['username'], 'dnolan');		
+	}
+	
+	public function testGetCusomterFiledDocAlerts() {
+		$user['User'] = array('id' => 9, 'firstname' => 'Daniel', 'lastname' => 'Smith');
+		$kiosk['Kiosk'] = array('location_description' => 'Test Kiosk Desc');
+		$kiosk['Location'] = array('name' => 'test location'); 
+		$result = $this->Alert->getCusFiledDocAlerts($user, $kiosk);
+		$this->assertEqual($result[0]['username'], 'dnolan');		
 	}	
+	
+	public function testGetCustomerLoginAlerts() {
+		$user['User'] = array('id' => 9, 'firstname' => 'Daniel', 'lastname' => 'Smith');
+		$kiosk['Kiosk'] = array('location_description' => 'Test Kiosk Desc');
+		$kiosk['Location'] = array('name' => 'test location'); 
+		$result = $this->Alert->getCustomerLoginAlerts($user, $kiosk);
+		$this->assertEqual($result[0]['username'], 'dnolan');		
+	}
 
 	public function endTest() {
 		unset($this->Alert);
