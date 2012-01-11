@@ -82,7 +82,7 @@ Ext.onReady(function(){
 			        height: 400,
 			        autoEl : {
 			            tag : 'iframe',
-			            src : 'http://www.tobcon.ie/assets/files/test.pdf'
+			            src : '/admin/queued_documents/view/40/#toolbar=1&statusbar=0&navpanes=0&zoom=50'
 			        }
 			    }]		                	
 	        }]
