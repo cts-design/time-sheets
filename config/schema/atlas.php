@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2012-01-12 15:05:13 : 1326398713*/
+/* atlas schema generated on: 2012-01-12 17:32:52 : 1326407572*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -542,8 +542,8 @@ class atlasSchema extends CakeSchema {
 	);
 	var $report_filters = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
-		'name' => array('type' => 'string', 'null' => false, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
-		'date_range' => array('type' => 'string', 'null' => false, 'length' => 13, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+		'name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+		'date_range' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 13, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'chart_breakdown' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 10, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'group_by' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 10, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'display_as' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 5, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
@@ -599,9 +599,9 @@ class atlasSchema extends CakeSchema {
 		'user_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'kiosk_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'location_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
-		'level_1' => array('type' => 'integer', 'null' => true, 'default' => NULL),
-		'level_2' => array('type' => 'integer', 'null' => true, 'default' => NULL),
-		'level_3' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'level_1' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'level_2' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'level_3' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'other' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'status' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 1),
 		'last_activity_admin_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
@@ -616,9 +616,9 @@ class atlasSchema extends CakeSchema {
 		'user_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'kiosk_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'location_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
-		'level_1' => array('type' => 'integer', 'null' => true, 'default' => NULL),
-		'level_2' => array('type' => 'integer', 'null' => true, 'default' => NULL),
-		'level_3' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'level_1' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'level_2' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'level_3' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'other' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'status' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 1),
 		'last_activity_admin_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
