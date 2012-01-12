@@ -234,8 +234,6 @@ Reports = {
                     }
                   }]
                 };
-
-                chartContainer.insert(0, newChartConfig);
               } else if (displayAs === 'line') {
                 Ext.Array.each(locations, function (item, index, allItems) {
                   tmpLocations.push({
@@ -266,7 +264,6 @@ Reports = {
 
                 chart.destroy();
 
-
                 newChartConfig = {
                   xtype: 'chart',
                   flex: 1,
@@ -293,9 +290,9 @@ Reports = {
                   }],
                   series: tmpLocations
                 };
-
-                chartContainer.insert(0, newChartConfig);
               }
+
+              chartContainer.insert(0, newChartConfig);
 
 							if (includeRawData) {
 								table = this.buildRawDataTable(store, records);
@@ -306,6 +303,7 @@ Reports = {
 
 								chartContainer.insert(1, {
 									html: table,
+                  autoScroll: true,
 									border: 0,
 									margin: '10px 0 0 50px',
 									height: 200,
@@ -335,6 +333,7 @@ Reports = {
 								series = chart.series,
 								axes = chart.axes.items[0],
 								selectedServices = [],
+                displayAs = Ext.getCmp('displayAs').getValue(),
 								includeRawData = Ext.getCmp('includeRawData').checked,
 								tmpServices = [],
 								newChartConfig,
@@ -349,64 +348,120 @@ Reports = {
 								});
 							});
 
-							Ext.Array.each(selectedServices, function (item, index, allItems) {
-								tmpServices.push({
-									type: 'line',
-			            highlight: {
-		                size: 7,
-		                radius: 7
-			            },
-			            axis: 'left',
-			            xField: 'name',
-			            yField: item,
-			            markerConfig: {
-		                type: 'circle',
-		                size: 4,
-		                radius: 4,
-		                'stroke-width': 0
-			            },
-									tips: {
-										trackMouse: true,
-										renderer: function (storeItem, item) {
-											this.setTitle(item.series.yField);
-											this.update('Total for ' + storeItem.data.time + ': ' + item.value[1]);
-											this.setWidth(item.series.yField.length * 7);
-										}
-									}
-								});
-							});
+              if (displayAs === 'bar') {
+                chart.destroy();
 
-							chart.destroy();
+                newChartConfig = {
+                  xtype: 'chart',
+                  id: 'servicesChart',
+                  width: '100%',
+                  store: Ext.data.StoreManager.lookup('TotalServicesStore'),
+                  legend: {
+                    position: 'right'
+                  },
+                  axes: [{
+                    type: 'Numeric',
+                    scope: this,
+                    fields: selectedServices,
+                    position: 'left',
+                    title: 'Total Services',
+                    minimum: 0,
+                    grid: true,
+                    label: {
+                      renderer: Ext.util.Format.numberRenderer('0,0')
+                    }
+                  }, {
+                    type: 'Category',
+                    position: 'bottom',
+                    fields: ['time']
+                  }],
+                  series: [{
+                    type: 'column',
+                    axis: 'left',
+                    highlight: true,
+                    tips: {
+                      trackMouse: true,
+                      height: 40,
+                      width: 'auto',
+                      renderer: function (storeItem, item) {
+                        this.setTitle(item.series.yField);
+                        this.update('Total for ' + storeItem.data.time + ': ' + item.value[1]);
+                        this.setWidth(item.series.yField[0].length * 7);
+                      }
+                    },
+                    xField: 'time',
+                    scope: this,
+                    yField: selectedServices,
+                    label: {
+                      display: 'insideEnd',
+                      'text-anchor': 'middle',
+                      field: 'total',
+                      renderer: Ext.util.Format.numberRenderer('0'),
+                      orientation: 'vertical',
+                      color: '#333'
+                    }
+                  }]
+                }
+              } else if (displayAs === 'line') {
+                Ext.Array.each(selectedServices, function (item, index, allItems) {
+                  tmpServices.push({
+                    type: 'line',
+                    highlight: {
+                      size: 7,
+                      radius: 7
+                    },
+                    axis: 'left',
+                    xField: 'name',
+                    yField: item,
+                    markerConfig: {
+                      type: 'circle',
+                      size: 4,
+                      radius: 4,
+                      'stroke-width': 0
+                    },
+                    tips: {
+                      trackMouse: true,
+                      renderer: function (storeItem, item) {
+                        this.setTitle(item.series.yField);
+                        this.update('Total for ' + storeItem.data.time + ': ' + item.value[1]);
+                        this.setWidth(item.series.yField.length * 7);
+                      }
+                    }
+                  });
+                });
 
-							newChartConfig = {
-								xtype: 'chart',
-								id: 'servicesChart',
-								flex: 1,
-								width: '100%',
-								store: store,
-								label: {
-									renderer: Ext.util.Format.numberRenderer('0,0')
-								},
-			          legend: {
-			            position: 'right'
-			          },
-								axes: [{
-									type: 'Numeric',
-									minimum: 0,
-									fields: selectedServices,
-									position: 'left',
-									title: 'Total Services',
-									minorTickSteps: 1,
-									grid: true
-								}, {
-									type: 'Category',
-									position: 'bottom',
-									fields: ['time']
-								}],
-								series: tmpServices
-							};
+                chart.destroy();
 
-							chartContainer.insert(0, newChartConfig);
+                newChartConfig = {
+                  xtype: 'chart',
+                  id: 'servicesChart',
+                  flex: 1,
+                  width: '100%',
+                  store: store,
+                  label: {
+                    renderer: Ext.util.Format.numberRenderer('0,0')
+                  },
+                  legend: {
+                    position: 'right'
+                  },
+                  axes: [{
+                    type: 'Numeric',
+                    minimum: 0,
+                    fields: selectedServices,
+                    position: 'left',
+                    title: 'Total Services',
+                    minorTickSteps: 1,
+                    grid: true
+                  }, {
+                    type: 'Category',
+                    position: 'bottom',
+                    fields: ['time']
+                  }],
+                  series: tmpServices
+                };
+              }
+
+              chartContainer.insert(0, newChartConfig);
 
 							if (includeRawData) {
 								table = this.buildRawDataTable(store, records);
@@ -417,6 +472,7 @@ Reports = {
 
 								chartContainer.insert(1, {
 									html: table,
+                  autoScroll: true,
 									border: 0,
 									margin: '10px 0 0 50px',
 									height: 200,
