@@ -2,6 +2,7 @@ var Reports;
 Reports = {
   activeChartType: null, // can be hourly, daily, weekly, monthly
   filterWindow: null,
+	groupBy: null,
 	selectedLocations: null,
   todaysDate: null,
 	loadMask: null,
@@ -31,6 +32,7 @@ Reports = {
 
 		this.todaysDate = this.filters.fromDate = this.filters.toDate = Ext.Date.format(new Date(), 'Y-m-d');
     this.activeChartType = 'hourly';
+    this.groupBy = 'hour';
 
 		this.initializeProgramStore();
 		this.initializeServicesStore();
@@ -171,7 +173,6 @@ Reports = {
 							});
 
 							if (includeRawData) {
-								console.log(Reports.filters.meta);
 								table = this.buildRawDataTable(store, records);
 
 								if (!Ext.isEmpty(chartContainer.items.items[1])) {
@@ -472,32 +473,53 @@ Reports = {
 				'programs']
 		});
 
-		// Ext.create('Ext.data.Store', {
-		// 	storeId: 'FilterStore',
-		// 	model: 'Filter',
-		// 	proxy: {
-		// 		api: {
-		// 			create: '/admin/reports/create_filters',
-		// 			read: '/admin/reports/read_filters',
-		// 			destroy: '/admin/reports/destroy_filters'
-		// 		},
-		// 		reader: {
-		// 			type: 'json',
-		// 			root: 'filters'
-		// 		},
-		// 		type: 'ajax'
-		// 	},
-		// 	autoLoad: true
-		// });
+    Ext.define('Filter', {
+      extend: 'Ext.data.Model',
+      fields: [
+        { name: 'id', type: 'int' },
+        'name',
+        'date_range',
+				'chart_breakdown',
+				'group_by',
+				'display_as',
+        'admin',
+        'kiosk',
+        'location',
+        'program'
+      ]
+    });
+
+    Ext.create('Ext.data.Store', {
+      storeId: 'FilterStore',
+      model: 'Filter',
+      proxy: {
+        type: 'ajax',
+        reader: {
+          root: 'report_filters'
+        },
+        writer: {
+          root: 'report_filters',
+          encode: true,
+          writeAllFields: true
+        },
+        api: {
+          create: '/admin/reports/create_filter',
+          read: '/admin/reports/read_filters',
+          update: '/admin/reports/update_filter',
+          destroy: '/admin/reports/destroy_filter'
+        }
+      },
+      autoLoad: true
+    });
 
 		Ext.create('Ext.data.ArrayStore', {
-			storeId: 'PresetStore',
+			storeId: 'DateRangeStore',
 			fields: [
 				'short',
 				'long'
 			],
 			data: [
-				[ 'today', 'Today'  ],
+				[ 'today', 'Today' ],
 				[ 'lastWeek', 'Last Week' ],
 				[ 'lastMonth', 'Last Month' ],
 				[ 'monthToDate', 'Month to Date' ],
@@ -516,7 +538,21 @@ Reports = {
 				[ 'daily', 'Daily' ],
 				[ 'weekly', 'Weekly' ],
 				[ 'monthly', 'Monthly' ],
-				[ 'yearly', 'Yearly' ]
+        [ 'yearly', 'Yearly' ]
+			]
+		});
+		
+		Ext.create('Ext.data.ArrayStore', {
+			storeId: 'GroupByStore',
+			fields: [
+				'short',
+				'long'
+			],
+			data: [
+				[ 'hour', 'Hour'  ],
+				[ 'day', 'Day' ],
+				[ 'week', 'Week' ],
+				[ 'month', 'Month' ]
 			]
 		});
 	},
@@ -524,7 +560,16 @@ Reports = {
 	initializeViewPort: function (fieldKeys) {
 		"use strict";
 
-		var availableDOMHeight = window.innerHeight;
+		var availableDOMHeight = function () {
+      if (typeof window.innerHeight !== 'undefined') {
+        return window.innerHeight - 160;
+      } else if (typeof document.documentElement !== 'undefined' 
+							&& typeof document.documentElement.clientHeight !== 'undefined') {
+        return document.documentElement.clientHeight - 100;
+      } else {
+        return document.getElementsByTagName('body')[0].clientHeight - 100;
+      }
+    };
 
 		this.window = Ext.create('Ext.window.Window', {
 			id: 'reportsWindow',
@@ -533,7 +578,7 @@ Reports = {
 			closable: false,
 			draggable: false,
 			resizable: false,
-			height: (availableDOMHeight - 100),
+			height: availableDOMHeight(),
 			layout: {
 				type: 'fit',
 				padding: '10 20'
@@ -550,11 +595,21 @@ Reports = {
 			tools: [{
 				itemId: 'filters',
 				type: 'gear',
+				tooltip: 'Chart Filters',
 				scope: this,
 				handler: this.showFilterWindow
 			}, {
+				itemId: 'refresh',
+				type: 'refresh',
+				tooltip: 'Reset Zoom',
+				scope: this,
+				handler: function () {
+					Ext.getCmp('totalUnduplicated').items.items[0].restoreZoom();
+				}
+			}, {
 				itemId: 'print',
 				type: 'print',
+				tooltip: 'Print This Page',
 				scope: this,
 				handler: function () {
 					window.print();
@@ -568,7 +623,7 @@ Reports = {
 			}],
 			width: '99%',
 			x: 7,
-			y: 95,
+			y: 155,
 			items: [{
 				xtype: 'tabpanel',
 				id: 'chartTabPanel',
@@ -581,6 +636,15 @@ Reports = {
 					title: 'Total Unduplicated Individuals',
 					items: [{
 						xtype: 'totalunduplicated',
+		        mask: 'horizontal',
+		        listeners: {
+		            select: {
+		                fn: function(me, selection) {
+		                    me.setZoom(selection);
+		                    me.mask.hide();
+		                }
+		            }
+		        },
 						flex: 1,
 						width: '100%',
 						store: Ext.data.StoreManager.lookup('UnduplicatedIndividualsStore'),
@@ -606,10 +670,11 @@ Reports = {
 							highlight: true,
 							tips: {
 								trackMouse: true,
-								height: 28,
-								width: 150,
+								height: 40,
+                width: 'auto',
 								renderer: function (storeItem, item) {
-									this.setTitle(item.value[0] + ' &mdash; Total: ' + item.value[1]);
+                  this.setTitle(item.value[0]);
+                  this.update('Total: ' + item.value[1]);
 								}
 							},
 							xField: 'time',
@@ -675,7 +740,7 @@ Reports = {
 			this.filterWindow = Ext.create('Ext.window.Window', {
 				bodyPadding: '5px 10px',
 				closeAction: 'hide',
-				height: 375,
+				height: 394,
 				hidden: true,
 				layout: 'auto',
 				margins: '0 0 10px',
@@ -685,7 +750,7 @@ Reports = {
 
 				items: [{
 					xtype: 'fieldcontainer',
-					height: 31,
+					height: 55,
 					margin: '5px 0 8px',
 					width: 780,
 					layout: {
@@ -694,12 +759,14 @@ Reports = {
 					fieldLabel: '',
 					items: [{
 						xtype: 'combo',
+						id: 'presets',
 						fieldLabel: 'Saved Presets',
-						margin: '0 267px 0 0',
-						store: Ext.data.StoreManager.lookup('PresetStore'),
-						valueField: 'short',
-						displayField: 'long',
-						query: 'local',
+						margin: '0 222px 0 0',
+						store: Ext.data.StoreManager.lookup('FilterStore'),
+						valueField: 'id',
+						displayField: 'name',
+						width: 300,
+						query: 'remote',
 						triggerAction: 'all',
 						listeners: {
 							select: {
@@ -710,37 +777,67 @@ Reports = {
 										fromDate = Ext.getCmp('fromDate'),
 										fromTime = Ext.getCmp('fromTime'),
 										toDate = Ext.getCmp('toDate'),
-										toTime = Ext.getCmp('toTime');
+										toTime = Ext.getCmp('toTime'),
+										location = Ext.getCmp('location'),
+										program = Ext.getCmp('program'),
+										kiosk = Ext.getCmp('kiosk'),
+										admin = Ext.getCmp('admin'),
+										chartBreakdown = Ext.getCmp('chartBreakdown'),
+										groupBy = Ext.getCmp('groupBy'),
+                    dateRange = Ext.getCmp('dateRange');
 
-									switch (value) {
-									case 'today':
-										fromDate.setValue(Date.today());
-										toDate.setValue(Date.today());
-										break;
+                  dateRange.select(record.data.date_range);
 
-									case 'lastWeek':
-										fromDate.setValue(Date.today().last().week().monday());
-										toDate.setValue(Date.today().last().friday());
-										break;
+                  switch(record.data.date_range) {
+                    case 'today':
+                      fromDate.reset();
+                      fromTime.reset();
+                      toDate.reset();
+                      toTime.reset();
+                      break;
 
-									case 'lastMonth':
-										fromDate.setValue(Date.today().last().month().moveToFirstDayOfMonth());
-										toDate.setValue(Date.today().last().month().moveToLastDayOfMonth());
-										break;
+                    case 'lastWeek':
+                      fromDate.setValue(Date.today().last().week().monday());
+                      fromTime.reset();
+                      toDate.setValue(Date.today().last().friday());
+                      toTime.reset();
+                      break;
 
-									case 'monthToDate':
-										fromDate.setValue(Date.today().moveToFirstDayOfMonth());
-										toDate.setValue(Date.today());
-										break;
+                    case 'lastMonth':
+                      fromDate.setValue(Date.today().last().month().moveToFirstDayOfMonth());
+                      fromTime.reset();
+                      toDate.setValue(Date.today().last().month().moveToLastDayOfMonth());
+                      toTime.reset();
+                      break;
 
-									case 'yearToDate':
-										fromDate.setValue(Date.january().moveToFirstDayOfMonth());
-										toDate.setValue(Date.today());
-										break;
+                    case 'monthToDate':
+                      fromDate.setValue(Date.today().moveToFirstDayOfMonth());
+                      fromTime.reset();
+                      toDate.setValue(Date.today());
+                      toTime.reset();
+                      break;
 
-									default:
-										break;
-									}
+                    case 'yearToDate':
+                      fromDate.setValue(Date.january().moveToFirstDayOfMonth());
+                      fromTime.reset();
+                      toDate.setValue(Date.today());
+                      toTime.reset();
+                      break;
+
+                    default:
+                      break;
+                  }
+
+									chartBreakdown.setValue(record.data.chart_breakdown);
+									groupBy.setValue(record.data.group_by);
+                  location.setValue(record.data.location);
+                  program.setValue(record.data.program);
+                  kiosk.setValue(record.data.kiosk);
+                  admin.setValue(record.data.admin);
+
+                  Ext.getCmp('saveFilterMenuItem').disable().hide();
+                  Ext.getCmp('updateFilterMenuItem').enable().show();
+                  Ext.getCmp('deleteFilterMenuItem').enable();
 								}
 							}
 						}
@@ -762,6 +859,93 @@ Reports = {
 										value = record.data.short;
 
 									this.activeChartType = value;
+								}
+							}
+						}
+					}, {
+            xtype: 'combo',
+            fieldLabel: 'Date Range',
+            id: 'dateRange',
+            margin: '0 222px 0 0',
+            width: 300,
+            store: Ext.data.StoreManager.lookup('DateRangeStore'),
+            valueField: 'short',
+            value: 'today',
+            displayField: 'long',
+            query: 'local',
+            triggerAction: 'all',
+            listeners: {
+              select: {
+                scope: this,
+                fn: function (combo, records, opts) {
+
+                  console.log('selected!');
+                  var rec = records[0],
+                    fromDate = Ext.getCmp('fromDate'),
+                    fromTime = Ext.getCmp('fromTime'),
+                    toDate = Ext.getCmp('toDate'),
+                    toTime = Ext.getCmp('toTime');
+
+                  switch(rec.data.short) {
+                    case 'today':
+                      fromDate.reset();
+                      fromTime.reset();
+                      toDate.reset();
+                      toTime.reset();
+                      break;
+
+                    case 'lastWeek':
+                      fromDate.setValue(Date.today().last().week().monday());
+                      fromTime.reset();
+                      toDate.setValue(Date.today().last().friday());
+                      toTime.reset();
+                      break;
+
+                    case 'lastMonth':
+                      fromDate.setValue(Date.today().last().month().moveToFirstDayOfMonth());
+                      fromTime.reset();
+                      toDate.setValue(Date.today().last().month().moveToLastDayOfMonth());
+                      toTime.reset();
+                      break;
+
+                    case 'monthToDate':
+                      fromDate.setValue(Date.today().moveToFirstDayOfMonth());
+                      fromTime.reset();
+                      toDate.setValue(Date.today());
+                      toTime.reset();
+                      break;
+
+                    case 'yearToDate':
+                      fromDate.setValue(Date.january().moveToFirstDayOfMonth());
+                      fromTime.reset();
+                      toDate.setValue(Date.today());
+                      toTime.reset();
+                      break;
+
+                    default:
+                      break;
+                  }
+                }
+              }
+            }
+          }, {
+						xtype: 'combo',
+						fieldLabel: 'Group By',
+						id: 'groupBy',
+						store: Ext.data.StoreManager.lookup('GroupByStore'),
+						valueField: 'short',
+						value: 'hour',
+						displayField: 'long',
+						query: 'local',
+						triggerAction: 'all',
+						listeners: {
+							select: {
+								scope: this,
+								fn: function (combo, recs, opts) {
+									var record = recs[0],
+										value = record.data.short;
+
+									this.groupBy = value;
 								}
 							}
 						}
@@ -874,10 +1058,25 @@ Reports = {
 					text: 'Filter',
 					menu: new Ext.menu.Menu({
 						items: [{
-							text: 'Save this filter for later',
+              id: 'saveFilterMenuItem',
+							text: 'Save this filter',
 							icon: '/img/icons/save.png',
 							scope: this,
 							handler: this.saveFilter
+						}, {
+              id: 'updateFilterMenuItem',
+              text: 'Update this filter',
+              icon: '/img/icons/save.png',
+              scope: this,
+              handler: this.updateFilter,
+              hidden: true
+            }, {
+              id: 'deleteFilterMenuItem',
+							text: 'Delete this filter',
+							icon: '/img/icons/delete.png',
+							scope: this,
+							handler: this.deleteFilter,
+              disabled: true
 						}]
 					})
 				}, {
@@ -893,7 +1092,6 @@ Reports = {
 		programsField = this.filterWindow.down('#program');
 		
 		if (activePanel === 'servicesChartContainer') {
-			console.log(programsField);
 			programsField.emptyText = 'Please select at least one program';
 			programsField.allowBlank = false;
 			programsField.reset();
@@ -906,12 +1104,115 @@ Reports = {
 		this.filterWindow.show();
 	},
 
-	saveFilters: function () {
+	saveFilter: function () {
 		"use strict";
+
+		var filterFieldSet = this.filterWindow.down('fieldset'),
+			chartBreakdown = Ext.getCmp('chartBreakdown'),
+      dateRange = Ext.getCmp('dateRange'),
+      groupBy = Ext.getCmp('groupBy'),
+      recordData = {},
+      store = Ext.data.StoreManager.lookup('FilterStore');
+
+    Ext.MessageBox.prompt('Save Preset', 'Enter a name for your filter preset', function (btn, text) {
+      if (btn === 'ok' && !Ext.isEmpty(text)) {
+        recordData['name'] = text;
+
+        Ext.Object.each(filterFieldSet.items.items, function (key, value, me) {
+          var val = value.id;
+
+          if (val !== 'fromDate' && val !== 'fromTime' && val !== 'toDate' && val !== 'toTime') {
+            recordData[value.id] = value.getValue();
+          }
+        });
+
+        recordData['chart_breakdown'] = chartBreakdown.getValue();
+        recordData['group_by'] = groupBy.getValue();
+        recordData['date_range'] = dateRange.getValue();
+      }
+
+      store.add(recordData);
+      store.sync();
+    });
+	},
+
+  updateFilter: function () {
+		"use strict";
+
+		var filterFieldSet = this.filterWindow.down('fieldset'),
+			chartBreakdown = Ext.getCmp('chartBreakdown'),
+      dateRange = Ext.getCmp('dateRange'),
+      groupBy = Ext.getCmp('groupBy'),
+      recordData = {},
+      store = Ext.data.StoreManager.lookup('FilterStore'),
+      recordId = Ext.getCmp('presets').getValue(),
+      record = store.getById(recordId);
+
+      Ext.Object.each(filterFieldSet.items.items, function (key, value, me) {
+        var val = value.id;
+
+        if (val !== 'fromDate' && val !== 'fromTime' && val !== 'toDate' && val !== 'toTime') {
+          record.set(value.id, value.getValue());
+        }
+      });
+
+      record.set('chart_breakdown', chartBreakdown.getValue());
+      record.set('group_by', groupBy.getValue());
+      record.set('date_range', dateRange.getValue());
+
+      store.sync();
+  },
+	
+	deleteFilter: function () {
+		"use strict";
+		
+		var recordId = Ext.getCmp('presets').getValue(),
+      store = Ext.data.StoreManager.lookup('FilterStore'),
+      recordIndex = store.find('id', recordId);
+		
+		Ext.MessageBox.confirm('Are you sure?', 'Are you sure you want to delete this preset filter?', function (btn) {
+			if (btn === 'yes') {
+        store.removeAt(recordIndex);
+        store.sync();
+			}
+		});
+
+    Ext.getCmp('deleteFilterMenuItem').disable();
+    this.resetFilters();
 	},
 
 	resetFilters: function () {
 		"use strict";
+		
+		var fromDate = Ext.getCmp('fromDate'),
+			fromTime = Ext.getCmp('fromTime'),
+			toDate = Ext.getCmp('toDate'),
+			toTime = Ext.getCmp('toTime'),
+			location = Ext.getCmp('location'),
+			program = Ext.getCmp('program'),
+			kiosk = Ext.getCmp('kiosk'),
+			admin = Ext.getCmp('admin'),
+			chartBreakdown = Ext.getCmp('chartBreakdown'),
+			groupBy = Ext.getCmp('groupBy'),
+			presets = Ext.getCmp('presets'),
+      dateRange = Ext.getCmp('dateRange');
+		
+		presets.reset();
+		fromDate.reset();
+		fromTime.reset();
+		toDate.reset();
+		toTime.reset();
+		location.reset();
+		program.reset();
+		kiosk.reset();
+		admin.reset();
+		chartBreakdown.reset();
+		groupBy.reset();
+    dateRange.reset();
+
+    Ext.getCmp('saveFilterMenuItem').enable().show();
+    Ext.getCmp('updateFilterMenuItem').disable().hide();
+    Ext.getCmp('deleteFilterMenuItem').disable();
 	},
 
 	setFilters: function () {
@@ -1007,6 +1308,12 @@ Reports = {
 				});
 				kioskMeta = kioskMeta.slice(0, -2);
 			}
+
+      programMeta = (Ext.isEmpty(programMeta)) ? 'All' : programMeta;
+      locationMeta = (Ext.isEmpty(locationMeta)) ? 'All' : locationMeta;
+      kioskMeta = (Ext.isEmpty(kioskMeta)) ? 'All' : kioskMeta;
+      adminMeta = (Ext.isEmpty(adminMeta)) ? 'All' : adminMeta;
+
 			
 			statusMeta = "<strong>Program(s)</strong>: " + programMeta + " &mdash; ";
 			statusMeta += "<strong>Location(s)</strong>: " + locationMeta + " &mdash; ";
@@ -1056,6 +1363,7 @@ Reports = {
 
 		var requestParams = this.buildRequestParams(),
 			chartType = this.activeChartType,
+			groupBy = this.groupBy,
 			activePanel = Ext.getCmp('chartTabPanel').activeTab.id,
 			url,
 			storeId;
@@ -1081,7 +1389,8 @@ Reports = {
 			url: url,
 			params: {
 				filters: Ext.encode(requestParams),
-				chartType: chartType
+				chartType: chartType,
+				groupBy: groupBy
 			},
       scope: this,
 			success: function (response) {
