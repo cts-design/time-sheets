@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2012-01-12 11:52:59 : 1326387179*/
+/* atlas schema generated on: 2012-01-12 15:05:13 : 1326398713*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -583,9 +583,9 @@ class atlasSchema extends CakeSchema {
 		'user_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'kiosk_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'location_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
-		'level_1' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 100),
-		'level_2' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 100),
-		'level_3' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 100),
+		'level_1' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'level_2' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'level_3' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'other' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'status' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 1),
 		'last_activity_admin_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
