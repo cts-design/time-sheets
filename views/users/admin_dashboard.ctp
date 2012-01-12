@@ -103,6 +103,7 @@
             <a><?php __('Tools') ?></a>
 			<ul>
 			    <li rel="loginIssues"><?php echo $html->link(__('Resolve Login Issues', true), array('controller' => 'users', 'action' => 'resolve_login_issues')) ?></li>
+                <li rel="reports"><?php echo $html->link(__('Reports', true), array('controller' => 'reports', 'action' => 'index')) ?></li>
 			</ul>
 		    </li>		    
 		</ul>
@@ -128,7 +129,7 @@
 	    	<?php endif ?> 
 	    	<p>
 	    		<?php echo $html->image('icons/application_xp_terminal.png')?>
-	    		<?php echo $html->link('Atlas 3.1.6', array('controller' => 'release_notes', 'admin' => true))?>
+	    		<?php echo $html->link('Atlas 3.2.0', array('controller' => 'release_notes', 'admin' => true))?>
 	    	</p>    	
 	    </div>
     </div>

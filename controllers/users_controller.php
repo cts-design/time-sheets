@@ -6,7 +6,9 @@
  * @link http://ctsfla.com
  * @package ATLAS V3
  */
- 
+
+App::import('Core', 'HttpSocket');
+
 class UsersController extends AppController {
 
     var $name = 'Users';
@@ -47,7 +49,9 @@ class UsersController extends AppController {
 		if($this->Auth->user('role_id') > 1) {
 		    $this->Auth->allow(
 			    'admin_auto_complete_customer',
-			    'admin_auto_complete_ssn_ajax'
+			    'admin_auto_complete_ssn_ajax',
+			    'admin_get_customers_by_first_and_last_name',
+			    'admin_get_customers_by_ssn'
 			);
 		}			
 		if(!empty($this->data)) {
@@ -316,7 +320,7 @@ class UsersController extends AppController {
 		}
 		$this->Kiosk->recursive = -1;
 		$this->Kiosk->Behaviors->attach('Containable');
-		$this->Kiosk->contain(array('KioskSurvey'));
+		$this->Kiosk->contain(array('KioskSurvey', 'Location'));
 		$settings = Cache::read('settings');	
 		$fields = Set::extract('/field',  json_decode($settings['SelfSign']['KioskRegistration'], true));
 		
@@ -327,8 +331,15 @@ class UsersController extends AppController {
 		if (isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'kiosk') {
 		    if ($this->Auth->user()) {
 		    	$user = $this->Auth->user();
+				$this->sendCustomerLoginAlert($user, $kiosk);
+				if($user['User']['veteran']) {
+					$this->sendCustomerDetailsAlert('veteran', $user, $kiosk);
+				}						
 				foreach($user['User'] as $k => $v) {
-					if(in_array($k, $fields) && empty($v)) {
+					if($v === 'Spanish') {
+						$this->sendCustomerDetailsAlert('spanish', $user, $kiosk);
+					}
+					if(in_array($k, $fields) && empty($v) && $v != 0) {
 						$this->redirect(
 							array('controller' => 'kiosks', 'action' => 'self_sign_edit', $user['User']['id']));
 					} 
@@ -894,6 +905,64 @@ class UsersController extends AppController {
 		}
 	}
 	
+	function admin_get_customers_by_first_and_last_name() {
+		if($this->RequestHandler->isAjax()) {
+			$this->User->recursive = -1;
+			if(isset($this->params['url']['query'])) {
+				$params = explode(',', $this->params['url']['query']);
+				$users = $this->User->find('all', array(
+					'conditions' => array(
+						'User.role_id' => 1,
+						'User.lastname' => $params[0],
+						'User.firstname LIKE' => '%' . $params[1] . '%')));
+				$data = array();				
+			}	
+			if(isset($users)) {
+				$i = 0;
+				foreach($users as $user) {
+					$data['users'][$i]['id'] = $user['User']['id'];
+					$data['users'][$i]['firstname'] = $user['User']['firstname'];
+					$data['users'][$i]['fullname'] = $user['User']['name_last4'];
+					$i++;
+				}
+			}
+			else {
+				$data['users'] = array();
+			}
+			$data['success'] = true;
+			$this->set(compact('data'));
+			$this->render('/elements/ajaxreturn');
+		}
+	}
+	
+	function admin_get_customers_by_ssn() {
+		if($this->RequestHandler->isAjax()) {
+			$this->User->recursive = -1;
+			if(isset($this->params['url']['query'])) {
+				$users = $this->User->find('all', array(
+					'conditions' => array(
+						'User.role_id' => 1,
+						'RIGHT (User.ssn , 4)' => $this->params['url']['query'])));
+				$data = array();				
+			}	
+			if(isset($users)) {
+				$i = 0;
+				foreach($users as $user) {
+					$data['users'][$i]['id'] = $user['User']['id'];
+					$data['users'][$i]['ssn'] = substr($user['User']['ssn'], -4);
+					$data['users'][$i]['fullname'] = $user['User']['name_last4'];
+					$i++;
+				}
+			}
+			else {
+				$data['users'] = array();
+			}
+			$data['success'] = true;
+			$this->set(compact('data'));
+			$this->render('/elements/ajaxreturn');
+		}
+	}
+	
 	function _toggleDisabled($id, $disabled, $userType) {
 		if(!$id) {
 			$this->Session->setFlash(__('Invalid user id', true), 'flash_failure');
@@ -943,5 +1012,41 @@ class UsersController extends AppController {
 		}
 		$this -> set('options', $options);
 	}
+	
+	private function sendCustomerDetailsAlert($detail, $user, $kiosk) {
+		$this->loadModel('Alert');
+		$data = $this->Alert->getCustomerDetailsAlerts($detail, $user, $kiosk);
+		if($data) {
+			$this->sendAlert($data, 'Cusomter Deatils alert');
+		}
+	}
+	
+	private function sendCustomerLoginAlert($user, $kiosk) {
+		$this->loadModel('Alert');
+		$data = $this->Alert->getCustomerLoginAlerts($user, $kiosk);
+		if($data) {
+			$this->sendAlert($data, 'Customer Login alert');
+		}
+	}
+	
+	private function sendAlert($data, $subject) {
+		if($data && $subject) {
+			$HttpSocket = new HttpSocket();
+			$HttpSocket->post('localhost:3000/new', array('data' => $data));
+			$to = '';
+			foreach($data as $alert) {
+				if($alert['send_email']) {
+					$to .= $alert['email'] . ',';
+				}			
+			}
+			if(!empty($to)) {
+				$to = trim($to, ',');
+				$this->Email->to = $to;
+				$this->Email->from = Configure::read('System.email');
+				$this->Email->subject = $subject;
+				$this->Email->send($alert['message'] . "\r\n" . $alert['url']);				
+			}
+		}
+	}	
 
 }

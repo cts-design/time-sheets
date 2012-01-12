@@ -1,10 +1,19 @@
 <?php
 
+/**
+ * @author Daniel Nolan
+ * @copyright Complete Technology Solutions 2011
+ * @link http://ctsfla.com
+ * @package ATLAS V3
+ */
+
+App::import('Core', 'HttpSocket');
+
 class QueuedDocumentsController extends AppController {
 
     var $name = 'QueuedDocuments';
 	
-	var $components = array('Notifications');
+	var $components = array('Notifications', 'Email');
 
     var $lockStatuses = array(
 		0 => 'Un-Locked',
@@ -292,12 +301,14 @@ class QueuedDocumentsController extends AppController {
 				    'Filed document ID '. $this->data['FiledDocument']['id'] .
 				    ' to ' . $user['User']['lastname'] . ', ' . $user['User']['firstname'] . ' - '. substr($user['User']['ssn'], -4). '.' .
 					'and re-queued document as doc Id# '.$id);
+			    $this->sendCusFiledDocAlert($user, $this->data['FiledDocument']['id']);
 			    $this->Session->setFlash(__('The document was filed and re-queued successfully', true), 'flash_success' );
 			    $this->redirect(array('action' => 'index', 'view', $id));				
 			}	    
 		    $this->Transaction->createUserTransaction('Storage', null, null ,
 			    'Filed document ID '. $this->data['FiledDocument']['id'] .
 			    ' to ' . $user['User']['lastname'] . ', ' . $user['User']['firstname'] . ' - '. substr($user['User']['ssn'],-4));
+		    $this->sendCusFiledDocAlert($user, $this->data['FiledDocument']['id']);
 		    $this->Session->setFlash(__('The document was filed successfully', true), 'flash_success' );
 		    $this->redirect(array('action' => 'index'));
 		}
@@ -336,7 +347,6 @@ class QueuedDocumentsController extends AppController {
     function admin_desktop_scan_document() {
 		if(!empty($this->data)) {
 		    $id = $this->QueuedDocument->uploadDocument($this->data, 'Desktop Scan', $this->Auth->User('id'));
-			$this->log($id, 'debug');
 		    if($id) {
 				$this->Transaction->createUserTransaction('Storage', null, null,
 					trim('Scanned document ID ' . $id . ' to ' . $user['User']['lastname'] .
@@ -378,4 +388,27 @@ class QueuedDocumentsController extends AppController {
 		    }
 		}
     }
+	
+	private function sendCusFiledDocAlert($user, $docId) {
+		$this->loadModel('Alert');
+		$data = $this->Alert->getCusFiledDocAlerts($user, $docId);
+		if($data) {
+			$HttpSocket = new HttpSocket();
+			$results = $HttpSocket->post('localhost:3000/new', 
+				array('data' => $data));
+			$to = '';
+			foreach($data as $alert) {
+				if($alert['send_email']) {
+					$to .= $alert['email'] . ',';
+				}			
+			}
+			if(!empty($to)) {
+				$to = trim($to, ',');
+				$this->Email->to = $to;
+				$this->Email->from = Configure::read('System.email');
+				$this->Email->subject = 'Document filed to customer alert';
+				$this->Email->send($alert['message'] . "\r\n" . $alert['url']);				
+			}
+		}
+	}		
 }

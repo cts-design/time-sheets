@@ -6,11 +6,14 @@
  * @link http://ctsfla.com
  * @package ATLAS V3
  */
+
+App::import('Core', 'HttpSocket');
+ 
 class FiledDocumentsController extends AppController {
 
     var $name = 'FiledDocuments';
 	
-	var $components = array('RequestHandler', 'Notifications');
+	var $components = array('RequestHandler', 'Notifications', 'Email');
 	var $helpers = array('Excel');
 
     var $reasons = array(
@@ -187,6 +190,7 @@ class FiledDocumentsController extends AppController {
 			$this->Transaction->createUserTransaction('Storage', null, null,
 				trim('Uploaded document ID ' . $id . ' to ' . $this->data['User']['lastname'] .
 					', ' . $this->data['User']['firstname'] . ' - ' . substr($this->data['User']['ssn'], -4), ' -'));
+			$this->sendCusFiledDocAlert($this->data, $id);
 			$this->Session->setFlash(__('The document has been filed.', true), 'flash_success');
 			$this->redirect(array('action' => 'index', $this->data['User']['id']));
 		    }
@@ -212,6 +216,7 @@ class FiledDocumentsController extends AppController {
 			$this->Transaction->createUserTransaction('Storage', null, null,
 				trim('Scanned document ID ' . $id . ' to ' . $user['User']['lastname'] .
 					', ' . $user['User']['firstname'] . ' - ' . substr($user['User']['ssn'], -4), ' -'));
+			$this->sendCusFiledDocAlert($user, $id);
 			$this->Session->setFlash(__('Scanned document was filed successfully.', true), 'flash_success');
 			$this->autoRender = false;
 			exit;
@@ -512,6 +517,29 @@ class FiledDocumentsController extends AppController {
 		if(isset($processedDoc['finalEmail'])) {
 			$this->Notifications->sendProgramEmail($processedDoc['finalEmail'], $user);
 		}
-    }		
+    }
+	
+	private function sendCusFiledDocAlert($user, $docId) {
+		$this->loadModel('Alert');
+		$data = $this->Alert->getCusFiledDocAlerts($user, $docId);
+		if($data) {
+			$HttpSocket = new HttpSocket();
+			$results = $HttpSocket->post('localhost:3000/new', 
+				array('data' => $data));
+			$to = '';
+			foreach($data as $alert) {
+				if($alert['send_email']) {
+					$to .= $alert['email'] . ',';
+				}			
+			}
+			if(!empty($to)) {
+				$to = trim($to, ',');
+				$this->Email->to = $to;
+				$this->Email->from = Configure::read('System.email');
+				$this->Email->subject = 'Document filed to customer alert';
+				$this->Email->send($alert['message'] . "\r\n" . $alert['url']);				
+			}
+		}
+	}	
 
 }

@@ -23,8 +23,7 @@ class KiosksController extends AppController {
 			$this->Auth->allow('admin_get_kiosk_buttons_by_location');
 		}
 		$this->Cookie->name = 'self_sign';
-		$this->Cookie->domain = Configure::read('domain'); 
-
+		$this->Cookie->domain = Configure::read('domain');
         $this->Auth->allow('kiosk_set_language');
 	}
 
@@ -152,7 +151,9 @@ class KiosksController extends AppController {
 					'Kiosk.location_recognition_name' => $oneStopLocation, 'Kiosk.deleted' => 0)));
 			$this->Cookie->write('location', $kiosk['Kiosk']['location_id']);
 			$this->Cookie->write('kioskId', $kiosk['Kiosk']['id']);
-			$this->Cookie->write('logout_message', $kiosk['Kiosk']['logout_message']);
+			if($kiosk['Kiosk']['logout_message']) {
+				$this->Cookie->write('logout_message', $kiosk['Kiosk']['logout_message']);	
+			}
 			$this->Kiosk->KioskButton->recursive = -1;
 			$rootButtons = $this->Kiosk->KioskButton->find('all', array(
 				'conditions' => array(
@@ -379,11 +380,12 @@ class KiosksController extends AppController {
 		$this->set(compact('title_for_layout', 'parentButtons', 'referer'));
 	}
 
-    function kiosk_self_scan_document($selfScanCatId=null, $queueCatId=null) {
+    function kiosk_self_scan_document($selfScanCatId=null, $queueCatId=null) {	
 		if(!empty($this->data)) {
 			$id = $this->_queueScannedDocument();
 			if($id) {
 				$this->loadModel('User');
+				$this->sendSelfScanAlert($this->Auth->user(), $id, $this->data['QueuedDocument']['scanned_location_id']);
 				$this->Transaction->createUserTransaction('Self Scan', null, $this->data['QueuedDocument']['scanned_location_id'], 'Self scanned document ID ' . $id);
 				$this->Session->setFlash(__('Scanned document was saved successfully.', true), 'flash_success');
 				$this->autoRender = false;
@@ -519,4 +521,27 @@ class KiosksController extends AppController {
 			}
 		}
 	}
+	
+	private function sendSelfScanAlert($user, $docId, $locationId) {
+		$this->loadModel('Alert');
+		$data = $this->Alert->getSelfScanAlerts($user, $docId, $locationId);
+		if($data) {
+			$HttpSocket = new HttpSocket();
+			$results = $HttpSocket->post('localhost:3000/new', 
+				array('data' => $data));
+			$to = '';
+			foreach($data as $alert) {
+				if($alert['send_email']) {
+					$to .= $alert['email'] . ',';
+				}			
+			}
+			if(!empty($to)) {
+				$to = trim($to, ',');
+				$this->Email->to = $to;
+				$this->Email->from = Configure::read('System.email');
+				$this->Email->subject = 'Self Scan alert';
+				$this->Email->send($alert['message'] . "\r\n" . $alert['url']);				
+			}
+		}
+	}	
 }

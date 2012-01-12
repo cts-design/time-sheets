@@ -236,7 +236,14 @@ class User extends AppModel {
 				'message' => 'Please select race.',
 				'required' => false
 			)
-		) 
+		),
+		'veteran' => array(
+			'notEmpty' => array(
+				'rule' => 'notEmpty',
+				'message' => 'Please select yes or no.',
+				'required' => false
+			)
+		)		 
 
     );
 	

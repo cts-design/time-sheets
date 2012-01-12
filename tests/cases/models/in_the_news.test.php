@@ -3,8 +3,6 @@
 App::import('Model', 'InTheNews');
 App::import('Lib', 'AtlasTestCase');
 class InTheNewsTestCase extends AtlasTestCase {
-	var $fixtures = array('app.in_the_news');
-
 	function startTest() {
 		$this->InTheNews =& ClassRegistry::init('InTheNews');
 	}

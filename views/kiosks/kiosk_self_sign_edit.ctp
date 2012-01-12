@@ -162,6 +162,16 @@
 			'before' => '<p class="left">',
 			'between' => '</p><p class="left">',
 			'after' => '</p>'));				
+	}
+	if(in_array('veteran', $fields)) {
+		echo $this->Form->input('User.veteran', array(
+			'label' => __('Are you a U.S. veteran', true),
+			'type' => 'select',
+			'empty' => 'Please Select',
+			'options' => array(1 => 'Yes', 0 => 'No'), 
+			'before' => '<p class="left">',
+			'between' => '</p><p class="left">',
+			'after' => '</p>'));
 	}	
 	echo $this->Form->input('User.id');
 	echo $this->Form->input('User.role_id', array('type' => 'hidden', 'value' => 1));

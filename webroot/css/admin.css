@@ -754,7 +754,7 @@ div.actions .ui-button-text {
     margin-right: 10px;
 }
 
-#PermissionTabs fieldset{height: 150px; width: 160px; margin-bottom: 10px; margin-right: 10px;}
+#PermissionTabs fieldset{height: 150px; width: 200px; margin-bottom: 10px; margin-right: 10px;}
 #PermissionTabs legend{font-weight: bold;}
 #PermissionTabs .input{margin: 0}
 
@@ -1103,3 +1103,41 @@ p.checkbox {
 
 .inTheNews div.date p.date { width: 310px }
 .inTheNews div.date select { width: 100px }
+
+.viewport-layout #logo {
+    background: #fff;
+    float: left;
+    height: 100px;
+    padding: 0; margin: 0;
+    width: 500px;
+}
+
+.viewport-layout #logo a {
+    display: block;
+    margin: 10px 35px;
+}
+
+.viewport-layout #logoLogout {
+    background: #fff;
+    margin: 0;
+    padding: 0 40px 22px 184px;
+    float: right;
+}
+
+
+table.raw-data tr {
+	border-bottom: 1px solid #cdcdcd;
+}
+
+table.raw-data tr th {
+	font-weight: bold;
+}
+
+table.raw-data .total {
+	font-weight: bold;
+}
+
+table.raw-data tr th,
+table.raw-data tr td {
+	padding: 2px 15px;
+}

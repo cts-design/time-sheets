@@ -3,6 +3,34 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+	<h1>Release 3.2.0 (1/12/12)</h1>
+	<h2>Major Feature Enhancements</h2>
+	<ol>
+		<li>Release of new ATLAS Alerts Desktop Client to allow for desktop growl notifications when specified alert criteria is met.</li>
+		<li>Implemented the ability to have roaming Alerts based on Logged in Windows Username.</li>
+		<li>Addition of the following Alerts modules</li>
+		<ol>
+			<li>Customer Details Alert – Allows you to alert when defined registration criteria is met, i.e.: Veteran</li>
+			<li>Self-Scan Alert – Send an alert when a specific customer self-scans a document</li>
+			<li>Customer Filed Document – Send alert when a document is filed for a specific customer</li>
+			<li>Customer Login – Send alert on a defined customer login</li>			
+		</ol>
+		<li>Report BETA has now been activated on all Production Servers.</li>
+		<ol>
+			<li>Implementation of Unduplicated Customer report controller</li>
+			<li>Implementation of Services report controller</li>
+			<li>Added ability to save most used report criteria as a preset within ATLAS</li>
+			<li>Added additional group by and timeframe functions to allow for greater control over reporting outcomes</li>
+			<li>Added ability to toggle between Line Graph and Bar Chart</li>
+			<li>Added dynamic “zoom” capabilities to focus in on detail areas of a report</li>			
+		</ol>
+	</ol>
+	<h2>Minor Feature Enhancements</h2>
+	<ol>
+		<li>Implemented a “count” within the self-sign queue display panel.</li>
+		<li>Added “Are you a US Veteran” to the optional Kiosk registration fields.</li>	
+	</ol>
+	<hr />
 	<h1>Release 3.1.6 (12/22/11)</h1>
 	<h2>Major Feature Enhancements</h2>
 	<ol>

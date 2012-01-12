@@ -159,7 +159,16 @@
 		<?php echo $session->read('Auth.User.race'); ?>
 	    </p>
 	    <br class="clear"/>
-    <?php endif ?>                    
+    <?php endif ?> 
+    <?php if(in_array('veteran', $fields)) : ?>
+	    <p class="left align-right">
+		<strong><?php __('US veteran:') ?> </strong>
+	    </p>
+	    <p class="left">
+		<?php echo ($session->read('Auth.User.veteran') ? 'Yes' : 'No'); ?>
+	    </p>
+	    <br class="clear"/>
+    <?php endif ?>                       
     <div class="actions">
 	<?php
 	echo $html->link(__('Correct', true), 'self_sign_service_selection', array('class' => 'self-sign-kiosk-link'));
