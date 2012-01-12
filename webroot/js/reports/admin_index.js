@@ -160,17 +160,142 @@ Reports = {
 								series = chart.series.items[0],
 								axes = chart.axes.items[0],
 								includeRawData = Ext.getCmp('includeRawData').checked,
+                displayAs = Ext.getCmp('displayAs').getValue(),
 								locations = [],
 								newTitle,
-								table;
+								table,
+                tmpLocations = [],
+                newChartConfig;
 
-							Ext.Object.each(records, function (key, value, me) {
-								Ext.Object.each(value.data, function (k, v, m) {
-									if (k !== "time" && !Ext.isEmpty(v)) {
-										Ext.Array.include(locations, k);
-									}
-								});
-							});
+              Ext.Object.each(records, function (key, value, me) {
+                Ext.Object.each(value.data, function (k, v, m) {
+                  if (k !== "time" && !Ext.isEmpty(v)) {
+                    Ext.Array.include(locations, k);
+                  }
+                });
+              });
+
+              if (displayAs === 'bar') {
+                chart.destroy();
+
+                newChartConfig = {
+                  xtype: 'totalunduplicated',
+                  mask: 'horizontal',
+                  listeners: {
+                      select: {
+                          fn: function(me, selection) {
+                              me.setZoom(selection);
+                              me.mask.hide();
+                          }
+                      }
+                  },
+                  flex: 1,
+                  width: '100%',
+                  store: Ext.data.StoreManager.lookup('UnduplicatedIndividualsStore'),
+                  axes: [{
+                    type: 'Numeric',
+                    scope: this,
+                    fields: locations,
+                    position: 'left',
+                    title: 'Total Unduplicated Individuals',
+                    minimum: 0,
+                    grid: true,
+                    label: {
+                      renderer: Ext.util.Format.numberRenderer('0,0')
+                    }
+                  }, {
+                    type: 'Category',
+                    position: 'bottom',
+                    fields: ['time']
+                  }],
+                  series: [{
+                    type: 'column',
+                    axis: 'left',
+                    highlight: true,
+                    tips: {
+                      trackMouse: true,
+                      height: 40,
+                      width: 'auto',
+                      renderer: function (storeItem, item) {
+                        this.setTitle(item.value[0]);
+                        this.update('Total: ' + item.value[1]);
+                      }
+                    },
+                    xField: 'time',
+                    scope: this,
+                    yField: locations,
+                    label: {
+                      display: 'insideEnd',
+                      'text-anchor': 'middle',
+                      field: 'total',
+                      renderer: Ext.util.Format.numberRenderer('0'),
+                      orientation: 'vertical',
+                      color: '#333'
+                    }
+                  }]
+                };
+
+                chartContainer.insert(0, newChartConfig);
+              } else if (displayAs === 'line') {
+                Ext.Array.each(locations, function (item, index, allItems) {
+                  tmpLocations.push({
+                    type: 'line',
+                    highlight: {
+                      size: 7,
+                      radius: 7
+                    },
+                    axis: 'left',
+                    xField: 'name',
+                    yField: item,
+                    markerConfig: {
+                      type: 'circle',
+                      size: 4,
+                      radius: 4,
+                      'stroke-width': 0
+                    },
+                    tips: {
+                      trackMouse: true,
+                      renderer: function (storeItem, item) {
+                        this.setTitle(item.series.yField);
+                        this.update('Total for ' + storeItem.data.time + ': ' + item.value[1]);
+                        this.setWidth(item.series.yField.length * 7);
+                      }
+                    }
+                  });
+                });
+
+                chart.destroy();
+
+
+                newChartConfig = {
+                  xtype: 'chart',
+                  flex: 1,
+                  width: '100%',
+                  store: store,
+                  label: {
+                    renderer: Ext.util.Format.numberRenderer('0,0')
+                  },
+                  legend: {
+                    position: 'right'
+                  },
+                  axes: [{
+                    type: 'Numeric',
+                    minimum: 0,
+                    fields: locations,
+                    position: 'left',
+                    title: 'Total Unduplicated Individuals',
+                    minorTickSteps: 1,
+                    grid: true
+                  }, {
+                    type: 'Category',
+                    position: 'bottom',
+                    fields: ['time']
+                  }],
+                  series: tmpLocations
+                };
+
+                chartContainer.insert(0, newChartConfig);
+              }
 
 							if (includeRawData) {
 								table = this.buildRawDataTable(store, records);
@@ -192,7 +317,6 @@ Reports = {
 								}
 							}
 
-							series.yField = axes.fields = locations;
 						}
 					}
 				}
@@ -541,6 +665,18 @@ Reports = {
         [ 'yearly', 'Yearly' ]
 			]
 		});
+
+    Ext.create('Ext.data.ArrayStore', {
+      storeId: 'displayAsStore',
+      fields: [
+        'short',
+        'long'
+      ],
+      data: [
+        [ 'bar', 'Bar Graph' ],
+        [ 'line', 'Line Graph' ]
+      ]
+    });
 		
 		Ext.create('Ext.data.ArrayStore', {
 			storeId: 'GroupByStore',
@@ -740,7 +876,7 @@ Reports = {
 			this.filterWindow = Ext.create('Ext.window.Window', {
 				bodyPadding: '5px 10px',
 				closeAction: 'hide',
-				height: 394,
+				height: 435,
 				hidden: true,
 				layout: 'auto',
 				margins: '0 0 10px',
@@ -784,6 +920,7 @@ Reports = {
 										admin = Ext.getCmp('admin'),
 										chartBreakdown = Ext.getCmp('chartBreakdown'),
 										groupBy = Ext.getCmp('groupBy'),
+                    displayAs = Ext.getCmp('displayAs'),
                     dateRange = Ext.getCmp('dateRange');
 
                   dateRange.select(record.data.date_range);
@@ -830,6 +967,7 @@ Reports = {
 
 									chartBreakdown.setValue(record.data.chart_breakdown);
 									groupBy.setValue(record.data.group_by);
+                  displayAs.setValue(record.data.display_as);
                   location.setValue(record.data.location);
                   program.setValue(record.data.program);
                   kiosk.setValue(record.data.kiosk);
@@ -1047,10 +1185,21 @@ Reports = {
 						width: 122
 					}]
 				}, {
+          xtype: 'combobox',
+          id: 'displayAs',
+          fieldLabel: 'Display As',
+          margin: '0 0 10px 0',
+          store: Ext.data.StoreManager.lookup('displayAsStore'),
+          valueField: 'short',
+          displayField: 'long',
+          value: 'bar',
+          query: 'local',
+          triggerAction: 'all',
+        }, {
 					xtype: 'checkbox',
 					id: 'includeRawData',
 					fieldLabel: 'Include raw data',
-					margin: '0 0 10px 0'
+					margin: '0 0 15px 0'
 				}, {
 					xtype: 'splitbutton',
 					handler: this.setFilters,
@@ -1111,6 +1260,7 @@ Reports = {
 			chartBreakdown = Ext.getCmp('chartBreakdown'),
       dateRange = Ext.getCmp('dateRange'),
       groupBy = Ext.getCmp('groupBy'),
+      displayAs = Ext.getCmp('displayAs'),
       recordData = {},
       store = Ext.data.StoreManager.lookup('FilterStore');
 
@@ -1129,6 +1279,7 @@ Reports = {
         recordData['chart_breakdown'] = chartBreakdown.getValue();
         recordData['group_by'] = groupBy.getValue();
         recordData['date_range'] = dateRange.getValue();
+        recordData['display_as'] = displayAs.getValue();
       }
 
       store.add(recordData);
@@ -1143,6 +1294,7 @@ Reports = {
 			chartBreakdown = Ext.getCmp('chartBreakdown'),
       dateRange = Ext.getCmp('dateRange'),
       groupBy = Ext.getCmp('groupBy'),
+      displayAs = Ext.getCmp('displayAs'),
       recordData = {},
       store = Ext.data.StoreManager.lookup('FilterStore'),
       recordId = Ext.getCmp('presets').getValue(),
@@ -1159,6 +1311,7 @@ Reports = {
       record.set('chart_breakdown', chartBreakdown.getValue());
       record.set('group_by', groupBy.getValue());
       record.set('date_range', dateRange.getValue());
+      record.set('display_as', displayAs.getValue());
 
       store.sync();
   },
