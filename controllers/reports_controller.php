@@ -357,82 +357,129 @@ class ReportsController extends AppController {
                 break;
 
             case 'daily':
+                $keyString = 'l m/d';
                 $data = array();
                 $from = $this->filters['fromDate'] . ' ' . $this->filters['fromTime'];
                 $to   = $this->filters['toDate'] . ' ' . $this->filters['toTime'];
 
-                $curDate = $from;
-                $toDateCheck = date('Y-m-d', strtotime($to));
+                $days_between = $this->days_between($from, $to);
 
-                for ($i=0; $i < 5; $i++) {
-                    $dayOfWeek = strtotime(date('Y-m-d', strtotime($curDate)) . " +{$i} days");
-                    $dayOfWeek = date('l', $dayOfWeek);
-                    $data[$dayOfWeek] = array();
+                for ($i=0; $i < $days_between; $i++) {
+                    $nextDay = strtotime(date('Y-m-d', strtotime($from)) . " +{$i} days");
+                    $shortDate = date('l m/d', $nextDay);
+                    $dayOfWeek = date('l', $nextDay);
+
+                    if ($dayOfWeek !== 'Saturday' && $dayOfWeek !== 'Sunday') {
+                        $data[$shortDate] = array();
+                    }
                 }
 
                 break;
 
             case 'weekly':
+                //$data = array();
+                //$from = $this->filters['fromDate'] . ' ' . $this->filters['fromTime'];
+                //$to   = $this->filters['toDate'] . ' ' . $this->filters['toTime'];
+
+                //$nextWeek = date('m/d/y', strtotime($from));
+                //$data[$nextWeek] = array();
+                //$finish = date('m/d/y', strtotime($to));
+
+                //$finished = false;
+                //do {
+                    //$nextWeek = strtotime(date('m/d/y', strtotime($nextWeek)) . " next Monday");
+                    //$nextWeek = date('m/d/y', $nextWeek);
+
+                    //if (strtotime($finish) <= strtotime($nextWeek)) {
+                        //$finished = true;
+                    //} else {
+                        //$data[$nextWeek] = array();
+                    //}
+                //} while (!$finished);
+
+
+                $keyString = 'm/d/y';
                 $data = array();
                 $from = $this->filters['fromDate'] . ' ' . $this->filters['fromTime'];
                 $to   = $this->filters['toDate'] . ' ' . $this->filters['toTime'];
 
-                $nextWeek = date('m/d/y', strtotime($from));
-                $data[$nextWeek] = array();
+                $fromDayOfWeek = date('w', strtotime($from));
+
+                // check to see if the from date is sunday (0), monday (1), or saturday (6)
+                if (!in_array($fromDayOfWeek, array(0, 1, 6))) {
+                    $firstWeek = strtotime(date('m/d/y', strtotime($from)) . " last Monday");
+                    $firstWeek = date('m/d/y', $firstWeek);
+
+                    // if last monday isn't in the same month, we need to jump to the 1st
+                    if (date('m', strtotime($firstWeek)) !== date('m', strtotime($from))) {
+                        $numberOfDaysTillFirst = date('t', strtotime($firstWeek)) - date('j', strtotime($firstWeek));
+                        $numberOfDaysTillFirst += 1;
+
+                        $firstWeek = strtotime(date('m/d/y', strtotime($firstWeek . " + {$numberOfDaysTillFirst} days")));
+                        $firstWeek = date('m/d/y', $firstWeek);
+                    }
+
+                } else {
+                    $firstWeek = date('m/d/y', strtotime($from));
+                }
+
+                $nextWeek = $firstWeek;
                 $finish = date('m/d/y', strtotime($to));
 
                 $finished = false;
                 do {
-                    $nextWeek = strtotime(date('m/d/y', strtotime($nextWeek)) . " next Monday");
-                    $nextWeek = date('m/d/y', $nextWeek);
-
                     if (strtotime($finish) <= strtotime($nextWeek)) {
                         $finished = true;
                     } else {
                         $data[$nextWeek] = array();
                     }
+
+                    $nextWeek = strtotime(date('m/d/y', strtotime($nextWeek)) . " next Monday");
+                    $nextWeek = date('m/d/y', $nextWeek);
                 } while (!$finished);
 
                 break;
 
             case 'monthly':
-                $data = array();
-                $from = $this->filters['fromDate'] . ' ' . $this->filters['fromTime'];
-                $to   = $this->filters['toDate'] . ' ' . $this->filters['toTime'];
+                //$data = array();
+                //$from = $this->filters['fromDate'] . ' ' . $this->filters['fromTime'];
+                //$to   = $this->filters['toDate'] . ' ' . $this->filters['toTime'];
 
-                $nextWeek = date('m/d/y', strtotime($from));
-                $data[$nextWeek] = array();
-                $finish = date('m/d/y', strtotime($to));
+                //$nextWeek = date('m/d/y', strtotime($from));
+                //$data[$nextWeek] = array();
+                //$finish = date('m/d/y', strtotime($to));
 
-                $finished = false;
-                do {
-                    $nextWeek = strtotime(date('m/d/y', strtotime($nextWeek)) . " next Monday");
-                    $nextWeek = date('m/d/y', $nextWeek);
+                //$finished = false;
+                //do {
+                    //$nextWeek = strtotime(date('m/d/y', strtotime($nextWeek)) . " next Monday");
+                    //$nextWeek = date('m/d/y', $nextWeek);
 
-                    if (strtotime($finish) <= strtotime($nextWeek)) {
-                        $finished = true;
-                    } else {
-                        $data[$nextWeek] = array();
+                    //if (strtotime($finish) <= strtotime($nextWeek)) {
+                        //$finished = true;
+                    //} else {
+                        //$data[$nextWeek] = array();
+                    //}
+                //} while (!$finished);
+
+                if ($this->groupBy === 'month') {
+                    $keyString = 'F Y';
+                    $data = array();
+                    $from = $this->filters['fromDate'] . ' ' . $this->filters['fromTime'];
+                    $to   = $this->filters['toDate'] . ' ' . $this->filters['toTime'];
+                    $months_between = $this->months_between($from, $to);
+
+                    foreach ($months_between as $key => $value) {
+                        $data[$value] = array();
                     }
-                } while (!$finished);
+                }
 
                 break;
 
             case 'yearly':
-                $data = array(
-                    'January' => array(),
-                    'February' => array(),
-                    'March' => array(),
-                    'April' => array(),
-                    'May' => array(),
-                    'June' => array(),
-                    'July' => array(),
-                    'August' => array(),
-                    'September' => array(),
-                    'October' => array(),
-                    'November' => array(),
-                    'December' => array()
-                );
+                $keyString = 'Y';
+                $data = array();
+                $from = $this->filters['fromDate'] . ' ' . $this->filters['fromTime'];
+                $to   = $this->filters['toDate'] . ' ' . $this->filters['toTime'];
                 break;
         }
 
