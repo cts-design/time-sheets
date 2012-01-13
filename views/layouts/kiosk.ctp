@@ -66,13 +66,16 @@
 	    </div>
 	    <div id="content">
 		<?php echo $content_for_layout; ?>
-	    </div>
+        </div>
+        <?php if ($this->here === '/kiosk'): ?>
 		<div style="margin: 10px 0 0" id="speakspanish">
 	    	<?php if (!$session->read('Config.language')): ?>
-	    		<p style="font-family: Arial, 'sans-serif'; font-size: 16px; text-align: center;"><a class="translate-button" href="/kiosk/kiosks/set_language/es">Español</a></p> </div>
+	    		<p style="font-family: Arial, 'sans-serif'; font-size: 16px; text-align: center;"><a class="translate-button" href="/kiosk/kiosks/set_language/es">Español</a></p>
 	    	<?php else: ?>
-	    		<p style="font-family: Arial, 'sans-serif'; font-size: 16px; text-align: center;"><a class="translate-button" href="/kiosk/kiosks/set_language/en">English</a></p> </div>
-	    	<?php endif ?>
+	    		<p style="font-family: Arial, 'sans-serif'; font-size: 16px; text-align: center;"><a class="translate-button" href="/kiosk/kiosks/set_language/en">English</a></p>
+            <?php endif ?>
+        </div>
+        <?php endif; ?>
 	    <div id="footer">
 	        <p id="copyright" class="left">
 		        <?php printf(__('%s is an equal opportunity employer/program. Auxiliary aids and services are available upon request to individuals with disabilities.', true), Configure::read('Company.name')) ?>
