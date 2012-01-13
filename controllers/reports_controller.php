@@ -2,6 +2,7 @@
 class ReportsController extends AppController {
     public $name = 'Reports';
     public $components = array('RequestHandler');
+	public $uses = array();
 
     protected $filters = array();
     protected $chartType = null;
