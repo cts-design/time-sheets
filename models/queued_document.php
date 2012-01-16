@@ -87,14 +87,21 @@ class QueuedDocument extends AppModel {
 
     function lockDocument($id=null, $userId=null) {
 		if($id && $userId) {
-		    $this->data['QueuedDocument']['id'] = $id;
-		    $this->data['QueuedDocument']['locked_by'] = $userId;
-		    $this->data['QueuedDocument']['locked_status'] = 1;
-		    if($this->save($this->data)) {
-				return true;
-		    }
-		    else
-			return false;
+			if($this->checkLocked($userId)) {
+			    $this->data['QueuedDocument']['id'] = $id;
+			    $this->data['QueuedDocument']['locked_by'] = $userId;
+				$this->data['QueuedDocument']['last_activity_admin_id'] = $userId;
+			    $this->data['QueuedDocument']['locked_status'] = 1;
+				$doc = $this->findById($id);
+				if($doc['QueuedDocument']['locked_status'] == 1) {
+					return false;
+				}
+			    if($this->save($this->data)) {
+					return $id;
+			    }
+			    else return false;				
+			}
+			else return false;
 		}
     }
 
@@ -104,7 +111,7 @@ class QueuedDocument extends AppModel {
 		    $this->data['QueuedDocument']['locked_by'] = null;
 		    $this->data['QueuedDocument']['locked_status'] = 0;
 		    if($this->save($this->data)) {
-				return true;
+				return $id;
 		    }
 		    else return false;
 		}
