@@ -5,7 +5,32 @@ Ext.define('QueuedDocument', {
 	fields:[
 		'id', 'queueCat', 'scannedLocation', 'queuedToCustomer',
 		'lockedBy', 'lockedStatus', 'lastActivityAdmin', 'created', 'modified'
-	]
+	],
+	
+	lockDocument: function() {
+		Ext.Ajax.request({
+		    url: '/admin/queued_documents/lock_document',
+		    params: {
+		        docId: this.get('id')
+		    },
+		    success: function(response, opts){
+		        var text = Ext.JSON.decode(response.responseText);
+		        if(text.success) {
+		        	this.set('lockedStatus', 'Locked');
+		        	this.set('lockedBy', text.admin);
+		        	this.set('lastActivityAdmin', text.admin);
+		        	Ext.getCmp('pdfFrame').el.dom.src = 
+						'/admin/queued_documents/view/'+text.docId+'/#toolbar=1&statusbar=0&navpanes=0&zoom=50';
+		        }
+		        else opts.failure();
+		    },
+		    failure: function(response, opts) {
+		    	Ext.MessageBox.alert(
+		    		'Failure', 'Unable to lock document for viewing. Make sure it is not locked by someone else.');
+		    },
+		    scope: this
+		});
+	}
 });
 
 Ext.create('Ext.data.Store', {
@@ -26,9 +51,10 @@ var contextMenu = Ext.create('Ext.menu.Menu', {
 	items: [{
 		text: 'View Doc',
 		icon:  '/img/icons/note_add.png',
-    	handler: function() {	
-    		Ext.getCmp('pdfFrame').el.dom.src = 
-				'/admin/queued_documents/view/'+docId+'/#toolbar=1&statusbar=0&navpanes=0&zoom=50'
+    	handler: function() {
+    		var selectionModel = Ext.getCmp('queuedDocGrid').getView().getSelectionModel();
+    		var doc = selectionModel.getLastSelected();
+    		doc.lockDocument();
     	}		
 	}]
 });
@@ -180,6 +206,7 @@ Ext.onReady(function(){
 	        },	        
 	        items: [{
 		        xtype: 'atlasdocqueuegridpanel',
+		        id: 'queuedDocGrid',
 		        height: 200,
 		        collapsible: true,
 				
