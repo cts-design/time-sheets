@@ -1,56 +1,117 @@
-Ext.create('Ext.data.Store', {
-    storeId:'queuedDocumentsStore',
-    fields:['name', 'email', 'phone'],
-    data:{'items':[
-        { 
-        	'id': 40, 
-        	'filename': 'blabla.pdf', 
-        	'queueCat': 'wia', 
-        	'scannedLocation': 'citrus', 
-        	'lockedBy': 'Daniel Noalan', 
-        	'lockedStatus': 'locked',
-        	'create': '12/12/12',
-        	'modified': '12/12/12'
-        }
-    ]},
-    proxy: {
-        type: 'memory',
-        reader: {
-            type: 'json',
-            root: 'items'
-        }
-    }
+var docId;
+
+Ext.define('QueuedDocument', {
+	extend: 'Ext.data.Model',
+	fields:[
+		'id', 'queueCat', 'scannedLocation', 'queuedToCustomer',
+		'lockedBy', 'lockedStatus', 'lastActivityAdmin', 'created', 'modified'
+	]
 });
 
+Ext.create('Ext.data.Store', {
+    storeId:'queuedDocumentsStore',
+	model: QueuedDocument,
+    proxy: {
+        type: 'ajax',
+		url: '/admin/queued_documents',
+        reader: {
+            type: 'json',
+            root: 'docs'
+        }
+    },
+	autoLoad: true
+});
 
-
+var contextMenu = Ext.create('Ext.menu.Menu', {
+	items: [{
+		text: 'View Doc',
+		icon:  '/img/icons/note_add.png',
+    	handler: function() {	
+    		Ext.getCmp('pdfFrame').el.dom.src = 
+				'/admin/queued_documents/view/'+docId+'/#toolbar=1&statusbar=0&navpanes=0&zoom=50'
+    	}		
+	}]
+});
 
 Ext.define('Atlas.grid.QueuedDocPanel', {
 	extend: 'Ext.grid.Panel',
 	alias: 'widget.atlasdocqueuegridpanel',
 	title: 'Document Queue',
 	store: Ext.data.StoreManager.lookup('queuedDocumentsStore'),
-    columns: [
-        { header: 'Id',  dataIndex: 'id' },
-        { header: 'Filename', dataIndex: 'filename' },
-        { header: 'Queue Cat', dataIndex: 'queueCat' },
-        { header: 'Scanned Location', dataIndex: 'scannedLocation' },
-        { header: 'Locked By', dataIndex: 'lockedBy' },
-        { header: 'Locked Status', dataIndex: 'scannedLocation' },
-        { header: 'Created', dataIndex: 'created' },
-        { header: 'Modified', dataIndex: 'modified' }
-        
-    ]	
+    columns: [{ 
+			header: 'Id',
+		  	dataIndex: 'id',
+	 		width: 75
+		},{ 
+			header: 'Queue Cat', 
+			dataIndex: 'queueCat',
+			width: 75
+		},{ 
+			header: 'Scanned Location',
+			dataIndex: 'scannedLocation' 
+		},{
+			header: 'Queued to Customer',
+			dataIndex: 'queuedToCustomer',
+			width: 150
+		},{ 
+			header: 'Locked Status', 
+			dataIndex: 'lockedStatus',
+			width: 80
+		},{ 
+			header: 'Locked By',
+			dataIndex: 'lockedBy'
+		},{
+			header: 'Last Act. Admin',
+			dataIndex: 'lastActivityAdmin'
+		},{
+			header: 'Created',
+			dataIndex: 'created',
+			width: 125
+		},{ 
+			header: 'Modified', 
+			dataIndex: 'modified',
+			width: 125
+		}],
+		viewConfig: {
+			loadMask: true,
+			singleSelect: true,
+			emptyText: 'No records at this time.',
+	        listeners: {
+	            itemcontextmenu: function(view, rec, node, index, e) {
+	                e.stopEvent();
+	                contextMenu.showAt(e.getXY());	    			    			
+		     		docId = rec.data.id;
+		            return false;
+		        }
+	    	}
+		},
+	    dockedItems: [{
+	        xtype: 'pagingtoolbar',
+	        store: Ext.data.StoreManager.lookup('queuedDocumentsStore'),
+	        dock: 'bottom',
+	        displayInfo: true
+	    }]					
 });
 
-
+var availableDOMHeight = function() {
+	if (typeof window.innerHeight !== 'undefined') {
+    	return window.innerHeight - 160;
+  	} 
+	else if (typeof document.documentElement !== 'undefined' 
+			&& typeof document.documentElement.clientHeight !== 'undefined') {
+    			return document.documentElement.clientHeight - 160;
+	} 
+	else {
+		return document.getElementsByTagName('body')[0].clientHeight - 160;
+    }
+};
 
 Ext.onReady(function(){
 	Ext.QuickTips.init();
 	
 	Ext.create('Ext.window.Window', {
-	    height: 625,
-	    width: 1200,
+	    height: availableDOMHeight(),
+	    width: '100%',
 	    closable: false,
 	    draggable: false,
 	    resizable: false,
@@ -74,14 +135,7 @@ Ext.onReady(function(){
 		        items: [{
 		        	title: 'File Document',
 			        height: 300,
-			        items: [{
-			        	xtype: 'button',
-			        	text: 'Click Me',
-			        	handler: function() {
-			        		var docId = 40;
-			        		Ext.getCmp('pdfFrame').el.dom.src = '/admin/queued_documents/view/'+docId+'/#toolbar=1&statusbar=0&navpanes=0&zoom=50'
-			        	}
-			        }],
+			        html: 'Panel content!',					
 			        width: 300
 		        },{
 		        	title: 'Re-Queue Document',
@@ -146,4 +200,3 @@ Ext.onReady(function(){
 	    }]
 	}).show();
 });
-
