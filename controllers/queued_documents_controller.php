@@ -44,8 +44,61 @@ class QueuedDocumentsController extends AppController {
 		    }
 		}
     }
+	
+	function admin_index() {
+		if($this->RequestHandler->isAjax()) {
+			$this->paginate = array('order' => array('QueuedDocument.id ASC'));
+			$docs = $this->paginate();
+			$locations = $this->QueuedDocument->Location->find('list');
+			$this->QueuedDocument->User->recursive = -1;
+			$queueCats = $this->QueuedDocument->DocumentQueueCategory->find('list', array(
+		    	'conditions' => array('DocumentQueueCategory.deleted' => 0)));
+			if($docs) {
+				$data = array();
+				$i = 0;
+				foreach($docs as $doc) {
+					$data['docs'][$i]['id'] = $doc['QueuedDocument']['id'];
+					$data['docs'][$i]['queueCat'] = $queueCats[$doc['QueuedDocument']['queue_category_id']];
+					$data['docs'][$i]['scannedLocation'] = 
+						$locations[$doc['QueuedDocument']['scanned_location_id']];
+					$lockedBy = $this->QueuedDocument->User->findById($doc['QueuedDocument']['locked_by']); 	
+					if($lockedBy) {
+						$data['docs'][$i]['lockedBy'] = 
+							$lockedBy['User']['lastname'] . ', ' . $lockedBy['User']['firstname'];
+					}
+					else {
+						$data['docs'][$i]['lockedBy'] = '';						
+					}
+					$lastActAdmin = 
+						$this->QueuedDocument->User->findById($doc['QueuedDocument']['last_activity_admin_id']); 
+					if($lastActAdmin) {
+						$data['docs'][$i]['lastActivityAdmin'] = 
+							$lastActAdmin['User']['lastname'] . ', ' . $lastActAdmin['User']['firstname'];						
+					}
+					else {
+						$data['docs'][$i]['lastActivityAdmin'] = '';						
+					}
+					$queuedToCustomer = 
+						$this->QueuedDocument->User->findById($doc['QueuedDocument']['user_id']); 
+					if($queuedToCustomer) {
+						$data['docs'][$i]['queuedToCustomer'] = $queuedToCustomer['User']['name_last4'];
+					}
+					else {
+						$data['docs'][$i]['queuedToCustomer'] = '';						
+					}					
+					$data['docs'][$i]['lockedStatus'] = 
+						$this->lockStatuses[$doc['QueuedDocument']['locked_status']];
+					$data['docs'][$i]['created'] = $doc['QueuedDocument']['created'];	
+					$data['docs'][$i]['modified'] = $doc['QueuedDocument']['modified'];
+					$i++;	
+ 				}
+			}
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
 
-    function admin_index($action=null, $docId=null, $active=null) {
+    function admin_index_old($action=null, $docId=null, $active=null) {
 		$canFile = null;
 		if(!empty($action) && $action == 'reset') {
 		    if($this->RequestHandler->isAjax()) {
