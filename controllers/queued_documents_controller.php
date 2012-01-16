@@ -58,7 +58,8 @@ class QueuedDocumentsController extends AppController {
 				$i = 0;
 				foreach($docs as $doc) {
 					$data['docs'][$i]['id'] = $doc['QueuedDocument']['id'];
-					$data['docs'][$i]['queueCat'] = $queueCats[$doc['QueuedDocument']['queue_category_id']];
+					$data['docs'][$i]['queueCat'] = 
+						$queueCats[$doc['QueuedDocument']['queue_category_id']];
 					$data['docs'][$i]['scannedLocation'] = 
 						$locations[$doc['QueuedDocument']['scanned_location_id']];
 					$lockedBy = $this->QueuedDocument->User->findById($doc['QueuedDocument']['locked_by']); 	
@@ -96,6 +97,23 @@ class QueuedDocumentsController extends AppController {
 			$this->set(compact('data'));
 			$this->render(null, null, '/elements/ajaxreturn');
 		}
+	}
+
+	function admin_lock_document() {
+		if($this->RequestHandler->isAjax()) {
+			$userId = $this->Auth->user('id');
+			$docId = $this->params['form']['docId'];
+			$lockedDocId = $this->QueuedDocument->lockDocument($docId, $userId);
+			if($lockedDocId) {
+				$data['docId'] = $lockedDocId;
+				$data['admin'] = 
+					$this->Auth->user('lastname') . ', ' . $this->Auth->user('firstname');	
+				$data['success'] = true; 
+			}
+			else $data['success'] = false;
+		}
+		$this->set(compact('data'));
+		$this->render(null, null, '/elements/ajaxreturn');
 	}
 
     function admin_index_old($action=null, $docId=null, $active=null) {
@@ -280,13 +298,14 @@ class QueuedDocumentsController extends AppController {
 
     function admin_view($id = null) {
 		$this->view = 'Media';
-		$doc = $this->QueuedDocument->read(null, $id);
+		$doc = $this->QueuedDocument->findById($id);
 		$params = array(
 		    'id' => $doc['QueuedDocument']['filename'],
 		    'name' => str_replace('.pdf', '', $doc['QueuedDocument']['filename']),
 		    'extension' => 'pdf',
 		   	'cache' => true,
 		    'path' =>  Configure::read('Document.storage.path') .
+		    //TODO change this to use get the path from the file name.
 		    date('Y', strtotime($doc['QueuedDocument']['created'])) . '/' .
 		    date('m', strtotime($doc['QueuedDocument']['created'])) . '/'
 		);
