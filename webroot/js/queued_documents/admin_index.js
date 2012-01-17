@@ -5,28 +5,46 @@ Ext.define('QueuedDocument', {
 	fields:[
 		'id', 'queueCat', 'scannedLocation', 'queuedToCustomer',
 		'lockedBy', 'lockedStatus', 'lastActivityAdmin', 'created', 'modified'
-	],
-	
+	],	
 	lockDocument: function() {
+		var gridView = Ext.getCmp('queuedDocGrid').getView();
+		gridView.setLoading('Loading Document.');		
+		Ext.getCmp('queuedDocGrid').getView().setLoading('Loading Document');
 		Ext.Ajax.request({
 		    url: '/admin/queued_documents/lock_document',
 		    params: {
 		        docId: this.get('id')
 		    },
-		    success: function(response, opts){
+		    success: function(response, opts, doc){
 		        var text = Ext.JSON.decode(response.responseText);
 		        if(text.success) {
+		        	var docStore = Ext.data.StoreManager.lookup('queuedDocumentsStore');
+		        	if(text.unlocked != undefined) {
+			        	var unlockedDoc = docStore.getById(text.unlocked);
+			        	if(unlockedDoc) {
+				        	unlockedDoc.set('lockedStatus', 'Unlocked');
+				        	unlockedDoc.set('lockedBy', '');
+				        	unlockedDoc.commit();
+			        	}
+		        	}
 		        	this.set('lockedStatus', 'Locked');
 		        	this.set('lockedBy', text.admin);
 		        	this.set('lastActivityAdmin', text.admin);
+		        	this.commit();
 		        	Ext.getCmp('pdfFrame').el.dom.src = 
-						'/admin/queued_documents/view/'+text.docId+'/#toolbar=1&statusbar=0&navpanes=0&zoom=50';
+						'/admin/queued_documents/view/'+text.locked+'/#toolbar=1&statusbar=0&navpanes=0&zoom=50';
+					gridView.setLoading(false);
 		        }
 		        else opts.failure();
 		    },
 		    failure: function(response, opts) {
 		    	Ext.MessageBox.alert(
-		    		'Failure', 'Unable to lock document for viewing. Make sure it is not locked by someone else.');
+		    		'Failure', 'Unable to lock document for viewing.<br />'
+		    		+'Make sure it is not locked by someone else.<br />'
+		    		+'Please use the refresh button in the grid toolbar<br />'
+		    		+'to update the grid view if nessesary.'
+		    	);
+		    	gridView.setLoading(false);	
 		    },
 		    scope: this
 		});
@@ -35,16 +53,26 @@ Ext.define('QueuedDocument', {
 
 Ext.create('Ext.data.Store', {
     storeId:'queuedDocumentsStore',
+    pageSize: 10,
 	model: QueuedDocument,
     proxy: {
         type: 'ajax',
 		url: '/admin/queued_documents',
         reader: {
             type: 'json',
-            root: 'docs'
+            root: 'docs',
+			totalProperty: 'totalCount'
         }
     },
-	autoLoad: true
+	autoLoad: true,
+	listeners: {
+		beforeLoad: function() {
+			Ext.getCmp('queuedDocGrid').getView().setLoading(true);	
+		},
+		load: function() {
+			Ext.getCmp('queuedDocGrid').getView().setLoading(false);
+		}
+	}
 });
 
 var contextMenu = Ext.create('Ext.menu.Menu', {
@@ -99,7 +127,6 @@ Ext.define('Atlas.grid.QueuedDocPanel', {
 			width: 125
 		}],
 		viewConfig: {
-			loadMask: true,
 			singleSelect: true,
 			emptyText: 'No records at this time.',
 	        listeners: {
