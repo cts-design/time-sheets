@@ -16,7 +16,7 @@ class QueuedDocumentsController extends AppController {
 	var $components = array('Notifications', 'Email');
 
     var $lockStatuses = array(
-		0 => 'Un-Locked',
+		0 => 'Unlocked',
 		1 => 'Locked'
     );
 	
@@ -55,6 +55,7 @@ class QueuedDocumentsController extends AppController {
 		    	'conditions' => array('DocumentQueueCategory.deleted' => 0)));
 			if($docs) {
 				$data = array();
+				$data['totalCount'] = $this->QueuedDocument->find('count');
 				$i = 0;
 				foreach($docs as $doc) {
 					$data['docs'][$i]['id'] = $doc['QueuedDocument']['id'];
@@ -103,9 +104,8 @@ class QueuedDocumentsController extends AppController {
 		if($this->RequestHandler->isAjax()) {
 			$userId = $this->Auth->user('id');
 			$docId = $this->params['form']['docId'];
-			$lockedDocId = $this->QueuedDocument->lockDocument($docId, $userId);
-			if($lockedDocId) {
-				$data['docId'] = $lockedDocId;
+			$data = $this->QueuedDocument->lockDocument($docId, $userId);
+			if($data) {
 				$data['admin'] = 
 					$this->Auth->user('lastname') . ', ' . $this->Auth->user('firstname');	
 				$data['success'] = true; 
