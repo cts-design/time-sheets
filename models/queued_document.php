@@ -77,10 +77,11 @@ class QueuedDocument extends AppModel {
 		$lockedConditions['QueuedDocument.locked_by'] = $userId;
 		$userLockedDoc = $this->find('first', array('conditions' => $lockedConditions));
 		if(!empty($userLockedDoc['QueuedDocument']['id'])) {
-		    if (!$this->unlockDocument($userLockedDoc['QueuedDocument']['id'])) {
-				return false;
+			$id = $this->unlockDocument($userLockedDoc['QueuedDocument']['id']);
+		    if ($id) {
+				return $id;
 		    }
-		    else return $userLockedDoc['QueuedDocument']['id'];
+		    else false; 
 		}
 		else return false;
     }
@@ -90,21 +91,23 @@ class QueuedDocument extends AppModel {
 			$unlockedDoc = $this->checkLocked($userId);
 			if($unlockedDoc) {
 				$data['unlocked'] = $unlockedDoc;
-			}	
+			}		    	
 		    $this->data['QueuedDocument']['id'] = $id;
 		    $this->data['QueuedDocument']['locked_by'] = $userId;
 			$this->data['QueuedDocument']['last_activity_admin_id'] = $userId;
 		    $this->data['QueuedDocument']['locked_status'] = 1;
 			$doc = $this->findById($id);
-			if($doc['QueuedDocument']['locked_status'] == 1) {
+			if($doc['QueuedDocument']['locked_status']) {
 				return false;
 			}
+				
 		    if($this->save($this->data)) {
 		    	$data['locked'] = $id;
 				return $data;
 		    }
 		    else return false;
 		}
+		else return false;
     }
 
     function unlockDocument($id=null) {
