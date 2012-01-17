@@ -8,6 +8,7 @@ Ext.define('QueuedDocument', {
 	],	
 	lockDocument: function() {
 		var gridView = Ext.getCmp('queuedDocGrid').getView();
+		var docStore = Ext.data.StoreManager.lookup('queuedDocumentsStore');
 		gridView.setLoading('Loading Document.');		
 		Ext.getCmp('queuedDocGrid').getView().setLoading('Loading Document');
 		Ext.Ajax.request({
@@ -15,10 +16,9 @@ Ext.define('QueuedDocument', {
 		    params: {
 		        docId: this.get('id')
 		    },
-		    success: function(response, opts, doc){
+		    success: function(response, opts){
 		        var text = Ext.JSON.decode(response.responseText);
-		        if(text.success) {
-		        	var docStore = Ext.data.StoreManager.lookup('queuedDocumentsStore');
+		        if(text.success) {	        	
 		        	if(text.unlocked != undefined) {
 			        	var unlockedDoc = docStore.getById(text.unlocked);
 			        	if(unlockedDoc) {
@@ -35,7 +35,9 @@ Ext.define('QueuedDocument', {
 						'/admin/queued_documents/view/'+text.locked+'/#toolbar=1&statusbar=0&navpanes=0&zoom=50';
 					gridView.setLoading(false);
 		        }
-		        else opts.failure();
+		        else {
+		        	opts.failure();
+		        }	
 		    },
 		    failure: function(response, opts) {
 		    	Ext.MessageBox.alert(
@@ -44,7 +46,9 @@ Ext.define('QueuedDocument', {
 		    		+'Please use the refresh button in the grid toolbar<br />'
 		    		+'to update the grid view if nessesary.'
 		    	);
-		    	gridView.setLoading(false);	
+		    	gridView.setLoading(false);
+		    	docStore.load();
+			    Ext.getCmp('pdfFrame').el.dom.src = '';		    		
 		    },
 		    scope: this
 		});
@@ -64,7 +68,6 @@ Ext.create('Ext.data.Store', {
 			totalProperty: 'totalCount'
         }
     },
-	autoLoad: true,
 	listeners: {
 		beforeLoad: function() {
 			Ext.getCmp('queuedDocGrid').getView().setLoading(true);	
@@ -253,4 +256,5 @@ Ext.onReady(function(){
 	        }]
 	    }]
 	}).show();
+	Ext.data.StoreManager.lookup('queuedDocumentsStore').load();
 });
