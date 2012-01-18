@@ -1,4 +1,5 @@
-var docId;
+var docQueueWindowMask = 
+	new Ext.LoadMask(Ext.getCmp('docQueueWindow'), {msg:"Loading Document..."});
 
 Ext.define('QueuedDocument', {
 	extend: 'Ext.data.Model',
@@ -7,10 +8,8 @@ Ext.define('QueuedDocument', {
 		'lockedBy', 'lockedStatus', 'lastActivityAdmin', 'created', 'modified'
 	],	
 	lockDocument: function() {
-		var gridView = Ext.getCmp('queuedDocGrid').getView();
+		docQueueWindowMask.show();
 		var docStore = Ext.data.StoreManager.lookup('queuedDocumentsStore');
-		gridView.setLoading('Loading Document.');		
-		Ext.getCmp('queuedDocGrid').getView().setLoading('Loading Document');
 		Ext.Ajax.request({
 		    url: '/admin/queued_documents/lock_document',
 		    params: {
@@ -33,7 +32,7 @@ Ext.define('QueuedDocument', {
 		        	this.commit();
 		        	Ext.getCmp('pdfFrame').el.dom.src = 
 						'/admin/queued_documents/view/'+text.locked+'/#toolbar=1&statusbar=0&navpanes=0&zoom=50';
-					gridView.setLoading(false);
+					docQueueWindowMask.hide()
 		        }
 		        else {
 		        	opts.failure();
@@ -46,7 +45,7 @@ Ext.define('QueuedDocument', {
 		    		+'Please use the refresh button in the grid toolbar<br />'
 		    		+'to update the grid view if nessesary.'
 		    	);
-		    	gridView.setLoading(false);
+		    	docQueueWindowMask.hide();
 		    	docStore.load();
 			    Ext.getCmp('pdfFrame').el.dom.src = '';		    		
 		    },
@@ -54,6 +53,7 @@ Ext.define('QueuedDocument', {
 		});
 	}
 });
+
 
 Ext.create('Ext.data.Store', {
     storeId:'queuedDocumentsStore',
@@ -67,15 +67,7 @@ Ext.create('Ext.data.Store', {
             root: 'docs',
 			totalProperty: 'totalCount'
         }
-    },
-	listeners: {
-		beforeLoad: function() {
-			Ext.getCmp('queuedDocGrid').getView().setLoading(true);	
-		},
-		load: function() {
-			Ext.getCmp('queuedDocGrid').getView().setLoading(false);
-		}
-	}
+    }
 });
 
 var contextMenu = Ext.create('Ext.menu.Menu', {
@@ -167,6 +159,7 @@ Ext.onReady(function(){
 	
 	Ext.create('Ext.window.Window', {
 	    height: availableDOMHeight(),
+	    id: 'docQueueWindow',
 	    width: '100%',
 	    closable: false,
 	    draggable: false,
