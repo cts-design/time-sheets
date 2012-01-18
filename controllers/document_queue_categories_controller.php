@@ -69,6 +69,7 @@ class DocumentQueueCategoriesController extends AppController {
 	
     function admin_get_cats() {
 		if($this->RequestHandler->isAjax()) {
+			$this->DocumentQueueCategory->recursive -1;
 		    $query = $this->DocumentQueueCategory->find('list', array(
 				'fields' => array('DocumentQueueCategory.id', 'DocumentQueueCategory.name')));
 			$i = 0;
