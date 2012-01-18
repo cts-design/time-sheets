@@ -2,8 +2,8 @@
 Ext.define('QueuedDocument', {
 	extend: 'Ext.data.Model',
 	fields:[
-		'id', 'queueCat', 'scannedLocation', 'queuedToCustomer',
-		'lockedBy', 'lockedStatus', 'lastActivityAdmin', 'created', 'modified'
+		'id', 'queue_cat', 'scanned_location', 'queued_to_customer',
+		'locked_by', 'locked_status', 'last_activity_admin', 'created', 'modified'
 	],	
 	lockDocument: function() {
 		var docQueueWindowMask = 
@@ -13,7 +13,7 @@ Ext.define('QueuedDocument', {
 		Ext.Ajax.request({
 		    url: '/admin/queued_documents/lock_document',
 		    params: {
-		        docId: this.get('id')
+		        doc_id: this.get('id')
 		    },
 		    success: function(response, opts){
 		        var text = Ext.JSON.decode(response.responseText);
@@ -21,14 +21,14 @@ Ext.define('QueuedDocument', {
 		        	if(text.unlocked != undefined) {
 			        	var unlockedDoc = docStore.getById(text.unlocked);
 			        	if(unlockedDoc) {
-				        	unlockedDoc.set('lockedStatus', 'Unlocked');
-				        	unlockedDoc.set('lockedBy', '');
+				        	unlockedDoc.set('locked_status', 'Unlocked');
+				        	unlockedDoc.set('locked_by', '');
 				        	unlockedDoc.commit();
 			        	}
 		        	}
-		        	this.set('lockedStatus', 'Locked');
-		        	this.set('lockedBy', text.admin);
-		        	this.set('lastActivityAdmin', text.admin);
+		        	this.set('locked_status', 'Locked');
+		        	this.set('locked_by', text.admin);
+		        	this.set('last_activity_admin', text.admin);
 		        	this.commit();
 		        	Ext.getCmp('pdfFrame').el.dom.src = 
 						'/admin/queued_documents/view/'+text.locked+'/#toolbar=1&statusbar=0&navpanes=0&zoom=50';
@@ -57,7 +57,7 @@ Ext.define('QueuedDocument', {
 
 Ext.create('Ext.data.Store', {
     storeId:'queuedDocumentsStore',
-    pageSize: 10,
+    pageSize: 5,
 	model: QueuedDocument,
     proxy: {
         type: 'ajax',
@@ -93,25 +93,25 @@ Ext.define('Atlas.grid.QueuedDocPanel', {
 	 		width: 75
 		},{ 
 			header: 'Queue Cat', 
-			dataIndex: 'queueCat',
+			dataIndex: 'queue_cat',
 			width: 75
 		},{ 
 			header: 'Scanned Location',
-			dataIndex: 'scannedLocation' 
+			dataIndex: 'scanned_location' 
 		},{
 			header: 'Queued to Customer',
-			dataIndex: 'queuedToCustomer',
+			dataIndex: 'queued_to_customer',
 			width: 150
 		},{ 
 			header: 'Locked Status', 
-			dataIndex: 'lockedStatus',
+			dataIndex: 'locked_status',
 			width: 80
 		},{ 
 			header: 'Locked By',
-			dataIndex: 'lockedBy'
+			dataIndex: 'locked_by'
 		},{
 			header: 'Last Act. Admin',
-			dataIndex: 'lastActivityAdmin'
+			dataIndex: 'last_activity_admin'
 		},{
 			header: 'Created',
 			dataIndex: 'created',
@@ -139,6 +139,122 @@ Ext.define('Atlas.grid.QueuedDocPanel', {
 	        dock: 'bottom',
 	        displayInfo: true
 	    }]					
+});
+
+
+Ext.define('Location', {
+	extend: 'Ext.data.Model',
+	fields: ['id', 'name']
+});
+
+Ext.create('Ext.data.Store', {
+	model: 'Location',
+	storeId: 'locationsStore',
+	proxy: {
+		type: 'ajax',
+		url: '/admin/locations/get_location_list',
+		reader: {
+			type: 'json',
+			root: 'locations'
+		},
+		limitParam: undefined,
+		pageParam: undefined,
+		startParam: undefined				
+	},
+	autoLoad: true
+});
+
+Ext.define('QueueCategory', {
+	extend: 'Ext.data.Model',
+	fields: ['id', 'name']
+});
+
+Ext.create('Ext.data.Store', {
+	model: 'QueueCategory',
+	storeId: 'queueCatgoriesStore',
+	proxy: {
+		type: 'ajax',
+		url: '/admin/document_queue_categories/get_cats',
+		reader: {
+			type: 'json',
+			root: 'cats'
+		},
+		limitParam: undefined,
+		pageParam: undefined,
+		startParam: undefined				
+	},
+	autoLoad: true
+});
+
+Ext.define('Atlas.form.DocQueueFilterPanel', {
+	extend: 'Ext.form.Panel',
+	alias: 'widget.docqueuefilterformpanel',
+	bodyPadding: 10,
+	layout: 'anchor',
+	defaults: {
+		labelWidth: 90,
+		anchor: '100%'
+	},
+	items:[{
+		xtype: 'boxselect',
+		id: 'locationsSelect',
+		encodeSubmitValue: true,
+		fieldLabel: 'Locations',
+		name: 'locations',
+		emptyText: 'Please Select',
+		displayField: 'name',
+		valueField: 'id',		
+		store: Ext.data.StoreManager.lookup('locationsStore')
+	},{
+		xtype: 'boxselect',
+		fieldLabel: 'Queue Cats',
+		id: 'queueCatsSelect',
+		encodeSubmitValue: true,
+		name: 'queue_cats',
+		emptyText: 'Please Select',
+		displayField: 'name',
+		valueField: 'id',
+		store: Ext.data.StoreManager.lookup('queueCatgoriesStore')				
+	},{
+        xtype: 'datefield',
+        fieldLabel: 'From',
+        name: 'from_date',
+        maxValue: new Date()
+    },{
+        xtype: 'datefield',
+        fieldLabel: 'To',
+        name: 'to_date',
+        maxValue: new Date()
+    },{
+    	xtype: 'checkbox',
+    	fieldLabel: 'Auto Load Docs',
+    	name: 'auto_load_docs',
+    	inputValue: 'yes'
+    }],
+    buttonAlign: 'left',
+    buttons:[{
+    	text: 'Submit',
+    	formBind: true,
+    	disabled: true,
+        handler: function() {
+            var form = this.up('form').getForm();
+            if (form.isValid()) {
+                form.submit({
+                    success: function(form, action) {
+                       Ext.Msg.alert('Success', action.result.msg);
+                    },
+                    failure: function(form, action) {
+                        Ext.Msg.alert('Failed', action.result.msg);
+                    }
+                });
+            }
+       }     
+    },{
+    	text: 'Reset',
+    	handler: function() {
+    		this.up('form').getForm().reset();
+    	}
+    }]
 });
 
 var availableDOMHeight = function() {
@@ -172,15 +288,15 @@ Ext.onReady(function(){
 	        xtype: 'panel',
 	        margins: '5 0 0 5',
 	        width: 300,
-	        id: 'west-region-container',
+	        id: 'westContainer',
 	        layout: 'accordion',
-	        activeItem: '3',
 		    items: [{
 		    	xtype: 'panel',
 		    	layout: 'vbox',
 		    	height: 'auto',
 		        title: 'Document Actions',
 		        collapsible: true,
+		        collapsed: true,
 		        items: [{
 		        	title: 'File Document',
 			        height: 300,
@@ -199,11 +315,12 @@ Ext.onReady(function(){
 		        }]
 		    },{
 		        title: 'Queue Filters',
-		        html: 'Panel content!',
+		        xtype: 'docqueuefilterformpanel',
+		        url: '/admin/queued_documents/set_filters',
 		        height: 150,
 		        width: 300,
 		        collapsible: true,
-		        collapsed: true
+		        collapsed: false
 		    },{
 		        title: 'Queue Search',
 		        html: 'Panel content!',
@@ -230,7 +347,7 @@ Ext.onReady(function(){
 	        items: [{
 		        xtype: 'atlasdocqueuegridpanel',
 		        id: 'queuedDocGrid',
-		        height: 200,
+		        height: 185,
 		        collapsible: true,
 				
 	        },{
