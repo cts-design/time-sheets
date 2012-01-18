@@ -59,36 +59,36 @@ class QueuedDocumentsController extends AppController {
 				$i = 0;
 				foreach($docs as $doc) {
 					$data['docs'][$i]['id'] = $doc['QueuedDocument']['id'];
-					$data['docs'][$i]['queueCat'] = 
+					$data['docs'][$i]['queue_cat'] = 
 						$queueCats[$doc['QueuedDocument']['queue_category_id']];
-					$data['docs'][$i]['scannedLocation'] = 
+					$data['docs'][$i]['scanned_location'] = 
 						$locations[$doc['QueuedDocument']['scanned_location_id']];
 					$lockedBy = $this->QueuedDocument->User->findById($doc['QueuedDocument']['locked_by']); 	
 					if($lockedBy) {
-						$data['docs'][$i]['lockedBy'] = 
+						$data['docs'][$i]['locked_by'] = 
 							$lockedBy['User']['lastname'] . ', ' . $lockedBy['User']['firstname'];
 					}
 					else {
-						$data['docs'][$i]['lockedBy'] = '';						
+						$data['docs'][$i]['locked_by'] = '';						
 					}
 					$lastActAdmin = 
 						$this->QueuedDocument->User->findById($doc['QueuedDocument']['last_activity_admin_id']); 
 					if($lastActAdmin) {
-						$data['docs'][$i]['lastActivityAdmin'] = 
+						$data['docs'][$i]['last_activity_admin'] = 
 							$lastActAdmin['User']['lastname'] . ', ' . $lastActAdmin['User']['firstname'];						
 					}
 					else {
-						$data['docs'][$i]['lastActivityAdmin'] = '';						
+						$data['docs'][$i]['last_activity_admin'] = '';						
 					}
 					$queuedToCustomer = 
 						$this->QueuedDocument->User->findById($doc['QueuedDocument']['user_id']); 
 					if($queuedToCustomer) {
-						$data['docs'][$i]['queuedToCustomer'] = $queuedToCustomer['User']['name_last4'];
+						$data['docs'][$i]['queued_to_customer'] = $queuedToCustomer['User']['name_last4'];
 					}
 					else {
-						$data['docs'][$i]['queuedToCustomer'] = '';						
+						$data['docs'][$i]['queued_to_customer'] = '';						
 					}					
-					$data['docs'][$i]['lockedStatus'] = 
+					$data['docs'][$i]['locked_status'] = 
 						$this->lockStatuses[$doc['QueuedDocument']['locked_status']];
 					$data['docs'][$i]['created'] = $doc['QueuedDocument']['created'];	
 					$data['docs'][$i]['modified'] = $doc['QueuedDocument']['modified'];
@@ -103,7 +103,7 @@ class QueuedDocumentsController extends AppController {
 	function admin_lock_document() {
 		if($this->RequestHandler->isAjax()) {
 			$userId = $this->Auth->user('id');
-			$docId = $this->params['form']['docId'];
+			$docId = $this->params['form']['doc_id'];
 			$data = $this->QueuedDocument->lockDocument($docId, $userId);
 			if($data) {
 				$data['admin'] = 
@@ -114,6 +114,25 @@ class QueuedDocumentsController extends AppController {
 		}
 		$this->set(compact('data'));
 		$this->render(null, null, '/elements/ajaxreturn');
+	}
+	
+	function admin_set_filters() {
+		if($this->RequestHandler->isAjax()) {
+			$this->data['DocumentQueueFilter'] = $this->params['form'];
+			$this->data['DocumentQueueFilter']['user_id'] = $this->Auth->user('id');
+			$this->loadModel('DocumentQueueFilter');
+			$this->DocumentQueueFilter->save($this->data);
+			if($this->DocumentQueueFilter->save($this->data)) {
+				$data['success'] = true;
+				$data['message'] = 'Filters set successfully.';
+			}
+			else {
+				$data['success'] = false;
+				$data['message'] = 'Unable to set filters.';
+			}	
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
 	}
 
     function admin_index_old($action=null, $docId=null, $active=null) {
