@@ -1,5 +1,3 @@
-var docQueueWindowMask = 
-	new Ext.LoadMask(Ext.getCmp('docQueueWindow'), {msg:"Loading Document..."});
 
 Ext.define('QueuedDocument', {
 	extend: 'Ext.data.Model',
@@ -8,6 +6,8 @@ Ext.define('QueuedDocument', {
 		'lockedBy', 'lockedStatus', 'lastActivityAdmin', 'created', 'modified'
 	],	
 	lockDocument: function() {
+		var docQueueWindowMask = 
+			new Ext.LoadMask(Ext.getCmp('docQueueWindow'), {msg:"Loading Document..."});		
 		docQueueWindowMask.show();
 		var docStore = Ext.data.StoreManager.lookup('queuedDocumentsStore');
 		Ext.Ajax.request({
