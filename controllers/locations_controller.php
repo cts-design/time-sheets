@@ -92,12 +92,13 @@ class LocationsController extends AppController {
 
 	function admin_get_location_list() {
 	    if ($this->RequestHandler->isAjax()) {
-	    	$this->Location->recursive = -1;
-			$locations = $this->Location->find('all');
+	    	$this->Location->recursive = -1;			
+			$locations = $this->Location->find('list',
+				array('fileds' => array('Location.id', 'Location.name')));
 			$i = 0;
-			foreach($locations as $location) {
-			    $data['locations'][$i]['id'] = $location['Location']['id'];
-			    $data['locations'][$i]['name'] = $location['Location']['name'];
+			foreach($locations as $k => $v) {
+			    $data['locations'][$i]['id'] = $k;
+			    $data['locations'][$i]['name'] = $v;
 			    $i++;
 			}
 			if(!empty($data)){
