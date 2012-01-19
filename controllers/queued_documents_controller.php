@@ -116,25 +116,6 @@ class QueuedDocumentsController extends AppController {
 		$this->render(null, null, '/elements/ajaxreturn');
 	}
 	
-	function admin_set_filters() {
-		if($this->RequestHandler->isAjax()) {
-			$this->data['DocumentQueueFilter'] = $this->params['form'];
-			$this->data['DocumentQueueFilter']['user_id'] = $this->Auth->user('id');
-			$this->loadModel('DocumentQueueFilter');
-			$this->DocumentQueueFilter->save($this->data);
-			if($this->DocumentQueueFilter->save($this->data)) {
-				$data['success'] = true;
-				$data['message'] = 'Filters set successfully.';
-			}
-			else {
-				$data['success'] = false;
-				$data['message'] = 'Unable to set filters.';
-			}	
-			$this->set(compact('data'));
-			$this->render(null, null, '/elements/ajaxreturn');
-		}
-	}
-
     function admin_index_old($action=null, $docId=null, $active=null) {
 		$canFile = null;
 		if(!empty($action) && $action == 'reset') {
