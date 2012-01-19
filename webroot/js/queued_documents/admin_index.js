@@ -207,7 +207,9 @@ Ext.create('Ext.data.Store', {
 	},
 	listeners: {
 		load: function(store, records, successful, operation, eOpts) {
-			Ext.getCmp('documentQueueFilterForm').loadRecord(records[0]);
+			if(records[0] != undefined) {
+				Ext.getCmp('documentQueueFilterForm').loadRecord(records[0]);
+			}
 		}
 	},
 	autoLoad: true
