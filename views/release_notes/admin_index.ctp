@@ -3,6 +3,13 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+	<h1>Release 3.2.1 (1/19/12)</h1>
+	<h2>Bug Fixes</h2>
+	<ol>
+		<li>Fixing bug where admins could type text into the reassign and new sign in drop down menus in the Self Sign Queue.</li>
+		<li>Removing the Espanol/English toggle button from all pages on the kiosk except the main page. This was causing undesirable results if the button was pressed after customer had logged in.</li>
+	</ol>
+	<hr />
 	<h1>Release 3.2.0 (1/12/12)</h1>
 	<h2>Major Feature Enhancements</h2>
 	<ol>

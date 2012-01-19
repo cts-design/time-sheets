@@ -136,6 +136,11 @@ class SelfSignLogsController extends AppController {
 	function admin_reassign() {
 		if($this->RequestHandler->isAjax()) {
 			if(!empty($this->data)) {
+				foreach($this->data['SelfSignLog'] as $k => $v) {
+					if(empty($v)) {
+						$this->data['SelfSignLog'][$k] = null;
+ 					}
+				}				
 				$this->data['SelfSignLog']['last_activity_admin_id'] = $this->Auth->user('id');
 				$this->data['SelfSignLogArchive'] = $this->data['SelfSignLog'];
 				if($this->SelfSignLog->save($this->data['SelfSignLog']) && 
@@ -163,6 +168,11 @@ class SelfSignLogsController extends AppController {
 	function admin_new_record() {
 		if($this->RequestHandler->isAjax()) {
 			if(!empty($this->data)) {
+				foreach($this->data['SelfSignLog'] as $k => $v) {
+					if(empty($v)) {
+						$this->data['SelfSignLog'][$k] = null;
+ 					}
+				}
 				$this->data['SelfSignLog']['last_activity_admin_id'] = $this->Auth->user('id');
 				$this->data['SelfSignLogArchive'] = $this->data['SelfSignLog'];
 				$this->SelfSignLog->create();
