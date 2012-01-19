@@ -261,10 +261,14 @@ Ext.define('Atlas.form.DocQueueFilterPanel', {
     	fieldLabel: 'Auto Load Docs',
     	name: 'auto_load_docs',
     	inputValue: 'yes'
+    },{
+    	xtype: 'hidden',
+    	name: 'id'
     }],
     buttonAlign: 'left',
     buttons:[{
-    	text: 'Submit',
+    	text: 'Save',
+    	icon:  '/img/icons/save.png',
     	formBind: true,
     	disabled: true,
         handler: function() {
@@ -273,6 +277,7 @@ Ext.define('Atlas.form.DocQueueFilterPanel', {
                 form.submit({
                     success: function(form, action) {
                        Ext.Msg.alert('Success', action.result.msg);
+                       Ext.data.StoreManager.lookup('documentQueueFiltersStore').load();
                     },
                     failure: function(form, action) {
                         Ext.Msg.alert('Failed', action.result.msg);
@@ -282,8 +287,12 @@ Ext.define('Atlas.form.DocQueueFilterPanel', {
        }     
     },{
     	text: 'Reset',
+    	icon:  '/img/icons/reset.png',
     	handler: function() {
-    		this.up('form').getForm().reset();
+    		var form = this.up('form').getForm();
+    		var vals = form.getValues();
+    		form.reset();
+    		form.setValues({id: vals.id});
     	}
     }]
 });
