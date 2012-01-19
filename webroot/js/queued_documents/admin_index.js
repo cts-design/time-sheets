@@ -186,9 +186,38 @@ Ext.create('Ext.data.Store', {
 	autoLoad: true
 });
 
+Ext.define('DocumentQueueFilter', {
+	extend: 'Ext.data.Model',
+	fields: ['id', 'locations', 'queue_cats', 'from_date', 'to_date', 'auto_load_docs']
+});
+
+Ext.create('Ext.data.Store', {
+	model: 'DocumentQueueFilter',
+	storeId: 'documentQueueFiltersStore',
+	proxy: {
+		type: 'ajax',
+		url: '/admin/document_queue_filters/get_filters',
+		reader: {
+			type: 'json',
+			root: 'filters'
+		},
+		limitParam: undefined,
+		pageParam: undefined,
+		startParam: undefined				
+	},
+	listeners: {
+		load: function(store, records, successful, operation, eOpts) {
+			Ext.getCmp('documentQueueFilterForm').loadRecord(records[0]);
+		}
+	},
+	autoLoad: true
+});
+
+
 Ext.define('Atlas.form.DocQueueFilterPanel', {
 	extend: 'Ext.form.Panel',
 	alias: 'widget.docqueuefilterformpanel',
+	id: 'documentQueueFilterForm',
 	bodyPadding: 10,
 	layout: 'anchor',
 	defaults: {
@@ -316,7 +345,7 @@ Ext.onReady(function(){
 		    },{
 		        title: 'Queue Filters',
 		        xtype: 'docqueuefilterformpanel',
-		        url: '/admin/queued_documents/set_filters',
+		        url: '/admin/document_queue_filters/set_filters',
 		        height: 150,
 		        width: 300,
 		        collapsible: true,
