@@ -275,12 +275,15 @@ Ext.define('Atlas.form.DocQueueFilterPanel', {
             var form = this.up('form').getForm();
             if (form.isValid()) {
                 form.submit({
+                	waitTitle: 'Saving',
+                	waitMsg: 'Please wait...',
                     success: function(form, action) {
-                       Ext.Msg.alert('Success', action.result.msg);
+                       Ext.Msg.alert('Success', action.result.message);
                        Ext.data.StoreManager.lookup('documentQueueFiltersStore').load();
+                       Ext.data.StoreManager.lookup('queuedDocumentsStore').load();
                     },
                     failure: function(form, action) {
-                        Ext.Msg.alert('Failed', action.result.msg);
+                        Ext.Msg.alert('Failed', action.result.message);
                     }
                 });
             }
