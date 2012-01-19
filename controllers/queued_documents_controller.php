@@ -47,15 +47,42 @@ class QueuedDocumentsController extends AppController {
 	
 	function admin_index() {
 		if($this->RequestHandler->isAjax()) {
-			$this->paginate = array('order' => array('QueuedDocument.id ASC'));
-			$docs = $this->paginate();
+			$this->loadModel('DocumentQueueFilter');
+			$filters = $this->DocumentQueueFilter->findByUserId($this->Auth->user('id'));
+			if($filters) {
+				$locations = json_decode($filters['DocumentQueueFilter']['locations'], true);
+				if(!empty($locations)) {
+					$conditions['QueuedDocument.scanned_location_id'] = $locations;
+				}
+				$queueCats = json_decode($filters['DocumentQueueFilter']['queue_cats'], true);
+				if(!empty($queueCats)) {
+					$conditions['QueuedDocument.queue_category_id'] = $queueCats;
+				}
+				if(!empty($filters['DocumentQueueFilter']['from_date']) && 
+				   !empty($filters['DocumentQueueFilter']['to_date'] )){
+					    $from = date('Y-m-d H:i:m', 
+					    	strtotime($filters['DocumentQueueFilter']['from_date'] . " 12:00 am"));
+					    $to = date('Y-m-d H:i:m',
+					    	strtotime($filters['DocumentQueueFilter']['to_date'] . " 11:59 pm"));
+					    $conditions['QueuedDocument.created Between ? AND ?'] = array($from, $to); 
+				}
+			}
+			if(isset($conditions)) {
+				$this->paginate = array(
+					'order' => array('QueuedDocument.id ASC'),
+					'conditions' => $conditions);
+				$data['totalCount'] = $this->QueuedDocument->find('count', array('conditions' => $conditions));	
+			}
+			else {
+				$this->paginate = array('order' => array('QueuedDocument.id ASC'));
+				$data['totalCount'] = $this->QueuedDocument->find('count');
+			}
+			$docs = $this->paginate();			
 			$locations = $this->QueuedDocument->Location->find('list');
 			$this->QueuedDocument->User->recursive = -1;
 			$queueCats = $this->QueuedDocument->DocumentQueueCategory->find('list', array(
 		    	'conditions' => array('DocumentQueueCategory.deleted' => 0)));
 			if($docs) {
-				$data = array();
-				$data['totalCount'] = $this->QueuedDocument->find('count');
 				$i = 0;
 				foreach($docs as $doc) {
 					$data['docs'][$i]['id'] = $doc['QueuedDocument']['id'];
@@ -94,6 +121,9 @@ class QueuedDocumentsController extends AppController {
 					$data['docs'][$i]['modified'] = $doc['QueuedDocument']['modified'];
 					$i++;	
  				}
+			}
+			else {
+				$data['docs'] = array();
 			}
 			$this->set(compact('data'));
 			$this->render(null, null, '/elements/ajaxreturn');
