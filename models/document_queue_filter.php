@@ -12,5 +12,15 @@ class DocumentQueueFilter extends AppModel {
 			'order' => ''
 		)
 	);
-}
+	
+	var $validate = array(
+	    'user_id' => array(
+			'unique' => array(
+			    'rule' => 'unique',
+			    'message' => 'Filters already exist for this user',
+			    'on' => 'create'
+			)
+	    )
+	);	
+}  
 ?>
