@@ -175,8 +175,6 @@ class KiosksController extends AppController {
 			if($message) {
 				$this->Cookie->write('logout_message', $message);
 			}
-			
-						
 			if(preg_match('(Scan Documents|scan documents|Escanear Documentos|escanear documentos)', 
 				$masterButtonList[$buttonId])) {
 					$this->redirect( array('action' => 'self_scan_program_selection'));
@@ -189,7 +187,7 @@ class KiosksController extends AppController {
 				'order' => array('KioskButton.order' => 'asc')));
 			$tag = $masterButtonTagList[$buttonId];
 			if(empty($possibleChildren) && $isChild == false) {
-				if($masterButtonList[$buttonId] == 'other' || $masterButtonList[$buttonId] == 'Other') {
+				if(preg_match('(other|Other|otro|Otro)', $masterButtonList[$buttonId])) {
 					$this->Cookie->write('level.1', $buttonId);
 					$this->Cookie->delete('level.2');
 					$this->Cookie->delete('level.3');
@@ -241,7 +239,7 @@ class KiosksController extends AppController {
 								'KioskButton.status' => 0), 
 							'order' => array('KioskButton.order' => 'asc')));
 						if($count == 0) {
-							if($masterButtonList[$buttonId] == 'other' || $masterButtonList[$buttonId] == 'Other') {
+							if(preg_match('(other|Other|otro|Otro)', $masterButtonList[$buttonId])) {
 								$this->Cookie->delete('level.3');
 								$this->redirect( array('action' => 'self_sign_other', 'level2'));
 							}
@@ -267,7 +265,7 @@ class KiosksController extends AppController {
 					elseif($button2['KioskButton']['parent_id'] !== null) {
 						$this->Cookie->write('level.3', $buttonId);
 						$this->Cookie->write('details.3', $masterButtonList[$buttonId]);
-						if($masterButtonList[$buttonId] == 'other' || $masterButtonList[$buttonId] == 'Other') {
+						if(preg_match('(other|Other|otro|Otro)', $masterButtonList[$buttonId])) {
 							$this->redirect( array('action' => 'self_sign_other', 'level3'));
 						}
 						else {

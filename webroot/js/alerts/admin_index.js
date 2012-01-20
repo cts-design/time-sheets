@@ -110,7 +110,7 @@ Ext.define('Atlas.form.field.SsnComboBox', {
 		getInnerTpl: function() {
 			return '<div>{fullname}</div>';
 		}
-	},		
+	}		
 });
 
 Ext.create('Ext.data.Store', {
