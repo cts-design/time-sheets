@@ -336,7 +336,181 @@ Ext.define('Atlas.form.DocQueueFilterPanel', {
     }]
 });
 
+Ext.define('Atlas.form.field.LastNameText', {
+	extend: 'Ext.form.field.Text',
+	alias: 'widget.lastnametextfield',
+	emptyText: 'Enter customer last name',
+	fieldLabel: 'Last Name',
+	allowBlank: false,
+	msgTarget: 'under',
+	name: 'lastname'	
+});
 
+Ext.define('Atlas.form.field.FirstNameComboBox', {
+	extend: 'Ext.form.field.ComboBox',
+	alias: 'widget.firstnamecombobox',
+	fieldLabel: 'First Name',
+	allowBlank: false,
+	valueField: 'id',
+	displayField: 'firstname',
+	msgTarget: 'under',
+	triggerAction: 'query',
+	minChars: 2,
+	emptyText: 'Enter at least 2 chars of first name',
+	name: 'firstname',
+	store: 'customerFirstname',
+	listConfig: {
+		getInnerTpl: function() {
+			return '<div>{fullname}</div>';
+		}
+	},
+	listeners: {
+		beforequery: function(queryEvent, eOpts) {
+ 			queryEvent.query = this.prev().getValue() + ',' + queryEvent.query;
+		}
+	}	
+});
+
+Ext.define('Customer', {
+	extend: 'Ext.data.Model',
+	fields: ['id', 'firstname', 'lastname', 'fullname', 'ssn']
+});
+
+Ext.create('Ext.data.Store', {
+	model: 'Customer',
+	storeId: 'customerFirstname',
+	proxy: {
+		type: 'ajax',
+		url: '/admin/users/get_customers_by_first_and_last_name',
+		reader: {
+			type: 'json',
+			root: 'users'
+		},
+		limitParam: undefined,
+		pageParam: undefined,
+		startParam: undefined				
+	}
+});
+
+Ext.define('Atlas.form.field.SsnComboBox', {
+	extend: 'Ext.form.field.ComboBox',
+	alias: 'widget.ssncombobox',
+	fieldLabel: 'Last 4 of SSN',
+	disabled: true,
+	allowBlank: false,
+	emptyText: 'Please enter last 4 of customer ssn',
+	msgTarget: 'under',
+	name: 'ssn',
+	allowBlank: false,
+	triggerAction: 'query',
+	msgTarget: 'under',
+	name: 'ssn',
+	store: 'customerSsn',
+	valueField: 'id',
+	displayField: 'ssn',
+	listConfig: {
+		getInnerTpl: function() {
+			return '<div>{fullname}</div>';
+		}
+	}		
+});
+
+Ext.create('Ext.data.Store', {
+	model: 'Customer',
+	storeId: 'customerSsn',
+	proxy: {
+		type: 'ajax',
+		url: '/admin/users/get_customers_by_ssn',
+		reader: {
+			type: 'json',
+			root: 'users'
+		},
+		limitParam: undefined,
+		pageParam: undefined,
+		startParam: undefined				
+	}
+});	
+
+Ext.define('Atlas.form.field.FindCusByComboBox', {
+	extend: 'Ext.form.field.ComboBox',
+	alias: 'widget.findcusbycombobox',
+	fieldLabel: 'Find customer by',
+	store: 'findCusBy',
+	emptyText: 'Please Select',
+	value: 'Name',
+	valueField: 'type',
+	displayField: 'type',
+	listeners: {
+		change: function(combo, newValue, oldValue, eOpts) {
+			var first = this.next(),
+				last = first.next(),
+				ssn = last.next();
+			if(!newValue){
+				first.disable();
+				last.disable();
+				ssn.disable();
+			}
+			if(newValue === 'Name') {
+				first.enable();
+				last.enable();
+				ssn.disable();				
+			}
+			if(newValue === 'Last 4 SSN') {
+				first.disable();
+				last.disable();
+				ssn.enable();
+			}
+		}
+	}
+});
+
+Ext.create('Ext.data.ArrayStore', {
+	storeId: 'findCusBy',
+	autoLoad: true,
+	idIndex: 0,
+	fields: ['type'],
+	data: [
+		['Name'],
+		['Last 4 SSN']
+	]
+});	
+
+Ext.define('Atlas.form.FileDocumentPanel', {
+	extend: 'Ext.form.Panel',
+	alias: 'widget.filedocumentformpanel',
+	id: 'fileDocumentForm',
+	bodyPadding: 10,
+	layout: 'anchor',
+	defaults: {
+		labelWidth: 70,
+		anchor: '100%'
+	},
+	items:[{
+		xtype: 'combobox',
+		fieldLabel: 'Main Cat'
+	},{
+		xtype: 'combobox',
+		fieldLabel: 'Second Cat'
+	},{
+		xtype: 'combobox', 
+		fieldLabel: 'Third Cat'
+	},{
+		xtype: 'findcusbycombobox',
+		margin: '10 0 10 0'
+	},{
+		xtype: 'lastnametextfield'
+	},{
+		xtype: 'firstnamecombobox'
+	},{
+		xtype: 'ssncombobox'
+	}],
+	buttonAlign: 'left',
+	buttons:[{
+		text: 'File'
+	}, {
+		text: 'File & Requeue'
+	}]
+});
 var availableDOMHeight = function() {
 	if (typeof window.innerHeight !== 'undefined') {
     	return window.innerHeight - 160;
@@ -376,8 +550,8 @@ Ext.create('Ext.window.Window', {
 	        collapsed: false,
 	        items: [{
 	        	title: 'File Document',
-		        height: 300,
-		        html: 'Panel content!',					
+	        	border: 0,
+		        xtype: 'filedocumentformpanel',				
 		        width: 300
 	        },{
 	        	title: 'Re-Queue Document',
