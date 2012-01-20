@@ -238,7 +238,7 @@ Ext.create('Ext.data.Store', {
 	listeners: {
 		load: function(store, records, successful, operation, eOpts) {
 			if(records[0] != undefined) {
-				Ext.getCmp('documentQueueFilterForm').loadRecord(records[0]);
+				Ext.getCmp('documentQueueFilterForm').loadRecord(records[0]);			
 			}
 		}
 	},
@@ -336,6 +336,7 @@ Ext.define('Atlas.form.DocQueueFilterPanel', {
     }]
 });
 
+
 var availableDOMHeight = function() {
 	if (typeof window.innerHeight !== 'undefined') {
     	return window.innerHeight - 160;
@@ -349,101 +350,104 @@ var availableDOMHeight = function() {
     }
 };
 
+Ext.create('Ext.window.Window', {
+    height: availableDOMHeight(),
+    id: 'docQueueWindow',
+    width: '100%',
+    closable: false,
+    draggable: false,
+    resizable: false,
+    maximizable: true,
+    y: 150,
+    layout: 'border',
+    items:[{
+        region:'west',
+        xtype: 'panel',
+        margins: '5 0 0 5',
+        width: 300,
+        id: 'westContainer',
+        layout: 'accordion',
+	    items: [{
+	    	xtype: 'panel',
+	    	layout: 'vbox',
+	    	height: 'auto',
+	        title: 'Document Actions',
+	        collapsible: true,
+	        collapsed: false,
+	        items: [{
+	        	title: 'File Document',
+		        height: 300,
+		        html: 'Panel content!',					
+		        width: 300
+	        },{
+	        	title: 'Re-Queue Document',
+		        html: 'Panel content!',
+		        flex: 1,
+		        width: 300		        	
+	        },{
+	        	title: 'Delete Document',
+		        html: 'Panel content!',
+		        flex: 1,
+		        width: 300		        	
+	        }]
+	    },{
+	        title: 'Queue Filters',
+	        xtype: 'docqueuefilterformpanel',
+	        url: '/admin/document_queue_filters/set_filters',
+	        height: 150,
+	        width: 300,
+	        collapsible: true,
+	        collapsed: true
+	    },{
+	        title: 'Queue Search',
+	        html: 'Panel content!',
+	        width: 300,
+	        height: 200,
+	        collapsible: true,
+	        collapsed: true
+	    },{
+	        title: 'Add Customer',
+	        html: 'Panel content!',
+	        width: 300,
+	        height: 600,
+	        collapsible: true,
+	        collapsed: true		    	
+	    }]	        
+    },{
+        
+        region: 'center',
+        xtype: 'panel',
+        layout: {
+        	align: 'stretch',
+        	type: 'vbox'	
+        },	        
+        items: [{
+	        xtype: 'atlasdocqueuegridpanel',
+	        id: 'queuedDocGrid',
+	        height: 185,
+	        collapsible: true,
+			
+        },{
+	    	title: 'Document',
+	        flex: 1,
+	        layout: 'fit',
+		    items : [{
+		        xtype : 'component',
+		        id: 'pdfFrame',
+		        width: 1000,
+		        height: 400,
+		        autoEl : {
+		            tag : 'iframe'
+		        }
+		    }]		                	
+        }]
+    }]
+});
+
+
+
 Ext.onReady(function(){
 	Ext.QuickTips.init();
-	
-	Ext.create('Ext.window.Window', {
-	    height: availableDOMHeight(),
-	    id: 'docQueueWindow',
-	    width: '100%',
-	    closable: false,
-	    draggable: false,
-	    resizable: false,
-	    maximizable: true,
-	    y: 150,
-	    layout: 'border',
-	    items:[{
-	        region:'west',
-	        xtype: 'panel',
-	        margins: '5 0 0 5',
-	        width: 300,
-	        id: 'westContainer',
-	        layout: 'accordion',
-		    items: [{
-		    	xtype: 'panel',
-		    	layout: 'vbox',
-		    	height: 'auto',
-		        title: 'Document Actions',
-		        collapsible: true,
-		        collapsed: true,
-		        items: [{
-		        	title: 'File Document',
-			        height: 300,
-			        html: 'Panel content!',					
-			        width: 300
-		        },{
-		        	title: 'Re-Queue Document',
-			        html: 'Panel content!',
-			        flex: 1,
-			        width: 300		        	
-		        },{
-		        	title: 'Delete Document',
-			        html: 'Panel content!',
-			        flex: 1,
-			        width: 300		        	
-		        }]
-		    },{
-		        title: 'Queue Filters',
-		        xtype: 'docqueuefilterformpanel',
-		        url: '/admin/document_queue_filters/set_filters',
-		        height: 150,
-		        width: 300,
-		        collapsible: true,
-		        collapsed: false
-		    },{
-		        title: 'Queue Search',
-		        html: 'Panel content!',
-		        width: 300,
-		        height: 200,
-		        collapsible: true,
-		        collapsed: true
-		    },{
-		        title: 'Add Customer',
-		        html: 'Panel content!',
-		        width: 300,
-		        height: 600,
-		        collapsible: true,
-		        collapsed: true		    	
-		    }]	        
-	    },{
-	        
-	        region: 'center',
-	        xtype: 'panel',
-	        layout: {
-	        	align: 'stretch',
-	        	type: 'vbox'	
-	        },	        
-	        items: [{
-		        xtype: 'atlasdocqueuegridpanel',
-		        id: 'queuedDocGrid',
-		        height: 185,
-		        collapsible: true,
-				
-	        },{
-		    	title: 'Document',
-		        flex: 1,
-		        layout: 'fit',
-			    items : [{
-			        xtype : 'component',
-			        id: 'pdfFrame',
-			        width: 1000,
-			        height: 400,
-			        autoEl : {
-			            tag : 'iframe'
-			        }
-			    }]		                	
-	        }]
-	    }]
-	}).show();
+    Ext.getCmp('docQueueWindow').show();
 	Ext.data.StoreManager.lookup('queuedDocumentsStore').load();
 });
