@@ -62,6 +62,7 @@ Ext.define('QueuedDocument', {
 		        	this.commit();
 		        	Ext.getCmp('pdfFrame').el.dom.src = 
 						'/admin/queued_documents/view/'+text.locked+'/#toolbar=1&statusbar=0&navpanes=0&zoom=50';
+					Ext.getCmp('docId').setValue(text.locked);	
 					docQueueWindowMask.hide()
 		        }
 		        else {
@@ -116,7 +117,7 @@ Ext.define('Atlas.grid.QueuedDocPanel', {
 	extend: 'Ext.grid.Panel',
 	alias: 'widget.atlasdocqueuegridpanel',
 	title: 'Document Queue',
-	store: Ext.data.StoreManager.lookup('queuedDocumentsStore'),
+	store: 'queuedDocumentsStore',
     columns: [{ 
 			header: 'Id',
 		  	dataIndex: 'id',
@@ -165,7 +166,7 @@ Ext.define('Atlas.grid.QueuedDocPanel', {
 		},
 	    dockedItems: [{
 	        xtype: 'pagingtoolbar',
-	        store: Ext.data.StoreManager.lookup('queuedDocumentsStore'),
+	        store: 'queuedDocumentsStore',
 	        dock: 'bottom',
 	        displayInfo: true
 	    }]					
@@ -265,7 +266,7 @@ Ext.define('Atlas.form.DocQueueFilterPanel', {
 		emptyText: 'Please Select',
 		displayField: 'name',
 		valueField: 'id',		
-		store: Ext.data.StoreManager.lookup('locationsStore')
+		store: 'locationsStore'
 	},{
 		xtype: 'boxselect',
 		fieldLabel: 'Queue Cats',
@@ -275,7 +276,7 @@ Ext.define('Atlas.form.DocQueueFilterPanel', {
 		emptyText: 'Please Select',
 		displayField: 'name',
 		valueField: 'id',
-		store: Ext.data.StoreManager.lookup('queueCatgoriesStore')				
+		store: 'queueCatgoriesStore'				
 	},{
         xtype: 'datefield',
         fieldLabel: 'From',
@@ -342,6 +343,7 @@ Ext.define('Atlas.form.field.LastNameText', {
 	emptyText: 'Enter customer last name',
 	fieldLabel: 'Last Name',
 	allowBlank: false,
+	submitValue: false,
 	msgTarget: 'under',
 	name: 'lastname'	
 });
@@ -357,7 +359,7 @@ Ext.define('Atlas.form.field.FirstNameComboBox', {
 	triggerAction: 'query',
 	minChars: 2,
 	emptyText: 'Enter at least 2 chars of first name',
-	name: 'firstname',
+	name: 'user_id',
 	store: 'customerFirstname',
 	listConfig: {
 		getInnerTpl: function() {
@@ -400,7 +402,7 @@ Ext.define('Atlas.form.field.SsnComboBox', {
 	allowBlank: false,
 	emptyText: 'Please enter last 4 of customer ssn',
 	msgTarget: 'under',
-	name: 'ssn',
+	name: 'user_id',
 	allowBlank: false,
 	triggerAction: 'query',
 	msgTarget: 'under',
@@ -436,6 +438,7 @@ Ext.define('Atlas.form.field.FindCusByComboBox', {
 	alias: 'widget.findcusbycombobox',
 	fieldLabel: 'Find customer by',
 	store: 'findCusBy',
+	submitValue: false,
 	emptyText: 'Please Select',
 	value: 'Name',
 	valueField: 'type',
@@ -473,7 +476,84 @@ Ext.create('Ext.data.ArrayStore', {
 		['Name'],
 		['Last 4 SSN']
 	]
+});
+
+Ext.define('DocumentFilingCategory', {
+	extend: 'Ext.data.Model',
+	fields: ['id', 'parent_id', 'name']
+});
+
+Ext.create('Ext.data.Store', {
+	model: 'DocumentFilingCategory',
+	storeId: 'documentFilingCats',
+	proxy: {
+		type: 'ajax',
+		url: '/admin/document_filing_categories/get_cats',
+		reader: {
+			type: 'json',
+			root: 'cats'
+		},
+		limitParam: undefined,
+		pageParam: undefined,
+		startParam: undefined				
+	}	
 });	
+
+Ext.create('Ext.data.Store', {
+	model: 'DocumentFilingCategory',
+	storeId: 'documentFilingCats2',
+	proxy: {
+		type: 'ajax',
+		url: '/admin/document_filing_categories/get_cats',
+		reader: {
+			type: 'json',
+			root: 'cats'
+		},
+		limitParam: undefined,
+		pageParam: undefined,
+		startParam: undefined				
+	},
+	listeners: {
+		load: function(store, records, successful, operation, eOpts) {
+			var combo = Ext.getCmp('secondFilingCats');
+			if(records[0] != undefined)	{
+				combo.enable();			
+			}
+			else {
+				combo.clearInvalid();
+				combo.disable();
+			}
+		}
+	}	
+});
+
+Ext.create('Ext.data.Store', {
+	model: 'DocumentFilingCategory',
+	storeId: 'documentFilingCats3',
+	proxy: {
+		type: 'ajax',
+		url: '/admin/document_filing_categories/get_cats',
+		reader: {
+			type: 'json',
+			root: 'cats'
+		},
+		limitParam: undefined,
+		pageParam: undefined,
+		startParam: undefined				
+	},
+	listeners: {
+		load: function(store, records, successful, operation, eOpts) {
+			var combo = Ext.getCmp('thirdFilingCats');
+			if(records[0] != undefined)	{
+				combo.enable();			
+			}
+			else {
+				combo.clearInvalid();
+				combo.disable();
+			}
+		}
+	}		
+});		
 
 Ext.define('Atlas.form.FileDocumentPanel', {
 	extend: 'Ext.form.Panel',
@@ -487,13 +567,58 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 	},
 	items:[{
 		xtype: 'combobox',
-		fieldLabel: 'Main Cat'
+		fieldLabel: 'Main Cat',
+		store: 'documentFilingCats',
+		displayField: 'name',
+		valueField: 'id',
+		forceSelection: true,
+		allowBlank: false,
+		name: 'cat_1',
+		listeners: {
+			select: function(combo, records, eOpts) {
+				if(records[0] != undefined) {
+					var store = Ext.data.StoreManager.lookup('documentFilingCats2');			
+					store.load({params:{'parentId' : records[0].data.id}});
+				}
+			}
+		}		
 	},{
 		xtype: 'combobox',
-		fieldLabel: 'Second Cat'
+		fieldLabel: 'Second Cat',
+		id: 'secondFilingCats',
+		store: 'documentFilingCats2',
+		displayField: 'name',
+		valueField: 'id',
+		name: 'cat_2',
+		forceSelection: true,
+		queryMode: 'local',
+		disabled: true,
+		allowBlank: false,
+		listeners: {
+			select: function(combo, records, eOpts) {
+				if(records[0] != undefined) {
+					var store = Ext.data.StoreManager.lookup('documentFilingCats3');			
+					store.load({params:{'parentId' : records[0].data.id}});
+				}
+			}
+		}		
+
 	},{
 		xtype: 'combobox', 
-		fieldLabel: 'Third Cat'
+		fieldLabel: 'Third Cat',
+		id: 'thirdFilingCats',
+		name: 'cat_3',
+		store: 'documentFilingCats3',
+		displayField: 'name',
+		valueField: 'id',
+		forceSelection: true,
+		queryMode: 'local',
+		disabled: true,
+		allowBlank: false	
+	},{
+		xtype: 'textfield',
+		fieldLabel: 'Other',
+		name: 'description'
 	},{
 		xtype: 'findcusbycombobox',
 		margin: '10 0 10 0'
@@ -503,14 +628,36 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 		xtype: 'firstnamecombobox'
 	},{
 		xtype: 'ssncombobox'
+	},{
+		xtype: 'hidden',
+		name: 'id',
+		id: 'docId'
 	}],
 	buttonAlign: 'left',
 	buttons:[{
-		text: 'File'
+		text: 'File',
+		formBind: true,
+        handler: function() {
+            var form = this.up('form').getForm();
+            if (form.isValid()) {
+                form.submit({
+                	waitTitle: 'Filing',
+                	waitMsg: 'Please wait...',
+                    success: function(form, action) {
+                       Ext.Msg.alert('Success', action.result.message);
+                    },
+                    failure: function(form, action) {
+                        Ext.Msg.alert('Failed', action.result.message);
+                    }
+                });
+            }
+       } 		
 	}, {
-		text: 'File & Requeue'
+		text: 'File & Requeue',
+		formBind: true
 	}]
 });
+
 var availableDOMHeight = function() {
 	if (typeof window.innerHeight !== 'undefined') {
     	return window.innerHeight - 160;
@@ -551,8 +698,10 @@ Ext.create('Ext.window.Window', {
 	        items: [{
 	        	title: 'File Document',
 	        	border: 0,
-		        xtype: 'filedocumentformpanel',				
-		        width: 300
+		        xtype: 'filedocumentformpanel',
+		        url: '/admin/queued_documents/file_document',				
+		        width: 300,
+		        height: 310
 	        },{
 	        	title: 'Re-Queue Document',
 		        html: 'Panel content!',
