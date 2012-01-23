@@ -358,67 +358,70 @@ class QueuedDocumentsController extends AppController {
 		);
 		$this->set($params);		
 	}
-
-    function admin_file_document() {
-		if(empty($this->data['FiledDocument']['id'])) {
-		    $this->Session->setFlash(__('Invalid document Id. Please try again.', true), 'flash_failure');
-		    $this->redirect(array('action' => 'index'));
-		}
-		$user = $this->QueuedDocument->User->find('first', array('conditions' => array(
-		    'User.role_id' => 1,
-		    'User.firstname' => $this->data['FiledDocument']['firstname'],
-		    'User.lastname' => $this->data['FiledDocument']['lastname'],
-		    'User.ssn' => $this->data['FiledDocument']['ssn'])));
-		if(empty($user)) {
-		    $this->Session->setFlash(__('Unable to file document. Please try again.', true), 'flash_failure');
-		    $this->redirect(array('action' => 'index'));
-		}
-		$this->data['FiledDocument']['user_id'] = $user['User']['id'];
-		$this->data['FiledDocument']['last_activity_admin_id'] = $this->data['FiledDocument']['admin_id'];
-		$this->data['FiledDocument']['filed_location_id'] = $this->Auth->user('location_id');
-				
-		if($this->QueuedDocument->User->FiledDocument->save($this->data['FiledDocument'])) {
-			$this->QueuedDocument->delete($this->data['FiledDocument']['id']);		
-			
-			$this->loadModel('ProgramResponse');							
-			$processedDoc = $this->ProgramResponse->ProgramResponseDoc->processResponseDoc($this->data, $user);	
-			if(isset($processedDoc['docFiledEmail'])) {
-				$this->Notifications->sendProgramEmail($processedDoc['docFiledEmail'], $user);
-			}				
-			if(isset($processedDoc['finalEmail'])) {
-				$this->Notifications->sendProgramEmail($processedDoc['finalEmail'], $user);
-			}
 	
-			if(key_exists('requeue', $this->data['FiledDocument'])) {
-				$this->data['QueuedDocument']['filename'] = $this->data['FiledDocument']['filename'];
-				$this->data['QueuedDocument']['locked_by'] = $this->Auth->user('id');
-				$this->data['QueuedDocument']['locked_status'] = 1;
-				$this->data['QueuedDocument']['entry_method'] = $this->data['FiledDocument']['entry_method'];
-				$this->data['QueuedDocument']['user_id'] = $this->data['FiledDocument']['user_id'];
-				$this->data['QueuedDocument']['created'] = $this->data['FiledDocument']['created'];
-				$this->QueuedDocument->create();
-				$this->QueuedDocument->save($this->data['QueuedDocument']);
-				$id = $this->QueuedDocument->getLastInsertId();
-			    $this->Transaction->createUserTransaction('Storage', null, null ,
-				    'Filed document ID '. $this->data['FiledDocument']['id'] .
-				    ' to ' . $user['User']['lastname'] . ', ' . $user['User']['firstname'] . ' - '. substr($user['User']['ssn'], -4). '.' .
-					'and re-queued document as doc Id# '.$id);
+	function admin_file_document() {
+		if($this->RequestHandler->isAjax()) {
+			$this->data['FiledDocument'] = $this->params['form'];
+			$this->log($this->params, 'debug');
+			$this->data['FiledDocument']['last_activity_admin_id'] = $this->Auth->user('id');
+			$this->data['FiledDocument']['admin_id'] = $this->Auth->user('id');
+			$this->data['FiledDocument']['filed_location_id'] = $this->Auth->user('location_id');
+			$this->QueuedDocument->recursive = -1;
+			$queuedDoc = $this->QueuedDocument->findById($this->data['FiledDocument']['id']);
+			$this->data['FiledDocument']['scanned_location_id'] = 
+				$queuedDoc['QueuedDocument']['scanned_location_id'];
+			$this->data['FiledDocument']['entry_method'] = $queuedDoc['QueuedDocument']['entry_method'];
+			$this->data['FiledDocument']['filename'] = $queuedDoc['QueuedDocument']['filename'];
+			$this->data['FiledDocument']['entry_method'] = $queuedDoc['QueuedDocument']['entry_method'];				
+			$this->QueuedDocument->User->recursive = -1;
+			$user = $this->QueuedDocument->User->findById($this->data['FiledDocument']['user_id']);
+			if($this->QueuedDocument->User->FiledDocument->save($this->data['FiledDocument'])) {
+				$this->QueuedDocument->delete($this->data['FiledDocument']['id']);		
+				
+				$this->loadModel('ProgramResponse');							
+				$processedDoc = $this->ProgramResponse->ProgramResponseDoc->processResponseDoc($this->data, $user);	
+				if(isset($processedDoc['docFiledEmail'])) {
+					$this->Notifications->sendProgramEmail($processedDoc['docFiledEmail'], $user);
+				}				
+				if(isset($processedDoc['finalEmail'])) {
+					$this->Notifications->sendProgramEmail($processedDoc['finalEmail'], $user);
+				}
+		
+				if(key_exists('requeue', $this->data['FiledDocument'])) {
+					$this->data['QueuedDocument']['filename'] = $this->data['FiledDocument']['filename'];
+					$this->data['QueuedDocument']['locked_by'] = $this->Auth->user('id');
+					$this->data['QueuedDocument']['locked_status'] = 1;
+					$this->data['QueuedDocument']['entry_method'] = $this->data['FiledDocument']['entry_method'];
+					$this->data['QueuedDocument']['user_id'] = $this->data['FiledDocument']['user_id'];
+					$this->data['QueuedDocument']['created'] = $this->data['FiledDocument']['created'];
+					$this->QueuedDocument->create();
+					$this->QueuedDocument->save($this->data['QueuedDocument']);
+					$id = $this->QueuedDocument->getLastInsertId();
+				    $this->Transaction->createUserTransaction('Storage', null, null ,
+					    'Filed document ID '. $this->data['FiledDocument']['id'] .
+					    ' to ' . $user['User']['lastname'] . ', ' . $user['User']['firstname'] . 
+					    ' - '. substr($user['User']['ssn'], -4). '.' .
+						'and re-queued document as doc Id# '.$id);
+					$data['message'] = 'Document filed and re-queud successfully';	
+				}
+				else {
+				    $this->Transaction->createUserTransaction('Storage', null, null ,
+					    'Filed document ID '. $this->data['FiledDocument']['id'] .
+					    ' to ' . $user['User']['lastname'] . ', ' . $user['User']['firstname'] . 
+					    ' - '. substr($user['User']['ssn'],-4));
+					$data['message'] = 'Document filed successfully';	
+				}
 			    $this->sendCusFiledDocAlert($user, $this->data['FiledDocument']['id']);
-			    $this->Session->setFlash(__('The document was filed and re-queued successfully', true), 'flash_success' );
-			    $this->redirect(array('action' => 'index', 'view', $id));				
-			}	    
-		    $this->Transaction->createUserTransaction('Storage', null, null ,
-			    'Filed document ID '. $this->data['FiledDocument']['id'] .
-			    ' to ' . $user['User']['lastname'] . ', ' . $user['User']['firstname'] . ' - '. substr($user['User']['ssn'],-4));
-		    $this->sendCusFiledDocAlert($user, $this->data['FiledDocument']['id']);
-		    $this->Session->setFlash(__('The document was filed successfully', true), 'flash_success' );
-		    $this->redirect(array('action' => 'index'));
-		}
-		else{
-		    $this->Session->setFlash(__('Unable to file document. Please try again.', true), 'flash_failure');
-		    $this->redirect(array('action' => 'index'));
-		}
-    }
+				$data['success'] = true;				
+			}
+			else {
+				$data['success'] = false;
+				$data['message'] = 'Unable to file document, please try again.';
+			}
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}		 
+	}
 
     function admin_delete() {
 		if(!empty($this->data['QueuedDocument']['id'])) {
