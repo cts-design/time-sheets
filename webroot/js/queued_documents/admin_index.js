@@ -30,10 +30,7 @@ Ext.apply(Ext.form.field.VTypes, {
 Ext.define('SelfScanCategory', {
 	extend: 'Ext.data.Model',
 	fields: [
-		{name: 'id', type: 'string'},
-		{name: 'cat_1', type: 'int'},
-		{name: 'cat_2', type: 'int'},
-		{name: 'cat_3', type: 'int'}
+		'id', 'cat_1', 'cat_2','cat_3'
 	]
 });
 
@@ -46,7 +43,10 @@ Ext.create('Ext.data.Store', {
         reader: {
             type: 'json',
             root: 'cats'
-        }
+        },
+		limitParam: undefined,
+		pageParam: undefined,
+		startParam: undefined
     },
     autoLoad: true
 });
@@ -54,16 +54,9 @@ Ext.create('Ext.data.Store', {
 Ext.define('QueuedDocument', {
 	extend: 'Ext.data.Model',
 	fields:[
-		{name: 'id', type: 'string'}, 
-		{name: 'queue_cat', type: 'string'}, 
-		{name: 'scanned_location', type: 'string'},
-		{name: 'queued_to_customer', type: 'string'},
-		{name: 'locked_by', type: 'string'},
-		{name: 'locked_by_id', type: 'int'},
-		{name: 'locked_status', type: 'string'},
-		{name: 'last_activity_admin', type: 'string'},
-		{name: 'bar_code_definition_id', type: 'int'},
-		{name: 'self_scan_cat_id', type: 'int'},
+		'id', 'queue_cat', 'scanned_location',
+		'queued_to_customer', 'locked_by', 'locked_by_id', 'locked_status', 
+		'last_activity_admin', 'bar_code_definition_id', 'self_scan_cat_id',
 		{name: 'created', type: 'date', dateFormat: 'Y-m-d H:i:s'}, 
 		{name: 'modified', type: 'date', dateFormat: 'Y-m-d H:i:s'}
 	],	
@@ -71,8 +64,7 @@ Ext.define('QueuedDocument', {
 		var docQueueWindowMask = 
 			new Ext.LoadMask(Ext.getCmp('docQueueWindow'), {msg:"Loading Document..."});		
 		docQueueWindowMask.show();
-		
-		if(this.data.locked_status === "Locked" && this.data.locked_by_id === adminId) {
+		if(this.data.locked_status == "Locked" && this.data.locked_by_id == adminId) {
 			autoPopulateFilingCats(this);
 			loadPdf(this.data.id);
 			Ext.getCmp('docId').setValue(this.data.id);
@@ -98,6 +90,7 @@ Ext.define('QueuedDocument', {
 			        	}
 			        	this.set('locked_status', 'Locked');
 			        	this.set('locked_by', text.admin);
+			        	this.set('locked_by_id', text.locked_by_id);
 			        	this.set('last_activity_admin', text.admin);
 			        	this.commit();
 			        	
@@ -209,20 +202,22 @@ Ext.define('Atlas.grid.QueuedDocPanel', {
 			width: 80
 		},{ 
 			header: 'Locked By',
-			dataIndex: 'locked_by'
+			dataIndex: 'locked_by',
+			width: 115
 		},{
 			header: 'Last Act. Admin',
-			dataIndex: 'last_activity_admin'
+			dataIndex: 'last_activity_admin',
+			width: 115
 		},{
 			header: 'Created',
 			dataIndex: 'created',
-			width: 125,
+			width: 110,
 			format: 'm/d/y g:i a',
 			xtype: 'datecolumn'			
 		},{ 
 			header: 'Modified', 
 			dataIndex: 'modified',
-			width: 125,
+			width: 110,
 			format: 'm/d/y g:i a',
 			xtype: 'datecolumn'			
 		}],
