@@ -71,7 +71,8 @@ class QueuedDocumentsController extends AppController {
 				$this->paginate = array(
 					'order' => array('QueuedDocument.id ASC'),
 					'conditions' => $conditions);
-				$data['totalCount'] = $this->QueuedDocument->find('count', array('conditions' => $conditions));	
+				$data['totalCount'] = 
+					$this->QueuedDocument->find('count', array('conditions' => $conditions));	
 			}
 			else {
 				$this->paginate = array('order' => array('QueuedDocument.id ASC'));
@@ -119,9 +120,11 @@ class QueuedDocumentsController extends AppController {
 					$data['docs'][$i]['locked_status'] = 
 						$this->lockStatuses[$doc['QueuedDocument']['locked_status']];
 					$data['docs'][$i]['self_scan_cat_id'] = $doc['QueuedDocument']['self_scan_cat_id'];
+					$data['docs'][$i]['bar_code_definition_id'] = 
+						$doc['QueuedDocument']['bar_code_definition_id'];
 					$data['docs'][$i]['created'] = $doc['QueuedDocument']['created'];	
 					$data['docs'][$i]['modified'] = $doc['QueuedDocument']['modified'];
-					$i++;	
+					$i++;
  				}
 			}
 			else {
@@ -139,7 +142,8 @@ class QueuedDocumentsController extends AppController {
 			$data = $this->QueuedDocument->lockDocument($docId, $userId);
 			if($data) {
 				$data['admin'] = 
-					$this->Auth->user('lastname') . ', ' . $this->Auth->user('firstname');	
+					$this->Auth->user('lastname') . ', ' . $this->Auth->user('firstname');
+				$data['locked_by_id'] = $this->Auth->user('id');		
 				$data['success'] = true; 
 			}
 			else $data['success'] = false;
