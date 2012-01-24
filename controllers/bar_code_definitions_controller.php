@@ -110,6 +110,34 @@ class BarCodeDefinitionsController extends AppController {
 		}
 	}
 	
+   public function admin_get_definitions() {
+		if($this->RequestHandler->isAjax()) {
+		    $definitions = $this->BarCodeDefinition->find('all', array(
+				'fields' => array(
+					'BarCodeDefinition.id',
+					'BarCodeDefinition.cat_1',
+					'BarCodeDefinition.cat_2',
+					'BarCodeDefinition.cat_3')));
+			$i = 0;
+			foreach($definitions as $definition){
+				$data['definitions'][$i]['id'] = $definition['BarCodeDefinition']['id'];
+				$data['definitions'][$i]['cat_1'] = $definition['BarCodeDefinition']['cat_1'];
+				$data['definitions'][$i]['cat_2'] = $definition['BarCodeDefinition']['cat_2'];
+				$data['definitions'][$i]['cat_3'] = $definition['BarCodeDefinition']['cat_3'];
+				$i++;
+			}
+			if(!empty($data['definitions'])){
+				$data['success'] = true;
+			}
+			else {
+				$data['success'] = true;
+				$data['definitions'] = array();
+			}		
+			$this->set(compact('data'));
+			return $this->render(null, null, '/elements/ajaxreturn');
+		}
+    }
+	
 	private function getDefinition($id) {
 		$this->BarCodeDefinition->recursive = 0;
 		$definition = $this->BarCodeDefinition->findById($id);
