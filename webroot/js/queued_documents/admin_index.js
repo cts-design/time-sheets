@@ -54,10 +54,18 @@ Ext.create('Ext.data.Store', {
 Ext.define('QueuedDocument', {
 	extend: 'Ext.data.Model',
 	fields:[
-		'id', 'queue_cat', 'scanned_location', 'queued_to_customer',
-		'locked_by',{name: 'locked_by_id', type: 'int'},  
-		'locked_status', 'last_activity_admin', 'bar_code_definition',
-		'self_scan_cat_id', 'created', 'modified'
+		{name: 'id', type: 'string'}, 
+		{name: 'queue_cat', type: 'string'}, 
+		{name: 'scanned_location', type: 'string'},
+		{name: 'queued_to_customer', type: 'string'},
+		{name: 'locked_by', type: 'string'},
+		{name: 'locked_by_id', type: 'int'},
+		{name: 'locked_status', type: 'string'},
+		{name: 'last_activity_admin', type: 'string'},
+		{name: 'bar_code_definition_id', type: 'int'},
+		{name: 'self_scan_cat_id', type: 'int'},
+		{name: 'created', type: 'date', dateFormat: 'Y-m-d H:i:s'}, 
+		{name: 'modified', type: 'date', dateFormat: 'Y-m-d H:i:s'}
 	],	
 	lockDocument: function() {
 		var docQueueWindowMask = 
@@ -208,11 +216,15 @@ Ext.define('Atlas.grid.QueuedDocPanel', {
 		},{
 			header: 'Created',
 			dataIndex: 'created',
-			width: 125
+			width: 125,
+			format: 'm/d/y g:i a',
+			xtype: 'datecolumn'			
 		},{ 
 			header: 'Modified', 
 			dataIndex: 'modified',
-			width: 125
+			width: 125,
+			format: 'm/d/y g:i a',
+			xtype: 'datecolumn'			
 		}],
 		viewConfig: {
 			singleSelect: true,
