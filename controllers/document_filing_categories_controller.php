@@ -239,15 +239,15 @@ class DocumentFilingCategoriesController extends AppController {
 			else{
 				$parentId = $this->params['url']['parentId'] ;
 			}
-		    $query = $this->DocumentFilingCategory->find('list', array(
+		    $cats = $this->DocumentFilingCategory->find('all', array(
 				'conditions' => array(
 					'DocumentFilingCategory.parent_id' => $parentId,
 					'DocumentFilingCategory.disabled' => 0),
 				'fields' => array('DocumentFilingCategory.id', 'DocumentFilingCategory.name')));
 			$i = 0;
-			foreach($query as $k => $v){
-				$data['cats'][$i]['id'] = $k;
-				$data['cats'][$i]['name'] = $v;
+			foreach($cats as $cat){
+				$data['cats'][$i]['id'] = $cat['DocumentFilingCategory']['id'];
+				$data['cats'][$i]['name'] = $cat['DocumentFilingCategory']['name'];
 				$i++;
 			}
 			if(!empty($data['cats'])){
