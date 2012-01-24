@@ -27,64 +27,124 @@ Ext.apply(Ext.form.field.VTypes, {
     daterangeText: 'Start date must be less than end date'
 });
 
+Ext.define('SelfScanCategory', {
+	extend: 'Ext.data.Model',
+	fields: [
+		{name: 'id', type: 'string'},
+		{name: 'cat_1', type: 'int'},
+		{name: 'cat_2', type: 'int'},
+		{name: 'cat_3', type: 'int'}
+	]
+});
 
+Ext.create('Ext.data.Store', {
+    storeId:'selfScanCategoriesStore',
+	model: SelfScanCategory,
+    proxy: {
+        type: 'ajax',
+		url: '/admin/self_scan_categories/get_cats',
+        reader: {
+            type: 'json',
+            root: 'cats'
+        }
+    },
+    autoLoad: true
+});
 
 Ext.define('QueuedDocument', {
 	extend: 'Ext.data.Model',
 	fields:[
 		'id', 'queue_cat', 'scanned_location', 'queued_to_customer',
-		'locked_by', 'locked_status', 'last_activity_admin', 'created', 'modified'
+		'locked_by',{name: 'locked_by_id', type: 'int'},  
+		'locked_status', 'last_activity_admin', 'bar_code_definition',
+		'self_scan_cat_id', 'created', 'modified'
 	],	
 	lockDocument: function() {
 		var docQueueWindowMask = 
 			new Ext.LoadMask(Ext.getCmp('docQueueWindow'), {msg:"Loading Document..."});		
 		docQueueWindowMask.show();
-		var docStore = Ext.data.StoreManager.lookup('queuedDocumentsStore');
-		Ext.Ajax.request({
-		    url: '/admin/queued_documents/lock_document',
-		    params: {
-		        doc_id: this.get('id')
-		    },
-		    success: function(response, opts){
-		        var text = Ext.JSON.decode(response.responseText);
-		        if(text.success) {	        	
-		        	if(text.unlocked != undefined) {
-			        	var unlockedDoc = docStore.getById(text.unlocked);
-			        	if(unlockedDoc) {
-				        	unlockedDoc.set('locked_status', 'Unlocked');
-				        	unlockedDoc.set('locked_by', '');
-				        	unlockedDoc.commit();
+		
+		if(this.data.locked_status === "Locked" && this.data.locked_by_id === adminId) {
+			autoPopulateFilingCats(this);
+			loadPdf(this.data.id);
+			Ext.getCmp('docId').setValue(this.data.id);
+			docQueueWindowMask.hide();
+		}
+		else {
+			var docStore = Ext.data.StoreManager.lookup('queuedDocumentsStore');
+			Ext.Ajax.request({
+			    url: '/admin/queued_documents/lock_document',
+			    params: {
+			        doc_id: this.get('id')
+			    },
+			    success: function(response, opts){
+			        var text = Ext.JSON.decode(response.responseText);
+			        if(text.success) {	        	
+			        	if(text.unlocked != undefined) {
+				        	var unlockedDoc = docStore.getById(text.unlocked);
+				        	if(unlockedDoc) {
+					        	unlockedDoc.set('locked_status', 'Unlocked');
+					        	unlockedDoc.set('locked_by', '');
+					        	unlockedDoc.commit();
+				        	}
 			        	}
-		        	}
-		        	this.set('locked_status', 'Locked');
-		        	this.set('locked_by', text.admin);
-		        	this.set('last_activity_admin', text.admin);
-		        	this.commit();
-		        	Ext.getCmp('pdfFrame').el.dom.src = 
-						'/admin/queued_documents/view/'+text.locked+'/#toolbar=1&statusbar=0&navpanes=0&zoom=50';
-					Ext.getCmp('docId').setValue(text.locked);	
-					docQueueWindowMask.hide()
-		        }
-		        else {
-		        	opts.failure();
-		        }	
-		    },
-		    failure: function(response, opts) {
-		    	Ext.MessageBox.alert(
-		    		'Failure', 'Unable to lock document for viewing.<br />'
-		    		+'Make sure it is not locked by someone else.<br />'
-		    		+'Please use the refresh button in the grid toolbar<br />'
-		    		+'to update the grid view if nessesary.'
-		    	);
-		    	docQueueWindowMask.hide();
-		    	docStore.load();
-			    Ext.getCmp('pdfFrame').el.dom.src = '';		    		
-		    },
-		    scope: this
-		});
+			        	this.set('locked_status', 'Locked');
+			        	this.set('locked_by', text.admin);
+			        	this.set('last_activity_admin', text.admin);
+			        	this.commit();
+			        	
+						autoPopulateFilingCats(this);
+						
+						loadPdf(text.locked);
+						
+						Ext.getCmp('docId').setValue(text.locked);	
+						docQueueWindowMask.hide();
+			        }
+			        else {
+			        	opts.failure();
+			        }	
+			    },
+			    failure: function(response, opts) {
+			    	Ext.MessageBox.alert(
+			    		'Failure', 'Unable to lock document for viewing.<br />'
+			    		+'Make sure it is not locked by someone else.<br />'
+			    		+'Please use the refresh button in the grid toolbar<br />'
+			    		+'to update the grid view if nessesary.'
+			    	);
+			    	docQueueWindowMask.hide();
+			    	docStore.load();
+				    Ext.getCmp('pdfFrame').el.dom.src = '';		    		
+			    },
+			    scope: this
+			});			
+		}
 	}
 });
 
+function loadPdf(docId) {
+	Ext.getCmp('pdfFrame').el.dom.src = 
+		'/admin/queued_documents/view/'+docId+'/#toolbar=1&statusbar=0&navpanes=0&zoom=50';	
+}
+
+function autoPopulateFilingCats(doc) {
+	if(doc.data.self_scan_cat_id) {
+		var selfScanCatStore = Ext.data.StoreManager.lookup('selfScanCategoriesStore');
+		var cat = selfScanCatStore.getById(doc.data.self_scan_cat_id);
+		if(cat.data.cat_1 != undefined) {
+			Ext.getCmp('mainFilingCats').select(cat.data.cat_1);
+			var cat2Store = Ext.data.StoreManager.lookup('documentFilingCats2');			
+			cat2Store.load({params:{'parentId' : cat.data.cat_1}});
+		}
+		if(cat.data.cat_2 != undefined) {
+			Ext.getCmp('secondFilingCats').select(cat.data.cat_2);
+			var cat3Store = Ext.data.StoreManager.lookup('documentFilingCats3');
+			cat3Store.load({params:{'parentId' : cat.data.cat_2}});		        			
+		}
+		if(cat.data.cat_3 != undefined) {
+			Ext.getCmp('thirdFilingCats').select(cat.data.cat_3);
+		}							
+	}	
+}
 
 Ext.create('Ext.data.Store', {
     storeId:'queuedDocumentsStore',
@@ -101,13 +161,15 @@ Ext.create('Ext.data.Store', {
     }
 });
 
-var contextMenu = Ext.create('Ext.menu.Menu', {
+Ext.create('Ext.menu.Menu', {
+	id: 'gridContextMenu',
 	items: [{
 		text: 'View Doc',
 		icon:  '/img/icons/note_add.png',
     	handler: function() {
     		var selectionModel = Ext.getCmp('queuedDocGrid').getView().getSelectionModel();
     		var doc = selectionModel.getLastSelected();
+    		Ext.getCmp('fileDocFormResetButton').fireEvent('click');
     		doc.lockDocument();
     	}		
 	}]
@@ -158,7 +220,7 @@ Ext.define('Atlas.grid.QueuedDocPanel', {
 	        listeners: {
 	            itemcontextmenu: function(view, rec, node, index, e) {
 	                e.stopEvent();
-	                contextMenu.showAt(e.getXY());	    			    			
+	                Ext.getCmp('gridContextMenu').showAt(e.getXY());	    			    			
 		     		docId = rec.data.id;
 		            return false;
 		        }
@@ -353,6 +415,7 @@ Ext.define('Atlas.form.field.FirstNameComboBox', {
 	alias: 'widget.firstnamecombobox',
 	fieldLabel: 'First Name',
 	allowBlank: false,
+	forceSelection: true,
 	valueField: 'id',
 	displayField: 'firstname',
 	msgTarget: 'under',
@@ -397,9 +460,10 @@ Ext.create('Ext.data.Store', {
 Ext.define('Atlas.form.field.SsnComboBox', {
 	extend: 'Ext.form.field.ComboBox',
 	alias: 'widget.ssncombobox',
-	fieldLabel: 'Last 4 of SSN',
+	fieldLabel: 'Last 4 SSN',
 	disabled: true,
 	allowBlank: false,
+	forceSelection: true,
 	emptyText: 'Please enter last 4 of customer ssn',
 	msgTarget: 'under',
 	name: 'user_id',
@@ -436,7 +500,7 @@ Ext.create('Ext.data.Store', {
 Ext.define('Atlas.form.field.FindCusByComboBox', {
 	extend: 'Ext.form.field.ComboBox',
 	alias: 'widget.findcusbycombobox',
-	fieldLabel: 'Find customer by',
+	fieldLabel: 'Find Cus. By',
 	store: 'findCusBy',
 	submitValue: false,
 	emptyText: 'Please Select',
@@ -496,7 +560,8 @@ Ext.create('Ext.data.Store', {
 		limitParam: undefined,
 		pageParam: undefined,
 		startParam: undefined				
-	}	
+	},
+	autoLoad: true	
 });	
 
 Ext.create('Ext.data.Store', {
@@ -562,13 +627,16 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 	bodyPadding: 10,
 	layout: 'anchor',
 	defaults: {
-		labelWidth: 70,
+		labelWidth: 75,
 		anchor: '100%'
 	},
 	items:[{
 		xtype: 'combobox',
 		fieldLabel: 'Main Cat',
+		id: 'mainFilingCats',
 		store: 'documentFilingCats',
+		emptyText: 'Select main filing category',
+		editable: false,
 		displayField: 'name',
 		valueField: 'id',
 		forceSelection: true,
@@ -587,10 +655,12 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 		fieldLabel: 'Second Cat',
 		id: 'secondFilingCats',
 		store: 'documentFilingCats2',
+		emptyText: 'Select second filing category',
 		displayField: 'name',
 		valueField: 'id',
 		name: 'cat_2',
 		forceSelection: true,
+		editable: false,
 		queryMode: 'local',
 		disabled: true,
 		allowBlank: false,
@@ -609,9 +679,11 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 		id: 'thirdFilingCats',
 		name: 'cat_3',
 		store: 'documentFilingCats3',
+		emptyText: 'Select third filing category',
 		displayField: 'name',
 		valueField: 'id',
 		forceSelection: true,
+		editable: false,
 		queryMode: 'local',
 		disabled: true,
 		allowBlank: false	
@@ -620,14 +692,18 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 		fieldLabel: 'Other',
 		name: 'description'
 	},{
-		xtype: 'findcusbycombobox',
-		margin: '10 0 10 0'
+		xtype: 'findcusbycombobox'
 	},{
 		xtype: 'lastnametextfield'
 	},{
 		xtype: 'firstnamecombobox'
 	},{
 		xtype: 'ssncombobox'
+	},{
+		xtype: 'checkbox',
+		fieldLabel: 'Re-Queue',
+		value: 'yes',
+		name: 'requeue'
 	},{
 		xtype: 'hidden',
 		name: 'id',
@@ -644,7 +720,11 @@ Ext.define('Atlas.form.FileDocumentPanel', {
                 	waitTitle: 'Filing',
                 	waitMsg: 'Please wait...',
                     success: function(form, action) {
-                       Ext.Msg.alert('Success', action.result.message);
+                    	Ext.getCmp('secondFilingCats').disable();	
+                       	Ext.getCmp('thirdFilingCats').disable();                       
+                       	form.reset();
+                       	Ext.Msg.alert('Success', action.result.message);
+                       	Ext.data.StoreManager.lookup('queuedDocumentsStore').load();
                     },
                     failure: function(form, action) {
                         Ext.Msg.alert('Failed', action.result.message);
@@ -652,9 +732,16 @@ Ext.define('Atlas.form.FileDocumentPanel', {
                 });
             }
        } 		
-	}, {
-		text: 'File & Requeue',
-		formBind: true
+	},{
+		text: 'Reset',
+		id: 'fileDocFormResetButton',
+		listeners: {
+			click: function() {
+				this.up('form').getForm().reset();
+				Ext.getCmp('secondFilingCats').disable();
+				Ext.getCmp('thirdFilingCats').disable();				
+			}
+		}
 	}]
 });
 
@@ -685,7 +772,7 @@ Ext.create('Ext.window.Window', {
         region:'west',
         xtype: 'panel',
         margins: '5 0 0 5',
-        width: 300,
+        width: 315,
         id: 'westContainer',
         layout: 'accordion',
 	    items: [{
@@ -700,38 +787,38 @@ Ext.create('Ext.window.Window', {
 	        	border: 0,
 		        xtype: 'filedocumentformpanel',
 		        url: '/admin/queued_documents/file_document',				
-		        width: 300,
-		        height: 310
+		       	width: '100%',
+		        height: 300
 	        },{
 	        	title: 'Re-Queue Document',
 		        html: 'Panel content!',
 		        flex: 1,
-		        width: 300		        	
+		        width: '100%',
 	        },{
 	        	title: 'Delete Document',
 		        html: 'Panel content!',
 		        flex: 1,
-		        width: 300		        	
+		        width: '100%'
 	        }]
 	    },{
 	        title: 'Queue Filters',
 	        xtype: 'docqueuefilterformpanel',
 	        url: '/admin/document_queue_filters/set_filters',
 	        height: 150,
-	        width: 300,
+	        width: '100%',
 	        collapsible: true,
 	        collapsed: true
 	    },{
 	        title: 'Queue Search',
 	        html: 'Panel content!',
-	        width: 300,
+	        width: '100%',
 	        height: 200,
 	        collapsible: true,
 	        collapsed: true
 	    },{
 	        title: 'Add Customer',
 	        html: 'Panel content!',
-	        width: 300,
+	        width: '100%',
 	        height: 600,
 	        collapsible: true,
 	        collapsed: true		    	
