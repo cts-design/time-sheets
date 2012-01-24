@@ -51,6 +51,30 @@ Ext.create('Ext.data.Store', {
     autoLoad: true
 });
 
+Ext.define('BarCodeDefinition', {
+	extend: 'Ext.data.Model',
+	fields: [
+		'id', 'cat_1', 'cat_2','cat_3'
+	]
+});
+
+Ext.create('Ext.data.Store', {
+    storeId:'barCodeDefinitionsStore',
+	model: SelfScanCategory,
+    proxy: {
+        type: 'ajax',
+		url: '/admin/bar_code_definitions/get_definitions',
+        reader: {
+            type: 'json',
+            root: 'definitions'
+        },
+		limitParam: undefined,
+		pageParam: undefined,
+		startParam: undefined
+    },
+    autoLoad: true
+});
+
 Ext.define('QueuedDocument', {
 	extend: 'Ext.data.Model',
 	fields:[
@@ -129,8 +153,25 @@ function loadPdf(docId) {
 
 function autoPopulateFilingCats(doc) {
 	if(doc.data.self_scan_cat_id) {
-		var selfScanCatStore = Ext.data.StoreManager.lookup('selfScanCategoriesStore');
-		var cat = selfScanCatStore.getById(doc.data.self_scan_cat_id);
+		var cat = 
+			Ext.data.StoreManager.lookup('selfScanCategoriesStore').getById(doc.data.self_scan_cat_id);
+		if(cat.data.cat_1 != undefined) {
+			Ext.getCmp('mainFilingCats').select(cat.data.cat_1);
+			var cat2Store = Ext.data.StoreManager.lookup('documentFilingCats2');			
+			cat2Store.load({params:{'parentId' : cat.data.cat_1}});
+		}
+		if(cat.data.cat_2 != undefined) {
+			Ext.getCmp('secondFilingCats').select(cat.data.cat_2);
+			var cat3Store = Ext.data.StoreManager.lookup('documentFilingCats3');
+			cat3Store.load({params:{'parentId' : cat.data.cat_2}});		        			
+		}
+		if(cat.data.cat_3 != undefined) {
+			Ext.getCmp('thirdFilingCats').select(cat.data.cat_3);
+		}							
+	}
+	else if(doc.data.bar_code_definition_id) {
+		var cat = 
+			Ext.data.StoreManager.lookup('barCodeDefinitionsStore').getById(doc.data.bar_code_definition_id);
 		if(cat.data.cat_1 != undefined) {
 			Ext.getCmp('mainFilingCats').select(cat.data.cat_1);
 			var cat2Store = Ext.data.StoreManager.lookup('documentFilingCats2');			
