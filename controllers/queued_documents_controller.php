@@ -90,10 +90,11 @@ class QueuedDocumentsController extends AppController {
 						$queueCats[$doc['QueuedDocument']['queue_category_id']];
 					$data['docs'][$i]['scanned_location'] = 
 						$locations[$doc['QueuedDocument']['scanned_location_id']];
-					$lockedBy = $this->QueuedDocument->User->findById($doc['QueuedDocument']['locked_by']); 	
+					$lockedBy = $this->QueuedDocument->User->findById($doc['QueuedDocument']['locked_by']);
 					if($lockedBy) {
 						$data['docs'][$i]['locked_by'] = 
 							$lockedBy['User']['lastname'] . ', ' . $lockedBy['User']['firstname'];
+						$data['docs'][$i]['locked_by_id'] = $lockedBy['User']['id'];	
 					}
 					else {
 						$data['docs'][$i]['locked_by'] = '';						
@@ -117,6 +118,7 @@ class QueuedDocumentsController extends AppController {
 					}					
 					$data['docs'][$i]['locked_status'] = 
 						$this->lockStatuses[$doc['QueuedDocument']['locked_status']];
+					$data['docs'][$i]['self_scan_cat_id'] = $doc['QueuedDocument']['self_scan_cat_id'];
 					$data['docs'][$i]['created'] = $doc['QueuedDocument']['created'];	
 					$data['docs'][$i]['modified'] = $doc['QueuedDocument']['modified'];
 					$i++;	
@@ -362,7 +364,6 @@ class QueuedDocumentsController extends AppController {
 	function admin_file_document() {
 		if($this->RequestHandler->isAjax()) {
 			$this->data['FiledDocument'] = $this->params['form'];
-			$this->log($this->params, 'debug');
 			$this->data['FiledDocument']['last_activity_admin_id'] = $this->Auth->user('id');
 			$this->data['FiledDocument']['admin_id'] = $this->Auth->user('id');
 			$this->data['FiledDocument']['filed_location_id'] = $this->Auth->user('location_id');
@@ -387,13 +388,12 @@ class QueuedDocumentsController extends AppController {
 					$this->Notifications->sendProgramEmail($processedDoc['finalEmail'], $user);
 				}
 		
-				if(key_exists('requeue', $this->data['FiledDocument'])) {
-					$this->data['QueuedDocument']['filename'] = $this->data['FiledDocument']['filename'];
+				if($this->data['FiledDocument']['requeue']) {
+					$this->data['QueuedDocument'] = $queuedDoc['QueuedDocument'];
+					unset($this->data['QueuedDocument']['id']);
 					$this->data['QueuedDocument']['locked_by'] = $this->Auth->user('id');
+					$this->data['QueuedDocument']['last_activity_admin_id'] = $this->Auth->user('id');
 					$this->data['QueuedDocument']['locked_status'] = 1;
-					$this->data['QueuedDocument']['entry_method'] = $this->data['FiledDocument']['entry_method'];
-					$this->data['QueuedDocument']['user_id'] = $this->data['FiledDocument']['user_id'];
-					$this->data['QueuedDocument']['created'] = $this->data['FiledDocument']['created'];
 					$this->QueuedDocument->create();
 					$this->QueuedDocument->save($this->data['QueuedDocument']);
 					$id = $this->QueuedDocument->getLastInsertId();
@@ -402,7 +402,8 @@ class QueuedDocumentsController extends AppController {
 					    ' to ' . $user['User']['lastname'] . ', ' . $user['User']['firstname'] . 
 					    ' - '. substr($user['User']['ssn'], -4). '.' .
 						'and re-queued document as doc Id# '.$id);
-					$data['message'] = 'Document filed and re-queud successfully';	
+					$data['message'] = 'Document filed and re-queud successfully';
+					$data['locked'] = $id;	
 				}
 				else {
 				    $this->Transaction->createUserTransaction('Storage', null, null ,
