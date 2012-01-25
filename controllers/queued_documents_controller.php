@@ -98,7 +98,7 @@ class QueuedDocumentsController extends AppController {
 						$data['docs'][$i]['locked_by_id'] = $lockedBy['User']['id'];	
 					}
 					else {
-						$data['docs'][$i]['locked_by'] = '';						
+						$data['docs'][$i]['locked_by'] = null;						
 					}
 					$lastActAdmin = 
 						$this->QueuedDocument->User->findById($doc['QueuedDocument']['last_activity_admin_id']); 
@@ -107,15 +107,23 @@ class QueuedDocumentsController extends AppController {
 							$lastActAdmin['User']['lastname'] . ', ' . $lastActAdmin['User']['firstname'];						
 					}
 					else {
-						$data['docs'][$i]['last_activity_admin'] = '';						
+						$data['docs'][$i]['last_activity_admin'] = null;						
 					}
 					$queuedToCustomer = 
 						$this->QueuedDocument->User->findById($doc['QueuedDocument']['user_id']); 
 					if($queuedToCustomer) {
 						$data['docs'][$i]['queued_to_customer'] = $queuedToCustomer['User']['name_last4'];
+						$data['docs'][$i]['queued_to_customer_id'] = $queuedToCustomer['User']['id'];
+						$data['docs'][$i]['queued_to_customer_ssn'] = $queuedToCustomer['User']['ssn'];
+						$data['docs'][$i]['queued_to_customer_first'] = $queuedToCustomer['User']['firstname'];
+						$data['docs'][$i]['queued_to_customer_last'] = $queuedToCustomer['User']['lastname'];
 					}
 					else {
-						$data['docs'][$i]['queued_to_customer'] = '';						
+						$data['docs'][$i]['queued_to_customer'] = null;
+						$data['docs'][$i]['queued_to_customer_id'] = null;
+						$data['docs'][$i]['queued_to_customer_ssn'] = null;
+						$data['docs'][$i]['queued_to_customer_first'] = null;
+						$data['docs'][$i]['queued_to_customer_last'] = null;												
 					}					
 					$data['docs'][$i]['locked_status'] = 
 						$this->lockStatuses[$doc['QueuedDocument']['locked_status']];
