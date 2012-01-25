@@ -433,7 +433,7 @@ Ext.define('Atlas.form.DocQueueFilterPanel', {
     	xtype: 'checkbox',
     	fieldLabel: 'Auto Load Docs',
     	name: 'auto_load_docs',
-    	inputValue: 'yes'
+    	inputValue: "1"
     },{
     	xtype: 'hidden',
     	name: 'id'
