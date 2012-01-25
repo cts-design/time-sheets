@@ -922,8 +922,13 @@ class UsersController extends AppController {
 				foreach($users as $user) {
 					$data['users'][$i]['id'] = $user['User']['id'];
 					$data['users'][$i]['firstname'] = $user['User']['firstname'];
+					$data['users'][$i]['lastname'] = $user['User']['lastname'];
 					$data['users'][$i]['fullname'] = $user['User']['name_last4'];
-					$i++;
+					$data['users'][$i]['fullssn'] = 
+						substr($user['User']['ssn'], 0, -6) . '-' . 
+						substr($user['User']['ssn'], 3, -4) . '-' .
+						substr($user['User']['ssn'], -4);
+  					$i++;
 				}
 			}
 			else {
@@ -951,6 +956,11 @@ class UsersController extends AppController {
 					$data['users'][$i]['id'] = $user['User']['id'];
 					$data['users'][$i]['ssn'] = substr($user['User']['ssn'], -4);
 					$data['users'][$i]['fullname'] = $user['User']['name_last4'];
+					$data['users'][$i]['lastname'] = $user['User']['lastname'];
+					$data['users'][$i]['fullssn'] = 
+						substr($user['User']['ssn'], 0, -6) . '-' . 
+						substr($user['User']['ssn'], 3, -4) . '-' .
+						substr($user['User']['ssn'], -4);
 					$i++;
 				}
 			}
