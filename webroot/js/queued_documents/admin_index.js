@@ -79,7 +79,9 @@ Ext.define('QueuedDocument', {
 	extend: 'Ext.data.Model',
 	fields:[
 		'id', 'queue_cat', 'scanned_location',
-		'queued_to_customer', 'locked_by', 'locked_by_id', 'locked_status', 
+		'queued_to_customer', 'queued_to_customer_id', 'queued_to_customer_ssn',
+		'queued_to_customer_first', 'queued_to_customer_last',
+		'locked_by', 'locked_by_id', 'locked_status', 
 		'last_activity_admin', 'bar_code_definition_id', 'self_scan_cat_id',
 		{name: 'created', type: 'date', dateFormat: 'Y-m-d H:i:s'}, 
 		{name: 'modified', type: 'date', dateFormat: 'Y-m-d H:i:s'}
@@ -90,6 +92,11 @@ Ext.define('QueuedDocument', {
 		docQueueWindowMask.show();
 		if(this.data.locked_status == "Locked" && this.data.locked_by_id == adminId) {
 			autoPopulateFilingCats(this);
+			
+			if(this.data.queued_to_customer_id) {
+				autoPopulateCustomerInfo(this);						
+			}
+			
 			loadPdf(this.data.id);
 			Ext.getCmp('docId').setValue(this.data.id);
 			docQueueWindowMask.hide();
@@ -120,6 +127,10 @@ Ext.define('QueuedDocument', {
 			        	
 						autoPopulateFilingCats(this);
 						
+						if(this.data.queued_to_customer_id) {
+							autoPopulateCustomerInfo(this);						
+						}
+						
 						loadPdf(text.locked);
 						
 						Ext.getCmp('docId').setValue(text.locked);	
@@ -149,6 +160,21 @@ Ext.define('QueuedDocument', {
 function loadPdf(docId) {
 	Ext.getCmp('pdfFrame').el.dom.src = 
 		'/admin/queued_documents/view/'+docId+'/#toolbar=1&statusbar=0&navpanes=0&zoom=50';	
+}
+
+function autoPopulateCustomerInfo(doc) {
+	var cusStore = Ext.data.StoreManager.lookup('customerFirstname');
+	
+	cusStore.add({
+		id: doc.data.queued_to_customer_id, 
+		firstname: doc.data.queued_to_customer_first, 
+		lastname: doc.data.queued_to_customer_last
+	});
+	
+	Ext.getCmp('fileDocLastname').setValue(doc.data.queued_to_customer_last);
+	Ext.getCmp('fileDocFirstname').setValue(doc.data.queued_to_customer_id);
+	Ext.getCmp('fileDocCusDetails').setValue(
+		doc.data.queued_to_customer_ssn + ', ' + doc.data.queued_to_customer_last);	
 }
 
 function autoPopulateFilingCats(doc) {
@@ -464,6 +490,7 @@ Ext.define('Atlas.form.field.FirstNameComboBox', {
 	fieldLabel: 'First Name',
 	allowBlank: false,
 	forceSelection: true,
+	hideTrigger: true,
 	valueField: 'id',
 	displayField: 'firstname',
 	msgTarget: 'under',
@@ -480,13 +507,17 @@ Ext.define('Atlas.form.field.FirstNameComboBox', {
 	listeners: {
 		beforequery: function(queryEvent, eOpts) {
  			queryEvent.query = this.prev().getValue() + ',' + queryEvent.query;
+		},
+		select: function(combo, records, eOpts) {
+			this.nextSibling('#fileDocCusDetails').setValue(
+				records[0].data.fullssn + ', ' + records[0].data.lastname);
 		}
 	}	
 });
 
 Ext.define('Customer', {
 	extend: 'Ext.data.Model',
-	fields: ['id', 'firstname', 'lastname', 'fullname', 'ssn']
+	fields: ['id', 'firstname', 'lastname', 'fullname', 'ssn', 'fullssn']
 });
 
 Ext.create('Ext.data.Store', {
@@ -512,6 +543,7 @@ Ext.define('Atlas.form.field.SsnComboBox', {
 	disabled: true,
 	allowBlank: false,
 	forceSelection: true,
+	hideTrigger: true,
 	emptyText: 'Please enter last 4 of customer ssn',
 	msgTarget: 'under',
 	name: 'user_id',
@@ -526,6 +558,12 @@ Ext.define('Atlas.form.field.SsnComboBox', {
 		getInnerTpl: function() {
 			return '<div>{fullname}</div>';
 		}
+	},
+	listeners: {
+		select: function(combo, records, eOpts) {
+			this.nextSibling('#fileDocCusDetails').setValue(
+				records[0].data.fullssn + ', ' + records[0].data.lastname);
+		}		
 	}		
 });
 
@@ -560,6 +598,7 @@ Ext.define('Atlas.form.field.FindCusByComboBox', {
 			var first = this.next(),
 				last = first.next(),
 				ssn = last.next();
+				cusDetails = ssn.next();
 			if(!newValue){
 				first.disable();
 				last.disable();
@@ -568,12 +607,17 @@ Ext.define('Atlas.form.field.FindCusByComboBox', {
 			if(newValue === 'Name') {
 				first.enable();
 				last.enable();
-				ssn.disable();				
+				ssn.disable();
+				ssn.reset();
+				cusDetails.reset();				
 			}
 			if(newValue === 'Last 4 SSN') {
 				first.disable();
+				first.reset();
+				last.reset();
 				last.disable();
 				ssn.enable();
+				cusDetails.reset();
 			}
 		}
 	}
@@ -742,11 +786,18 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 	},{
 		xtype: 'findcusbycombobox'
 	},{
-		xtype: 'lastnametextfield'
+		xtype: 'lastnametextfield',
+		id: 'fileDocLastname'
 	},{
-		xtype: 'firstnamecombobox'
+		xtype: 'firstnamecombobox',
+		id: 'fileDocFirstname'
 	},{
 		xtype: 'ssncombobox'
+	},{
+		xtype: 'textfield',
+		fieldLabel: 'Cus. Details',
+		readOnly: true,
+		id: 'fileDocCusDetails'
 	},{
 		xtype: 'checkbox',
 		fieldLabel: 'Re-Queue',
@@ -836,7 +887,7 @@ Ext.create('Ext.window.Window', {
 		        xtype: 'filedocumentformpanel',
 		        url: '/admin/queued_documents/file_document',				
 		       	width: '100%',
-		        height: 300
+		        height: 325
 	        },{
 	        	title: 'Re-Queue Document',
 		        html: 'Panel content!',
