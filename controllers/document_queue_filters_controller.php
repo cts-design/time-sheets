@@ -17,7 +17,10 @@ class DocumentQueueFiltersController extends AppController {
 				$this->data['DocumentQueueFilter']['to_date'] = 
 					date('Y-m-d', strtotime($this->data['DocumentQueueFilter']['to_date']));
 			}
-			else $this->data['DocumentQueueFilter']['to_date'] = null;			
+			else $this->data['DocumentQueueFilter']['to_date'] = null;
+			if(!isset($this->data['DocumentQueueFilter']['auto_load_docs'])) {
+				$this->data['DocumentQueueFilter']['auto_load_docs'] = 0;
+			}
 			if($this->DocumentQueueFilter->save($this->data)) {
 				$data['success'] = true;
 				$data['message'] = 'Filters set successfully.';
