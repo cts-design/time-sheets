@@ -16,7 +16,7 @@ class DocumentQueueFilter extends AppModel {
 	var $validate = array(
 	    'user_id' => array(
 			'unique' => array(
-			    'rule' => 'unique',
+			    'rule' => 'isUnique',
 			    'message' => 'Filters already exist for this user',
 			    'on' => 'create'
 			)
