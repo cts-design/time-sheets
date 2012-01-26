@@ -731,12 +731,6 @@ var JobOrderForms = {
 		html = Ext.create('Ext.XTemplate', htmlMarkup).apply(data); 
 		win = window.open('', 'printgrid');
 		
-		if (Ext.isGecko) {
-			win.print();
-			win.close();
-			return;
-		}
-		
 		win.document.write(html);
 		win.print();
 		win.close();
