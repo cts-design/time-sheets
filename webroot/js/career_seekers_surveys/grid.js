@@ -101,10 +101,10 @@ var CareerSeekers = {
       listeners: {
         itemclick: {
           fn: function(view, rec, item, index, e, opts) {
-            var gridToolbars = this.grid.getDockedItems();
+            var gridToolbars = this.grid.getToolbars();
             this.selectedRecord = rec;
 
-            gridToolbars[1].items.items[0].enable();
+            gridToolbars[0].items.items[0].enable();
           },
           scope: this
         },
