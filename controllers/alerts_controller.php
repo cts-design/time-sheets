@@ -67,7 +67,7 @@ class AlertsController extends AppController {
 				$this->data['Alert']['watched_id'] = $this->params['form']['level2'];
 			}
 			elseif(isset($this->params['form']['level2']) && isset($this->params['form']['level3'])) {
-				$this->data['Alert']['watched_id'] = $this->params['form']['level2'];
+				$this->data['Alert']['watched_id'] = $this->params['form']['level3'];
 			}
 			if($this->Alert->save($this->data)) {
 				$id = $this->Alert->getLastInsertId();

@@ -3,6 +3,14 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+	<h1>Release 3.2.2 (1/26/12)</h1>
+	<h2>Bug Fixes</h2>
+	<ol>
+		<li>FIxed bug that was causing Alerts module to not fully exectue "3rd" level alert criteria</li>
+		<li>Fixed spelling error within Alerts email notification</li>
+		<li>Additional customer level updates to content</li>
+	</ol>
+	<hr />
 	<h1>Release 3.2.1 (1/19/12)</h1>
 	<h2>Bug Fixes</h2>
 	<ol>
