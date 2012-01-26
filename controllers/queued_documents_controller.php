@@ -33,6 +33,7 @@ class QueuedDocumentsController extends AppController {
 
     function beforeFilter() {
 		parent::beforeFilter();
+		//TODO remove the cookie, most likely no longer needed
 		$this->Cookie->name = 'docQueueSearch';
 		$this->Cookie->time = 0;
 		$this->Security->validatePost = false;
@@ -65,7 +66,7 @@ class QueuedDocumentsController extends AppController {
 					    $to = date('Y-m-d H:i:m',
 					    	strtotime($filters['DocumentQueueFilter']['to_date'] . " 11:59 pm"));
 					    $conditions['QueuedDocument.created Between ? AND ?'] = array($from, $to); 
-				}
+				} 
 			}
 			if(isset($conditions)) {
 				$this->paginate = array(
@@ -114,7 +115,10 @@ class QueuedDocumentsController extends AppController {
 					if($queuedToCustomer) {
 						$data['docs'][$i]['queued_to_customer'] = $queuedToCustomer['User']['name_last4'];
 						$data['docs'][$i]['queued_to_customer_id'] = $queuedToCustomer['User']['id'];
-						$data['docs'][$i]['queued_to_customer_ssn'] = $queuedToCustomer['User']['ssn'];
+						$data['docs'][$i]['queued_to_customer_ssn'] = 
+							substr($queuedToCustomer['User']['ssn'], 0, -6) . '-' . 
+							substr($queuedToCustomer['User']['ssn'], 3, -4) . '-' .
+							substr($queuedToCustomer['User']['ssn'], -4);
 						$data['docs'][$i]['queued_to_customer_first'] = $queuedToCustomer['User']['firstname'];
 						$data['docs'][$i]['queued_to_customer_last'] = $queuedToCustomer['User']['lastname'];
 					}
@@ -150,8 +154,7 @@ class QueuedDocumentsController extends AppController {
 			$data = $this->QueuedDocument->lockDocument($docId, $userId);
 			if($data) {
 				$data['admin'] = 
-					$this->Auth->user('lastname') . ', ' . $this->Auth->user('firstname');
-				$data['locked_by_id'] = $this->Auth->user('id');		
+					$this->Auth->user('lastname') . ', ' . $this->Auth->user('firstname');		
 				$data['success'] = true; 
 			}
 			else $data['success'] = false;
@@ -160,164 +163,6 @@ class QueuedDocumentsController extends AppController {
 		$this->render(null, null, '/elements/ajaxreturn');
 	}
 	
-    function admin_index_old($action=null, $docId=null, $active=null) {
-		$canFile = null;
-		if(!empty($action) && $action == 'reset') {
-		    if($this->RequestHandler->isAjax()) {
-			$this->QueuedDocument->checkLocked($this->Auth->user('id'));
-			exit;
-		    }
-		    elseif(!$this->RequestHandler->isAjax()) {
-			$this->_resetFilters();
-			$this->redirect(array('action' => 'index'));
-		    }
-		}
-		if(!empty($action) && $action == 'resetInactive') {
-		    $this->QueuedDocument->checkLocked($this->Auth->user('id'));
-		    $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => true));
-		}
-		if(!empty($this->data['User']['qd']) && $this->data['User']['qd'] == 'add' ) {
-		    $this->_addCustomer();
-		}
-		$this->QueuedDocument->recursive = 0;
-		$locationId = $this->Cookie->read('location_id');
-		$queuedDocId = $this->Cookie->read('queue_category_id');
-		$from = $this->Cookie->read('date_from');
-		$to = $this->Cookie->read('date_to');
-		if(!$this->RequestHandler->isAjax()) {
-		    if(!empty($this->data['QueuedDocument']) && empty($this->data['QueuedDocument']['location'])) {
-				$this->Session->setFlash(__('You must select a location', true), 'flash_failure');
-		    }
-		}
-		if(!empty($this->data['QueuedDocument'])) {
-		    $this->_resetFilters();
-		    if($this->data['QueuedDocument']['location'] != 'All') {
-			$conditions['QueuedDocument.scanned_location_id'] = $this->data['QueuedDocument']['location'];
-		    }
-		    $this->Cookie->write('location_id', $this->data['QueuedDocument']['location']);
-		    $locationId = $this->data['QueuedDocument']['location'];
-		}
-	
-		elseif(!empty($locationId) && $locationId != 'All') {
-		    $conditions['QueuedDocument.scanned_location_id'] = $locationId;
-		}
-		if(!empty($this->data['QueuedDocument']['program']) && !empty($this->data['QueuedDocument']['location'])) {
-		    $conditions['QueuedDocument.queue_category_id'] = $this->data['QueuedDocument']['program'];
-		    $this->Cookie->write('queue_category_id', $this->data['QueuedDocument']['program']);
-		    $queuedDocId = $this->data['QueuedDocument']['program'];
-		}
-		elseif(!empty($queuedDocId)) {
-		    $conditions['QueuedDocument.queue_category_id'] = $queuedDocId;
-		}
-		if(!empty($this->data['QueuedDocument']['date_from']) && !empty($this->data['QueuedDocument']['date_to'])
-			&& !empty($this->data['QueuedDocument']['location'])) {
-		    $from = date('Y-m-d H:i:m', strtotime($this->data['QueuedDocument']['date_from'] . " 12:00 am"));
-		    $to = date('Y-m-d H:i:m', strtotime($this->data['QueuedDocument']['date_to'] . " 11:59 pm"));
-		    $this->Cookie->write('date_from', $from);
-		    $this->Cookie->write('date_to', $to);
-		    $conditions['QueuedDocument.created Between ? AND ?'] = array($from, $to);
-		}
-		elseif(!empty($from) && !empty($to)) {
-		    $conditions['QueuedDocument.created Between ? AND ?'] = array($from, $to);
-		}
-		if(isset($conditions)) {
-		    // @TODO Move the pagianation limits to the config file
-		    $this->paginate = array('limit' => 10, 'conditions' => $conditions);
-		}
-		else {
-		    // @TODO Move the pagianation limits to the config file 
-		    $this->paginate = array('limit' => 10);
-		}
-		if(isset($conditions) || $locationId == 'All' || !empty($docId)) {
-		    $this->QueuedDocument->checkLocked($this->Auth->user('id'));
-		    if(!empty($docId)) {
-			$conditions['QueuedDocument.id'] = $docId;
-		    }
-		    $conditions['QueuedDocument.locked_status'] = 0;
-		    $doc = $this->QueuedDocument->find('first',
-				    array('conditions' => $conditions, 'order' => array('QueuedDocument.id' => 'asc')));
-		    if(!empty($doc['QueuedDocument']['id'])) {
-				if($this->QueuedDocument->lockDocument($doc['QueuedDocument']['id'], $this->Auth->user('id'))) {
-				    $lockedDoc = $doc;
-				    $this->Transaction->createUserTransaction('Storage', null, null , 'Locked document ID '. $doc['QueuedDocument']['id'] );
-				}
-		    }
-		    else
-			$lockedDoc = null;
-		}
-		else {
-		    $lockedDoc = null;
-		}
-		$this->loadModel('DocumentFilingCategory');
-		$this->DocumentFilingCategory->recursive = -1;
-		if(!empty($from)) {
-		    $from = date('m/d/Y', strtotime($from));
-		}
-		if(!empty($to)) {
-		    $to = date('m/d/Y', strtotime($to));
-		}
-		if($this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'QueuedDocuments/admin_file_document', '*')) {
-		    if($active == null && !empty($conditions)) {
-			$active = 2;
-		    }
-		    $canFile = true;
-		}
-		else {
-		    if($active == null && !empty($conditions)) {
-			$active = 1;
-		    }
-		}
-		$locations = $this->QueuedDocument->Location->find('list');
-		$locations['All'] = 'All Locations';
-	
-		$data = array(
-		    'states' => $this->states,
-		    'genders' => $this->genders,
-		    'statuses' => $this->statuses,
-		    'active' => $active,
-		    'lockedDoc' => $lockedDoc,
-		    'lockStatuses' => $this->lockStatuses,
-		    'queuedDocuments' => $this->paginate(),
-		    'cat1' => $this->DocumentFilingCategory->find('list',
-			    array('conditions' => array('DocumentFilingCategory.parent_id' => null, 'DocumentFilingCategory.disabled' => 0))),
-		    'locations' => $locations,
-		    'reasons' => $this->reasons,
-		    'queueCategories' => $this->QueuedDocument->DocumentQueueCategory->find('list', array(
-		    	'conditions' => array('DocumentQueueCategory.deleted' => 0))),
-		    'locationId' => $locationId,
-		    'queuedDocId' => $queuedDocId,
-		    'from' => $from,
-		    'to' => $to,
-		    'canFile' => $canFile
-		);
-		if(!empty($lockedDoc['QueuedDocument']['user_id'])) {
-		    $data['user'] = $this->QueuedDocument->User->read(null,$lockedDoc['QueuedDocument']['user_id'] );
-		}
-		if(!empty($lockedDoc['QueuedDocument']['bar_code_definition_id'])) {
-			$this->loadModel('BarCodeDefinition');
-			 $definition = $this->BarCodeDefinition->findById(
-				$lockedDoc['QueuedDocument']['bar_code_definition_id'], array('cat_1', 'cat_2', 'cat_3'));	
-			if($definition) {
-				$data['categories'] = $definition['BarCodeDefinition'];
-			}		
-		}		
-		else if(!empty($lockedDoc['QueuedDocument']['self_scan_cat_id'])) {
-		    $category = $this->QueuedDocument->SelfScanCategory->findById(
-		    	$lockedDoc['QueuedDocument']['self_scan_cat_id'], array('cat_1', 'cat_2', 'cat_3'));
-			if($category) {
-				$data['categories'] = $category['SelfScanCategory'];
-			}	
-		}
-
-		$this->set($data);
-		if($this->RequestHandler->isAjax()) {
-		    $this->layout = 'ajax';
-		    if(!empty($this->params['named']['page'])) {
-			$this->render('/elements/queued_documents/index_table');
-		    }
-		}
-    }
-
     function admin_reassign_queue() {
 		if(empty($this->data['QueuedDocument']['id'])) {
 		    $this->Session->setFlash(__('Invalid document id. Please try again.', true), 'flash_failure');
@@ -400,7 +245,7 @@ class QueuedDocumentsController extends AppController {
 					$this->Notifications->sendProgramEmail($processedDoc['finalEmail'], $user);
 				}
 		
-				if($this->data['FiledDocument']['requeue']) {
+				if(isset($this->data['FiledDocument']['requeue'])) {
 					$this->data['QueuedDocument'] = $queuedDoc['QueuedDocument'];
 					unset($this->data['QueuedDocument']['id']);
 					$this->data['QueuedDocument']['locked_by'] = $this->Auth->user('id');
@@ -418,6 +263,39 @@ class QueuedDocumentsController extends AppController {
 					$data['locked'] = $id;	
 				}
 				else {
+					if($this->checkAutoLoad()) {
+						$conditions = $this->getDocumentQueueFilters();
+						if($conditions) {
+							
+							$conditons['QueuedDocument']['locked_status'] = 0;
+							$doc = $this->QueuedDocument->find('first', array(
+								'conditions' => $conditions,
+								'order' => array('QueuedDocument.id ASC')));
+	
+							$data = $this->QueuedDocument->lockDocument(
+								$doc['QueuedDocument']['id'], $this->Auth->user('id'));
+							if($data['user_id']) {
+								$this->QueuedDocument->User->recursive = -1;
+								$user = $this->QueuedDocument->User->findById($data['user_id']);
+								if($user){
+									$data['queued_to_customer_id'] = $user['User']['id'];
+									$data['queued_to_customer_first'] = $user['User']['firstname'];
+									$data['queued_to_customer_last'] = $user['User']['lastname'];
+									$data['queued_to_customer_ssn'] = 
+										substr($user['User']['ssn'], 0, -6) . '-' . 
+										substr($user['User']['ssn'], 3, -4) . '-' .
+										substr($user['User']['ssn'], -4);									
+								}
+								else {
+									$data['queued_to_customer_id'] = null;
+									$data['queued_to_customer_first'] = null;
+									$data['queued_to_customer_last'] = null;
+									$data['queued_to_customer_ssn'] = null;									
+								}
+								
+							}			
+						}	
+					}
 				    $this->Transaction->createUserTransaction('Storage', null, null ,
 					    'Filed document ID '. $this->data['FiledDocument']['id'] .
 					    ' to ' . $user['User']['lastname'] . ', ' . $user['User']['firstname'] . 
@@ -506,6 +384,37 @@ class QueuedDocumentsController extends AppController {
 		    }
 		}
     }
+	
+	private function checkAutoLoad() {
+		$this->loadModel('DocumentQueueFilter');
+		return $this->DocumentQueueFilter->Field('auto_load_docs', 
+			array('user_id' => $this->Auth->user('id')));	
+	}
+	
+	private function getDocumentQueueFilters() {
+		$this->loadModel('DocumentQueueFilter');
+		$filters = $this->DocumentQueueFilter->findByUserId($this->Auth->user('id'));
+		if($filters) {
+			$locations = json_decode($filters['DocumentQueueFilter']['locations'], true);
+			if(!empty($locations)) {
+				$conditions['QueuedDocument.scanned_location_id'] = $locations;
+			}
+			$queueCats = json_decode($filters['DocumentQueueFilter']['queue_cats'], true);
+			if(!empty($queueCats)) {
+				$conditions['QueuedDocument.queue_category_id'] = $queueCats;
+			}
+			if(!empty($filters['DocumentQueueFilter']['from_date']) && 
+			   !empty($filters['DocumentQueueFilter']['to_date'] )){
+				    $from = date('Y-m-d H:i:m', 
+				    	strtotime($filters['DocumentQueueFilter']['from_date'] . " 12:00 am"));
+				    $to = date('Y-m-d H:i:m',
+				    	strtotime($filters['DocumentQueueFilter']['to_date'] . " 11:59 pm"));
+				    $conditions['QueuedDocument.created Between ? AND ?'] = array($from, $to); 
+			}
+			return $conditions;   		    
+		}
+		return false;		
+	}	
 	
 	private function sendCusFiledDocAlert($user, $docId) {
 		$this->loadModel('Alert');
