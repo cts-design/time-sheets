@@ -91,7 +91,9 @@ Ext.define('QueuedDocument', {
 			new Ext.LoadMask(Ext.getCmp('docQueueWindow'), {msg:"Loading Document..."});		
 		docQueueWindowMask.show();
 		if(this.data.locked_status == "Locked" && this.data.locked_by_id == adminId) {
-			autoPopulateFilingCats(this);
+			if(this.data.self_scan_cat_id || this.data.bar_code_definition_id) {
+				autoPopulateFilingCats(this);
+			}
 			
 			if(this.data.queued_to_customer_id) {
 				autoPopulateCustomerInfo(this);						
@@ -121,7 +123,7 @@ Ext.define('QueuedDocument', {
 			        	}
 			        	this.set('locked_status', 'Locked');
 			        	this.set('locked_by', text.admin);
-			        	this.set('locked_by_id', text.locked_by_id);
+			        	this.set('locked_by_id', text.locked_by);
 			        	this.set('last_activity_admin', text.admin);
 			        	this.commit();
 			        	
@@ -131,9 +133,9 @@ Ext.define('QueuedDocument', {
 							autoPopulateCustomerInfo(this);						
 						}
 						
-						loadPdf(text.locked);
+						loadPdf(text.id);
 						
-						Ext.getCmp('docId').setValue(text.locked);	
+						Ext.getCmp('docId').setValue(text.id);	
 						docQueueWindowMask.hide();
 			        }
 			        else {
@@ -651,7 +653,10 @@ Ext.create('Ext.data.Store', {
 		},
 		limitParam: undefined,
 		pageParam: undefined,
-		startParam: undefined				
+		startParam: undefined,
+		extraParams: {
+			parentId: 'parent'
+		}				
 	},
 	autoLoad: true	
 });	
@@ -797,7 +802,8 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 		xtype: 'textfield',
 		fieldLabel: 'Cus. Details',
 		readOnly: true,
-		id: 'fileDocCusDetails'
+		id: 'fileDocCusDetails',
+		submitValue: false
 	},{
 		xtype: 'checkbox',
 		fieldLabel: 'Re-Queue',
@@ -824,6 +830,22 @@ Ext.define('Atlas.form.FileDocumentPanel', {
                        	form.reset();
                        	Ext.Msg.alert('Success', action.result.message);
                        	Ext.data.StoreManager.lookup('queuedDocumentsStore').load();
+                       	if(action.result.id != undefined) {
+                       		var lockedDoc = Ext.create('QueuedDocument', {
+                       			id: action.result.id,
+                       			bar_code_definition_id: action.result.bar_code_definition_id,
+                       			locked_by_id: action.result.locked_by,
+                       			locked_status: 'Locked',
+                       			scanned_location_id: action.result.scanned_location_id,
+                       			self_scan_cat_id: action.result.self_scan_cat_id,
+                				queue_category_id: action.result.queue_category_id,
+                				queued_to_customer_id: action.result.queued_to_customer_id,
+                				queued_to_customer_first: action.result.queued_to_customer_first,
+                				queued_to_customer_last: action.result.queued_to_customer_last,
+                				queued_to_customer_ssn: action.result.queued_to_customer_ssn
+                       		});
+                       		lockedDoc.lockDocument()
+                       	}
                     },
                     failure: function(form, action) {
                         Ext.Msg.alert('Failed', action.result.message);
@@ -922,8 +944,7 @@ Ext.create('Ext.window.Window', {
 	        collapsible: true,
 	        collapsed: true		    	
 	    }]	        
-    },{
-        
+    },{      
         region: 'center',
         xtype: 'panel',
         layout: {
@@ -934,8 +955,7 @@ Ext.create('Ext.window.Window', {
 	        xtype: 'atlasdocqueuegridpanel',
 	        id: 'queuedDocGrid',
 	        height: 185,
-	        collapsible: true,
-			
+	        collapsible: true 		
         },{
 	    	title: 'Document',
 	        flex: 1,
@@ -952,8 +972,6 @@ Ext.create('Ext.window.Window', {
         }]
     }]
 });
-
-
 
 Ext.onReady(function(){
 	Ext.QuickTips.init();
