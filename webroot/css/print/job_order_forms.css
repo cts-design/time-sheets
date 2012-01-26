@@ -1,0 +1,19 @@
+.left { float: left; }
+.clear { clear: left; }
+
+body {
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: 13px;
+}
+
+div { line-height: 1px }
+
+p.label {
+	font-weight: bold;
+	margin-right: 15px;
+}
+
+ul {
+	clear: left;
+	line-height: 18px;
+}
