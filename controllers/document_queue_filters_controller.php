@@ -21,13 +21,25 @@ class DocumentQueueFiltersController extends AppController {
 			if(!isset($this->data['DocumentQueueFilter']['auto_load_docs'])) {
 				$this->data['DocumentQueueFilter']['auto_load_docs'] = 0;
 			}
+			if(!$this->data['DocumentQueueFilter']['id']) {
+				$this->DocumentQueueFilter->create();
+				unset($this->data['DocumentQueueFilter']['id']);
+			}
 			if($this->DocumentQueueFilter->save($this->data)) {
 				$data['success'] = true;
 				$data['message'] = 'Filters set successfully.';
 			}
 			else {
 				$data['success'] = false;
-				$data['message'] = 'Unable to set filters.';
+				$errors = $this->DocumentQueueFilter->invalidFields();
+				if(!empty($errors)) {
+					foreach($errors as $k => $v) {
+						$data['message'] = $v . '<br />';
+					}
+				}
+				else {
+					$data['message'] = 'Unable to set filters.';
+				}			
 			}	
 			$this->set(compact('data'));
 			$this->render(null, null, '/elements/ajaxreturn');
