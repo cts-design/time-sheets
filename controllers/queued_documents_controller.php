@@ -48,50 +48,57 @@ class QueuedDocumentsController extends AppController {
 	
 	function admin_index() {
 		if($this->RequestHandler->isAjax()) {
-			$conditions = $this->getDocumentQueueFilters();
-			$this->QueuedDocument->checkLocked($this->Auth->user('id'));
-			if(isset($conditions)) {
-				if($this->checkAutoLoad()) {				
-					$conditions['QueuedDocument.locked_status'] = 0;
-					$doc = $this->QueuedDocument->find('first', array(
-						'order' => array('QueuedDocument.id ASC'),
-						'conditions' => $conditions,
-						'recursive' => -1));
-					if($doc) {
-						$docs[0] = $this->QueuedDocument->lockDocument(
-								       $doc['QueuedDocument']['id'], $this->Auth->user('id'));
-					}	
-					$data['totalCount'] = 1;					
-				}
-				else {
-					$this->paginate = array(
-						'order' => array('QueuedDocument.id ASC'),
-						'conditions' => $conditions);
-					$data['totalCount'] = 
-						$this->QueuedDocument->find('count', array('conditions' => $conditions));					
-				}	
+			if(isset($this->params['url']['requeued'])) {
+				$docs[0] = $this->QueuedDocument->findById($this->params['url']['id']);
+				$docs[0]['QueuedDocument']['requeued'] = true;				
 			}
 			else {
-				if($this->checkAutoLoad()) {
-					$conditions['QueuedDocument']['locked_status'] = 0;
-					$doc = $this->QueuedDocument->find('first', array(
-						'order' => array('QueuedDocument.id ASC'),
-						'conditions' => $conditions,
-						'recursive' => -1));
-					if($doc) {
-						$docs[0] = $this->QueuedDocument->lockDocument(
-								       $doc['QueuedDocument']['id'], $this->Auth->user('id'));
-					}						
-					$data['totalCount'] = 1;										
+				$conditions = $this->getDocumentQueueFilters();
+				$this->QueuedDocument->checkLocked($this->Auth->user('id'));
+				if(isset($conditions)) {
+					if($this->checkAutoLoad()) {				
+						$conditions['QueuedDocument.locked_status'] = 0;
+						$doc = $this->QueuedDocument->find('first', array(
+							'order' => array('QueuedDocument.id ASC'),
+							'conditions' => $conditions,
+							'recursive' => -1));
+						if($doc) {
+							$docs[0] = $this->QueuedDocument->lockDocument(
+									       $doc['QueuedDocument']['id'], $this->Auth->user('id'));
+						}	
+						$data['totalCount'] = 1;					
+					}
+					else {
+						$this->paginate = array(
+							'order' => array('QueuedDocument.id ASC'),
+							'conditions' => $conditions);
+						$data['totalCount'] = 
+							$this->QueuedDocument->find('count', array('conditions' => $conditions));					
+					}	
 				}
 				else {
-					$this->paginate = array('order' => array('QueuedDocument.id ASC'));
-					$data['totalCount'] = $this->QueuedDocument->find('count');					
+					if($this->checkAutoLoad()) {
+						$conditions['QueuedDocument']['locked_status'] = 0;
+						$doc = $this->QueuedDocument->find('first', array(
+							'order' => array('QueuedDocument.id ASC'),
+							'conditions' => $conditions,
+							'recursive' => -1));
+						if($doc) {
+							$docs[0] = $this->QueuedDocument->lockDocument(
+									       $doc['QueuedDocument']['id'], $this->Auth->user('id'));
+						}						
+						$data['totalCount'] = 1;										
+					}
+					else {
+						$this->paginate = array('order' => array('QueuedDocument.id ASC'));
+						$data['totalCount'] = $this->QueuedDocument->find('count');					
+					}
 				}
-			}
-			if(!$this->checkAutoLoad()) {
-				$docs = $this->paginate();	
+				if(!$this->checkAutoLoad()) {
+					$docs = $this->paginate();	
+				}				
 			}			
+			
 			if($docs) {
 				$i = 0;
 				foreach($docs as $doc) {
@@ -129,6 +136,9 @@ class QueuedDocumentsController extends AppController {
 						$data['docs'][$i]['queued_to_customer_ssn'] = null;
 						$data['docs'][$i]['queued_to_customer_first'] = null;
 						$data['docs'][$i]['queued_to_customer_last'] = null;												
+					}
+					if(isset($doc['QueuedDocument']['requeued'])) {
+						$data['docs'][$i]['requeued'] = true;
 					}					
 					$data['docs'][$i]['locked_status'] = 
 						$this->lockStatuses[$doc['QueuedDocument']['locked_status']];
