@@ -87,9 +87,9 @@ Ext.define('QueuedDocument', {
 		{name: 'modified', type: 'date', dateFormat: 'Y-m-d H:i:s'}
 	],	
 	lockDocument: function() {
-		var docQueueWindowMask = 
-			new Ext.LoadMask(Ext.getCmp('docQueueWindow'), {msg:"Loading Document..."});		
-		docQueueWindowMask.show();
+		var docQueueMask = 
+			new Ext.LoadMask(Ext.getBody(), {msg:"Loading Document..."});	
+		docQueueMask.show();
 		if(this.data.locked_status == "Locked" && this.data.locked_by_id == adminId) {
 			if(this.data.self_scan_cat_id || this.data.bar_code_definition_id) {
 				autoPopulateFilingCats(this);
@@ -101,7 +101,7 @@ Ext.define('QueuedDocument', {
 			
 			loadPdf(this.data.id);
 			Ext.getCmp('docId').setValue(this.data.id);
-			docQueueWindowMask.hide();
+			docQueueMask.hide();
 		}
 		else {
 			var docStore = Ext.data.StoreManager.lookup('queuedDocumentsStore');
@@ -132,11 +132,11 @@ Ext.define('QueuedDocument', {
 						if(this.data.queued_to_customer_id) {
 							autoPopulateCustomerInfo(this);						
 						}
-						
-						loadPdf(text.id);
+						//TODO fix the returned data
+						loadPdf(text.QueuedDocument.id);
 						
 						Ext.getCmp('docId').setValue(text.id);	
-						docQueueWindowMask.hide();
+						docQueueMask.hide();
 			        }
 			        else {
 			        	opts.failure();
@@ -149,7 +149,7 @@ Ext.define('QueuedDocument', {
 			    		+'Please use the refresh button in the grid toolbar<br />'
 			    		+'to update the grid view if nessesary.'
 			    	);
-			    	docQueueWindowMask.hide();
+			    	docQueueMask.hide();
 			    	docStore.load();
 				    Ext.getCmp('pdfFrame').el.dom.src = '';		    		
 			    },
@@ -161,7 +161,7 @@ Ext.define('QueuedDocument', {
 
 function loadPdf(docId) {
 	Ext.getCmp('pdfFrame').el.dom.src = 
-		'/admin/queued_documents/view/'+docId+'/#toolbar=1&statusbar=0&navpanes=0&zoom=50';	
+		'/admin/queued_documents/view/'+docId+'/#toolbar=1&statusbar=0&navpanes=0&zoom=75';	
 }
 
 function autoPopulateCustomerInfo(doc) {
@@ -228,6 +228,15 @@ Ext.create('Ext.data.Store', {
             root: 'docs',
 			totalProperty: 'totalCount'
         }
+    },
+    listeners: {
+    	load: function(store, records, successful, operation, eOpts) {
+    		var autoLoad = Ext.getCmp('autoLoadDocs').getValue();
+    		if(autoLoad && records[0] != undefined) {
+    			var doc = this.getById(records[0].data.id);
+    			doc.lockDocument();
+    		}  	
+    	}
     }
 });
 
@@ -248,7 +257,7 @@ Ext.create('Ext.menu.Menu', {
 Ext.define('Atlas.grid.QueuedDocPanel', {
 	extend: 'Ext.grid.Panel',
 	alias: 'widget.atlasdocqueuegridpanel',
-	title: 'Document Queue',
+	title: 'Documents in Queue',
 	store: 'queuedDocumentsStore',
     columns: [{ 
 			header: 'Id',
@@ -433,12 +442,14 @@ Ext.define('Atlas.form.DocQueueFilterPanel', {
         maxValue: new Date()
     },{
     	xtype: 'checkbox',
+    	id: 'autoLoadDocs',
     	fieldLabel: 'Auto Load Docs',
     	name: 'auto_load_docs',
     	inputValue: "1"
     },{
     	xtype: 'hidden',
-    	name: 'id'
+    	name: 'id',
+    	value: 0
     }],
     buttonAlign: 'left',
     buttons:[{
@@ -830,22 +841,6 @@ Ext.define('Atlas.form.FileDocumentPanel', {
                        	form.reset();
                        	Ext.Msg.alert('Success', action.result.message);
                        	Ext.data.StoreManager.lookup('queuedDocumentsStore').load();
-                       	if(action.result.id != undefined) {
-                       		var lockedDoc = Ext.create('QueuedDocument', {
-                       			id: action.result.id,
-                       			bar_code_definition_id: action.result.bar_code_definition_id,
-                       			locked_by_id: action.result.locked_by,
-                       			locked_status: 'Locked',
-                       			scanned_location_id: action.result.scanned_location_id,
-                       			self_scan_cat_id: action.result.self_scan_cat_id,
-                				queue_category_id: action.result.queue_category_id,
-                				queued_to_customer_id: action.result.queued_to_customer_id,
-                				queued_to_customer_first: action.result.queued_to_customer_first,
-                				queued_to_customer_last: action.result.queued_to_customer_last,
-                				queued_to_customer_ssn: action.result.queued_to_customer_ssn
-                       		});
-                       		lockedDoc.lockDocument()
-                       	}
                     },
                     failure: function(form, action) {
                         Ext.Msg.alert('Failed', action.result.message);
@@ -879,102 +874,103 @@ var availableDOMHeight = function() {
     }
 };
 
-Ext.create('Ext.window.Window', {
-    height: availableDOMHeight(),
-    id: 'docQueueWindow',
-    width: '100%',
-    closable: false,
-    draggable: false,
-    resizable: false,
-    maximizable: true,
-    y: 150,
-    layout: 'border',
-    items:[{
-        region:'west',
-        xtype: 'panel',
-        margins: '5 0 0 5',
-        width: 315,
-        id: 'westContainer',
-        layout: 'accordion',
-	    items: [{
-	    	xtype: 'panel',
-	    	layout: 'vbox',
-	    	height: 'auto',
-	        title: 'Document Actions',
-	        collapsible: true,
-	        collapsed: false,
-	        items: [{
-	        	title: 'File Document',
-	        	border: 0,
-		        xtype: 'filedocumentformpanel',
-		        url: '/admin/queued_documents/file_document',				
-		       	width: '100%',
-		        height: 325
-	        },{
-	        	title: 'Re-Queue Document',
-		        html: 'Panel content!',
-		        flex: 1,
-		        width: '100%',
-	        },{
-	        	title: 'Delete Document',
-		        html: 'Panel content!',
-		        flex: 1,
-		        width: '100%'
-	        }]
-	    },{
-	        title: 'Queue Filters',
-	        xtype: 'docqueuefilterformpanel',
-	        url: '/admin/document_queue_filters/set_filters',
-	        height: 150,
-	        width: '100%',
-	        collapsible: true,
-	        collapsed: true
-	    },{
-	        title: 'Queue Search',
-	        html: 'Panel content!',
-	        width: '100%',
-	        height: 200,
-	        collapsible: true,
-	        collapsed: true
-	    },{
-	        title: 'Add Customer',
-	        html: 'Panel content!',
-	        width: '100%',
-	        height: 600,
-	        collapsible: true,
-	        collapsed: true		    	
-	    }]	        
-    },{      
-        region: 'center',
-        xtype: 'panel',
-        layout: {
-        	align: 'stretch',
-        	type: 'vbox'	
-        },	        
-        items: [{
-	        xtype: 'atlasdocqueuegridpanel',
-	        id: 'queuedDocGrid',
-	        height: 185,
-	        collapsible: true 		
-        },{
-	    	title: 'Document',
-	        flex: 1,
-	        layout: 'fit',
-		    items : [{
-		        xtype : 'component',
-		        id: 'pdfFrame',
-		        width: 1000,
-		        height: 400,
-		        autoEl : {
-		            tag : 'iframe'
-		        }
-		    }]		                	
-        }]
-    }]
-});
 
 Ext.onReady(function(){
+	//TODO see about moving viewport out of onReady?
+	Ext.create('Ext.container.Viewport', {
+	    layout: 'border',
+	    items:[{
+	        region:'west',
+	        width: 315,
+	        id: 'westContainer',
+	        layout: 'accordion',
+	        title: 'Queued Documents',
+	        tools: [{
+	        	type: 'prev',
+	        	tooltip: 'Back to dashboard',
+	        	handler: function()	{
+	        		window.location = '/admin/users/dashboard';
+	        	}
+	        }],
+		    items: [{
+		    	xtype: 'panel',
+		    	layout: 'vbox',
+		    	height: 'auto',
+		        title: 'Document Actions',
+		        collapsible: true,
+		        collapsed: false,
+		        items: [{
+		        	title: 'File Document',
+		        	border: 0,
+			        xtype: 'filedocumentformpanel',
+			        url: '/admin/queued_documents/file_document',				
+			       	width: '100%',
+			        height: 325
+		        },{
+		        	title: 'Re-Queue Document',
+			        html: 'Panel content!',
+			        flex: 1,
+			        width: '100%'
+		        },{
+		        	title: 'Delete Document',
+			        html: 'Panel content!',
+			        flex: 1,
+			        width: '100%'
+		        }]
+		    },{
+		        title: 'Queue Filters',
+		        xtype: 'docqueuefilterformpanel',
+		        url: '/admin/document_queue_filters/set_filters',
+		        height: 150,
+		        width: '100%',
+		        collapsible: true,
+		        collapsed: true
+		    },{
+		        title: 'Queue Search',
+		        html: 'Panel content!',
+		        width: '100%',
+		        height: 200,
+		        collapsible: true,
+		        collapsed: true
+		    },{
+		        title: 'Add Customer',
+		        html: 'Panel content!',
+		        width: '100%',
+		        height: 600,
+		        collapsible: true,
+		        collapsed: true		    	
+		    }]	        
+	    },{      
+	        region: 'center',
+	        xtype: 'panel',
+	        layout: {
+	        	align: 'stretch',
+	        	type: 'vbox'	
+	        },	        
+	        items: [{
+		        xtype: 'atlasdocqueuegridpanel',
+		        id: 'queuedDocGrid',
+		        height: 185,
+		        collapsible: true 		
+	        },{
+		    	title: 'Document',
+		        flex: 1,
+		        layout: 'fit',
+			    items : [{
+			        xtype : 'component',
+			        id: 'pdfFrame',
+			        width: 900,
+			        height: 400,
+			        autoEl : {
+			            tag : 'iframe'
+			        }
+			    }]		                	
+	        }]
+	    }]
+	});
+
+
 	Ext.QuickTips.init();
-    Ext.getCmp('docQueueWindow').show();
+	Ext.useShims = true;
 	Ext.data.StoreManager.lookup('queuedDocumentsStore').load();
 });
