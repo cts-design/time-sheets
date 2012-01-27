@@ -51,12 +51,12 @@ class QueuedDocumentsController extends AppController {
 			$conditions = $this->getDocumentQueueFilters();
 			$this->QueuedDocument->checkLocked($this->Auth->user('id'));
 			if(isset($conditions)) {
-				if($this->checkAutoLoad()) {
-					
+				if($this->checkAutoLoad()) {				
 					$conditions['QueuedDocument.locked_status'] = 0;
 					$doc = $this->QueuedDocument->find('first', array(
 						'order' => array('QueuedDocument.id ASC'),
-						'conditions' => $conditions));
+						'conditions' => $conditions,
+						'recursive' => -1));
 					if($doc) {
 						$docs[0] = $this->QueuedDocument->lockDocument(
 								       $doc['QueuedDocument']['id'], $this->Auth->user('id'));
@@ -76,7 +76,8 @@ class QueuedDocumentsController extends AppController {
 					$conditions['QueuedDocument']['locked_status'] = 0;
 					$doc = $this->QueuedDocument->find('first', array(
 						'order' => array('QueuedDocument.id ASC'),
-						'conditions' => $conditions));
+						'conditions' => $conditions,
+						'recursive' => -1));
 					if($doc) {
 						$docs[0] = $this->QueuedDocument->lockDocument(
 								       $doc['QueuedDocument']['id'], $this->Auth->user('id'));
@@ -90,50 +91,37 @@ class QueuedDocumentsController extends AppController {
 			}
 			if(!$this->checkAutoLoad()) {
 				$docs = $this->paginate();	
-			} 
-					
-			$locations = $this->QueuedDocument->Location->find('list');
-			// TODO use associated doc data rather than extra database calls
-			$this->QueuedDocument->User->recursive = -1;
-			$queueCats = $this->QueuedDocument->DocumentQueueCategory->find('list', array(
-		    	'conditions' => array('DocumentQueueCategory.deleted' => 0)));
+			}			
 			if($docs) {
 				$i = 0;
 				foreach($docs as $doc) {
 					$data['docs'][$i]['id'] = $doc['QueuedDocument']['id'];
-					$data['docs'][$i]['queue_cat'] = 
-						$queueCats[$doc['QueuedDocument']['queue_category_id']];
-					$data['docs'][$i]['scanned_location'] = 
-						$locations[$doc['QueuedDocument']['scanned_location_id']];
-					$lockedBy = $this->QueuedDocument->User->findById($doc['QueuedDocument']['locked_by']);
-					if($lockedBy) {
+					$data['docs'][$i]['queue_cat'] = $doc['DocumentQueueCategory']['name'];
+					$data['docs'][$i]['scanned_location'] = $doc['Location']['name'];
+					if(!empty($doc['LockedBy']['id'])) {
 						$data['docs'][$i]['locked_by'] = 
-							$lockedBy['User']['lastname'] . ', ' . $lockedBy['User']['firstname'];
-						$data['docs'][$i]['locked_by_id'] = $lockedBy['User']['id'];	
+							$doc['LockedBy']['lastname'] . ', ' . $doc['LockedBy']['firstname'];
+						$data['docs'][$i]['locked_by_id'] = $doc['LockedBy']['id'];	
 					}
 					else {
 						$data['docs'][$i]['locked_by'] = null;						
-					}
-					$lastActAdmin = 
-						$this->QueuedDocument->User->findById($doc['QueuedDocument']['last_activity_admin_id']); 
-					if($lastActAdmin) {
+					} 
+					if(!empty($doc['LastActAdmin']['id'])) {
 						$data['docs'][$i]['last_activity_admin'] = 
-							$lastActAdmin['User']['lastname'] . ', ' . $lastActAdmin['User']['firstname'];						
+							$doc['LastActAdmin']['lastname'] . ', ' . $doc['LastActAdmin']['firstname'];						
 					}
 					else {
 						$data['docs'][$i]['last_activity_admin'] = null;						
-					}
-					$queuedToCustomer = 
-						$this->QueuedDocument->User->findById($doc['QueuedDocument']['user_id']); 
-					if($queuedToCustomer) {
-						$data['docs'][$i]['queued_to_customer'] = $queuedToCustomer['User']['name_last4'];
-						$data['docs'][$i]['queued_to_customer_id'] = $queuedToCustomer['User']['id'];
+					} 
+					if($doc['User']['id']) {
+						$data['docs'][$i]['queued_to_customer'] = $doc['User']['name_last4'];
+						$data['docs'][$i]['queued_to_customer_id'] = $doc['User']['id'];
 						$data['docs'][$i]['queued_to_customer_ssn'] = 
-							substr($queuedToCustomer['User']['ssn'], 0, -6) . '-' . 
-							substr($queuedToCustomer['User']['ssn'], 3, -4) . '-' .
-							substr($queuedToCustomer['User']['ssn'], -4);
-						$data['docs'][$i]['queued_to_customer_first'] = $queuedToCustomer['User']['firstname'];
-						$data['docs'][$i]['queued_to_customer_last'] = $queuedToCustomer['User']['lastname'];
+							substr($doc['User']['ssn'], 0, -6) . '-' . 
+							substr($doc['User']['ssn'], 3, -4) . '-' .
+							substr($doc['User']['ssn'], -4);
+						$data['docs'][$i]['queued_to_customer_first'] = $doc['User']['firstname'];
+						$data['docs'][$i]['queued_to_customer_last'] = $doc['User']['lastname'];
 					}
 					else {
 						$data['docs'][$i]['queued_to_customer'] = null;
