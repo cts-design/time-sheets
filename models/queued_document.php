@@ -3,29 +3,41 @@ class QueuedDocument extends AppModel {
     var $name = 'QueuedDocument';
 
     var $belongsTo = array(
-	'DocumentQueueCategory' => array(
-	    'className' => 'DocumentQueueCategory',
-	    'foreignKey' => 'queue_category_id'
-	),
-	'Location' => array(
-	    'className' => 'Location',
-	    'foreignKey' => 'scanned_location_id'
-	),
-	'User' => array(
-	    'className' => 'User',
-	    'foreignKey' => 'locked_by'
-	),
-	'LastActAdmin' => array(
-		'className' => 'User',
-		'foreignKey' => 'last_activity_admin_id',
-		'conditions' => '',
-		'fields' => '',
-		'order' => ''
-	),
-	'SelfScanCategory' => array(
-	    'className' => 'SelfScanCategory',
-	    'foreignKey' => 'self_scan_cat_id'
-	),
+		'DocumentQueueCategory' => array(
+		    'className' => 'DocumentQueueCategory',
+		    'foreignKey' => 'queue_category_id',
+		    'fields' => 'id, name'
+		),
+		'Location' => array(
+		    'className' => 'Location',
+		    'foreignKey' => 'scanned_location_id',
+		    'fields' => 'id, name'
+		),
+		'LockedBy' => array(
+		    'className' => 'User',
+		    'foreignKey' => 'locked_by',
+		    'fields' => 'id, firstname, lastname'
+		),
+		'LastActAdmin' => array(
+			'className' => 'User',
+			'foreignKey' => 'last_activity_admin_id',
+			'fields' => 'id, firstname, lastname'
+		),
+		'SelfScanCategory' => array(
+		    'className' => 'SelfScanCategory',
+		    'foreignKey' => 'self_scan_cat_id',
+		    'fields' => 'id, name'
+		),
+		'BarCodeDefinition' => array(
+		    'className' => 'BarCodeDefinition',
+		    'foreignKey' => 'bar_code_definition_id',
+		    'fields' => 'id, name'
+		),	
+		'User' => array(
+		    'className' => 'User',
+		    'foreignKey' => 'user_id',
+		    'fields' => 'id, firstname, lastname, ssn, name_last4'
+		)	
     );
 	
 	var $validate = array(
