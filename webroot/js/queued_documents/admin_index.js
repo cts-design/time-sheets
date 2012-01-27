@@ -81,7 +81,7 @@ Ext.define('QueuedDocument', {
 		'id', 'queue_cat', 'scanned_location',
 		'queued_to_customer', 'queued_to_customer_id', 'queued_to_customer_ssn',
 		'queued_to_customer_first', 'queued_to_customer_last',
-		'locked_by', 'locked_by_id', 'locked_status', 
+		'locked_by', 'locked_by_id', 'locked_status', 'requeued', 
 		'last_activity_admin', 'bar_code_definition_id', 'self_scan_cat_id',
 		{name: 'created', type: 'date', dateFormat: 'Y-m-d H:i:s'}, 
 		{name: 'modified', type: 'date', dateFormat: 'Y-m-d H:i:s'}
@@ -132,10 +132,10 @@ Ext.define('QueuedDocument', {
 						if(this.data.queued_to_customer_id) {
 							autoPopulateCustomerInfo(this);						
 						}
-						//TODO fix the returned data
+						
 						loadPdf(text.QueuedDocument.id);
 						
-						Ext.getCmp('docId').setValue(text.id);	
+						Ext.getCmp('docId').setValue(text.QueuedDocument.id);	
 						docQueueMask.hide();
 			        }
 			        else {
@@ -232,7 +232,7 @@ Ext.create('Ext.data.Store', {
     listeners: {
     	load: function(store, records, successful, operation, eOpts) {
     		var autoLoad = Ext.getCmp('autoLoadDocs').getValue();
-    		if(autoLoad && records[0] != undefined) {
+    		if(records[0] != undefined && (autoLoad || records[0].data.requeued)) {
     			var doc = this.getById(records[0].data.id);
     			doc.lockDocument();
     		}  	
@@ -457,9 +457,10 @@ Ext.define('Atlas.form.DocQueueFilterPanel', {
     	icon:  '/img/icons/save.png',
     	formBind: true,
     	disabled: true,
-        handler: function() {
+        handler: function() {     	
             var form = this.up('form').getForm();
             if (form.isValid()) {
+            	Ext.getCmp('pdfFrame').el.dom.src = '';
                 form.submit({
                 	waitTitle: 'Saving',
                 	waitMsg: 'Please wait...',
@@ -828,6 +829,7 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 	buttonAlign: 'left',
 	buttons:[{
 		text: 'File',
+		icon:  '/img/icons/save.png',
 		formBind: true,
         handler: function() {
             var form = this.up('form').getForm();
@@ -839,8 +841,16 @@ Ext.define('Atlas.form.FileDocumentPanel', {
                     	Ext.getCmp('secondFilingCats').disable();	
                        	Ext.getCmp('thirdFilingCats').disable();                       
                        	form.reset();
+                       	Ext.getCmp('pdfFrame').el.dom.src = '';
                        	Ext.Msg.alert('Success', action.result.message);
-                       	Ext.data.StoreManager.lookup('queuedDocumentsStore').load();
+                       	var store = Ext.data.StoreManager.lookup('queuedDocumentsStore');
+                       	if(action.result.locked != undefined) {
+                       		store.load({params: {id: action.result.locked, requeued: true}});
+                       	}
+                       	else {
+                       		store.load();
+                       	}
+                       	
                     },
                     failure: function(form, action) {
                         Ext.Msg.alert('Failed', action.result.message);
@@ -851,6 +861,7 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 	},{
 		text: 'Reset',
 		id: 'fileDocFormResetButton',
+		icon:  '/img/icons/reset.png',
 		listeners: {
 			click: function() {
 				this.up('form').getForm().reset();
@@ -860,19 +871,6 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 		}
 	}]
 });
-
-var availableDOMHeight = function() {
-	if (typeof window.innerHeight !== 'undefined') {
-    	return window.innerHeight - 160;
-  	} 
-	else if (typeof document.documentElement !== 'undefined' 
-			&& typeof document.documentElement.clientHeight !== 'undefined') {
-    			return document.documentElement.clientHeight - 160;
-	} 
-	else {
-		return document.getElementsByTagName('body')[0].clientHeight - 160;
-    }
-};
 
 
 Ext.onReady(function(){
