@@ -98,8 +98,7 @@ class QueuedDocument extends AppModel {
 				return false;
 			}				
 		    if($this->save($this->data)) {
-		    	$doc = $this->findById($id);
-		    	$data = $doc['QueuedDocument'];
+		    	$data = $this->findById($id);
 		    	if($unlockedDoc) {
 					$data['unlocked'] = $unlockedDoc;
 				}				
