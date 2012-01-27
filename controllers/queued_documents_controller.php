@@ -48,39 +48,52 @@ class QueuedDocumentsController extends AppController {
 	
 	function admin_index() {
 		if($this->RequestHandler->isAjax()) {
-			$this->loadModel('DocumentQueueFilter');
-			$filters = $this->DocumentQueueFilter->findByUserId($this->Auth->user('id'));
-			if($filters) {
-				$locations = json_decode($filters['DocumentQueueFilter']['locations'], true);
-				if(!empty($locations)) {
-					$conditions['QueuedDocument.scanned_location_id'] = $locations;
-				}
-				$queueCats = json_decode($filters['DocumentQueueFilter']['queue_cats'], true);
-				if(!empty($queueCats)) {
-					$conditions['QueuedDocument.queue_category_id'] = $queueCats;
-				}
-				if(!empty($filters['DocumentQueueFilter']['from_date']) && 
-				   !empty($filters['DocumentQueueFilter']['to_date'] )){
-					    $from = date('Y-m-d H:i:m', 
-					    	strtotime($filters['DocumentQueueFilter']['from_date'] . " 12:00 am"));
-					    $to = date('Y-m-d H:i:m',
-					    	strtotime($filters['DocumentQueueFilter']['to_date'] . " 11:59 pm"));
-					    $conditions['QueuedDocument.created Between ? AND ?'] = array($from, $to); 
-				} 
-			}
+			$conditions = $this->getDocumentQueueFilters();
+			$this->QueuedDocument->checkLocked($this->Auth->user('id'));
 			if(isset($conditions)) {
-				$this->paginate = array(
-					'order' => array('QueuedDocument.id ASC'),
-					'conditions' => $conditions);
-				$data['totalCount'] = 
-					$this->QueuedDocument->find('count', array('conditions' => $conditions));	
+				if($this->checkAutoLoad()) {
+					
+					$conditions['QueuedDocument.locked_status'] = 0;
+					$doc = $this->QueuedDocument->find('first', array(
+						'order' => array('QueuedDocument.id ASC'),
+						'conditions' => $conditions));
+					if($doc) {
+						$docs[0] = $this->QueuedDocument->lockDocument(
+								       $doc['QueuedDocument']['id'], $this->Auth->user('id'));
+					}	
+					$data['totalCount'] = 1;					
+				}
+				else {
+					$this->paginate = array(
+						'order' => array('QueuedDocument.id ASC'),
+						'conditions' => $conditions);
+					$data['totalCount'] = 
+						$this->QueuedDocument->find('count', array('conditions' => $conditions));					
+				}	
 			}
 			else {
-				$this->paginate = array('order' => array('QueuedDocument.id ASC'));
-				$data['totalCount'] = $this->QueuedDocument->find('count');
+				if($this->checkAutoLoad()) {
+					$conditions['QueuedDocument']['locked_status'] = 0;
+					$doc = $this->QueuedDocument->find('first', array(
+						'order' => array('QueuedDocument.id ASC'),
+						'conditions' => $conditions));
+					if($doc) {
+						$docs[0] = $this->QueuedDocument->lockDocument(
+								       $doc['QueuedDocument']['id'], $this->Auth->user('id'));
+					}						
+					$data['totalCount'] = 1;										
+				}
+				else {
+					$this->paginate = array('order' => array('QueuedDocument.id ASC'));
+					$data['totalCount'] = $this->QueuedDocument->find('count');					
+				}
 			}
-			$docs = $this->paginate();			
+			if(!$this->checkAutoLoad()) {
+				$docs = $this->paginate();	
+			} 
+					
 			$locations = $this->QueuedDocument->Location->find('list');
+			// TODO use associated doc data rather than extra database calls
 			$this->QueuedDocument->User->recursive = -1;
 			$queueCats = $this->QueuedDocument->DocumentQueueCategory->find('list', array(
 		    	'conditions' => array('DocumentQueueCategory.deleted' => 0)));
@@ -145,6 +158,7 @@ class QueuedDocumentsController extends AppController {
 			$this->set(compact('data'));
 			$this->render(null, null, '/elements/ajaxreturn');
 		}
+		$this->layout = 'ext_fullscreen';
 	}
 
 	function admin_lock_document() {
@@ -200,7 +214,8 @@ class QueuedDocumentsController extends AppController {
 		);
 		$this->set($params);
     }
-
+	
+	//TODO remove this if we are not going to have thumbnails anymore?
 	function admin_view_thumbnail($id = null) {
 		$this->view = 'Media';
 		$doc = $this->QueuedDocument->read(null, $id);
@@ -263,39 +278,6 @@ class QueuedDocumentsController extends AppController {
 					$data['locked'] = $id;	
 				}
 				else {
-					if($this->checkAutoLoad()) {
-						$conditions = $this->getDocumentQueueFilters();
-						if($conditions) {
-							
-							$conditons['QueuedDocument']['locked_status'] = 0;
-							$doc = $this->QueuedDocument->find('first', array(
-								'conditions' => $conditions,
-								'order' => array('QueuedDocument.id ASC')));
-	
-							$data = $this->QueuedDocument->lockDocument(
-								$doc['QueuedDocument']['id'], $this->Auth->user('id'));
-							if($data['user_id']) {
-								$this->QueuedDocument->User->recursive = -1;
-								$user = $this->QueuedDocument->User->findById($data['user_id']);
-								if($user){
-									$data['queued_to_customer_id'] = $user['User']['id'];
-									$data['queued_to_customer_first'] = $user['User']['firstname'];
-									$data['queued_to_customer_last'] = $user['User']['lastname'];
-									$data['queued_to_customer_ssn'] = 
-										substr($user['User']['ssn'], 0, -6) . '-' . 
-										substr($user['User']['ssn'], 3, -4) . '-' .
-										substr($user['User']['ssn'], -4);									
-								}
-								else {
-									$data['queued_to_customer_id'] = null;
-									$data['queued_to_customer_first'] = null;
-									$data['queued_to_customer_last'] = null;
-									$data['queued_to_customer_ssn'] = null;									
-								}
-								
-							}			
-						}	
-					}
 				    $this->Transaction->createUserTransaction('Storage', null, null ,
 					    'Filed document ID '. $this->data['FiledDocument']['id'] .
 					    ' to ' . $user['User']['lastname'] . ', ' . $user['User']['firstname'] . 
@@ -363,10 +345,6 @@ class QueuedDocumentsController extends AppController {
 		$this->set(compact('title_for_layout', 'queueCats', 'locations'));
     }
 
-    function _resetFilters() {
-		$this->QueuedDocument->checkLocked($this->Auth->user('id'));
-		$this->Cookie->destroy();
-    }
 
     function _addCustomer() {
 		if(!empty($this->data)) {
