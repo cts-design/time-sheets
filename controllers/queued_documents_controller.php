@@ -50,7 +50,8 @@ class QueuedDocumentsController extends AppController {
 		if($this->RequestHandler->isAjax()) {
 			if(isset($this->params['url']['requeued'])) {
 				$docs[0] = $this->QueuedDocument->findById($this->params['url']['id']);
-				$docs[0]['QueuedDocument']['requeued'] = true;				
+				$docs[0]['QueuedDocument']['requeued'] = true;
+				$data['totalCount'] = 1;				
 			}
 			else {
 				$conditions = $this->getDocumentQueueFilters();
