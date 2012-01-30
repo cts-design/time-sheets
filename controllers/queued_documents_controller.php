@@ -344,6 +344,14 @@ class QueuedDocumentsController extends AppController {
 		$this->set(compact('title_for_layout', 'queueCats', 'locations'));
     }
 
+    function admin_unlock_document() {
+    	if($this->RequestHandler->isAjax()) {
+    		$this->QueuedDocument->checkLocked($this->Auth->user('id'));
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');    		   	
+    	}
+    }
+
 
     function _addCustomer() {
 		if(!empty($this->data)) {
