@@ -876,6 +876,9 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 });
 
 
+
+
+
 Ext.onReady(function(){
 	//TODO see about moving viewport out of onReady?
 	Ext.create('Ext.container.Viewport', {
@@ -970,8 +973,29 @@ Ext.onReady(function(){
 	    }]
 	});
 
-
 	Ext.QuickTips.init();
 	Ext.useShims = true;
 	Ext.data.StoreManager.lookup('queuedDocumentsStore').load();
+
+	/*
+	this is here to release any locked documents on browser close or
+	on page exit.
+	*/
+	window.onunload = function() {
+		var url = '/admin/queued_documents/unlock_document';
+		var passData = null;
+		if (window.XMLHttpRequest) {              
+			AJAX=new XMLHttpRequest();              
+		} 
+		else {                                  
+			AJAX=new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		if (AJAX) {
+			AJAX.open("POST", url, false);
+			AJAX.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+			AJAX.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+			AJAX.send(passData);                                        
+		}
+	}
+
 });
