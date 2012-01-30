@@ -468,6 +468,9 @@ Ext.define('Atlas.form.DocQueueFilterPanel', {
                        Ext.Msg.alert('Success', action.result.message);
                        Ext.data.StoreManager.lookup('documentQueueFiltersStore').load();
                        Ext.data.StoreManager.lookup('queuedDocumentsStore').load();
+                       Ext.getCmp('fileDocumentForm').getForm().reset();
+                       Ext.getCmp('secondFilingCats').disable();	
+                       Ext.getCmp('thirdFilingCats').disable(); 
                     },
                     failure: function(form, action) {
                         Ext.Msg.alert('Failed', action.result.message);
