@@ -94,13 +94,11 @@ Ext.define('QueuedDocument', {
 			if(this.data.self_scan_cat_id || this.data.bar_code_definition_id) {
 				autoPopulateFilingCats(this);
 			}
-			
 			if(this.data.queued_to_customer_id) {
 				autoPopulateCustomerInfo(this);						
 			}
-			
-			loadPdf(this.data.id);
-			Ext.getCmp('docId').setValue(this.data.id);
+			embedPDF(this.data.id);
+			Ext.getCmp('docId').setValue(this.data.id);	
 			docQueueMask.hide();
 		}
 		else {
@@ -125,16 +123,12 @@ Ext.define('QueuedDocument', {
 			        	this.set('locked_by', text.admin);
 			        	this.set('locked_by_id', text.locked_by);
 			        	this.set('last_activity_admin', text.admin);
-			        	this.commit();
-			        	
-						autoPopulateFilingCats(this);
-						
+			        	this.commit();			        	
+						autoPopulateFilingCats(this);					
 						if(this.data.queued_to_customer_id) {
 							autoPopulateCustomerInfo(this);						
-						}
-						
-						loadPdf(text.QueuedDocument.id);
-						
+						}					
+						embedPDF(text.QueuedDocument.id);						
 						Ext.getCmp('docId').setValue(text.QueuedDocument.id);	
 						docQueueMask.hide();
 			        }
@@ -151,18 +145,13 @@ Ext.define('QueuedDocument', {
 			    	);
 			    	docQueueMask.hide();
 			    	docStore.load();
-				    Ext.getCmp('pdfFrame').el.dom.src = '';		    		
+				    Ext.getCmp('queuedDocumentsPdf').el.dom.innerHTML = '<p>No Document Loaded.</p>';	    		
 			    },
 			    scope: this
 			});			
 		}
 	}
 });
-
-function loadPdf(docId) {
-	Ext.getCmp('pdfFrame').el.dom.src = 
-		'/admin/queued_documents/view/'+docId+'/#toolbar=1&statusbar=0&navpanes=0&zoom=75';	
-}
 
 function autoPopulateCustomerInfo(doc) {
 	var cusStore = Ext.data.StoreManager.lookup('customerFirstname');
@@ -460,7 +449,8 @@ Ext.define('Atlas.form.DocQueueFilterPanel', {
         handler: function() {     	
             var form = this.up('form').getForm();
             if (form.isValid()) {
-            	Ext.getCmp('pdfFrame').el.dom.src = '';
+            	console.log(Ext.getCmp('queuedDocumentsPdf').getEl());
+            	Ext.getCmp('queuedDocumentsPdf').el.dom.innerHTML = '<p>No Document Loaded.</p>';
                 form.submit({
                 	waitTitle: 'Saving',
                 	waitMsg: 'Please wait...',
@@ -844,7 +834,7 @@ Ext.define('Atlas.form.FileDocumentPanel', {
                     	Ext.getCmp('secondFilingCats').disable();	
                        	Ext.getCmp('thirdFilingCats').disable();                       
                        	form.reset();
-                       	Ext.getCmp('pdfFrame').el.dom.src = '';
+                       	Ext.getCmp('queuedDocumentsPdf').el.dom.innerHTML = '<p>No Document Loaded.</p>';
                        	Ext.Msg.alert('Success', action.result.message);
                        	var store = Ext.data.StoreManager.lookup('queuedDocumentsStore');
                        	if(action.result.locked != undefined) {
@@ -875,12 +865,8 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 	}]
 });
 
-
-
-
-
 Ext.onReady(function(){
-	//TODO see about moving viewport out of onReady?
+	//TODO: see about moving viewport out of onReady?
 	Ext.create('Ext.container.Viewport', {
 	    layout: 'border',
 	    items:[{
@@ -962,12 +948,11 @@ Ext.onReady(function(){
 		        layout: 'fit',
 			    items : [{
 			        xtype : 'component',
-			        id: 'pdfFrame',
+			        id: 'queuedDocumentsPdf',
 			        width: 900,
 			        height: 400,
-			        autoEl : {
-			            tag : 'iframe'
-			        }
+			        html: '<p>No document currently loaded</p>'
+			        //TODO: look into possibly having a no acrobat installed message here
 			    }]		                	
 	        }]
 	    }]
@@ -983,19 +968,36 @@ Ext.onReady(function(){
 	*/
 	window.onunload = function() {
 		var url = '/admin/queued_documents/unlock_document';
-		var passData = null;
-		if (window.XMLHttpRequest) {              
-			AJAX=new XMLHttpRequest();              
-		} 
-		else {                                  
-			AJAX=new ActiveXObject("Microsoft.XMLHTTP");
-		}
-		if (AJAX) {
-			AJAX.open("POST", url, false);
-			AJAX.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-			AJAX.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-			AJAX.send(passData);                                        
-		}
+		unlockDoc(url);
 	}
 
 });
+
+function embedPDF(docId){
+    var myPDF = new PDFObject({
+		url: '/admin/queued_documents/view/'+docId,
+		height: "800px",
+		pdfOpenParams: { 
+			scrollbars: '1', 
+			toolbar: '1', 
+			statusbar: '0', 
+			messages: '0', 
+			navpanes: '0' 
+		}
+    }).embed('queuedDocumentsPdf');
+}
+
+function unlockDoc(url, passData) {
+	if (window.XMLHttpRequest) {              
+		AJAX=new XMLHttpRequest();              
+	} 
+	else {                                  
+		AJAX=new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	if (AJAX) {
+		AJAX.open("POST", url, false);
+		AJAX.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		AJAX.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+		AJAX.send(passData);                                        
+	}
+}		
