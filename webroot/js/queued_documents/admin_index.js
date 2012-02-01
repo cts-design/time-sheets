@@ -1009,7 +1009,6 @@ Ext.onReady(function(){
 		var url = '/admin/queued_documents/unlock_document';
 		unlockDoc(url);
 	}
-
 });
 
 function embedPDF(docId){
