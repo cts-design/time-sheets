@@ -346,7 +346,14 @@ class QueuedDocumentsController extends AppController {
 
     function admin_unlock_document() {
     	if($this->RequestHandler->isAjax()) {
-    		$this->QueuedDocument->checkLocked($this->Auth->user('id'));
+    		if($this->QueuedDocument->checkLocked($this->Auth->user('id'))) {
+    			$data['success'] = true;
+    			$data['message'] = 'Document unlock and returned to queue.';
+    		}
+    		else {
+    			$data['success'] = false;
+    			$data['message'] = 'Unable to unlock document.';
+    		}	
 			$this->set(compact('data'));
 			$this->render(null, null, '/elements/ajaxreturn');    		   	
     	}
@@ -365,7 +372,8 @@ class QueuedDocumentsController extends AppController {
 				$this->redirect(array('action' => 'index'));
 		    }
 		    else {
-				$this->Session->setFlash(__('The customer could not be saved. Please, try again.', true), 'flash_failure');
+				$this->Session->setFlash(
+					__('The customer could not be saved. Please, try again.', true), 'flash_failure');
 		    }
 		}
     }
