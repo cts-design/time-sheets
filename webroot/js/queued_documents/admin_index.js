@@ -160,7 +160,7 @@ Ext.define('QueuedDocument', {
 			        	}
 			        	this.set('locked_status', 'Locked');
 			        	this.set('locked_by', text.admin);
-			        	this.set('locked_by_id', text.locked_by);
+			        	this.set('locked_by_id', text.LockedBy.id);
 			        	this.set('last_activity_admin', text.admin);
 			        	this.commit();			        	
 						autoPopulateFilingCats(this);					
@@ -279,7 +279,40 @@ Ext.create('Ext.menu.Menu', {
     		Ext.getCmp('fileDocFormResetButton').fireEvent('click');
     		doc.lockDocument();
     	}		
-	}]
+	},{
+		text: 'Release Doc',
+		hidden: true,
+		itemId: 'releaseDoc',
+		handler: function() {
+			Ext.Ajax.request({
+			    url: '/admin/queued_documents/unlock_document',
+			    success: function(response){
+			        var text = Ext.JSON.decode(response.responseText);
+			        console.log(text);
+			        if(text.success) {
+			        	Ext.Msg.alert('Success', text.message);
+			        	Ext.data.StoreManager.lookup('queuedDocumentsStore').load();
+			        }
+			        else {
+			        	Ext.Msg.alert('Success', text.message);
+			        }
+			    }
+			});
+		}
+	}],
+	listeners: {
+		beforeshow: function() {
+    		var selectionModel = Ext.getCmp('queuedDocGrid').getView().getSelectionModel();
+    		var doc = selectionModel.getLastSelected();
+			if(!Ext.getCmp('autoLoadDocs').getValue() && 
+			 doc.data.locked_status == 'Locked' && doc.data.locked_by_id == adminId) {
+				this.getComponent('releaseDoc').show();
+			}
+			else {
+				this.getComponent('releaseDoc').hide();
+			}
+		}
+	}
 });
 
 Ext.define('Atlas.grid.QueuedDocPanel', {
