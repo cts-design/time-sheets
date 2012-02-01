@@ -20,7 +20,7 @@ class QueuedDocumentsController extends AppController {
 		1 => 'Locked'
     );
 	
-    var $reasons = array(
+	var $reasons = array(
 		'Duplicate scan' => 'Duplicate scan',
 		'Customer info missing' => 'Customer info missing',
 		'Multiple customers in same scan' => 'Multiple customers in same scan',
@@ -29,11 +29,11 @@ class QueuedDocumentsController extends AppController {
 		'Scan is incomplete' => 'Scan is incomplete',
 		'Document scanned in error or not needed' => 'Document scanned in error or not needed',
 		'Other' => 'Other'
-    );
+	);
 
     function beforeFilter() {
 		parent::beforeFilter();
-		//TODO remove the cookie, most likely no longer needed
+		// TODO: remove the cookie, most likely no longer needed
 		$this->Cookie->name = 'docQueueSearch';
 		$this->Cookie->time = 0;
 		$this->Security->validatePost = false;
@@ -214,7 +214,7 @@ class QueuedDocumentsController extends AppController {
 		$this->set($params);
     }
 	
-	//TODO remove this if we are not going to have thumbnails anymore?
+	//TODO: remove this if we are not going to have thumbnails anymore?
 	function admin_view_thumbnail($id = null) {
 		$this->view = 'Media';
 		$doc = $this->QueuedDocument->read(null, $id);
