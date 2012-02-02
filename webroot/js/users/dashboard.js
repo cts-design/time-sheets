@@ -125,6 +125,21 @@ $(document).ready(function () {
 	        		image: "/img/icons/news.png"
 	        	}
 	        },
+	        jobOrderForms : {
+	        	icon: {
+	        		image: "/img/icons/file.png"
+	        	}
+	        },
+	        employerVerifications : {
+	        	icon: {
+	        		image: "/img/icons/file.png"
+	        	}
+	        },
+	        jobSeekerNewHires : {
+	        	icon: {
+	        		image: "/img/icons/file.png"
+	        	}
+	        },
 	        surveys: {
 	        	icon: {
 	        		image: "/img/icons/survey.png"
