@@ -1,7 +1,24 @@
 <?php
+/**
+ * @author Daniel Nolan
+ * @copyright Complete Technology Solutions 2011
+ * @link http://ctsfla.com
+ * @package ATLAS V3
+ */
 class BarCodeDefinitionsController extends AppController {
 
 	public $name = 'BarCodeDefinitions';
+
+	public function beforeFilter(){
+		parent::beforeFilter();
+		if($this->Auth->user()) {
+		    if($this->Acl->check(array(
+				'model' => 'User',
+				'foreign_key' => $this->Auth->user('id')), 'QueuedDocuments/admin_index', '*')){
+				$this->Auth->allow('admin_get_definitions');
+		    }
+		}		
+	}
 
 	public function admin_index() {
 		if($this->RequestHandler->isAjax()) {
