@@ -141,7 +141,10 @@ Ext.define('QueuedDocument', {
 				autoPopulateCustomerInfo(this);						
 			}
 			embedPDF(this.data.id);
-			Ext.getCmp('docId').setValue(this.data.id);	
+
+			Ext.getCmp('fileDocumentForm').getComponent('docId').setValue(this.data.id);
+			Ext.getCmp('reassignQueueForm').getComponent('docId').setValue(this.data.id);
+
 			docQueueMask.hide();
 		}
 		else {
@@ -171,8 +174,9 @@ Ext.define('QueuedDocument', {
 						if(this.data.queued_to_customer_id) {
 							autoPopulateCustomerInfo(this);						
 						}					
-						embedPDF(text.QueuedDocument.id);						
-						Ext.getCmp('docId').setValue(text.QueuedDocument.id);	
+						embedPDF(text.QueuedDocument.id);
+						Ext.getCmp('fileDocumentForm').getComponent('docId').setValue(text.QueuedDocument.id);
+						Ext.getCmp('reassignQueueForm').getComponent('docId').setValue(text.QueuedDocument.id);
 						docQueueMask.hide();
 					}
 					else {
@@ -892,7 +896,7 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 	},{
 		xtype: 'hidden',
 		name: 'id',
-		id: 'docId'
+		itemId: 'docId'
 	}],
 	buttonAlign: 'left',
 	buttons:[{
@@ -918,10 +922,10 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 						else {
 							store.load();
 						}
-                    },
-                    failure: function(form, action) {
-                        Ext.Msg.alert('Failed', action.result.message);
-                    }
+					},
+					failure: function(form, action) {
+						Ext.Msg.alert('Failed', action.result.message);
+					}
                 });
             }
 		}
@@ -937,6 +941,58 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 			}
 		}
 	}]
+});
+
+Ext.define('Atlas.form.ReassignQueuePanel', {
+	extend: 'Ext.form.Panel',
+	alias: 'widget.reassignqueueformpanel',
+	id: 'reassignQueueForm',
+	bodyPadding: 10,
+	layout: 'anchor',
+	defaults: {
+		labelWidth: 90,
+		anchor: '100%'
+	},
+	items: [{
+		xtype: 'combobox',
+		fieldLabel: 'Queue Category',
+		store: 'queueCatgoriesStore',
+		queryMode: 'local',
+		displayField: 'name',
+		valueField: 'id',
+		name: 'queue_category_id',
+		forceSelection: true,
+		editable: false,
+		allowBlank: false		
+	}, {
+		xtype: 'hidden',
+		name: 'id',
+		itemId: 'docId',
+		value: null
+	}],
+	buttonAlign: 'left',
+	buttons:[{
+		text: 'Re-Assign',
+		formBind: true,
+		handler: function () {
+			var form = this.up('form').getForm();
+			if(form.isValid()) {
+				form.submit({
+					waitTitle: 'Saving',
+					waitMsg: 'Please wait...',
+					success: function(form, action) {
+						form.reset();
+						Ext.getCmp('queuedDocumentsPdf').el.dom.innerHTML = '<p>No Document Loaded.</p>';
+						Ext.Msg.alert('Success', action.result.message);
+						Ext.data.StoreManager.lookup('queuedDocumentsStore').load();
+                    },
+                    failure: function(form, action) {
+                        Ext.Msg.alert('Failed', action.result.message);
+                    }					
+				});
+			}
+		}
+	}]	
 });
 
 Ext.onReady(function(){
@@ -971,8 +1027,10 @@ Ext.onReady(function(){
 					width: '100%',
 					height: 325
 				},{
-					title: 'Re-Queue Document',
-					html: 'Panel content!',
+					title: 'Re-Assign to new Queue',
+					xtype: 'reassignqueueformpanel',
+					url: '/admin/queued_documents/reassign_queue',
+					border: 0,
 					flex: 1,
 					width: '100%'
 				},{
