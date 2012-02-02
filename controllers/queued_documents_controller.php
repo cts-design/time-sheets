@@ -214,31 +214,12 @@ class QueuedDocumentsController extends AppController {
 		    'extension' => 'pdf',
 		   	'cache' => true,
 		    'path' =>  Configure::read('Document.storage.path') .
-		    //TODO change this to use get the path from the file name.
-		    date('Y', strtotime($doc['QueuedDocument']['created'])) . '/' .
-		    date('m', strtotime($doc['QueuedDocument']['created'])) . '/'
+		    substr($doc['QueuedDocument']['filename'], 0, 4) . '/' .
+		    substr($doc['QueuedDocument']['filename'], 4, 2) . '/'
 		);
 		$this->set($params);
     }
-	
-	//TODO: remove this if we are not going to have thumbnails anymore?
-	public function admin_view_thumbnail($id = null) {
-		$this->view = 'Media';
-		$doc = $this->QueuedDocument->read(null, $id);
-		$params = array(
-		    'id' => str_replace('.pdf', '.jpg', $doc['QueuedDocument']['filename']),
-		    'name' => str_replace('.pdf', '', $doc['QueuedDocument']['filename']),
-		    'extension' => 'jpg',
-		    'download' => false,
-		    'cache' => true,
-		    'mimeType' => array('jpg' => 'image/jpeg'),
-		    'path' =>  Configure::read('Document.jpeg.path') .
-		    date('Y', strtotime($doc['QueuedDocument']['created'])) . '/' .
-		    date('m', strtotime($doc['QueuedDocument']['created'])) . '/'
-		);
-		$this->set($params);		
-	}
-	
+		
 	public function admin_file_document() {
 		if($this->RequestHandler->isAjax()) {
 			$this->data['FiledDocument'] = $this->params['form'];
