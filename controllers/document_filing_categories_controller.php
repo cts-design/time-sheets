@@ -239,6 +239,7 @@ class DocumentFilingCategoriesController extends AppController {
 			else{
 				$parentId = $this->params['url']['parentId'] ;
 			}
+			$this->DocumentFilingCategory->recursive = -1;
 		    $cats = $this->DocumentFilingCategory->find('all', array(
 				'conditions' => array(
 					'DocumentFilingCategory.parent_id' => $parentId,
