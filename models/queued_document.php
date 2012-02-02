@@ -87,7 +87,9 @@ class QueuedDocument extends AppModel {
     function checkLocked($userId) {
 		$lockedConditions['QueuedDocument.locked_status'] = 1;
 		$lockedConditions['QueuedDocument.locked_by'] = $userId;
-		$userLockedDoc = $this->find('first', array('conditions' => $lockedConditions));
+		$userLockedDoc = $this->find('first', array(
+			'conditions' => $lockedConditions, 
+			'recursive' => -1));
 		if(!empty($userLockedDoc['QueuedDocument']['id'])) {
 			$id = $this->unlockDocument($userLockedDoc['QueuedDocument']['id']);
 		    if ($id) {
