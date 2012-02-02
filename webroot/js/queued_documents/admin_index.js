@@ -143,26 +143,26 @@ Ext.define('QueuedDocument', {
 		else {
 			var docStore = Ext.data.StoreManager.lookup('queuedDocumentsStore');
 			Ext.Ajax.request({
-			    url: '/admin/queued_documents/lock_document',
-			    params: {
-			        doc_id: this.get('id')
-			    },
-			    success: function(response, opts){
-			        var text = Ext.JSON.decode(response.responseText);
-			        if(text.success) {	        	
-			        	if(text.unlocked != undefined) {
-				        	var unlockedDoc = docStore.getById(text.unlocked);
-				        	if(unlockedDoc) {
-					        	unlockedDoc.set('locked_status', 'Unlocked');
-					        	unlockedDoc.set('locked_by', '');
-					        	unlockedDoc.commit();
-				        	}
-			        	}
-			        	this.set('locked_status', 'Locked');
-			        	this.set('locked_by', text.admin);
-			        	this.set('locked_by_id', text.LockedBy.id);
-			        	this.set('last_activity_admin', text.admin);
-			        	this.commit();			        	
+				url: '/admin/queued_documents/lock_document',
+				params: {
+					doc_id: this.get('id')
+				},
+				success: function(response, opts){
+					var text = Ext.JSON.decode(response.responseText);
+					if(text.success) {
+						if(text.unlocked !== undefined) {
+							var unlockedDoc = docStore.getById(text.unlocked);
+							if(unlockedDoc) {
+								unlockedDoc.set('locked_status', 'Unlocked');
+								unlockedDoc.set('locked_by', '');
+								unlockedDoc.commit();
+							}
+						}
+						this.set('locked_status', 'Locked');
+						this.set('locked_by', text.admin);
+						this.set('locked_by_id', text.LockedBy.id);
+						this.set('last_activity_admin', text.admin);
+						this.commit();
 						autoPopulateFilingCats(this);					
 						if(this.data.queued_to_customer_id) {
 							autoPopulateCustomerInfo(this);						
@@ -170,23 +170,23 @@ Ext.define('QueuedDocument', {
 						embedPDF(text.QueuedDocument.id);						
 						Ext.getCmp('docId').setValue(text.QueuedDocument.id);	
 						docQueueMask.hide();
-			        }
-			        else {
-			        	opts.failure();
-			        }	
-			    },
-			    failure: function(response, opts) {
-			    	Ext.MessageBox.alert(
-			    		'Failure', 'Unable to lock document for viewing.<br />'
-			    		+'Make sure it is not locked by someone else.<br />'
-			    		+'Please use the refresh button in the grid toolbar<br />'
-			    		+'to update the grid view if nessesary.'
-			    	);
-			    	docQueueMask.hide();
-			    	docStore.load();
-				    Ext.getCmp('queuedDocumentsPdf').el.dom.innerHTML = '<p>No Document Loaded.</p>';	    		
-			    },
-			    scope: this
+					}
+					else {
+						opts.failure();
+					}	
+				},
+				failure: function(response, opts) {
+					Ext.MessageBox.alert(
+						'Failure', 'Unable to lock document for viewing.<br />' +
+						'Make sure it is not locked by someone else.<br />' +
+						'Please use the refresh button in the grid toolbar<br />' +
+						'to update the grid view if nessesary.'
+					);
+					docQueueMask.hide();
+					docStore.load();
+					Ext.getCmp('queuedDocumentsPdf').el.dom.innerHTML = '<p>No Document Loaded.</p>';
+				},
+				scope: this
 			});			
 		}
 	}
@@ -208,37 +208,36 @@ function autoPopulateCustomerInfo(doc) {
 }
 
 function autoPopulateFilingCats(doc) {
+	var cat, cat2Store, cat3Store;
 	if(doc.data.self_scan_cat_id) {
-		var cat = 
-			Ext.data.StoreManager.lookup('selfScanCategoriesStore').getById(doc.data.self_scan_cat_id);
-		if(cat.data.cat_1 != undefined) {
+		cat = Ext.data.StoreManager.lookup('selfScanCategoriesStore').getById(doc.data.self_scan_cat_id);
+		if(cat.data.cat_1 !== undefined) {
 			Ext.getCmp('mainFilingCats').select(cat.data.cat_1);
-			var cat2Store = Ext.data.StoreManager.lookup('documentFilingCats2');			
+			cat2Store = Ext.data.StoreManager.lookup('documentFilingCats2');			
 			cat2Store.load({params:{'parentId' : cat.data.cat_1}});
 		}
-		if(cat.data.cat_2 != undefined) {
+		if(cat.data.cat_2 !== undefined) {
 			Ext.getCmp('secondFilingCats').select(cat.data.cat_2);
-			var cat3Store = Ext.data.StoreManager.lookup('documentFilingCats3');
-			cat3Store.load({params:{'parentId' : cat.data.cat_2}});		        			
+			cat3Store = Ext.data.StoreManager.lookup('documentFilingCats3');
+			cat3Store.load({params:{'parentId' : cat.data.cat_2}});
 		}
-		if(cat.data.cat_3 != undefined) {
+		if(cat.data.cat_3 !== undefined) {
 			Ext.getCmp('thirdFilingCats').select(cat.data.cat_3);
 		}							
 	}
 	else if(doc.data.bar_code_definition_id) {
-		var cat = 
-			Ext.data.StoreManager.lookup('barCodeDefinitionsStore').getById(doc.data.bar_code_definition_id);
-		if(cat.data.cat_1 != undefined) {
+		cat = Ext.data.StoreManager.lookup('barCodeDefinitionsStore').getById(doc.data.bar_code_definition_id);
+		if(cat.data.cat_1 !== undefined) {
 			Ext.getCmp('mainFilingCats').select(cat.data.cat_1);
-			var cat2Store = Ext.data.StoreManager.lookup('documentFilingCats2');			
+			cat2Store = Ext.data.StoreManager.lookup('documentFilingCats2');
 			cat2Store.load({params:{'parentId' : cat.data.cat_1}});
 		}
-		if(cat.data.cat_2 != undefined) {
+		if(cat.data.cat_2 !== undefined) {
 			Ext.getCmp('secondFilingCats').select(cat.data.cat_2);
-			var cat3Store = Ext.data.StoreManager.lookup('documentFilingCats3');
-			cat3Store.load({params:{'parentId' : cat.data.cat_2}});		        			
+			cat3Store = Ext.data.StoreManager.lookup('documentFilingCats3');
+			cat3Store.load({params:{'parentId' : cat.data.cat_2}});
 		}
-		if(cat.data.cat_3 != undefined) {
+		if(cat.data.cat_3 !== undefined) {
 			Ext.getCmp('thirdFilingCats').select(cat.data.cat_3);
 		}							
 	}	
@@ -257,14 +256,14 @@ Ext.create('Ext.data.Store', {
 			totalProperty: 'totalCount'
         }
     },
-    listeners: {
-    	load: function(store, records, successful, operation, eOpts) {
-    		var autoLoad = Ext.getCmp('autoLoadDocs').getValue();
-    		if(records[0] != undefined && (autoLoad || records[0].data.requeued)) {
-    			var doc = this.getById(records[0].data.id);
-    			doc.lockDocument();
-    		}  	
-    	}
+	listeners: {
+		load: function(store, records, successful, operation, eOpts) {
+			var autoLoad = Ext.getCmp('autoLoadDocs').getValue();
+			if(records[0] !== undefined && (autoLoad || records[0].data.requeued)) {
+				var doc = this.getById(records[0].data.id);
+				doc.lockDocument();
+			}
+		}
     }
 });
 
@@ -273,40 +272,39 @@ Ext.create('Ext.menu.Menu', {
 	items: [{
 		text: 'View Doc',
 		icon:  '/img/icons/note_add.png',
-    	handler: function() {
-    		var selectionModel = Ext.getCmp('queuedDocGrid').getView().getSelectionModel();
-    		var doc = selectionModel.getLastSelected();
-    		Ext.getCmp('fileDocFormResetButton').fireEvent('click');
-    		doc.lockDocument();
-    	}		
+		handler: function() {
+			var selectionModel = Ext.getCmp('queuedDocGrid').getView().getSelectionModel();
+			var doc = selectionModel.getLastSelected();
+			Ext.getCmp('fileDocFormResetButton').fireEvent('click');
+			doc.lockDocument();
+		}
 	},{
 		text: 'Release Doc',
 		hidden: true,
 		itemId: 'releaseDoc',
 		handler: function() {
 			Ext.Ajax.request({
-			    url: '/admin/queued_documents/unlock_document',
-			    success: function(response){
-			        var text = Ext.JSON.decode(response.responseText);
-			        console.log(text);
-			        if(text.success) {
-			        	Ext.Msg.alert('Success', text.message);
-			        	Ext.data.StoreManager.lookup('queuedDocumentsStore').load();
-			        }
-			        else {
-			        	Ext.Msg.alert('Success', text.message);
-			        }
-			    }
+				url: '/admin/queued_documents/unlock_document',
+				success: function(response){
+					var text = Ext.JSON.decode(response.responseText);
+					if(text.success) {
+						Ext.Msg.alert('Success', text.message);
+						Ext.data.StoreManager.lookup('queuedDocumentsStore').load();
+					}
+					else {
+						Ext.Msg.alert('Success', text.message);
+					}
+				}
 			});
 		}
 	}],
 	listeners: {
 		beforeshow: function() {
-    		var selectionModel = Ext.getCmp('queuedDocGrid').getView().getSelectionModel();
-    		var doc = selectionModel.getLastSelected();
+			var selectionModel = Ext.getCmp('queuedDocGrid').getView().getSelectionModel();
+			var doc = selectionModel.getLastSelected();
 			if(!Ext.getCmp('autoLoadDocs').getValue() && 
-			 doc.data.locked_status == 'Locked' && doc.data.locked_by_id == adminId) {
-				this.getComponent('releaseDoc').show();
+				doc.data.locked_status == 'Locked' && doc.data.locked_by_id == adminId) {
+					this.getComponent('releaseDoc').show();
 			}
 			else {
 				this.getComponent('releaseDoc').hide();
@@ -322,8 +320,8 @@ Ext.define('Atlas.grid.QueuedDocPanel', {
 	store: 'queuedDocumentsStore',
     columns: [{ 
 			header: 'Id',
-		  	dataIndex: 'id',
-	 		width: 75
+			dataIndex: 'id',
+			width: 75
 		},{ 
 			header: 'Queue Cat', 
 			dataIndex: 'queue_cat',
@@ -363,21 +361,21 @@ Ext.define('Atlas.grid.QueuedDocPanel', {
 		viewConfig: {
 			singleSelect: true,
 			emptyText: 'No records at this time.',
-	        listeners: {
-	            itemcontextmenu: function(view, rec, node, index, e) {
-	                e.stopEvent();
-	                Ext.getCmp('gridContextMenu').showAt(e.getXY());	    			    			
-		     		docId = rec.data.id;
-		            return false;
-		        }
-	    	}
+			listeners: {
+				itemcontextmenu: function(view, rec, node, index, e) {
+					e.stopEvent();
+					Ext.getCmp('gridContextMenu').showAt(e.getXY());
+						docId = rec.data.id;
+					return false;
+				}
+			}
 		},
-	    dockedItems: [{
-	        xtype: 'pagingtoolbar',
-	        store: 'queuedDocumentsStore',
-	        dock: 'bottom',
-	        displayInfo: true
-	    }]					
+		dockedItems: [{
+			xtype: 'pagingtoolbar',
+			store: 'queuedDocumentsStore',
+			dock: 'bottom',
+			displayInfo: true
+		}]
 });
 
 
@@ -446,7 +444,7 @@ Ext.create('Ext.data.Store', {
 	},
 	listeners: {
 		load: function(store, records, successful, operation, eOpts) {
-			if(records[0] != undefined) {
+			if(records[0] !== undefined) {
 				Ext.getCmp('documentQueueFilterForm').loadRecord(records[0]);			
 			}
 		}
@@ -502,30 +500,29 @@ Ext.define('Atlas.form.DocQueueFilterPanel', {
         startDateField: 'fromDate',
         maxValue: new Date()
     },{
-    	xtype: 'checkbox',
-    	id: 'autoLoadDocs',
-    	fieldLabel: 'Auto Load Docs',
-    	name: 'auto_load_docs',
-    	inputValue: "1"
+		xtype: 'checkbox',
+		id: 'autoLoadDocs',
+		fieldLabel: 'Auto Load Docs',
+		name: 'auto_load_docs',
+		inputValue: "1"
     },{
-    	xtype: 'hidden',
-    	name: 'id',
-    	value: 0
+		xtype: 'hidden',
+		name: 'id',
+		value: 0
     }],
     buttonAlign: 'left',
     buttons:[{
-    	text: 'Save',
-    	icon:  '/img/icons/save.png',
-    	formBind: true,
-    	disabled: true,
-        handler: function() {     	
+		text: 'Save',
+		icon:  '/img/icons/save.png',
+		formBind: true,
+		disabled: true,
+		handler: function() {
             var form = this.up('form').getForm();
             if (form.isValid()) {
-            	console.log(Ext.getCmp('queuedDocumentsPdf').getEl());
-            	Ext.getCmp('queuedDocumentsPdf').el.dom.innerHTML = '<p>No Document Loaded.</p>';
+				Ext.getCmp('queuedDocumentsPdf').el.dom.innerHTML = '<p>No Document Loaded.</p>';
                 form.submit({
-                	waitTitle: 'Saving',
-                	waitMsg: 'Please wait...',
+					waitTitle: 'Saving',
+					waitMsg: 'Please wait...',
                     success: function(form, action) {
                        Ext.Msg.alert('Success', action.result.message);
                        Ext.data.StoreManager.lookup('documentQueueFiltersStore').load();
@@ -541,14 +538,14 @@ Ext.define('Atlas.form.DocQueueFilterPanel', {
             }
        }     
     },{
-    	text: 'Reset',
-    	icon:  '/img/icons/reset.png',
-    	handler: function() {
-    		var form = this.up('form').getForm();
-    		var vals = form.getValues();
-    		form.reset();
-    		form.setValues({id: vals.id});
-    	}
+		text: 'Reset',
+		icon:  '/img/icons/reset.png',
+		handler: function() {
+			var form = this.up('form').getForm();
+			var vals = form.getValues();
+			form.reset();
+			form.setValues({id: vals.id});
+		}
     }]
 });
 
@@ -585,7 +582,7 @@ Ext.define('Atlas.form.field.FirstNameComboBox', {
 	},
 	listeners: {
 		beforequery: function(queryEvent, eOpts) {
- 			queryEvent.query = this.prev().getValue() + ',' + queryEvent.query;
+			queryEvent.query = this.prev().getValue() + ',' + queryEvent.query;
 		},
 		select: function(combo, records, eOpts) {
 			this.nextSibling('#fileDocCusDetails').setValue(
@@ -620,7 +617,6 @@ Ext.define('Atlas.form.field.SsnComboBox', {
 	alias: 'widget.ssncombobox',
 	fieldLabel: 'Last 4 SSN',
 	disabled: true,
-	allowBlank: false,
 	forceSelection: true,
 	hideTrigger: true,
 	emptyText: 'Please enter last 4 of customer ssn',
@@ -628,8 +624,6 @@ Ext.define('Atlas.form.field.SsnComboBox', {
 	name: 'user_id',
 	allowBlank: false,
 	triggerAction: 'query',
-	msgTarget: 'under',
-	name: 'ssn',
 	store: 'customerSsn',
 	valueField: 'id',
 	displayField: 'ssn',
@@ -755,7 +749,7 @@ Ext.create('Ext.data.Store', {
 	listeners: {
 		load: function(store, records, successful, operation, eOpts) {
 			var combo = Ext.getCmp('secondFilingCats');
-			if(records[0] != undefined)	{
+			if(records[0] !== undefined)	{
 				combo.enable();			
 			}
 			else {
@@ -783,7 +777,7 @@ Ext.create('Ext.data.Store', {
 	listeners: {
 		load: function(store, records, successful, operation, eOpts) {
 			var combo = Ext.getCmp('thirdFilingCats');
-			if(records[0] != undefined)	{
+			if(records[0] !== undefined)	{
 				combo.enable();			
 			}
 			else {
@@ -818,7 +812,7 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 		name: 'cat_1',
 		listeners: {
 			select: function(combo, records, eOpts) {
-				if(records[0] != undefined) {
+				if(records[0] !== undefined) {
 					var store = Ext.data.StoreManager.lookup('documentFilingCats2');			
 					store.load({params:{'parentId' : records[0].data.id}});
 				}
@@ -840,7 +834,7 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 		allowBlank: false,
 		listeners: {
 			select: function(combo, records, eOpts) {
-				if(records[0] != undefined) {
+				if(records[0] !== undefined) {
 					var store = Ext.data.StoreManager.lookup('documentFilingCats3');			
 					store.load({params:{'parentId' : records[0].data.id}});
 				}
@@ -900,29 +894,28 @@ Ext.define('Atlas.form.FileDocumentPanel', {
             var form = this.up('form').getForm();
             if (form.isValid()) {
                 form.submit({
-                	waitTitle: 'Filing',
-                	waitMsg: 'Please wait...',
-                    success: function(form, action) {
-                    	Ext.getCmp('secondFilingCats').disable();	
-                       	Ext.getCmp('thirdFilingCats').disable();                       
-                       	form.reset();
-                       	Ext.getCmp('queuedDocumentsPdf').el.dom.innerHTML = '<p>No Document Loaded.</p>';
-                       	Ext.Msg.alert('Success', action.result.message);
-                       	var store = Ext.data.StoreManager.lookup('queuedDocumentsStore');
-                       	if(action.result.locked != undefined) {
-                       		store.load({params: {id: action.result.locked, requeued: true}});
-                       	}
-                       	else {
-                       		store.load();
-                       	}
-                       	
+					waitTitle: 'Filing',
+					waitMsg: 'Please wait...',
+					success: function(form, action) {
+						Ext.getCmp('secondFilingCats').disable();	
+						Ext.getCmp('thirdFilingCats').disable();                       
+						form.reset();
+						Ext.getCmp('queuedDocumentsPdf').el.dom.innerHTML = '<p>No Document Loaded.</p>';
+						Ext.Msg.alert('Success', action.result.message);
+						var store = Ext.data.StoreManager.lookup('queuedDocumentsStore');
+						if(action.result.locked !== undefined) {
+							store.load({params: {id: action.result.locked, requeued: true}});
+						}
+						else {
+							store.load();
+						}
                     },
                     failure: function(form, action) {
                         Ext.Msg.alert('Failed', action.result.message);
                     }
                 });
             }
-       } 		
+		}
 	},{
 		text: 'Reset',
 		id: 'fileDocFormResetButton',
@@ -940,94 +933,94 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 Ext.onReady(function(){
 	//TODO: see about moving viewport out of onReady?
 	Ext.create('Ext.container.Viewport', {
-	    layout: 'border',
-	    items:[{
-	        region:'west',
-	        width: 315,
-	        id: 'westContainer',
-	        layout: 'accordion',
-	        title: 'Queued Documents',
-	        tools: [{
-	        	type: 'prev',
-	        	tooltip: 'Back to dashboard',
-	        	handler: function()	{
-	        		window.location = '/admin/users/dashboard';
-	        	}
-	        }],
-		    items: [{
-		    	xtype: 'panel',
-		    	layout: 'vbox',
-		    	height: 'auto',
-		        title: 'Document Actions',
-		        collapsible: true,
-		        collapsed: false,
-		        items: [{
-		        	title: 'File Document',
-		        	border: 0,
-			        xtype: 'filedocumentformpanel',
-			        url: '/admin/queued_documents/file_document',				
-			       	width: '100%',
-			        height: 325
-		        },{
-		        	title: 'Re-Queue Document',
-			        html: 'Panel content!',
-			        flex: 1,
-			        width: '100%'
-		        },{
-		        	title: 'Delete Document',
-			        html: 'Panel content!',
-			        flex: 1,
-			        width: '100%'
-		        }]
-		    },{
-		        title: 'Queue Filters',
-		        xtype: 'docqueuefilterformpanel',
-		        url: '/admin/document_queue_filters/set_filters',
-		        height: 150,
-		        width: '100%',
-		        collapsible: true,
-		        collapsed: true
-		    },{
-		        title: 'Queue Search',
-		        html: 'Panel content!',
-		        width: '100%',
-		        height: 200,
-		        collapsible: true,
-		        collapsed: true
-		    },{
-		        title: 'Add Customer',
-		        html: 'Panel content!',
-		        width: '100%',
-		        height: 600,
-		        collapsible: true,
-		        collapsed: true		    	
-		    }]	        
-	    },{      
-	        region: 'center',
-	        xtype: 'panel',
-	        layout: {
-	        	align: 'stretch',
-	        	type: 'vbox'	
-	        },	        
-	        items: [{
-		        xtype: 'atlasdocqueuegridpanel',
-		        id: 'queuedDocGrid',
-		        height: 185,
-		        collapsible: true 		
-	        },{
-		    	title: 'Document',
-		        flex: 1,
-		        layout: 'fit',
-			    items : [{
-			        xtype : 'component',
-			        id: 'queuedDocumentsPdf',
-			        width: 900,
-			        height: 400,
-			        html: '<p>No document currently loaded</p>'
-			        //TODO: look into possibly having a no acrobat installed message here
-			    }]		                	
-	        }]
-	    }]
+		layout: 'border',
+		items:[{
+			region:'west',
+			width: 315,
+			id: 'westContainer',
+			layout: 'accordion',
+			title: 'Queued Documents',
+			tools: [{
+				type: 'prev',
+				tooltip: 'Back to dashboard',
+				handler: function()	{
+					window.location = '/admin/users/dashboard';
+				}
+			}],
+			items: [{
+				xtype: 'panel',
+				layout: 'vbox',
+				height: 'auto',
+				title: 'Document Actions',
+				collapsible: true,
+				collapsed: false,
+				items: [{
+					title: 'File Document',
+					border: 0,
+					xtype: 'filedocumentformpanel',
+					url: '/admin/queued_documents/file_document',
+					width: '100%',
+					height: 325
+				},{
+					title: 'Re-Queue Document',
+					html: 'Panel content!',
+					flex: 1,
+					width: '100%'
+				},{
+					title: 'Delete Document',
+					html: 'Panel content!',
+					flex: 1,
+					width: '100%'
+				}]
+			},{
+				title: 'Queue Filters',
+				xtype: 'docqueuefilterformpanel',
+				url: '/admin/document_queue_filters/set_filters',
+				height: 150,
+				width: '100%',
+				collapsible: true,
+				collapsed: true
+			},{
+				title: 'Queue Search',
+				html: 'Panel content!',
+				width: '100%',
+				height: 200,
+				collapsible: true,
+				collapsed: true
+			},{
+				title: 'Add Customer',
+				html: 'Panel content!',
+				width: '100%',
+				height: 600,
+				collapsible: true,
+				collapsed: true
+			}]
+		},{
+			region: 'center',
+			xtype: 'panel',
+			layout: {
+				align: 'stretch',
+				type: 'vbox'	
+			},
+			items: [{
+				xtype: 'atlasdocqueuegridpanel',
+				id: 'queuedDocGrid',
+				height: 185,
+				collapsible: true
+			},{
+				title: 'Document',
+				flex: 1,
+				layout: 'fit',
+				items : [{
+					xtype : 'component',
+					id: 'queuedDocumentsPdf',
+					width: 900,
+					height: 400,
+					html: '<p>No document currently loaded</p>'
+					//TODO: look into possibly having a no acrobat installed message here
+				}]
+			}]
+		}]
 	});
 
 	Ext.QuickTips.init();
@@ -1041,7 +1034,7 @@ Ext.onReady(function(){
 	window.onunload = function() {
 		var url = '/admin/queued_documents/unlock_document';
 		unlockDoc(url);
-	}
+	};
 });
 
 function embedPDF(docId){
