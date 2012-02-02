@@ -183,26 +183,31 @@ class QueuedDocumentsController extends AppController {
 	}
 	
     public function admin_reassign_queue() {
-		if(empty($this->data['QueuedDocument']['id'])) {
-		    $this->Session->setFlash(__('Invalid document id. Please try again.', true), 'flash_failure');
-		    $this->redirect(array('action' => 'index'));
+    	if($this->RequestHandler->isAjax()) {
+			if(!empty($this->params['form']['id'])){
+				$this->data['QueuedDocument'] = $this->params['form'];
+				$this->data['QueuedDocument']['last_activity_admin_id'] = $this->Auth->user('id');
+				if($this->QueuedDocument->save($this->data)) {
+				    $queueCatList = $this->QueuedDocument->DocumentQueueCategory->find('list');
+				    $queueCatId = $this->data['QueuedDocument']['queue_category_id'];
+				    $this->Transaction->createUserTransaction('Storage', null, null , 
+					    'Reassigned document ID '. $this->data['QueuedDocument']['id'] .
+					    ' to queue ' . $queueCatList[$queueCatId]);
+				    $data['success'] = true;
+				    $data['message'] = 'Document reassigned successfully.';
+				}
+				else {
+					$data['sucess'] = false;
+					$data['message'] = 'Unable to reassign document.';
+				}  		
+    		}
+    		else {
+    			$data['success'] = false;
+    			$data['message'] = 'Invalid doument id';
+    		}
+    		$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');  
 		}
-		$this->data['QueuedDocument']['last_activity_admin_id'] = $this->Auth->user('id');
-		if($this->QueuedDocument->save($this->data)) {
-		    $queueCatList = $this->QueuedDocument->DocumentQueueCategory->find('list');
-		    $queueCatId = $this->data['QueuedDocument']['queue_category_id'];
-		    $this->Transaction->createUserTransaction('Storage', null, null , 
-			    'Reassigned document ID '. $this->data['QueuedDocument']['id'] .
-			    ' to queue ' . $queueCatList[$queueCatId]);
-		    $this->Session->setFlash(__('The queued document has been re-assigned.', true), 'flash_success');
-		    $this->redirect(array('action' => 'index'));
-		}
-		else {
-		    $this->Session->setFlash(
-		    	__('The queued document could not be re-assigned. Please try again.', true), 'flash_failure');
-		    $this->redirect(array('action' => 'index'));
-		}
-
     }
 
     public function admin_view($id = null) {
