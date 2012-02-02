@@ -1,10 +1,16 @@
 <?php
 class DocumentQueueFiltersController extends AppController {
 
-	var $name = 'DocumentQueueFilters';
+	public $name = 'DocumentQueueFilters';
 	
+	public function beforeFilter(){
+		parent::beforeFilter();
+		if($this->Auth->user('role_id' > 1)) {
+			$this->Auth->allow('admin_get_filters');
+		}		
+	}	
 	
-	function admin_set_filters() {
+	public function admin_set_filters() {
 		if($this->RequestHandler->isAjax()) {
 			$this->data['DocumentQueueFilter'] = $this->params['form'];
 			$this->data['DocumentQueueFilter']['user_id'] = $this->Auth->user('id');
@@ -46,7 +52,7 @@ class DocumentQueueFiltersController extends AppController {
 		}
 	}
 	
-	function admin_get_filters() {
+	public function admin_get_filters() {
 		if($this->RequestHandler->isAjax()){
 			$filters = $this->DocumentQueueFilter->findByUserId($this->Auth->User('id'));
 			if($filters){
@@ -79,4 +85,3 @@ class DocumentQueueFiltersController extends AppController {
 	}
 
 }
-?>
