@@ -158,7 +158,24 @@ var JobOrderForms = {
         scope: this,
         handler: function() {
           this.deleteSurvey(this.selectedRecord);
-        }
+        },
+				listeners: {
+					itemclick: {
+						fn: function(view, rec, item, index, e, opts) {
+							var gridToolbars = this.grid.getDockedItem();
+							this.selectedRecord rec;
+							
+							gridToolbars[1].items.items[0].enable();
+						},
+						scope: this
+					},
+					itemdblclick: {
+	          fn: function(g,ri,e) {
+	            this.showWindow(this.selectedRecord);
+	          },
+						scope: this
+					}
+				}
       }]
     });
 

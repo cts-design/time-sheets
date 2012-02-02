@@ -676,5 +676,12 @@
 							'after' => '</p>'));
 		echo '<br class="clear" />';
 	?>
-<?php echo $this->Form->end(__('Submit', true));?>
+<?php $options = array(
+	'label' => 'Submit',
+	'name' => 'submit',
+	'div' => array(
+		'class' => 'submit-button'
+	)
+) ?>
+<?php echo $this->Form->end($options);?>
 </div>

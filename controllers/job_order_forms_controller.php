@@ -63,7 +63,7 @@ class JobOrderFormsController extends AppController {
 
 		// get the document relative path to the inital storage folder
 	    $abs_path = WWW_ROOT . 'files/public/job_order_forms/';
-	    $rel_path = 'files/public/job_order_forms/';
+	    $rel_path = '/files/public/job_order_forms/';
 	    $file_ext = '';
 	    $filename = '';
 
@@ -100,4 +100,3 @@ class JobOrderFormsController extends AppController {
 		return $url;
 	}
 }
-?>
