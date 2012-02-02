@@ -27,6 +27,46 @@ Ext.apply(Ext.form.field.VTypes, {
     daterangeText: 'Start date must be less than end date'
 });
 
+var closeWindow = new Ext.util.DelayedTask(function(){
+	Ext.getCmp('timeOutConfirm').close();
+});
+
+function setDocTimeOut() {
+	documentTimeout.delay(docTimeOutDelay);
+}
+
+var documentTimeout = new Ext.util.DelayedTask(function(){
+	
+	Ext.getCmp('timeOutConfirm').show({
+		title: 'Document Time Out',
+		msg: 'Do you wish to keep this document open?<br />Clicking no will return you to the dashboard.',
+		closable: false,
+		buttons: Ext.Msg.YESNO,
+		icon: Ext.Msg.QUESTION,
+		fn: function(clicked) {
+			if(clicked === 'yes') {
+				closeWindow.cancel();
+				documentTimeout.delay(docTimeOutDelay);
+			}
+			else {
+				window.location = '/admin/users/dashboard';
+			}
+		}
+	});
+});
+
+Ext.create('Ext.window.MessageBox',{
+	id: 'timeOutConfirm',
+	listeners: {
+		beforeclose: function() {
+			window.location = '/admin/users/dashboard';
+		},
+		show: function() {
+			closeWindow.delay(30000);
+		}
+	}
+});
+
 Ext.define('SelfScanCategory', {
 	extend: 'Ext.data.Model',
 	fields: [
@@ -87,45 +127,9 @@ Ext.define('QueuedDocument', {
 		{name: 'modified', type: 'date', dateFormat: 'Y-m-d H:i:s'}
 	],	
 	lockDocument: function() {
-		var closeWindow = new Ext.util.DelayedTask(function(){
-			Ext.getCmp('timeOutConfirm').close();
-		});		
-		Ext.create('Ext.window.MessageBox',{
-			id: 'timeOutConfirm',
-			listeners: {
-				beforeclose: function() {
-					window.location = '/admin/users/dashboard';
-				},
-				show: function() {
-					closeWindow.delay(30000);
-				}
-			}
-		});
-		var documentTimeout = new Ext.util.DelayedTask(function(){
-			Ext.getCmp('timeOutConfirm').show({
-				title: 'Document Time Out',
-				msg: 'Do you wish to keep this document open?<br />Clicking no will return you to the dashboard.',
-				closable: false,
-				buttons: Ext.Msg.YESNO,
-				icon: Ext.Msg.QUESTION,
-				fn: function(clicked) {
-					if(clicked === 'yes') {
-						closeWindow.delay(9999999999999999);
-						documentTimeout.delay(docTimeOutDelay);
-					}
-					else {
-						window.location = '/admin/users/dashboard';
-					}
-				}
-			});
-		});
-		documentTimeout.delay(docTimeOutDelay);
-		Ext.EventManager.on(Ext.getBody(), 'mousemove', function(){
-			documentTimeout.delay(docTimeOutDelay);
-		});	
-		Ext.EventManager.on(Ext.getBody(), 'keypress', function(){
-			documentTimeout.delay(docTimeOutDelay);
-		});				
+		Ext.EventManager.on(Ext.getBody(), 'mousemove', setDocTimeOut);	
+		Ext.EventManager.on(Ext.getBody(), 'keypress', setDocTimeOut);	
+		setDocTimeOut();		
 		var docQueueMask = 
 			new Ext.LoadMask(Ext.getBody(), {msg:"Loading Document..."});	
 		docQueueMask.show();
@@ -271,7 +275,7 @@ Ext.create('Ext.menu.Menu', {
 	id: 'gridContextMenu',
 	items: [{
 		text: 'View Doc',
-		icon:  '/img/icons/note_add.png',
+		icon:  '/img/icons/lock.png',
 		handler: function() {
 			var selectionModel = Ext.getCmp('queuedDocGrid').getView().getSelectionModel();
 			var doc = selectionModel.getLastSelected();
@@ -282,17 +286,22 @@ Ext.create('Ext.menu.Menu', {
 		text: 'Release Doc',
 		hidden: true,
 		itemId: 'releaseDoc',
-		handler: function() {
+		icon:  '/img/icons/lock_open.png',
+		handler: function() {	
 			Ext.Ajax.request({
 				url: '/admin/queued_documents/unlock_document',
 				success: function(response){
 					var text = Ext.JSON.decode(response.responseText);
 					if(text.success) {
+						documentTimeout.cancel();
+						Ext.EventManager.removeListener(Ext.getBody(), 'mousemove', setDocTimeOut);	
+						Ext.EventManager.removeListener(Ext.getBody(), 'keypress', setDocTimeOut);	
 						Ext.Msg.alert('Success', text.message);
+						Ext.getCmp('queuedDocumentsPdf').el.dom.innerHTML = '<p>No Document Loaded.</p>';
 						Ext.data.StoreManager.lookup('queuedDocumentsStore').load();
 					}
 					else {
-						Ext.Msg.alert('Success', text.message);
+						Ext.Msg.alert('Failure', text.message);
 					}
 				}
 			});
