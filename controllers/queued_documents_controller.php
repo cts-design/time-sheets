@@ -11,16 +11,16 @@ App::import('Core', 'HttpSocket');
 
 class QueuedDocumentsController extends AppController {
 
-    var $name = 'QueuedDocuments';
+    public $name = 'QueuedDocuments';
 	
-	var $components = array('Notifications', 'Email');
+	public $components = array('Notifications', 'Email');
 
-    var $lockStatuses = array(
+    public $lockStatuses = array(
 		0 => 'Unlocked',
 		1 => 'Locked'
     );
 	
-	var $reasons = array(
+	public $reasons = array(
 		'Duplicate scan' => 'Duplicate scan',
 		'Customer info missing' => 'Customer info missing',
 		'Multiple customers in same scan' => 'Multiple customers in same scan',
@@ -31,7 +31,7 @@ class QueuedDocumentsController extends AppController {
 		'Other' => 'Other'
 	);
 
-    function beforeFilter() {
+   public function beforeFilter() {
 		parent::beforeFilter();
 		// TODO: remove the cookie, most likely no longer needed
 		$this->Cookie->name = 'docQueueSearch';
@@ -46,7 +46,7 @@ class QueuedDocumentsController extends AppController {
 		}
     }
 	
-	function admin_index() {
+	public function admin_index() {
 		if($this->RequestHandler->isAjax()) {
 			if(isset($this->params['url']['requeued'])) {
 				$docs[0] = $this->QueuedDocument->findById($this->params['url']['id']);
@@ -72,9 +72,13 @@ class QueuedDocumentsController extends AppController {
 					else {
 						$this->paginate = array(
 							'order' => array('QueuedDocument.id ASC'),
-							'conditions' => $conditions);
+							'conditions' => $conditions,
+							'recursive' => 0);
+						
 						$data['totalCount'] = 
-							$this->QueuedDocument->find('count', array('conditions' => $conditions));					
+							$this->QueuedDocument->find('count', array(
+								'conditions' => $conditions,
+								'recursive' => -1));					
 					}	
 				}
 				else {
@@ -91,8 +95,10 @@ class QueuedDocumentsController extends AppController {
 						$data['totalCount'] = 1;										
 					}
 					else {
-						$this->paginate = array('order' => array('QueuedDocument.id ASC'));
-						$data['totalCount'] = $this->QueuedDocument->find('count');					
+						$this->paginate = array(
+							'order' => array('QueuedDocument.id ASC',
+							'recursive' => 0));
+						$data['totalCount'] = $this->QueuedDocument->find('count', array('recursive' => -1));					
 					}
 				}
 				if(!$this->checkAutoLoad()) {
@@ -160,7 +166,7 @@ class QueuedDocumentsController extends AppController {
 		$this->layout = 'ext_fullscreen';
 	}
 
-	function admin_lock_document() {
+	public function admin_lock_document() {
 		if($this->RequestHandler->isAjax()) {
 			$userId = $this->Auth->user('id');
 			$docId = $this->params['form']['doc_id'];
@@ -176,7 +182,7 @@ class QueuedDocumentsController extends AppController {
 		$this->render(null, null, '/elements/ajaxreturn');
 	}
 	
-    function admin_reassign_queue() {
+    public function admin_reassign_queue() {
 		if(empty($this->data['QueuedDocument']['id'])) {
 		    $this->Session->setFlash(__('Invalid document id. Please try again.', true), 'flash_failure');
 		    $this->redirect(array('action' => 'index'));
@@ -192,13 +198,14 @@ class QueuedDocumentsController extends AppController {
 		    $this->redirect(array('action' => 'index'));
 		}
 		else {
-		    $this->Session->setFlash(__('The queued document could not be re-assigned. Please try again.', true), 'flash_failure');
+		    $this->Session->setFlash(
+		    	__('The queued document could not be re-assigned. Please try again.', true), 'flash_failure');
 		    $this->redirect(array('action' => 'index'));
 		}
 
     }
 
-    function admin_view($id = null) {
+    public function admin_view($id = null) {
 		$this->view = 'Media';
 		$doc = $this->QueuedDocument->findById($id);
 		$params = array(
@@ -215,7 +222,7 @@ class QueuedDocumentsController extends AppController {
     }
 	
 	//TODO: remove this if we are not going to have thumbnails anymore?
-	function admin_view_thumbnail($id = null) {
+	public function admin_view_thumbnail($id = null) {
 		$this->view = 'Media';
 		$doc = $this->QueuedDocument->read(null, $id);
 		$params = array(
@@ -232,7 +239,7 @@ class QueuedDocumentsController extends AppController {
 		$this->set($params);		
 	}
 	
-	function admin_file_document() {
+	public function admin_file_document() {
 		if($this->RequestHandler->isAjax()) {
 			$this->data['FiledDocument'] = $this->params['form'];
 			$this->data['FiledDocument']['last_activity_admin_id'] = $this->Auth->user('id');
@@ -295,7 +302,7 @@ class QueuedDocumentsController extends AppController {
 		}		 
 	}
 
-    function admin_delete() {
+    public function admin_delete() {
 		if(!empty($this->data['QueuedDocument']['id'])) {
 		    $id = $this->data['QueuedDocument']['id'];
 		    $this->data['QueuedDocument']['last_activity_admin_id'] = $this->Auth->user('id');
@@ -321,7 +328,7 @@ class QueuedDocumentsController extends AppController {
 
     }
 
-    function admin_desktop_scan_document() {
+    public function admin_desktop_scan_document() {
 		if(!empty($this->data)) {
 		    $id = $this->QueuedDocument->uploadDocument($this->data, 'Desktop Scan', $this->Auth->User('id'));
 		    if($id) {
@@ -344,7 +351,7 @@ class QueuedDocumentsController extends AppController {
 		$this->set(compact('title_for_layout', 'queueCats', 'locations'));
     }
 
-    function admin_unlock_document() {
+    public function admin_unlock_document() {
     	if($this->RequestHandler->isAjax()) {
     		if($this->QueuedDocument->checkLocked($this->Auth->user('id'))) {
     			$data['success'] = true;
