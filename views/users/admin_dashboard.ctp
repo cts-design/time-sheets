@@ -47,7 +47,15 @@
                             	<li rel="hotJobs"><?php echo $html->link(__('Hot Jobs', true), array('controller' => 'hot_jobs', 'action' => 'index')); ?></li>
                             	<li rel="rfp"><?php echo $html->link(__('RFPs & Bids', true), array('controller' => 'rfps', 'action' => 'index')); ?></li>
                             	<li rel="featured"><?php echo $html->link(__('Featured Employer', true), array('controller' => 'featured_employers', 'action' => 'index')); ?></li>
-                            </ul>
+                                	<li rel="jobForms" id="jobForms">
+		                                    <a><?php __('Job Order Forms') ?></a>
+		                            		<ul>
+																			<li rel="jobOrderForms"><?php echo $html->link(__('Job Orders', true), array('controller' => 'job_order_forms', 'action' => 'index')); ?></li>
+																			<li rel="employerVerifications"><?php echo $html->link(__('Employer Verifications', true), array('controller' => 'employer_verifications', 'action' => 'index')); ?></li>
+																			<li rel="jobSeekerNewHires"><?php echo $html->link(__('Job Seeker New Hires', true), array('controller' => 'job_seeker_new_hires', 'action' => 'index')); ?></li>
+		                            		</ul>
+		                            	</li>    
+												</ul>
                         </li>
 			<li rel="settings" id="settings">
                 <a><?php __('Settings') ?></a>
