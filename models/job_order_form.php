@@ -2,12 +2,6 @@
 class JobOrderForm extends AppModel {
 	var $name = 'JobOrderForm';
 	var $validate = array(
-		// 'job_description' => array(
-		// 	'properFileType' => array(
-		// 		'rule' => array('properFileType'),
-		// 		'message' => 'Please upload either a PDF or Microsoft Word document'
-		// 	)
-		// ),
 		'federal_id' => array(
 			'notEmpty' => array(
 				'rule' => array('notEmpty'),
