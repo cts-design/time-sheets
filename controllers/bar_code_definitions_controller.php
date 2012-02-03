@@ -11,10 +11,7 @@ class BarCodeDefinitionsController extends AppController {
 
 	public function beforeFilter(){
 		parent::beforeFilter();
-		if($this->Auth->user()) {
-		    if($this->Acl->check(array(
-				'model' => 'User',
-				'foreign_key' => $this->Auth->user('id')), 'QueuedDocuments/admin_index', '*')){
+		if($this->Auth->user('role_id') > 3) {
 				$this->Auth->allow('admin_get_definitions');
 		    }
 		}		
