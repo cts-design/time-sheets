@@ -30,3 +30,5 @@ views/website_views/pages/home.ctp
 design
 /design/*
 *.tmproj
+atlas.sublime-project
+atlas.sublime-workspace
