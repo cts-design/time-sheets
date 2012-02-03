@@ -13,7 +13,7 @@ class AppController extends Controller {
     var $components = array(
     	'Session', 
     	'RequestHandler',
-    	'Auth',
+    	'AtlasAuth',
     	'AtlasAcl',
     	'Cookie',
     	'Transaction',
@@ -155,11 +155,26 @@ class AppController extends Controller {
 	                $this->Session->setFlash(__('This module needs to be activated, please contact CTS', true), 'flash_failure');
 	                $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => true));
 	            }
-	        }	
+	        }  	
+    }
+    
+    public function beforeRender() {
+	    if($this->RequestHandler->isAjax()) {
+	    	// TODO: make sure this is going to work......
+	    	$message = $this->Session->read('Message.auth.message');
+	    	if(!empty($message)) {
+	   			$message .= '<br />' . $this->params['url']['url'];
+	    		$this->Session->delete('Message.auth');
+	    		$data['success'] = false;
+	    		$data['message'] = $message;
+	    		$this->set(compact('data'));
+	    	}
+	    }     	
     }
 
     public function constructClasses() {
         parent::constructClasses();
+        $this->Auth = $this->AtlasAuth;
         $this->Acl = $this->AtlasAcl;
     }
 
@@ -173,7 +188,7 @@ class AppController extends Controller {
 		$this->loadModel('ModuleAccessControl');
 		$Controllers = Configure::listObjects('controller');
 		if(in_array($controller, $Controllers)) {
-		$module = $this->ModuleAccessControl->findByName($controller);
+			$module = $this->ModuleAccessControl->findByName($controller);
 			if($module['ModuleAccessControl']['permission'] == 1) {
 				return false;
 			}
