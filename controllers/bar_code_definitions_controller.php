@@ -11,9 +11,8 @@ class BarCodeDefinitionsController extends AppController {
 
 	public function beforeFilter(){
 		parent::beforeFilter();
-		if($this->Auth->user('role_id') > 3) {
-				$this->Auth->allow('admin_get_definitions');
-		    }
+		if($this->Auth->user('role_id') > 1) {
+			$this->Auth->allow('admin_get_definitions');
 		}		
 	}
 
@@ -40,7 +39,7 @@ class BarCodeDefinitionsController extends AppController {
 				}		
 			}
 			else {
-			 	$data['definitions'] = array();
+				$data['definitions'] = array();
 			}
 			$data['total'] = $this->BarCodeDefinition->find('count');
 			$data['success'] = true;
@@ -59,9 +58,9 @@ class BarCodeDefinitionsController extends AppController {
 					$data['total'] = $this->BarCodeDefinition->find('count');
 					$data['success'] = true;
 					$data['message'] = 'Bar code definition added successfully.';
-                    $this->Transaction->createUserTransaction('BarCodeDefinition', null, null,
-                                            'Added bar code definition ID ' . 
-                                            $this->BarCodeDefinition->getLastInsertId());					
+					$this->Transaction->createUserTransaction('BarCodeDefinition', null, null,
+											'Added bar code definition ID ' . 
+											$this->BarCodeDefinition->getLastInsertId());					
 				} else {
 					$data['success'] = false;
 					$data['message'] = 'Unable to add bar code definition.';
@@ -88,9 +87,9 @@ class BarCodeDefinitionsController extends AppController {
 					$data['definitions'] = $this->getDefinition($this->data['BarCodeDefinition']['id']);
 					$data['success'] = true;
 					$data['message'] = 'Bar code definition updated successfully.';
-                    $this->Transaction->createUserTransaction('BarCodeDefinition', null, null,
-                                            'Edited bar code definition ID ' . 
-                                            $this->data['BarCodeDefinition']['id']);					
+					$this->Transaction->createUserTransaction('BarCodeDefinition', null, null,
+											'Edited bar code definition ID ' . 
+											$this->data['BarCodeDefinition']['id']);					
 				} else {
 					$data['success'] = false;
 					$data['message'] = 'Unable to update bar code definition.';
@@ -112,9 +111,9 @@ class BarCodeDefinitionsController extends AppController {
 			elseif ($this->BarCodeDefinition->delete($this->data['BarCodeDefinition']['id'])) {
 				$data['definitions'] = $this->getDefinition($this->data['BarCodeDefinition']['id']);
 				$data['success'] = true;
-                $this->Transaction->createUserTransaction('BarCodeDefinition', null, null,
-                                        'Deleted bar code definition ID ' . 
-                                        $this->data['BarCodeDefinition']['id']);				
+				$this->Transaction->createUserTransaction('BarCodeDefinition', null, null,
+										'Deleted bar code definition ID ' . 
+										$this->data['BarCodeDefinition']['id']);				
 			}
 			else {
 				$data['success'] = false;
@@ -126,7 +125,7 @@ class BarCodeDefinitionsController extends AppController {
 	
    public function admin_get_definitions() {
 		if($this->RequestHandler->isAjax()) {
-		    $definitions = $this->BarCodeDefinition->find('all', array(
+			$definitions = $this->BarCodeDefinition->find('all', array(
 				'fields' => array(
 					'BarCodeDefinition.id',
 					'BarCodeDefinition.cat_1',
@@ -150,7 +149,7 @@ class BarCodeDefinitionsController extends AppController {
 			$this->set(compact('data'));
 			return $this->render(null, null, '/elements/ajaxreturn');
 		}
-    }
+	}
 	
 	private function getDefinition($id) {
 		$this->BarCodeDefinition->recursive = 0;
