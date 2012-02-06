@@ -35,6 +35,11 @@ function setDocTimeOut() {
 	documentTimeout.delay(docTimeOutDelay);
 }
 
+function removeTimeoutListeners() {
+	Ext.EventManager.removeListener(Ext.getBody(), 'mousemove', setDocTimeOut);
+	Ext.EventManager.removeListener(Ext.getBody(), 'keypress', setDocTimeOut);
+}
+
 var documentTimeout = new Ext.util.DelayedTask(function(){
 	
 	Ext.getCmp('timeOutConfirm').show({
@@ -144,6 +149,7 @@ Ext.define('QueuedDocument', {
 
 			Ext.getCmp('fileDocumentForm').getComponent('docId').setValue(this.data.id);
 			Ext.getCmp('reassignQueueForm').getComponent('docId').setValue(this.data.id);
+			Ext.getCmp('deleteDocumentForm').getComponent('docId').setValue(this.data.id);
 
 			docQueueMask.hide();
 		}
@@ -177,6 +183,7 @@ Ext.define('QueuedDocument', {
 						embedPDF(text.QueuedDocument.id);
 						Ext.getCmp('fileDocumentForm').getComponent('docId').setValue(text.QueuedDocument.id);
 						Ext.getCmp('reassignQueueForm').getComponent('docId').setValue(text.QueuedDocument.id);
+						Ext.getCmp('deleteDocumentForm').getComponent('docId').setValue(text.QueuedDocument.id);
 						docQueueMask.hide();
 					}
 					else {
@@ -297,9 +304,8 @@ Ext.create('Ext.menu.Menu', {
 				success: function(response){
 					var text = Ext.JSON.decode(response.responseText);
 					if(text.success) {
+						removeTimeoutListeners();
 						documentTimeout.cancel();
-						Ext.EventManager.removeListener(Ext.getBody(), 'mousemove', setDocTimeOut);
-						Ext.EventManager.removeListener(Ext.getBody(), 'keypress', setDocTimeOut);
 						Ext.Msg.alert('Success', text.message);
 						Ext.getCmp('queuedDocumentsPdf').el.dom.innerHTML = '<p>No Document Loaded.</p>';
 						Ext.data.StoreManager.lookup('queuedDocumentsStore').load();
@@ -537,19 +543,21 @@ Ext.define('Atlas.form.DocQueueFilterPanel', {
 					waitTitle: 'Saving',
 					waitMsg: 'Please wait...',
 					success: function(form, action) {
-					   Ext.Msg.alert('Success', action.result.message);
-					   Ext.data.StoreManager.lookup('documentQueueFiltersStore').load();
-					   Ext.data.StoreManager.lookup('queuedDocumentsStore').load();
-					   Ext.getCmp('fileDocumentForm').getForm().reset();
-					   Ext.getCmp('secondFilingCats').disable();
-					   Ext.getCmp('thirdFilingCats').disable();
+						removeTimeoutListeners();
+						documentTimeout.cancel();
+						Ext.Msg.alert('Success', action.result.message);
+						Ext.data.StoreManager.lookup('documentQueueFiltersStore').load();
+						Ext.data.StoreManager.lookup('queuedDocumentsStore').load();
+						Ext.getCmp('fileDocumentForm').getForm().reset();
+						Ext.getCmp('secondFilingCats').disable();
+						Ext.getCmp('thirdFilingCats').disable();
 					},
 					failure: function(form, action) {
 						Ext.Msg.alert('Failed', action.result.message);
 					}
 				});
 			}
-	   }
+		}
 	},{
 		text: 'Reset',
 		icon:  '/img/icons/reset.png',
@@ -914,6 +922,8 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 						Ext.getCmp('thirdFilingCats').disable();
 						form.reset();
 						Ext.getCmp('queuedDocumentsPdf').el.dom.innerHTML = '<p>No Document Loaded.</p>';
+						removeTimeoutListeners();
+						documentTimeout.cancel();
 						Ext.Msg.alert('Success', action.result.message);
 						var store = Ext.data.StoreManager.lookup('queuedDocumentsStore');
 						if(action.result.locked !== undefined) {
@@ -964,7 +974,7 @@ Ext.define('Atlas.form.ReassignQueuePanel', {
 		forceSelection: true,
 		editable: false,
 		allowBlank: false
-	}, {
+	},{
 		xtype: 'hidden',
 		name: 'id',
 		itemId: 'docId',
@@ -983,7 +993,105 @@ Ext.define('Atlas.form.ReassignQueuePanel', {
 					success: function(form, action) {
 						form.reset();
 						Ext.getCmp('queuedDocumentsPdf').el.dom.innerHTML = '<p>No Document Loaded.</p>';
+						Ext.getCmp('fileDocumentForm').getForm().reset();
+						Ext.getCmp('secondFilingCats').disable();
+						Ext.getCmp('thirdFilingCats').disable();
+						removeTimeoutListeners();
+						documentTimeout.cancel();
 						Ext.Msg.alert('Success', action.result.message);
+						Ext.data.StoreManager.lookup('queuedDocumentsStore').load();
+					},
+					failure: function(form, action) {
+						Ext.Msg.alert('Failed', action.result.message);
+					}
+				});
+			}
+		}
+	}]
+});
+
+var reasons = [
+		['Duplicate scan'],
+		['Customer info missing'],
+		['Multiple customers in same scan'],
+		['Multiple programs in same scan'],
+		['Document unreadable'],
+		['Scan is incomplete'],
+		['Document scanned in error or not needed'],
+		['Other']
+];
+
+Ext.create('Ext.data.ArrayStore', {
+	autoDestroy: true,
+	storeId: 'deletedReasonsStore',
+	data: reasons,
+	idIndex: 0,
+	fields: ['reason']
+});
+
+Ext.define('Atlas.form.DeleteDocumentPanel', {
+	extend: 'Ext.form.Panel',
+	alias: 'widget.deletedocumentformpanel',
+	id: 'deleteDocumentForm',
+	bodyPadding: 10,
+	layout: 'anchor',
+	defaults: {
+		labelWidth: 90,
+		anchor: '100%'
+	},
+	items:[{
+		xtype: 'combobox',
+		fieldLabel: 'Deleted Reason',
+		name: 'deleted_reason',
+		store: 'deletedReasonsStore',
+		queryMode: 'local',
+		displayField: 'reason',
+		valueField: 'reason',
+		forceSelection: true,
+		editable: false,
+		allowBlank: false,
+		listeners: {
+			select: function(combo, records, eOpts) {
+				if(records[0].data.reason === 'Other') {
+					this.next().enable();
+				}
+				else{
+					this.next().reset();
+					this.next().disable();
+				}
+			}
+		}
+	},{
+		xtype: 'textfield',
+		fieldLabel: 'Other',
+		disabled: true,
+		name: 'other',
+		allowBlank: false
+	},{
+		xtype: 'hidden',
+		name: 'id',
+		itemId: 'docId',
+		value: null
+	}],
+	buttonAlign: 'left',
+	buttons: [{
+		text: 'Delete',
+		formBind: true,
+		handler: function() {
+			var form = this.up('form').getForm();
+			if(form.isValid()) {
+				form.submit({
+					waitTitle: 'Saving',
+					waitMsg: 'Please wait...',
+					success: function(form, action) {
+						form.reset();
+						Ext.getCmp('queuedDocumentsPdf').el.dom.innerHTML = '<p>No Document Loaded.</p>';
+						Ext.getCmp('fileDocumentForm').getForm().reset();
+						Ext.getCmp('secondFilingCats').disable();
+						Ext.getCmp('thirdFilingCats').disable();
+						Ext.Msg.alert('Success', action.result.message);
+						removeTimeoutListeners();
+						documentTimeout.cancel();
 						Ext.data.StoreManager.lookup('queuedDocumentsStore').load();
 					},
 					failure: function(form, action) {
@@ -1035,8 +1143,10 @@ Ext.onReady(function(){
 					width: '100%'
 				},{
 					title: 'Delete Document',
-					html: 'Panel content!',
+					xtype: 'deletedocumentformpanel',
+					url: '/admin/queued_documents/delete',
 					flex: 1,
+					border: 0,
 					width: '100%'
 				}]
 			},{
