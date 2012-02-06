@@ -103,6 +103,7 @@ class AppController extends Controller {
 		$this->Auth->autoRedirect = false;
 		$this->Auth->authorize = 'actions';
 		$this->Auth->actionPath = 'controllers/';
+		$this->Auth->ajaxError = 'ajax_error';
 		//@TODO possibly change this to check specfic permissions 
 		if($this->Auth->user('role_id') > 1) {
 		    $this->Auth->allow(
@@ -156,20 +157,6 @@ class AppController extends Controller {
 	                $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => true));
 	            }
 	        }  	
-    }
-    
-    public function beforeRender() {
-	    if($this->RequestHandler->isAjax()) {
-	    	// TODO: make sure this is going to work......
-	    	$message = $this->Session->read('Message.auth.message');
-	    	if(!empty($message)) {
-	   			$message .= '<br />' . $this->params['url']['url'];
-	    		$this->Session->delete('Message.auth');
-	    		$data['success'] = false;
-	    		$data['message'] = $message;
-	    		$this->set(compact('data'));
-	    	}
-	    }     	
     }
 
     public function constructClasses() {
