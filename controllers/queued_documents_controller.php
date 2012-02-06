@@ -20,6 +20,7 @@ class QueuedDocumentsController extends AppController {
 		1 => 'Locked'
     );
 	
+	// TODO: remove this property as it will no longer be needed
 	public $reasons = array(
 		'Duplicate scan' => 'Duplicate scan',
 		'Customer info missing' => 'Customer info missing',
@@ -285,29 +286,39 @@ class QueuedDocumentsController extends AppController {
 	}
 
     public function admin_delete() {
-		if(!empty($this->data['QueuedDocument']['id'])) {
-		    $id = $this->data['QueuedDocument']['id'];
+		if(!empty($this->params['form']['id'])) {
+		    $id = $this->params['form']['id'];
+		    $this->data = $this->QueuedDocument->read(null, $id);
 		    $this->data['QueuedDocument']['last_activity_admin_id'] = $this->Auth->user('id');
 		    $this->data['QueuedDocument']['deleted_location_id'] = $this->Auth->user('location_id');
+		    if(isset($this->params['form']['other'])) {
+		    	$this->data['QueuedDocument']['deleted_reason'] = $this->params['form']['other'];	
+		    }
+		    else {
+		    	$this->data['QueuedDocument']['deleted_reason'] = $this->params['form']['deleted_reason'];		
+		    }
 		}
 		if(!$id) {
-		    $this->Session->setFlash(__('Invalid id for queued document', true), 'flash_failure');
-		    $this->redirect(array('action' => 'index'));
-		}
-		$data = $this->data;
-		$this->QueuedDocument->set($data);
-		if($this->QueuedDocument->delete($id, false)) {
-		    $this->Transaction->createUserTransaction('Storage', null, null ,
-			    'Deleted document ID '. $id .
-			    ' from the queue with reason, ' . $this->data['QueuedDocument']['reason']);
-		    $this->Session->setFlash(__('Queued document deleted', true), 'flash_success');
-		    $this->redirect(array('action' => 'index'));
+			$data['success'] = false;
+			$data['message'] = 'Invalid document id.';
 		}
 		else {
-		    $this->Session->setFlash(__('Queued document was not deleted', true), 'flash_failure');
-		    $this->redirect(array('action' => 'index'));
+			$data = $this->data;
+			$this->QueuedDocument->set($data);
+			if($this->QueuedDocument->delete($id, false)) {
+			    $this->Transaction->createUserTransaction('Storage', null, null ,
+				    'Deleted document ID '. $id .
+				    ' from the queue with reason, ' . $this->data['QueuedDocument']['deleted_reason']);
+				$data['success'] = true;
+				$data['message'] = 'Document was deleted successfully.';    
+			}
+			else {
+				$data['success'] = false;
+				$data['message'] = 'Unable to delete document.';
+			}			
 		}
-
+		$this->set(compact('data'));
+		$this->render(null, null, '/elements/ajaxreturn');
     }
 
     public function admin_desktop_scan_document() {
