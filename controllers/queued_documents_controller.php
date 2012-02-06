@@ -55,7 +55,18 @@ class QueuedDocumentsController extends AppController {
 				$data['totalCount'] = 1;				
 			}
 			else {
-				$conditions = $this->getDocumentQueueFilters();
+				if(!isset($this->params['url']['exclude_filters'])) {
+					$conditions = $this->getDocumentQueueFilters();
+				}		
+				if(isset($this->params['url']['doc_id'])) {
+					$conditions['QueuedDocument.id'] = $this->params['url']['doc_id'];
+				}
+				if(isset($this->params['url']['lastname'])) {
+					$conditions['User.lastname'] = $this->params['url']['lastname'];
+				}
+				if(isset($this->params['url']['last4'])) {
+					$conditions['RIGHT (User.ssn , 4)'] = $this->params['url']['last4'];
+				}
 				$this->QueuedDocument->checkLocked($this->Auth->user('id'));
 				if(isset($conditions)) {
 					if($this->checkAutoLoad()) {				
