@@ -533,8 +533,6 @@ Ext.define('Atlas.form.DocQueueFilterPanel', {
 	buttons:[{
 		text: 'Save',
 		icon:  '/img/icons/save.png',
-		formBind: true,
-		disabled: true,
 		handler: function() {
 			var form = this.up('form').getForm();
 			if (form.isValid()) {
@@ -559,7 +557,7 @@ Ext.define('Atlas.form.DocQueueFilterPanel', {
 			}
 		}
 	},{
-		text: 'Reset',
+		text: 'Reset Form',
 		icon:  '/img/icons/reset.png',
 		handler: function() {
 			var form = this.up('form').getForm();
@@ -911,6 +909,7 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 		text: 'File',
 		icon:  '/img/icons/save.png',
 		formBind: true,
+		disabled: true,
 		handler: function() {
 			var form = this.up('form').getForm();
 			if (form.isValid()) {
@@ -940,7 +939,7 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 			}
 		}
 	},{
-		text: 'Reset',
+		text: 'Reset Form',
 		id: 'fileDocFormResetButton',
 		icon:  '/img/icons/reset.png',
 		listeners: {
@@ -984,6 +983,7 @@ Ext.define('Atlas.form.ReassignQueuePanel', {
 	buttons:[{
 		text: 'Re-Assign',
 		formBind: true,
+		disabled: true,
 		handler: function () {
 			var form = this.up('form').getForm();
 			if(form.isValid()) {
@@ -1077,6 +1077,7 @@ Ext.define('Atlas.form.DeleteDocumentPanel', {
 	buttons: [{
 		text: 'Delete',
 		formBind: true,
+		disabled: true,
 		handler: function() {
 			var form = this.up('form').getForm();
 			if(form.isValid()) {
@@ -1099,6 +1100,122 @@ Ext.define('Atlas.form.DeleteDocumentPanel', {
 					}
 				});
 			}
+		}
+	}]
+});
+
+var searchTypes = [
+	['Document Id'],
+	['Customer Last Name'],
+	['Customer Last 4 SSN']
+];
+
+Ext.create('Ext.data.ArrayStore', {
+	autoDestroy: true,
+	storeId: 'searchTypesStore',
+	data: searchTypes,
+	idIndex: 0,
+	fields: ['type']
+});
+
+Ext.define('Atlas.form.documentQueueSearchPanel', {
+	extend: 'Ext.form.Panel',
+	alias: 'widget.documentqueuesearchformpanel',
+	id: 'documentQueueSearchPanel',
+	bodyPadding: 10,
+	height: 100,
+	layout: 'anchor',
+	defaults: {
+		labelWidth: 90,
+		anchor: '100%'
+	},
+	items: [{
+		html:
+			'<p>This will search the document queue within whatever filters you have set. ' +
+			'Please check the exclude filters checkbox if you want to search the entire queue ' +
+			'disregarding filter settings.</p>',
+		border: 0,
+		margin: '0 0 10 0'
+	},{
+		xtype: 'combobox',
+		fieldLabel: 'Serach Type',
+		store: 'searchTypesStore',
+		displayField: 'type',
+		valueField: 'type',
+		value: 'Document Id',
+		submitValue: false,
+		listeners: {
+			change: function(combo, newValue, oldValue, eOpts) {
+				if(newValue === 'Document Id') {
+					combo.nextSibling('[name=doc_id]').enable();
+					combo.nextSibling('[name=last4]').disable();
+					combo.nextSibling('[name=lastname]').disable();
+				}
+				if(newValue === 'Customer Last Name') {
+					combo.nextSibling('[name=doc_id]').disable();
+					combo.nextSibling('[name=last4]').disable();
+					combo.nextSibling('[name=lastname]').enable();
+				}
+				if(newValue === 'Customer Last 4 SSN') {
+					combo.nextSibling('[name=doc_id]').disable();
+					combo.nextSibling('[name=last4]').enable();
+					combo.nextSibling('[name=lastname]').disable();
+				}
+			}
+		}
+	},{
+		xtype: 'numberfield',
+		fieldLabel: 'Doc Id',
+		name: 'doc_id',
+		minValue: 0,
+		hideTrigger: true,
+		allowBlank: false
+	},{
+		xtype: 'textfield',
+		fieldLabel: 'Cus. Last Name',
+		name: 'lastname',
+		itemId: 'lastName',
+		allowBlank: false,
+		disabled: true
+	},{
+		xtype: 'textfield',
+		fieldLabel: 'Cus. Last 4 SSN',
+		name: 'last4',
+		allowBlank: false,
+		disabled: true
+	},{
+		xtype: 'checkbox',
+		fieldLabel: 'Exclude Filters',
+		name: 'exclude_filters'
+	}],
+	buttonAlign: 'left',
+	buttons: [{
+		text: 'Search',
+		icon:  '/img/icons/find.png',
+		formBind: true,
+		disabld: true,
+		handler: function() {
+			var form = this.up('form').getForm();
+			if(form.isValid()) {
+				var vals = form.getValues();
+				var store = Ext.data.StoreManager.lookup('queuedDocumentsStore');
+				store.getProxy().extraParams = vals;
+				store.load();
+				Ext.getCmp('queuedDocumentsPdf').el.dom.innerHTML = '<p>No Document Loaded.</p>';
+			}
+		}
+	},{
+		text: 'Reset Search',
+		icon:  '/img/icons/reset.png',
+		formBind: true,
+		disabled: true,
+		handler: function() {
+			var form = this.up('form').getForm();
+			form.reset();
+			var store = Ext.data.StoreManager.lookup('queuedDocumentsStore');
+			store.getProxy().extraParams = {};
+			store.load();
+			Ext.getCmp('queuedDocumentsPdf').el.dom.innerHTML = '<p>No Document Loaded.</p>';
 		}
 	}]
 });
@@ -1126,7 +1243,7 @@ Ext.onReady(function(){
 				height: 'auto',
 				title: 'Document Actions',
 				collapsible: true,
-				collapsed: false,
+				collapsed: true,
 				items: [{
 					title: 'File Document',
 					border: 0,
@@ -1153,22 +1270,20 @@ Ext.onReady(function(){
 				title: 'Queue Filters',
 				xtype: 'docqueuefilterformpanel',
 				url: '/admin/document_queue_filters/set_filters',
-				height: 150,
 				width: '100%',
 				collapsible: true,
 				collapsed: true
 			},{
 				title: 'Queue Search',
-				html: 'Panel content!',
+				xtype: 'documentqueuesearchformpanel',
 				width: '100%',
 				height: 200,
 				collapsible: true,
-				collapsed: true
+				collapsed: false
 			},{
 				title: 'Add Customer',
 				html: 'Panel content!',
 				width: '100%',
-				height: 600,
 				collapsible: true,
 				collapsed: true
 			}]
