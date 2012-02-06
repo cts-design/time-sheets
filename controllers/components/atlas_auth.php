@@ -5,6 +5,16 @@ App::import('Component', 'Auth');
 class AtlasAuthComponent extends AuthComponent {
 
 /**
+ * The name of an optional view element to render when an Ajax request is made
+ * and the user does not have permission to access that location.
+ * there will be two variables avilable in the element you set.
+ * the $url that was be being accessed and the $authError
+ * @var string
+ * @access public
+*/
+	public $ajaxError = null;
+
+/**
  * Main execution method.  Handles redirecting of invalid users, and processing
  * of login form data.
  *
@@ -152,9 +162,19 @@ class AtlasAuthComponent extends AuthComponent {
 		if ($this->isAuthorized($type, null, $user)) {
 			return true;
 		}
-
-		$this->Session->setFlash($this->authError, $this->flashElement, array(), 'auth');
-		if (!$this->RequestHandler->isAjax()) {
+	
+		if ($this->RequestHandler->isAjax() && !empty($this->ajaxError)) {
+			if ($url) {
+				$data['url'] = $url;
+			}	
+			$data['authError'] = $this->authError;
+			$controller->set($data);
+			$controller->viewPath = 'elements';
+			echo $controller->render($this->ajaxError, $this->RequestHandler->ajaxLayout);
+			$this->_stop();
+		}
+		else{
+			$this->Session->setFlash($this->authError, $this->flashElement, array(), 'auth');
 			$controller->redirect($controller->referer(), null, true);
 		}
 		return false;
