@@ -57,7 +57,7 @@ class QueuedDocument extends AppModel {
 		parent::beforeDelete($cascade);
 		if(!empty($this->data['QueuedDocument'])) {
 		    $adminId = $this->data['QueuedDocument']['last_activity_admin_id'];
-		    $reason = $this->data['QueuedDocument']['reason'];
+		    $reason = $this->data['QueuedDocument']['deleted_reason'];
 		    $deletedLocation = $this->data['QueuedDocument']['deleted_location_id'];
 		}
 		$delDoc = ClassRegistry::init('DeletedDocument');
