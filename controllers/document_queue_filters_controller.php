@@ -5,7 +5,7 @@ class DocumentQueueFiltersController extends AppController {
 	
 	public function beforeFilter(){
 		parent::beforeFilter();
-		if($this->Auth->user('role_id' > 1)) {
+		if($this->Auth->user('role_id') > 1) {
 			$this->Auth->allow('admin_get_filters');
 		}		
 	}	
