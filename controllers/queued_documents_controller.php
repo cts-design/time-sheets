@@ -39,11 +39,11 @@ class QueuedDocumentsController extends AppController {
 		$this->Security->validatePost = false;
 		if($this->Auth->user()) {
 		    if($this->Acl->check(array(
-				'model' => 'Role',
-				'foreign_key' => $this->Auth->user('role_id')), 'QueuedDocuments/admin_index', '*')){
-			$this->Auth->allow('admin_view');
+				'model' => 'User',
+				'foreign_key' => $this->Auth->user('id')), 'QueuedDocuments/admin_index', '*')){
+					$this->Auth->allow('admin_view', 'admin_lock_document');
 		    }
-		}
+		}		
     }
 	
 	public function admin_index() {
@@ -61,8 +61,7 @@ class QueuedDocumentsController extends AppController {
 						$conditions['QueuedDocument.locked_status'] = 0;
 						$doc = $this->QueuedDocument->find('first', array(
 							'order' => array('QueuedDocument.id ASC'),
-							'conditions' => $conditions,
-							'recursive' => -1));
+							'conditions' => $conditions));
 						if($doc) {
 							$docs[0] = $this->QueuedDocument->lockDocument(
 									       $doc['QueuedDocument']['id'], $this->Auth->user('id'));
@@ -72,13 +71,11 @@ class QueuedDocumentsController extends AppController {
 					else {
 						$this->paginate = array(
 							'order' => array('QueuedDocument.id ASC'),
-							'conditions' => $conditions,
-							'recursive' => 0);
+							'conditions' => $conditions);
 						
 						$data['totalCount'] = 
 							$this->QueuedDocument->find('count', array(
-								'conditions' => $conditions,
-								'recursive' => -1));					
+								'conditions' => $conditions));					
 					}	
 				}
 				else {
@@ -86,8 +83,7 @@ class QueuedDocumentsController extends AppController {
 						$conditions['QueuedDocument']['locked_status'] = 0;
 						$doc = $this->QueuedDocument->find('first', array(
 							'order' => array('QueuedDocument.id ASC'),
-							'conditions' => $conditions,
-							'recursive' => -1));
+							'conditions' => $conditions));
 						if($doc) {
 							$docs[0] = $this->QueuedDocument->lockDocument(
 									       $doc['QueuedDocument']['id'], $this->Auth->user('id'));
@@ -104,7 +100,7 @@ class QueuedDocumentsController extends AppController {
 				if(!$this->checkAutoLoad()) {
 					$docs = $this->paginate();	
 				}				
-			}			
+			}	
 			
 			if($docs) {
 				$i = 0;
