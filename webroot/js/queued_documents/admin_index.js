@@ -1,30 +1,30 @@
 Ext.apply(Ext.form.field.VTypes, {
-    daterange: function(val, field) {
-        var date = field.parseDate(val);
+	daterange: function(val, field) {
+		var date = field.parseDate(val);
 
-        if (!date) {
-            return false;
-        }
-        if (field.startDateField && (!this.dateRangeMax || (date.getTime() != this.dateRangeMax.getTime()))) {
-            var start = field.up('form').down('#' + field.startDateField);
-            start.setMaxValue(date);
-            start.validate();
-            this.dateRangeMax = date;
-        }
-        else if (field.endDateField && (!this.dateRangeMin || (date.getTime() != this.dateRangeMin.getTime()))) {
-            var end = field.up('form').down('#' + field.endDateField);
-            end.setMinValue(date);
-            end.validate();
-            this.dateRangeMin = date;
-        }
-        /*
-         * Always return true since we're only using this vtype to set the
-         * min/max allowed values (these are tested for after the vtype test)
-         */
-        return true;
-    },
+		if (!date) {
+			return false;
+		}
+		if (field.startDateField && (!this.dateRangeMax || (date.getTime() != this.dateRangeMax.getTime()))) {
+			var start = field.up('form').down('#' + field.startDateField);
+			start.setMaxValue(date);
+			start.validate();
+			this.dateRangeMax = date;
+		}
+		else if (field.endDateField && (!this.dateRangeMin || (date.getTime() != this.dateRangeMin.getTime()))) {
+			var end = field.up('form').down('#' + field.endDateField);
+			end.setMinValue(date);
+			end.validate();
+			this.dateRangeMin = date;
+		}
+		/*
+		* Always return true since we're only using this vtype to set the
+		* min/max allowed values (these are tested for after the vtype test)
+		*/
+		return true;
+	},
 
-    daterangeText: 'Start date must be less than end date'
+	daterangeText: 'Start date must be less than end date'
 });
 
 var closeWindow = new Ext.util.DelayedTask(function(){
@@ -75,20 +75,20 @@ Ext.define('SelfScanCategory', {
 });
 
 Ext.create('Ext.data.Store', {
-    storeId:'selfScanCategoriesStore',
+	storeId:'selfScanCategoriesStore',
 	model: SelfScanCategory,
-    proxy: {
-        type: 'ajax',
+	proxy: {
+		type: 'ajax',
 		url: '/admin/self_scan_categories/get_cats',
-        reader: {
-            type: 'json',
-            root: 'cats'
-        },
+		reader: {
+			type: 'json',
+			root: 'cats'
+		},
 		limitParam: undefined,
 		pageParam: undefined,
 		startParam: undefined
-    },
-    autoLoad: true
+	},
+	autoLoad: true
 });
 
 Ext.define('BarCodeDefinition', {
@@ -99,20 +99,20 @@ Ext.define('BarCodeDefinition', {
 });
 
 Ext.create('Ext.data.Store', {
-    storeId:'barCodeDefinitionsStore',
+	storeId:'barCodeDefinitionsStore',
 	model: SelfScanCategory,
-    proxy: {
-        type: 'ajax',
+	proxy: {
+		type: 'ajax',
 		url: '/admin/bar_code_definitions/get_definitions',
-        reader: {
-            type: 'json',
-            root: 'definitions'
-        },
+		reader: {
+			type: 'json',
+			root: 'definitions'
+		},
 		limitParam: undefined,
 		pageParam: undefined,
 		startParam: undefined
-    },
-    autoLoad: true
+	},
+	autoLoad: true
 });
 
 Ext.define('QueuedDocument', {
@@ -121,24 +121,24 @@ Ext.define('QueuedDocument', {
 		'id', 'queue_cat', 'scanned_location',
 		'queued_to_customer', 'queued_to_customer_id', 'queued_to_customer_ssn',
 		'queued_to_customer_first', 'queued_to_customer_last',
-		'locked_by', 'locked_by_id', 'locked_status', 'requeued', 
+		'locked_by', 'locked_by_id', 'locked_status', 'requeued',
 		'last_activity_admin', 'bar_code_definition_id', 'self_scan_cat_id',
-		{name: 'created', type: 'date', dateFormat: 'Y-m-d H:i:s'}, 
+		{name: 'created', type: 'date', dateFormat: 'Y-m-d H:i:s'},
 		{name: 'modified', type: 'date', dateFormat: 'Y-m-d H:i:s'}
-	],	
+	],
 	lockDocument: function() {
-		Ext.EventManager.on(Ext.getBody(), 'mousemove', setDocTimeOut);	
-		Ext.EventManager.on(Ext.getBody(), 'keypress', setDocTimeOut);	
-		setDocTimeOut();		
-		var docQueueMask = 
-			new Ext.LoadMask(Ext.getBody(), {msg:"Loading Document..."});	
+		Ext.EventManager.on(Ext.getBody(), 'mousemove', setDocTimeOut);
+		Ext.EventManager.on(Ext.getBody(), 'keypress', setDocTimeOut);
+		setDocTimeOut();
+		var docQueueMask =
+			new Ext.LoadMask(Ext.getBody(), {msg:"Loading Document..."});
 		docQueueMask.show();
 		if(this.data.locked_status == "Locked" && this.data.locked_by_id == adminId) {
 			if(this.data.self_scan_cat_id || this.data.bar_code_definition_id) {
 				autoPopulateFilingCats(this);
 			}
 			if(this.data.queued_to_customer_id) {
-				autoPopulateCustomerInfo(this);						
+				autoPopulateCustomerInfo(this);
 			}
 			embedPDF(this.data.id);
 
@@ -170,10 +170,10 @@ Ext.define('QueuedDocument', {
 						this.set('locked_by_id', text.LockedBy.id);
 						this.set('last_activity_admin', text.admin);
 						this.commit();
-						autoPopulateFilingCats(this);					
+						autoPopulateFilingCats(this);
 						if(this.data.queued_to_customer_id) {
-							autoPopulateCustomerInfo(this);						
-						}					
+							autoPopulateCustomerInfo(this);
+						}
 						embedPDF(text.QueuedDocument.id);
 						Ext.getCmp('fileDocumentForm').getComponent('docId').setValue(text.QueuedDocument.id);
 						Ext.getCmp('reassignQueueForm').getComponent('docId').setValue(text.QueuedDocument.id);
@@ -181,7 +181,7 @@ Ext.define('QueuedDocument', {
 					}
 					else {
 						opts.failure();
-					}	
+					}
 				},
 				failure: function(response, opts) {
 					Ext.MessageBox.alert(
@@ -195,7 +195,7 @@ Ext.define('QueuedDocument', {
 					Ext.getCmp('queuedDocumentsPdf').el.dom.innerHTML = '<p>No Document Loaded.</p>';
 				},
 				scope: this
-			});			
+			});
 		}
 	}
 });
@@ -204,15 +204,15 @@ function autoPopulateCustomerInfo(doc) {
 	var cusStore = Ext.data.StoreManager.lookup('customerFirstname');
 	
 	cusStore.add({
-		id: doc.data.queued_to_customer_id, 
-		firstname: doc.data.queued_to_customer_first, 
+		id: doc.data.queued_to_customer_id,
+		firstname: doc.data.queued_to_customer_first,
 		lastname: doc.data.queued_to_customer_last
 	});
 	
 	Ext.getCmp('fileDocLastname').setValue(doc.data.queued_to_customer_last);
 	Ext.getCmp('fileDocFirstname').setValue(doc.data.queued_to_customer_id);
 	Ext.getCmp('fileDocCusDetails').setValue(
-		doc.data.queued_to_customer_ssn + ', ' + doc.data.queued_to_customer_last);	
+		doc.data.queued_to_customer_ssn + ', ' + doc.data.queued_to_customer_last);
 }
 
 function autoPopulateFilingCats(doc) {
@@ -221,7 +221,7 @@ function autoPopulateFilingCats(doc) {
 		cat = Ext.data.StoreManager.lookup('selfScanCategoriesStore').getById(doc.data.self_scan_cat_id);
 		if(cat.data.cat_1 !== undefined) {
 			Ext.getCmp('mainFilingCats').select(cat.data.cat_1);
-			cat2Store = Ext.data.StoreManager.lookup('documentFilingCats2');			
+			cat2Store = Ext.data.StoreManager.lookup('documentFilingCats2');
 			cat2Store.load({params:{'parentId' : cat.data.cat_1}});
 		}
 		if(cat.data.cat_2 !== undefined) {
@@ -231,7 +231,7 @@ function autoPopulateFilingCats(doc) {
 		}
 		if(cat.data.cat_3 !== undefined) {
 			Ext.getCmp('thirdFilingCats').select(cat.data.cat_3);
-		}							
+		}
 	}
 	else if(doc.data.bar_code_definition_id) {
 		cat = Ext.data.StoreManager.lookup('barCodeDefinitionsStore').getById(doc.data.bar_code_definition_id);
@@ -247,23 +247,23 @@ function autoPopulateFilingCats(doc) {
 		}
 		if(cat.data.cat_3 !== undefined) {
 			Ext.getCmp('thirdFilingCats').select(cat.data.cat_3);
-		}							
-	}	
+		}
+	}
 }
 
 Ext.create('Ext.data.Store', {
-    storeId:'queuedDocumentsStore',
-    pageSize: 5,
+	storeId:'queuedDocumentsStore',
+	pageSize: 5,
 	model: QueuedDocument,
-    proxy: {
-        type: 'ajax',
+	proxy: {
+		type: 'ajax',
 		url: '/admin/queued_documents',
-        reader: {
-            type: 'json',
-            root: 'docs',
+		reader: {
+			type: 'json',
+			root: 'docs',
 			totalProperty: 'totalCount'
-        }
-    },
+		}
+	},
 	listeners: {
 		load: function(store, records, successful, operation, eOpts) {
 			var autoLoad = Ext.getCmp('autoLoadDocs').getValue();
@@ -272,7 +272,7 @@ Ext.create('Ext.data.Store', {
 				doc.lockDocument();
 			}
 		}
-    }
+	}
 });
 
 Ext.create('Ext.menu.Menu', {
@@ -291,15 +291,15 @@ Ext.create('Ext.menu.Menu', {
 		hidden: true,
 		itemId: 'releaseDoc',
 		icon:  '/img/icons/lock_open.png',
-		handler: function() {	
+		handler: function() {
 			Ext.Ajax.request({
 				url: '/admin/queued_documents/unlock_document',
 				success: function(response){
 					var text = Ext.JSON.decode(response.responseText);
 					if(text.success) {
 						documentTimeout.cancel();
-						Ext.EventManager.removeListener(Ext.getBody(), 'mousemove', setDocTimeOut);	
-						Ext.EventManager.removeListener(Ext.getBody(), 'keypress', setDocTimeOut);	
+						Ext.EventManager.removeListener(Ext.getBody(), 'mousemove', setDocTimeOut);
+						Ext.EventManager.removeListener(Ext.getBody(), 'keypress', setDocTimeOut);
 						Ext.Msg.alert('Success', text.message);
 						Ext.getCmp('queuedDocumentsPdf').el.dom.innerHTML = '<p>No Document Loaded.</p>';
 						Ext.data.StoreManager.lookup('queuedDocumentsStore').load();
@@ -315,7 +315,7 @@ Ext.create('Ext.menu.Menu', {
 		beforeshow: function() {
 			var selectionModel = Ext.getCmp('queuedDocGrid').getView().getSelectionModel();
 			var doc = selectionModel.getLastSelected();
-			if(!Ext.getCmp('autoLoadDocs').getValue() && 
+			if(!Ext.getCmp('autoLoadDocs').getValue() &&
 				doc.data.locked_status == 'Locked' && doc.data.locked_by_id == adminId) {
 					this.getComponent('releaseDoc').show();
 			}
@@ -331,26 +331,26 @@ Ext.define('Atlas.grid.QueuedDocPanel', {
 	alias: 'widget.atlasdocqueuegridpanel',
 	title: 'Documents in Queue',
 	store: 'queuedDocumentsStore',
-    columns: [{ 
+	columns: [{
 			header: 'Id',
 			dataIndex: 'id',
 			width: 75
-		},{ 
-			header: 'Queue Cat', 
+		},{
+			header: 'Queue Cat',
 			dataIndex: 'queue_cat',
 			width: 75
-		},{ 
+		},{
 			header: 'Scanned Location',
-			dataIndex: 'scanned_location' 
+			dataIndex: 'scanned_location'
 		},{
 			header: 'Queued to Customer',
 			dataIndex: 'queued_to_customer',
 			width: 150
-		},{ 
-			header: 'Locked Status', 
+		},{
+			header: 'Locked Status',
 			dataIndex: 'locked_status',
 			width: 80
-		},{ 
+		},{
 			header: 'Locked By',
 			dataIndex: 'locked_by',
 			width: 115
@@ -363,13 +363,13 @@ Ext.define('Atlas.grid.QueuedDocPanel', {
 			dataIndex: 'created',
 			width: 110,
 			format: 'm/d/y g:i a',
-			xtype: 'datecolumn'			
-		},{ 
-			header: 'Modified', 
+			xtype: 'datecolumn'
+		},{
+			header: 'Modified',
 			dataIndex: 'modified',
 			width: 110,
 			format: 'm/d/y g:i a',
-			xtype: 'datecolumn'			
+			xtype: 'datecolumn'
 		}],
 		viewConfig: {
 			singleSelect: true,
@@ -409,7 +409,7 @@ Ext.create('Ext.data.Store', {
 		},
 		limitParam: undefined,
 		pageParam: undefined,
-		startParam: undefined				
+		startParam: undefined
 	},
 	autoLoad: true
 });
@@ -431,7 +431,7 @@ Ext.create('Ext.data.Store', {
 		},
 		limitParam: undefined,
 		pageParam: undefined,
-		startParam: undefined				
+		startParam: undefined
 	},
 	autoLoad: true
 });
@@ -453,12 +453,12 @@ Ext.create('Ext.data.Store', {
 		},
 		limitParam: undefined,
 		pageParam: undefined,
-		startParam: undefined				
+		startParam: undefined
 	},
 	listeners: {
 		load: function(store, records, successful, operation, eOpts) {
 			if(records[0] !== undefined) {
-				Ext.getCmp('documentQueueFilterForm').loadRecord(records[0]);			
+				Ext.getCmp('documentQueueFilterForm').loadRecord(records[0]);
 			}
 		}
 	},
@@ -484,7 +484,7 @@ Ext.define('Atlas.form.DocQueueFilterPanel', {
 		name: 'locations',
 		emptyText: 'Please Select',
 		displayField: 'name',
-		valueField: 'id',		
+		valueField: 'id',
 		store: 'locationsStore'
 	},{
 		xtype: 'boxselect',
@@ -495,62 +495,62 @@ Ext.define('Atlas.form.DocQueueFilterPanel', {
 		emptyText: 'Please Select',
 		displayField: 'name',
 		valueField: 'id',
-		store: 'queueCatgoriesStore'				
+		store: 'queueCatgoriesStore'
 	},{
-        xtype: 'datefield',
-        fieldLabel: 'From',
-        id: 'fromDate',
-        name: 'from_date',
-        vtype: 'daterange',
-        endDateField: 'toDate',
-        maxValue: new Date()
-    },{
-        xtype: 'datefield',
-        id: 'toDate',
-        fieldLabel: 'To',
-        name: 'to_date',
-        vtype: 'daterange',
-        startDateField: 'fromDate',
-        maxValue: new Date()
-    },{
+		xtype: 'datefield',
+		fieldLabel: 'From',
+		id: 'fromDate',
+		name: 'from_date',
+		vtype: 'daterange',
+		endDateField: 'toDate',
+		maxValue: new Date()
+	},{
+		xtype: 'datefield',
+		id: 'toDate',
+		fieldLabel: 'To',
+		name: 'to_date',
+		vtype: 'daterange',
+		startDateField: 'fromDate',
+		maxValue: new Date()
+	},{
 		xtype: 'checkbox',
 		id: 'autoLoadDocs',
 		fieldLabel: 'Auto Load Docs',
 		name: 'auto_load_docs',
 		inputValue: "1"
-    },{
+	},{
 		xtype: 'hidden',
 		name: 'id',
 		value: 0
-    }],
-    buttonAlign: 'left',
-    buttons:[{
+	}],
+	buttonAlign: 'left',
+	buttons:[{
 		text: 'Save',
 		icon:  '/img/icons/save.png',
 		formBind: true,
 		disabled: true,
 		handler: function() {
-            var form = this.up('form').getForm();
-            if (form.isValid()) {
+			var form = this.up('form').getForm();
+			if (form.isValid()) {
 				Ext.getCmp('queuedDocumentsPdf').el.dom.innerHTML = '<p>No Document Loaded.</p>';
-                form.submit({
+				form.submit({
 					waitTitle: 'Saving',
 					waitMsg: 'Please wait...',
-                    success: function(form, action) {
-                       Ext.Msg.alert('Success', action.result.message);
-                       Ext.data.StoreManager.lookup('documentQueueFiltersStore').load();
-                       Ext.data.StoreManager.lookup('queuedDocumentsStore').load();
-                       Ext.getCmp('fileDocumentForm').getForm().reset();
-                       Ext.getCmp('secondFilingCats').disable();	
-                       Ext.getCmp('thirdFilingCats').disable(); 
-                    },
-                    failure: function(form, action) {
-                        Ext.Msg.alert('Failed', action.result.message);
-                    }
-                });
-            }
-       }     
-    },{
+					success: function(form, action) {
+					   Ext.Msg.alert('Success', action.result.message);
+					   Ext.data.StoreManager.lookup('documentQueueFiltersStore').load();
+					   Ext.data.StoreManager.lookup('queuedDocumentsStore').load();
+					   Ext.getCmp('fileDocumentForm').getForm().reset();
+					   Ext.getCmp('secondFilingCats').disable();
+					   Ext.getCmp('thirdFilingCats').disable();
+					},
+					failure: function(form, action) {
+						Ext.Msg.alert('Failed', action.result.message);
+					}
+				});
+			}
+	   }
+	},{
 		text: 'Reset',
 		icon:  '/img/icons/reset.png',
 		handler: function() {
@@ -559,7 +559,7 @@ Ext.define('Atlas.form.DocQueueFilterPanel', {
 			form.reset();
 			form.setValues({id: vals.id});
 		}
-    }]
+	}]
 });
 
 Ext.define('Atlas.form.field.LastNameText', {
@@ -570,7 +570,7 @@ Ext.define('Atlas.form.field.LastNameText', {
 	allowBlank: false,
 	submitValue: false,
 	msgTarget: 'under',
-	name: 'lastname'	
+	name: 'lastname'
 });
 
 Ext.define('Atlas.form.field.FirstNameComboBox', {
@@ -601,7 +601,7 @@ Ext.define('Atlas.form.field.FirstNameComboBox', {
 			this.nextSibling('#fileDocCusDetails').setValue(
 				records[0].data.fullssn + ', ' + records[0].data.lastname);
 		}
-	}	
+	}
 });
 
 Ext.define('Customer', {
@@ -621,7 +621,7 @@ Ext.create('Ext.data.Store', {
 		},
 		limitParam: undefined,
 		pageParam: undefined,
-		startParam: undefined				
+		startParam: undefined
 	}
 });
 
@@ -649,8 +649,8 @@ Ext.define('Atlas.form.field.SsnComboBox', {
 		select: function(combo, records, eOpts) {
 			this.nextSibling('#fileDocCusDetails').setValue(
 				records[0].data.fullssn + ', ' + records[0].data.lastname);
-		}		
-	}		
+		}
+	}
 });
 
 Ext.create('Ext.data.Store', {
@@ -665,7 +665,7 @@ Ext.create('Ext.data.Store', {
 		},
 		limitParam: undefined,
 		pageParam: undefined,
-		startParam: undefined				
+		startParam: undefined
 	}
 });	
 
@@ -695,7 +695,7 @@ Ext.define('Atlas.form.field.FindCusByComboBox', {
 				last.enable();
 				ssn.disable();
 				ssn.reset();
-				cusDetails.reset();				
+				cusDetails.reset();
 			}
 			if(newValue === 'Last 4 SSN') {
 				first.disable();
@@ -740,10 +740,10 @@ Ext.create('Ext.data.Store', {
 		startParam: undefined,
 		extraParams: {
 			parentId: 'parent'
-		}				
+		}
 	},
-	autoLoad: true	
-});	
+	autoLoad: true
+});
 
 Ext.create('Ext.data.Store', {
 	model: 'DocumentFilingCategory',
@@ -757,20 +757,20 @@ Ext.create('Ext.data.Store', {
 		},
 		limitParam: undefined,
 		pageParam: undefined,
-		startParam: undefined				
+		startParam: undefined
 	},
 	listeners: {
 		load: function(store, records, successful, operation, eOpts) {
 			var combo = Ext.getCmp('secondFilingCats');
 			if(records[0] !== undefined)	{
-				combo.enable();			
+				combo.enable();
 			}
 			else {
 				combo.clearInvalid();
 				combo.disable();
 			}
 		}
-	}	
+	}
 });
 
 Ext.create('Ext.data.Store', {
@@ -785,21 +785,21 @@ Ext.create('Ext.data.Store', {
 		},
 		limitParam: undefined,
 		pageParam: undefined,
-		startParam: undefined				
+		startParam: undefined
 	},
 	listeners: {
 		load: function(store, records, successful, operation, eOpts) {
 			var combo = Ext.getCmp('thirdFilingCats');
 			if(records[0] !== undefined)	{
-				combo.enable();			
+				combo.enable();
 			}
 			else {
 				combo.clearInvalid();
 				combo.disable();
 			}
 		}
-	}		
-});		
+	}
+});
 
 Ext.define('Atlas.form.FileDocumentPanel', {
 	extend: 'Ext.form.Panel',
@@ -826,11 +826,11 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 		listeners: {
 			select: function(combo, records, eOpts) {
 				if(records[0] !== undefined) {
-					var store = Ext.data.StoreManager.lookup('documentFilingCats2');			
+					var store = Ext.data.StoreManager.lookup('documentFilingCats2');
 					store.load({params:{'parentId' : records[0].data.id}});
 				}
 			}
-		}		
+		}
 	},{
 		xtype: 'combobox',
 		fieldLabel: 'Second Cat',
@@ -848,14 +848,14 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 		listeners: {
 			select: function(combo, records, eOpts) {
 				if(records[0] !== undefined) {
-					var store = Ext.data.StoreManager.lookup('documentFilingCats3');			
+					var store = Ext.data.StoreManager.lookup('documentFilingCats3');
 					store.load({params:{'parentId' : records[0].data.id}});
 				}
 			}
-		}		
+		}
 
 	},{
-		xtype: 'combobox', 
+		xtype: 'combobox',
 		fieldLabel: 'Third Cat',
 		id: 'thirdFilingCats',
 		name: 'cat_3',
@@ -867,7 +867,7 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 		editable: false,
 		queryMode: 'local',
 		disabled: true,
-		allowBlank: false	
+		allowBlank: false
 	},{
 		xtype: 'textfield',
 		fieldLabel: 'Other',
@@ -903,15 +903,15 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 		text: 'File',
 		icon:  '/img/icons/save.png',
 		formBind: true,
-        handler: function() {
-            var form = this.up('form').getForm();
-            if (form.isValid()) {
-                form.submit({
+		handler: function() {
+			var form = this.up('form').getForm();
+			if (form.isValid()) {
+				form.submit({
 					waitTitle: 'Filing',
 					waitMsg: 'Please wait...',
 					success: function(form, action) {
-						Ext.getCmp('secondFilingCats').disable();	
-						Ext.getCmp('thirdFilingCats').disable();                       
+						Ext.getCmp('secondFilingCats').disable();
+						Ext.getCmp('thirdFilingCats').disable();
 						form.reset();
 						Ext.getCmp('queuedDocumentsPdf').el.dom.innerHTML = '<p>No Document Loaded.</p>';
 						Ext.Msg.alert('Success', action.result.message);
@@ -926,8 +926,8 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 					failure: function(form, action) {
 						Ext.Msg.alert('Failed', action.result.message);
 					}
-                });
-            }
+				});
+			}
 		}
 	},{
 		text: 'Reset',
@@ -937,7 +937,7 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 			click: function() {
 				this.up('form').getForm().reset();
 				Ext.getCmp('secondFilingCats').disable();
-				Ext.getCmp('thirdFilingCats').disable();				
+				Ext.getCmp('thirdFilingCats').disable();
 			}
 		}
 	}]
@@ -963,7 +963,7 @@ Ext.define('Atlas.form.ReassignQueuePanel', {
 		name: 'queue_category_id',
 		forceSelection: true,
 		editable: false,
-		allowBlank: false		
+		allowBlank: false
 	}, {
 		xtype: 'hidden',
 		name: 'id',
@@ -985,14 +985,14 @@ Ext.define('Atlas.form.ReassignQueuePanel', {
 						Ext.getCmp('queuedDocumentsPdf').el.dom.innerHTML = '<p>No Document Loaded.</p>';
 						Ext.Msg.alert('Success', action.result.message);
 						Ext.data.StoreManager.lookup('queuedDocumentsStore').load();
-                    },
-                    failure: function(form, action) {
-                        Ext.Msg.alert('Failed', action.result.message);
-                    }					
+					},
+					failure: function(form, action) {
+						Ext.Msg.alert('Failed', action.result.message);
+					}
 				});
 			}
 		}
-	}]	
+	}]
 });
 
 Ext.onReady(function(){
@@ -1067,7 +1067,7 @@ Ext.onReady(function(){
 			xtype: 'panel',
 			layout: {
 				align: 'stretch',
-				type: 'vbox'	
+				type: 'vbox'
 			},
 			items: [{
 				xtype: 'atlasdocqueuegridpanel',
@@ -1105,30 +1105,30 @@ Ext.onReady(function(){
 });
 
 function embedPDF(docId){
-    var myPDF = new PDFObject({
+	var myPDF = new PDFObject({
 		url: '/admin/queued_documents/view/'+docId,
 		height: "800px",
-		pdfOpenParams: { 
-			scrollbars: '1', 
-			toolbar: '1', 
-			statusbar: '0', 
-			messages: '0', 
-			navpanes: '0' 
+		pdfOpenParams: {
+			scrollbars: '1',
+			toolbar: '1',
+			statusbar: '0',
+			messages: '0',
+			navpanes: '0'
 		}
-    }).embed('queuedDocumentsPdf');
+	}).embed('queuedDocumentsPdf');
 }
 
 function unlockDoc(url, passData) {
-	if (window.XMLHttpRequest) {              
-		AJAX=new XMLHttpRequest();              
-	} 
-	else {                                  
+	if (window.XMLHttpRequest) {
+		AJAX=new XMLHttpRequest();
+	}
+	else {
 		AJAX=new ActiveXObject("Microsoft.XMLHTTP");
 	}
 	if (AJAX) {
 		AJAX.open("POST", url, false);
 		AJAX.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		AJAX.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-		AJAX.send(passData);                                        
+		AJAX.send(passData);
 	}
-}		
+}
