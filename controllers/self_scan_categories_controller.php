@@ -3,6 +3,13 @@ class SelfScanCategoriesController extends AppController {
 
 	var $name = 'SelfScanCategories';
 
+	public function beforeFilter(){
+		parent::beforeFilter();
+			if($this->Auth->user('role_id') > 1) {
+				$this->Auth->allow('admin_get_cats');		
+			}
+	}
+
 	function admin_index() {
 		$this->SelfScanCategory->recursive = 0;
 		$order = array('SelfScanCategory.name' => 'asc');
