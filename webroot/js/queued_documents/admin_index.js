@@ -1220,6 +1220,302 @@ Ext.define('Atlas.form.documentQueueSearchPanel', {
 	}]
 });
 
+var states = [
+	['AL',"Alabama"],
+	['AK',"Alaska"],
+	['AZ',"Arizona"],
+	['AR',"Arkansas"],
+	['CA',"California"],
+	['CO',"Colorado"],
+	['CT',"Connecticut"],
+	['DE',"Delaware"],
+	['DC',"District Of Columbia"],
+	['FL',"Florida"],
+	['GA',"Georgia"],
+	['HI',"Hawaii"],
+	['ID',"Idaho"],
+	['IL',"Illinois"],
+	['IN',"Indiana"],
+	['IA',"Iowa"],
+	['KS',"Kansas"],
+	['KY',"Kentucky"],
+	['LA',"Louisiana"],
+	['ME',"Maine"],
+	['MD',"Maryland"],
+	['MA',"Massachusetts"],
+	['MI',"Michigan"],
+	['MN',"Minnesota"],
+	['MS',"Mississippi"],
+	['MO',"Missouri"],
+	['MT',"Montana"],
+	['NE',"Nebraska"],
+	['NV',"Nevada"],
+	['NH',"New Hampshire"],
+	['NJ',"New Jersey"],
+	['NM',"New Mexico"],
+	['NY',"New York"],
+	['NC',"North Carolina"],
+	['ND',"North Dakota"],
+	['OH',"Ohio"],
+	['OK',"Oklahoma"],
+	['OR',"Oregon"],
+	['PA',"Pennsylvania"],
+	['RI',"Rhode Island"],
+	['SC',"South Carolina"],
+	['SD',"South Dakota"],
+	['TN',"Tennessee"],
+	['TX',"Texas"],
+	['UT',"Utah"],
+	['VT',"Vermont"],
+	['VA',"Virginia"],
+	['WA',"Washington"],
+	['WV',"West Virginia"],
+	['WI',"Wisconsin"],
+	['WY',"Wyoming"]
+];
+
+Ext.create('Ext.data.ArrayStore', {
+	autoDestroy: true,
+	storeId: 'statesStore',
+	idIndex: 0,
+	fields: ['abrv', 'state'],
+	data: states
+});
+
+Ext.create('Ext.data.ArrayStore', {
+	autoDestroy: true,
+	storeId: 'surnamesStore',
+	idIndex: 0,
+	fields: ['surname'],
+	data: [
+		['Sr'],
+		['Jr'],
+		['III']
+	]
+});
+
+Ext.create('Ext.data.ArrayStore', {
+	autoDestroy: true,
+	storeId: 'gendersStore',
+	idIndex: 0,
+	fields: ['gender'],
+	data: [
+		['Male'],
+		['Female']
+	]
+});
+
+Ext.create('Ext.data.ArrayStore', {
+	autoDestroy: true,
+	storeId: 'languagesStore',
+	idIndex: 0,
+	fields: ['language'],
+	data: [
+		['English'],
+		['Spanish'],
+		['Other']
+	]
+});
+
+Ext.create('Ext.data.ArrayStore', {
+	autoDestroy: true,
+	storeId: 'racesStore',
+	idIndex: 0,
+	fields: ['race'],
+	data: [
+		['American Indian or Alaska Native'],
+		['Asian'],
+		['Black or African American'],
+		['Hawaiian or Other Pacific Islander'],
+		['White']
+	]
+});
+
+Ext.create('Ext.data.ArrayStore', {
+	autoDestroy: true,
+	storeId: 'ethnicitiesStore',
+	idIndex: 0,
+	fields: ['ethnicity'],
+	data: [
+		['Hispanic or Latino'],
+		['Not Hispanic or Latino']
+	]
+});
+
+Ext.define('Atlas.form.CustomerAddPanel', {
+	extend: 'Ext.form.Panel',
+	alias: 'widget.customeraddformpanel',
+	id: 'customerAddFormPanel',
+	bodyPadding: 10,
+	height: 100,
+	layout: 'anchor',
+	defaults: {
+		labelWidth: 75,
+		anchor: '100%'
+	},
+	items: [{
+		xtype: 'textfield',
+		fieldLabel: 'First Name',
+		allowBlank: false,
+		name: 'firstname'
+	},{
+		xtype: 'textfield',
+		fieldLabel: 'Last Name',
+		allowBlank: false,
+		name: 'lastname'
+	},{
+		xtype: 'textfield',
+		fieldLabel: 'Middle Initial',
+		name: 'middle_initial'
+	},{
+		xtype: 'combobox',
+		fieldLabel: 'Surname',
+		store: 'surnamesStore',
+		valueField: 'surname',
+		displayField: 'surname',
+		emptyText: 'Please Select',
+		queryMode: 'local',
+		forceSelection: true,
+		editable: false,
+		name: 'surname'
+	},{
+		xtype: 'textfield',
+		fieldLabel: 'SSN',
+		allowBlank: false,
+		name: 'ssn'
+	},{
+		xtype: 'textfield',
+		fieldLabel: 'Address',
+		allowBlank: false,
+		name: 'address_1'
+	},{
+		xtype: 'textfield',
+		fieldLabel: 'City',
+		allowBlank: false,
+		name: 'city'
+	},{
+		xtype: 'textfield',
+		fieldLabel: 'County',
+		allowBlank: false,
+		name: 'county'
+	},{
+		xtype: 'combobox',
+		fieldLabel: 'State',
+		allowBlank: false,
+		store: 'statesStore',
+		displayField: 'state',
+		valueField: 'abrv',
+		emptyText: 'Please Select',
+		queryMode: 'local',
+		forceSelection: true,
+		editable: false,
+		name: 'state'
+	},{
+		xtype: 'numberfield',
+		fieldLabel: 'Zip',
+		allowBlank: false,
+		maxLength: 5,
+		hideTrigger: true,
+		name: 'zip'
+	},{
+		xtype: 'textfield',
+		fieldLabel: 'Phone',
+		allowBlank: false,
+		name: 'phone'
+	},{
+		xtype: 'textfield',
+		fieldLabel: 'Alt Phone',
+		name: 'alt_phone'
+	},{
+		xtype: 'combobox',
+		fieldLabel: 'Gender',
+		allowBlank: false,
+		store: 'gendersStore',
+		displayField: 'gender',
+		valueField: 'gender',
+		emptyText: 'Please Select',
+		queryMode: 'local',
+		forceSelection: true,
+		editable: false,
+		name: 'gender'
+	},{
+		xtype: 'datefield',
+		fieldLabel: 'DOB',
+		allowBlank: false,
+		name: 'dob'
+	},{
+		xtype: 'textfield',
+		fieldLabel: 'Email',
+		allowBlank: false,
+		vtype: 'email',
+		name: 'email'
+	},{
+		xtype: 'combobox',
+		fieldLabel: 'Language',
+		store: 'languagesStore',
+		displayField: 'language',
+		valueField: 'language',
+		emptyText: 'Please Select',
+		queryMode: 'local',
+		forceSelection: true,
+		editable: false,
+		name: 'language'
+	},{
+		xtype: 'combobox',
+		fieldLabel: 'Race',
+		store: 'racesStore',
+		displayField: 'race',
+		valueField: 'race',
+		emptyText: 'Please Select',
+		queryMode: 'local',
+		forceSelection: true,
+		editable: false,
+		name: 'race'
+	},{
+		xtype: 'combobox',
+		fieldLabel: 'Ethnicity',
+		store: 'ethnicitiesStore',
+		displayField: 'ethnicity',
+		valueField: 'ethnicity',
+		emptyText: 'Please Select',
+		queryMode: 'local',
+		forceSelection: true,
+		editable: false,
+		name: 'ethnicity'
+	},{
+		xtype: 'hidden',
+		name: 'role_id',
+		value: 1
+	}],
+	buttonAlign: 'left',
+	buttons: [{
+		text: 'Save',
+		formBind: true,
+		disabled: true,
+		handler: function() {
+			var form = this.up('form').getForm();
+			if(form.isValid()) {
+				form.submit({
+					waitTitle: 'Saving',
+					waitMsg: 'Please wait...',
+					success: function(form, action) {
+						form.reset();
+						Ext.Msg.alert('Success', action.result.message);
+					},
+					failure: function(form, action) {
+						Ext.Msg.alert('Failed', action.result.message);
+					}
+				});
+			}
+		}
+	},{
+		text: 'Reset Form',
+		handler: function() {
+			this.up('form').getForm().reset();
+		}
+	}]
+});
+
 Ext.onReady(function(){
 	//TODO: see about moving viewport out of onReady?
 	Ext.create('Ext.container.Viewport', {
@@ -1243,7 +1539,7 @@ Ext.onReady(function(){
 				height: 'auto',
 				title: 'Document Actions',
 				collapsible: true,
-				collapsed: true,
+				collapsed: false,
 				items: [{
 					title: 'File Document',
 					border: 0,
@@ -1279,10 +1575,11 @@ Ext.onReady(function(){
 				width: '100%',
 				height: 200,
 				collapsible: true,
-				collapsed: false
+				collapsed: true
 			},{
 				title: 'Add Customer',
-				html: 'Panel content!',
+				xtype: 'customeraddformpanel',
+				url: '/admin/users/add',
 				width: '100%',
 				collapsible: true,
 				collapsed: true
