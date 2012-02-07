@@ -48,6 +48,30 @@ class QueuedDocumentsController extends AppController {
     }
 	
 	public function admin_index() {
+		$canFile = null;
+		$canDelete = null;
+		$canReassign = null;
+		$canAddCustomer = null;
+	    if($this->Acl->check(array(
+			'model' => 'User',
+			'foreign_key' => $this->Auth->user('id')), 'QueuedDocuments/admin_file_document', '*')){
+				$canFile = true;
+	    }
+	    if($this->Acl->check(array(
+			'model' => 'User',
+			'foreign_key' => $this->Auth->user('id')), 'QueuedDocuments/admin_delete', '*')){
+				$canDelete = true;
+	    }
+	    if($this->Acl->check(array(
+			'model' => 'User',
+			'foreign_key' => $this->Auth->user('id')), 'QueuedDocuments/admin_reassign_queue', '*')){
+				$canReassign = true;
+	    }
+	    if($this->Acl->check(array(
+			'model' => 'User',
+			'foreign_key' => $this->Auth->user('id')), 'Users/admin_add', '*')){
+				$canAddCustomer = true;
+	    }	    	    		    		
 		if($this->RequestHandler->isAjax()) {
 			if(isset($this->params['url']['requeued'])) {
 				$docs[0] = $this->QueuedDocument->findById($this->params['url']['id']);
@@ -68,6 +92,7 @@ class QueuedDocumentsController extends AppController {
 					$conditions['RIGHT (User.ssn , 4)'] = $this->params['url']['last4'];
 				}
 				$this->QueuedDocument->checkLocked($this->Auth->user('id'));
+
 				if(isset($conditions)) {
 					if($this->checkAutoLoad()) {				
 						$conditions['QueuedDocument.locked_status'] = 0;
@@ -104,8 +129,7 @@ class QueuedDocumentsController extends AppController {
 					}
 					else {
 						$this->paginate = array(
-							'order' => array('QueuedDocument.id ASC',
-							'recursive' => 0));
+							'order' => array('QueuedDocument.id ASC'));
 						$data['totalCount'] = $this->QueuedDocument->find('count', array('recursive' => -1));					
 					}
 				}
@@ -114,7 +138,7 @@ class QueuedDocumentsController extends AppController {
 				}				
 			}	
 			
-			if($docs) {
+			if(isset($docs)) {
 				$i = 0;
 				foreach($docs as $doc) {
 					$data['docs'][$i]['id'] = $doc['QueuedDocument']['id'];
@@ -171,6 +195,9 @@ class QueuedDocumentsController extends AppController {
 			$this->set(compact('data'));
 			$this->render(null, null, '/elements/ajaxreturn');
 		}
+		if(!$this->RequestHandler->isAjax()) {
+			$this->set(compact('canFile', 'canDelete', 'canReassign', 'canAddCustomer'));
+		}	
 		$this->layout = 'ext_fullscreen';
 	}
 
@@ -398,6 +425,7 @@ class QueuedDocumentsController extends AppController {
 	private function getDocumentQueueFilters() {
 		$this->loadModel('DocumentQueueFilter');
 		$filters = $this->DocumentQueueFilter->findByUserId($this->Auth->user('id'));
+		$conditions = null;
 		if($filters) {
 			$locations = json_decode($filters['DocumentQueueFilter']['locations'], true);
 			if(!empty($locations)) {
