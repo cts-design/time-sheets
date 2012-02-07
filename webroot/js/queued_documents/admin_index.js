@@ -383,8 +383,9 @@ Ext.define('Atlas.grid.QueuedDocPanel', {
 			listeners: {
 				itemcontextmenu: function(view, rec, node, index, e) {
 					e.stopEvent();
-					Ext.getCmp('gridContextMenu').showAt(e.getXY());
-						docId = rec.data.id;
+					if(!Ext.getCmp('autoLoadDocs').getValue()) {
+						Ext.getCmp('gridContextMenu').showAt(e.getXY());
+					}
 					return false;
 				}
 			}
@@ -523,7 +524,17 @@ Ext.define('Atlas.form.DocQueueFilterPanel', {
 		id: 'autoLoadDocs',
 		fieldLabel: 'Auto Load Docs',
 		name: 'auto_load_docs',
-		inputValue: "1"
+		inputValue: "1",
+		listeners: {
+			change: function(checkbox, newValue, oldValue, eOpts) {
+				if(newValue) {
+					Ext.getCmp('queueSearch').disable();
+				}
+				else {
+					Ext.getCmp('queueSearch').enable();
+				}
+			}
+		}
 	},{
 		xtype: 'hidden',
 		name: 'id',
@@ -1537,7 +1548,9 @@ Ext.onReady(function(){
 				xtype: 'panel',
 				layout: 'vbox',
 				height: 'auto',
+				id: 'documentActions',
 				title: 'Document Actions',
+				disabled: true,
 				collapsible: true,
 				collapsed: false,
 				items: [{
@@ -1546,21 +1559,25 @@ Ext.onReady(function(){
 					xtype: 'filedocumentformpanel',
 					url: '/admin/queued_documents/file_document',
 					width: '100%',
-					height: 325
+					flex: 1
 				},{
 					title: 'Re-Assign to new Queue',
 					xtype: 'reassignqueueformpanel',
 					url: '/admin/queued_documents/reassign_queue',
 					border: 0,
-					flex: 1,
-					width: '100%'
+					height: 100,
+					width: '100%',
+					hidden: true,
+					itemId: 'reassignDocument'
 				},{
 					title: 'Delete Document',
 					xtype: 'deletedocumentformpanel',
 					url: '/admin/queued_documents/delete',
-					flex: 1,
+					height: 150,
 					border: 0,
-					width: '100%'
+					width: '100%',
+					hidden: true,
+					itemId: 'deleteDocument'
 				}]
 			},{
 				title: 'Queue Filters',
@@ -1571,6 +1588,7 @@ Ext.onReady(function(){
 				collapsed: true
 			},{
 				title: 'Queue Search',
+				id: 'queueSearch',
 				xtype: 'documentqueuesearchformpanel',
 				width: '100%',
 				height: 200,
@@ -1578,11 +1596,13 @@ Ext.onReady(function(){
 				collapsed: true
 			},{
 				title: 'Add Customer',
+				id: 'addCustomer',
 				xtype: 'customeraddformpanel',
 				url: '/admin/users/add',
 				width: '100%',
 				collapsible: true,
-				collapsed: true
+				collapsed: true,
+				disabled: true
 			}]
 		},{
 			region: 'center',
@@ -1615,7 +1635,23 @@ Ext.onReady(function(){
 	Ext.QuickTips.init();
 	Ext.useShims = true;
 	Ext.data.StoreManager.lookup('queuedDocumentsStore').load();
-
+	
+	if(canFile) {
+		Ext.getCmp('documentActions').enable();
+	}
+	if(!canFile) {
+		Ext.getCmp('documentActions').collapse();
+		Ext.getCmp('autoLoadDocs').hide();
+	}
+	if(canDelete) {
+		Ext.getCmp('documentActions').getComponent('deleteDocument').show();
+	}
+	if(canReassign) {
+		Ext.getCmp('documentActions').getComponent('reassignDocument').show();
+	}
+	if(canAddCustomer) {
+		Ext.getCmp('addCustomer').enable();
+	}
 	/*
 	this is here to release any locked documents on browser close or
 	on page exit.
