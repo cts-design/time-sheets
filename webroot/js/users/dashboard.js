@@ -20,6 +20,11 @@ $(document).ready(function () {
 				image : "/img/icons/group.png"
 			    }
 			},
+			plugin : {
+			    icon : {
+				image : "/img/icons/plugin.png"
+			    }
+			},
 			user : {
 			    icon : {
 				image : "/img/icons/user.png"
