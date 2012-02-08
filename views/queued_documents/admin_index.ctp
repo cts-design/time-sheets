@@ -2,11 +2,11 @@
 <?php echo $this->Html->script('pdfobject_min', array('inline' => false)) ?>
 <?php echo $this->Html->script('ext/ux/BoxSelect', array('inline' => false)); ?>
 <script type="text/javascript">
-	var adminId = <?php echo $this->Session->read('Auth.User.id') ?>;
-	var canFile = <?php echo $canFile ?>;
-	var canDelete = <?php echo $canDelete ?>;
-	var canReassign = <?php echo $canReassign ?>;
-	var canAddCustomer = <?php echo $canAddCustomer ?>;
+	var adminId = <?php echo $this->Session->read('Auth.User.id'); ?>;
+	var canFile = <?php echo $canFile; ?>;
+	var canDelete = <?php echo $canDelete; ?>;
+	var canReassign = <?php echo $canReassign; ?>;
+	var canAddCustomer = <?php echo $canAddCustomer; ?>;
 
 	// TODO: make this a database setting
 	var docTimeOutDelay = <?php echo "30000"; ?>;
