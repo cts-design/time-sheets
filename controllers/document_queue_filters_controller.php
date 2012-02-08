@@ -5,9 +5,11 @@ class DocumentQueueFiltersController extends AppController {
 	
 	public function beforeFilter(){
 		parent::beforeFilter();
-		if($this->Auth->user('role_id') > 1) {
-			$this->Auth->allow('admin_get_filters');
-		}		
+	    if($this->Acl->check(array(
+			'model' => 'User',
+			'foreign_key' => $this->Auth->user('id')), 'QueuedDocuments/admin_index', '*')){
+				$this->Auth->allow('admin_get_filters', 'admin_set_filters');
+	    }		
 	}	
 	
 	public function admin_set_filters() {
