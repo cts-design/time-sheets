@@ -20,29 +20,14 @@ class QueuedDocumentsController extends AppController {
 		1 => 'Locked'
     );
 	
-	// TODO: remove this property as it will no longer be needed
-	public $reasons = array(
-		'Duplicate scan' => 'Duplicate scan',
-		'Customer info missing' => 'Customer info missing',
-		'Multiple customers in same scan' => 'Multiple customers in same scan',
-		'Multiple programs in same scan' => 'Multiple programs in same scan',
-		'Document unreadable' => 'Document unreadable',
-		'Scan is incomplete' => 'Scan is incomplete',
-		'Document scanned in error or not needed' => 'Document scanned in error or not needed',
-		'Other' => 'Other'
-	);
-
    public function beforeFilter() {
 		parent::beforeFilter();
-		// TODO: remove the cookie, most likely no longer needed
-		$this->Cookie->name = 'docQueueSearch';
-		$this->Cookie->time = 0;
 		$this->Security->validatePost = false;
 		if($this->Auth->user()) {
 		    if($this->Acl->check(array(
 				'model' => 'User',
 				'foreign_key' => $this->Auth->user('id')), 'QueuedDocuments/admin_index', '*')){
-					$this->Auth->allow('admin_view', 'admin_lock_document');
+					$this->Auth->allow('admin_view', 'admin_lock_document', 'admin_unlock_document');
 		    }
 		}		
     }
