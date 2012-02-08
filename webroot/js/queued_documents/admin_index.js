@@ -828,6 +828,13 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 		labelWidth: 75,
 		anchor: '100%'
 	},
+    initComponent: function() {
+      this.on('beforeadd', function(me, field){
+        if (!field.allowBlank)
+          field.labelSeparator += '<span style="color: rgb(255, 0, 0); padding-left: 2px;">*</span>';
+      });
+      this.callParent(arguments);
+    },
 	items:[{
 		xtype: 'combobox',
 		fieldLabel: 'Main Cat',
@@ -909,7 +916,8 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 		xtype: 'checkbox',
 		fieldLabel: 'Re-Queue',
 		value: 'yes',
-		name: 'requeue'
+		name: 'requeue',
+		allowBlank: true
 	},{
 		xtype: 'hidden',
 		name: 'id',
@@ -970,9 +978,16 @@ Ext.define('Atlas.form.ReassignQueuePanel', {
 	bodyPadding: 10,
 	layout: 'anchor',
 	defaults: {
-		labelWidth: 90,
+		labelWidth: 100,
 		anchor: '100%'
 	},
+    initComponent: function() {
+      this.on('beforeadd', function(me, field){
+        if (!field.allowBlank)
+          field.labelSeparator += '<span style="color: rgb(255, 0, 0); padding-left: 2px;">*</span>';
+      });
+      this.callParent(arguments);
+    },
 	items: [{
 		xtype: 'combobox',
 		fieldLabel: 'Queue Category',
@@ -1047,9 +1062,16 @@ Ext.define('Atlas.form.DeleteDocumentPanel', {
 	bodyPadding: 10,
 	layout: 'anchor',
 	defaults: {
-		labelWidth: 90,
+		labelWidth: 100,
 		anchor: '100%'
 	},
+    initComponent: function() {
+      this.on('beforeadd', function(me, field){
+        if (!field.allowBlank)
+          field.labelSeparator += '<span style="color: rgb(255, 0, 0); padding-left: 2px;">*</span>';
+      });
+      this.callParent(arguments);
+    },
 	items:[{
 		xtype: 'combobox',
 		fieldLabel: 'Deleted Reason',
@@ -1137,9 +1159,16 @@ Ext.define('Atlas.form.documentQueueSearchPanel', {
 	height: 100,
 	layout: 'anchor',
 	defaults: {
-		labelWidth: 90,
+		labelWidth: 100,
 		anchor: '100%'
 	},
+    initComponent: function() {
+      this.on('beforeadd', function(me, field){
+        if (!field.allowBlank)
+          field.labelSeparator += '<span style="color: rgb(255, 0, 0); padding-left: 2px;">*</span>';
+      });
+      this.callParent(arguments);
+    },
 	items: [{
 		html:
 			'<p>This will search the document queue within whatever filters you have set. ' +
@@ -1207,7 +1236,8 @@ Ext.define('Atlas.form.documentQueueSearchPanel', {
 	},{
 		xtype: 'checkbox',
 		fieldLabel: 'Exclude Filters',
-		name: 'exclude_filters'
+		name: 'exclude_filters',
+		allowBlank: true
 	}],
 	buttonAlign: 'left',
 	buttons: [{
@@ -1363,6 +1393,17 @@ Ext.create('Ext.data.ArrayStore', {
 	]
 });
 
+Ext.create('Ext.data.ArrayStore', {
+	autoDestroy: true,
+	storeId: 'boolsStore',
+	idIndex: 0,
+	fields: ['bool'],
+	data: [
+		['Yes'],
+		['No']
+	]
+});
+
 Ext.define('Atlas.form.CustomerAddPanel', {
 	extend: 'Ext.form.Panel',
 	alias: 'widget.customeraddformpanel',
@@ -1374,6 +1415,13 @@ Ext.define('Atlas.form.CustomerAddPanel', {
 		labelWidth: 75,
 		anchor: '100%'
 	},
+    initComponent: function() {
+      this.on('beforeadd', function(me, field){
+        if (!field.allowBlank)
+          field.labelSeparator += '<span style="color: rgb(255, 0, 0); padding-left: 2px;">*</span>';
+      });
+      this.callParent(arguments);
+    },
 	items: [{
 		xtype: 'textfield',
 		fieldLabel: 'First Name',
@@ -1503,6 +1551,17 @@ Ext.define('Atlas.form.CustomerAddPanel', {
 		forceSelection: true,
 		editable: false,
 		name: 'ethnicity'
+	},{
+		xtype: 'combobox',
+		fieldLabel: 'US Veteran',
+		store: 'boolsStore',
+		displayField: 'bool',
+		valueField: 'bool',
+		emptyText: 'Please Select',
+		queryMode: 'local',
+		forceSelection: true,
+		editable: false,
+		name: 'veteran'
 	},{
 		xtype: 'hidden',
 		name: 'role_id',
