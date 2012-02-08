@@ -48,10 +48,10 @@ class QueuedDocumentsController extends AppController {
     }
 	
 	public function admin_index() {
-		$canFile = null;
-		$canDelete = null;
-		$canReassign = null;
-		$canAddCustomer = null;
+		$canFile = 0;
+		$canDelete = 0;
+		$canReassign = 0;
+		$canAddCustomer = 0;
 	    if($this->Acl->check(array(
 			'model' => 'User',
 			'foreign_key' => $this->Auth->user('id')), 'QueuedDocuments/admin_file_document', '*')){
@@ -113,7 +113,7 @@ class QueuedDocumentsController extends AppController {
 						$data['totalCount'] = 
 							$this->QueuedDocument->find('count', array(
 								'conditions' => $conditions,
-								'recursive' => -1));					
+								'recursive' => 0));					
 					}	
 				}
 				else {
