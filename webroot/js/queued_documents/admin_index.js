@@ -273,6 +273,7 @@ Ext.create('Ext.data.Store', {
 	},
 	listeners: {
 		load: function(store, records, successful, operation, eOpts) {
+			Ext.getCmp('queuedDocumentsPdf').el.dom.innerHTML = '<p>No Document Loaded.</p>';
 			var autoLoad = Ext.getCmp('autoLoadDocs').getValue();
 			if(records[0] !== undefined && (autoLoad || records[0].data.requeued)) {
 				var doc = this.getById(records[0].data.id);
