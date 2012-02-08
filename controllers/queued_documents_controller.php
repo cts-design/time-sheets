@@ -99,7 +99,6 @@ class QueuedDocumentsController extends AppController {
 						$doc = $this->QueuedDocument->find('first', array(
 							'order' => array('QueuedDocument.id ASC'),
 							'conditions' => $conditions));
-						$this->log($doc, 'debug');
 						if($doc) {
 							$docs[0] = $this->QueuedDocument->lockDocument(
 									       $doc['QueuedDocument']['id'], $this->Auth->user('id'));
@@ -113,7 +112,8 @@ class QueuedDocumentsController extends AppController {
 						
 						$data['totalCount'] = 
 							$this->QueuedDocument->find('count', array(
-								'conditions' => $conditions));					
+								'conditions' => $conditions,
+								'recursive' => -1));					
 					}	
 				}
 				else {
