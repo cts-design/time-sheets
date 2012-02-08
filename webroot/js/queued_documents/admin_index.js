@@ -1157,20 +1157,30 @@ Ext.define('Atlas.form.documentQueueSearchPanel', {
 		submitValue: false,
 		listeners: {
 			change: function(combo, newValue, oldValue, eOpts) {
+				var docId = combo.nextSibling('[name=doc_id]');
+				var lastName = combo.nextSibling('[name=lastname]');
+				var last4 = combo.nextSibling('[name=last4]');
+
 				if(newValue === 'Document Id') {
-					combo.nextSibling('[name=doc_id]').enable();
-					combo.nextSibling('[name=last4]').disable();
-					combo.nextSibling('[name=lastname]').disable();
+					lastName.reset();
+					lastName.disable();
+					last4.reset();
+					last4.disable();
+					docId.enable();
 				}
 				if(newValue === 'Customer Last Name') {
-					combo.nextSibling('[name=doc_id]').disable();
-					combo.nextSibling('[name=last4]').disable();
-					combo.nextSibling('[name=lastname]').enable();
+					docId.reset();
+					docId.disable();
+					last4.reset();
+					last4.disable();
+					lastName.enable();
 				}
 				if(newValue === 'Customer Last 4 SSN') {
-					combo.nextSibling('[name=doc_id]').disable();
-					combo.nextSibling('[name=last4]').enable();
-					combo.nextSibling('[name=lastname]').disable();
+					docId.reset();
+					docId.disable();
+					lastName.reset();
+					lastName.disable();
+					last4.enable();
 				}
 			}
 		}
@@ -1635,7 +1645,6 @@ Ext.onReady(function(){
 	Ext.QuickTips.init();
 	Ext.useShims = true;
 	Ext.data.StoreManager.lookup('queuedDocumentsStore').load();
-	
 	if(canFile) {
 		Ext.getCmp('documentActions').enable();
 	}
@@ -1665,13 +1674,13 @@ Ext.onReady(function(){
 function embedPDF(docId){
 	var myPDF = new PDFObject({
 		url: '/admin/queued_documents/view/'+docId,
-		height: "800px",
 		pdfOpenParams: {
 			scrollbars: '1',
 			toolbar: '1',
 			statusbar: '0',
 			messages: '0',
-			navpanes: '0'
+			navpanes: '0',
+			view: "FitH"
 		}
 	}).embed('queuedDocumentsPdf');
 }
