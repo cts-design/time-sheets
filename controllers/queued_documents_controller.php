@@ -58,6 +58,14 @@ class QueuedDocumentsController extends AppController {
 				$canAddCustomer = true;
 	    }	    	    		    		
 		if($this->RequestHandler->isAjax()) {
+			if(isset($this->params['url']['sort']) && $this->params['url']['sort'] == 'locked_status') {
+				if($this->params['url']['direction'] == 'ASC'){
+					$this->params['url']['direction'] = 'DESC';
+				}
+				else{
+					$this->params['url']['direction'] = 'ASC';
+				}
+			}
 			if(isset($this->params['url']['requeued'])) {
 				$docs[0] = $this->QueuedDocument->findById($this->params['url']['id']);
 				$docs[0]['QueuedDocument']['requeued'] = true;
@@ -380,25 +388,6 @@ class QueuedDocumentsController extends AppController {
 			$this->set(compact('data'));
 			$this->render(null, null, '/elements/ajaxreturn');    		   	
     	}
-    }
-
-
-    function _addCustomer() {
-		if(!empty($this->data)) {
-		    $this->loadModel('User');
-		    $this->User->create();
-		    if($this->User->save($this->data)) {
-				$this->Transaction->createUserTransaction('Customer',
-					null, null, 'Added customer ' . $this->data['User']['firstname'] .
-					' ' . $this->data['User']['lastname']) . ' - ' . substr($this->data['User']['ssn'], -4);
-				$this->Session->setFlash(__('The customer has been saved', true), 'flash_success');
-				$this->redirect(array('action' => 'index'));
-		    }
-		    else {
-				$this->Session->setFlash(
-					__('The customer could not be saved. Please, try again.', true), 'flash_failure');
-		    }
-		}
     }
 	
 	private function checkAutoLoad() {
