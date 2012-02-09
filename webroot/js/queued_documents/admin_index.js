@@ -187,16 +187,17 @@ Ext.define('QueuedDocument', {
 						docQueueMask.hide();
 					}
 					else {
-						opts.failure();
+						opts.failure(response);
 					}
 				},
 				failure: function(response, opts) {
-					Ext.MessageBox.alert(
-						'Failure', 'Unable to lock document for viewing.<br />' +
+					documentTimeout.cancel();
+					removeTimeoutListeners();
+					var message = 'Unable to lock document for viewing.<br />' +
 						'Make sure it is not locked by someone else.<br />' +
 						'Please use the refresh button in the grid toolbar<br />' +
-						'to update the grid view if nessesary.'
-					);
+						'to update the grid view if nessesary.';
+					Ext.MessageBox.alert('Failure', message);
 					docQueueMask.hide();
 					docStore.load();
 					Ext.getCmp('queuedDocumentsPdf').el.dom.innerHTML = '<p>No Document Loaded.</p>';
@@ -262,8 +263,11 @@ Ext.create('Ext.data.Store', {
 	storeId:'queuedDocumentsStore',
 	pageSize: 5,
 	model: QueuedDocument,
+	remoteSort: true,
 	proxy: {
 		type: 'ajax',
+		simpleSortMode: true,
+		directionParam: 'direction',
 		url: '/admin/queued_documents',
 		reader: {
 			type: 'json',
@@ -272,7 +276,21 @@ Ext.create('Ext.data.Store', {
 		}
 	},
 	listeners: {
+		beforeload: function (store, options) {
+			if(store.sorters.items[0]){
+				var oldSortParam = store.sorters.items[0].property;
+				for(var i=0; i < gridColumns.length; i++) {
+					var currentCol = gridColumns[i];
+					if(currentCol.sortable && currentCol.customSort && currentCol.dataIndex == oldSortParam) {
+						store.sorters.items[0].property = currentCol.customSort;
+						break;
+					}
+				}
+			}
+		},
 		load: function(store, records, successful, operation, eOpts) {
+			documentTimeout.cancel();
+			removeTimeoutListeners();
 			Ext.getCmp('queuedDocumentsPdf').el.dom.innerHTML = '<p>No Document Loaded.</p>';
 			var autoLoad = Ext.getCmp('autoLoadDocs').getValue();
 			if(records[0] !== undefined && (autoLoad || records[0].data.requeued)) {
@@ -333,51 +351,58 @@ Ext.create('Ext.menu.Menu', {
 	}
 });
 
+var gridColumns = [{
+		header: 'Id',
+		dataIndex: 'id',
+		width: 75
+	},{
+		header: 'Queue Cat',
+		dataIndex: 'queue_cat',
+		width: 75,
+		customSort: 'DocumentQueueCategory.name'
+	},{
+		header: 'Scanned Location',
+		dataIndex: 'scanned_location',
+		customSort: 'Location.name'
+	},{
+		header: 'Queued to Customer',
+		dataIndex: 'queued_to_customer',
+		width: 150,
+		customSort: 'User.lastname'
+	},{
+		header: 'Locked Status',
+		dataIndex: 'locked_status',
+		width: 80
+	},{
+		header: 'Locked By',
+		dataIndex: 'locked_by',
+		width: 115,
+		customSort: 'LockedBy.lastname'
+	},{
+		header: 'Last Act. Admin',
+		dataIndex: 'last_activity_admin',
+		width: 115,
+		customSort: 'LastActAdmin.lastname'
+	},{
+		header: 'Created',
+		dataIndex: 'created',
+		width: 110,
+		format: 'm/d/y g:i a',
+		xtype: 'datecolumn'
+	},{
+		header: 'Modified',
+		dataIndex: 'modified',
+		width: 110,
+		format: 'm/d/y g:i a',
+		xtype: 'datecolumn'
+	}];
+
 Ext.define('Atlas.grid.QueuedDocPanel', {
 	extend: 'Ext.grid.Panel',
 	alias: 'widget.atlasdocqueuegridpanel',
 	title: 'Documents in Queue',
 	store: 'queuedDocumentsStore',
-	columns: [{
-			header: 'Id',
-			dataIndex: 'id',
-			width: 75
-		},{
-			header: 'Queue Cat',
-			dataIndex: 'queue_cat',
-			width: 75
-		},{
-			header: 'Scanned Location',
-			dataIndex: 'scanned_location'
-		},{
-			header: 'Queued to Customer',
-			dataIndex: 'queued_to_customer',
-			width: 150
-		},{
-			header: 'Locked Status',
-			dataIndex: 'locked_status',
-			width: 80
-		},{
-			header: 'Locked By',
-			dataIndex: 'locked_by',
-			width: 115
-		},{
-			header: 'Last Act. Admin',
-			dataIndex: 'last_activity_admin',
-			width: 115
-		},{
-			header: 'Created',
-			dataIndex: 'created',
-			width: 110,
-			format: 'm/d/y g:i a',
-			xtype: 'datecolumn'
-		},{
-			header: 'Modified',
-			dataIndex: 'modified',
-			width: 110,
-			format: 'm/d/y g:i a',
-			xtype: 'datecolumn'
-		}],
+	columns: gridColumns,
 		viewConfig: {
 			singleSelect: true,
 			emptyText: 'No records at this time.',
@@ -1732,6 +1757,7 @@ Ext.onReady(function(){
 });
 
 function embedPDF(docId){
+	/*
 	var myPDF = new PDFObject({
 		url: '/admin/queued_documents/view/'+docId,
 		pdfOpenParams: {
@@ -1743,6 +1769,9 @@ function embedPDF(docId){
 			view: "FitH"
 		}
 	}).embed('queuedDocumentsPdf');
+	*/
+	Ext.getCmp('queuedDocumentsPdf').el.dom.innerHTML = '<object data="/admin/queued_documents/view/30#scrollbars=1&amp;toolbar=1&amp;statusbar=0&amp;messages=0&amp;navpanes=0&amp;view=FitH" type="application/pdf" width="100%" height="100%" id="ext-gen1267"><p>no doc</p></object>';
+
 }
 
 function unlockDoc(url, passData) {
