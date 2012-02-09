@@ -555,9 +555,11 @@ Ext.define('Atlas.form.DocQueueFilterPanel', {
 			change: function(checkbox, newValue, oldValue, eOpts) {
 				if(newValue) {
 					Ext.getCmp('queueSearch').disable();
+					Ext.getCmp('queuedDocGrid').collapse();
 				}
 				else {
 					Ext.getCmp('queueSearch').enable();
+					Ext.getCmp('queuedDocGrid').expand();
 				}
 			}
 		}
@@ -1745,6 +1747,9 @@ Ext.onReady(function(){
 	}
 	if(canAddCustomer) {
 		Ext.getCmp('addCustomer').enable();
+	}
+	if(Ext.getCmp('autoLoadDocs').getValue()) {
+		Ext.getCmp('queuedDocGrid').collapse();
 	}
 	/*
 	this is here to release any locked documents on browser close or
