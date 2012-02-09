@@ -1756,8 +1756,7 @@ Ext.onReady(function(){
 	};
 });
 
-function embedPDF(docId){
-	/*
+function embedPDF(docId){	
 	var myPDF = new PDFObject({
 		url: '/admin/queued_documents/view/'+docId,
 		pdfOpenParams: {
@@ -1769,9 +1768,6 @@ function embedPDF(docId){
 			view: "FitH"
 		}
 	}).embed('queuedDocumentsPdf');
-	*/
-	Ext.getCmp('queuedDocumentsPdf').el.dom.innerHTML = '<object data="/admin/queued_documents/view/30#scrollbars=1&amp;toolbar=1&amp;statusbar=0&amp;messages=0&amp;navpanes=0&amp;view=FitH" type="application/pdf" width="100%" height="100%" id="ext-gen1267"><p>no doc</p></object>';
-
 }
 
 function unlockDoc(url, passData) {
