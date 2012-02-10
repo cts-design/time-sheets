@@ -695,7 +695,9 @@ class UsersController extends AppController {
     }
 
     function admin_dashboard() {
+        $this->loadNavigationConfig();
         $this->loadPluginConfigs();
+
 		$title_for_layout = 'Administration Dashboard';
 		$this->set(compact('title_for_layout'));
     }
@@ -1049,7 +1051,11 @@ class UsersController extends AppController {
 				$this->Email->send($alert['message'] . "\r\n" . $alert['url']);				
 			}
 		}
-	}
+    }
+
+    private function loadNavigationConfig() {
+        return Configure::load('navigation');
+    }
 
     private function loadPluginConfigs() {
       $blackList = array('AclExtras', 'DebugKit');
