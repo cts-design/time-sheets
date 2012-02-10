@@ -358,30 +358,31 @@ var gridColumns = [{
 	},{
 		header: 'Queue Cat',
 		dataIndex: 'queue_cat',
-		width: 75,
+		width: 100,
 		customSort: 'DocumentQueueCategory.name'
 	},{
 		header: 'Scanned Location',
 		dataIndex: 'scanned_location',
-		customSort: 'Location.name'
+		customSort: 'Location.name',
+		width: 125
 	},{
 		header: 'Queued to Customer',
 		dataIndex: 'queued_to_customer',
-		width: 150,
+		flex: 1,
 		customSort: 'User.lastname'
 	},{
 		header: 'Locked Status',
 		dataIndex: 'locked_status',
-		width: 80
+		width: 90
 	},{
 		header: 'Locked By',
 		dataIndex: 'locked_by',
-		width: 115,
+		width: 150,
 		customSort: 'LockedBy.lastname'
 	},{
 		header: 'Last Act. Admin',
 		dataIndex: 'last_activity_admin',
-		width: 115,
+		width: 150,
 		customSort: 'LastActAdmin.lastname'
 	},{
 		header: 'Created',
