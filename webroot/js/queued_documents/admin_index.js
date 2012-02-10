@@ -225,33 +225,25 @@ function autoPopulateCustomerInfo(doc) {
 
 function autoPopulateFilingCats(doc) {
 	var cat, cat2Store, cat3Store;
-	if(doc.data.self_scan_cat_id) {
-		cat = Ext.data.StoreManager.lookup('selfScanCategoriesStore').getById(doc.data.self_scan_cat_id);
+
+	if(doc.data.self_scan_cat_id || doc.data.bar_code_definition_id) {
+		if(doc.data.self_scan_cat_id) {
+			cat = Ext.data.StoreManager.lookup('selfScanCategoriesStore').getById(doc.data.self_scan_cat_id);
+		}
+		else {
+			cat = Ext.data.StoreManager.lookup('barCodeDefinitionsStore').getById(doc.data.bar_code_definition_id);
+		}
 		if(cat.data.cat_1 !== undefined) {
 			Ext.getCmp('mainFilingCats').select(cat.data.cat_1);
 			cat2Store = Ext.data.StoreManager.lookup('documentFilingCats2');
-			cat2Store.load({params:{'parentId' : cat.data.cat_1}});
+			cat2Store.clearFilter();
+			cat2Store.filter(getCatFilter(cat.data.cat_1));
 		}
 		if(cat.data.cat_2 !== undefined) {
 			Ext.getCmp('secondFilingCats').select(cat.data.cat_2);
 			cat3Store = Ext.data.StoreManager.lookup('documentFilingCats3');
-			cat3Store.load({params:{'parentId' : cat.data.cat_2}});
-		}
-		if(cat.data.cat_3 !== undefined) {
-			Ext.getCmp('thirdFilingCats').select(cat.data.cat_3);
-		}
-	}
-	else if(doc.data.bar_code_definition_id) {
-		cat = Ext.data.StoreManager.lookup('barCodeDefinitionsStore').getById(doc.data.bar_code_definition_id);
-		if(cat.data.cat_1 !== undefined) {
-			Ext.getCmp('mainFilingCats').select(cat.data.cat_1);
-			cat2Store = Ext.data.StoreManager.lookup('documentFilingCats2');
-			cat2Store.load({params:{'parentId' : cat.data.cat_1}});
-		}
-		if(cat.data.cat_2 !== undefined) {
-			Ext.getCmp('secondFilingCats').select(cat.data.cat_2);
-			cat3Store = Ext.data.StoreManager.lookup('documentFilingCats3');
-			cat3Store.load({params:{'parentId' : cat.data.cat_2}});
+			cat3Store.clearFilter();
+			cat3Store.filter(getCatFilter(cat.data.cat_2));
 		}
 		if(cat.data.cat_3 !== undefined) {
 			Ext.getCmp('thirdFilingCats').select(cat.data.cat_3);
@@ -708,7 +700,7 @@ Ext.create('Ext.data.Store', {
 		pageParam: undefined,
 		startParam: undefined
 	}
-});	
+});
 
 Ext.define('Atlas.form.field.FindCusByComboBox', {
 	extend: 'Ext.form.field.ComboBox',
@@ -798,20 +790,24 @@ Ext.create('Ext.data.Store', {
 		},
 		limitParam: undefined,
 		pageParam: undefined,
-		startParam: undefined
+		startParam: undefined,
+		extraParams: {
+			parentId: 'notParent'
+		}
 	},
 	listeners: {
-		load: function(store, records, successful, operation, eOpts) {
+		datachanged: function(store, records, successful, operation, eOpts) {
 			var combo = Ext.getCmp('secondFilingCats');
-			if(records[0] !== undefined)	{
+			if(store.data.length && store.isFiltered())	{
 				combo.enable();
 			}
 			else {
-				combo.clearInvalid();
+				combo.reset();
 				combo.disable();
 			}
 		}
-	}
+	},
+	autoLoad: true
 });
 
 Ext.create('Ext.data.Store', {
@@ -826,21 +822,35 @@ Ext.create('Ext.data.Store', {
 		},
 		limitParam: undefined,
 		pageParam: undefined,
-		startParam: undefined
+		startParam: undefined,
+		extraParams: {
+			parentId: 'notParent'
+		}
 	},
 	listeners: {
-		load: function(store, records, successful, operation, eOpts) {
+		datachanged: function(store, records, successful, operation, eOpts) {
 			var combo = Ext.getCmp('thirdFilingCats');
-			if(records[0] !== undefined)	{
+			if(store.data.length && store.isFiltered())	{
 				combo.enable();
 			}
 			else {
-				combo.clearInvalid();
+				combo.reset();
 				combo.disable();
 			}
 		}
-	}
+	},
+	autoLoad: true
 });
+
+function getCatFilter(parentId) {
+	var catFilter = new Ext.util.Filter({
+		exactMatch: true,
+		property: 'parent_id',
+		root: 'data',
+		value: parentId
+	});
+	return catFilter;
+}
 
 Ext.define('Atlas.form.FileDocumentPanel', {
 	extend: 'Ext.form.Panel',
@@ -870,12 +880,19 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 		valueField: 'id',
 		forceSelection: true,
 		allowBlank: false,
+		queryMode: 'local',
+		triggerAction: 'all',
 		name: 'cat_1',
 		listeners: {
 			select: function(combo, records, eOpts) {
 				if(records[0] !== undefined) {
-					var store = Ext.data.StoreManager.lookup('documentFilingCats2');
-					store.load({params:{'parentId' : records[0].data.id}});
+					var secondFilingCats = combo.nextSibling(),
+					store = secondFilingCats.getStore();
+					store.clearFilter();
+					secondFilingCats.reset();
+					secondFilingCats.nextSibling().getStore().clearFilter();
+					store.filter(getCatFilter(records[0].data.id));
+					secondFilingCats.nextSibling().getStore().clearFilter();
 				}
 			}
 		}
@@ -891,13 +908,19 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 		forceSelection: true,
 		editable: false,
 		queryMode: 'local',
+		triggerAction: 'all',
+		lastQuery: '',
 		disabled: true,
 		allowBlank: false,
 		listeners: {
 			select: function(combo, records, eOpts) {
 				if(records[0] !== undefined) {
-					var store = Ext.data.StoreManager.lookup('documentFilingCats3');
-					store.load({params:{'parentId' : records[0].data.id}});
+					var thirdFilingCats = combo.nextSibling(),
+					store = thirdFilingCats.getStore();
+					store.clearFilter();
+
+					thirdFilingCats.reset();
+					store.filter(getCatFilter(records[0].data.id));
 				}
 			}
 		}
@@ -914,6 +937,8 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 		forceSelection: true,
 		editable: false,
 		queryMode: 'local',
+		triggerAction: 'all',
+		lastQuery: '',
 		disabled: true,
 		allowBlank: false
 	},{
