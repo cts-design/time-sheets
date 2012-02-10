@@ -1,0 +1,236 @@
+<?php
+    $config['navigation.website'] = array(
+        'rel' => 'website',
+        'links' => array(
+            array(
+                'link' => array('controller' => 'pages', 'action' => 'index'),
+                'rel' => 'pages',
+                'title' => 'Pages'
+            ),
+            array(
+                'link' => array('controller' => 'navigations', 'action' => 'index'),
+                'rel' => 'navigation',
+                'title' => 'Navigation'
+            ),
+            array(
+                'rel' => 'inTheNews',
+                'title' => 'News',
+                'children' => array(
+                    array(
+                        'link' => array('controller' => 'press_releases', 'action' => 'index'),
+                        'rel' => 'pressReleases',
+                        'title' => 'Press Releases'
+                    ),
+                    array(
+                        'link' => array('controller' => 'chairman_reports', 'action' => 'index'),
+                        'rel' => 'chairmanReports',
+                        'title' => 'Chairman Reports'
+                    ),
+                    array(
+                        'link' => array('controller' => 'in_the_news', 'action' => 'index'),
+                        'rel' => 'inTheNews',
+                        'title' => 'In the News'
+                    ),
+                    array(
+                        'link' => array('controller' => 'helpful_articles', 'action' => 'index'),
+                        'rel' => 'inTheNews',
+                        'title' => 'Helpful Articles'
+                    )
+                )
+            ),
+            array(
+                'rel' => 'surveys',
+                'title' => 'Surveys',
+                'children' => array(
+                    array(
+                        'link' => array('controller' => 'career_seekers_surveys', 'action' => 'index'),
+                        'rel' => 'careerSeekersSurveys',
+                        'title' => 'Career Seekers Surveys'
+                    ),
+                    array(
+                        'link' => array('controller' => 'employers_surveys', 'action' => 'index'),
+                        'rel' => 'employersSurveys',
+                        'title' => 'Employer Surveys'
+                    )
+                )
+            ),
+            array(
+                'link' => array('controller' => 'events', 'action' => 'index'),
+                'rel' => 'calendar',
+                'title' => 'Calendar of Events'
+            ),
+            array(
+                'link' => array('controller' => 'hot_jobs', 'action' => 'index'),
+                'rel' => 'hotJobs',
+                'title' => 'Hot Jobs'
+            ),
+            array(
+                'link' => array('controller' => 'rfps', 'action' => 'index'),
+                'rel' => 'rfp',
+                'title' => 'RFPs & Bids'
+            ),
+            array(
+                'link' => array('controller' => 'featured_employers', 'action' => 'index'),
+                'rel' => 'featured',
+                'title' => 'Featured Employer'
+            )
+        )
+    );
+
+    $config['navigation.settings'] = array(
+        'rel' => 'settings',
+        'links' => array(
+            array(
+                'link' => array('controller' => 'settings', 'action' => 'index'),
+                'rel' => 'settings_1',
+                'title' => 'Atlas Module Preferences & Settings'
+            ),
+            array(
+                'link' => array('controller' => 'bar_code_definitions', 'action' => 'index'),
+                'rel' => 'settings_1',
+                'title' => 'Bar Code Definitions'
+            ),
+            array(
+                'link' => array('controller' => 'document_filing_categories', 'action' => 'index'),
+                'rel' => 'settings_1',
+                'title' => 'Document Filing Categories'
+            ),
+            array(
+                'link' => array('controller' => 'document_queue_categories', 'action' => 'index'),
+                'rel' => 'settings_1',
+                'title' => 'Document Queue Categories'
+            ),
+            array(
+                'link' => array('controller' => 'ftp_document_scanners', 'action' => 'index'),
+                'rel' => 'settings_1',
+                'title' => 'FTP Document Scanners'
+            ),
+            array(
+                'link' => array('controller' => 'locations', 'action' => 'index'),
+                'rel' => 'settings_1',
+                'title' => 'Locations'
+            ),
+            array(
+                'link' => array('controller' => 'master_kiosk_buttons', 'action' => 'index'),
+                'rel' => 'settings_1',
+                'title' => 'Master Kiosk Buttons'
+            ),
+            array(
+                'hasPermission' => 2,
+                'link' => array('controller' => 'module_access_controls', 'action' => 'index'),
+                'rel' => 'settings_1',
+                'title' => 'Module Access Control'
+            ),
+            array(
+                'link' => array('controller' => 'roles', 'action' => 'index'),
+                'rel' => 'settings_1',
+                'title' => 'Roles'
+            ),
+            array(
+                'link' => array('controller' => 'self_scan_categories', 'action' => 'index'),
+                'rel' => 'settings_1',
+                'title' => 'Self Scan Categories'
+            ),
+            array(
+                'link' => array('controller' => 'kiosks', 'action' => 'index'),
+                'rel' => 'settings_1',
+                'title' => 'Self Sign Kiosk/Location Settings'
+            )
+        )
+    );
+
+    $config['navigation.alerts'] = array(
+        'link' => array('controller' => 'alerts', 'action' => 'index'),
+        'rel' => 'alerts',
+        'title' => 'Alerts'
+    );
+
+    $config['navigation.users'] = array(
+        'rel' => 'group',
+        'links' => array(
+            array(
+                'link' => array('controller' => 'users', 'action' => 'index_admin'),
+                'rel' => 'group',
+                'title' => 'Administrators'
+            ),
+            array(
+                'link' => array('controller' => 'users', 'action' => 'index'),
+                'rel' => 'alerts',
+                'title' => 'Customers'
+            )
+        )
+    );
+
+    $config['navigation.selfSign'] = array(
+        'rel' => 'user',
+        'links' => array(
+            array(
+                'link' => array('controller' => 'self_sign_logs', 'action' => 'index'),
+                'rel' => 'queue',
+                'title' => 'Self Sign Queue'
+            ),
+            array(
+                'link' => array('controller' => 'self_sign_log_archives', 'action' => 'index'),
+                'rel' => 'archive',
+                'title' => 'Self Sign Archives'
+            ),
+            array(
+                'link' => array('controller' => 'kiosk_surveys', 'action' => 'index'),
+                'rel' => 'selfSignSurvey',
+                'title' => 'Self Sign Surveys'
+            )
+        )
+    );
+
+    $config['navigation.storage'] = array(
+        'rel' => 'storage',
+        'links' => array(
+            array(
+                'link' => array('controller' => 'queued_documents', 'action' => 'index'),
+                'rel' => 'queue',
+                'title' => 'Queued Documents'
+            ),
+            array(
+                'link' => array('controller' => 'queued_documents', 'action' => 'desktop_scan_document'),
+                'rel' => 'scan',
+                'title' => 'Desktop Scan'
+            ),
+            array(
+                'link' => array('controller' => 'filed_documents', 'action' => 'index'),
+                'rel' => '',
+                'title' => 'My Filed Documents'
+            ),
+            array(
+                'link' => array('controller' => 'filed_documents', 'action' => 'view_all_docs'),
+                'rel' => 'archive',
+                'title' => 'Filed Document Archive'
+            ),
+            array(
+                'link' => array('controller' => 'deleted_documents', 'action' => 'index'),
+                'rel' => 'trash',
+                'title' => 'Deleted Documents'
+            ),
+        )
+    );
+
+    $config['navigation.programs'] = array(
+        'link' => array('controller' => 'programs', 'action' => 'index'),
+        'rel' => 'programs',
+        'title' => 'Programs'
+    );
+
+    $config['navigation.tools'] = array(
+        'rel' => 'tools',
+        'links' => array(
+            array(
+                'link' => array('controller' => 'users', 'action' => 'resolve_login_issues'),
+                'rel' => 'loginIssues',
+                'title' => 'Resolve Login Issues'
+            ),
+            array(
+                'link' => array('controller' => 'reports', 'action' => 'index'),
+                'rel' => 'reports',
+                'title' => 'Reports'
+            )
+        )
+    );
