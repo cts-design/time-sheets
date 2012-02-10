@@ -203,6 +203,8 @@ class QueuedDocumentsController extends AppController {
 				$data['admin'] = 
 					$this->Auth->user('lastname') . ', ' . $this->Auth->user('firstname');		
 				$data['success'] = true; 
+			    $this->Transaction->createUserTransaction('Storage', null, null , 
+				    'Locked Document ID ' . $data['QueuedDocument']['id']  . ' for viewing ' );				
 			}
 			else $data['success'] = false;
 		}
