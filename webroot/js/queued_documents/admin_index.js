@@ -304,15 +304,6 @@ Ext.create('Ext.data.Store', {
 Ext.create('Ext.menu.Menu', {
 	id: 'gridContextMenu',
 	items: [{
-		text: 'View Doc',
-		icon:  '/img/icons/lock.png',
-		handler: function() {
-			var selectionModel = Ext.getCmp('queuedDocGrid').getView().getSelectionModel();
-			var doc = selectionModel.getLastSelected();
-			Ext.getCmp('fileDocFormResetButton').fireEvent('click');
-			doc.lockDocument();
-		}
-	},{
 		text: 'Release Doc',
 		hidden: true,
 		itemId: 'releaseDoc',
@@ -408,6 +399,10 @@ Ext.define('Atlas.grid.QueuedDocPanel', {
 			singleSelect: true,
 			emptyText: 'No records at this time.',
 			listeners: {
+				itemClick: function(row, record, itme, index, e, eOpts) {
+					Ext.getCmp('fileDocFormResetButton').fireEvent('click');
+					record.lockDocument();
+				},
 				itemcontextmenu: function(view, rec, node, index, e) {
 					e.stopEvent();
 					if(!Ext.getCmp('autoLoadDocs').getValue()) {
