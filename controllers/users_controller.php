@@ -99,8 +99,6 @@ class UsersController extends AppController {
 		if($this->params['action'] == 'admin_login' && $this->RequestHandler->isAjax()) {
 			$this->Security->validatePost = false;
 		}
-
-        $this->loadPluginConfigs();
     }
 
     function admin_index($disabled=false) {
@@ -697,6 +695,7 @@ class UsersController extends AppController {
     }
 
     function admin_dashboard() {
+        $this->loadPluginConfigs();
 		$title_for_layout = 'Administration Dashboard';
 		$this->set(compact('title_for_layout'));
     }
