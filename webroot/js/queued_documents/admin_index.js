@@ -392,8 +392,10 @@ Ext.define('Atlas.grid.QueuedDocPanel', {
 			emptyText: 'No records at this time.',
 			listeners: {
 				itemClick: function(row, record, itme, index, e, eOpts) {
-					Ext.getCmp('fileDocFormResetButton').fireEvent('click');
-					record.lockDocument();
+					if(!Ext.getCmp('autoLoadDocs').getValue()){
+						Ext.getCmp('fileDocFormResetButton').fireEvent('click');
+						record.lockDocument();
+					}
 				},
 				itemcontextmenu: function(view, rec, node, index, e) {
 					e.stopEvent();
@@ -406,6 +408,7 @@ Ext.define('Atlas.grid.QueuedDocPanel', {
 		},
 		dockedItems: [{
 			xtype: 'pagingtoolbar',
+			id: 'queuedDocGridPaging',
 			store: 'queuedDocumentsStore',
 			dock: 'bottom',
 			displayInfo: true
@@ -544,10 +547,13 @@ Ext.define('Atlas.form.DocQueueFilterPanel', {
 				if(newValue) {
 					Ext.getCmp('queueSearch').disable();
 					Ext.getCmp('queuedDocGrid').collapse();
+					Ext.getCmp('queuedDocGridPaging').disable();
+
 				}
 				else {
 					Ext.getCmp('queueSearch').enable();
 					Ext.getCmp('queuedDocGrid').expand();
+					Ext.getCmp('queuedDocGridPaging').enable();
 				}
 			}
 		}
@@ -1769,6 +1775,7 @@ Ext.onReady(function(){
 	}
 	if(Ext.getCmp('autoLoadDocs').getValue()) {
 		Ext.getCmp('queuedDocGrid').collapse();
+		Ext.getCmp('queuedDocGridPaging').disable();
 	}
 	/*
 	this is here to release any locked documents on browser close or
