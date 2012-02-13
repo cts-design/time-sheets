@@ -1,6 +1,7 @@
 <?php
     $config['navigation.website'] = array(
         'rel' => 'website',
+        'title' => 'Website',
         'links' => array(
             array(
                 'link' => array('controller' => 'pages', 'action' => 'index'),
@@ -79,6 +80,7 @@
 
     $config['navigation.settings'] = array(
         'rel' => 'settings',
+        'title' => 'Settings',
         'links' => array(
             array(
                 'link' => array('controller' => 'settings', 'action' => 'index'),
@@ -147,6 +149,7 @@
 
     $config['navigation.users'] = array(
         'rel' => 'group',
+        'title' => 'Users',
         'links' => array(
             array(
                 'link' => array('controller' => 'users', 'action' => 'index_admin'),
@@ -155,7 +158,7 @@
             ),
             array(
                 'link' => array('controller' => 'users', 'action' => 'index'),
-                'rel' => 'alerts',
+                'rel' => 'group',
                 'title' => 'Customers'
             )
         )
@@ -163,6 +166,7 @@
 
     $config['navigation.selfSign'] = array(
         'rel' => 'user',
+        'title' => 'Self Sign',
         'links' => array(
             array(
                 'link' => array('controller' => 'self_sign_logs', 'action' => 'index'),
@@ -184,6 +188,7 @@
 
     $config['navigation.storage'] = array(
         'rel' => 'storage',
+        'title' => 'Storage',
         'links' => array(
             array(
                 'link' => array('controller' => 'queued_documents', 'action' => 'index'),
@@ -221,6 +226,7 @@
 
     $config['navigation.tools'] = array(
         'rel' => 'tools',
+        'title' => 'Tools',
         'links' => array(
             array(
                 'link' => array('controller' => 'users', 'action' => 'resolve_login_issues'),
