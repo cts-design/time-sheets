@@ -397,7 +397,7 @@ Ext.define('Atlas.grid.QueuedDocPanel', {
 				},
 				itemcontextmenu: function(view, rec, node, index, e) {
 					e.stopEvent();
-					if(!Ext.getCmp('autoLoadDocs').getValue()) {
+					if(!Ext.getCmp('autoLoadDocs').getValue() && rec.data.locked_status === "Locked") {
 						Ext.getCmp('gridContextMenu').showAt(e.getXY());
 					}
 					return false;
@@ -1277,9 +1277,11 @@ Ext.define('Atlas.form.documentQueueSearchPanel', {
 		allowBlank: false,
 		disabled: true
 	},{
-		xtype: 'textfield',
+		xtype: 'numberfield',
 		fieldLabel: 'Cus. Last 4 SSN',
 		name: 'last4',
+		minValue: 0,
+		hideTrigger: true,
 		allowBlank: false,
 		disabled: true
 	},{
