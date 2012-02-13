@@ -1294,8 +1294,6 @@ Ext.define('Atlas.form.documentQueueSearchPanel', {
 	buttons: [{
 		text: 'Search',
 		icon:  '/img/icons/find.png',
-		formBind: true,
-		disabld: true,
 		handler: function() {
 			var form = this.up('form').getForm();
 			if(form.isValid()) {
@@ -1309,8 +1307,6 @@ Ext.define('Atlas.form.documentQueueSearchPanel', {
 	},{
 		text: 'Reset Search',
 		icon:  '/img/icons/reset.png',
-		formBind: true,
-		disabled: true,
 		handler: function() {
 			var form = this.up('form').getForm();
 			form.reset();
