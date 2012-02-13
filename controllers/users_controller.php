@@ -13,7 +13,7 @@ class UsersController extends AppController {
 
     var $name = 'Users';
     var $components = array('Email');
-    var $helpers = array('PluginNav', 'Nav');
+    var $helpers = array('Nav');
 
     function beforeFilter() {
 		parent::beforeFilter();
