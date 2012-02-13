@@ -107,6 +107,7 @@ class QueuedDocumentsControllerTestCase extends AtlasTestCase {
 	        'location_id' => 1
 	    ));
 	    $this->QueuedDocuments->Email = new MockEmailComponent();
+	    $this->QueuedDocuments->Email->enabled = true;
 	    $data = array('id' => 49, 'user_id' => 9, 'cat_1' => 10);
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
 		$result = $this->testAction('/admin/queued_documents/file_document/', 
@@ -123,6 +124,7 @@ class QueuedDocumentsControllerTestCase extends AtlasTestCase {
 	        'location_id' => 1
 	    ));
 	    $this->QueuedDocuments->Email = new MockEmailComponent();
+	    $this->QueuedDocuments->Email->enabled = true;
 	    $data = array('id' => 49, 'user_id' => 9, 'cat_1' => 10, 'requeue' => 1);
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
 		$result = $this->testAction('/admin/queued_documents/file_document/', 
