@@ -22,6 +22,8 @@
 
 	echo $this->Html->css('/js/ext/resources/css/ext-all');
 
+    echo $this->Html->css('/css/admin-ext');
+
     echo $this->Html->script('/js/ext/bootstrap');
 
 	echo $this->Html->script('atlas');
