@@ -67,8 +67,6 @@ class NavHelper extends AppHelper {
     }
 
     public function buildAdminNavigation($type, $sort = false) {
-        if (!$type) return false;
-
         $output = '';
         $config = Configure::read('navigation.'.$type);
         $plugins = $this->getPluginConfig($type);
