@@ -63,6 +63,7 @@
 			   	'label' => 'Add Cusomer Login Alerts',
 			    'checked' => (isset($controllers['Alerts']['admin_add_customer_login_alert'])) ? $controllers['Alerts']['admin_add_customer_login_alert'] : '' ));?>		    
 		    </fieldset>
+            <?php echo $this->PluginPermissions->buildFieldset('alerts') ?>
 		    <br class="clear" />
 			<?php echo $this->Form->end(__('Submit', true))?>		
 	</div>
@@ -124,6 +125,7 @@
 				    'checked' => (isset($controllers['UserTransactions']['all'])) ? $controllers['UserTransactions']['all'] : '' ));?>
 			    </fieldset>
 		    <?php endif; ?>
+            <?php echo $this->PluginPermissions->buildFieldset('users') ?>
 		    <br class="clear" />
 			<?php echo $this->Form->end(__('Submit', true))?>    
 	</div>
@@ -261,29 +263,8 @@
 			    </fieldset>
 		    <?php endif; ?>	
 
-            <?php if (isset($pluginPermissions['website'])): ?>
-                <?php foreach ($pluginPermissions['website'] as $plugin => $pluginControllers): ?>
-                    <?php foreach ($pluginControllers as $pluginController => $pluginActions): ?>
-                        <?php $title = Inflector::humanize($pluginController) ?>
-                        <fieldset class="left right-mar-10">
-                            <legend><?php echo $title ?></legend>
+            <?php echo $this->PluginPermissions->buildFieldset('website') ?>
 
-                                <?php foreach ($pluginActions as $pluginAction): ?>
-                                    <?php
-                                        $controllerName = Inflector::camelize($pluginController);
-                                        $actionName = Inflector::humanize(substr($pluginAction, 6));
-                                        $label = 'LABEL';
-                                        echo $this->Form->input("$controllerName.$pluginAction", array(
-                                            'type' => 'checkbox',
-                                            'label' => $actionName,
-                                            'checked' => (isset($controller[$controllerName][$pluginAction])) ? $controllers[$controllerName][$pluginAction] : ''
-                                        ));
-                                    ?>
-                                <?php endforeach ?>
-                        </fieldset>
-                    <?php endforeach ?>
-                <?php endforeach ?>
-            <?php endif ?>
 		    <br class="clear" />
 			<?php echo $this->Form->end(__('Submit', true))?>    
 	</div>
@@ -360,6 +341,7 @@
 			    'checked' => (isset($controllers['DeletedDocuments']['all'])) ? $controllers['DeletedDocuments']['all'] : '' ));?>
 		    </fieldset>
 		    <?php endif; ?>
+            <?php echo $this->PluginPermissions->buildFieldset('storage') ?>
 		    <br class="clear" />
 			<?php echo $this->Form->end(__('Submit', true))?>    
 	</div>
@@ -396,6 +378,7 @@
 				    'checked' => (isset($controllers['KioskSurveys']['all'])) ? $controllers['KioskSurveys']['all'] : '' ));?>
 			    </fieldset>
 			<?php endif; ?>	
+            <?php echo $this->PluginPermissions->buildFieldset('selfSign') ?>
 			<br class="clear" />
 			<?php echo $this->Form->end(__('Submit', true))?>    
 	</div>
@@ -450,6 +433,7 @@
 				    'checked' => (isset($controllers['ProgramResponses']['admin_toggle_expired'])) ? $controllers['ProgramResponses']['admin_toggle_expired'] : '' ));?>
 				 				    
 			    </fieldset>		    
+            <?php echo $this->PluginPermissions->buildFieldset('programs') ?>
 		    <br class="clear" />
 			<?php echo $this->Form->end(__('Submit', true))?>    
 	</div>
@@ -464,6 +448,7 @@
 			   	'label' => 'Resolve Login Issues',
 			    'checked' => (isset($controllers['Users']['admin_resolve_login_issues'])) ? $controllers['Users']['admin_resolve_login_issues'] : '' ));?>
 		    </fieldset>
+            <?php echo $this->PluginPermissions->buildFieldset('tools') ?>
 		    <br class="clear" />
 			<?php echo $this->Form->end(__('Submit', true))?>    
 	</div>
@@ -479,17 +464,14 @@
 			    'checked' => (isset($controllers['Reports']['admin_index'])) ? $controllers['Reports']['admin_index'] : '' ));?>
  		       <?php echo $this->Form->input('Reports.admin_self_sign_logs', array(
  			    'type' => 'checkbox',
- 			   	'label' => 'Self Sign Logs Report',
- 			    'checked' => (isset($controllers['Reports']['admin_self_sign_logs'])) ? $controllers['Reports']['admin_self_sign_logs'] : '' ));?>
+ 			   	'label' => 'Total Unduplicated Individuals Report',
+ 			    'checked' => (isset($controllers['Reports']['admin_total_unduplicated_individuals'])) ? $controllers['Reports']['admin_self_sign_logs'] : '' ));?>
                 <?php echo $this->Form->input('Reports.admin_self_sign_logs', array(
  			    'type' => 'checkbox',
- 			   	'label' => 'Self Sign Logs Report',
- 			    'checked' => (isset($controllers['Reports']['admin_self_sign_logs'])) ? $controllers['Reports']['admin_self_sign_logs'] : '' ));?>
-                <?php echo $this->Form->input('Reports.admin_self_sign_logs', array(
- 			    'type' => 'checkbox',
- 			   	'label' => 'Self Sign Logs Report',
- 			    'checked' => (isset($controllers['Reports']['admin_self_sign_logs'])) ? $controllers['Reports']['admin_self_sign_logs'] : '' ));?>
+ 			   	'label' => 'Total Services Report',
+ 			    'checked' => (isset($controllers['Reports']['admin_total_services'])) ? $controllers['Reports']['admin_self_sign_logs'] : '' ));?>
 		    </fieldset>
+            <?php echo $this->PluginPermissions->buildFieldset('reports') ?>
 		    <br class="clear" />
 			<?php echo $this->Form->end(__('Submit', true))?>    
 	</div>
