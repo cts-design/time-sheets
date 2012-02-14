@@ -3,25 +3,60 @@
 App::import('Controller', 'DocumentQueueFilters');
 App::import('Lib', 'AtlasTestCase');
 class TestDocumentQueueFiltersController extends DocumentQueueFiltersController {
-	var $autoRender = false;
+	public $autoRender = false;
 
-	function redirect($url, $status = null, $exit = true) {
+	public function redirect($url, $status = null, $exit = true) {
 		$this->redirectUrl = $url;
 	}
 }
 
 class DocumentQueueFiltersControllerTestCase extends AtlasTestCase {
-	var $fixtures = array('app.document_queue_filter', 'app.user', 'app.role', 'app.location', 'app.ftp_document_scanner', 'app.kiosk', 'app.kiosk_button', 'app.master_kiosk_button', 'app.self_sign_log', 'app.self_sign_log_archive', 'app.kiosk_survey', 'app.kiosk_survey_question', 'app.kiosk_survey_response', 'app.kiosk_survey_response_answer', 'app.kiosks_kiosk_survey', 'app.queued_document', 'app.document_queue_category', 'app.bar_code_definition', 'app.document_filing_category', 'app.watched_filing_cat', 'app.program', 'app.program_field', 'app.program_response', 'app.program_response_doc', 'app.program_email', 'app.program_paper_form', 'app.program_instruction', 'app.self_scan_category', 'app.user_transaction', 'app.filed_document');
 
-	function startTest() {
+	public function startTest() {
 		$this->DocumentQueueFilters =& new TestDocumentQueueFiltersController();
 		$this->DocumentQueueFilters->constructClasses();
+        $this->DocumentQueueFilters->params['controller'] = 'document_queue_filters';
+        $this->DocumentQueueFilters->params['pass'] = array();
+        $this->DocumentQueueFilters->params['named'] = array();	
+		$this->testController = $this->DocumentQueueFilters;
 	}
 
-	function endTest() {
+	public function testAdminSetFilters() {
+		$this->DocumentQueueFilters->Component->initialize($this->DocumentQueueFilters);	
+		$this->DocumentQueueFilters->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'dnolan',
+	        'location_id' => 1
+	    ));
+	    $data = array('id' => 2, 'locations' => '["1","2"]');
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$result = $this->testAction('/admin/document_queue_filters/set_filters/', 
+			array('method' => 'post', 'form_data' => $data));
+		$this->assertTrue($result['data']['success']); 			
+	}
+
+	public function testAdminGetFilters() {
+		$this->DocumentQueueFilters->Component->initialize($this->DocumentQueueFilters);	
+		$this->DocumentQueueFilters->Session->write('Auth.User', array(
+	        'id' => 1,
+	        'role_id' => 2,
+	        'username' => 'bcordell',
+	        'location_id' => 1
+	    ));
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$result = $this->testAction('/admin/document_queue_filters/get_filters/', 
+			array('method' => 'get'));
+		$this->DocumentQueueFilters->log($result, 'debug');
+		$this->assertTrue($result['data']['success']); 
+		$this->assertEqual($result['data']['filters']['id'], 2); 			
+	}
+
+	public function endTest() {
+		Configure::write('debug', 2);
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);		
 		unset($this->DocumentQueueFilters);
 		ClassRegistry::flush();
 	}
 
 }
-?>
