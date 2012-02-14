@@ -9,6 +9,6 @@
 	var canAddCustomer = <?php echo $canAddCustomer; ?>;
 
 	// TODO: make this a database setting
-	var docTimeOutDelay = <?php echo "30000"; ?>;
+	var docTimeOutDelay = <?php echo "600000"; ?>;
 </script>
 <?php echo $this->Html->script('queued_documents/admin_index', array('inline' => false)); ?>
