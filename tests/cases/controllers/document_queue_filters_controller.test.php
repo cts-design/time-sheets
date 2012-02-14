@@ -47,7 +47,6 @@ class DocumentQueueFiltersControllerTestCase extends AtlasTestCase {
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
 		$result = $this->testAction('/admin/document_queue_filters/get_filters/', 
 			array('method' => 'get'));
-		$this->DocumentQueueFilters->log($result, 'debug');
 		$this->assertTrue($result['data']['success']); 
 		$this->assertEqual($result['data']['filters']['id'], 2); 			
 	}
