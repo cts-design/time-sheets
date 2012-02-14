@@ -8,6 +8,7 @@
 class PermissionsController extends AppController {
 
     var $name = 'Permissions';
+    var $helpers = array('PluginPermissions');
     var $uses = '';
 
     private $pluginPermissions = null;
