@@ -29,6 +29,8 @@ views/website_views/pages/home.ctp
 *.DS_STORE
 design
 /design/*
-*.tmproj
-atlas.sublime-project
-atlas.sublime-workspace
+plugins/*
+!plugins/acl_extras
+!plugins/debug_kit
+*.sublime-project
+*.sublime-workspace

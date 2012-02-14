@@ -47,7 +47,10 @@
                             	<li rel="hotJobs"><?php echo $html->link(__('Hot Jobs', true), array('controller' => 'hot_jobs', 'action' => 'index')); ?></li>
                             	<li rel="rfp"><?php echo $html->link(__('RFPs & Bids', true), array('controller' => 'rfps', 'action' => 'index')); ?></li>
                             	<li rel="featured"><?php echo $html->link(__('Featured Employer', true), array('controller' => 'featured_employers', 'action' => 'index')); ?></li>
-                            </ul>
+                                	
+<?php echo $this->PluginNav->links('website') ?>
+
+												</ul>
                         </li>
 			<li rel="settings" id="settings">
                 <a><?php __('Settings') ?></a>

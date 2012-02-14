@@ -13,9 +13,10 @@ class UsersController extends AppController {
 
     var $name = 'Users';
     var $components = array('Email');
+    var $helpers = array('PluginNav');
 
     function beforeFilter() {
-		parent::beforeFilter();	
+		parent::beforeFilter();
 		$this->Security->blackHoleCallback = 'forceSSL';
 		$this->Security->requireSecure();
 		$this->User->recursive = 0;
@@ -97,7 +98,9 @@ class UsersController extends AppController {
 
 		if($this->params['action'] == 'admin_login' && $this->RequestHandler->isAjax()) {
 			$this->Security->validatePost = false;
-		}			
+		}
+
+        $this->loadPluginConfigs();
     }
 
     function admin_index($disabled=false) {
@@ -1089,6 +1092,19 @@ class UsersController extends AppController {
 				$this->Email->send($alert['message'] . "\r\n" . $alert['url']);				
 			}
 		}
-	}	
+	}
+
+    private function loadPluginConfigs() {
+      $blackList = array('AclExtras', 'DebugKit');
+      $plugins = App::objects('plugin');
+
+      foreach ($plugins as $key => $value) {
+        if (!in_array($value, $blackList)) {
+            Configure::load(Inflector::underscore($value) . '.config');
+        }
+      }
+
+      return true;
+    }
 
 }
