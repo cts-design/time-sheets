@@ -32,3 +32,5 @@ design
 plugins/*
 !plugins/acl_extras
 !plugins/debug_kit
+*.sublime-project
+*.sublime-workspace
