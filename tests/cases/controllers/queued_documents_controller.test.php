@@ -171,4 +171,3 @@ class QueuedDocumentsControllerTestCase extends AtlasTestCase {
 	}
 
 }
-?>
