@@ -119,6 +119,11 @@ class NavTest extends CakeTestCase {
         $expected .= '<li rel="zebra"><a href="/zebra">Zebra</a></li><li rel="dog"><a href="/dog">Dog</a></li></ul></li>';
         $this->assertEqual($expected, $this->Nav->buildAdminNavigation('sorting'));
 
+        $expected = '<li rel="sorting"><a>Sorting</a><ul><li rel="alaska"><a href="/alaska">Alaska</a></li>';
+        $expected .= '<li rel="dog"><a href="/dog">Dog</a></li><li rel="zebra"><a href="/zebra">Zebra</a></li></ul></li>';
+        $this->assertEqual($expected, $this->Nav->buildAdminNavigation('sorting', true));
+
+        // check nav sorting with grandchildren
         Configure::write('navigation.sorting', array(
             'rel' => 'sorting',
             'title' => 'Sorting',
@@ -134,15 +139,33 @@ class NavTest extends CakeTestCase {
                     'title' => 'Zebra'
                 ),
                 array(
-                    'link' => array('controller' => 'dog', 'action' => 'index'),
                     'rel' => 'dog',
-                    'title' => 'Dog'
+                    'title' => 'Dog',
+                    'children' => array(
+                        array(
+                            'rel' => 'littleDog',
+                            'title' => 'Little Dog',
+                            'link' => array('controller' => 'little_dog', 'action' => 'index')
+                        ),
+                        array(
+                            'rel' => 'bigDog',
+                            'title' => 'Big Dog',
+                            'link' => array('controller' => 'big_dog', 'action' => 'index')
+                        )
+                    )
                 )
             )
         ));
 
         $expected = '<li rel="sorting"><a>Sorting</a><ul><li rel="alaska"><a href="/alaska">Alaska</a></li>';
-        $expected .= '<li rel="dog"><a href="/dog">Dog</a></li><li rel="zebra"><a href="/zebra">Zebra</a></li></ul></li>';
+        $expected .= '<li rel="zebra"><a href="/zebra">Zebra</a></li><li rel="dog"><a>Dog</a>';
+        $expected .= '<ul><li rel="littleDog"><a href="/little_dog">Little Dog</a></li><li rel="bigDog"><a href="/big_dog">Big Dog</a></li></ul></li></ul></li>';
+        $this->assertEqual($expected, $this->Nav->buildAdminNavigation('sorting'));
+
+        $expected = '<li rel="sorting"><a>Sorting</a><ul><li rel="alaska"><a href="/alaska">Alaska</a></li>';
+        $expected .= '<li rel="dog"><a>Dog</a><ul><li rel="bigDog"><a href="/big_dog">Big Dog</a></li>';
+        $expected .= '<li rel="littleDog"><a href="/little_dog">Little Dog</a></li></ul></li>';
+        $expected .= '<li rel="zebra"><a href="/zebra">Zebra</a></li></ul></li>';
         $this->assertEqual($expected, $this->Nav->buildAdminNavigation('sorting', true));
     }
 }
