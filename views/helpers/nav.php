@@ -141,6 +141,6 @@ class NavHelper extends AppHelper {
     }
 
     private function getPluginConfig($type) {
-        return Configure::read('plugins.'.$type);
+        return Configure::read('plugins.navigation.'.$type);
     }
 }
