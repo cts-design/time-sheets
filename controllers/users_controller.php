@@ -1059,7 +1059,7 @@ class UsersController extends AppController {
 		$this->loadModel('Alert');
 		$data = $this->Alert->getCustomerDetailsAlerts($detail, $user, $kiosk);
 		if($data) {
-			$this->sendAlert($data, 'Cusomter Deatils alert');
+			$this->sendAlert($data, 'Customer Details alert');
 		}
 	}
 	
