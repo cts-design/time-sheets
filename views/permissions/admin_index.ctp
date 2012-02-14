@@ -260,6 +260,30 @@
 				    'checked' => (isset($controllers['FeaturedEmployers']['admin_delete'])) ? $controllers['FeaturedEmployers']['admin_delete'] : '' ));?>
 			    </fieldset>
 		    <?php endif; ?>	
+
+            <?php if (isset($pluginPermissions['website'])): ?>
+                <?php foreach ($pluginPermissions['website'] as $plugin => $pluginControllers): ?>
+                    <?php foreach ($pluginControllers as $pluginController => $pluginActions): ?>
+                        <?php $title = Inflector::humanize($pluginController) ?>
+                        <fieldset class="left right-mar-10">
+                            <legend><?php echo $title ?></legend>
+
+                                <?php foreach ($pluginActions as $pluginAction): ?>
+                                    <?php
+                                        $controllerName = Inflector::camelize($pluginController);
+                                        $actionName = Inflector::humanize(substr($pluginAction, 6));
+                                        $label = 'LABEL';
+                                        echo $this->Form->input("$controllerName.$pluginAction", array(
+                                            'type' => 'checkbox',
+                                            'label' => $actionName,
+                                            'checked' => (isset($controller[$controllerName][$pluginAction])) ? $controllers[$controllerName][$pluginAction] : ''
+                                        ));
+                                    ?>
+                                <?php endforeach ?>
+                        </fieldset>
+                    <?php endforeach ?>
+                <?php endforeach ?>
+            <?php endif ?>
 		    <br class="clear" />
 			<?php echo $this->Form->end(__('Submit', true))?>    
 	</div>
