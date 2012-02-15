@@ -29,3 +29,5 @@ views/website_views/pages/home.ctp
 *.DS_STORE
 design
 /design/*
+*.sublime-project
+*.sublime-workspace
