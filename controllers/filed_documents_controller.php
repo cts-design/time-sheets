@@ -284,13 +284,14 @@ class FiledDocumentsController extends AppController {
 	function admin_report(){			
 		if(isset($this->params['url']['filters'])) {			
 			$conditions = $this->_setFilters();
-		//TODO: i think this needs a limit, say 10,000 records	
 			if($conditions){
-				$query = $this->FiledDocument->find('all', array('conditions' => $conditions));
+				$query = $this->FiledDocument->find('all', array(
+					'conditions' => $conditions,
+					'limit' => 20000));
 			}
 		}
 		else {
-			$query = $this->FiledDocument->find('all');
+			$query = $this->FiledDocument->find('all', array('limit' => 20000));
 		}	
 		$title = 'Filed Document Archive Report ' . date('m/d/Y');
 		if(isset($query)) {
