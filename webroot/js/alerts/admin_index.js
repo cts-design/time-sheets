@@ -2,7 +2,7 @@ var locationId, parentId;
 
 Ext.define('Atlas.form.field.AlertNameText', {
 	extend: 'Ext.form.field.Text',
-	alias: 'widget.alertnametextfield',	
+	alias: 'widget.alertnametextfield',
 	fieldLabel: 'Alert Name',
 	allowBlank: false,
 	msgTarget: 'under',
@@ -11,12 +11,12 @@ Ext.define('Atlas.form.field.AlertNameText', {
 
 Ext.define('Atlas.form.field.LocationComboBox', {
 	extend: 'Ext.form.field.ComboBox',
-	alias: 'widget.locationcombobox',	
+	alias: 'widget.locationcombobox',
 	xtype: 'combobox',
 	fieldLabel: 'Location',
 	displayField: 'name',
 	valueField: 'id',
-	store: 'locations',			
+	store: 'locations',
 	queryMode: 'remote',
 	emptyText: 'Please Select',
 	name: 'location',
@@ -28,7 +28,7 @@ Ext.define('Atlas.form.field.SendEmailCheckbox', {
 	extend: 'Ext.form.field.Checkbox',
 	alias: 'widget.sendemailcheckbox',
 	fieldLabel: 'Also send email',
-	name: 'send_email'	
+	name: 'send_email'
 });
 
 Ext.define('Atlas.form.field.LastNameText', {
@@ -39,7 +39,7 @@ Ext.define('Atlas.form.field.LastNameText', {
 	disabled: true,
 	allowBlank: false,
 	msgTarget: 'under',
-	name: 'lastname'	
+	name: 'lastname'
 });
 
 Ext.define('Atlas.form.field.FirstNameComboBox', {
@@ -63,9 +63,9 @@ Ext.define('Atlas.form.field.FirstNameComboBox', {
 	},
 	listeners: {
 		beforequery: function(queryEvent, eOpts) {
- 			queryEvent.query = this.prev().getValue() + ',' + queryEvent.query;
+			queryEvent.query = this.prev().getValue() + ',' + queryEvent.query;
 		}
-	}	
+	}
 });
 
 Ext.define('Customer', {
@@ -85,9 +85,9 @@ Ext.create('Ext.data.Store', {
 		},
 		limitParam: undefined,
 		pageParam: undefined,
-		startParam: undefined				
+		startParam: undefined
 	}
-});	
+});
 
 
 Ext.define('Atlas.form.field.SsnComboBox', {
@@ -99,10 +99,7 @@ Ext.define('Atlas.form.field.SsnComboBox', {
 	emptyText: 'Please enter last 4 of customer ssn',
 	msgTarget: 'under',
 	name: 'ssn',
-	allowBlank: false,
 	triggerAction: 'query',
-	msgTarget: 'under',
-	name: 'ssn',
 	store: 'customerSsn',
 	valueField: 'id',
 	displayField: 'ssn',
@@ -110,7 +107,7 @@ Ext.define('Atlas.form.field.SsnComboBox', {
 		getInnerTpl: function() {
 			return '<div>{fullname}</div>';
 		}
-	}		
+	}
 });
 
 Ext.create('Ext.data.Store', {
@@ -125,9 +122,9 @@ Ext.create('Ext.data.Store', {
 		},
 		limitParam: undefined,
 		pageParam: undefined,
-		startParam: undefined				
+		startParam: undefined
 	}
-});	
+});
 
 Ext.define('Atlas.form.field.FindCusByComboBox', {
 	extend: 'Ext.form.field.ComboBox',
@@ -150,7 +147,7 @@ Ext.define('Atlas.form.field.FindCusByComboBox', {
 			if(newValue === 'Name') {
 				first.enable();
 				last.enable();
-				ssn.disable();				
+				ssn.disable();
 			}
 			if(newValue === 'Last 4 SSN') {
 				first.disable();
@@ -185,7 +182,7 @@ Ext.define('Atlas.button.AlertSaveButton', {
 				success: function(form, action) {
 					Ext.Msg.alert('Success', action.result.message);
 					form.reset();
-					Ext.getCmp('myAlertsGrid').getStore().load();						
+					Ext.getCmp('myAlertsGrid').getStore().load();
 				},
 				failure: function(form, action) {
 					Ext.Msg.alert('Failed', action.result.message);
@@ -201,7 +198,7 @@ Ext.define('Atlas.button.AlertResetButton', {
 	text: 'Reset',
 	handler: function() {
 		this.up('form').getForm().reset();
-	}	
+	}
 });
 
 Ext.define('Atlas.form.SelfScanAlertPanel', {
@@ -220,7 +217,7 @@ Ext.define('Atlas.form.SelfScanAlertPanel', {
 	},{
 		xtype: 'lastnametextfield'
 	},{
-		xtype: 'firstnamecombobox'		
+		xtype: 'firstnamecombobox'
 	},{
 		xtype: 'ssncombobox'
 	},{
@@ -233,11 +230,11 @@ Ext.define('Atlas.form.SelfScanAlertPanel', {
 		width: 100,
 		margin: '0 0 0 10'
 	}]
-});	
+});
 
 Ext.define('Atlas.form.SelfSignAlertPanel', {
 	extend: 'Ext.form.Panel',
-	alias: 'widget.selfsignalertformpanel',	
+	alias: 'widget.selfsignalertformpanel',
 	padding: 10,
 	border: 0,
 	defaults: {
@@ -252,9 +249,9 @@ Ext.define('Atlas.form.SelfSignAlertPanel', {
 		listeners: {
 			select: function() {
 				locationId = this.getValue();
-				var level1Buttons = this.nextNode()
-				,   level2Buttons = level1Buttons.nextNode()
-				,   level3Buttons = level2Buttons.nextNode();
+				var level1Buttons = this.nextNode(),
+					level2Buttons = level1Buttons.nextNode(),
+					level3Buttons = level2Buttons.nextNode();
 				level1Buttons.getStore().load();
 				if(!level2Buttons.isDisabled()) {
 					level2Buttons.reset();
@@ -262,7 +259,7 @@ Ext.define('Atlas.form.SelfSignAlertPanel', {
 				}
 				if(!level3Buttons.isDisabled()) {
 					level3Buttons.reset();
-					level3Buttons.disable();					
+					level3Buttons.disable();
 				}
 			}
 		}
@@ -281,8 +278,8 @@ Ext.define('Atlas.form.SelfSignAlertPanel', {
 		listeners: {
 			select: function() {
 				parentId = this.getValue();
-				var level2Buttons = this.nextNode();				
-				level2Buttons.getStore().load();				
+				var level2Buttons = this.nextNode();
+				level2Buttons.getStore().load();
 			}
 		}
 	},{
@@ -296,13 +293,14 @@ Ext.define('Atlas.form.SelfSignAlertPanel', {
 		displayField: 'name',
 		queryMode: 'local',
 		name: 'level2',
+		allowBlank: true,
 		listeners: {
 			select: function() {
 				parentId = this.getValue();
 				var level3Buttons = this.nextNode();
-				level3Buttons.getStore().load();						
+				level3Buttons.getStore().load();
 			}
-		}		
+		}
 	},{
 		fieldLabel: 'Level 3 Buttons',
 		id: 'level3Buttons',
@@ -313,7 +311,8 @@ Ext.define('Atlas.form.SelfSignAlertPanel', {
 		emptyText: 'Please Select',
 		displayField: 'name',
 		queryMode: 'local',
-		name: 'level3'
+		name: 'level3',
+		allowBlank: true
 	},{
 		xtype: 'sendemailcheckbox'
 	},{
@@ -344,11 +343,11 @@ Ext.define('Atlas.form.SelfSignAlertPanel', {
 			disableAndResetButtons(['1', '2', '3']);
 		}
 	}]
-});	
+});
 
 Ext.define('Atlas.form.CustomerDetailsAlertPanel', {
 	extend: 'Ext.form.Panel',
-	alias: 'widget.customerdetailsalertformpanel',	
+	alias: 'widget.customerdetailsalertformpanel',
 	padding: 10,
 	border: 0,
 	defaults: {
@@ -374,7 +373,7 @@ Ext.define('Atlas.form.CustomerDetailsAlertPanel', {
 		allowBlank: false,
 		msgTarget: 'under'
 	},{
-		xtype: 'sendemailcheckbox'	
+		xtype: 'sendemailcheckbox'
 	},{
 		xtype: 'alertsavebutton',
 		width: 100
@@ -434,7 +433,7 @@ Ext.define('Atlas.form.CusFiledDocAlertPanel', {
 	},{
 		xtype: 'lastnametextfield'
 	},{
-		xtype: 'firstnamecombobox'		
+		xtype: 'firstnamecombobox'
 	},{
 		xtype: 'ssncombobox'
 	},{
@@ -470,7 +469,7 @@ Ext.define('Atlas.form.CustomerLoginAlertPanel', {
 	},{
 		xtype: 'lastnametextfield'
 	},{
-		xtype: 'firstnamecombobox'		
+		xtype: 'firstnamecombobox'
 	},{
 		xtype: 'ssncombobox'
 	},{
@@ -483,7 +482,7 @@ Ext.define('Atlas.form.CustomerLoginAlertPanel', {
 		width: 100,
 		margin: '0 0 0 10'
 	}]
-});		
+});
 
 
 Ext.define('DocumentQueueCategory', {
@@ -503,9 +502,9 @@ Ext.create('Ext.data.Store', {
 		},
 		limitParam: undefined,
 		pageParam: undefined,
-		startParam: undefined				
+		startParam: undefined
 	}
-});	
+});
 
 
 
@@ -537,9 +536,9 @@ Ext.create('Ext.data.Store', {
 		},
 		limitParam: undefined,
 		pageParam: undefined,
-		startParam: undefined				
+		startParam: undefined
 	}
-});	
+});
 
 Ext.define('KioskButton', {
 	extend: 'Ext.data.Model',
@@ -568,18 +567,18 @@ Ext.create('Atlas.data.KioskButtonStore', {
 	storeId: 'level1ButtonsStore',
 	listeners: {
 		beforeload: function() {
-			this.getProxy().url = 
+			this.getProxy().url =
 				'/admin/kiosks/get_kiosk_buttons_by_location/'+locationId+'/';
 		},
 		load: function(store, records, successful, operation, eOpts) {
 			var level1Buttons = Ext.getCmp('level1Buttons');
 			level1Buttons.reset();
 			if(level1Buttons.isDisabled() && records[0] !== undefined) {
-			 	level1Buttons.enable();
+				level1Buttons.enable();
 			}
 			if(!level1Buttons.isDisabled() && records[0] === undefined) {
-				level1Buttons.disable();	
-			}				  
+				level1Buttons.disable();
+			}
 		}
 	}
 });
@@ -588,20 +587,20 @@ Ext.create('Atlas.data.KioskButtonStore', {
 	storeId: 'level2ButtonsStore',
 	listeners: {
 		beforeload: function() {
-			this.getProxy().url = 
+			this.getProxy().url =
 				'/admin/kiosks/get_kiosk_buttons_by_location/'+locationId+'/'+parentId;
 		},
 		load: function(store, records, successful, operation, eOpts) {
 			var level2Buttons = Ext.getCmp('level2Buttons');
 			level2Buttons.reset();
 			if(level2Buttons.isDisabled() && records[0] !== undefined) {
-			 	level2Buttons.enable();	
+				level2Buttons.enable();
 			}
 			if(!level2Buttons.isDisabled() && records[0] === undefined) {
 				level2Buttons.disable();
 				disableAndResetButtons(['3']);
 			}
-		} 
+		}
 	}
 });
 
@@ -609,19 +608,19 @@ Ext.create('Atlas.data.KioskButtonStore', {
 	storeId: 'level3ButtonsStore',
 	listeners: {
 		beforeload: function() {
-			this.getProxy().url = 
+			this.getProxy().url =
 				'/admin/kiosks/get_kiosk_buttons_by_location/'+locationId+'/'+parentId;
 		},
 		load: function(store, records, successful, operation, eOpts) {
 			var level3Buttons = Ext.getCmp('level3Buttons');
 			level3Buttons.reset();
 			if(level3Buttons.isDisabled() && records[0] !== undefined) {
-			 	level3Buttons.enable();	
+				level3Buttons.enable();
 			}
 			if(!level3Buttons.isDisabled() && records[0] === undefined) {
-				level3Buttons.disable();	
+				level3Buttons.disable();
 			}
-		} 
+		}
 	}
 });
 	
@@ -632,17 +631,17 @@ Ext.create('Ext.data.Store', {
 		type: 'ajax',
 		url: '/admin/alerts/get_alert_types',
 		reader: {
-			type: 'json',		
+			type: 'json',
 			root: 'types'
 		}
 	}
-});	
+});
 
 function disableAndResetButtons(level) {
 	for(var i in level) {
 		var buttons = Ext.getCmp('level' + level[i] + 'Buttons');
 		buttons.reset();
-		buttons.disable();		
+		buttons.disable();
 	}
 }
 
@@ -667,7 +666,7 @@ Ext.create('Ext.data.Store', {
 		startParam: undefined
 	},
 	autoLoad: true
-});	
+});
 
 Ext.create('Ext.menu.Menu', {
 	title: 'Actions',
@@ -680,17 +679,17 @@ Ext.create('Ext.menu.Menu', {
 			var selected = Ext.getCmp('myAlertsGrid').getSelectionModel().getLastSelected();
 			Ext.getCmp('contextMenu').hide();
 			Ext.Ajax.request({
-			    url: '/admin/alerts/toggle_email',
-			    params: {
-			        id: selected.data.id,
-			        send_email: this.checked
-			    },
-			    success: function(response){
-			    	Ext.getCmp('myAlertsGrid').getStore().load();
-			    },
-			    failure: function() {
-			    	Ext.Msg.alert('Error', 'An erorr has occured.');
-			    }
+				url: '/admin/alerts/toggle_email',
+				params: {
+					id: selected.data.id,
+					send_email: this.checked
+				},
+				success: function(response){
+					Ext.getCmp('myAlertsGrid').getStore().load();
+				},
+				failure: function() {
+					Ext.Msg.alert('Error', 'An erorr has occured.');
+				}
 			});
 		}
 	},{
@@ -700,18 +699,18 @@ Ext.create('Ext.menu.Menu', {
 			var selected = Ext.getCmp('myAlertsGrid').getSelectionModel().getLastSelected();
 			Ext.getCmp('contextMenu').hide();
 			Ext.Ajax.request({
-			    url: '/admin/alerts/toggle_disabled',
-			    params: {
-			        id: selected.data.id,
-			        disabled: this.checked
-			    },
-			    success: function(response){
-			    	Ext.getCmp('myAlertsGrid').getStore().load();
-			    },
-			    failure: function() {
-			    	Ext.Msg.alert('Error', 'An erorr has occured.');		    	
-			    }
-			});			
+			url: '/admin/alerts/toggle_disabled',
+			params: {
+				id: selected.data.id,
+				disabled: this.checked
+			},
+			success: function(response){
+				Ext.getCmp('myAlertsGrid').getStore().load();
+			},
+			failure: function() {
+				Ext.Msg.alert('Error', 'An erorr has occured.');
+			}
+			});
 		}
 	},{
 		text: 'Delete',
@@ -722,147 +721,147 @@ Ext.create('Ext.menu.Menu', {
 					var selected = Ext.getCmp('myAlertsGrid').getSelectionModel().getLastSelected();
 					Ext.getCmp('contextMenu').hide();
 					Ext.Ajax.request({
-					    url: '/admin/alerts/delete',
-					    params: {
-					        id: selected.data.id
-					    },
-					    success: function(response){
-					    	console.log(response.responseText.message);
-					    	var responseText = Ext.JSON.decode(response.responseText);
-					    	Ext.Msg.alert('Success', responseText.message);
-					    	Ext.getCmp('myAlertsGrid').getStore().load();
-					    },
-					    failure: function(response) {
-					    	var responseText = Ext.JSON.decode(response.responseText);
-					    	Ext.Msg.alert('Success', responseText.message);					    	
-					    	Ext.Msg.alert('Error', response.responseText.message);		    	
-					    }
-					});						
+						url: '/admin/alerts/delete',
+						params: {
+							id: selected.data.id
+						},
+						success: function(response){
+							console.log(response.responseText.message);
+							var responseText = Ext.JSON.decode(response.responseText);
+							Ext.Msg.alert('Success', responseText.message);
+							Ext.getCmp('myAlertsGrid').getStore().load();
+						},
+						failure: function(response) {
+							var responseText = Ext.JSON.decode(response.responseText);
+							Ext.Msg.alert('Success', responseText.message);
+							Ext.Msg.alert('Error', response.responseText.message);
+						}
+					});
 				}
-			});		
-		}		
+			});
+		}
 	}]
 });
 
-Ext.onReady(function(){	
+Ext.onReady(function(){
 				
 	Ext.create('Ext.Panel', {
-	    width: 950,
-	    height: 400,
-	    title: "Alerts",
-	    layout: {
-	        type: 'hbox',
-	        align: 'stretch'
-	    },
-	    renderTo: 'alerts',
-	    items: [{
-	        xtype: 'panel',
-	        flex: 1.5,
-	        layout: 'card',
-	        activeItem: 0,
-	        items: [{
-	        	html: [
-	        		'<p>Please select an alert type to add from the dropdown above. ',
-	        		'If no alert types appear in the dropdown menu, please have your ',
-	        		'supervisor check your permissions.</p>'
-	        	],
-	        	padding: 10,
-	        	border: 0
-	        },{
-	        	xtype: 'selfsignalertformpanel',
-	        	id: 'selfSignAlertFormPanel',
-	        	url: '/admin/alerts/add_self_sign_alert'
-	        },{
-	        	xtype: 'customerdetailsalertformpanel',
-	        	id: 'customerDetailsAlertFromPanel',
-	        	url: '/admin/alerts/add_customer_details_alert'	        	
-	        },{
-	        	xtype: 'queueddocumentalertformpanel',
-	        	id: 'queuedDocumentAlertFormPanel',
-	        	url: '/admin/alerts/add_queued_document_alert'
-	        },{
-	        	xtype: 'selfscanalertformpanel',
-	        	id: 'selfScanAlertFormPanel',
-	        	url: '/admin/alerts/add_self_scan_alert'	        	
-	        },{
-	        	xtype: 'cusfileddocalertformpanel',
-	        	id: 'cusFiledDocAlertFormPanel',
-	        	url: '/admin/alerts/add_cus_filed_doc_alert'		        	
-	        },{
-	        	xtype: 'customerloginalertformpanel',
-	        	id: 'customerLoginAlertFormPanel',
-	        	url: '/admin/alerts/add_customer_login_alert'
-	        }],
-	        dockedItems: [{
-	        	xtype: 'toolbar',
-	        	dock: 'top',
-	        	items: [{
-	        		xtype: 'combobox',
-	        		width: 300,
-	        		fieldLabel: 'Select Alert Type',
-	        		store: 'alertTypes',
-	        		displayField: 'label',
-	        		valueField: 'id',
-	        		emptyText: 'Please Select',
-	        		listeners: {
-	        			select: function() {
-							this.up('panel').getLayout().setActiveItem(this.getValue());					
-	        			}
-	        		}
-	        	}]
-	        }]
-	    },{
-	        xtype: 'gridpanel',
-	        flex: 2,
-	        title: 'My Alerts',
-	        id: 'myAlertsGrid',
+		width: 950,
+		height: 400,
+		title: "Alerts",
+		layout: {
+			type: 'hbox',
+			align: 'stretch'
+		},
+		renderTo: 'alerts',
+		items: [{
+			xtype: 'panel',
+			flex: 1.5,
+			layout: 'card',
+			activeItem: 0,
+			items: [{
+				html: [
+					'<p>Please select an alert type to add from the dropdown above. ',
+					'If no alert types appear in the dropdown menu, please have your ',
+					'supervisor check your permissions.</p>'
+				],
+				padding: 10,
+				border: 0
+				},{
+					xtype: 'selfsignalertformpanel',
+					id: 'selfSignAlertFormPanel',
+					url: '/admin/alerts/add_self_sign_alert'
+				},{
+					xtype: 'customerdetailsalertformpanel',
+					id: 'customerDetailsAlertFromPanel',
+					url: '/admin/alerts/add_customer_details_alert'
+				},{
+					xtype: 'queueddocumentalertformpanel',
+					id: 'queuedDocumentAlertFormPanel',
+					url: '/admin/alerts/add_queued_document_alert'
+				},{
+					xtype: 'selfscanalertformpanel',
+					id: 'selfScanAlertFormPanel',
+					url: '/admin/alerts/add_self_scan_alert'
+				},{
+					xtype: 'cusfileddocalertformpanel',
+					id: 'cusFiledDocAlertFormPanel',
+					url: '/admin/alerts/add_cus_filed_doc_alert'
+				},{
+					xtype: 'customerloginalertformpanel',
+					id: 'customerLoginAlertFormPanel',
+					url: '/admin/alerts/add_customer_login_alert'
+				}],
+				dockedItems: [{
+					xtype: 'toolbar',
+					dock: 'top',
+					items: [{
+						xtype: 'combobox',
+						width: 300,
+						fieldLabel: 'Select Alert Type',
+						store: 'alertTypes',
+						displayField: 'label',
+						valueField: 'id',
+						emptyText: 'Please Select',
+						listeners: {
+						select: function() {
+							this.up('panel').getLayout().setActiveItem(this.getValue());
+						}
+					}
+				}]
+			}]
+			},{
+			xtype: 'gridpanel',
+			flex: 2,
+			title: 'My Alerts',
+			id: 'myAlertsGrid',
 			viewConfig: {
 				loadMask: true,
 				singleSelect: true,
 				emptyText: 'No records at this time.',
-		        listeners: {
-		            itemcontextmenu: function(view, rec, node, index, e) {
-		                e.stopEvent();
-		                var cm = Ext.getCmp('contextMenu');
-		                cm.items.items[0].setChecked(Boolean(rec.data.send_email));
-		                cm.items.items[1].setChecked(Boolean(rec.data.disabled));
-		                cm.showAt(e.getXY());
-			            return false;
-		            }
-		        }		
-			},	        
-	        columns: [{ 
-	        	text: 'Id',
-	        	dataIndex: 'id',
-	        	hidden: true
-	        },
-		    {
-		    	text: 'Name',
-		    	dataIndex: 'name',
-		    	flex: 1 
-		    },
-		    { 
-		    	text: 'Type', 
-		    	dataIndex: 'type', 
-		    	width: 150 
-		    },
-		    { 
-		    	text: 'Send Email',
-		        dataIndex: 'send_email',
-		        xtype: 'booleancolumn',
-		        trueText: 'Yes',
-            	falseText: 'No',
-            	width: 70 
-		    },
-		    { 
-		    	text: 'Disabled',
-		        dataIndex: 'disabled', 
-		        xtype: 'booleancolumn',
-		        trueText: 'Yes',
-            	falseText: 'No',
-            	width: 60 
-		    }],
-    		store: 'alerts'
-	    }]
+				listeners: {
+					itemcontextmenu: function(view, rec, node, index, e) {
+						e.stopEvent();
+						var cm = Ext.getCmp('contextMenu');
+						cm.items.items[0].setChecked(Boolean(rec.data.send_email));
+						cm.items.items[1].setChecked(Boolean(rec.data.disabled));
+						cm.showAt(e.getXY());
+						return false;
+					}
+				}
+				},
+				columns: [{
+					text: 'Id',
+					dataIndex: 'id',
+					hidden: true
+				},
+				{
+					text: 'Name',
+					dataIndex: 'name',
+					flex: 1
+				},
+				{
+					text: 'Type',
+					dataIndex: 'type',
+					width: 150
+				},
+				{
+					text: 'Send Email',
+					dataIndex: 'send_email',
+					xtype: 'booleancolumn',
+					trueText: 'Yes',
+					falseText: 'No',
+					width: 70
+				},
+				{
+					text: 'Disabled',
+					dataIndex: 'disabled',
+					xtype: 'booleancolumn',
+					trueText: 'Yes',
+					falseText: 'No',
+					width: 60
+				}],
+			store: 'alerts'
+		}]
 	});
 });
