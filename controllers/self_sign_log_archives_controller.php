@@ -137,6 +137,13 @@ class SelfSignLogArchivesController extends AppController {
 				$report[$k]['Button 3'] = '';
 
 			$report[$k]['Other'] = $v['SelfSignLogArchive']['other'];
+			if(!empty($v['Admin']['lastname'])) {
+				$report[$k]['Last Activity Admin'] = 
+					$v['Admin']['lastname'] . ', ' . $v['Admin']['firstname'];				
+			}
+			else {
+				$report[$k]['Last Activity Admin'] = '';
+			}
 			$report[$k]['Status'] = $statuses[$v['SelfSignLogArchive']['status']];
 			$report[$k]['Created'] = $v['SelfSignLogArchive']['created'];
 			$report[$k]['Closed'] = $v['SelfSignLogArchive']['closed'];
@@ -160,6 +167,7 @@ class SelfSignLogArchivesController extends AppController {
             'Button 2' => '',
             'Button 3' => '',
             'Other' => '',
+            'Last Activity Admin' => '',
             'Status' => '',
             'Created' => '',
             'Closed' => '',
