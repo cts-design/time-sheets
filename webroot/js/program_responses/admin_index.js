@@ -401,6 +401,7 @@ Ext.onReady(function() {
 	var responsesPanel = Ext.create('Ext.panel.Panel', {
 		frame : true,
 		renderTo: 'programResponseTabs',
+		title: progName,
 		width : 950,
 		height : 800,
 		layout : 'border',

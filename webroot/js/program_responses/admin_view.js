@@ -99,7 +99,7 @@ Ext.onReady(function(){
 	
 	
 	var programResponsePanel = Ext.create('Ext.panel.Panel', {
-		title: 'Program Response',
+		title: progName + ' - Program Response',
 		renderTo: 'ProgramResponsePanel',
 		width: 950,
 		height: 400,
