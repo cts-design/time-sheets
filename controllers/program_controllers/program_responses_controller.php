@@ -384,7 +384,8 @@ class ProgramResponsesController extends AppController {
 			else {
 				$approvalPermission = null;
 			}
-			$this->set(compact('approvalPermission'));		
+			$programName = $program['Program']['name'];
+			$this->set(compact('approvalPermission', 'programName'));		
 		}	
 	}
 
@@ -489,8 +490,9 @@ class ProgramResponsesController extends AppController {
 		else {
 			$approval = 'false';
 		}
+		$programName = $programResponse['Program']['name'];
 		$title_for_layout = 'Program Response';
-		$this->set(compact('title_for_layout', 'approval'));
+		$this->set(compact('title_for_layout', 'approval', 'programName'));
 	}
 
 
