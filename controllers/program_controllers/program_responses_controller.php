@@ -97,7 +97,12 @@ class ProgramResponsesController extends AppController {
 		if($instructions) {
 			$data['instructions'] = $instructions[0];
 		}	
-		$data['title_for_layout'] = $program['Program']['name'] . ' Registration Form' ;
+		if($program['Program']['form_type'] === 'quiz') {
+			$data['title_for_layout'] = $program['Program']['name'] . ' Quiz Form';	
+		}
+		else {
+			$data['title_for_layout'] = $program['Program']['name'] . ' Registration Form' ;
+		}
 		$data['program'] = $program;
 		if($program['Program']['view_media_again']) {
 			$type = explode('_', $program['Program']['type']);
