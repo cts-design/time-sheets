@@ -99,7 +99,14 @@ class ProgramResponsesController extends AppController {
 		}	
 		$data['title_for_layout'] = $program['Program']['name'] . ' Registration Form' ;
 		$data['program'] = $program;
-		$this->set($data);	
+		if($program['Program']['view_media_again']) {
+			$type = explode('_', $program['Program']['type']);
+			$viewMediaAgainLink = '/programs/view_media/'.$program['Program']['id'].'/'.$type[0];				
+		}
+		else {
+			$viewMediaAgainLink = null;
+		}
+		$this->set(compact('data', 'viewMediaAgainLink'));	
 	}
 		
 	function required_docs($id = null, $reset = null) {
