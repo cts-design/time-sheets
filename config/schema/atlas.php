@@ -1,5 +1,6 @@
 <?php 
 /* atlas schema generated on: 2012-02-20 15:52:23 : 1329771143*/
+
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
