@@ -101,12 +101,12 @@ class ProgramResponsesController extends AppController {
 		$data['program'] = $program;
 		if($program['Program']['view_media_again']) {
 			$type = explode('_', $program['Program']['type']);
-			$viewMediaAgainLink = '/programs/view_media/'.$program['Program']['id'].'/'.$type[0];				
+			$data['viewMediaAgainLink'] = '/programs/view_media/'.$program['Program']['id'].'/'.$type[0];				
 		}
 		else {
-			$viewMediaAgainLink = null;
+			$data['viewMediaAgainLink'] = null;
 		}
-		$this->set(compact('data', 'viewMediaAgainLink'));	
+		$this->set($data);	
 	}
 		
 	function required_docs($id = null, $reset = null) {
