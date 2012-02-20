@@ -77,7 +77,7 @@ class ProgramsController extends AppController {
 			}
 		
 		}
-		$mediaOnly = array('uri', 'pdf', 'video');
+		$mediaOnly = array('uri', 'pdf', 'video', 'presenter');
 		if(in_array($program['Program']['type'], $mediaOnly)) {
 			$this->Session->write('step2', 'complete');
 			$data['redirect'] = '/programs/view_media/' . $id . '/' . $program['Program']['type']; 				
@@ -101,7 +101,7 @@ class ProgramsController extends AppController {
 				}					
 			}			
 		}
-		$mediaForm = array('pdf_form', 'uri_form', 'video_form');
+		$mediaForm = array('pdf_form', 'uri_form', 'video_form', 'presenter_form');
 		if(in_array($program['Program']['type'], $mediaForm)){
 			switch($program['Program']['type']){
 				case 'pdf_form' : 
@@ -112,7 +112,10 @@ class ProgramsController extends AppController {
 					break;
 				case 'video_form' :
 					$element = 'video';
-					break;	
+					break;
+				case 'presenter_form' :
+					$element = 'presenter';
+					break;						
 			}
 			$data['redirect'] = '/programs/view_media/' . $id . '/' . $element;
 			$this->Session->write('step2', 'form');					
@@ -144,7 +147,7 @@ class ProgramsController extends AppController {
 				}						
 			}				
 		}			
-		$mediaFormDocs = array('video_form_docs', 'uri_form_docs', 'pdf_form_docs');		
+		$mediaFormDocs = array('video_form_docs', 'uri_form_docs', 'pdf_form_docs', 'presenter_form_docs');		
 		if(in_array($program['Program']['type'], $mediaFormDocs)){
 		 	switch($program['Program']['type']){
 				case 'pdf_form_docs' : 
@@ -291,8 +294,8 @@ class ProgramsController extends AppController {
 			$data['acknowledgeMedia'] = false;
 		}
 		$instructions = Set::extract('/ProgramInstruction[type=media]/text', $program);		
-		$data['element'] = '/programs/' . $element; 
-		if(strstr($program['Program']['type'], 'uri')) {
+		$data['element'] = '/programs/' . $element;
+		if(strstr($program['Program']['type'], 'uri') || strstr($program['Program']['type'], 'presenter') ) {
 			$data['media'] = $program['Program']['media'];
 		}
 		else {
