@@ -5,7 +5,7 @@ Ext.onReady(function() {
         expires: new Date(new Date().getTime()+(1000*60*60*24*365)) // 1 year
     }));
 
-	var responseId = null, CurrentPage = null, Atlas = {}, itemsPerPage = 10;
+	var responseId = null, loaded = null, itemsPerPage = 10;
 
 	Ext.define('ProgramResponse', {
 		extend: 'Ext.data.Model',
@@ -47,7 +47,12 @@ Ext.onReady(function() {
 			model: 'ProgramResponse',
 			proxy: programResponseProxy,
 			pageSize: itemsPerPage,
-			remoteSort : true
+			remoteSort: true,
+			listeners: {
+				load: function() {
+					Ext.state.Manager.set('programResponseGrid'+progId, {currentPage: this.currentPage});
+				}
+			}
 	});
 	
 	
@@ -252,7 +257,9 @@ Ext.onReady(function() {
 						programResponseProxy.extraParams.tab = 'not_approved';
 						break;
 				}
-				newCard.getStore().loadPage(1, {start: 0, limit: 10});
+				if(loaded) {
+					newCard.getStore().loadPage(1, {start: 0, limit: 10});
+				}
 			},
 			beforeadd: function(container, component, index) {
 				if(this.items.length == 5) {
@@ -264,7 +271,6 @@ Ext.onReady(function() {
 					this.remove(notApprovedProgramResponsesGrid);
 					this.remove(pendingApprovalProgramResponsesGrid);
 				}
-	
 			}
 		}
 	});
@@ -494,7 +500,13 @@ Ext.onReady(function() {
 			});
 		}
 	});
-	//programResponseProxy.extraParams.tab = 'open';
-	//openProgramResponsesGrid.getStore().loadPage(1, {start: 0, limit: 10});
-	programResponseTabs.getActiveTab().getStore().loadPage(1, {start: 0, limit: 10});
+	var state = Ext.state.Manager.get('programResponseGrid'+progId),
+		page = 1;
+	if(state) {
+		page = state.currentPage;
+	}
+	if(!loaded) {
+		programResponseTabs.getActiveTab().getStore().loadPage(page, {start: 0, limit: 10});
+		loaded = 1;
+	}
 });
