@@ -99,6 +99,9 @@
 		    <li rel="programs" id="programs">
 		    	<?php echo $html->link(__('Programs', true), array('controller' => 'programs', 'action' => 'index')) ?>
 		    </li>
+		    <li rel="audits" id="audits">
+		    	<?php echo $html->link(__('Audits', true), array('controller' => 'audits', 'action' => 'index')) ?>
+		    </li>
 		    <li rel="tools" id="tools">
             <a><?php __('Tools') ?></a>
 			<ul>

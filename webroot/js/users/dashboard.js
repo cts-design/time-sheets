@@ -162,7 +162,12 @@ $(document).ready(function () {
 				icon: {
 					image: '/img/icons/reports.png'
 				}
-			}
+			},
+      audits: {
+        icon: {
+          image: '/img/icons/audit.png'
+        }
+      }
 	    }
 	},
 	cookies: {
