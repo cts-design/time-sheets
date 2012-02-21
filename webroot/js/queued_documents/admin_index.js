@@ -233,19 +233,19 @@ function autoPopulateFilingCats(doc) {
 		else {
 			cat = Ext.data.StoreManager.lookup('barCodeDefinitionsStore').getById(doc.data.bar_code_definition_id);
 		}
-		if(cat.data.cat_1 !== undefined) {
+		if(cat.data.cat_1 !== null) {
 			Ext.getCmp('mainFilingCats').select(cat.data.cat_1);
 			cat2Store = Ext.data.StoreManager.lookup('documentFilingCats2');
 			cat2Store.clearFilter();
 			cat2Store.filter(getCatFilter(cat.data.cat_1));
 		}
-		if(cat.data.cat_2 !== undefined) {
+		if(cat.data.cat_2 !== null) {
 			Ext.getCmp('secondFilingCats').select(cat.data.cat_2);
 			cat3Store = Ext.data.StoreManager.lookup('documentFilingCats3');
 			cat3Store.clearFilter();
 			cat3Store.filter(getCatFilter(cat.data.cat_2));
 		}
-		if(cat.data.cat_3 !== undefined) {
+		if(cat.data.cat_3 !== null) {
 			Ext.getCmp('thirdFilingCats').select(cat.data.cat_3);
 		}
 	}
