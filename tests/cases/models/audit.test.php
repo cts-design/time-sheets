@@ -28,6 +28,20 @@ class AuditTestCase extends AtlasTestCase {
         $this->assertEqual($invalidFields['name'], 'An audit name is required');
         $this->assertEqual($invalidFields['start_date'], 'A start date is required');
         $this->assertEqual($invalidFields['end_date'], 'An end date is required');
+
+        $this->Audit->create();
+        $invalidData = array(
+            'Audit' => array(
+                'name' => '',
+                'start_date' => '12-01-2012',
+                'end_date' => '12-10-2012'
+            )
+        );
+
+        $this->assertFalse($this->Audit->save($invalidData));
+        $invalidFields = $this->Audit->invalidFields();
+        $this->assertEqual($invalidFields['start_date'], 'Start date must be a valid date (yyyy-mm-dd)');
+        $this->assertEqual($invalidFields['end_date'], 'End date must be a valid date (yyyy-mm-dd)');
     }
 }
 
