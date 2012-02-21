@@ -267,7 +267,7 @@ class QueuedDocumentsController extends AppController {
 				$queuedDoc['QueuedDocument']['scanned_location_id'];
 			$this->data['FiledDocument']['entry_method'] = $queuedDoc['QueuedDocument']['entry_method'];
 			$this->data['FiledDocument']['filename'] = $queuedDoc['QueuedDocument']['filename'];
-			$this->data['FiledDocument']['entry_method'] = $queuedDoc['QueuedDocument']['entry_method'];				
+			$this->data['FiledDocument']['created'] = $queuedDoc['QueuedDocument']['created'];				
 			$this->QueuedDocument->User->recursive = -1;
 			$user = $this->QueuedDocument->User->findById($this->data['FiledDocument']['user_id']);
 			if($this->QueuedDocument->User->FiledDocument->save($this->data['FiledDocument'])) {
