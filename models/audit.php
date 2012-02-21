@@ -14,13 +14,23 @@ class Audit extends AppModel {
         'start_date' => array(
             'notEmpty' => array(
                 'rule' => 'notEmpty',
-                'message' => 'A start date is required'
+                'message' => 'A start date is required',
+                'last' => true
+            ),
+            'validDate' => array(
+                'rule' => array('date', 'ymd'),
+                'message' => 'Start date must be a valid date (yyyy-mm-dd)'
             )
         ),
         'end_date' => array(
             'notEmpty' => array(
                 'rule' => 'notEmpty',
-                'message' => 'An end date is required'
+                'message' => 'An end date is required',
+                'last' => true
+            ),
+            'validDate' => array(
+                'rule' => array('date', 'ymd'),
+                'message' => 'End date must be a valid date (yyyy-mm-dd)'
             )
         )
     );
