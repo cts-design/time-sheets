@@ -85,9 +85,9 @@ class FiledDocumentsController extends AppController {
 		    'name' => str_replace('.pdf', '', $doc['FiledDocument']['filename']),
 		    'extension' => 'pdf',
 		    'cache' => true,
-		    'path' => Configure::read('Document.storage.path') .
-		    date('Y', strtotime($doc['FiledDocument']['created'])) . '/' .
-		    date('m', strtotime($doc['FiledDocument']['created'])) . '/'
+		    'path' =>  Configure::read('Document.storage.path') .
+		    substr($doc['FiledDocument']['filename'], 0, 4) . '/' .
+		    substr($doc['FiledDocument']['filename'], 4, 2) . '/'		    
 		);
 		$this->Transaction->createUserTransaction('Storage', null, null,
 			'Viewed filed document ID ' . $doc['FiledDocument']['id']);
