@@ -1,6 +1,10 @@
 Ext.onReady(function() {
 	Ext.QuickTips.init();
 
+    Ext.state.Manager.setProvider(new Ext.state.CookieProvider({
+        expires: new Date(new Date().getTime()+(1000*60*60*24*365)) // 1 year
+    }));
+
 	var responseId = null, CurrentPage = null, Atlas = {}, itemsPerPage = 10;
 
 	Ext.define('ProgramResponse', {
@@ -17,7 +21,7 @@ Ext.onReady(function() {
 			name : 'expires_on',
 			type : 'date',
 			dateFormat : 'Y-m-d H:i:s'
-		}, 'confirmation_id', 'actions', 'notes']	
+		}, 'confirmation_id', 'actions', 'notes']
 	});
 	
 	var programResponseProxy = Ext.create('Ext.data.proxy.Ajax', {
@@ -28,7 +32,7 @@ Ext.onReady(function() {
 			totalProperty: 'totalCount'
 		},
 		extraParams : {
-			tab : '',
+			tab : 'open',
 			dateFrom : '',
 			dateTo : '',
 			id : '',
@@ -36,15 +40,15 @@ Ext.onReady(function() {
 			search : ''
 		},
 		directionParam : 'direction',
-		simpleSortMode: true	
+		simpleSortMode: true
 	});
 	
 	var store = Ext.create('Ext.data.Store', {
 			model: 'ProgramResponse',
 			proxy: programResponseProxy,
 			pageSize: itemsPerPage,
-			remoteSort : true			
-	}); 
+			remoteSort : true
+	});
 	
 	
 	
@@ -91,7 +95,7 @@ Ext.onReady(function() {
 			deferEmptyText: false,
 			loadMask: true,
 			emptyText : 'No responses at this time.'
-		},	
+		},
 		selType: 'rowmodel',
 		listeners: {
 			select: function(sm, record, index, eOpts) {
@@ -100,23 +104,25 @@ Ext.onReady(function() {
 				}
 				responseId = record.data.id;
 				editor.setValue(record.data.notes);
-				Ext.getCmp('save').enable();				
+				Ext.getCmp('save').enable();
 			}
 		}
 	});
 		
 	var openProgramResponsesGrid = Ext.create('Atlas.grid.ProgramResponsePanel', {
 		title : 'Open',
+		id: 'open',
 		bbar: Ext.create('Ext.PagingToolbar', {
 			store: store,
 			displayInfo: true,
 			displayMsg: 'Displaying responses {0} - {1} of {2}',
 			emptyMsg: "No responses to display"
-		})		
-	});	
+		})
+	});
 	
 	var closedProgramResponsesGrid = Ext.create('Atlas.grid.ProgramResponsePanel', {
 		title : 'Closed',
+		id: 'closed',
 		columns: [{
 			text : 'Id',
 			dataIndex : 'id',
@@ -153,37 +159,40 @@ Ext.onReady(function() {
 			displayInfo: true,
 			displayMsg: 'Displaying responses {0} - {1} of {2}',
 			emptyMsg: "No responses to display"
-		})		
+		})
 	});
 		
 	var expiredProgramResponsesGrid = Ext.create('Atlas.grid.ProgramResponsePanel', {
 		title : 'Expired',
+		id: 'expired',
 		bbar: Ext.create('Ext.PagingToolbar', {
 			store: store,
 			displayInfo: true,
 			displayMsg: 'Displaying responses {0} - {1} of {2}',
 			emptyMsg: "No responses to display"
-		})		
+		})
 	});
 	
 	var pendingApprovalProgramResponsesGrid = Ext.create('Atlas.grid.ProgramResponsePanel', {
 		title : 'Pending Approval',
+		id: 'pendingApproval',
 		bbar: Ext.create('Ext.PagingToolbar', {
 			store: store,
 			displayInfo: true,
 			displayMsg: 'Displaying responses {0} - {1} of {2}',
 			emptyMsg: "No responses to display"
-		})		
+		})
 	});
 		
 	var notApprovedProgramResponsesGrid = Ext.create('Atlas.grid.ProgramResponsePanel', {
 		title : 'Not Approved',
+		id: 'notApproved',
 		bbar: Ext.create('Ext.PagingToolbar', {
 			store: store,
 			displayInfo: true,
 			displayMsg: 'Displaying responses {0} - {1} of {2}',
 			emptyMsg: "No responses to display"
-		})		
+		})
 	});
 	
 	var editor = Ext.create('Ext.form.HtmlEditor', {
@@ -201,12 +210,31 @@ Ext.onReady(function() {
 		width : 800,
 		activeTab : 0,
 		frame : true,
-		items : [openProgramResponsesGrid, closedProgramResponsesGrid, expiredProgramResponsesGrid],
-		listeners : {
-			tabchange : function(tabPanel, newCard, oldCard, eOpts) {
-				Ext.getCmp('save').disable();
-				programResponseSearch.getForm().reset()
-				editor.setValue('Please select a row in the grid above to see program response notes.');
+		stateful: true,
+		stateId: 'programResponseTabs' + progId,
+		stateEvents: ['tabchange'],
+		items : [
+			openProgramResponsesGrid,
+			closedProgramResponsesGrid,
+			expiredProgramResponsesGrid,
+			pendingApprovalProgramResponsesGrid,
+			notApprovedProgramResponsesGrid
+		],
+		getState: function() {
+           return { activeTab: this.getActiveTab().id };
+		},
+		applyState: function(state) {
+			if(state.activeTab !== undefined) {
+				this.setActiveTab(state.activeTab);
+			}
+		},
+		listeners: {
+			tabchange: function(tabPanel, newCard, oldCard, eOpts) {
+				var save = Ext.getCmp('save');
+				if(save) {
+					save.disable();
+				}
+				editor.reset();
 				switch (newCard.title) {
 					case 'Open':
 						programResponseProxy.extraParams.tab = 'open';
@@ -222,19 +250,19 @@ Ext.onReady(function() {
 						break;
 					case 'Not Approved':
 						programResponseProxy.extraParams.tab = 'not_approved';
-						break;					
+						break;
 				}
-				newCard.getStore().loadPage(1, {start: 0, limit: 10});			
+				newCard.getStore().loadPage(1, {start: 0, limit: 10});
 			},
-			beforeadd : function(container, component, index) {
+			beforeadd: function(container, component, index) {
 				if(this.items.length == 5) {
 					return false;
 				}
 			},
-			beforerender : function() {
-				if(approvalPermission) {
-					this.add(notApprovedProgramResponsesGrid);
-					this.add(pendingApprovalProgramResponsesGrid);
+			beforeshow: function() {
+				if(! approvalPermission) {
+					this.remove(notApprovedProgramResponsesGrid);
+					this.remove(pendingApprovalProgramResponsesGrid);
 				}
 	
 			}
@@ -246,9 +274,9 @@ Ext.onReady(function() {
 		items: [{
 			text: 'Today',
 			handler: function() {
-				var dt = new Date();		
+				var dt = new Date();
 				Ext.getCmp('fromDate').setValue(Ext.Date.format(dt, 'm/d/Y'));
-				Ext.getCmp('toDate').setValue(Ext.Date.format(dt, 'm/d/Y'));		
+				Ext.getCmp('toDate').setValue(Ext.Date.format(dt, 'm/d/Y'));
 			}
 		}, {
 			xtype: 'tbseparator'
@@ -258,7 +286,7 @@ Ext.onReady(function() {
 				var dt = new Date();
 				dt.setDate(dt.getDate() - 1);
 				Ext.getCmp('fromDate').setValue(Ext.Date.format(dt, 'm/d/Y'));
-				Ext.getCmp('toDate').setValue(Ext.Date.format(dt, 'm/d/Y'));	
+				Ext.getCmp('toDate').setValue(Ext.Date.format(dt, 'm/d/Y'));
 			}
 		}, {
 			xtype: 'tbseparator'
@@ -266,9 +294,9 @@ Ext.onReady(function() {
 			text: 'Last Week',
 			handler: function() {
 				var dt = new Date();
-				dt.setDate(dt.getDate() - (parseInt(Ext.Date.format(dt, 'N')) + 6));
+				dt.setDate(dt.getDate() - (parseInt(Ext.Date.format(dt, 'N'), 10) + 6));
 				Ext.getCmp('fromDate').setValue(Ext.Date.format(dt, 'm/d/Y'));
-				dt.setDate(dt.getDate() + 6);		
+				dt.setDate(dt.getDate() + 6);
 				Ext.getCmp('toDate').setValue(Ext.Date.format(dt, 'm/d/Y'));
 			}
 		}, {
@@ -280,7 +308,7 @@ Ext.onReady(function() {
 					firstDayPrevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1),
 					lastDayPrevMonth = Ext.Date.getLastDateOfMonth(firstDayPrevMonth);
 				Ext.getCmp('fromDate').setValue(Ext.Date.format(firstDayPrevMonth, 'm/d/Y'));
-				Ext.getCmp('toDate').setValue(Ext.Date.format(lastDayPrevMonth, 'm/d/Y'));		
+				Ext.getCmp('toDate').setValue(Ext.Date.format(lastDayPrevMonth, 'm/d/Y'));
 			}
 		}]
 	});
@@ -293,7 +321,7 @@ Ext.onReady(function() {
 	var searchTypeStore = Ext.create('Ext.data.Store', {
 		model: 'SearchType',
 		data : [
-			{type: 'firstname', label: 'First Name'}, 
+			{type: 'firstname', label: 'First Name'},
 			{type: 'lastname', label : 'Last Name'},
 			{type: 'last4', label: 'Last 4 SSN'},
 			{type: 'fullssn', label: 'Full SSN'}
@@ -314,7 +342,7 @@ Ext.onReady(function() {
 			layout : 'column',
 			xtype: 'container',
 			bodyStyle: 'margin: 0 0 0 7px',
-			items : [{		
+			items : [{
 				layout : 'anchor',
 				columnWidth : 0.333,
 				height : 120,
@@ -326,13 +354,13 @@ Ext.onReady(function() {
 					id: 'fromDate',
 					fieldLabel: 'From',
 					name: 'fromDate',
-	        		width: 200
+					width: 200
 				}, {
 					xtype: 'datefield',
 					fieldLabel: 'To',
 					name: 'toDate',
 					id: 'toDate',
-	        		width: 200
+					width: 200
 				}, dateSearchTb]
 			}, {
 				layout : 'anchor',
@@ -361,8 +389,8 @@ Ext.onReady(function() {
 					store : searchTypeStore,
 					queryMode: 'local',
 					valueField: 'type',
-        			displayField: 'label',
-        			width: 250
+					displayField: 'label',
+					width: 250
 				},
 				{
 					xtype : 'textfield',
@@ -377,7 +405,7 @@ Ext.onReady(function() {
 			id : 'docSearch',
 			icon : '/img/icons/find.png',
 			handler : function() {
-				var f = programResponseSearch.getForm(), vals = f.getValues()			
+				var f = programResponseSearch.getForm(), vals = f.getValues();
 				Ext.iterate(vals, function (key, value){
 					programResponseProxy.extraParams[key] = value;
 				});
@@ -392,7 +420,7 @@ Ext.onReady(function() {
 				var vals = f.getValues();
 				Ext.iterate(vals, function (key, value){
 					programResponseProxy.extraParams[key] = value;
-				}); 			
+				});
 				programResponseTabs.getActiveTab().getStore().loadPage(1, {start: 0, limit: 10});
 			}
 		}]
@@ -434,7 +462,7 @@ Ext.onReady(function() {
 					}
 				});
 			}
-		}]	
+		}]
 	});
 
 	Ext.get('programResponseTabs').on('click', function(e, t) {
@@ -461,11 +489,12 @@ Ext.onReady(function() {
 					}
 				},
 				failure : function(response, opts, obj) {
-					Ext.Msg.alert('Status', obj.message)
+					Ext.Msg.alert('Status', obj.message);
 				}
 			});
 		}
 	});
-	programResponseProxy.extraParams.tab = 'open';
-	openProgramResponsesGrid.getStore().loadPage(1, {start: 0, limit: 10});
+	//programResponseProxy.extraParams.tab = 'open';
+	//openProgramResponsesGrid.getStore().loadPage(1, {start: 0, limit: 10});
+	programResponseTabs.getActiveTab().getStore().loadPage(1, {start: 0, limit: 10});
 });
