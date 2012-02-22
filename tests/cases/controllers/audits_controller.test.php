@@ -38,16 +38,7 @@ class AuditsControllerTestCase extends AtlasTestCase {
                         'name' => 'Audit 1',
                         'start_date' => '2012-12-01',
                         'end_date' => '2012-12-31',
-                        'deleted' => 0,
-                        'created' => '2012-12-01 08:00:00',
-                        'modified' => '2012-12-01 08:00:00'
-                    ),
-                    array(
-                        'id' => 2,
-                        'name' => 'Audit 2 Deleted',
-                        'start_date' => '2012-12-10',
-                        'end_date' => '2012-12-20',
-                        'deleted' => 1,
+                        'disabled' => 0,
                         'created' => '2012-12-01 08:00:00',
                         'modified' => '2012-12-01 08:00:00'
                     )
@@ -60,6 +51,16 @@ class AuditsControllerTestCase extends AtlasTestCase {
 		$result = $this->testAction('/admin/audits/read', array('method' => 'get'));
 		$this->assertEqual($expectedResult, $result);
 	}
+
+    public function testAdminCreate() {
+		$this->Audits->Component->initialize($this->Audits);	
+		$this->Audits->Session->write('Auth.User', array(
+	        'id' => 2,
+	        'role_id' => 2,
+	        'username' => 'bcordell',
+	        'location_id' => 1
+	    ));
+    }
 		
 	public function endTest() {
 		Configure::write('debug', 2);
