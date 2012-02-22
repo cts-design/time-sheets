@@ -12,8 +12,6 @@ class AuditsController extends AppController {
         $audits = $this->Audit->find('all');
         $data = array();
 
-        $this->log($audits, 'debug');
-
         foreach ($audits as $key => $value) {
             $data['audits'][] = $value['Audit'];
         }
