@@ -1088,6 +1088,14 @@ Ext.define('Atlas.form.ReassignQueuePanel', {
 				});
 			}
 		}
+	},{
+		text: 'Reset Form',
+		icon:  '/img/icons/reset.png',
+		listeners: {
+			click: function() {
+				this.up('form').getForm().reset();
+			}
+		}
 	}]
 });
 
@@ -1187,6 +1195,14 @@ Ext.define('Atlas.form.DeleteDocumentPanel', {
 						Ext.Msg.alert('Failed', action.result.message);
 					}
 				});
+			}
+		}
+	},{
+		text: 'Reset Form',
+		icon:  '/img/icons/reset.png',
+		listeners: {
+			click: function() {
+				this.up('form').getForm().reset();
 			}
 		}
 	}]
