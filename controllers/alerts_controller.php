@@ -10,7 +10,6 @@
 
 class AlertsController extends AppController {
 
-    public $whatever = null;
 	public $name = 'Alerts';
 		
 	public function beforeFilter() {
