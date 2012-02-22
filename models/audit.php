@@ -4,6 +4,8 @@ class Audit extends AppModel {
     public $name = 'Audit';
     public $displayField = 'name';
 
+    public $actsAs = array('Disableable');
+
     public $validate = array(
         'name' => array(
             'notEmpty' => array(
