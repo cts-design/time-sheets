@@ -13,39 +13,37 @@ class FiledDocument extends AppModel {
 		'User' => array(
 			'className' => 'User',
 			'foreignKey' => 'user_id',
-			'conditions' => '',
-			'fields' => '',
-			'order' => ''
+			'fields' => 'id, lastname, firstname, ssn, name_last4'
 		),
 		'Admin' => array(
 			'className' => 'User',
 			'foreignKey' => 'admin_id',
-			'conditions' => '',
-			'fields' => '',
-			'order' => ''
+			'fields' => 'id, lastname, firstname'
 		),
 		'LastActAdmin' => array(
 			'className' => 'User',
 			'foreignKey' => 'last_activity_admin_id',
-			'conditions' => '',
-			'fields' => '',
-			'order' => ''
+			'fields' => 'id, lastname, firstname'
 		),
 		'Cat1' => array(
 		    'className' => 'DocumentFilingCategory',
-		    'foreignKey' => 'cat_1'
+		    'foreignKey' => 'cat_1',
+		    'fields' => 'id, name'
 		),
 		'Cat2' => array(
 		    'className' => 'DocumentFilingCategory',
-		    'foreignKey' => 'cat_2'
+		    'foreignKey' => 'cat_2',
+		    'fields' => 'id, name'
 		),
 		'Cat3' => array(
 		    'className' => 'DocumentFilingCategory',
-		    'foreignKey' => 'cat_3'
+		    'foreignKey' => 'cat_3',
+		    'fields' => 'id, name'
 		),
 		'Location' => array(
 		    'className' => 'Location',
-		    'foreignKey' => 'filed_location_id'
+		    'foreignKey' => 'filed_location_id',
+		    'fields' => 'id, name'
 		)
 	);
 
