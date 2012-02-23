@@ -23,6 +23,7 @@ webroot/js/default/*
 webroot/js/default
 webroot/files/pdftk.exe
 webroot/test.php
+webroot/files/presenter/*
 views/layouts/default.ctp
 views/website_views/pages/home.ctp
 *.sdocml
