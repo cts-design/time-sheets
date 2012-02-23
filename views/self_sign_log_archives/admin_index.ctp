@@ -33,7 +33,7 @@
 	    <div id="searchFieldset2" class="left">
 		<?php echo $this->Form->input('button_1', array(
 			'type' => 'select',
-			'empty' => 'All Buttons',
+			'empty' => 'No Filter',
 			'before' => '<p class="left">',
 			'between' => '</p><p class="left">',
 			'after' => '</p>'
@@ -41,7 +41,7 @@
 		<br class="clear" />
 		<?php echo $this->Form->input('button_2', array(
 			'type' => 'select',
-			'empty' => 'All Buttons',
+			'empty' => 'No Filter',
 			'before' => '<p class="left">',
 			'between' => '</p><p class="left">',
 			'after' => '</p>'
@@ -49,7 +49,7 @@
 		<br class="clear" />
 		<?php echo $this->Form->input('button_3', array(
 			'type' => 'select',
-			'empty' => 'All Buttons',
+			'empty' => 'No Filter',
 			'before' => '<p class="left">',
 			'between' => '</p><p class="left">',
 			'after' => '</p>'
