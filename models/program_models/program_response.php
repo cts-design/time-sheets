@@ -20,9 +20,15 @@ class ProgramResponse extends AppModel {
 				$return = $programResponse;
 				break;
 			}
-			elseif($programResponse['ProgramResponse']['expires_on'] > date('Y-m-d H:i:s')) {
-				$return = $programResponse;;
-				break;
+			elseif($programResponse['ProgramResponse']['not_approved'] && 
+				$programResponse['ProgramResponse']['allow_new_response'] == 0) {
+					$return = $programResponse;
+					break;				
+			}
+			elseif($programResponse['ProgramResponse']['expires_on'] > date('Y-m-d H:i:s') && 
+				$programResponse['ProgramResponse']['not_approved'] == 0) {
+					$return = $programResponse;
+					break;
 			}
 		}
 		if(empty($return)) {
