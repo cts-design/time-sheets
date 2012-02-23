@@ -8,6 +8,7 @@
 ?>
 <?php $this->Html->scriptStart(array('inline' => false)); ?>
 	var progId = <?php echo $this->params['pass'][0]?>;
+	var progName = '<?php echo $programName ?>';
 	var approvalPermission = false;
 	<?php if($approvalPermission) : ?>
 		approvalPermission = <?php echo $approvalPermission ?>;
