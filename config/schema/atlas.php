@@ -1,10 +1,6 @@
 <?php 
-<<<<<<< HEAD
-/* atlas schema generated on: 2012-02-07 15:19:03 : 1328645943*/
-=======
 /* atlas schema generated on: 2012-02-20 15:52:23 : 1329771143*/
 
->>>>>>> assembla-merge-11583
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 

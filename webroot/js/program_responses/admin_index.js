@@ -60,7 +60,7 @@ Ext.onReady(function() {
 	Ext.define('Atlas.grid.ProgramResponsePanel', {
 		extend: 'Ext.grid.Panel',
 		forceFit : true,
-		height : 600,
+		height : 300,
 		frame : true,
 		store: store,
 		columns: [{
@@ -487,7 +487,7 @@ Ext.onReady(function() {
 							msg : obj.message,
 							buttons : Ext.Msg.OK,
 							fn : function() {
-								programResponseTabs.getActiveTab().getStore().loadPage(1, {start: 0, limit: 10});
+								programResponseTabs.getActiveTab().getStore().load();
 							}
 						});
 					} else {
