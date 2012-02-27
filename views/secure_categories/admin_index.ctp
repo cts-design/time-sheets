@@ -1,3 +1,5 @@
+<?php echo $this->Html->css('/js/ext/resources/css/BoxSelect', 'stylesheet', array('inline' => false)); ?>
+<?php echo $this->Html->script('ext/ux/BoxSelect', array('inline' => false)); ?>
 <?php echo $this->Html->script('secure_categories/admin_index.js', array('inline' => FALSE));?>
 
 <div id="crumbWrapper">
