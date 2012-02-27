@@ -224,6 +224,12 @@
         'title' => 'Programs'
     );
 
+    $config['navigation.audits'] = array(
+        'link' => array('controller' => 'audits', 'action' => 'index'),
+        'rel' => 'audits',
+        'title' => 'Audits'
+    );
+
     $config['navigation.tools'] = array(
         'rel' => 'tools',
         'title' => 'Tools',
