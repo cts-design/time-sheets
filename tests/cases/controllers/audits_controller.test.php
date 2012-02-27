@@ -62,14 +62,17 @@ class AuditsControllerTestCase extends AtlasTestCase {
         ));
 
         $data = array(
-            'name' => 'Test Audit Create',
-            'start_date' => '2012-03-01',
-            'end_date' => '2012-03-10'
+            'audits' => array(
+                'name' => 'Test Audit Create',
+                'start_date' => '2012-03-01',
+                'end_date' => '2012-03-10'
+            )
         );
 
         $_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
         $result = $this->testAction('/admin/audits/create', array('method' => 'post', 'form_data' => $data));
 
+        $this->assertTrue($result['data']['success']);
         $id = $this->Audits->Audit->getLastInsertId();
         $audit = $this->Audits->Audit->read(null, $id);
         $this->assertEqual(3, $audit['Audit']['id']);
