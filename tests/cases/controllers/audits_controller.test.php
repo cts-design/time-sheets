@@ -73,12 +73,25 @@ class AuditsControllerTestCase extends AtlasTestCase {
         $result = $this->testAction('/admin/audits/create', array('method' => 'post', 'form_data' => $data));
 
         $this->assertTrue($result['data']['success']);
+        $this->assertEqual($result['data']['message'], 'Audit added successfully');
         $id = $this->Audits->Audit->getLastInsertId();
         $audit = $this->Audits->Audit->read(null, $id);
         $this->assertEqual(3, $audit['Audit']['id']);
         $this->assertEqual('Test Audit Create', $audit['Audit']['name']);			
         $this->assertEqual('2012-03-01', $audit['Audit']['start_date']);			
         $this->assertEqual('2012-03-10', $audit['Audit']['end_date']);			
+
+        // test failing method
+        $data = array(
+            'audits' => array(
+                'name' => '',
+                'start_date' => '',
+                'end_date' => ''
+            )
+        );
+        $result = $this->testAction('/admin/audits/create', array('method' => 'post', 'form_data' => $data));
+        $this->assertFalse($result['data']['success']);
+        $this->assertEqual($result['data']['message'], 'Unable to add audit, please try again');
     }
 		
 	public function endTest() {
