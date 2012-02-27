@@ -53,13 +53,29 @@ class AuditsControllerTestCase extends AtlasTestCase {
 	}
 
     public function testAdminCreate() {
-		$this->Audits->Component->initialize($this->Audits);	
-		$this->Audits->Session->write('Auth.User', array(
-	        'id' => 2,
-	        'role_id' => 2,
-	        'username' => 'bcordell',
-	        'location_id' => 1
-	    ));
+        $this->Audits->Component->initialize($this->Audits);	
+        $this->Audits->Session->write('Auth.User', array(
+            'id' => 2,
+            'role_id' => 2,
+            'username' => 'bcordell',
+            'location_id' => 1
+        ));
+
+        $data = array(
+            'name' => 'Test Audit Create',
+            'start_date' => '2012-03-01',
+            'end_date' => '2012-03-10'
+        );
+
+        $_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+        $result = $this->testAction('/admin/audits/create', array('method' => 'post', 'form_data' => $data));
+
+        $id = $this->Audits->Audit->getLastInsertId();
+        $audit = $this->Audits->Audit->read(null, $id);
+        $this->assertEqual(3, $audit['Audit']['id']);
+        $this->assertEqual('Test Audit Create', $audit['Audit']['name']);			
+        $this->assertEqual('2012-03-01', $audit['Audit']['start_date']);			
+        $this->assertEqual('2012-03-10', $audit['Audit']['end_date']);			
     }
 		
 	public function endTest() {
