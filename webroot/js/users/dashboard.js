@@ -20,6 +20,11 @@ $(document).ready(function () {
 				image : "/img/icons/group.png"
 			    }
 			},
+			plugin : {
+			    icon : {
+				image : "/img/icons/plugin.png"
+			    }
+			},
 			user : {
 			    icon : {
 				image : "/img/icons/user.png"
@@ -123,6 +128,21 @@ $(document).ready(function () {
 	        inTheNews: {
 	        	icon: {
 	        		image: "/img/icons/news.png"
+	        	}
+	        },
+	        jobOrderForms : {
+	        	icon: {
+	        		image: "/img/icons/file.png"
+	        	}
+	        },
+	        employerVerifications : {
+	        	icon: {
+	        		image: "/img/icons/file.png"
+	        	}
+	        },
+	        jobSeekerNewHires : {
+	        	icon: {
+	        		image: "/img/icons/file.png"
 	        	}
 	        },
 	        surveys: {

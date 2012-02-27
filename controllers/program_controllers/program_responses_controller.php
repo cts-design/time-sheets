@@ -97,8 +97,20 @@ class ProgramResponsesController extends AppController {
 		if($instructions) {
 			$data['instructions'] = $instructions[0];
 		}	
-		$data['title_for_layout'] = $program['Program']['name'] . ' Registration Form' ;
+		if($program['Program']['form_type'] === 'quiz') {
+			$data['title_for_layout'] = $program['Program']['name'] . ' Quiz Form';	
+		}
+		else {
+			$data['title_for_layout'] = $program['Program']['name'] . ' Registration Form' ;
+		}
 		$data['program'] = $program;
+		if($program['Program']['view_media_again']) {
+			$type = explode('_', $program['Program']['type']);
+			$data['viewMediaAgainLink'] = '/programs/view_media/'.$program['Program']['id'].'/'.$type[0];				
+		}
+		else {
+			$data['viewMediaAgainLink'] = null;
+		}
 		$this->set($data);	
 	}
 		
@@ -384,7 +396,8 @@ class ProgramResponsesController extends AppController {
 			else {
 				$approvalPermission = null;
 			}
-			$this->set(compact('approvalPermission'));		
+			$programName = $program['Program']['name'];
+			$this->set(compact('approvalPermission', 'programName'));		
 		}	
 	}
 
@@ -489,8 +502,9 @@ class ProgramResponsesController extends AppController {
 		else {
 			$approval = 'false';
 		}
+		$programName = $programResponse['Program']['name'];
 		$title_for_layout = 'Program Response';
-		$this->set(compact('title_for_layout', 'approval'));
+		$this->set(compact('title_for_layout', 'approval', 'programName'));
 	}
 
 

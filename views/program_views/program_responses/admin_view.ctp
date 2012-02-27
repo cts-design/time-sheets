@@ -1,6 +1,7 @@
 <?php $this->Html->scriptStart(array('inline' => false)); ?>
 	var programResponseId = <?php echo $this->params['pass'][0]; ?>;
 	var requiresApproval = <?php echo $approval; ?>;
+	var progName = '<?php echo $programName; ?>';
 <?php $this->Html->scriptEnd() ?>
 <?php echo $this->Html->script('program_responses/admin_view', array('inline' => FALSE));?>
 

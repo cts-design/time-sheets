@@ -3,6 +3,32 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+	<h1>Release 3.2.3 (2/23/12)</h1>
+	<h2>Minor Feature Enhancements</h2>
+	<ol>
+		<li>Added program name to the header within the programs controller.</li>
+		<li>Added functionality to allow for 1st, 2nd or 3rd tier alert notifications.</li>
+		<li>Adjusted the tabs within the Programs module to save the user state when navigating between panes.</li>
+		<li>
+			Allow for pagination settings to be retained when navigating between program responses list and program response data.
+		</li>
+		<li>Implemented a plug-in module architecture to allow for customized deployments of ATLAS to be delivered.</li>
+		<li>Added the ability to deliver program orientations utilizing Adobe Presenter</li>
+		<li>Added “last activity admin” to the self-sign excel report.</li>
+	</ol>	
+	<h2>Bug Fixes</h2>
+	<ol>
+		<li>
+			Resolved issue that was causing the selection dropdowns within the self-sign archive 
+			to not funtion properly when making multiple selections.
+		</li>
+		<li>Adjusted excel report within filed document archive to output up to 10,000 records</li>	
+		<li>
+			Fixing bug where customers could create multiple program responses if they had a not approved
+			response that was marked to allow customer to create a new response. 
+		</li>		
+	</ol>	
+	<hr />
 	<h1>Release 3.2.2 (1/26/12)</h1>
 	<h2>Bug Fixes</h2>
 	<ol>

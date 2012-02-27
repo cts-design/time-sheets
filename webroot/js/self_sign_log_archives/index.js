@@ -34,15 +34,14 @@ $(document).ready(function() {
 		})
 	});
 	$('#SelfSignLogArchiveButton1').change(function() {
+		resetDropdown2();
+		resetDropdown3();
 		if($('#SelfSignLogArchiveLocations').val() != null) {
 			$.getJSON('/admin/self_sign_log_archives/get_child_buttons_ajax', {
 				id : $(this).val(),
 				location : $('#SelfSignLogArchiveLocations').val()
 			}, function(buttons) {
-				if(buttons != null) {
-					populateButton2Dropdown(buttons);
-					resetDropdown3();
-				}
+				populateButton2Dropdown(buttons);
 			})
 		} else {
 			$.getJSON('/admin/self_sign_log_archives/get_child_buttons_ajax', {
@@ -50,12 +49,12 @@ $(document).ready(function() {
 			}, function(buttons) {
 				if(buttons != null) {
 					populateButton2Dropdown(buttons);
-					resetDropdown3();
 				}
 			})
 		}
 	});
 	$('#SelfSignLogArchiveButton2').change(function() {
+		resetDropdown3();
 		$.getJSON('/admin/self_sign_log_archives/get_grand_child_buttons_ajax', {
 			id : $(this).val()
 		}, function(buttons) {
@@ -89,7 +88,7 @@ $(document).ready(function() {
 	})
 });
 function populateButton1Dropdown(buttons) {
-	var options = '<option value="">All Buttons</option>';
+	var options = '<option value="">No Filter</option>';
 	if(buttons !== null) {
 		$.each(buttons, function(index, button) {
 			options += '<option value="' + index + '">' + button + '</option>';
@@ -101,6 +100,7 @@ function populateButton1Dropdown(buttons) {
 function populateButton2Dropdown(buttons) {
 	var options = '';
 	if(buttons !== null) {
+		options += '<option value="">No Filter</option>';
 		$.each(buttons, function(index, button) {
 			options += '<option value="' + index + '">' + button + '</option>';
 		});
@@ -111,6 +111,7 @@ function populateButton2Dropdown(buttons) {
 function populateButton3Dropdown(buttons) {
 	var options = '';
 	if(buttons !== null) {
+		options += '<option value="">No Filter</option>';
 		$.each(buttons, function(index, button) {
 			options += '<option value="' + index + '">' + button + '</option>';
 		});
@@ -119,11 +120,11 @@ function populateButton3Dropdown(buttons) {
 }
 
 function resetDropdown2() {
-	var options = '<option value="">All Buttons</option>';
+	var options = '<option value="">No Filter</option>';
 	$('#SelfSignLogArchiveButton2').html(options);
 }
 
 function resetDropdown3() {
-	var options = '<option value="">All Buttons</option>';
+	var options = '<option value="">No Filter</option>';
 	$('#SelfSignLogArchiveButton3').html(options);
 }

@@ -13,9 +13,10 @@ class UsersController extends AppController {
 
     var $name = 'Users';
     var $components = array('Email');
+    var $helpers = array('Nav');
 
     function beforeFilter() {
-		parent::beforeFilter();	
+		parent::beforeFilter();
 		$this->Security->blackHoleCallback = 'forceSSL';
 		$this->Security->requireSecure();
 		$this->User->recursive = 0;
@@ -97,7 +98,7 @@ class UsersController extends AppController {
 
 		if($this->params['action'] == 'admin_login' && $this->RequestHandler->isAjax()) {
 			$this->Security->validatePost = false;
-		}			
+		}
     }
 
     function admin_index($disabled=false) {
@@ -694,6 +695,9 @@ class UsersController extends AppController {
     }
 
     function admin_dashboard() {
+        $this->loadNavigationConfig();
+        $this->loadPluginConfigs();
+
 		$title_for_layout = 'Administration Dashboard';
 		$this->set(compact('title_for_layout'));
     }
@@ -1047,6 +1051,23 @@ class UsersController extends AppController {
 				$this->Email->send($alert['message'] . "\r\n" . $alert['url']);				
 			}
 		}
-	}	
+    }
+
+    private function loadNavigationConfig() {
+        return Configure::load('navigation');
+    }
+
+    private function loadPluginConfigs() {
+      $blackList = array('AclExtras', 'DebugKit');
+      $plugins = App::objects('plugin');
+
+      foreach ($plugins as $key => $value) {
+        if (!in_array($value, $blackList)) {
+            Configure::load(Inflector::underscore($value) . '.config');
+        }
+      }
+
+      return true;
+    }
 
 }
