@@ -52,7 +52,8 @@ class UsersController extends AppController {
 			    'admin_auto_complete_customer',
 			    'admin_auto_complete_ssn_ajax',
 			    'admin_get_customers_by_first_and_last_name',
-			    'admin_get_customers_by_ssn'
+			    'admin_get_customers_by_ssn',
+			    'admin_get_all_admins'
 			);
 		}			
 		if(!empty($this->data)) {
@@ -848,6 +849,27 @@ class UsersController extends AppController {
 			$this->render(null, null,  '/elements/ajaxreturn');	
 
 		}
+	}
+
+	function admin_get_all_admins() {
+		$this->User->recursive = -1;
+		$admins = $this->User->find('all', array(
+			'conditions' => array('User.role_id > 2'), 
+			'order' => 'User.lastname ASC'));
+		if($admins) {
+			$i = 0;
+			foreach($admins as $admin) {
+				$data['admins'][$i]['id'] = $admin['User']['id'];
+				$data['admins'][$i]['name'] = $admin['User']['lastname'] . ', ' . $admin['User']['firstname'];
+				$i++;
+			}
+			$data['success'] = true;
+		}
+		else {
+			$data['success'] = false;
+		}
+		$this->set('data', $data);
+		$this->render(null, null,  '/elements/ajaxreturn');							
 	}
 	
 	function admin_request_ssn_change() {
