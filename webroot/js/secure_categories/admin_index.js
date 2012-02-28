@@ -20,6 +20,12 @@ Ext.create('Ext.data.Store', {
 	autoLoad: true
 });
 
+Ext.define('Admin', {
+	extend: "Ext.data.Model",
+	fields: ['id', 'name']
+});
+
+
 Ext.define('Atlas.grid.SecureFilingCategoriesPanel', {
 	extend: 'Ext.grid.Panel',
 	alias: 'widget.securefilingcategoriesgridpanel',
