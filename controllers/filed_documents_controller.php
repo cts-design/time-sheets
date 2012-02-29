@@ -76,10 +76,27 @@ class FiledDocumentsController extends AppController {
 	function admin_view($id = null) {
 		if(!$id) {
 		    $this->Session->setFlash(__('Invalid filed document', true), 'flash_failure');
-		    $this->redirect(array('action' => 'index'));
+		    $this->redirect($this->referer());
 		}
 		$this->view = 'Media';
-		$doc = $this->FiledDocument->read(null, $id);
+		$doc = $this->FiledDocument->findById($id);
+		if($doc) {
+			if($doc['Cat1']['secure']) {
+				$secure_admins = json_decode($doc['Cat1']['secure_admins'], true);
+			}
+			elseif($doc['Cat2']['secure']) {
+				$secure_admins = json_decode($doc['Cat2']['secure_admins'], true);
+			}
+			elseif($doc['Cat3']['secure']) {
+				$secure_admins = json_decode($doc['Cat3']['secure_admins'], true);
+			}
+			if(isset($secure_admins) && is_array($secure_admins)) {
+				if($this->Auth->user('role_id') > 3 && !in_array($this->Auth->user('id'), $secure_admins)) {
+					$this->Session->setFlash(__('Not authorized to view secure documents', true), 'flash_failure');
+					$this->redirect($this->referer());
+				}
+			}		
+		}
 		$params = array(
 		    'id' => $doc['FiledDocument']['filename'],
 		    'name' => str_replace('.pdf', '', $doc['FiledDocument']['filename']),
