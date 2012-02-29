@@ -6,6 +6,8 @@ class Audit extends AppModel {
 
     public $actsAs = array('Disableable');
 
+    public $hasAndBelongsToMany = array('User');
+
     public $validate = array(
         'name' => array(
             'notEmpty' => array(
