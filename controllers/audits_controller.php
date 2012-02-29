@@ -79,9 +79,6 @@ class AuditsController extends AppController {
             }
         }
 
-        //debug($customers);
-        //die;
-
         return $customers;
     }
 }
