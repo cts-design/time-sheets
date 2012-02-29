@@ -1,5 +1,6 @@
 <?php
 
+App::import('Vendor', 'chromephp/chromephp');
 App::import('Controller', 'Audits');
 App::import('Lib', 'AtlasTestCase');
 class TestAuditsController extends AuditsController {
@@ -65,7 +66,9 @@ class AuditsControllerTestCase extends AtlasTestCase {
             'audits' => array(
                 'name' => 'Test Audit Create',
                 'start_date' => '2012-03-01',
-                'end_date' => '2012-03-10'
+                'end_date' => '2012-03-10',
+                'auditors' => 10,
+                'customers' => '113441234\n333441234\n443441244\n552441234'
             )
         );
 
@@ -74,19 +77,30 @@ class AuditsControllerTestCase extends AtlasTestCase {
 
         $this->assertTrue($result['data']['success']);
         $this->assertEqual($result['data']['message'], 'Audit added successfully');
+
+        // bind habtm table
         $id = $this->Audits->Audit->getLastInsertId();
         $audit = $this->Audits->Audit->read(null, $id);
+
         $this->assertEqual(3, $audit['Audit']['id']);
         $this->assertEqual('Test Audit Create', $audit['Audit']['name']);			
         $this->assertEqual('2012-03-01', $audit['Audit']['start_date']);			
         $this->assertEqual('2012-03-10', $audit['Audit']['end_date']);			
+
+        // testing habtm
+        $expectedCustomerIds = array(12, 14, 15, 16);
+        $savedCustomerIds = Set::extract('/User/id', $audit);
+
+        $this->assertEqual(count($audit['User']), 4);
+        $this->assertEqual($savedCustomerIds, $expectedCustomerIds);
 
         // test failing method
         $data = array(
             'audits' => array(
                 'name' => '',
                 'start_date' => '',
-                'end_date' => ''
+                'end_date' => '',
+                'customers' => ''
             )
         );
         $result = $this->testAction('/admin/audits/create', array('method' => 'post', 'form_data' => $data));

@@ -4,9 +4,13 @@ App::import('Vendor', 'chromephp/chromephp');
 class AuditsController extends AppController {
     public $name = 'Audits';
 
+    public $invalidUsers = array();
+
     public function beforeFilter() {
         parent::beforeFilter();
     }
+
+    public function admin_index() {}
 
     public function admin_read() {
         $audits = $this->Audit->find('all');
@@ -23,11 +27,16 @@ class AuditsController extends AppController {
     }
 
     public function admin_create() {
-        App::import('Vendor', 'chromephp/chromephp');
         $params = $this->params['form']['audits'];
 
+        // parse customer list
+        $auditCustomers = $this->parseCustomerList($params['customers']);
+        unset($params['customers']);
+
         $this->data['Audit'] = $params;
-        if ($this->Audit->save($this->data)) {
+        $this->data['User'] = $auditCustomers;
+
+        if ($this->Audit->saveAll($this->data)) {
             $id = $this->Audit->getLastInsertId();
             $data['success'] = true;
             $data['message'] = 'Audit added successfully';
@@ -44,6 +53,36 @@ class AuditsController extends AppController {
 
         $this->set('data', $data);
         return $this->render(null, null, '/elements/ajaxreturn');
+    }
+
+    private function createAuditors($amount) {
+        
+    }
+
+    private function parseCustomerList($list) {
+        $customers = array();
+        $customerSSNs = explode('\n', $list);
+
+        // we don't want to pull every associated model
+        $this->Audit->User->recursive = -1;
+
+        foreach ($customerSSNs as $customerSSN) {
+            $customer = $this->Audit->User->find('first', array(
+                'conditions' => array('User.ssn' => $customerSSN),
+                'fields' => array('User.id')
+            ));
+
+            if ($customer) {
+                array_push($customers, $customer['User']['id']);
+            } else {
+                array_push($this->invalidUsers, $customerSSN);
+            }
+        }
+
+        //debug($customers);
+        //die;
+
+        return $customers;
     }
 }
 
