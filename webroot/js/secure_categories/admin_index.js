@@ -20,6 +20,28 @@ Ext.create('Ext.data.Store', {
 	autoLoad: true
 });
 
+Ext.define('SecureQueueCategory', {
+	extend: 'Ext.data.Model',
+	fields: ['id', 'category', 'secure_admins']
+});
+
+Ext.create('Ext.data.Store', {
+	storeId: 'SecureQueueCategories',
+	model: 'SecureQueueCategory',
+	proxy: {
+		type: 'ajax',
+		url: '/admin/secure_categories/get_secure_queue_cats',
+		reader: {
+			type: 'json',
+			root: 'cats'
+		},
+		limitParam: undefined,
+		pageParam: undefined,
+		startParam: undefined
+	},
+	autoLoad: true
+});
+
 Ext.define('Admin', {
 	extend: "Ext.data.Model",
 	fields: ['id', 'name']
@@ -42,10 +64,9 @@ Ext.create('Ext.data.Store', {
 	autoLoad: true
 });
 
-Ext.define('Atlas.grid.SecureFilingCategoriesPanel', {
+Ext.define('Atlas.grid.SecureCategoriesPanel', {
 	extend: 'Ext.grid.Panel',
-	alias: 'widget.securefilingcategoriesgridpanel',
-	store: 'SecureFilingCategories',
+	alias: 'widget.securecategoriesgridpanel',
 	columns: [{
 		text: 'Id',
 		dataIndex: 'id',
@@ -54,41 +75,32 @@ Ext.define('Atlas.grid.SecureFilingCategoriesPanel', {
 		text: 'Category',
 		dataIndex: 'category',
 		flex: 1
-	}],
-	listeners: {
-		selectionchange: function(selectionModel, selected) {
-			if(selected.length) {
-				var filingCatInfo = Ext.getCmp('filingCatInfo');
-				filingCatTpl.overwrite(filingCatInfo.body, selected[0].data);
-				Ext.getCmp('secureFilingCategory').loadRecord(selected[0]);
-			}
-		}
-	}
+	}]
 });
 
 var catInfoTplMarkup = [
-	'<p style="margin-bottom: 20px;"> Choose a category above view/add/remove allowed admins.</p>',
-	'<p>Category: <span style="margin-left: 10px;">{category}</span></p>'
-];
-var filingCatTpl = Ext.create('Ext.Template', catInfoTplMarkup);
+		'<p style="margin-bottom: 20px;"> Choose a category above view/add/remove allowed admins.</p>',
+		'<p>Category: <span style="margin-left: 10px;">{category}</span></p>'
+	],
+	catTpl = Ext.create('Ext.Template', catInfoTplMarkup);
 
-Ext.define('Atlas.form.SecureFilingCategoryPanel', {
+Ext.define('Atlas.form.SecureCategoryPanel', {
 	extend: 'Ext.form.Panel',
-	alias: 'widget.securefilingcategoryformpanel',
+	alias: 'widget.securecategoryformpanel',
 	items: [{
 		xtype: 'hidden',
 		name: 'id'
 	},{
 		xtype: 'panel',
-		id: 'filingCatInfo',
+		itemId: 'catInfo',
 		border: 0,
 		height: 50,
 		data: {},
-		tpl: filingCatTpl,
+		tpl: catTpl,
 		margin: '0 0 10 0'
 	},{
 		xtype: 'boxselect',
-		id: 'adminSelect',
+		itemId: 'adminSelect',
 		encodeSubmitValue: true,
 		name: 'secure_admins',
 		store: 'Admins',
@@ -107,7 +119,12 @@ Ext.define('Atlas.form.SecureFilingCategoryPanel', {
 				waitTitle: 'Updating',
 				success: function(form, action) {
 					Ext.Msg.alert('Success', action.result.message);
-					Ext.data.StoreManager.lookup('SecureFilingCategories').load();
+					if(action.form.url == "/admin/secure_categories/update_filing_cat") {
+						Ext.data.StoreManager.lookup('SecureFilingCategories').load();
+					}
+					if(action.form.url == "/admin/secure_categories/update_queue_cat") {
+						Ext.data.StoreManager.lookup('SecureQueueCategories').load();
+					}
 				},
 				failure: function(form, action) {
 					Ext.Msg.alert('Failure', action.result.message);
@@ -117,30 +134,13 @@ Ext.define('Atlas.form.SecureFilingCategoryPanel', {
 	}]
 });
 
-
-Ext.define('SecureQueueCategory', {
-	extend: 'Ext.data.Model',
-	fields: ['id', 'name', 'users']
-});
-
-Ext.define('Atlas.grid.SecureQueueCategoriesPanel', {
-	extend: 'Ext.grid.Panel',
-	alias: 'widget.securequeuecategoriesgridpanel',
-	columns: [{
-		text: 'Id',
-		dataIndex: 'id'
-	},{
-		text: 'Name',
-		dataIndex: 'name'
-	}]
-});
-
 Ext.onReady(function(){
 
 	Ext.create('Ext.Panel', {
 		width: 950,
 		height: 500,
 		border: 0,
+		frame: true,
 		renderTo: 'secureCategories',
 		layout: {
 			type: 'hbox',
@@ -152,24 +152,60 @@ Ext.onReady(function(){
 			align: 'left',
 			flex: 1,
 			items: [{
-				xtype: 'securefilingcategoriesgridpanel',
+				xtype: 'securecategoriesgridpanel',
+				store: 'SecureFilingCategories',
 				title: 'Filing Categories',
 				flex: 1,
-				width: 475
+				width: 475,
+				listeners: {
+					selectionchange: function(selectionModel, selected) {
+						if(selected.length) {
+							var secureFilingCategoryForm = Ext.getCmp('secureFilingCategoryForm'),
+								catInfo = secureFilingCategoryForm.getComponent('catInfo');
+							catTpl.overwrite(catInfo.body, selected[0].data);
+							secureFilingCategoryForm.loadRecord(selected[0]);
+						}
+					}
+				}
 			},{
-				xtype: 'securefilingcategoryformpanel',
-				id: 'secureFilingCategory',
+				xtype: 'securecategoryformpanel',
+				id: 'secureFilingCategoryForm',
 				url: '/admin/secure_categories/update_filing_cat',
 				width: 475,
 				flex: 2,
-				border: 0,
-				padding: 10
+				bodyPadding: 10,
+				border: 0
 			}]
 		},{
-			xtype: 'securequeuecategoriesgridpanel',
+			xtype: 'panel',
+			layout: 'vbox',
 			align: 'right',
 			flex: 1,
-			title: 'Queue Categories'
+			items: [{
+				xtype: 'securecategoriesgridpanel',
+				store: 'SecureQueueCategories',
+				title: 'Queue Categories',
+				flex: 1,
+				width: 475,
+				listeners: {
+					selectionchange: function(selectionModel, selected) {
+						if(selected.length) {
+							var secureQueueCategoryForm = Ext.getCmp('secureQueueCategoryForm'),
+								catInfo = secureQueueCategoryForm.getComponent('catInfo');
+							catTpl.overwrite(catInfo.body, selected[0].data);
+							secureQueueCategoryForm.loadRecord(selected[0]);
+						}
+					}
+				}
+			},{
+				xtype: 'securecategoryformpanel',
+				id: 'secureQueueCategoryForm',
+				url: '/admin/secure_categories/update_queue_cat',
+				width: 475,
+				flex: 2,
+				border: 0,
+				bodyPadding: 10
+			}]
 		}]
 	});
 });
