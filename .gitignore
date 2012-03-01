@@ -28,6 +28,7 @@ views/layouts/default.ctp
 views/website_views/pages/home.ctp
 *.sdocml
 *.DS_STORE
+*.DS_Store
 design
 /design/*
 *.sublime-project
