@@ -2,9 +2,9 @@ require 'rubygems'
 require 'capcake'
 
 set :application, 'atlas' # Your app's location (domain or sub-domain name)
-set :repository, "git@git.assembla.com:CTSATLAS.git"
+set :repository, "git@github.com:CTSATLAS/atlas.git"
 
-set :deploy_via, :export
+set :deploy_via, :remote_cache
 
 set :default_shell, '/bin/bash'
 
@@ -187,7 +187,7 @@ end
 task :design do
   transaction do
     on_rollback { run "rm -rf #{release_path}; true" } 
-    run "cd #{release_path} && git clone --depth 1 git@git.assembla.com:CTSATLAS.5.git design"
+    run "cd #{release_path} && git clone --depth 1 git://github.com/CTSATLAS/atlas-design.git design"
     set :git_flag_quiet, "-q "  
     stream "cd #{release_path}/design && git checkout #{git_flag_quiet}#{design_branch}"
     run "mv #{release_path}/design/img/default/ #{release_path}/webroot/img/"
@@ -204,11 +204,29 @@ task :finalize_deploy, :roles => [:web] do
 	cake.schema.create
 	cake.schema.update
 	cake.aco_update
-	run "cd #{current_release} && cake campfire 'Deployed #{branch} to #{deploy_to}'"
 	cake.cache.clear
+end
+
+namespace :notify do
+  desc 'Alert Campfire of a deploy'
+  task :campfire do
+    branch_name = branch.split('/', 2).last
+    deployer = ENV["USER"]
+    deployed = capture("cd #{previous_release} && git rev-parse HEAD")[0,7]
+    deploying = capture("cd #{current_release} && git rev-parse HEAD")[0,7]
+    compare_url = "https://github.com/CTSATLAS/atlas/compare/#{deployed}...#{deploying}"
+
+    body =
+      "#{deployer} deployed " +
+      "#{branch_name} (#{deployed}..#{deploying}) to #{deploy_to} " +
+      "with `cap #{ARGV.join(' ')}` (#{compare_url})"
+
+    run "cd #{current_release} && cake campfire '#{body}'"  
+  end
 end
 	
 after "deploy:update_code", :design
 after "deploy:symlink", :finalize_deploy
+after :finalize_deploy, "notify:campfire"
 
 capcake
