@@ -1,4 +1,6 @@
-Atlas is a customer information and document mangament system for workforce boards. 
+# Atlas
+
+An Automated Tracking, Linking and Archiving Solution for Workforce Development
 
 
 ```
