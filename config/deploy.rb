@@ -154,12 +154,12 @@ task :design do
 end  
 
 task :finalize_deploy, :roles => [:web] do
-	run "chmod 755 -R #{release_path}"
-	cake.cache.clear
-	cake.schema.create
-	cake.schema.update
-	cake.aco_update
-	cake.cache.clear
+  run "chmod 755 -R #{release_path}"
+  cake.cache.clear
+  cake.schema.create
+  cake.schema.update
+  cake.aco_update
+  cake.cache.clear
 end
 
 namespace :notify_campfire do
