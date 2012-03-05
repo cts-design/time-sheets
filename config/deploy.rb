@@ -1,8 +1,9 @@
 require 'rubygems'
 require 'capcake'
 
-set :application, 'atlas' # Your app's location (domain or sub-domain name)
+set :application, 'atlas' # app's location (domain or sub-domain name)
 set :repository, "git@github.com:CTSATLAS/atlas.git"
+set :branch, 'master'
 
 set :deploy_via, :remote_cache
 
@@ -11,8 +12,9 @@ set :default_shell, '/bin/bash'
 # branch to pull atlas design files from
 set :design_branch, "master"
 
-# Server Settings. Be sure to wrap each region in it's own namespace. 
+# --- Server Settings. 
 
+# Staging and demo servers
 namespace :cts do
   task :demo do
     set :deploy_to, "/var/www/vhosts/demo.atlasforworkforce.com/#{application}"
@@ -27,6 +29,7 @@ namespace :cts do
     set :server_name, 'cts staging'
     set :user, 'dev4cts'
     set :branch, 'staging'
+    set :design_branch, ENV['DESIGN'] if ENV.has_key?('DESIGN')
     server "development.ctsfla.com", :app, :web, :db, :primary => true
   end
   
@@ -34,157 +37,94 @@ namespace :cts do
     set :deploy_to, "/var/www/vhosts/www.ctsdemo.local/#{application}"
     set :server_name, 'cts tradeshow'
     set :user, 'demo_ftp'
-    set :branch, 'master'
     server "www.ctsdemo.local", :app, :web, :db, :primary => true    
   end
 end
 
-namespace :cccp do 
-  task :staging do
-    set :deploy_to, "/var/www/vhosts/ccc.atlasforworkforce.com/#{application}"
-    set :server_name, 'cccp staging'
-    set :user, 'b78ghfp6y'
-    set :branch, 'staging'
-    server "ccc.atlasforworkforce.com", :app, :web, :db, :primary => true    
-  end
-  task :production do
-    set :deploy_to, "/var/www/vhosts/vpk.childcarepinellas.org/#{application}"
-    set :server_name, 'cccp production'
-    set :user, 'vpk_ftp'
-    set :branch, 'master'  
-    server "vpk.childcarepinellas.org", :app, :web, :db, :primary => true       
-  end  
+# Production servers
+task :cccp do
+  set :deploy_to, "/var/www/vhosts/vpk.childcarepinellas.org/#{application}"
+  set :server_name, 'cccp production'
+  set :user, 'vpk_ftp' 
+  server "vpk.childcarepinellas.org", :app, :web, :db, :primary => true       
 end
 
-namespace :cc do
-  task :staging do
-    set :deploy_to, "/var/www/vhosts/cc.atlasforworkforce.com/#{application}"
-    set :server_name, 'cc staging'
-    set :user, 'ftp_cc_stage'
-    set :branch, 'staging'
-    server "cc.atlasforworkforce.com", :app, :web, :db, :primary => true
-  end
-  task :production do
-    set :deploy_to, "/var/www/vhosts/atlasv3.careercentral.jobs/#{application}"
-    set :server_name, 'cc production'
-    set :user, 'ccv3prod_ftp'
-    set :branch, 'master'
-    server "192.168.200.46", :app, :web, :db, :primary => true
-  end
+task :cc do
+  set :deploy_to, "/var/www/vhosts/atlasv3.careercentral.jobs/#{application}"
+  set :server_name, 'cc production'
+  set :user, 'ccv3prod_ftp'
+  server "192.168.200.46", :app, :web, :db, :primary => true
 end
 
-namespace :chipola do
-  task :staging do
-    set :deploy_to, "/var/www/vhosts/chipola.atlasforworkforce.com/#{application}"
-    set :server_name, 'chipola staging'
-    set :user, 'ola_chip0'
-    set :branch, 'staging'
-    server "chipola.atlasforworkforce.com", :app, :web, :db, :primary => true
-  end
-
-	task :production do
-		set :branch, 'master'
-		set :deploy_to, "/var/www/vhosts/atlas.onestopahead.com/#{application}"
-    set :server_name, 'chipola production'
-		set :user, 'ola_chip0'
-		server "69.68.156.141", :app, :web, :db, :primary => true
-	end
+task :chipola do
+  set :deploy_to, "/var/www/vhosts/atlas.onestopahead.com/#{application}"
+  set :server_name, 'chipola production'
+  set :user, 'ola_chip0'
+  server "69.68.156.141", :app, :web, :db, :primary => true
 end
 
-namespace :clm do
-  task :staging do
-    set :deploy_to, "/var/www/vhosts/clmdev.ctsfla.com/#{application}"
-    set :server_name, 'clm staging'
-    set :user, 'dev4clm'
-    set :branch, 'staging'
-    server "clmdev.ctsfla.com", :app, :web, :db, :primary => true     
-  end
-  task :production do
-    set :deploy_to, "/var/www/vhosts/atlas.clmworkforce.com/#{application}"
-    set :server_name, 'clm production'
-    set :user, 'clm_ftp' 
-    set :branch, 'master'
-    server "atlas.clmworkforce.com", :app, :web, :db, :primary => true
-  end
+task :clm do
+  set :deploy_to, "/var/www/vhosts/atlas.clmworkforce.com/#{application}"
+  set :server_name, 'clm production'
+  set :user, 'clm_ftp' 
+  server "atlas.clmworkforce.com", :app, :web, :db, :primary => true
 end
 
-namespace :elcm do
-  task :staging do 
-    set :deploy_to, "/var/www/vhosts/elcm.atlasforworkforce.com/#{application}"
-    set :server_name, 'elcm staging'
-    set :user, 'ion_mar9'
-    set :branch, 'staging'
-    server "elcm.atlasforworkforce.com", :app, :web, :db, :primary => true    
-  end
-  task :production do
-    set :deploy_to, "/var/www/vhosts/atlas.elc-marion.org/#{application}"
-    set :server_name, 'elcm production'
-    set :user, 'elcm_ftp'
-    set :branch, 'master' 
-    server "atlas.elc-marion.org", :app, :web, :db, :primary => true       
-  end
+task :elcm do
+  set :deploy_to, "/var/www/vhosts/atlas.elc-marion.org/#{application}"
+  set :server_name, 'elcm production'
+  set :user, 'elcm_ftp' 
+  server "atlas.elc-marion.org", :app, :web, :db, :primary => true       
 end
-
-namespace :tbwa do
-  task :staging do
-    set :design_branch, "tbwa"
-    set :deploy_to, "/var/www/vhosts/tbwa.ctsfla.com/#{application}"
-    set :server_name, 'tbwa staging'
-    set :user, 'tbwaftp'
-    set :branch, 'staging'
-    server "tbwa.ctsfla.com", :app, :web, :db, :primary => true
-  end
   
-  task :production do
-    set :design_branch, "tbwa"
-    set :branch, 'master'
-    set :server_name, 'tbwa production'
-    set :deploy_to, "/var/www/vhosts/workforcetampa.com/#{application}"
-    set :user, 'ftp_tbwa'
-    server "workforcetampa.com", :app, :web, :db, :primary => true    
-  end
+task :tbwa do
+  set :design_branch, "tbwa"
+  set :server_name, 'tbwa production'
+  set :deploy_to, "/var/www/vhosts/workforcetampa.com/#{application}"
+  set :user, 'ftp_tbwa'
+  server "workforcetampa.com", :app, :web, :db, :primary => true    
 end
 
-# Cake Settings
+# --- Cake Settings
 set :cake_branch, "1.3"
 
 set :shared_children,       %w(config system tmp tmp/fdf webroot/files/public webroot/img/public storage 
                                storage/thumbnails storage/program_forms storage/program_media)
 
 namespace :deploy do
-	desc "Updates symlinks needed to make application work"
-    task :symlink, :except => { :no_release => true } do
-      on_rollback do
-        if previous_release
-          run "rm -f #{current_path}; ln -s #{previous_release} #{current_path}; true"
-        else
-          logger.important "no previous release to rollback to, rollback of symlink skipped"
-        end
+  desc "Updates symlinks needed to make application work"
+  task :symlink, :except => { :no_release => true } do
+    on_rollback do
+      if previous_release
+        run "rm -f #{current_path}; ln -s #{previous_release} #{current_path}; true"
+      else
+        logger.important "no previous release to rollback to, rollback of symlink skipped"
       end
-      run "ln -s #{shared_path}/system #{latest_release}/webroot/system && ln -s #{shared_path}/tmp #{latest_release}/tmp";
-      run "ln -s #{shared_path}/storage #{latest_release}/storage"
-      run "ln -s #{shared_path}/webroot/files/public #{latest_release}/webroot/files/public"
-      run "ln -s #{shared_path}/webroot/img/public #{latest_release}/webroot/img/public"
-      if (remote_file_exists?("#{shared_path}/webroot/img/default/default_header_logo.jpg"))
-        run "ln -s #{shared_path}/webroot/img/default/default_header_logo.jpg #{latest_release}/webroot/img/default/default_header_logo.jpg"
-      end 
-      run "ln -s #{shared_path}/webroot/img/admin/admin_header_logo.jpg #{latest_release}/webroot/img/admin/admin_header_logo.jpg"
-      run "ln -s #{shared_path}/webroot/img/kiosk/kiosk_header.jpg #{latest_release}/webroot/img/kiosk/kiosk_header.jpg"
-      run "ln -s #{shared_path}/config/core.php #{latest_release}/config/core.php"
-      run "ln -s #{shared_path}/config/atlas.php #{latest_release}/config/atlas.php"
-      run "ln -s #{shared_path}/webroot/index.php #{latest_release}/webroot/index.php"
-      run "ln -s #{shared_path}/webroot/test.php #{latest_release}/webroot/test.php"
-      run "ln -s #{shared_path}/webroot/js/ckfinder/config.php #{latest_release}/webroot/js/ckfinder/config.php"
-      run "rm -f #{current_path} && ln -s #{latest_release} #{current_path}" 
-      cake.database.symlink if (remote_file_exists?(database_path))   
-    end  
+    end
+    run "ln -s #{shared_path}/system #{latest_release}/webroot/system && ln -s #{shared_path}/tmp #{latest_release}/tmp";
+    run "ln -s #{shared_path}/storage #{latest_release}/storage"
+    run "ln -s #{shared_path}/webroot/files/public #{latest_release}/webroot/files/public"
+    run "ln -s #{shared_path}/webroot/img/public #{latest_release}/webroot/img/public"
+    if (remote_file_exists?("#{shared_path}/webroot/img/default/default_header_logo.jpg"))
+      run "ln -s #{shared_path}/webroot/img/default/default_header_logo.jpg #{latest_release}/webroot/img/default/default_header_logo.jpg"
+    end 
+    run "ln -s #{shared_path}/webroot/img/admin/admin_header_logo.jpg #{latest_release}/webroot/img/admin/admin_header_logo.jpg"
+    run "ln -s #{shared_path}/webroot/img/kiosk/kiosk_header.jpg #{latest_release}/webroot/img/kiosk/kiosk_header.jpg"
+    run "ln -s #{shared_path}/config/core.php #{latest_release}/config/core.php"
+    run "ln -s #{shared_path}/config/atlas.php #{latest_release}/config/atlas.php"
+    run "ln -s #{shared_path}/webroot/index.php #{latest_release}/webroot/index.php"
+    run "ln -s #{shared_path}/webroot/test.php #{latest_release}/webroot/test.php"
+    run "ln -s #{shared_path}/webroot/js/ckfinder/config.php #{latest_release}/webroot/js/ckfinder/config.php"
+    run "rm -f #{current_path} && ln -s #{latest_release} #{current_path}" 
+    cake.database.symlink if (remote_file_exists?(database_path))   
+  end  
 end
 
 namespace :cake do
   namespace :schema do
     desc "Update database schema create tables"
-    	task :create, roles => [:web] do
-    	run "cd #{current_release} && cake schema create atlas < #{current_release}/config/schema_create_prompt.txt"
+    task :create, roles => [:web] do
+      run "cd #{current_release} && cake schema create atlas < #{current_release}/config/schema_create_prompt.txt"
     end
     
     desc "Update database schema update tables"
@@ -214,12 +154,12 @@ task :design do
 end  
 
 task :finalize_deploy, :roles => [:web] do
-	run "chmod 755 -R #{release_path}"
-	cake.cache.clear
-	cake.schema.create
-	cake.schema.update
-	cake.aco_update
-	cake.cache.clear
+  run "chmod 755 -R #{release_path}"
+  cake.cache.clear
+  cake.schema.create
+  cake.schema.update
+  cake.aco_update
+  cake.cache.clear
 end
 
 namespace :notify_campfire do
