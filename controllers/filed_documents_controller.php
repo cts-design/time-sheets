@@ -286,7 +286,24 @@ class FiledDocumentsController extends AppController {
 					$data['docs'][$k]['modified'] = date('m-d-Y g:i a', strtotime($v['FiledDocument']['modified']));
 					$data['docs'][$k]['LastActAdmin-lastname'] = 
 						trim(ucwords($v['LastActAdmin']['lastname'] . ', ' . $v['LastActAdmin']['firstname']), ', ');
-					$data['docs'][$k]['view'] = '<a target="_blank" href="/admin/filed_documents/view/'.$v['FiledDocument']['id'].'">View</a>';
+					$allowed = true;
+					if($v['Cat1']['secure']) {
+						$allowed = in_array($this->Auth->user('id'), json_decode($v['Cat1']['secure_admins']));
+					}
+					if($v['Cat2']['secure']) {
+						$allowed = in_array($this->Auth->user('id'), json_decode($v['Cat2']['secure_admins']));
+					}
+					if($v['Cat3']['secure']) {
+						$allowed = in_array($this->Auth->user('id'), json_decode($v['Cat3']['secure_admins']));
+					}
+					if(!$allowed && $this->Auth->user('role_id') > 3) {
+						$data['docs'][$k]['view'] = '<img src="/img/icons/key.png" />';	
+					}
+					else {
+						$data['docs'][$k]['view'] = 
+							'<a target="_blank" href="/admin/filed_documents/view/'.
+							$v['FiledDocument']['id'].'">View</a>';	
+					}					
 				}
 			}
 			else {
