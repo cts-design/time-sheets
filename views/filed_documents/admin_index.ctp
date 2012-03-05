@@ -67,13 +67,27 @@
 		<td><?php echo $filedDocument['FiledDocument']['description']; ?>&nbsp;</td>
 		<td><?php echo $time->format('m-d-Y g:i a', $filedDocument['FiledDocument']['created']); ?>&nbsp;</td>
 		<td><?php echo (isset($filedDocument['LastActAdmin']['lastname'])) ? $filedDocument['LastActAdmin']['lastname'] . ', ' . $filedDocument['LastActAdmin']['firstname'] : ''; ?>&nbsp;</td>
+		<?php $allowed = true; ?>
+		<?php if($filedDocument['Cat1']['secure']) : ?>
+		<?php $allowed = in_array($this->Session->read('Auth.User.id'), json_decode($filedDocument['Cat1']['secure_admins'], true)) ?>
+		<?php endif ?>
+		<?php if($filedDocument['Cat2']['secure']) : ?>
+		<?php $allowed = in_array($this->Session->read('Auth.User.id'), json_decode($filedDocument['Cat2']['secure_admins'], true)) ?>
+		<?php endif ?>
+		<?php if($filedDocument['Cat3']['secure']) : ?>
+		<?php $allowed = in_array($this->Session->read('Auth.User.id'), json_decode($filedDocument['Cat3']['secure_admins'], true)) ?>
+		<?php endif ?> 				
 		<td class="actions">
-			<?php echo $this->Html->link(__('View', true),
-				    array('action' => 'view', $filedDocument['FiledDocument']['id']), 
-				    array('class' => 'view', 'target' => '_blank')); ?>
-			<?php echo $this->Html->link(__('Edit', true),
-				    array('action' => 'edit', $filedDocument['FiledDocument']['id'], (!empty($this->params['pass'][0]) ? $this->params['pass'][0] : null) ), array('class'=>'edit')); ?>
-			<?php echo $this->Html->link(__('Delete', true), 'admin/filed_documents/delete/' .$filedDocument['FiledDocument']['id'], array('class'=>'delete', 'rel' => $filedDocument['FiledDocument']['id'])); ?>
+			<?php if( !$allowed && $this->Session->read('Auth.User.role_id') > 3) : ?>
+				<p><?php echo $this->Html->image('icons/key.png');?> Secure Document</p>	
+			<?php else : ?>
+				<?php echo $this->Html->link(__('View', true),
+					    array('action' => 'view', $filedDocument['FiledDocument']['id']), 
+					    array('class' => 'view', 'target' => '_blank')); ?>
+				<?php echo $this->Html->link(__('Edit', true),
+					    array('action' => 'edit', $filedDocument['FiledDocument']['id'], (!empty($this->params['pass'][0]) ? $this->params['pass'][0] : null) ), array('class'=>'edit')); ?>
+				<?php echo $this->Html->link(__('Delete', true), 'admin/filed_documents/delete/' .$filedDocument['FiledDocument']['id'], array('class'=>'delete', 'rel' => $filedDocument['FiledDocument']['id'])); ?>				
+			<?php endif ?>
 		</td>
 	</tr>
 <?php endforeach; ?>
