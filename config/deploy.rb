@@ -16,6 +16,7 @@ set :design_branch, "master"
 namespace :cts do
   task :demo do
     set :deploy_to, "/var/www/vhosts/demo.atlasforworkforce.com/#{application}"
+    set :server_name, 'cts demo'
     set :user, 'adidas_salad'
     set :branch, 'staging'
     server "demo.atlasforworkforce.com", :app, :web, :db, :primary => true
@@ -23,6 +24,7 @@ namespace :cts do
   
   task :staging do  
     set :deploy_to, "/var/www/vhosts/development.ctsfla.com/#{application}"
+    set :server_name, 'cts staging'
     set :user, 'dev4cts'
     set :branch, 'staging'
     server "development.ctsfla.com", :app, :web, :db, :primary => true
@@ -30,6 +32,7 @@ namespace :cts do
   
   task :tradeshow do
     set :deploy_to, "/var/www/vhosts/www.ctsdemo.local/#{application}"
+    set :server_name, 'cts tradeshow'
     set :user, 'demo_ftp'
     set :branch, 'master'
     server "www.ctsdemo.local", :app, :web, :db, :primary => true    
@@ -39,12 +42,14 @@ end
 namespace :cccp do 
   task :staging do
     set :deploy_to, "/var/www/vhosts/ccc.atlasforworkforce.com/#{application}"
+    set :server_name, 'cccp staging'
     set :user, 'b78ghfp6y'
     set :branch, 'staging'
     server "ccc.atlasforworkforce.com", :app, :web, :db, :primary => true    
   end
   task :production do
     set :deploy_to, "/var/www/vhosts/vpk.childcarepinellas.org/#{application}"
+    set :server_name, 'cccp production'
     set :user, 'vpk_ftp'
     set :branch, 'master'  
     server "vpk.childcarepinellas.org", :app, :web, :db, :primary => true       
@@ -54,12 +59,14 @@ end
 namespace :cc do
   task :staging do
     set :deploy_to, "/var/www/vhosts/cc.atlasforworkforce.com/#{application}"
+    set :server_name, 'cc staging'
     set :user, 'ftp_cc_stage'
     set :branch, 'staging'
     server "cc.atlasforworkforce.com", :app, :web, :db, :primary => true
   end
   task :production do
     set :deploy_to, "/var/www/vhosts/atlasv3.careercentral.jobs/#{application}"
+    set :server_name, 'cc production'
     set :user, 'ccv3prod_ftp'
     set :branch, 'master'
     server "192.168.200.46", :app, :web, :db, :primary => true
@@ -69,6 +76,7 @@ end
 namespace :chipola do
   task :staging do
     set :deploy_to, "/var/www/vhosts/chipola.atlasforworkforce.com/#{application}"
+    set :server_name, 'chipola staging'
     set :user, 'ola_chip0'
     set :branch, 'staging'
     server "chipola.atlasforworkforce.com", :app, :web, :db, :primary => true
@@ -76,7 +84,8 @@ namespace :chipola do
 
 	task :production do
 		set :branch, 'master'
-		set :deploy_to, "/var/www/vhosts/atlas.onestopahead.com/atlas"
+		set :deploy_to, "/var/www/vhosts/atlas.onestopahead.com/#{application}"
+    set :server_name, 'chipola production'
 		set :user, 'ola_chip0'
 		server "69.68.156.141", :app, :web, :db, :primary => true
 	end
@@ -85,12 +94,14 @@ end
 namespace :clm do
   task :staging do
     set :deploy_to, "/var/www/vhosts/clmdev.ctsfla.com/#{application}"
+    set :server_name, 'clm staging'
     set :user, 'dev4clm'
     set :branch, 'staging'
     server "clmdev.ctsfla.com", :app, :web, :db, :primary => true     
   end
   task :production do
     set :deploy_to, "/var/www/vhosts/atlas.clmworkforce.com/#{application}"
+    set :server_name, 'clm production'
     set :user, 'clm_ftp' 
     set :branch, 'master'
     server "atlas.clmworkforce.com", :app, :web, :db, :primary => true
@@ -100,12 +111,14 @@ end
 namespace :elcm do
   task :staging do 
     set :deploy_to, "/var/www/vhosts/elcm.atlasforworkforce.com/#{application}"
+    set :server_name, 'elcm staging'
     set :user, 'ion_mar9'
     set :branch, 'staging'
     server "elcm.atlasforworkforce.com", :app, :web, :db, :primary => true    
   end
   task :production do
     set :deploy_to, "/var/www/vhosts/atlas.elc-marion.org/#{application}"
+    set :server_name, 'elcm production'
     set :user, 'elcm_ftp'
     set :branch, 'master' 
     server "atlas.elc-marion.org", :app, :web, :db, :primary => true       
@@ -116,6 +129,7 @@ namespace :tbwa do
   task :staging do
     set :design_branch, "tbwa"
     set :deploy_to, "/var/www/vhosts/tbwa.ctsfla.com/#{application}"
+    set :server_name, 'tbwa staging'
     set :user, 'tbwaftp'
     set :branch, 'staging'
     server "tbwa.ctsfla.com", :app, :web, :db, :primary => true
@@ -124,7 +138,8 @@ namespace :tbwa do
   task :production do
     set :design_branch, "tbwa"
     set :branch, 'master'
-    set :deploy_to, "/var/www/vhosts/workforcetampa.com/atlas"
+    set :server_name, 'tbwa production'
+    set :deploy_to, "/var/www/vhosts/workforcetampa.com/#{application}"
     set :user, 'ftp_tbwa'
     server "workforcetampa.com", :app, :web, :db, :primary => true    
   end
@@ -207,26 +222,45 @@ task :finalize_deploy, :roles => [:web] do
 	cake.cache.clear
 end
 
-namespace :notify do
+namespace :notify_campfire do
+  deployer = ENV["USER"]
+
   desc 'Alert Campfire of a deploy'
-  task :campfire do
-    branch_name = branch.split('/', 2).last
-    deployer = ENV["USER"]
+  task :deploy_alert do
+    branch_name = branch.split('/', 2).last   
     deployed = capture("cd #{previous_release} && git rev-parse HEAD")[0,7]
     deploying = capture("cd #{current_release} && git rev-parse HEAD")[0,7]
     compare_url = "https://github.com/CTSATLAS/atlas/compare/#{deployed}...#{deploying}"
 
     body =
       "#{deployer} deployed " +
-      "#{branch_name} (#{deployed}..#{deploying}) to #{deploy_to} " +
-      "with `cap #{ARGV.join(' ')}` (#{compare_url})"
+      "#{branch_name} (#{deployed}..#{deploying}) to #{server_name} " +
+      "(#{compare_url})"
+      send_campfire_alert body
+  end
 
-    run "cd #{current_release} && cake campfire '#{body}'"  
+  desc 'Alert Campfire of site disabled'
+  task :disabled_alert do
+    body = "#{deployer} put #{server_name} in maintenance mode."  
+    send_campfire_alert body
+  end
+
+  desc 'Alert Campfire of site enabled'
+  task :enabled_alert do
+    body = "#{deployer} removed #{server_name} from maintenance mode."
+    send_campfire_alert body
   end
 end
+
+def send_campfire_alert(body)
+  run "cd #{current_release} && cake campfire '#{body}'" 
+end
+
+after "deploy:web:disable", "notify_campfire:disabled_alert"
+after "deploy:web:enable", "notify_campfire:enabled_alert"
 	
 after "deploy:update_code", :design
 after "deploy:symlink", :finalize_deploy
-after :finalize_deploy, "notify:campfire"
+after :finalize_deploy, "notify_campfire:deploy_alert"
 
 capcake
