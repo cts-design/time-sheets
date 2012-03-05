@@ -123,7 +123,7 @@ end
 namespace :cake do
   namespace :schema do
     desc "Update database schema create tables"
-  	task :create, roles => [:web] do
+    task :create, roles => [:web] do
       run "cd #{current_release} && cake schema create atlas < #{current_release}/config/schema_create_prompt.txt"
     end
     
