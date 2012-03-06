@@ -76,7 +76,7 @@
 		<?php endif ?>
 		<?php if($filedDocument['Cat3']['secure']) : ?>
 		<?php $allowed = in_array($this->Session->read('Auth.User.id'), json_decode($filedDocument['Cat3']['secure_admins'], true)) ?>
-		<?php endif ?> 				
+		<?php endif ?>		 				
 		<td class="actions">
 			<?php if( !$allowed && $this->Session->read('Auth.User.role_id') > 3) : ?>
 				<p><?php echo $this->Html->image('icons/key.png');?> Secure Document</p>	
