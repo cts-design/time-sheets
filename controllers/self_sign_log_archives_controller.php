@@ -137,6 +137,13 @@ class SelfSignLogArchivesController extends AppController {
 				$report[$k]['Button 3'] = '';
 
 			$report[$k]['Other'] = $v['SelfSignLogArchive']['other'];
+			if(!empty($v['Admin']['lastname'])) {
+				$report[$k]['Last Activity Admin'] = 
+					$v['Admin']['lastname'] . ', ' . $v['Admin']['firstname'];				
+			}
+			else {
+				$report[$k]['Last Activity Admin'] = '';
+			}
 			$report[$k]['Status'] = $statuses[$v['SelfSignLogArchive']['status']];
 			$report[$k]['Created'] = $v['SelfSignLogArchive']['created'];
 			$report[$k]['Closed'] = $v['SelfSignLogArchive']['closed'];
@@ -160,6 +167,7 @@ class SelfSignLogArchivesController extends AppController {
             'Button 2' => '',
             'Button 3' => '',
             'Other' => '',
+            'Last Activity Admin' => '',
             'Status' => '',
             'Created' => '',
             'Closed' => '',
@@ -201,14 +209,17 @@ class SelfSignLogArchivesController extends AppController {
 			else {
 				$conditions = array('SelfSignLogArchive.level_1 !=' => null);
 			}
-			$buttonList = $this->SelfSignLogArchive->find('list', array('fields' => array('SelfSignLogArchive.id',
-				'SelfSignLogArchive.level_1'),
-				'conditions' => $conditions));
+			$buttonList = $this->SelfSignLogArchive->find('list', array(
+				'fields' => array('SelfSignLogArchive.id', 'SelfSignLogArchive.level_1'),
+				'conditions' => $conditions,
+				'group' => 'level_1'));
 			if(isset($buttonList)) {
-				$buttonList = array_unique($buttonList);
 				foreach($buttonList as $k => $v) {
-					$button[$v] = $masterButtonList[$v];
+					if($v) {
+						$button[$v] = $masterButtonList[$v];
+					}			
 				}
+				asort($button);
 				$this->set('buttons', $button);
 			}
 			$this->render('admin_get_buttons_ajax');
@@ -228,23 +239,21 @@ class SelfSignLogArchivesController extends AppController {
 			}
 			$possibleButtons = $this->SelfSignLogArchive->find('list', array('fields' => array('id',
 				'level_2'),
-				'conditions' => $conditions));
+				'conditions' => $conditions,
+				'group' => 'level_2'));
 			if(isset($possibleButtons)) {
-				$possibleMasterButtons = $this->SelfSignLogArchive->Kiosk->KioskButton->MasterKioskButton->find('list', array('conditions' => array('MasterKioskButton.parent_id' => $this->params['url']['id']),
-					'fields' => array('id',
-						'name')));
+				$possibleMasterButtons = 
+					$this->SelfSignLogArchive->Kiosk->KioskButton->MasterKioskButton->find('list', array(
+					'conditions' => array('MasterKioskButton.parent_id' => $this->params['url']['id']),
+					'fields' => array('id', 'name')));
 				foreach($possibleButtons as $k => $v) {
-					if(array_key_exists($v, $possibleMasterButtons)) {
+					if($v && array_key_exists($v, $possibleMasterButtons)) {
 						$buttonList[$v] = $masterButtonList[$v];
 					}
 				}
-				if(!empty($buttonList)) {
-					$buttonList = array('' => 'All Buttons') + $buttonList;
-				}
-				else
-					$buttonList = array('' => 'All Buttons');
 			}
 			if(isset($buttonList)) {
+				asort($buttonList);
 				$this->set('buttons', $buttonList);
 			}
 			$this->render('admin_get_buttons_ajax');
@@ -264,24 +273,22 @@ class SelfSignLogArchivesController extends AppController {
 			}
 			$possibleButtons = $this->SelfSignLogArchive->find('list', array('fields' => array('id',
 				'level_3'),
-				'conditions' => $conditions));
+				'conditions' => $conditions,
+				'group' => 'level_3'));
 			if(isset($possibleButtons)) {
-				$possibleMasterButtons = $this->SelfSignLogArchive->Kiosk->KioskButton->MasterKioskButton->find('list', array('conditions' => array('MasterKioskButton.parent_id' => $this->params['url']['id']),
-					'fields' => array('id',
-						'name')));
+				$possibleMasterButtons = 
+					$this->SelfSignLogArchive->Kiosk->KioskButton->MasterKioskButton->find('list', array(
+						'conditions' => array('MasterKioskButton.parent_id' => $this->params['url']['id']),
+						'fields' => array('id', 'name')));
 				foreach($possibleButtons as $k => $v) {
 
-					if(array_key_exists($v, $possibleMasterButtons)) {
+					if($v && array_key_exists($v, $possibleMasterButtons)) {
 						$buttonList[$v] = $masterButtonList[$v];
 					}
 				}
-				if(!empty($buttonList)) {
-					$buttonList = array('' => 'All Buttons') + $buttonList;
-				}
-				else
-					$buttonList = array('' => 'All Buttons');
 			}
 			if(isset($buttonList)) {
+				asort($buttonList);
 				$this->set('buttons', $buttonList);
 			}
 			$this->render('admin_get_buttons_ajax');

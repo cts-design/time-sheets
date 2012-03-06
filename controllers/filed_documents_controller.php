@@ -245,10 +245,12 @@ class FiledDocumentsController extends AppController {
 			$query = $this->Paginate('FiledDocument');
 			$data['docs'] = array();
 			if(!empty($conditions)) {
-				$data['totalCount'] = $this->FiledDocument->find('count', array('conditions' => $conditions));	
+				$data['totalCount'] = $this->FiledDocument->find('count', array(
+					'conditions' => $conditions,
+					'recursive' => 0));	
 			}
 			else{
-				$data['totalCount'] = $this->FiledDocument->find('count');	
+				$data['totalCount'] = $this->FiledDocument->find('count', array('recursive' => -1));	
 			}
 			if(!empty($query)) {
 				foreach($query as $k => $v) {
@@ -280,33 +282,35 @@ class FiledDocumentsController extends AppController {
 	}
 
 	function admin_report(){			
-		if(isset($this->params['url']['filters'])) {
-			
+		if(isset($this->params['url']['filters'])) {			
 			$conditions = $this->_setFilters();
 			if($conditions){
-				$query = $this->FiledDocument->find('all', array('conditions' => $conditions));
+				$query = $this->FiledDocument->find('all', array(
+					'conditions' => $conditions,
+					'limit' => 20000));
 			}
 		}
 		else {
-			$query = $this->FiledDocument->find('all');
+			$query = $this->FiledDocument->find('all', array('limit' => 20000));
 		}	
 		$title = 'Filed Document Archive Report ' . date('m/d/Y');
-		foreach($query as $k => $v) {
-			$report[$k]['id'] = $v['FiledDocument']['id'];
-			$report[$k]['Customer'] = 
-				trim(ucwords($v['User']['lastname'] . ', ' . $v['User']['firstname'] . ' - ' . 
-				substr($v['User']['ssn'], -4)), ' ,');
-			$report[$k]['Location'] = $v['Location']['name'];
-			$report[$k]['Filed By Admin'] = trim(ucwords($v['Admin']['lastname'] . ', '. $v['Admin']['firstname']), ' ,');
-			$report[$k]['Main Cat'] = $v['Cat1']['name'];
-			$report[$k]['Second Cat'] = $v['Cat2']['name'];
-			$report[$k]['Third Cat'] = $v['Cat3']['name'];
-			$report[$k]['Description'] = $v['FiledDocument']['description'];
-			$report[$k]['Last Activity Admin'] = trim(ucwords($v['LastActAdmin']['lastname'] . ', '. $v['LastActAdmin']['firstname']), ' ,');
-			$report[$k]['Created'] = date('m/d/y h:i a', strtotime($v['FiledDocument']['created']));
-			$report[$k]['Modified'] = date('m/d/y h:i a', strtotime($v['FiledDocument']['modified']));		
+		if(isset($query)) {
+			foreach($query as $k => $v) {
+				$report[$k]['id'] = $v['FiledDocument']['id'];
+				$report[$k]['Customer'] = 
+					trim(ucwords($v['User']['lastname'] . ', ' . $v['User']['firstname'] . ' - ' . 
+					substr($v['User']['ssn'], -4)), ' ,');
+				$report[$k]['Location'] = $v['Location']['name'];
+				$report[$k]['Filed By Admin'] = trim(ucwords($v['Admin']['lastname'] . ', '. $v['Admin']['firstname']), ' ,');
+				$report[$k]['Main Cat'] = $v['Cat1']['name'];
+				$report[$k]['Second Cat'] = $v['Cat2']['name'];
+				$report[$k]['Third Cat'] = $v['Cat3']['name'];
+				$report[$k]['Description'] = $v['FiledDocument']['description'];
+				$report[$k]['Last Activity Admin'] = trim(ucwords($v['LastActAdmin']['lastname'] . ', '. $v['LastActAdmin']['firstname']), ' ,');
+				$report[$k]['Created'] = date('m/d/y h:i a', strtotime($v['FiledDocument']['created']));
+				$report[$k]['Modified'] = date('m/d/y h:i a', strtotime($v['FiledDocument']['modified']));		
+			}			
 		}
-
 		if(empty($report[0])) {
 		    $this->Session->setFlash(__('There are no results to generate a report', true), 'flash_failure');
 		    $this->redirect(array('action' => 'view_all_docs'));

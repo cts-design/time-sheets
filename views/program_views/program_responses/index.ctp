@@ -6,6 +6,11 @@
 </noscript>
 
 <br />
+<?php if($viewMediaAgainLink) : ?>
+	<div> <a href="<?php echo $viewMediaAgainLink ?>">View Media Again </a></div>
+	<br />
+<?php endif ?>
+
 <div class="required bot-mar-10"><label></label> <?php __('indicates required fields.') ?></div>
 <div id="ProgramForm">
 	<?php if(!empty($program['ProgramField'])) : ?>
@@ -38,3 +43,4 @@
 		<?php echo $form->end(__('Submit', true)); ?>										
 	<?php endif; ?>
 </div>
+

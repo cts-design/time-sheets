@@ -8,7 +8,15 @@
 class PermissionsController extends AppController {
 
     var $name = 'Permissions';
+    var $helpers = array('PluginPermissions');
     var $uses = '';
+
+    private $pluginPermissions = null;
+
+    public function beforeFilter() {
+        parent::beforeFilter();
+        $this->pluginPermissions = $this->getPluginPermissions();
+    }
 
     function admin_index($id=null, $model=null) {
 	    $ModuleAccessControl =& ClassRegistry::init('ModuleAccessControl');
@@ -63,7 +71,8 @@ class PermissionsController extends AppController {
 		$data['disabledModules'] = $ModuleAccessControl->find('list',
 															  array('fields' => array('ModuleAccessControl.name'),
 															  		'conditions' => array('permission' => 1)));
-		$data['title_for_layout'] = $title_for_layout;
+        $data['title_for_layout'] = $title_for_layout;
+        $data['pluginPermissions'] = $this->pluginPermissions;
 		$data['id'] = $id;
 		$data['model'] = $model;
 		$this->set($data);
@@ -137,5 +146,18 @@ class PermissionsController extends AppController {
 	    $this->Session->setFlash(__('Permissions were not reset. Please try again.', true), 'flash_failure');
 	    $this->redirect($this->referer());
 	}
+    }
+
+    private function getPluginPermissions() {
+        $blackList = array('AclExtras', 'DebugKit');
+        $plugins = App::objects('plugin');
+
+        foreach ($plugins as $key => $value) {
+            if (!in_array($value, $blackList)) {
+                Configure::load(Inflector::underscore($value) . '.config');
+            }
+        }
+
+        return Configure::read('plugins.permission');
     }
 }
