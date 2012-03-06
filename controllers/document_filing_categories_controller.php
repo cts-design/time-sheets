@@ -249,12 +249,15 @@ class DocumentFilingCategoriesController extends AppController {
 				'fields' => array(
 					'DocumentFilingCategory.id', 
 					'DocumentFilingCategory.parent_id', 
-					'DocumentFilingCategory.name')));
+					'DocumentFilingCategory.name',
+					'DocumentFilingCategory.secure')));
 			$i = 0;
 			foreach($cats as $cat){
+				if($cat['DocumentFilingCategory']['secure']) {}
 				$data['cats'][$i]['id'] = $cat['DocumentFilingCategory']['id'];
 				$data['cats'][$i]['parent_id'] = $cat['DocumentFilingCategory']['parent_id'];
 				$data['cats'][$i]['name'] = $cat['DocumentFilingCategory']['name'];
+				$data['cats'][$i]['secure'] = intval($cat['DocumentFilingCategory']['secure']);
 				$i++;
 			}
 			if(!empty($data['cats'])){
