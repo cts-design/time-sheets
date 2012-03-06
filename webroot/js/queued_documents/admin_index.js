@@ -761,7 +761,17 @@ Ext.create('Ext.data.ArrayStore', {
 
 Ext.define('DocumentFilingCategory', {
 	extend: 'Ext.data.Model',
-	fields: ['id', 'parent_id', 'name']
+	fields: ['id', 'parent_id', 'name', 'secure', {
+		name : 'img',
+		convert: function(value, record){
+			var img = null;
+			var secure = record.get('secure');
+			if(secure) {
+				img = '<img src="/img/icons/key.png" />&nbsp';
+			}
+			return img;
+		}
+	}]
 });
 
 Ext.create('Ext.data.Store', {
@@ -889,6 +899,11 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 		queryMode: 'local',
 		triggerAction: 'all',
 		name: 'cat_1',
+		listConfig: {
+			getInnerTpl: function() {
+				return '<div>{img}{name}</div>';
+			}
+		},
 		listeners: {
 			select: function(combo, records, eOpts) {
 				if(records[0] !== undefined) {
@@ -918,6 +933,11 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 		lastQuery: '',
 		disabled: true,
 		allowBlank: false,
+		listConfig: {
+			getInnerTpl: function() {
+				return '<div>{img}{name}</div>';
+			}
+		},
 		listeners: {
 			select: function(combo, records, eOpts) {
 				if(records[0] !== undefined) {
@@ -946,7 +966,12 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 		triggerAction: 'all',
 		lastQuery: '',
 		disabled: true,
-		allowBlank: false
+		allowBlank: false,
+		listConfig: {
+			getInnerTpl: function() {
+				return '<div>{img}{name}</div>';
+			}
+		}
 	},{
 		xtype: 'textfield',
 		fieldLabel: 'Other',
