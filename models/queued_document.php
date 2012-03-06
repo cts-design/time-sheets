@@ -3,29 +3,41 @@ class QueuedDocument extends AppModel {
     var $name = 'QueuedDocument';
 
     var $belongsTo = array(
-	'DocumentQueueCategory' => array(
-	    'className' => 'DocumentQueueCategory',
-	    'foreignKey' => 'queue_category_id'
-	),
-	'Location' => array(
-	    'className' => 'Location',
-	    'foreignKey' => 'scanned_location_id'
-	),
-	'User' => array(
-	    'className' => 'User',
-	    'foreignKey' => 'locked_by'
-	),
-	'LastActAdmin' => array(
-		'className' => 'User',
-		'foreignKey' => 'last_activity_admin_id',
-		'conditions' => '',
-		'fields' => '',
-		'order' => ''
-	),
-	'SelfScanCategory' => array(
-	    'className' => 'SelfScanCategory',
-	    'foreignKey' => 'self_scan_cat_id'
-	),
+		'DocumentQueueCategory' => array(
+		    'className' => 'DocumentQueueCategory',
+		    'foreignKey' => 'queue_category_id',
+		    'fields' => 'id, name'
+		),
+		'Location' => array(
+		    'className' => 'Location',
+		    'foreignKey' => 'scanned_location_id',
+		    'fields' => 'id, name'
+		),
+		'LockedBy' => array(
+		    'className' => 'User',
+		    'foreignKey' => 'locked_by',
+		    'fields' => 'id, firstname, lastname'
+		),
+		'LastActAdmin' => array(
+			'className' => 'User',
+			'foreignKey' => 'last_activity_admin_id',
+			'fields' => 'id, firstname, lastname'
+		),
+		'SelfScanCategory' => array(
+		    'className' => 'SelfScanCategory',
+		    'foreignKey' => 'self_scan_cat_id',
+		    'fields' => 'id, name'
+		),
+		'BarCodeDefinition' => array(
+		    'className' => 'BarCodeDefinition',
+		    'foreignKey' => 'bar_code_definition_id',
+		    'fields' => 'id, name'
+		),	
+		'User' => array(
+		    'className' => 'User',
+		    'foreignKey' => 'user_id',
+		    'fields' => 'id, firstname, lastname, ssn, name_last4'
+		)	
     );
 	
 	var $validate = array(
@@ -45,7 +57,7 @@ class QueuedDocument extends AppModel {
 		parent::beforeDelete($cascade);
 		if(!empty($this->data['QueuedDocument'])) {
 		    $adminId = $this->data['QueuedDocument']['last_activity_admin_id'];
-		    $reason = $this->data['QueuedDocument']['reason'];
+		    $reason = $this->data['QueuedDocument']['deleted_reason'];
 		    $deletedLocation = $this->data['QueuedDocument']['deleted_location_id'];
 		}
 		$delDoc = ClassRegistry::init('DeletedDocument');
@@ -75,27 +87,40 @@ class QueuedDocument extends AppModel {
     function checkLocked($userId) {
 		$lockedConditions['QueuedDocument.locked_status'] = 1;
 		$lockedConditions['QueuedDocument.locked_by'] = $userId;
-		$userLockedDoc = $this->find('first', array('conditions' => $lockedConditions));
+		$userLockedDoc = $this->find('first', array(
+			'conditions' => $lockedConditions, 
+			'recursive' => -1));
 		if(!empty($userLockedDoc['QueuedDocument']['id'])) {
-		    if (!$this->unlockDocument($userLockedDoc['QueuedDocument']['id'])) {
-				return false;
+			$id = $this->unlockDocument($userLockedDoc['QueuedDocument']['id']);
+		    if ($id) {
+				return $id;
 		    }
-		    else return true;
+		    else false; 
 		}
 		else return false;
     }
 
     function lockDocument($id=null, $userId=null) {
 		if($id && $userId) {
+			$unlockedDoc = $this->checkLocked($userId);	
 		    $this->data['QueuedDocument']['id'] = $id;
 		    $this->data['QueuedDocument']['locked_by'] = $userId;
+			$this->data['QueuedDocument']['last_activity_admin_id'] = $userId;
 		    $this->data['QueuedDocument']['locked_status'] = 1;
+			$doc = $this->findById($id);
+			if($doc['QueuedDocument']['locked_status']) {
+				return false;
+			}				
 		    if($this->save($this->data)) {
-				return true;
+		    	$data = $this->findById($id);
+		    	if($unlockedDoc) {
+					$data['unlocked'] = $unlockedDoc;
+				}				
+				return $data;
 		    }
-		    else
-			return false;
+		    else return false;
 		}
+		else return false;
     }
 
     function unlockDocument($id=null) {
@@ -104,7 +129,7 @@ class QueuedDocument extends AppModel {
 		    $this->data['QueuedDocument']['locked_by'] = null;
 		    $this->data['QueuedDocument']['locked_status'] = 0;
 		    if($this->save($this->data)) {
-				return true;
+				return $id;
 		    }
 		    else return false;
 		}
