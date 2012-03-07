@@ -41,12 +41,10 @@
             <?php if($this->Session->read('Auth.User.role_id') <= 3) : ?>
 		    	<p>
 		    		<?php echo $html->image('icons/email.png')?> 
-		    		<a href="mailto:CTSATLAS@support.assembla.com
-		    			?subject=This subject line will be the title of your ticket
+		    		<a href="mailto:dev@ctsfla.com?subject=This subject line will be the title of your ticket
 		    			&body=Please be as descriptive as possible.
-		    			%0AAttachments included in this email will be included in the ticket.
-		    			%0AInclude a screenshot of the error as an attachment if possible.
-	                    %0AReply to a ticket alert from Assembla and your email will be posted as a ticket comment."><?php __('Create a support ticket via email') ?></a> 
+		    			%0AInclude a screenshot of the error as an attachment if possible">
+		    			<?php __('Create a support ticket via email') ?></a> 
 		    	</p>
 		    	<p><?php echo $html->image('icons/telephone.png')?> 352-666-0333</p>
 	    	<?php else : ?>
