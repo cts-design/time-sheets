@@ -136,6 +136,10 @@ class QueuedDocumentsController extends AppController {
 				foreach($docs as $doc) {
 					$data['docs'][$i]['id'] = $doc['QueuedDocument']['id'];
 					$data['docs'][$i]['queue_cat'] = $doc['DocumentQueueCategory']['name'];
+					$data['docs'][$i]['secure'] =  false;
+					if($doc['DocumentQueueCategory']['secure']) {
+						$data['docs'][$i]['secure'] =  true;
+					}
 					$data['docs'][$i]['scanned_location'] = $doc['Location']['name'];
 					if(!empty($doc['LockedBy']['id'])) {
 						$data['docs'][$i]['locked_by'] = 
