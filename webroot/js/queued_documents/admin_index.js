@@ -123,7 +123,7 @@ Ext.create('Ext.data.Store', {
 Ext.define('QueuedDocument', {
 	extend: 'Ext.data.Model',
 	fields:[
-		'id', 'queue_cat', 'scanned_location',
+		'id', 'queue_cat', 'scanned_location', 'secure',
 		'queued_to_customer', 'queued_to_customer_id', 'queued_to_customer_ssn',
 		'queued_to_customer_first', 'queued_to_customer_last',
 		'locked_by', 'locked_by_id', 'locked_status', 'requeued',
@@ -145,7 +145,15 @@ Ext.define('QueuedDocument', {
 			if(this.data.queued_to_customer_id) {
 				autoPopulateCustomerInfo(this);
 			}
-			embedPDF(this.data.id);
+			Ext.getCmp('secureDocMessage').show();
+			if(1+1 == 2){
+				
+			}
+			else {
+				Ext.getCmp('secureDocMessage').hide();
+			}
+
+			embedPDF(this.data);
 
 			Ext.getCmp('fileDocumentForm').getComponent('docId').setValue(this.data.id);
 			Ext.getCmp('reassignQueueForm').getComponent('docId').setValue(this.data.id);
@@ -180,7 +188,7 @@ Ext.define('QueuedDocument', {
 						if(this.data.queued_to_customer_id) {
 							autoPopulateCustomerInfo(this);
 						}
-						embedPDF(text.QueuedDocument.id);
+						embedPDF(text.QueuedDocument);
 						Ext.getCmp('fileDocumentForm').getComponent('docId').setValue(text.QueuedDocument.id);
 						Ext.getCmp('reassignQueueForm').getComponent('docId').setValue(text.QueuedDocument.id);
 						Ext.getCmp('deleteDocumentForm').getComponent('docId').setValue(text.QueuedDocument.id);
@@ -1782,12 +1790,23 @@ Ext.onReady(function(){
 			},{
 				title: 'Document',
 				flex: 1,
-				layout: 'fit',
+				layout: 'vbox',
 				items : [{
+					xtype: 'component',
+					id: 'secureDocMessage',
+					html: [
+						'<p style="background:red; padding:10px; font-weight: bold">' +
+						'<img src="/img/icons/key.png" />' +
+						'&nbsp;This is a secure document please handle with care.</p>'
+					],
+					height: 40,
+					width: '100%',
+					hidden: true
+				},{
 					xtype : 'component',
 					id: 'queuedDocumentsPdf',
-					width: 900,
-					height: 400,
+					width: '100%',
+					flex: 1,
 					html: '<p>No document currently loaded</p>'
 					//TODO: look into possibly having a no acrobat installed message here
 				}]
@@ -1828,9 +1847,9 @@ Ext.onReady(function(){
 	};
 });
 
-function embedPDF(docId){	
+function embedPDF(doc){
 	var myPDF = new PDFObject({
-		url: '/admin/queued_documents/view/'+docId,
+		url: '/admin/queued_documents/view/'+doc.id,
 		pdfOpenParams: {
 			scrollbars: '1',
 			toolbar: '1',
@@ -1840,6 +1859,14 @@ function embedPDF(docId){
 			view: "FitH"
 		}
 	}).embed('queuedDocumentsPdf');
+
+	if(doc.secure) {
+		Ext.getCmp('secureDocMessage').show();
+	}
+	else {
+		Ext.getCmp('secureDocMessage').hide();
+	}
+
 }
 
 function unlockDoc(url, passData) {
