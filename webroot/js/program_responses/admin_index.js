@@ -202,7 +202,7 @@ Ext.onReady(function() {
 	
 	var editor = Ext.create('Ext.form.HtmlEditor', {
 		width : 800,
-		height : 250,
+		height : 225,
 		region : 'south',
 		bodyStyle : {
 			padding : '7px'
