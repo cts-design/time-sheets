@@ -88,7 +88,7 @@ end
 # --- Cake Settings
 set :cake_branch, "1.3"
 
-set :shared_children,       %w(config system tmp tmp/fdf webroot/files/public webroot/img/public storage 
+set :shared_children,       %w(config backups system tmp tmp/fdf webroot/files/public webroot/img/public storage 
                                storage/thumbnails storage/program_forms storage/program_media)
 
 namespace :deploy do
@@ -190,12 +190,40 @@ namespace :notify_campfire do
     body = "#{deployer} removed #{server_name} from maintenance mode."
     send_campfire_alert body
   end
+
+  desc 'Alert Campfire of database backup'
+  task :mysql_backup_alert do
+    body = "#{server_name} database backup complete"
+    send_campfire_alert body
+  end
+
 end
 
 def send_campfire_alert(body)
   run "cd #{current_release} && cake campfire '#{body}'" 
 end
 
+
+namespace :mysql do
+  desc "performs a backup (using mysqldump) in app shared dir"
+  task :backup do
+    filename = "#{application}.db_backup.#{Time.now.to_f}.sql.bz2"
+    filepath = "#{shared_path}/backups/#{filename}"
+    text = capture "cat #{shared_path}/config/database.yml"
+    yaml = YAML::load(text)
+
+    on_rollback { run "rm #{filepath}" }
+    run "mysqldump -u #{yaml['production']['username']} -p #{yaml['production']['database']} | bzip2 -c > #{filepath}" do |ch, stream, out|
+      ch.send_data "#{yaml['production']['password']}\n" if out =~ /^Enter password:/
+    end
+
+  end
+
+end
+
+before :deploy, 'mysql:backup' 
+
+after "mysql:backup", "notify_campfire:mysql_backup_alert"
 after "deploy:web:disable", "notify_campfire:disabled_alert"
 after "deploy:web:enable", "notify_campfire:enabled_alert"
 	
