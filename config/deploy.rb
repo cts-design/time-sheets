@@ -12,6 +12,9 @@ set :default_shell, '/bin/bash'
 # branch to pull atlas design files from
 set :design_branch, "master"
 
+# plugins, override in region namespace if region has plugins
+set :app_plugins, []
+
 # --- Server Settings. 
 
 # Staging and demo servers
@@ -88,8 +91,9 @@ end
 # --- Cake Settings
 set :cake_branch, "1.3"
 
-set :shared_children,       %w(config backups system tmp tmp/fdf webroot/files/public webroot/img/public storage 
-                               storage/thumbnails storage/program_forms storage/program_media)
+set :shared_children,       %w(config backups plugins system tmp tmp/fdf webroot/files/public 
+                               webroot/img/public storage storage/thumbnails storage/program_forms 
+                               storage/program_media)
 
 namespace :deploy do
   desc "Updates symlinks needed to make application work"
@@ -116,8 +120,29 @@ namespace :deploy do
     run "ln -s #{shared_path}/webroot/test.php #{latest_release}/webroot/test.php"
     run "ln -s #{shared_path}/webroot/js/ckfinder/config.php #{latest_release}/webroot/js/ckfinder/config.php"
     run "rm -f #{current_path} && ln -s #{latest_release} #{current_path}" 
-    cake.database.symlink if (remote_file_exists?(database_path))   
-  end  
+    cake.database.symlink if (remote_file_exists?(database_path))
+    deploy.plugins.symlink       
+  end 
+
+  namespace :plugins do
+    desc "Symlinks the configured plugins for the appliction into plugins, from the shared dirs."
+    task :symlink, :except => { :no_release => true } do
+      app_plugins.each { |plugin|
+        run "ln -s #{shared_path}/plugins/#{plugin} #{latest_release}/plugins/#{plugin}"
+      }
+    end
+  end
+
+  task :finalize_update, :except => { :no_release => true } do
+    run "chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
+    #run "chmod 755 -R #{release_path}" #do we need this line? 
+    cake.cache.clear
+    cake.schema.create
+    cake.schema.update
+    cake.aco_update
+    cake.cache.clear
+  end
+
 end
 
 namespace :cake do
@@ -153,14 +178,6 @@ task :design do
   end
 end  
 
-task :finalize_deploy, :roles => [:web] do
-  run "chmod 755 -R #{release_path}"
-  cake.cache.clear
-  cake.schema.create
-  cake.schema.update
-  cake.aco_update
-  cake.cache.clear
-end
 
 namespace :notify_campfire do
   deployer = ENV["USER"]
@@ -228,7 +245,6 @@ after "deploy:web:disable", "notify_campfire:disabled_alert"
 after "deploy:web:enable", "notify_campfire:enabled_alert"
 	
 after "deploy:update_code", :design
-after "deploy:symlink", :finalize_deploy
-after :finalize_deploy, "notify_campfire:deploy_alert"
+after "deploy:finalize_update", "notify_campfire:deploy_alert"
 
 capcake
