@@ -134,7 +134,7 @@ namespace :deploy do
   end
 
   task :finalize_update, :except => { :no_release => true } do
-    run "chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
+    #run "chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
     #run "chmod 755 -R #{release_path}" #do we need this line? 
     cake.cache.clear
     cake.schema.create
