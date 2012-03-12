@@ -265,10 +265,27 @@ class QueuedDocumentsController extends AppController {
 			$this->data['FiledDocument']['last_activity_admin_id'] = $this->Auth->user('id');
 			$this->data['FiledDocument']['admin_id'] = $this->Auth->user('id');
 			$this->data['FiledDocument']['filed_location_id'] = $this->Auth->user('location_id');
-			$this->QueuedDocument->recursive = -1;
+			$this->QueuedDocument->recursive = 0;
 			$queuedDoc = $this->QueuedDocument->findById($this->data['FiledDocument']['id']);
 			$this->data['FiledDocument']['scanned_location_id'] = 
 				$queuedDoc['QueuedDocument']['scanned_location_id'];
+			if($queuedDoc['DocumentQueueCategory']['secure']) {
+				if(isset($this->data['FiledDocument']['cat_3'])) {
+					$catId = $this->data['FiledDocument']['cat_3'];
+				}
+				elseif(isset($this->data['FiledDocument']['cat_2'])) {
+					$catId = $this->data['FiledDocument']['cat_2'];
+				}
+				elseif(isset($this->data['FiledDocument']['cat_1'])) {
+					$catId = $this->data['FiledDocument']['cat_1'];
+				}
+				if(!$this->checkIfFilingCatSecure($catId)) {
+					$data['success'] = false;
+					$data['message'] = 'Unable to file secure document to a non-secure category.';
+					$this->set(compact('data'));
+					return $this->render(null, null, '/elements/ajaxreturn');									
+				}				
+			}				
 			$this->data['FiledDocument']['entry_method'] = $queuedDoc['QueuedDocument']['entry_method'];
 			$this->data['FiledDocument']['filename'] = $queuedDoc['QueuedDocument']['filename'];
 			$this->data['FiledDocument']['created'] = $queuedDoc['QueuedDocument']['created'];				
@@ -449,5 +466,10 @@ class QueuedDocumentsController extends AppController {
 				$this->Email->send($alert['message'] . "\r\n" . $alert['url']);				
 			}
 		}
+	}
+
+	private function checkIfFilingCatSecure($catId) {
+		$this->loadModel('DocumentFilingCategory');
+		return $this->DocumentFilingCategory->isSecure($catId);
 	}		
 }
