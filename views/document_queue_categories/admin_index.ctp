@@ -21,6 +21,7 @@
 		<tr>
 		    <th class="ui-state-default"><?php echo $this->Paginator->sort(__('FTP Path', true), 'ftp_path');?></th>
 		    <th class="ui-state-default"><?php echo $this->Paginator->sort(__('Name', true), 'name');?></th>
+		    <th class="ui-state-default"><?php __('Secure');?></th>
 		    <th class="actions ui-state-default"><?php __('Actions');?></th>
 		</tr>
 	    </thead>
@@ -35,6 +36,7 @@
 	<tr<?php echo $class;?>>
 		<td><?php echo $documentQueueCategory['DocumentQueueCategory']['ftp_path']; ?>&nbsp;</td>
 		<td><?php echo $documentQueueCategory['DocumentQueueCategory']['name']; ?>&nbsp;</td>
+		<td><?php echo $documentQueueCategory['DocumentQueueCategory']['secure']; ?></td>	
 		<td class="actions">
 			<?php echo $this->Html->link(__('Edit', true), array('action' => 'edit', $documentQueueCategory['DocumentQueueCategory']['id']), array('class'=>'edit')); ?>
 			<?php echo $this->Html->link(__('Delete', true), array('action' => 'delete', $documentQueueCategory['DocumentQueueCategory']['id']), array('class'=>'delete'), __('Are you sure you want to delete category?', true)); ?>
