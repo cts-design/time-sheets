@@ -36,7 +36,7 @@
 	<tr<?php echo $class;?>>
 		<td><?php echo $documentQueueCategory['DocumentQueueCategory']['ftp_path']; ?>&nbsp;</td>
 		<td><?php echo $documentQueueCategory['DocumentQueueCategory']['name']; ?>&nbsp;</td>
-		<td><?php echo $documentQueueCategory['DocumentQueueCategory']['secure']; ?></td>	
+		<td><?php echo ($documentQueueCategory['DocumentQueueCategory']['secure']) ? 'Yes' : 'No'; ?></td>
 		<td class="actions">
 			<?php echo $this->Html->link(__('Edit', true), array('action' => 'edit', $documentQueueCategory['DocumentQueueCategory']['id']), array('class'=>'edit')); ?>
 			<?php echo $this->Html->link(__('Delete', true), array('action' => 'delete', $documentQueueCategory['DocumentQueueCategory']['id']), array('class'=>'delete'), __('Are you sure you want to delete category?', true)); ?>
