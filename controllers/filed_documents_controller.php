@@ -297,7 +297,7 @@ class FiledDocumentsController extends AppController {
 						$allowed = in_array($this->Auth->user('id'), json_decode($v['Cat3']['secure_admins']));
 					}
 					if(!$allowed && $this->Auth->user('role_id') > 3) {
-						$data['docs'][$k]['view'] = '<img src="/img/icons/key.png" />';	
+						$data['docs'][$k]['view'] = '<img alt="secure" src="/img/icons/lock.png" />';	
 					}
 					else {
 						$data['docs'][$k]['view'] = 
