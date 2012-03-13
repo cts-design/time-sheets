@@ -448,7 +448,17 @@ Ext.create('Ext.data.Store', {
 
 Ext.define('QueueCategory', {
 	extend: 'Ext.data.Model',
-	fields: ['id', 'name']
+	fields: ['id', 'name', 'secure', {
+		name : 'img',
+		convert: function(value, record){
+			var img = null;
+			var secure = record.get('secure');
+			if(secure) {
+				img = '<img src="/img/icons/lock.png" />&nbsp';
+			}
+			return img;
+		}
+	}]
 });
 
 Ext.create('Ext.data.Store', {
@@ -527,6 +537,11 @@ Ext.define('Atlas.form.DocQueueFilterPanel', {
 		emptyText: 'Please Select',
 		displayField: 'name',
 		valueField: 'id',
+		listConfig: {
+			getInnerTpl: function() {
+				return '<div>{img}{name}</div>';
+			}
+		},
 		store: 'queueCatgoriesStore'
 	},{
 		xtype: 'datefield',
@@ -1083,6 +1098,11 @@ Ext.define('Atlas.form.ReassignQueuePanel', {
 		queryMode: 'local',
 		displayField: 'name',
 		valueField: 'id',
+		listConfig: {
+			getInnerTpl: function() {
+				return '<div>{img}{name}</div>';
+			}
+		},
 		name: 'queue_category_id',
 		forceSelection: true,
 		editable: false,
