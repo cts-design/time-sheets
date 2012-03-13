@@ -775,7 +775,7 @@ Ext.define('DocumentFilingCategory', {
 			var img = null;
 			var secure = record.get('secure');
 			if(secure) {
-				img = '<img src="/img/icons/key.png" />&nbsp';
+				img = '<img src="/img/icons/lock.png" />&nbsp';
 			}
 			return img;
 		}
