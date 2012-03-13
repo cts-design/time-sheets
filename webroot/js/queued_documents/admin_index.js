@@ -304,10 +304,10 @@ Ext.create('Ext.data.Store', {
 Ext.create('Ext.menu.Menu', {
 	id: 'gridContextMenu',
 	items: [{
-		text: 'Release Doc',
+		text: 'Unlock Doc & Return to Queue',
 		hidden: true,
-		itemId: 'releaseDoc',
-		icon:  '/img/icons/lock_open.png',
+		itemId: 'unlockDoc',
+		icon:  '/img/icons/key.png',
 		handler: function() {
 			Ext.Ajax.request({
 				url: '/admin/queued_documents/unlock_document',
@@ -333,10 +333,10 @@ Ext.create('Ext.menu.Menu', {
 			var doc = selectionModel.getLastSelected();
 			if(!Ext.getCmp('autoLoadDocs').getValue() &&
 				doc.data.locked_status == 'Locked' && doc.data.locked_by_id == adminId) {
-					this.getComponent('releaseDoc').show();
+					this.getComponent('unlockDoc').show();
 			}
 			else {
-				this.getComponent('releaseDoc').hide();
+				this.getComponent('unlockDoc').hide();
 			}
 		}
 	}
@@ -1796,7 +1796,7 @@ Ext.onReady(function(){
 					id: 'secureDocMessage',
 					html: [
 						'<p style="background:red; padding:10px; font-weight: bold">' +
-						'<img src="/img/icons/key.png" />' +
+						'<img src="/img/icons/lock.png" />' +
 						'&nbsp;This is a secure document please handle with care.</p>'
 					],
 					height: 40,
