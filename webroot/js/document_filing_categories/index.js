@@ -5,7 +5,7 @@
  */
 
 
-// Kludge to fix not being able to type spaces in context menu text fields 
+// Kludge to fix not being able to type spaces in context menu text fields
 Ext.override(Ext.menu.KeyNav, {
     constructor: function(menu) {
         var me = this;
@@ -55,8 +55,8 @@ Ext.onReady( function() {
 				if(addForm.getForm().isValid()) {
 					
 					var vals = addForm.getForm().getValues();
-					var parent = tree.getSelectionModel().getLastSelected();	
-					if(parent == null) {
+					var parent = tree.getSelectionModel().getLastSelected();
+					if(parent === null) {
 						Ext.MessageBox.alert('Error', 'Please seleact a parent category to add category to.');
 						return false;
 					}
@@ -87,12 +87,12 @@ Ext.onReady( function() {
 							}
 							if(o.success !== true) {
 								Ext.Msg.alert('Error', o.message);
-							} else {					
-								store.load();													
+							} else {
+								store.load();
 								tree.on('load', function() {
 									tree.expandPath(o.node);
 									tree.selectPath(o.node);
-									Ext.Msg.alert('Success', o.message);								
+									Ext.Msg.alert('Success', o.message);
 								}, this, {
 									delay: 100,
 									single: true
@@ -106,7 +106,7 @@ Ext.onReady( function() {
 				}
 			}
 		}]
-	});	
+	});
 		
 	var editForm = Ext.create('Ext.form.Panel', {
 		width: 300,
@@ -123,10 +123,10 @@ Ext.onReady( function() {
 			disabled: true,
 			handler: function()	{
 				Ext.MessageBox.wait('Please Wait..', 'Status');
-				var selected = tree.getSelectionModel().getLastSelected();			
-				var form = this.up('form').getForm();					
+				var selected = tree.getSelectionModel().getLastSelected();
+				var form = this.up('form').getForm();
 				var id =  selected.internalId;
-	            if (form.isValid()) {
+				if (form.isValid()) {
 					var vals = form.getValues();
 					selected.beginEdit();
 					selected.set({text: vals.text});
@@ -137,25 +137,25 @@ Ext.onReady( function() {
 		}]
 	});
 	
-	var contextMenu	 = Ext.create('Ext.menu.Menu', {
-	    items: [{
-	    	text: 'Add Category',
-	    	id: 'addCat',
-	    	icon : '/img/icons/add.png',
-	    	menu: {
-	    		plain: true,
-	    		items: [addForm]
-	    	}
-	    },		
-	    {
-	    	text: 'Edit Category',
-	    	id: 'editCat',
-	    	icon : '/img/icons/application_form_edit.png',
+	var contextMenu	= Ext.create('Ext.menu.Menu', {
+		items: [{
+			text: 'Add Category',
+			id: 'addCat',
+			icon : '/img/icons/add.png',
+			menu: {
+				plain: true,
+				items: [addForm]
+			}
+		},
+		{
+			text: 'Edit Category',
+			id: 'editCat',
+			icon : '/img/icons/application_form_edit.png',
 			menu: {
 				plain: true,
 				items: [editForm]
 			}
-	    },{
+		},{
 			text: 'Disable Category',
 			id: 'disableCat',
 			hidden: true,
@@ -163,7 +163,7 @@ Ext.onReady( function() {
 			handler: function(){
 				var node = tree.getSelectionModel().getLastSelected();
 				toggleNodeDisabled(node, 1);
-			}			
+			}
 		},{
 			text: 'Enable Category',
 			id: 'enableCat',
@@ -172,7 +172,7 @@ Ext.onReady( function() {
 			handler: function(){
 				var node = tree.getSelectionModel().getLastSelected();
 				toggleNodeDisabled(node, 0);
-			}			
+			}
 		},{
 			text: 'Secure',
 			id: 'secureCat',
@@ -198,7 +198,7 @@ Ext.onReady( function() {
 				Ext.getCmp('disableCat').hide();
 			}
 		}
-	});	
+	});
 	
 	Ext.define('DocumentFilingCategory', {
 		extend: 'Ext.data.Model',
@@ -213,32 +213,31 @@ Ext.onReady( function() {
 	});
 	
     var store = Ext.create('Ext.data.TreeStore', {
-    	model: 'DocumentFilingCategory',
+		model: 'DocumentFilingCategory',
         proxy: {
-        	api:{
-        		create: '/admin/document_filing_categories/add',
-        		update: '/admin/document_filing_categories/edit'
-        		
-        	},
-        	url: '/admin/document_filing_categories/',
+			api:{
+				create: '/admin/document_filing_categories/add',
+				update: '/admin/document_filing_categories/edit'
+				
+			},
+			url: '/admin/document_filing_categories/',
             type: 'ajax',
             simpleSort: true,
 			writer: {
-		    	type: 'json',
-		    	writeAllFields: true,
-		    	root: 'category',
-		    	encode: true
-			}            
+				type: 'json',
+				writeAllFields: true,
+				root: 'category',
+				encode: true
+			}
         },
         root: {
-        	id: 'source',
+			id: 'source',
 			expanded: true,
 			text: 'Document Filing Catgories',
-			draggable: false,
-			
+			draggable: false
         },
         listeners: {
-        	write: function(store, operation, eOpts) {
+			write: function(store, operation, eOpts) {
 				if(operation.action == 'update'){
 					if(operation.success){
 						Ext.MessageBox.alert('Status', 'Category updated successfully.');
@@ -249,9 +248,9 @@ Ext.onReady( function() {
 						editForm.getForm().reset();
 					}
 				}
-        	}
+			}
         }
-    });	
+    });
 	
 	var tree = Ext.create('Ext.tree.Panel', {
 		id: 'docCatTree',
@@ -276,24 +275,23 @@ Ext.onReady( function() {
                 ptype: 'treeviewdragdrop'
             },
 			listeners : {
-	            itemcontextmenu: function(view, rec, node, index, e) {
-	                e.stopEvent();
+				itemcontextmenu: function(view, rec, node, index, e) {
+				e.stopEvent();
 
-	                if(rec.data.secure) {
-	                	console.log(rec);
-	                	Ext.getCmp('unsecureCat').show();
-	                	Ext.getCmp('secureCat').hide();
-	                }
-	                else {
-	                	Ext.getCmp('secureCat').show();
-	                	Ext.getCmp('unsecureCat').hide();
-	                }
-	                contextMenu.showAt(e.getXY());
-	            	return false;
-	            }
-	                				
-			}            
-        },	
+				if(rec.data.secure) {
+					console.log(rec);
+					Ext.getCmp('unsecureCat').show();
+					Ext.getCmp('secureCat').hide();
+				}
+				else {
+					Ext.getCmp('secureCat').show();
+					Ext.getCmp('unsecureCat').hide();
+				}
+				contextMenu.showAt(e.getXY());
+				return false;
+				}
+			}
+        },
 		getState: function () {
 			var nodes = [];
 			var lastnode;
@@ -311,9 +309,7 @@ Ext.onReady( function() {
 				};
 				storeTreeState(child, nodes);
 			});
-			return {
-				expandedNodes: nodes
-			}
+			return { expandedNodes: nodes };
 		},
 		applyState: function (state) {
 			var that = this;
@@ -341,13 +337,13 @@ Ext.onReady( function() {
 	});
 	
 	tree.on('itemmove', function(ni, oldParent, newParent, index, eOpts) {
-		
+		var url, params;
 		if (oldParent == newParent) {
-			var url = reorderUrl;
-			var params = {'node':ni.data.id, 'delta':(index-oldPosition)};
+			url = reorderUrl;
+			params = {'node':ni.data.id, 'delta':(index-oldPosition)};
 		} else {
-			var url = reparentUrl;
-			var params = {'node':ni.data.id, 'parent':newParent.data.id, 'position':index};
+			url = reparentUrl;
+			params = {'node':ni.data.id, 'parent':newParent.data.id, 'position':index};
 		}
 	
 		// we disable tree interaction until we've heard a response from the server
@@ -357,7 +353,7 @@ Ext.onReady( function() {
 	
 		Ext.Ajax.request({
 			url:url,
-			params:params,
+			params: params,
 	
 			success: function(response, request) {
 				var o = {};
@@ -367,7 +363,7 @@ Ext.onReady( function() {
 					Ext.Msg.alert('Error','Unable to move category, please try again.');
 					return;
 				}
-				if(o.success == true) {
+				if(o.success === true) {
 					tree.enable();
 				} else {
 					request.failure();
@@ -421,8 +417,8 @@ Ext.onReady( function() {
 			failure: function() {
 				Ext.Msg.alert('Error','Unable to update category status, please try again.');
 			}
-		});	
-	}
+		});
+	};
 
 	var toggleNodeSecure = function(node, secure) {
 		Ext.MessageBox.wait('Please Wait..', 'Status');
@@ -453,8 +449,8 @@ Ext.onReady( function() {
 			failure: function() {
 				Ext.Msg.alert('Error','Unable to update category secure status, please try again.');
 			}
-		});	
-	}	
+		});
+	};
 	
 	tree.getView().on('beforeitemcontextmenu', function(view, record, item, index, e, eOpts){
 		if(record.data.disabled) {
@@ -478,4 +474,4 @@ Ext.onReady( function() {
 		}
 	});
 	
-});	
+});
