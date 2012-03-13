@@ -79,7 +79,7 @@
 		<?php endif ?>		 				
 		<td class="actions">
 			<?php if( !$allowed && $this->Session->read('Auth.User.role_id') > 3) : ?>
-				<p><?php echo $this->Html->image('icons/key.png');?> Secure Document</p>	
+				<p><?php echo $this->Html->image('icons/lock.png');?> Secure Document</p>	
 			<?php else : ?>
 				<?php echo $this->Html->link(__('View', true),
 					    array('action' => 'view', $filedDocument['FiledDocument']['id']), 
