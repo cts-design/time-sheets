@@ -74,11 +74,12 @@ class DocumentQueueCategoriesController extends AppController {
 		if($this->RequestHandler->isAjax()) {
 			$this->DocumentQueueCategory->recursive -1;
 		    $cats = $this->DocumentQueueCategory->find('all', array(
-				'fields' => array('DocumentQueueCategory.id', 'DocumentQueueCategory.name')));
+				'fields' => array('DocumentQueueCategory.id', 'DocumentQueueCategory.name', 'DocumentQueueCategory.secure')));
 			$i = 0;
 			foreach($cats as $cat){
 				$data['cats'][$i]['id'] = $cat['DocumentQueueCategory']['id'];
 				$data['cats'][$i]['name'] = $cat['DocumentQueueCategory']['name'];
+				$data['cats'][$i]['secure'] = intval($cat['DocumentQueueCategory']['secure']);
 				$i++;
 			}
 			if(!empty($data['cats'])){
