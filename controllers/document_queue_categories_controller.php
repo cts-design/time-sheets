@@ -42,6 +42,9 @@ class DocumentQueueCategoriesController extends AppController {
 			$this->redirect(array('action' => 'index'));
 		}
 		if (!empty($this->data)) {
+			if(!$this->data['DocumentQueueCategory']['secure']) {
+				$this->data['DocumentQueueCategory']['secure_admins'] = json_encode(array());
+			}
 			if ($this->DocumentQueueCategory->save($this->data)) {
 				$this->Session->setFlash(__('The document queue category has been saved', true), 'flash_success');
 				$this->redirect(array('action' => 'index'));
