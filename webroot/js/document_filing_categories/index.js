@@ -32,8 +32,8 @@ Ext.onReady( function() {
 	
 	
 	var cp = Ext.create('Ext.state.CookieProvider', {
-	    expires: new Date(new Date().getTime()+(1000*60*60*24*30)), //30 days	
-	})
+		expires: new Date(new Date().getTime()+(1000*60*60*24*30)) //30 Days
+	});
 	
 	Ext.state.Manager.setProvider(cp);
 	
@@ -173,6 +173,24 @@ Ext.onReady( function() {
 				var node = tree.getSelectionModel().getLastSelected();
 				toggleNodeDisabled(node, 0);
 			}			
+		},{
+			text: 'Secure',
+			id: 'secureCat',
+			icon : '/img/icons/lock_add.png',
+			hidden: true,
+			handler: function() {
+				var node = tree.getSelectionModel().getLastSelected();
+				toggleNodeSecure(node, 1);
+			}
+		},{
+			text: 'Un-Secure',
+			id: 'unsecureCat',
+			icon : '/img/icons/lock_delete.png',
+			hidden: true,
+			handler: function() {
+				var node = tree.getSelectionModel().getLastSelected();
+				toggleNodeSecure(node, 0);
+			}
 		}],
 		listeners: {
 			hide: function() {
@@ -189,7 +207,8 @@ Ext.onReady( function() {
 			{name: 'text', type: 'string'},
 			{name: 'disabled', type: 'boolean'},
 			{name: 'cls', type: 'string'},
-			{name: 'leaf', type: 'boolean'}
+			{name: 'leaf', type: 'boolean'},
+			{name: 'secure', type: 'boolean'}
 		]
 	});
 	
@@ -259,6 +278,16 @@ Ext.onReady( function() {
 			listeners : {
 	            itemcontextmenu: function(view, rec, node, index, e) {
 	                e.stopEvent();
+
+	                if(rec.data.secure) {
+	                	console.log(rec);
+	                	Ext.getCmp('unsecureCat').show();
+	                	Ext.getCmp('secureCat').hide();
+	                }
+	                else {
+	                	Ext.getCmp('secureCat').show();
+	                	Ext.getCmp('unsecureCat').hide();
+	                }
 	                contextMenu.showAt(e.getXY());
 	            	return false;
 	            }
@@ -394,6 +423,38 @@ Ext.onReady( function() {
 			}
 		});	
 	}
+
+	var toggleNodeSecure = function(node, secure) {
+		Ext.MessageBox.wait('Please Wait..', 'Status');
+		Ext.Ajax.request({
+			url: '/admin/document_filing_categories/toggle_secure',
+			params: {
+				'data[DocumentFilingCategory][id]': node.data.id,
+				'data[DocumentFilingCategory][secure]' : secure
+			},
+			scope: this,
+			success: function(response, options) {
+				var o = {};
+				try {
+					o = Ext.decode(response.responseText);
+				} catch(e) {
+					Ext.Msg.alert('Error','Unable to update category secure status, please try again.');
+					return;
+				}
+				if(o.success !== true) {
+					Ext.Msg.alert('Error', o.message);
+					tree.enable();
+				} else {
+					Ext.Msg.alert('Success', o.message);
+						store.load();
+						tree.enable();
+				}
+			},
+			failure: function() {
+				Ext.Msg.alert('Error','Unable to update category secure status, please try again.');
+			}
+		});	
+	}	
 	
 	tree.getView().on('beforeitemcontextmenu', function(view, record, item, index, e, eOpts){
 		if(record.data.disabled) {
