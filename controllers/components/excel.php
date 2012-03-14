@@ -62,7 +62,11 @@ class ExcelComponent extends Object {
         foreach ($data as $row) {
             $j=0;
             foreach ($row as $field => $value) {
-                $this->sheet->setCellValueByColumnAndRow($j++,$i, $value);
+                if ($field === 'ssn') {
+                    $this->sheet->setCellValueExplicitByColumnAndRow($j++, $i, $value, PHPExcel_Cell_DataType::TYPE_STRING);
+                } else {
+                    $this->sheet->setCellValueByColumnAndRow($j++, $i, $value);
+                }
             }
             $i++;
         }
