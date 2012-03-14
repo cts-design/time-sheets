@@ -248,6 +248,17 @@ class User extends AppModel {
     );
 	
 	var $validationSets = array(
+		'auditor' => array(
+			'ssn' => array(
+				'rule' => 'notEmpty',
+				'required' => false,
+				'allowBlank' => true
+			),
+			'username' => array(
+				'rule' => 'isUnique',
+				'message' => 'This username already exists in the system'
+			)
+		),
 		'customerLogin' => array(
 			'username' => array(
 				'notEmpty' => array(
