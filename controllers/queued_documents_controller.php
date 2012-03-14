@@ -58,6 +58,7 @@ class QueuedDocumentsController extends AppController {
 				$canAddCustomer = true;
 	    }	    	    		    		
 		if($this->RequestHandler->isAjax()) {
+			$allowedQueueCats = $this->getAllowedQueueCats();
 			if(isset($this->params['url']['sort']) && $this->params['url']['sort'] == 'locked_status') {
 				if($this->params['url']['direction'] == 'ASC'){
 					$this->params['url']['direction'] = 'DESC';
@@ -89,6 +90,7 @@ class QueuedDocumentsController extends AppController {
 				if(isset($conditions)) {
 					if($this->checkAutoLoad()) {				
 						$conditions['QueuedDocument.locked_status'] = 0;
+						$conditions['QueuedDocument.queue_category_id'] = $allowedQueueCats;
 						$doc = $this->QueuedDocument->find('first', array(
 							'order' => array('QueuedDocument.id ASC'),
 							'conditions' => $conditions));
@@ -113,6 +115,7 @@ class QueuedDocumentsController extends AppController {
 					
 					if($this->checkAutoLoad()) {
 						$conditions['QueuedDocument.locked_status'] = 0;
+						$conditions['QueuedDocument.queue_category_id'] = $allowedQueueCats;
 						$doc = $this->QueuedDocument->find('first', array('conditions' => $conditions));
 						if($doc) {
 							$docs[0] = $this->QueuedDocument->lockDocument(
@@ -122,8 +125,13 @@ class QueuedDocumentsController extends AppController {
 					}
 					else {
 						$this->paginate = array(
-							'order' => array('QueuedDocument.id ASC'));
-						$data['totalCount'] = $this->QueuedDocument->find('count', array('recursive' => -1));					
+							'order' => array('QueuedDocument.id ASC'),
+							'conditions' => array(
+								'QueuedDocument.queue_category_id' => $allowedQueueCats));
+						$data['totalCount'] = $this->QueuedDocument->find('count', array(
+							'recursive' => -1,
+							'conditions' => array(
+								'QueuedDocument.queue_category_id' => $allowedQueueCats)));					
 					}
 				}
 				if(!$this->checkAutoLoad()) {
@@ -471,5 +479,28 @@ class QueuedDocumentsController extends AppController {
 	private function checkIfFilingCatSecure($catId) {
 		$this->loadModel('DocumentFilingCategory');
 		return $this->DocumentFilingCategory->isSecure($catId);
-	}		
+	}
+
+	private function getAllowedQueueCats() {
+		$this->QueuedDocument->DocumentQueueCategory->recursive -1;
+	    $cats = $this->QueuedDocument->DocumentQueueCategory->find('all', array(
+			'fields' => array(
+				'DocumentQueueCategory.id',
+				'DocumentQueueCategory.secure',
+				'DocumentQueueCategory.secure_admins'
+				)));
+		$i = 0;
+		$allowedCats = array();
+		foreach($cats as $cat){
+			if($this->Auth->user('role_id') > 3 && $cat['DocumentQueueCategory']['secure']) {
+				$secureAdmins = json_decode($cat['DocumentQueueCategory']['secure_admins']);
+				if(!in_array($this->Auth->user('id'), $secureAdmins)) {
+					continue;
+				}
+			}
+			$allowedCats[$i] = $cat['DocumentQueueCategory']['id'];
+			$i++;
+		}
+		return $allowedCats;	
+	} 		
 }
