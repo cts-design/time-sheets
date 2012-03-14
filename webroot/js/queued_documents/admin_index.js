@@ -1249,7 +1249,7 @@ Ext.define('Atlas.form.documentQueueSearchPanel', {
 		margin: '0 0 10 0'
 	},{
 		xtype: 'combobox',
-		fieldLabel: 'Serach Type',
+		fieldLabel: 'Search Type',
 		store: 'searchTypesStore',
 		displayField: 'type',
 		valueField: 'type',
