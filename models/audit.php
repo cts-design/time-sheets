@@ -6,7 +6,16 @@ class Audit extends AppModel {
 
     public $actsAs = array('Disableable');
 
-    public $hasAndBelongsToMany = array('User');
+    public $hasAndBelongsToMany = array(
+        'User',
+        'Auditor' => array(
+            'className' => 'User',
+            'joinTable' => 'audits_auditors',
+            'foreignKey' => 'audit_id',
+            'associationForeignKey' => 'user_id',
+            'unique' => false
+        )
+    );
 
     public $validate = array(
         'name' => array(
