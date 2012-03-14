@@ -28,12 +28,12 @@ namespace :cts do
   end
   
   task :staging do  
-    set :deploy_to, "/var/www/vhosts/development.ctsfla.com/#{application}"
-    set :server_name, 'cts staging'
-    set :user, 'dev4cts'
+    set :deploy_to, "/var/www/vhosts/staging.atlasforworkforce.com/#{application}"
+    set :server_name, 'atlas staging'
+    set :user, 'atlas_staging'
     set :branch, 'staging'
     set :design_branch, ENV['DESIGN'] if ENV.has_key?('DESIGN')
-    server "development.ctsfla.com", :app, :web, :db, :primary => true
+    server "staging.atlasforworkforce.com", :app, :web, :db, :primary => true
   end
   
   task :tradeshow do
