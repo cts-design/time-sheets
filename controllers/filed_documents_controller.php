@@ -95,6 +95,21 @@ class FiledDocumentsController extends AppController {
 		return $params;
     }
 
+	function auditor_view($id = null) {
+		$this->view = 'Media';
+		$doc = $this->FiledDocument->read(null, $id);
+		$params = array(
+		    'id' => $doc['FiledDocument']['filename'],
+		    'name' => str_replace('.pdf', '', $doc['FiledDocument']['filename']),
+		    'extension' => 'pdf',
+		    'cache' => true,
+		    'path' => Configure::read('Document.storage.path') .
+		    date('Y', strtotime($doc['FiledDocument']['created'])) . '/' .
+		    date('m', strtotime($doc['FiledDocument']['created'])) . '/'
+		);
+		$this->set($params);
+    }
+
     function admin_edit($id = null) {
 		if(!$id) {
 		    $this->Session->setFlash(__('Invalid filed document', true), 'flash_failure');
