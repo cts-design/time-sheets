@@ -1,6 +1,5 @@
 <?php 
-/* atlas schema generated on: 2012-02-20 15:52:23 : 1329771143*/
-
+/* atlas schema generated on: 2012-03-15 14:10:22 : 1331835022*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -141,6 +140,8 @@ class atlasSchema extends CakeSchema {
 		'lft' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'rght' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'disabled' => array('type' => 'boolean', 'null' => false, 'default' => NULL),
+		'secure' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'secure_admins' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
@@ -150,6 +151,8 @@ class atlasSchema extends CakeSchema {
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 		'ftp_path' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'name' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'secure' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'secure_admins' => array('type' => 'text', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'deleted' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
