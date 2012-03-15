@@ -318,6 +318,7 @@ Ext.create('Ext.menu.Menu', {
 						documentTimeout.cancel();
 						Ext.Msg.alert('Success', text.message);
 						Ext.getCmp('queuedDocumentsPdf').el.dom.innerHTML = '<p>No Document Loaded.</p>';
+						Ext.getCmp('secureDocMessage').hide();
 						Ext.data.StoreManager.lookup('queuedDocumentsStore').load();
 					}
 					else {
