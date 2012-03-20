@@ -20,6 +20,7 @@ class AuditsController extends AppController {
         $audits = $this->Audit->find('all', array(
             'fields' => array('Audit.*'),
             'contain' => array(
+                'AuditsAuditor',
                 'User' => array(
                     'fields' => array('User.id', 'User.ssn', 'User.firstname', 'User.lastname')
                 )
@@ -35,6 +36,10 @@ class AuditsController extends AppController {
 
                 if (!empty($value['User'])) {
                     $data['audits'][$key]['users'] = $value['User'];
+                }
+
+                if (!empty($value['Auditor'])) {
+                    $data['audits'][$key]['auditors'] = $value['Auditor'];
                 }
             }
         } else {
@@ -85,10 +90,8 @@ class AuditsController extends AppController {
 
     public function admin_update() {
         $params = json_decode($this->params['form']['audits'], true);
-        $auditId = $params['id'];
-        unset($params['id']);
 
-        $this->Audit->read(null, $auditId);
+        $this->Audit->read(null, $params['id']);
         $this->Audit->set($params);
 
         if ($this->Audit->save()) {
