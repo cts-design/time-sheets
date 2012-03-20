@@ -4,6 +4,7 @@ require 'capcake'
 set :application, 'atlas' # app's location (domain or sub-domain name)
 set :repository, "git@github.com:CTSATLAS/atlas.git"
 set :branch, 'master'
+set :keep_releases, 5
 
 set :deploy_via, :remote_cache
 
@@ -31,6 +32,7 @@ namespace :cts do
     set :deploy_to, "/var/www/vhosts/staging.atlasforworkforce.com/#{application}"
     set :server_name, 'atlas staging'
     set :user, 'atlas_staging'
+    set :keep_releases, 2
     set :branch, 'staging'
     set :design_branch, ENV['DESIGN'] if ENV.has_key?('DESIGN')
     server "staging.atlasforworkforce.com", :app, :web, :db, :primary => true
@@ -106,6 +108,9 @@ namespace :deploy do
       end
     end
     run "ln -s #{shared_path}/system #{latest_release}/webroot/system && ln -s #{shared_path}/tmp #{latest_release}/tmp";
+    run "rm -f #{current_path} && ln -s #{latest_release} #{current_path}" 
+    cake.database.symlink if (remote_file_exists?(database_path))
+
     run "ln -s #{shared_path}/storage #{latest_release}/storage"
     run "ln -s #{shared_path}/webroot/files/public #{latest_release}/webroot/files/public"
     run "ln -s #{shared_path}/webroot/img/public #{latest_release}/webroot/img/public"
@@ -119,8 +124,6 @@ namespace :deploy do
     run "ln -s #{shared_path}/webroot/index.php #{latest_release}/webroot/index.php"
     run "ln -s #{shared_path}/webroot/test.php #{latest_release}/webroot/test.php"
     run "ln -s #{shared_path}/webroot/js/ckfinder/config.php #{latest_release}/webroot/js/ckfinder/config.php"
-    run "rm -f #{current_path} && ln -s #{latest_release} #{current_path}" 
-    cake.database.symlink if (remote_file_exists?(database_path))
     deploy.plugins.symlink       
   end 
 
@@ -154,7 +157,7 @@ namespace :cake do
     
     desc "Update database schema update tables"
     task :update, roles => [:web] do
-    	run "cd #{current_release} && yes y | cake schema update atlas"
+      run "cd #{current_release} && yes y | cake schema update atlas"
     end
   end 
    
@@ -243,8 +246,7 @@ before :deploy, 'mysql:backup'
 after "mysql:backup", "notify_campfire:mysql_backup_alert"
 after "deploy:web:disable", "notify_campfire:disabled_alert"
 after "deploy:web:enable", "notify_campfire:enabled_alert"
-	
 after "deploy:update_code", :design
-after "deploy:finalize_update", "notify_campfire:deploy_alert"
+after "cake:aco_update", "notify_campfire:deploy_alert"
 
 capcake
