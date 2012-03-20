@@ -94,11 +94,7 @@ Audits = {
       autoLoad: true,
       autoSync: true,
       model: 'Audit',
-      storeId: 'AuditStore',
-      listeners: {
-        load: function () {
-        }
-      }
+      storeId: 'AuditStore'
     });
 
     this.userStore = Ext.create('Ext.data.Store', {
@@ -318,7 +314,8 @@ Audits = {
       deleteAuditBtn = Ext.getCmp('deleteAuditBtn'),
       excelDownloadBtn = Ext.getCmp('excelDownloadBtn'),
       form = this.auditFormPanel.getForm(),
-      sliderValue = Ext.getCmp('auditorSlider').originalValue,
+      slider = Ext.getCmp('auditorSlider'),
+      sliderValue = slider.originalValue,
       dirtyFields = form.getValues(false, true);
 
     if (this.auditFormPanel.collapsed) {
@@ -345,6 +342,7 @@ Audits = {
     deleteAuditBtn.disable();
     editAuditBtn.disable();
     excelDownloadBtn.disable();
+    slider.enable();
 
     selModel.deselectAll();
     this.selectedRecord = null;
@@ -352,20 +350,25 @@ Audits = {
 
   editAudit: function () {
     "use strict";
+    var slider = Ext.getCmp('auditorSlider');
 
     if (this.auditFormPanel.collapsed) {
       this.auditFormPanel.expand(true);
     }
 
     this.auditFormPanel.loadRecord(this.selectedRecord);
+    slider.disable();
   },
 
   deleteAudit: function () {
     "use strict";
 
+    this.auditStore.on('datachanged', function (store, recs) {
+      store.load();
+    });
+
     this.selectedRecord.set('disabled', 1);
     this.selectedRecord.save();
-    this.auditStore.load();
   },
 
   saveAudit: function () {
@@ -382,12 +385,15 @@ Audits = {
     formValues.start_date = Ext.Date.format(start_date, 'Y-m-d');
     formValues.end_date = Ext.Date.format(end_date, 'Y-m-d');
 
+    this.auditStore.on('datachanged', function (store, recs) {
+      store.load();
+    });
+
     if (form.isValid()) {
       if (this.selectedRecord) {
-        console.log('record selected');
         this.selectedRecord.set(formValues);
+        this.selectedRecord.save();
       } else {
-        console.log('record not selected');
         this.auditStore.add(formValues);
       }
     }
