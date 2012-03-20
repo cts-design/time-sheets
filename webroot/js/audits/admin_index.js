@@ -78,7 +78,8 @@ Audits = {
         },
         reader: { type: 'json', root: 'audits' },
         writer: { type: 'json', encode: true, root: 'audits', writeAllFields: false }
-      }
+      },
+      hasMany: { model: 'User', name: 'users' }
     });
 
     Ext.define('User', {
@@ -174,6 +175,7 @@ Audits = {
           title: 'Paste List of Customers',
           items: [{
             xtype: 'textareafield',
+            id: 'customersField',
             allowBlank: false,
             fieldLabel: 'Paste In a List of Customers (One Per Line)',
             height: 205,
@@ -350,13 +352,23 @@ Audits = {
 
   editAudit: function () {
     "use strict";
-    var slider = Ext.getCmp('auditorSlider');
+    var slider = Ext.getCmp('auditorSlider'),
+      customersField = Ext.getCmp('customersField'),
+      customers;
 
     if (this.auditFormPanel.collapsed) {
       this.auditFormPanel.expand(true);
     }
 
     this.auditFormPanel.loadRecord(this.selectedRecord);
+
+    customers = '';
+    this.selectedRecord.users().each(function (user) {
+      var formattedString = user.get('ssn') + "\n";
+      customers += formattedString;
+    });
+
+    customersField.setValue(customers);
     slider.disable();
   },
 
