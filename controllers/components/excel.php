@@ -14,7 +14,7 @@ class ExcelComponent extends Object {
 
     public function initialize(&$controller, $settings = array()) {
         $this->settings = array_merge($this->settings, $settings);
-        // $this->saveDirectory = Configure::read('Documents.storage.path');
+        $this->saveDirectory = substr(APP, 0, -1) . Configure::read('Document.storage.path');
     }
 
     public function create($title) {
@@ -89,15 +89,17 @@ class ExcelComponent extends Object {
             mkdir($this->saveDirectory);
         }
 
-        if (file_exists("$filename.xlsx")) {
-            unlink("$filename.xlsx");
+        $fileWithPath = $this->saveDirectory . $filename . '.xlsx';
+
+        if (file_exists($fileWithPath)) {
+            unlink($fileWithPath);
         }
 
-        $this->writer->save("$filename.xlsx");
+        $this->writer->save($fileWithPath);
     }
 
     public function saveDirectory($dir) {
-        $this->saveDirectory = './';
+        $this->saveDirectory = $dir;
     }
 
     private function setExcelDefaults() {
