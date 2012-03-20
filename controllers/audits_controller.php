@@ -295,7 +295,8 @@ class AuditsController extends AppController {
     }
 
     public function createExcelReports($auditId) {
-        $this->Excel->saveDirectory(Configure::read('Document.storage.path') . 'audit_reports');
+        $saveDirectory = substr(APP, 0, -1) . Configure::read('Document.storage.path');
+        $this->Excel->saveDirectory($saveDirectory . 'audit_reports/');
 
         // auditor report
         $this->Excel->create("Auditors for audit id: $auditId");
