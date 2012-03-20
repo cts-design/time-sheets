@@ -330,6 +330,7 @@ class FiledDocumentsController extends AppController {
 				$report[$k]['Modified'] = date('m/d/y h:i a', strtotime($v['FiledDocument']['modified']));		
 			}			
 		}
+		$this->Transaction->createUserTransaction('Storage', null, null, 'Created a filed document archive Excel report');		
 		if(empty($report[0])) {
 		    $this->Session->setFlash(__('There are no results to generate a report', true), 'flash_failure');
 		    $this->redirect(array('action' => 'view_all_docs'));

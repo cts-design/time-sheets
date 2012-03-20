@@ -3,6 +3,19 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+	<h1>Release 3.2.4 (3/08/12)</h1>
+	<h2>Minor Feature Enhancements</h2>
+	<ol>
+		<li>Added a user activity transaction to excel report for document archive.</li>
+		<li>Updated support link in admin dash to mailto dev@ctsfla.com.</li>
+	</ol>
+	<h2>Bug Fixes</h2>
+	<ol>
+		<li>
+			Fixed bug where paging toolbar was not showing if there was enough rows in the grid to make it scroll. Adjusted height of editor below to allow for the extra height needed by the grid.
+		</li>		
+	</ol>	
+	<hr />
 	<h1>Release 3.2.3 (2/23/12)</h1>
 	<h2>Minor Feature Enhancements</h2>
 	<ol>
