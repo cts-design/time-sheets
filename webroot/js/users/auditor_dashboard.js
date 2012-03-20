@@ -330,7 +330,7 @@ AuditDashboard = {
   embedDocument: function (id) {
     "use strict";
     var pdf,
-      loadMask = new Ext.LoadMask('customerDocumentPDF', { msg: 'Loading Document...' });
+      loadMask = new Ext.LoadMask(Ext.getBody(), { msg: 'Loading Document...' });
 
     loadMask.show();
 
@@ -354,7 +354,7 @@ AuditDashboard = {
 
     if (!this.timeout) {
       this.timeout = new Ext.util.DelayedTask(function () {
-        window.location = '/auditor/users/logout';
+        window.location = '/users/logout';
       });
 
       this.timeout.delay(300000);
