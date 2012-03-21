@@ -32,7 +32,7 @@ namespace :cts do
     set :deploy_to, "/var/www/vhosts/staging.atlasforworkforce.com/#{application}"
     set :server_name, 'atlas staging'
     set :user, 'atlas_staging'
-    set :keep_releases, 2
+    set :keep_releases, 1
     set :branch, 'staging'
     set :design_branch, ENV['DESIGN'] if ENV.has_key?('DESIGN')
     server "staging.atlasforworkforce.com", :app, :web, :db, :primary => true
@@ -187,9 +187,13 @@ namespace :notify_campfire do
 
   desc 'Alert Campfire of a deploy'
   task :deploy_alert do
-    branch_name = branch.split('/', 2).last   
-    deployed = capture("cd #{previous_release} && git rev-parse HEAD")[0,7]
-    deploying = capture("cd #{current_release} && git rev-parse HEAD")[0,7]
+    branch_name = branch.split('/', 2).last
+    if current_release   
+      deployed = capture("cd #{current_release} && git rev-parse HEAD")[0,7]
+    else 
+      deployed = 'no current release'  
+    end  
+    deploying = capture("cd #{latest_release} && git rev-parse HEAD")[0,7]
     compare_url = "https://github.com/CTSATLAS/atlas/compare/#{deployed}...#{deploying}"
 
     body =
@@ -247,6 +251,6 @@ after "mysql:backup", "notify_campfire:mysql_backup_alert"
 after "deploy:web:disable", "notify_campfire:disabled_alert"
 after "deploy:web:enable", "notify_campfire:enabled_alert"
 after "deploy:update_code", :design
-after "cake:aco_update", "notify_campfire:deploy_alert"
+after "deploy:finalize_update", "notify_campfire:deploy_alert"
 
 capcake
