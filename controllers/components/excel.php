@@ -1,5 +1,13 @@
 <?php
-
+/**
+ * Zip Component
+ *
+ * CakePHP component that works as an adapter for the native ZipArchive extension
+ *
+ * @package AtlasV3
+ * @author Brandon Cordell
+ * @copyright 2012 Complete Technology Solutions
+ */
 App::import('Vendor', 'PHPExcel', array('file' => 'excel' . DS . 'PHPExcel.php'));
 App::import('Vendor', 'PHPExcelWriter', array('file' => 'excel' . DS . 'PHPExcel' . DS . 'Writer' . DS . 'Excel2007.php'));
 
