@@ -217,6 +217,8 @@ class QueuedDocumentsController extends AppController {
 			if(!empty($this->params['form']['id'])){
 				$this->data['QueuedDocument'] = $this->params['form'];
 				$this->data['QueuedDocument']['last_activity_admin_id'] = $this->Auth->user('id');
+				$this->data['QueuedDocument']['locked_status'] = 0;
+				$this->data['QueuedDocument']['locked_by'] = null;
 				if($this->QueuedDocument->save($this->data)) {
 				    $queueCatList = $this->QueuedDocument->DocumentQueueCategory->find('list');
 				    $queueCatId = $this->data['QueuedDocument']['queue_category_id'];
