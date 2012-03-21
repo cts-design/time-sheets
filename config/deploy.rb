@@ -4,6 +4,7 @@ require 'capcake'
 set :application, 'atlas' # app's location (domain or sub-domain name)
 set :repository, "git@github.com:CTSATLAS/atlas.git"
 set :branch, 'master'
+set :keep_releases, 5
 
 set :deploy_via, :remote_cache
 
@@ -11,6 +12,9 @@ set :default_shell, '/bin/bash'
 
 # branch to pull atlas design files from
 set :design_branch, "master"
+
+# plugins, override in region namespace if region has plugins
+set :app_plugins, []
 
 # --- Server Settings. 
 
@@ -25,12 +29,13 @@ namespace :cts do
   end
   
   task :staging do  
-    set :deploy_to, "/var/www/vhosts/development.ctsfla.com/#{application}"
-    set :server_name, 'cts staging'
-    set :user, 'dev4cts'
+    set :deploy_to, "/var/www/vhosts/staging.atlasforworkforce.com/#{application}"
+    set :server_name, 'atlas staging'
+    set :user, 'atlas_staging'
+    set :keep_releases, 1
     set :branch, 'staging'
     set :design_branch, ENV['DESIGN'] if ENV.has_key?('DESIGN')
-    server "development.ctsfla.com", :app, :web, :db, :primary => true
+    server "staging.atlasforworkforce.com", :app, :web, :db, :primary => true
   end
   
   task :tradeshow do
@@ -88,8 +93,9 @@ end
 # --- Cake Settings
 set :cake_branch, "1.3"
 
-set :shared_children,       %w(config system tmp tmp/fdf webroot/files/public webroot/img/public storage 
-                               storage/thumbnails storage/program_forms storage/program_media)
+set :shared_children,       %w(config backups plugins system tmp tmp/fdf webroot/files/public 
+                               webroot/img/public storage storage/thumbnails storage/program_forms 
+                               storage/program_media)
 
 namespace :deploy do
   desc "Updates symlinks needed to make application work"
@@ -102,6 +108,9 @@ namespace :deploy do
       end
     end
     run "ln -s #{shared_path}/system #{latest_release}/webroot/system && ln -s #{shared_path}/tmp #{latest_release}/tmp";
+    run "rm -f #{current_path} && ln -s #{latest_release} #{current_path}" 
+    cake.database.symlink if (remote_file_exists?(database_path))
+
     run "ln -s #{shared_path}/storage #{latest_release}/storage"
     run "ln -s #{shared_path}/webroot/files/public #{latest_release}/webroot/files/public"
     run "ln -s #{shared_path}/webroot/img/public #{latest_release}/webroot/img/public"
@@ -115,9 +124,28 @@ namespace :deploy do
     run "ln -s #{shared_path}/webroot/index.php #{latest_release}/webroot/index.php"
     run "ln -s #{shared_path}/webroot/test.php #{latest_release}/webroot/test.php"
     run "ln -s #{shared_path}/webroot/js/ckfinder/config.php #{latest_release}/webroot/js/ckfinder/config.php"
-    run "rm -f #{current_path} && ln -s #{latest_release} #{current_path}" 
-    cake.database.symlink if (remote_file_exists?(database_path))   
-  end  
+    deploy.plugins.symlink       
+  end 
+
+  namespace :plugins do
+    desc "Symlinks the configured plugins for the appliction into plugins, from the shared dirs."
+    task :symlink, :except => { :no_release => true } do
+      app_plugins.each { |plugin|
+        run "ln -s #{shared_path}/plugins/#{plugin} #{latest_release}/plugins/#{plugin}"
+      }
+    end
+  end
+
+  task :finalize_update, :except => { :no_release => true } do
+    #run "chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
+    #run "chmod 755 -R #{release_path}" #do we need this line? 
+    cake.cache.clear
+    cake.schema.create
+    cake.schema.update
+    cake.aco_update
+    cake.cache.clear
+  end
+
 end
 
 namespace :cake do
@@ -129,7 +157,7 @@ namespace :cake do
     
     desc "Update database schema update tables"
     task :update, roles => [:web] do
-    	run "cd #{current_release} && yes y | cake schema update atlas"
+      run "cd #{current_release} && yes y | cake schema update atlas"
     end
   end 
    
@@ -153,23 +181,19 @@ task :design do
   end
 end  
 
-task :finalize_deploy, :roles => [:web] do
-  run "chmod 755 -R #{release_path}"
-  cake.cache.clear
-  cake.schema.create
-  cake.schema.update
-  cake.aco_update
-  cake.cache.clear
-end
 
 namespace :notify_campfire do
   deployer = ENV["USER"]
 
   desc 'Alert Campfire of a deploy'
   task :deploy_alert do
-    branch_name = branch.split('/', 2).last   
-    deployed = capture("cd #{previous_release} && git rev-parse HEAD")[0,7]
-    deploying = capture("cd #{current_release} && git rev-parse HEAD")[0,7]
+    branch_name = branch.split('/', 2).last
+    if current_release   
+      deployed = capture("cd #{current_release} && git rev-parse HEAD")[0,7]
+    else 
+      deployed = 'no current release'  
+    end  
+    deploying = capture("cd #{latest_release} && git rev-parse HEAD")[0,7]
     compare_url = "https://github.com/CTSATLAS/atlas/compare/#{deployed}...#{deploying}"
 
     body =
@@ -190,17 +214,43 @@ namespace :notify_campfire do
     body = "#{deployer} removed #{server_name} from maintenance mode."
     send_campfire_alert body
   end
+
+  desc 'Alert Campfire of database backup'
+  task :mysql_backup_alert do
+    body = "#{server_name} database backup complete"
+    send_campfire_alert body
+  end
+
 end
 
 def send_campfire_alert(body)
   run "cd #{current_release} && cake campfire '#{body}'" 
 end
 
+
+namespace :mysql do
+  desc "performs a backup (using mysqldump) in app shared dir"
+  task :backup do
+    filename = "#{application}.db_backup.#{Time.now.to_f}.sql.bz2"
+    filepath = "#{shared_path}/backups/#{filename}"
+    text = capture "cat #{shared_path}/config/database.yml"
+    yaml = YAML::load(text)
+
+    on_rollback { run "rm #{filepath}" }
+    run "mysqldump -u #{yaml['production']['username']} -p #{yaml['production']['database']} | bzip2 -c > #{filepath}" do |ch, stream, out|
+      ch.send_data "#{yaml['production']['password']}\n" if out =~ /^Enter password:/
+    end
+
+  end
+
+end
+
+before :deploy, 'mysql:backup' 
+
+after "mysql:backup", "notify_campfire:mysql_backup_alert"
 after "deploy:web:disable", "notify_campfire:disabled_alert"
 after "deploy:web:enable", "notify_campfire:enabled_alert"
-	
 after "deploy:update_code", :design
-after "deploy:symlink", :finalize_deploy
-after :finalize_deploy, "notify_campfire:deploy_alert"
+after "deploy:finalize_update", "notify_campfire:deploy_alert"
 
 capcake
