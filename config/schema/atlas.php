@@ -469,7 +469,7 @@ class atlasSchema extends CakeSchema {
 	);
 	var $program_response_docs = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
-		'cat_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
+		'cat_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'key' => 'index'),
 		'program_response_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'doc_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'paper_form' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
