@@ -189,12 +189,15 @@ AuditDashboard = {
               text: 'Id'
             }, {
               dataIndex: 'location',
+              flex: 1,
               text: 'Location'
             }, {
               dataIndex: 'module',
+              flex: 1,
               text: 'Module'
             }, {
               dataIndex: 'details',
+              flex: 1,
               text: 'Details'
             }, {
               xtype: 'datecolumn',
