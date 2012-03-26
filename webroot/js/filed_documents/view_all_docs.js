@@ -11,8 +11,9 @@ Ext.onReady(function(){
 			'Cat2-name', 
 			'Cat3-name',
 			'description', 
-			'created', 
+			'created',
 			'modified', 
+			'filed', 
 			'LastActAdmin-lastname',
 			'view'
 		]
@@ -97,6 +98,12 @@ Ext.onReady(function(){
 		},{
 			text: 'Modified',
 			dataIndex: 'modified',
+			sortable: true,
+			width: 110,
+			hidden: true
+		},{
+			text: 'Filed',
+			dataIndex: 'filed',
 			sortable: true,
 			width: 115
 		}, {
