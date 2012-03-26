@@ -484,9 +484,9 @@ class atlasSchema extends CakeSchema {
 		'program_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'template' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'cat_1' => array('type' => 'integer', 'null' => false, 'default' => NULL),
-		'cat_2' => array('type' => 'integer', 'null' => false, 'default' => NULL),
-		'cat_3' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+		'cat_1' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'cat_2' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'cat_3' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'cert' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
@@ -495,7 +495,7 @@ class atlasSchema extends CakeSchema {
 	);
 	var $program_response_docs = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
-		'cat_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
+		'cat_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'key' => 'index'),
 		'program_response_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'doc_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'paper_form' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
