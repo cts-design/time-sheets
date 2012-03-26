@@ -421,6 +421,7 @@ class FiledDocumentsController extends AppController {
 		$this->data['FiledDocument']['user_id'] = $this->data['User']['id'];
 		$this->data['FiledDocument']['last_activity_admin_id'] = $this->data['FiledDocument']['admin_id'];
 		$this->data['FiledDocument']['entry_method'] = $entryMethod;
+		$this->data['FiledDocument']['filed'] = date('Y-m-d H:i:s');
 		if(!move_uploaded_file($this->data['FiledDocument']['submittedfile']['tmp_name'], $path . $docName)) {
 		    return false;
 		}
