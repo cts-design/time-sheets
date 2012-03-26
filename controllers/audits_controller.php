@@ -3,7 +3,7 @@
 class AuditsController extends AppController {
     public $name = 'Audits';
 
-    public $components = array('Excel');
+    public $components = array('Excel', 'Zip');
 
     public $auditors = array();
     public $invalidCustomers = array();
