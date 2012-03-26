@@ -135,6 +135,20 @@ class AuditsController extends AppController {
         return $this->render(null, null, '/elements/ajaxreturn');
     }
 
+    public function admin_view($id = null, $type = null) {
+        $this->view = 'Media';
+        $filename = "audit_" . $type . "_" . $id . ".xlsx";
+        $params = array(
+            'id' => $filename,
+            'name' => str_replace('.xlsx', '', $filename),
+            'extension' => 'xlsx',
+            'mimeType' => array('xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
+            'cache' => true,
+            'path' => Configure::read('Document.storage.path') . 'audit_reports/'
+        );
+        $this->set($params);
+    }
+
     public function admin_filed_docs() {
         $customerId = $this->params['url']['customer_id'];
         $data = array();

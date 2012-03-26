@@ -415,11 +415,11 @@ Audits = {
     var auditId = this.selectedRecord.data.id
     switch (btn.id) {
       case 'auditorListBtn':
-        window.location = '/audit_auditors_' + auditId + '.xlsx';
+        window.location = '/admin/audits/view/' + auditId + '/auditors';
         break;
 
       case 'customerListBtn':
-        window.location = '/audit_customers_' + auditId + '.xlsx';
+        window.location = '/admin/audits/view/' + auditId + '/customers';
         break;
     }
   },
