@@ -59,6 +59,7 @@
 		<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Deleted Reason', true), 'deleted_reason'); ?></th>
 		<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Last Activity Admin Id', true), 'last_activity_admin_id'); ?></th>
 		<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Created', true), 'created'); ?></th>
+		<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Filed', true), 'filed'); ?></th>
 		<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Modified', true), 'modified'); ?></th>
 		<th class="actions ui-state-default"><?php __('Actions'); ?></th>
 	    </tr>
@@ -88,6 +89,11 @@
 		<?php echo (!empty($deletedDocument['LastActAdmin']['lastname'])) ? $deletedDocument['LastActAdmin']['lastname']  .', '. $deletedDocument['LastActAdmin']['firstname'] : ''; ?>&nbsp;
 	    </td>
 	    <td><?php echo $this->Time->format('m-d-y g:i a', $deletedDocument['DeletedDocument']['created']); ?>&nbsp;</td>
+	    <td>
+	    	<?php if($deletedDocument['DeletedDocument']['filed']) : ?>
+	    		<?php echo $this->Time->format('m-d-y g:i a', $deletedDocument['DeletedDocument']['filed']); ?>&nbsp; ?>
+	    	<?php endif ?>
+		</td>
 	    <td><?php echo $this->Time->format('m-d-y g:i a', $deletedDocument['DeletedDocument']['modified']); ?>&nbsp;</td>
 			
 		<?php if($deletedDocument['Cat1']['secure']) : ?>
