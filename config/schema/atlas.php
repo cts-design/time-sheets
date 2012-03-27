@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2012-03-15 14:10:22 : 1331835022*/
+/* atlas schema generated on: 2012-03-27 16:34:07 : 1332880447*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -130,6 +130,7 @@ class atlasSchema extends CakeSchema {
 		'last_activity_admin_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'filed' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
@@ -230,6 +231,7 @@ class atlasSchema extends CakeSchema {
 		'last_activity_admin_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'key' => 'index'),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'filed' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'user_id' => array('column' => 'user_id', 'unique' => 0), 'last_activity_admin_id' => array('column' => 'last_activity_admin_id', 'unique' => 0), 'admin_id' => array('column' => 'admin_id', 'unique' => 0)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
@@ -474,9 +476,9 @@ class atlasSchema extends CakeSchema {
 		'program_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'template' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'cat_1' => array('type' => 'integer', 'null' => false, 'default' => NULL),
-		'cat_2' => array('type' => 'integer', 'null' => false, 'default' => NULL),
-		'cat_3' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+		'cat_1' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'cat_2' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'cat_3' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'cert' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
