@@ -11,6 +11,9 @@ class AuditsController extends AppController {
 
     public function beforeFilter() {
         parent::beforeFilter();
+        if (preg_match('/auditor/i', $this->Session->read('Auth.User.role_name'))) {
+            $this->Auth->allow('admin_read', 'admin_users', 'admin_view', 'admin_user_transactions', 'admin_filed_docs');
+        }
     }
 
     public function admin_index() {}
