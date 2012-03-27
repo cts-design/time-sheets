@@ -511,10 +511,11 @@ class FiledDocumentsController extends AppController {
                     }
                 }
             }
-			if(isset($filters['fromDate']) && isset($filters['toDate'])){
+			if(isset($filters['fromDate'], $filters['toDate'], $filters['dateType'])){
 				$from = date('Y-m-d H:i:m', strtotime($filters['fromDate'] . '12:00 AM'));
 				$to = date('Y-m-d H:i:m', strtotime($filters['toDate'] . '11:59 PM'));
-				$conditions['FiledDocument.created BETWEEN ? AND ?'] = array($from, $to);
+
+				$conditions['FiledDocument.' . $filters['dateType'] . ' BETWEEN ? AND ?'] = array($from, $to);
 			}
 			if(isset($filters['filed_location_id'])){
 				$conditions['FiledDocument.filed_location_id'] = $filters['filed_location_id'];

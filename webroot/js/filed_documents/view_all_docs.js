@@ -276,6 +276,16 @@ Ext.onReady(function(){
 			{'scope' : 'matching exactly', 'label' : 'Matching Exactly'}
 		]
 	});
+
+	var dateTypeStore = Ext.create('Ext.data.ArrayStore', {
+		storeId: 'dateTypeStore',
+		fields: ['dateType', 'label'],
+		data: [
+			['created', 'Created'],
+			['filed', 'Filed'],
+			['modified', 'Modified']
+		]
+	});
 	
 	var allDocsSearch = Ext.create('Ext.form.Panel', {
 		frame: true,
@@ -297,6 +307,16 @@ Ext.onReady(function(){
 				bodyStyle: 'padding: 0 10px',
 				title: 'Dates',
 				items: [{
+					xtype: 'combo',
+					fieldLabel: 'Date Type',
+					id: 'dateType',
+					name: 'dateType',
+					store: 'dateTypeStore',
+					valueField: 'dateType',
+					displayField: 'label',
+					value: 'Filed',
+					width: 200
+				},{
 					xtype: 'datefield',
 					id: 'fromDate',
 					fieldLabel: 'From',
