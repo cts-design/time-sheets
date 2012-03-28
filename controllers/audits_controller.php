@@ -20,8 +20,18 @@ class AuditsController extends AppController {
 
     public function admin_read() {
         $this->Audit->Behaviors->attach('Containable');
+        $conditions = array();
+
+        if (preg_match('/auditor/i', $this->Session->read('Auth.User.role_name'))) {
+            $this->Audit->bindModel(array(
+                'hasOne' => array('AuditsAuditor')
+            ));
+            $conditions = array('AuditsAuditor.user_id' => $this->Session->read('Auth.User.id'));
+        }
+
         $audits = $this->Audit->find('all', array(
             'fields' => array('Audit.*'),
+            'conditions' => $conditions,
             'contain' => array(
                 'AuditsAuditor',
                 'User' => array(
