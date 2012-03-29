@@ -28,6 +28,12 @@
 							'between' => '</p><p class="left">',
 							'after' => '</p>'));
 		echo '<br class="clear" />';
+		echo '<div class="input"><p class="left">';
+		echo $this->Form->label('Secure');
+		echo '</p>';
+		echo $this->Form->checkbox('secure');
+		echo '</div>';
+		echo '<br class="clear" />';		
 	?>
 	</fieldset>
 <?php echo $this->Form->end(__('Submit', true));?>

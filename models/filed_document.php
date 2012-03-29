@@ -28,17 +28,17 @@ class FiledDocument extends AppModel {
 		'Cat1' => array(
 		    'className' => 'DocumentFilingCategory',
 		    'foreignKey' => 'cat_1',
-		    'fields' => 'id, name'
+		    'fields' => 'id, name, secure, secure_admins'
 		),
 		'Cat2' => array(
 		    'className' => 'DocumentFilingCategory',
 		    'foreignKey' => 'cat_2',
-		    'fields' => 'id, name'
+		    'fields' => 'id, name, secure, secure_admins'
 		),
 		'Cat3' => array(
 		    'className' => 'DocumentFilingCategory',
 		    'foreignKey' => 'cat_3',
-		    'fields' => 'id, name'
+		    'fields' => 'id, name, secure, secure_admins'
 		),
 		'Location' => array(
 		    'className' => 'Location',

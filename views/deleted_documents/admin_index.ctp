@@ -59,18 +59,17 @@
 		<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Deleted Reason', true), 'deleted_reason'); ?></th>
 		<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Last Activity Admin Id', true), 'last_activity_admin_id'); ?></th>
 		<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Created', true), 'created'); ?></th>
+		<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Filed', true), 'filed'); ?></th>
 		<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Modified', true), 'modified'); ?></th>
 		<th class="actions ui-state-default"><?php __('Actions'); ?></th>
 	    </tr>
 	</thead>
-	<?php
-	$i = 0;
-	foreach($deletedDocuments as $deletedDocument):
-	    $class = null;
-	    if($i++ % 2 == 0) {
-		$class = ' class="altrow"';
-	    }
-	?>
+	<?php $i = 0; ?>
+	<?php foreach($deletedDocuments as $deletedDocument): ?>
+	<?php $class = null; ?>
+	<?php if($i++ % 2 == 0) : ?>
+		<?php $class = ' class="altrow"'; ?>
+	<?php endif ?>
     	<tr<?php echo $class;?>>
     	    <td><?php echo $deletedDocument['DeletedDocument']['id']; ?>&nbsp;</td>
     	    <td>
@@ -90,10 +89,41 @@
 		<?php echo (!empty($deletedDocument['LastActAdmin']['lastname'])) ? $deletedDocument['LastActAdmin']['lastname']  .', '. $deletedDocument['LastActAdmin']['firstname'] : ''; ?>&nbsp;
 	    </td>
 	    <td><?php echo $this->Time->format('m-d-y g:i a', $deletedDocument['DeletedDocument']['created']); ?>&nbsp;</td>
+	    <td>
+	    	<?php if($deletedDocument['DeletedDocument']['filed']) : ?>
+	    		<?php echo $this->Time->format('m-d-y g:i a', $deletedDocument['DeletedDocument']['filed']); ?>&nbsp; ?>
+	    	<?php endif ?>
+		</td>
 	    <td><?php echo $this->Time->format('m-d-y g:i a', $deletedDocument['DeletedDocument']['modified']); ?>&nbsp;</td>
+			
+		<?php if($deletedDocument['Cat1']['secure']) : ?>
+			<?php $admins = json_decode($deletedDocument['Cat1']['secure_admins'], true) ?>
+			<?php $admins = (is_array($admins)) ? $admins : array() ?> 	
+		<?php endif ?>
+		<?php if($deletedDocument['Cat2']['secure']) : ?>
+			<?php $admins = json_decode($deletedDocument['Cat2']['secure_admins'], true) ?>
+			<?php $admins = (is_array($admins)) ? $admins : array() ?> 	
+		<?php endif ?>
+		<?php if($deletedDocument['Cat3']['secure']) : ?>
+			<?php $admins = json_decode($deletedDocument['Cat3']['secure_admins'], true) ?>
+			<?php $admins = (is_array($admins)) ? $admins : array() ?> 	
+		<?php endif; ?>
+		<?php if($deletedDocument['DocumentQueueCategory']['secure']) : ?>
+			<?php $admins = json_decode($deletedDocument['DocumentQueueCategory']['secure_admins'], true) ?>
+			<?php $admins = (is_array($admins)) ? $admins : array() ?>
+		<?php endif ?> 
+		<?php $allowed = true;?>
+		<?php if(isset($admins)) : ?>	
+			<?php $allowed = in_array($this->Session->read('Auth.User.id'), $admins) ?>	
+			<?php unset($admins) ?>
+		<?php endif ?>  
 	    <td class="actions">
-		<?php echo $this->Html->link(__('View', true), array('action' => 'view', $deletedDocument['DeletedDocument']['id']), array('class' => 'view')); ?>
-		<?php echo $this->Html->link(__('Restore', true), array('action' => 'restore', $deletedDocument['DeletedDocument']['id']), array('class' => 'restore')); ?>
+		<?php if( !$allowed && $this->Session->read('Auth.User.role_id') > 3) : ?>
+			<p><?php echo $this->Html->image('icons/key.png');?> Secure Document</p>	
+		<?php else :?>	    	
+			<?php echo $this->Html->link(__('View', true), array('action' => 'view', $deletedDocument['DeletedDocument']['id']), array('class' => 'view')); ?>
+			<?php echo $this->Html->link(__('Restore', true), array('action' => 'restore', $deletedDocument['DeletedDocument']['id']), array('class' => 'restore')); ?>
+		<?php endif; ?>	
 	    </td>
 	</tr>
 	<?php endforeach; ?>

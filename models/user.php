@@ -26,7 +26,11 @@ class User extends AppModel {
 		'FiledDocument' => array(
 		    'className' => 'FiledDocument',
 		    'foreignKey' => 'user_id'
-		)
+		),
+		'QueuedDocument' => array(
+		    'className' => 'QueuedDocument',
+		    'foreignKey' => 'user_id'
+		)		
     );
 	
     var $hasOne = array(

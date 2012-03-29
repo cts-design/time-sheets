@@ -11,340 +11,382 @@ App::import('Core', 'HttpSocket');
 
 class QueuedDocumentsController extends AppController {
 
-    var $name = 'QueuedDocuments';
+    public $name = 'QueuedDocuments';
 	
-	var $components = array('Notifications', 'Email');
+	public $components = array('Notifications', 'Email');
 
-    var $lockStatuses = array(
-		0 => 'Un-Locked',
+    public $lockStatuses = array(
+		0 => 'Unlocked',
 		1 => 'Locked'
     );
 	
-    var $reasons = array(
-		'Duplicate scan' => 'Duplicate scan',
-		'Customer info missing' => 'Customer info missing',
-		'Multiple customers in same scan' => 'Multiple customers in same scan',
-		'Multiple programs in same scan' => 'Multiple programs in same scan',
-		'Document unreadable' => 'Document unreadable',
-		'Scan is incomplete' => 'Scan is incomplete',
-		'Document scanned in error or not needed' => 'Document scanned in error or not needed',
-		'Other' => 'Other'
-    );
-
-    function beforeFilter() {
+   public function beforeFilter() {
 		parent::beforeFilter();
-		$this->Cookie->name = 'docQueueSearch';
-		$this->Cookie->time = 0;
 		$this->Security->validatePost = false;
 		if($this->Auth->user()) {
 		    if($this->Acl->check(array(
-				'model' => 'Role',
-				'foreign_key' => $this->Auth->user('role_id')), 'QueuedDocuments/admin_index', '*')){
-			$this->Auth->allow('admin_view');
+				'model' => 'User',
+				'foreign_key' => $this->Auth->user('id')), 'QueuedDocuments/admin_index', '*')){
+					$this->Auth->allow('admin_view', 'admin_lock_document', 'admin_unlock_document');
 		    }
-		}
-    }
-
-    function admin_index($action=null, $docId=null, $active=null) {
-		$canFile = null;
-		if(!empty($action) && $action == 'reset') {
-		    if($this->RequestHandler->isAjax()) {
-			$this->QueuedDocument->checkLocked($this->Auth->user('id'));
-			exit;
-		    }
-		    elseif(!$this->RequestHandler->isAjax()) {
-			$this->_resetFilters();
-			$this->redirect(array('action' => 'index'));
-		    }
-		}
-		if(!empty($action) && $action == 'resetInactive') {
-		    $this->QueuedDocument->checkLocked($this->Auth->user('id'));
-		    $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => true));
-		}
-		if(!empty($this->data['User']['qd']) && $this->data['User']['qd'] == 'add' ) {
-		    $this->_addCustomer();
-		}
-		$this->QueuedDocument->recursive = 0;
-		$locationId = $this->Cookie->read('location_id');
-		$queuedDocId = $this->Cookie->read('queue_category_id');
-		$from = $this->Cookie->read('date_from');
-		$to = $this->Cookie->read('date_to');
-		if(!$this->RequestHandler->isAjax()) {
-		    if(!empty($this->data['QueuedDocument']) && empty($this->data['QueuedDocument']['location'])) {
-				$this->Session->setFlash(__('You must select a location', true), 'flash_failure');
-		    }
-		}
-		if(!empty($this->data['QueuedDocument'])) {
-		    $this->_resetFilters();
-		    if($this->data['QueuedDocument']['location'] != 'All') {
-			$conditions['QueuedDocument.scanned_location_id'] = $this->data['QueuedDocument']['location'];
-		    }
-		    $this->Cookie->write('location_id', $this->data['QueuedDocument']['location']);
-		    $locationId = $this->data['QueuedDocument']['location'];
-		}
-	
-		elseif(!empty($locationId) && $locationId != 'All') {
-		    $conditions['QueuedDocument.scanned_location_id'] = $locationId;
-		}
-		if(!empty($this->data['QueuedDocument']['program']) && !empty($this->data['QueuedDocument']['location'])) {
-		    $conditions['QueuedDocument.queue_category_id'] = $this->data['QueuedDocument']['program'];
-		    $this->Cookie->write('queue_category_id', $this->data['QueuedDocument']['program']);
-		    $queuedDocId = $this->data['QueuedDocument']['program'];
-		}
-		elseif(!empty($queuedDocId)) {
-		    $conditions['QueuedDocument.queue_category_id'] = $queuedDocId;
-		}
-		if(!empty($this->data['QueuedDocument']['date_from']) && !empty($this->data['QueuedDocument']['date_to'])
-			&& !empty($this->data['QueuedDocument']['location'])) {
-		    $from = date('Y-m-d H:i:m', strtotime($this->data['QueuedDocument']['date_from'] . " 12:00 am"));
-		    $to = date('Y-m-d H:i:m', strtotime($this->data['QueuedDocument']['date_to'] . " 11:59 pm"));
-		    $this->Cookie->write('date_from', $from);
-		    $this->Cookie->write('date_to', $to);
-		    $conditions['QueuedDocument.created Between ? AND ?'] = array($from, $to);
-		}
-		elseif(!empty($from) && !empty($to)) {
-		    $conditions['QueuedDocument.created Between ? AND ?'] = array($from, $to);
-		}
-		if(isset($conditions)) {
-		    // @TODO Move the pagianation limits to the config file
-		    $this->paginate = array('limit' => 10, 'conditions' => $conditions);
-		}
-		else {
-		    // @TODO Move the pagianation limits to the config file 
-		    $this->paginate = array('limit' => 10);
-		}
-		if(isset($conditions) || $locationId == 'All' || !empty($docId)) {
-		    $this->QueuedDocument->checkLocked($this->Auth->user('id'));
-		    if(!empty($docId)) {
-			$conditions['QueuedDocument.id'] = $docId;
-		    }
-		    $conditions['QueuedDocument.locked_status'] = 0;
-		    $doc = $this->QueuedDocument->find('first',
-				    array('conditions' => $conditions, 'order' => array('QueuedDocument.id' => 'asc')));
-		    if(!empty($doc['QueuedDocument']['id'])) {
-				if($this->QueuedDocument->lockDocument($doc['QueuedDocument']['id'], $this->Auth->user('id'))) {
-				    $lockedDoc = $doc;
-				    $this->Transaction->createUserTransaction('Storage', null, null , 'Locked document ID '. $doc['QueuedDocument']['id'] );
-				}
-		    }
-		    else
-			$lockedDoc = null;
-		}
-		else {
-		    $lockedDoc = null;
-		}
-		$this->loadModel('DocumentFilingCategory');
-		$this->DocumentFilingCategory->recursive = -1;
-		if(!empty($from)) {
-		    $from = date('m/d/Y', strtotime($from));
-		}
-		if(!empty($to)) {
-		    $to = date('m/d/Y', strtotime($to));
-		}
-		if($this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'QueuedDocuments/admin_file_document', '*')) {
-		    if($active == null && !empty($conditions)) {
-			$active = 2;
-		    }
-		    $canFile = true;
-		}
-		else {
-		    if($active == null && !empty($conditions)) {
-			$active = 1;
-		    }
-		}
-		$locations = $this->QueuedDocument->Location->find('list');
-		$locations['All'] = 'All Locations';
-	
-		$data = array(
-		    'states' => $this->states,
-		    'genders' => $this->genders,
-		    'statuses' => $this->statuses,
-		    'active' => $active,
-		    'lockedDoc' => $lockedDoc,
-		    'lockStatuses' => $this->lockStatuses,
-		    'queuedDocuments' => $this->paginate(),
-		    'cat1' => $this->DocumentFilingCategory->find('list',
-			    array('conditions' => array('DocumentFilingCategory.parent_id' => null, 'DocumentFilingCategory.disabled' => 0))),
-		    'locations' => $locations,
-		    'reasons' => $this->reasons,
-		    'queueCategories' => $this->QueuedDocument->DocumentQueueCategory->find('list', array(
-		    	'conditions' => array('DocumentQueueCategory.deleted' => 0))),
-		    'locationId' => $locationId,
-		    'queuedDocId' => $queuedDocId,
-		    'from' => $from,
-		    'to' => $to,
-		    'canFile' => $canFile
-		);
-		if(!empty($lockedDoc['QueuedDocument']['user_id'])) {
-		    $data['user'] = $this->QueuedDocument->User->read(null,$lockedDoc['QueuedDocument']['user_id'] );
-		}
-		if(!empty($lockedDoc['QueuedDocument']['bar_code_definition_id'])) {
-			$this->loadModel('BarCodeDefinition');
-			 $definition = $this->BarCodeDefinition->findById(
-				$lockedDoc['QueuedDocument']['bar_code_definition_id'], array('cat_1', 'cat_2', 'cat_3'));	
-			if($definition) {
-				$data['categories'] = $definition['BarCodeDefinition'];
-			}		
 		}		
-		else if(!empty($lockedDoc['QueuedDocument']['self_scan_cat_id'])) {
-		    $category = $this->QueuedDocument->SelfScanCategory->findById(
-		    	$lockedDoc['QueuedDocument']['self_scan_cat_id'], array('cat_1', 'cat_2', 'cat_3'));
-			if($category) {
-				$data['categories'] = $category['SelfScanCategory'];
-			}	
-		}
-
-		$this->set($data);
+    }
+	
+	public function admin_index() {
+		$canFile = 0;
+		$canDelete = 0;
+		$canReassign = 0;
+		$canAddCustomer = 0;
+	    if($this->Acl->check(array(
+			'model' => 'User',
+			'foreign_key' => $this->Auth->user('id')), 'QueuedDocuments/admin_file_document', '*')){
+				$canFile = true;
+	    }
+	    if($this->Acl->check(array(
+			'model' => 'User',
+			'foreign_key' => $this->Auth->user('id')), 'QueuedDocuments/admin_delete', '*')){
+				$canDelete = true;
+	    }
+	    if($this->Acl->check(array(
+			'model' => 'User',
+			'foreign_key' => $this->Auth->user('id')), 'QueuedDocuments/admin_reassign_queue', '*')){
+				$canReassign = true;
+	    }
+	    if($this->Acl->check(array(
+			'model' => 'User',
+			'foreign_key' => $this->Auth->user('id')), 'Users/admin_add', '*')){
+				$canAddCustomer = true;
+	    }	    	    		    		
 		if($this->RequestHandler->isAjax()) {
-		    $this->layout = 'ajax';
-		    if(!empty($this->params['named']['page'])) {
-			$this->render('/elements/queued_documents/index_table');
-		    }
+			$allowedQueueCats = $this->getAllowedQueueCats();
+			if(isset($this->params['url']['sort']) && $this->params['url']['sort'] == 'locked_status') {
+				if($this->params['url']['direction'] == 'ASC'){
+					$this->params['url']['direction'] = 'DESC';
+				}
+				else{
+					$this->params['url']['direction'] = 'ASC';
+				}
+			}
+			if(isset($this->params['url']['requeued'])) {
+				$docs[0] = $this->QueuedDocument->findById($this->params['url']['id']);
+				$docs[0]['QueuedDocument']['requeued'] = true;
+				$data['totalCount'] = 1;				
+			}
+			else {
+				if(!isset($this->params['url']['exclude_filters'])) {
+					$conditions = $this->getDocumentQueueFilters();
+				}		
+				if(isset($this->params['url']['doc_id'])) {
+					$conditions['QueuedDocument.id'] = $this->params['url']['doc_id'];
+				}
+				if(isset($this->params['url']['lastname'])) {
+					$conditions['User.lastname'] = $this->params['url']['lastname'];
+				}
+				if(isset($this->params['url']['last4'])) {
+					$conditions['RIGHT (User.ssn , 4)'] = $this->params['url']['last4'];
+				}
+				$this->QueuedDocument->checkLocked($this->Auth->user('id'));
+
+				if(isset($conditions)) {
+					if($this->checkAutoLoad()) {				
+						$conditions['QueuedDocument.locked_status'] = 0;
+						$conditions['QueuedDocument.queue_category_id'] = $allowedQueueCats;
+						$doc = $this->QueuedDocument->find('first', array(
+							'order' => array('QueuedDocument.id ASC'),
+							'conditions' => $conditions));
+						if($doc) {
+							$docs[0] = $this->QueuedDocument->lockDocument(
+									       $doc['QueuedDocument']['id'], $this->Auth->user('id'));
+						}	
+						$data['totalCount'] = 1;					
+					}
+					else {
+						$this->paginate = array(
+							'order' => array('QueuedDocument.id ASC'),
+							'conditions' => $conditions);
+						
+						$data['totalCount'] = 
+							$this->QueuedDocument->find('count', array(
+								'conditions' => $conditions,
+								'recursive' => 0));					
+					}	
+				}
+				else {
+					
+					if($this->checkAutoLoad()) {
+						$conditions['QueuedDocument.locked_status'] = 0;
+						$conditions['QueuedDocument.queue_category_id'] = $allowedQueueCats;
+						$doc = $this->QueuedDocument->find('first', array('conditions' => $conditions));
+						if($doc) {
+							$docs[0] = $this->QueuedDocument->lockDocument(
+									       $doc['QueuedDocument']['id'], $this->Auth->user('id'));
+						}						
+						$data['totalCount'] = 1;										
+					}
+					else {
+						$this->paginate = array(
+							'order' => array('QueuedDocument.id ASC'),
+							'conditions' => array(
+								'QueuedDocument.queue_category_id' => $allowedQueueCats));
+						$data['totalCount'] = $this->QueuedDocument->find('count', array(
+							'recursive' => -1,
+							'conditions' => array(
+								'QueuedDocument.queue_category_id' => $allowedQueueCats)));					
+					}
+				}
+				if(!$this->checkAutoLoad()) {
+					$docs = $this->paginate();	
+				}				
+			}	
+			
+			if(isset($docs)) {
+				$i = 0;
+				foreach($docs as $doc) {
+					$data['docs'][$i]['id'] = $doc['QueuedDocument']['id'];
+					$data['docs'][$i]['queue_cat'] = $doc['DocumentQueueCategory']['name'];
+					$data['docs'][$i]['secure'] =  false;
+					if($doc['DocumentQueueCategory']['secure']) {
+						$data['docs'][$i]['secure'] =  true;
+					}
+					$data['docs'][$i]['scanned_location'] = $doc['Location']['name'];
+					if(!empty($doc['LockedBy']['id'])) {
+						$data['docs'][$i]['locked_by'] = 
+							$doc['LockedBy']['lastname'] . ', ' . $doc['LockedBy']['firstname'];
+						$data['docs'][$i]['locked_by_id'] = $doc['LockedBy']['id'];	
+					}
+					else {
+						$data['docs'][$i]['locked_by'] = null;						
+					} 
+					if(!empty($doc['LastActAdmin']['id'])) {
+						$data['docs'][$i]['last_activity_admin'] = 
+							$doc['LastActAdmin']['lastname'] . ', ' . $doc['LastActAdmin']['firstname'];						
+					}
+					else {
+						$data['docs'][$i]['last_activity_admin'] = null;						
+					} 
+					if($doc['User']['id']) {
+						$data['docs'][$i]['queued_to_customer'] = $doc['User']['name_last4'];
+						$data['docs'][$i]['queued_to_customer_id'] = $doc['User']['id'];
+						$data['docs'][$i]['queued_to_customer_ssn'] = 
+							substr($doc['User']['ssn'], 0, -6) . '-' . 
+							substr($doc['User']['ssn'], 3, -4) . '-' .
+							substr($doc['User']['ssn'], -4);
+						$data['docs'][$i]['queued_to_customer_first'] = $doc['User']['firstname'];
+						$data['docs'][$i]['queued_to_customer_last'] = $doc['User']['lastname'];
+					}
+					else {
+						$data['docs'][$i]['queued_to_customer'] = null;
+						$data['docs'][$i]['queued_to_customer_id'] = null;
+						$data['docs'][$i]['queued_to_customer_ssn'] = null;
+						$data['docs'][$i]['queued_to_customer_first'] = null;
+						$data['docs'][$i]['queued_to_customer_last'] = null;												
+					}
+					if(isset($doc['QueuedDocument']['requeued'])) {
+						$data['docs'][$i]['requeued'] = true;
+					}					
+					$data['docs'][$i]['locked_status'] = 
+						$this->lockStatuses[$doc['QueuedDocument']['locked_status']];
+					$data['docs'][$i]['self_scan_cat_id'] = $doc['QueuedDocument']['self_scan_cat_id'];
+					$data['docs'][$i]['bar_code_definition_id'] = 
+						$doc['QueuedDocument']['bar_code_definition_id'];
+					$data['docs'][$i]['created'] = $doc['QueuedDocument']['created'];	
+					$data['docs'][$i]['modified'] = $doc['QueuedDocument']['modified'];
+					$i++;
+ 				}
+			}
+			else {
+				$data['docs'] = array();
+			}
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+		if(!$this->RequestHandler->isAjax()) {
+			$this->set(compact('canFile', 'canDelete', 'canReassign', 'canAddCustomer'));
+		}	
+		$this->layout = 'ext_fullscreen';
+	}
+
+	public function admin_lock_document() {
+		if($this->RequestHandler->isAjax()) {
+			$userId = $this->Auth->user('id');
+			$docId = $this->params['form']['doc_id'];
+			$data = $this->QueuedDocument->lockDocument($docId, $userId);
+			if($data) {
+				$data['admin'] = 
+					$this->Auth->user('lastname') . ', ' . $this->Auth->user('firstname');		
+				$data['success'] = true; 
+			    $this->Transaction->createUserTransaction('Storage', null, null , 
+				    'Locked Document ID ' . $data['QueuedDocument']['id']  . ' for viewing ' );				
+			}
+			else $data['success'] = false;
+		}
+		$this->set(compact('data'));
+		$this->render(null, null, '/elements/ajaxreturn');
+	}
+	
+    public function admin_reassign_queue() {
+    	if($this->RequestHandler->isAjax()) {
+			if(!empty($this->params['form']['id'])){
+				$this->data['QueuedDocument'] = $this->params['form'];
+				$this->data['QueuedDocument']['last_activity_admin_id'] = $this->Auth->user('id');
+				$this->data['QueuedDocument']['locked_status'] = 0;
+				$this->data['QueuedDocument']['locked_by'] = null;
+				if($this->QueuedDocument->save($this->data)) {
+				    $queueCatList = $this->QueuedDocument->DocumentQueueCategory->find('list');
+				    $queueCatId = $this->data['QueuedDocument']['queue_category_id'];
+				    $this->Transaction->createUserTransaction('Storage', null, null , 
+					    'Reassigned document ID '. $this->data['QueuedDocument']['id'] .
+					    ' to queue ' . $queueCatList[$queueCatId]);
+				    $data['success'] = true;
+				    $data['message'] = 'Document reassigned successfully.';
+				}
+				else {
+					$data['sucess'] = false;
+					$data['message'] = 'Unable to reassign document.';
+				}  		
+    		}
+    		else {
+    			$data['success'] = false;
+    			$data['message'] = 'Invalid doument id';
+    		}
+    		$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');  
 		}
     }
 
-    function admin_reassign_queue() {
-		if(empty($this->data['QueuedDocument']['id'])) {
-		    $this->Session->setFlash(__('Invalid document id. Please try again.', true), 'flash_failure');
-		    $this->redirect(array('action' => 'index'));
-		}
-		$this->data['QueuedDocument']['last_activity_admin_id'] = $this->Auth->user('id');
-		if($this->QueuedDocument->save($this->data)) {
-		    $queueCatList = $this->QueuedDocument->DocumentQueueCategory->find('list');
-		    $queueCatId = $this->data['QueuedDocument']['queue_category_id'];
-		    $this->Transaction->createUserTransaction('Storage', null, null , 
-			    'Reassigned document ID '. $this->data['QueuedDocument']['id'] .
-			    ' to queue ' . $queueCatList[$queueCatId]);
-		    $this->Session->setFlash(__('The queued document has been re-assigned.', true), 'flash_success');
-		    $this->redirect(array('action' => 'index'));
-		}
-		else {
-		    $this->Session->setFlash(__('The queued document could not be re-assigned. Please try again.', true), 'flash_failure');
-		    $this->redirect(array('action' => 'index'));
-		}
-
-    }
-
-    function admin_view($id = null) {
+    public function admin_view($id = null) {
 		$this->view = 'Media';
-		$doc = $this->QueuedDocument->read(null, $id);
+		$doc = $this->QueuedDocument->findById($id);
 		$params = array(
 		    'id' => $doc['QueuedDocument']['filename'],
 		    'name' => str_replace('.pdf', '', $doc['QueuedDocument']['filename']),
 		    'extension' => 'pdf',
 		   	'cache' => true,
 		    'path' =>  Configure::read('Document.storage.path') .
-		    date('Y', strtotime($doc['QueuedDocument']['created'])) . '/' .
-		    date('m', strtotime($doc['QueuedDocument']['created'])) . '/'
+		    substr($doc['QueuedDocument']['filename'], 0, 4) . '/' .
+		    substr($doc['QueuedDocument']['filename'], 4, 2) . '/'
 		);
 		$this->set($params);
     }
-
-	function admin_view_thumbnail($id = null) {
-		$this->view = 'Media';
-		$doc = $this->QueuedDocument->read(null, $id);
-		$params = array(
-		    'id' => str_replace('.pdf', '.jpg', $doc['QueuedDocument']['filename']),
-		    'name' => str_replace('.pdf', '', $doc['QueuedDocument']['filename']),
-		    'extension' => 'jpg',
-		    'download' => false,
-		    'cache' => true,
-		    'mimeType' => array('jpg' => 'image/jpeg'),
-		    'path' =>  Configure::read('Document.jpeg.path') .
-		    date('Y', strtotime($doc['QueuedDocument']['created'])) . '/' .
-		    date('m', strtotime($doc['QueuedDocument']['created'])) . '/'
-		);
-		$this->set($params);		
+		
+	public function admin_file_document() {
+		if($this->RequestHandler->isAjax()) {
+			$this->data['FiledDocument'] = $this->params['form'];
+			$this->data['FiledDocument']['last_activity_admin_id'] = $this->Auth->user('id');
+			$this->data['FiledDocument']['admin_id'] = $this->Auth->user('id');
+			$this->data['FiledDocument']['filed_location_id'] = $this->Auth->user('location_id');
+			$this->QueuedDocument->recursive = 0;
+			$queuedDoc = $this->QueuedDocument->findById($this->data['FiledDocument']['id']);
+			$this->data['FiledDocument']['scanned_location_id'] = 
+				$queuedDoc['QueuedDocument']['scanned_location_id'];
+			if($queuedDoc['DocumentQueueCategory']['secure']) {
+				if(isset($this->data['FiledDocument']['cat_3'])) {
+					$catId = $this->data['FiledDocument']['cat_3'];
+				}
+				elseif(isset($this->data['FiledDocument']['cat_2'])) {
+					$catId = $this->data['FiledDocument']['cat_2'];
+				}
+				elseif(isset($this->data['FiledDocument']['cat_1'])) {
+					$catId = $this->data['FiledDocument']['cat_1'];
+				}
+				if(!$this->checkIfFilingCatSecure($catId)) {
+					$data['success'] = false;
+					$data['message'] = 'Unable to file secure document to a non-secure category.';
+					$this->set(compact('data'));
+					return $this->render(null, null, '/elements/ajaxreturn');									
+				}				
+			}				
+			$this->data['FiledDocument']['entry_method'] = $queuedDoc['QueuedDocument']['entry_method'];
+			$this->data['FiledDocument']['filename'] = $queuedDoc['QueuedDocument']['filename'];
+			$this->data['FiledDocument']['created'] = $queuedDoc['QueuedDocument']['created'];
+			$this->data['FiledDocument']['filed'] = date('Y-m-d H:i:s');				
+			$this->QueuedDocument->User->recursive = -1;
+			$user = $this->QueuedDocument->User->findById($this->data['FiledDocument']['user_id']);
+			if($this->QueuedDocument->User->FiledDocument->save($this->data['FiledDocument'])) {
+				$this->QueuedDocument->delete($this->data['FiledDocument']['id']);		
+				
+				$this->loadModel('ProgramResponse');							
+				$processedDoc = $this->ProgramResponse->ProgramResponseDoc->processResponseDoc($this->data, $user);	
+				if(isset($processedDoc['docFiledEmail'])) {
+					$this->Notifications->sendProgramEmail($processedDoc['docFiledEmail'], $user);
+				}				
+				if(isset($processedDoc['finalEmail'])) {
+					$this->Notifications->sendProgramEmail($processedDoc['finalEmail'], $user);
+				}
+		
+				if(isset($this->data['FiledDocument']['requeue'])) {
+					$this->data['QueuedDocument'] = $queuedDoc['QueuedDocument'];
+					unset($this->data['QueuedDocument']['id']);
+					$this->data['QueuedDocument']['locked_by'] = $this->Auth->user('id');
+					$this->data['QueuedDocument']['last_activity_admin_id'] = $this->Auth->user('id');
+					$this->data['QueuedDocument']['locked_status'] = 1;
+					$this->QueuedDocument->create();
+					$this->QueuedDocument->save($this->data['QueuedDocument']);
+					$id = $this->QueuedDocument->getLastInsertId();
+				    $this->Transaction->createUserTransaction('Storage', null, null ,
+					    'Filed document ID '. $this->data['FiledDocument']['id'] .
+					    ' to ' . $user['User']['lastname'] . ', ' . $user['User']['firstname'] . 
+					    ' - '. substr($user['User']['ssn'], -4). '.' .
+						'and re-queued document as doc Id# '.$id);
+					$data['message'] = 'Document filed and re-queud successfully';
+					$data['locked'] = $id;	
+				}
+				else {
+				    $this->Transaction->createUserTransaction('Storage', null, null ,
+					    'Filed document ID '. $this->data['FiledDocument']['id'] .
+					    ' to ' . $user['User']['lastname'] . ', ' . $user['User']['firstname'] . 
+					    ' - '. substr($user['User']['ssn'],-4));
+					$data['message'] = 'Document filed successfully';	
+				}
+			    $this->sendCusFiledDocAlert($user, $this->data['FiledDocument']['id']);
+				$data['success'] = true;				
+			}
+			else {
+				$data['success'] = false;
+				$data['message'] = 'Unable to file document, please try again.';
+			}
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}		 
 	}
 
-    function admin_file_document() {
-		if(empty($this->data['FiledDocument']['id'])) {
-		    $this->Session->setFlash(__('Invalid document Id. Please try again.', true), 'flash_failure');
-		    $this->redirect(array('action' => 'index'));
-		}
-		$user = $this->QueuedDocument->User->find('first', array('conditions' => array(
-		    'User.role_id' => 1,
-		    'User.firstname' => $this->data['FiledDocument']['firstname'],
-		    'User.lastname' => $this->data['FiledDocument']['lastname'],
-		    'User.ssn' => $this->data['FiledDocument']['ssn'])));
-		if(empty($user)) {
-		    $this->Session->setFlash(__('Unable to file document. Please try again.', true), 'flash_failure');
-		    $this->redirect(array('action' => 'index'));
-		}
-		$this->data['FiledDocument']['user_id'] = $user['User']['id'];
-		$this->data['FiledDocument']['last_activity_admin_id'] = $this->data['FiledDocument']['admin_id'];
-		$this->data['FiledDocument']['filed_location_id'] = $this->Auth->user('location_id');
-				
-		if($this->QueuedDocument->User->FiledDocument->save($this->data['FiledDocument'])) {
-			$this->QueuedDocument->delete($this->data['FiledDocument']['id']);		
-			
-			$this->loadModel('ProgramResponse');							
-			$processedDoc = $this->ProgramResponse->ProgramResponseDoc->processResponseDoc($this->data, $user);	
-			if(isset($processedDoc['docFiledEmail'])) {
-				$this->Notifications->sendProgramEmail($processedDoc['docFiledEmail'], $user);
-			}				
-			if(isset($processedDoc['finalEmail'])) {
-				$this->Notifications->sendProgramEmail($processedDoc['finalEmail'], $user);
-			}
-	
-			if(key_exists('requeue', $this->data['FiledDocument'])) {
-				$this->data['QueuedDocument']['filename'] = $this->data['FiledDocument']['filename'];
-				$this->data['QueuedDocument']['locked_by'] = $this->Auth->user('id');
-				$this->data['QueuedDocument']['locked_status'] = 1;
-				$this->data['QueuedDocument']['entry_method'] = $this->data['FiledDocument']['entry_method'];
-				$this->data['QueuedDocument']['user_id'] = $this->data['FiledDocument']['user_id'];
-				$this->data['QueuedDocument']['created'] = $this->data['FiledDocument']['created'];
-				$this->QueuedDocument->create();
-				$this->QueuedDocument->save($this->data['QueuedDocument']);
-				$id = $this->QueuedDocument->getLastInsertId();
-			    $this->Transaction->createUserTransaction('Storage', null, null ,
-				    'Filed document ID '. $this->data['FiledDocument']['id'] .
-				    ' to ' . $user['User']['lastname'] . ', ' . $user['User']['firstname'] . ' - '. substr($user['User']['ssn'], -4). '.' .
-					'and re-queued document as doc Id# '.$id);
-			    $this->sendCusFiledDocAlert($user, $this->data['FiledDocument']['id']);
-			    $this->Session->setFlash(__('The document was filed and re-queued successfully', true), 'flash_success' );
-			    $this->redirect(array('action' => 'index', 'view', $id));				
-			}	    
-		    $this->Transaction->createUserTransaction('Storage', null, null ,
-			    'Filed document ID '. $this->data['FiledDocument']['id'] .
-			    ' to ' . $user['User']['lastname'] . ', ' . $user['User']['firstname'] . ' - '. substr($user['User']['ssn'],-4));
-		    $this->sendCusFiledDocAlert($user, $this->data['FiledDocument']['id']);
-		    $this->Session->setFlash(__('The document was filed successfully', true), 'flash_success' );
-		    $this->redirect(array('action' => 'index'));
-		}
-		else{
-		    $this->Session->setFlash(__('Unable to file document. Please try again.', true), 'flash_failure');
-		    $this->redirect(array('action' => 'index'));
-		}
-    }
-
-    function admin_delete() {
-		if(!empty($this->data['QueuedDocument']['id'])) {
-		    $id = $this->data['QueuedDocument']['id'];
+    public function admin_delete() {
+		if(!empty($this->params['form']['id'])) {
+		    $id = $this->params['form']['id'];
+		    $this->data = $this->QueuedDocument->read(null, $id);
 		    $this->data['QueuedDocument']['last_activity_admin_id'] = $this->Auth->user('id');
 		    $this->data['QueuedDocument']['deleted_location_id'] = $this->Auth->user('location_id');
+		    if(isset($this->params['form']['other'])) {
+		    	$this->data['QueuedDocument']['deleted_reason'] = $this->params['form']['other'];	
+		    }
+		    else {
+		    	$this->data['QueuedDocument']['deleted_reason'] = $this->params['form']['deleted_reason'];		
+		    }
 		}
 		if(!$id) {
-		    $this->Session->setFlash(__('Invalid id for queued document', true), 'flash_failure');
-		    $this->redirect(array('action' => 'index'));
-		}
-		$data = $this->data;
-		$this->QueuedDocument->set($data);
-		if($this->QueuedDocument->delete($id, false)) {
-		    $this->Transaction->createUserTransaction('Storage', null, null ,
-			    'Deleted document ID '. $id .
-			    ' from the queue with reason, ' . $this->data['QueuedDocument']['reason']);
-		    $this->Session->setFlash(__('Queued document deleted', true), 'flash_success');
-		    $this->redirect(array('action' => 'index'));
+			$data['success'] = false;
+			$data['message'] = 'Invalid document id.';
 		}
 		else {
-		    $this->Session->setFlash(__('Queued document was not deleted', true), 'flash_failure');
-		    $this->redirect(array('action' => 'index'));
+			$data = $this->data;
+			$this->QueuedDocument->set($data);
+			if($this->QueuedDocument->delete($id, false)) {
+			    $this->Transaction->createUserTransaction('Storage', null, null ,
+				    'Deleted document ID '. $id .
+				    ' from the queue with reason, ' . $this->data['QueuedDocument']['deleted_reason']);
+				$data['success'] = true;
+				$data['message'] = 'Document was deleted successfully.';    
+			}
+			else {
+				$data['success'] = false;
+				$data['message'] = 'Unable to delete document.';
+			}			
 		}
-
+		$this->set(compact('data'));
+		$this->render(null, null, '/elements/ajaxreturn');
     }
 
-    function admin_desktop_scan_document() {
+    public function admin_desktop_scan_document() {
 		if(!empty($this->data)) {
 		    $id = $this->QueuedDocument->uploadDocument($this->data, 'Desktop Scan', $this->Auth->User('id'));
 		    if($id) {
@@ -367,27 +409,52 @@ class QueuedDocumentsController extends AppController {
 		$this->set(compact('title_for_layout', 'queueCats', 'locations'));
     }
 
-    function _resetFilters() {
-		$this->QueuedDocument->checkLocked($this->Auth->user('id'));
-		$this->Cookie->destroy();
+    public function admin_unlock_document() {
+    	if($this->RequestHandler->isAjax()) {
+    		if($this->QueuedDocument->checkLocked($this->Auth->user('id'))) {
+    			$data['success'] = true;
+    			$data['message'] = 'Document unlock and returned to queue.';
+    		}
+    		else {
+    			$data['success'] = false;
+    			$data['message'] = 'Unable to unlock document.';
+    		}	
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');    		   	
+    	}
     }
-
-    function _addCustomer() {
-		if(!empty($this->data)) {
-		    $this->loadModel('User');
-		    $this->User->create();
-		    if($this->User->save($this->data)) {
-				$this->Transaction->createUserTransaction('Customer',
-					null, null, 'Added customer ' . $this->data['User']['firstname'] .
-					' ' . $this->data['User']['lastname']) . ' - ' . substr($this->data['User']['ssn'], -4);
-				$this->Session->setFlash(__('The customer has been saved', true), 'flash_success');
-				$this->redirect(array('action' => 'index'));
-		    }
-		    else {
-				$this->Session->setFlash(__('The customer could not be saved. Please, try again.', true), 'flash_failure');
-		    }
+	
+	private function checkAutoLoad() {
+		$this->loadModel('DocumentQueueFilter');
+		return $this->DocumentQueueFilter->Field('auto_load_docs', 
+			array('user_id' => $this->Auth->user('id')));	
+	}
+	
+	private function getDocumentQueueFilters() {
+		$this->loadModel('DocumentQueueFilter');
+		$filters = $this->DocumentQueueFilter->findByUserId($this->Auth->user('id'));
+		$conditions = null;
+		if($filters) {
+			$locations = json_decode($filters['DocumentQueueFilter']['locations'], true);
+			if(!empty($locations)) {
+				$conditions['QueuedDocument.scanned_location_id'] = $locations;
+			}
+			$queueCats = json_decode($filters['DocumentQueueFilter']['queue_cats'], true);
+			if(!empty($queueCats)) {
+				$conditions['QueuedDocument.queue_category_id'] = $queueCats;
+			}
+			if(!empty($filters['DocumentQueueFilter']['from_date']) && 
+			   !empty($filters['DocumentQueueFilter']['to_date'] )){
+				    $from = date('Y-m-d H:i:m', 
+				    	strtotime($filters['DocumentQueueFilter']['from_date'] . " 12:00 am"));
+				    $to = date('Y-m-d H:i:m',
+				    	strtotime($filters['DocumentQueueFilter']['to_date'] . " 11:59 pm"));
+				    $conditions['QueuedDocument.created Between ? AND ?'] = array($from, $to); 
+			}
+			return $conditions;   		    
 		}
-    }
+		return false;		
+	}	
 	
 	private function sendCusFiledDocAlert($user, $docId) {
 		$this->loadModel('Alert');
@@ -410,5 +477,33 @@ class QueuedDocumentsController extends AppController {
 				$this->Email->send($alert['message'] . "\r\n" . $alert['url']);				
 			}
 		}
-	}		
+	}
+
+	private function checkIfFilingCatSecure($catId) {
+		$this->loadModel('DocumentFilingCategory');
+		return $this->DocumentFilingCategory->isSecure($catId);
+	}
+
+	private function getAllowedQueueCats() {
+		$this->QueuedDocument->DocumentQueueCategory->recursive -1;
+	    $cats = $this->QueuedDocument->DocumentQueueCategory->find('all', array(
+			'fields' => array(
+				'DocumentQueueCategory.id',
+				'DocumentQueueCategory.secure',
+				'DocumentQueueCategory.secure_admins'
+				)));
+		$i = 0;
+		$allowedCats = array();
+		foreach($cats as $cat){
+			if($this->Auth->user('role_id') > 3 && $cat['DocumentQueueCategory']['secure']) {
+				$secureAdmins = json_decode($cat['DocumentQueueCategory']['secure_admins']);
+				if(!in_array($this->Auth->user('id'), $secureAdmins)) {
+					continue;
+				}
+			}
+			$allowedCats[$i] = $cat['DocumentQueueCategory']['id'];
+			$i++;
+		}
+		return $allowedCats;	
+	} 		
 }

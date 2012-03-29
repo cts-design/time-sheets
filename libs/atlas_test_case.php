@@ -29,6 +29,7 @@ class AtlasTestCase extends CakeTestCase {
             'deleted_document',
             'document_filing_category',
             'document_queue_category',
+            'document_queue_filter',
             'document_transaction',
             'filed_document',
             'ftp_document_scanner',

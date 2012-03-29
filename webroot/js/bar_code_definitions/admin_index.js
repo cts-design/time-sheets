@@ -84,7 +84,17 @@ Ext.onReady(function(){
     
     Ext.define('DocumentFilingCategory', {
     	extend: 'Ext.data.Model',
-    	fields: [{name: 'id', type: 'int'}, {name: 'name'}]
+    	fields: [{name: 'id', type: 'int'}, {name: 'name'}, {name: 'secure'}, {
+            name : 'img',
+            convert: function(value, record){
+                var img = null;
+                var secure = record.get('secure');
+                if(secure) {
+                    img = '<img src="/img/icons/lock.png" />&nbsp';
+                }
+                return img;
+            }
+        }]
     });   
     
     var catProxy = Ext.create('Ext.data.proxy.Ajax', {
@@ -130,7 +140,17 @@ Ext.onReady(function(){
     
     Ext.define('DocumentQueueCategory', {
     	extend: 'Ext.data.Model',
-		fields: [{name: 'id', type: 'int'}, {name: 'name'}]    	
+		fields: [{name: 'id', type: 'int'}, {name: 'name'}, {name: 'secure'}, {
+            name : 'img',
+            convert: function(value, record){
+                var img = null;
+                var secure = record.get('secure');
+                if(secure) {
+                    img = '<img src="/img/icons/lock.png" />&nbsp';
+                }
+                return img;
+            }
+        }]    	
     });
     
   	var docCatStore = Ext.create('Ext.data.Store', {
@@ -290,6 +310,11 @@ Ext.onReady(function(){
                 displayField: 'name',
                 valueField: 'id',
                 queryMode: 'remote',
+                listConfig: {
+                    getInnerTpl: function() {
+                        return '<div>{img}{name}</div>';
+                    }
+                },                
                 value: null,
                 allowBlank: false
             },{
@@ -298,7 +323,12 @@ Ext.onReady(function(){
                 id: 'cat1Name',               
                 store: cat1Store,
                 displayField: 'name',
-                valueField: 'id',        
+                valueField: 'id',
+                listConfig: {
+                    getInnerTpl: function() {
+                        return '<div>{img}{name}</div>';
+                    }
+                },                        
                 queryMode: 'local',
                 xtype: 'combo', 
                 value: null,
@@ -326,6 +356,11 @@ Ext.onReady(function(){
                 valueField: 'id',
                 queryMode: 'local',
                 value: null,
+                listConfig: {
+                    getInnerTpl: function() {
+                        return '<div>{img}{name}</div>';
+                    }
+                },                
                 allowBlank: false,
                 listeners: {
                 	select: function(combo, records, Eopts) {
@@ -347,6 +382,11 @@ Ext.onReady(function(){
                 valueField: 'id',
                 queryMode: 'local',
                 value: null,
+                listConfig: {
+                    getInnerTpl: function() {
+                        return '<div>{img}{name}</div>';
+                    }
+                },                
                 allowBlank: false
             }]
         }],

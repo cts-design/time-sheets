@@ -3,6 +3,12 @@ class BarCodeDefinition extends AppModel {
 	var $name = 'BarCodeDefinition';
 	var $displayField = 'name';
 	
+	var $hasMany = array(
+	    'QueuedDocument' => array(
+			'className' => 'QueuedDocument',
+			'foreignKey' => 'bar_code_definition_id'
+	    ));
+
 	var $belongsTo = array(
 		'Cat1' => array(
 		    'className' => 'DocumentFilingCategory',

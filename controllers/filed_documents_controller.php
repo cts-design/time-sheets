@@ -80,18 +80,35 @@ class FiledDocumentsController extends AppController {
 	function admin_view($id = null) {
 		if(!$id) {
 		    $this->Session->setFlash(__('Invalid filed document', true), 'flash_failure');
-		    $this->redirect(array('action' => 'index'));
+		    $this->redirect($this->referer());
 		}
 		$this->view = 'Media';
-		$doc = $this->FiledDocument->read(null, $id);
+		$doc = $this->FiledDocument->findById($id);
+		if($doc) {
+			if($doc['Cat1']['secure']) {
+				$secure_admins = json_decode($doc['Cat1']['secure_admins'], true);
+			}
+			elseif($doc['Cat2']['secure']) {
+				$secure_admins = json_decode($doc['Cat2']['secure_admins'], true);
+			}
+			elseif($doc['Cat3']['secure']) {
+				$secure_admins = json_decode($doc['Cat3']['secure_admins'], true);
+			}
+			if(isset($secure_admins) && is_array($secure_admins)) {
+				if($this->Auth->user('role_id') > 3 && !in_array($this->Auth->user('id'), $secure_admins)) {
+					$this->Session->setFlash(__('Not authorized to view secure documents', true), 'flash_failure');
+					$this->redirect($this->referer());
+				}
+			}		
+		}
 		$params = array(
 		    'id' => $doc['FiledDocument']['filename'],
 		    'name' => str_replace('.pdf', '', $doc['FiledDocument']['filename']),
 		    'extension' => 'pdf',
 		    'cache' => true,
-		    'path' => Configure::read('Document.storage.path') .
-		    date('Y', strtotime($doc['FiledDocument']['created'])) . '/' .
-		    date('m', strtotime($doc['FiledDocument']['created'])) . '/'
+		    'path' =>  Configure::read('Document.storage.path') .
+		    substr($doc['FiledDocument']['filename'], 0, 4) . '/' .
+		    substr($doc['FiledDocument']['filename'], 4, 2) . '/'		    
 		);
 		$this->Transaction->createUserTransaction('Storage', null, null,
 			'Viewed filed document ID ' . $doc['FiledDocument']['id']);
@@ -285,10 +302,28 @@ class FiledDocumentsController extends AppController {
 					$data['docs'][$k]['Cat3-name'] = $v['Cat3']['name'];
 					$data['docs'][$k]['description'] = $v['FiledDocument']['description'];
 					$data['docs'][$k]['created'] = date('m-d-Y g:i a', strtotime($v['FiledDocument']['created']));
+					$data['docs'][$k]['filed'] = date('m-d-Y g:i a', strtotime($v['FiledDocument']['filed']));
 					$data['docs'][$k]['modified'] = date('m-d-Y g:i a', strtotime($v['FiledDocument']['modified']));
 					$data['docs'][$k]['LastActAdmin-lastname'] = 
 						trim(ucwords($v['LastActAdmin']['lastname'] . ', ' . $v['LastActAdmin']['firstname']), ', ');
-					$data['docs'][$k]['view'] = '<a target="_blank" href="/admin/filed_documents/view/'.$v['FiledDocument']['id'].'">View</a>';
+					$allowed = true;
+					if($v['Cat1']['secure']) {
+						$allowed = in_array($this->Auth->user('id'), json_decode($v['Cat1']['secure_admins']));
+					}
+					if($v['Cat2']['secure']) {
+						$allowed = in_array($this->Auth->user('id'), json_decode($v['Cat2']['secure_admins']));
+					}
+					if($v['Cat3']['secure']) {
+						$allowed = in_array($this->Auth->user('id'), json_decode($v['Cat3']['secure_admins']));
+					}
+					if(!$allowed && $this->Auth->user('role_id') > 3) {
+						$data['docs'][$k]['view'] = '<img alt="secure" src="/img/icons/lock.png" />';	
+					}
+					else {
+						$data['docs'][$k]['view'] = 
+							'<a target="_blank" href="/admin/filed_documents/view/'.
+							$v['FiledDocument']['id'].'">View</a>';	
+					}					
 				}
 			}
 			else {
@@ -327,6 +362,7 @@ class FiledDocumentsController extends AppController {
 				$report[$k]['Description'] = $v['FiledDocument']['description'];
 				$report[$k]['Last Activity Admin'] = trim(ucwords($v['LastActAdmin']['lastname'] . ', '. $v['LastActAdmin']['firstname']), ' ,');
 				$report[$k]['Created'] = date('m/d/y h:i a', strtotime($v['FiledDocument']['created']));
+				$report[$k]['Filed'] = date('m/d/y h:i a', strtotime($v['FiledDocument']['filed']));
 				$report[$k]['Modified'] = date('m/d/y h:i a', strtotime($v['FiledDocument']['modified']));		
 			}			
 		}
@@ -407,6 +443,7 @@ class FiledDocumentsController extends AppController {
 		$this->data['FiledDocument']['user_id'] = $this->data['User']['id'];
 		$this->data['FiledDocument']['last_activity_admin_id'] = $this->data['FiledDocument']['admin_id'];
 		$this->data['FiledDocument']['entry_method'] = $entryMethod;
+		$this->data['FiledDocument']['filed'] = date('Y-m-d H:i:s');
 		if(!move_uploaded_file($this->data['FiledDocument']['submittedfile']['tmp_name'], $path . $docName)) {
 		    return false;
 		}
@@ -494,10 +531,11 @@ class FiledDocumentsController extends AppController {
                     }
                 }
             }
-			if(isset($filters['fromDate']) && isset($filters['toDate'])){
+			if(isset($filters['fromDate'], $filters['toDate'], $filters['dateType'])){
 				$from = date('Y-m-d H:i:m', strtotime($filters['fromDate'] . '12:00 AM'));
 				$to = date('Y-m-d H:i:m', strtotime($filters['toDate'] . '11:59 PM'));
-				$conditions['FiledDocument.created BETWEEN ? AND ?'] = array($from, $to);
+
+				$conditions['FiledDocument.' . $filters['dateType'] . ' BETWEEN ? AND ?'] = array($from, $to);
 			}
 			if(isset($filters['filed_location_id'])){
 				$conditions['FiledDocument.filed_location_id'] = $filters['filed_location_id'];

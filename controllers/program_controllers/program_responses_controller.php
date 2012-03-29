@@ -849,6 +849,7 @@ class ProgramResponsesController extends AppController {
 					$this->data['FiledDocument']['cat_2'] = $programPaperForm['ProgramPaperForm']['cat_2'];
 					$this->data['FiledDocument']['cat_3'] = $programPaperForm['ProgramPaperForm']['cat_3'];
 					$this->data['FiledDocument']['entry_method'] = 'Program Generated';
+					$this->data['FiledDocument']['filed'] = date('Y-m-d H:i:s');
 					$this->data['ProgramResponseDoc']['created'] = date('Y-m-d H:i:s');					
 					$this->data['ProgramResponseDoc']['cat_id'] = $programPaperForm['ProgramPaperForm']['cat_3'];
 					$this->data['ProgramResponseDoc']['program_response_id'] =  $programResponseId;

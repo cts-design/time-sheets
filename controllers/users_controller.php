@@ -52,7 +52,8 @@ class UsersController extends AppController {
 			    'admin_auto_complete_customer',
 			    'admin_auto_complete_ssn_ajax',
 			    'admin_get_customers_by_first_and_last_name',
-			    'admin_get_customers_by_ssn'
+			    'admin_get_customers_by_ssn',
+			    'admin_get_all_admins'
 			);
 		}			
 		if(!empty($this->data)) {
@@ -211,7 +212,11 @@ class UsersController extends AppController {
 
     function admin_add() {
     	$this->User->Behaviors->disable('Disableable');
-		$this->set('title_for_layout', 'Add Customer');
+		if($this->RequestHandler->isAjax()) {
+			if(!empty($this->params['form'])) {
+				$this->data['User'] = $this->params['form'];
+			}
+		}
 		if (!empty($this->data)) {
 		    $this->User->create();
 			$this->User->editValidation('customer');
@@ -219,19 +224,47 @@ class UsersController extends AppController {
 				$this->Transaction->createUserTransaction('Customer', 
 					null, null, 'Added customer '. $this->data['User']['lastname'] . 
 					', ' . $this->data['User']['firstname'] . ' - ' . substr($this->data['User']['ssn'], -4));
-				$this->Session->setFlash(__('The customer has been saved', true), 'flash_success');
-				$this->redirect(array('action' => 'index'));
+				$message = __('The customer has been saved', true);
+				if($this->RequestHandler->isAjax()) {
+					$data['success'] = true;
+					$data['message'] = $message;
+				}
+				else {
+					$this->Session->setFlash($message, 'flash_success');
+					$this->redirect(array('action' => 'index'));
+				}
 		    }
 		    else {
-				$this->Session->setFlash(__('The customer could not be saved. Please, try again.', true), 'flash_failure');
+		    	$message = __('The customer could not be saved. Please, try again.', true);
+		    	if($this->RequestHandler->isAjax()) {
+					$errors = $this->User->invalidFields();
+					if(!empty($errors)) {
+						foreach($errors as $k => $v) {
+							$data['errors'][$k] = $v; 
+						}
+						$message = __('Form has errors. Please correct them.', true);
+					}		    		
+		    		$data['success'] = false;
+		    		$data['message'] = $message;
+		    	}
+		    	else {
+		    		$this->Session->setFlash($message, 'flash_failure');
+		    	}
 		    }
 		}
-		$data = array(
-		    'states' => $this->states,
-		    'genders' => $this->genders,
-		    'statuses' => $this->statuses
-		    );
-		$this->set($data);
+		if($this->RequestHandler->isAjax()){
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+		else {
+			$data = array(
+			    'states' => $this->states,
+			    'genders' => $this->genders,
+			    'statuses' => $this->statuses
+			    );
+			$this->set('title_for_layout', 'Add Customer');
+			$this->set($data);			
+		}
     }
 
     function admin_edit($id = null) {
@@ -869,6 +902,27 @@ class UsersController extends AppController {
 
 		}
 	}
+
+	function admin_get_all_admins() {
+		$this->User->recursive = -1;
+		$admins = $this->User->find('all', array(
+			'conditions' => array('User.role_id > 2'), 
+			'order' => 'User.lastname ASC'));
+		if($admins) {
+			$i = 0;
+			foreach($admins as $admin) {
+				$data['admins'][$i]['id'] = $admin['User']['id'];
+				$data['admins'][$i]['name'] = $admin['User']['lastname'] . ', ' . $admin['User']['firstname'];
+				$i++;
+			}
+			$data['success'] = true;
+		}
+		else {
+			$data['success'] = false;
+		}
+		$this->set('data', $data);
+		$this->render(null, null,  '/elements/ajaxreturn');							
+	}
 	
 	function admin_request_ssn_change() {
 		if($this->RequestHandler->isAjax()) {
@@ -946,8 +1000,13 @@ class UsersController extends AppController {
 				foreach($users as $user) {
 					$data['users'][$i]['id'] = $user['User']['id'];
 					$data['users'][$i]['firstname'] = $user['User']['firstname'];
+					$data['users'][$i]['lastname'] = $user['User']['lastname'];
 					$data['users'][$i]['fullname'] = $user['User']['name_last4'];
-					$i++;
+					$data['users'][$i]['fullssn'] = 
+						substr($user['User']['ssn'], 0, -6) . '-' . 
+						substr($user['User']['ssn'], 3, -4) . '-' .
+						substr($user['User']['ssn'], -4);
+  					$i++;
 				}
 			}
 			else {
@@ -975,6 +1034,11 @@ class UsersController extends AppController {
 					$data['users'][$i]['id'] = $user['User']['id'];
 					$data['users'][$i]['ssn'] = substr($user['User']['ssn'], -4);
 					$data['users'][$i]['fullname'] = $user['User']['name_last4'];
+					$data['users'][$i]['lastname'] = $user['User']['lastname'];
+					$data['users'][$i]['fullssn'] = 
+						substr($user['User']['ssn'], 0, -6) . '-' . 
+						substr($user['User']['ssn'], 3, -4) . '-' .
+						substr($user['User']['ssn'], -4);
 					$i++;
 				}
 			}

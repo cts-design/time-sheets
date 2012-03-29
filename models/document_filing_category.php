@@ -29,6 +29,11 @@ class DocumentFilingCategory extends AppModel {
 	    )
 	);
 
+	function isSecure($catId) {
+		$this->id = $catId;
+		return $this->field('secure');
+	}
+
     function delete($id = null) {
 	if($id) {
 	    $data['DocumentFilingCategory']['id'] = $id;

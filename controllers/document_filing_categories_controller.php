@@ -39,7 +39,8 @@ class DocumentFilingCategoriesController extends AppController {
 				        "id" => $node['DocumentFilingCategory']['id'],
 				        "disabled" =>  $disabled,
 				        "cls" => "folder",
-				        "leaf" => ($node['DocumentFilingCategory']['lft'] + 1 == $node['DocumentFilingCategory']['rght'])
+				        "leaf" => ($node['DocumentFilingCategory']['lft'] + 1 == $node['DocumentFilingCategory']['rght']),
+				        "secure" => intval($node['DocumentFilingCategory']['secure'])
 				    );
 				}			 	
 			 }
@@ -230,24 +231,59 @@ class DocumentFilingCategoriesController extends AppController {
 			return $this->render(null, null, '/elements/ajaxreturn');
 		}
 	}
+
+	function admin_toggle_secure() {
+		if($this->RequestHandler->isAjax()) {
+			if(!empty($this->data)) {
+				if(!$this->data['DocumentFilingCategory']['secure']) {
+					$this->data['DocumentFilingCategory']['secure_admins'] = '[]';
+				} 
+				if($this->DocumentFilingCategory->save($this->data)){
+					$data['success'] = true;
+					if($this->data['DocumentFilingCategory']['secure'] == 1){
+						$data['message'] = 'Category secured successfully.';
+						$data['secure'] = true;
+					}
+					elseif($this->data['DocumentFilingCategory']['secure'] == 0) {
+						$data['message'] = 'Category unsecured successfully.';
+						$data['disabled'] = false;						
+					}
+				}
+				else $data['success'] = false;
+			}
+			else $data['success'] = false;
+			$this->set(compact(('data')));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
 	
     function admin_get_cats() {
 		if($this->RequestHandler->isAjax()) {
 			if($this->params['url']['parentId'] == 'parent') {
-				$parentId = NULL;
+				$conditions['DocumentFilingCategory.parent_id'] = null;
+			}
+			elseif($this->params['url']['parentId'] == 'notParent') {
+				$conditions['not'] = array('DocumentFilingCategory.parent_id' => null);
 			}
 			else{
-				$parentId = $this->params['url']['parentId'] ;
+				$conditions['DocumentFilingCategory.parent_id'] = $this->params['url']['parentId'] ;
 			}
-		    $query = $this->DocumentFilingCategory->find('list', array(
-				'conditions' => array(
-					'DocumentFilingCategory.parent_id' => $parentId,
-					'DocumentFilingCategory.disabled' => 0),
-				'fields' => array('DocumentFilingCategory.id', 'DocumentFilingCategory.name')));
+			$conditions['DocumentFilingCategory.disabled'] = 0;
+			$this->DocumentFilingCategory->recursive = -1;
+		    $cats = $this->DocumentFilingCategory->find('all', array(
+				'conditions' => $conditions,
+				'fields' => array(
+					'DocumentFilingCategory.id', 
+					'DocumentFilingCategory.parent_id', 
+					'DocumentFilingCategory.name',
+					'DocumentFilingCategory.secure')));
 			$i = 0;
-			foreach($query as $k => $v){
-				$data['cats'][$i]['id'] = $k;
-				$data['cats'][$i]['name'] = $v;
+			foreach($cats as $cat){
+				if($cat['DocumentFilingCategory']['secure']) {}
+				$data['cats'][$i]['id'] = $cat['DocumentFilingCategory']['id'];
+				$data['cats'][$i]['parent_id'] = $cat['DocumentFilingCategory']['parent_id'];
+				$data['cats'][$i]['name'] = $cat['DocumentFilingCategory']['name'];
+				$data['cats'][$i]['secure'] = intval($cat['DocumentFilingCategory']['secure']);
 				$i++;
 			}
 			if(!empty($data['cats'])){
