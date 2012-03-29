@@ -123,7 +123,7 @@ Ext.create('Ext.data.Store', {
 Ext.define('QueuedDocument', {
 	extend: 'Ext.data.Model',
 	fields:[
-		'id', 'queue_cat', 'scanned_location',
+		'id', 'queue_cat', 'scanned_location', 'secure',
 		'queued_to_customer', 'queued_to_customer_id', 'queued_to_customer_ssn',
 		'queued_to_customer_first', 'queued_to_customer_last',
 		'locked_by', 'locked_by_id', 'locked_status', 'requeued',
@@ -145,7 +145,15 @@ Ext.define('QueuedDocument', {
 			if(this.data.queued_to_customer_id) {
 				autoPopulateCustomerInfo(this);
 			}
-			embedPDF(this.data.id);
+			Ext.getCmp('secureDocMessage').show();
+			if(1+1 == 2){
+				
+			}
+			else {
+				Ext.getCmp('secureDocMessage').hide();
+			}
+
+			embedPDF(this.data);
 
 			Ext.getCmp('fileDocumentForm').getComponent('docId').setValue(this.data.id);
 			Ext.getCmp('reassignQueueForm').getComponent('docId').setValue(this.data.id);
@@ -180,7 +188,7 @@ Ext.define('QueuedDocument', {
 						if(this.data.queued_to_customer_id) {
 							autoPopulateCustomerInfo(this);
 						}
-						embedPDF(text.QueuedDocument.id);
+						embedPDF(text.QueuedDocument);
 						Ext.getCmp('fileDocumentForm').getComponent('docId').setValue(text.QueuedDocument.id);
 						Ext.getCmp('reassignQueueForm').getComponent('docId').setValue(text.QueuedDocument.id);
 						Ext.getCmp('deleteDocumentForm').getComponent('docId').setValue(text.QueuedDocument.id);
@@ -296,10 +304,10 @@ Ext.create('Ext.data.Store', {
 Ext.create('Ext.menu.Menu', {
 	id: 'gridContextMenu',
 	items: [{
-		text: 'Release Doc',
+		text: 'Unlock Doc & Return to Queue',
 		hidden: true,
-		itemId: 'releaseDoc',
-		icon:  '/img/icons/lock_open.png',
+		itemId: 'unlockDoc',
+		icon:  '/img/icons/key.png',
 		handler: function() {
 			Ext.Ajax.request({
 				url: '/admin/queued_documents/unlock_document',
@@ -310,6 +318,7 @@ Ext.create('Ext.menu.Menu', {
 						documentTimeout.cancel();
 						Ext.Msg.alert('Success', text.message);
 						Ext.getCmp('queuedDocumentsPdf').el.dom.innerHTML = '<p>No Document Loaded.</p>';
+						Ext.getCmp('secureDocMessage').hide();
 						Ext.data.StoreManager.lookup('queuedDocumentsStore').load();
 					}
 					else {
@@ -325,10 +334,10 @@ Ext.create('Ext.menu.Menu', {
 			var doc = selectionModel.getLastSelected();
 			if(!Ext.getCmp('autoLoadDocs').getValue() &&
 				doc.data.locked_status == 'Locked' && doc.data.locked_by_id == adminId) {
-					this.getComponent('releaseDoc').show();
+					this.getComponent('unlockDoc').show();
 			}
 			else {
-				this.getComponent('releaseDoc').hide();
+				this.getComponent('unlockDoc').hide();
 			}
 		}
 	}
@@ -440,7 +449,17 @@ Ext.create('Ext.data.Store', {
 
 Ext.define('QueueCategory', {
 	extend: 'Ext.data.Model',
-	fields: ['id', 'name']
+	fields: ['id', 'name', 'secure', {
+		name : 'img',
+		convert: function(value, record){
+			var img = null;
+			var secure = record.get('secure');
+			if(secure) {
+				img = '<img src="/img/icons/lock.png" />&nbsp';
+			}
+			return img;
+		}
+	}]
 });
 
 Ext.create('Ext.data.Store', {
@@ -519,6 +538,11 @@ Ext.define('Atlas.form.DocQueueFilterPanel', {
 		emptyText: 'Please Select',
 		displayField: 'name',
 		valueField: 'id',
+		listConfig: {
+			getInnerTpl: function() {
+				return '<div>{img}{name}</div>';
+			}
+		},
 		store: 'queueCatgoriesStore'
 	},{
 		xtype: 'datefield',
@@ -761,7 +785,17 @@ Ext.create('Ext.data.ArrayStore', {
 
 Ext.define('DocumentFilingCategory', {
 	extend: 'Ext.data.Model',
-	fields: ['id', 'parent_id', 'name']
+	fields: ['id', 'parent_id', 'name', 'secure', {
+		name : 'img',
+		convert: function(value, record){
+			var img = null;
+			var secure = record.get('secure');
+			if(secure) {
+				img = '<img src="/img/icons/lock.png" />&nbsp';
+			}
+			return img;
+		}
+	}]
 });
 
 Ext.create('Ext.data.Store', {
@@ -889,6 +923,11 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 		queryMode: 'local',
 		triggerAction: 'all',
 		name: 'cat_1',
+		listConfig: {
+			getInnerTpl: function() {
+				return '<div>{img}{name}</div>';
+			}
+		},
 		listeners: {
 			select: function(combo, records, eOpts) {
 				if(records[0] !== undefined) {
@@ -918,6 +957,11 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 		lastQuery: '',
 		disabled: true,
 		allowBlank: false,
+		listConfig: {
+			getInnerTpl: function() {
+				return '<div>{img}{name}</div>';
+			}
+		},
 		listeners: {
 			select: function(combo, records, eOpts) {
 				if(records[0] !== undefined) {
@@ -946,7 +990,12 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 		triggerAction: 'all',
 		lastQuery: '',
 		disabled: true,
-		allowBlank: false
+		allowBlank: false,
+		listConfig: {
+			getInnerTpl: function() {
+				return '<div>{img}{name}</div>';
+			}
+		}
 	},{
 		xtype: 'textfield',
 		fieldLabel: 'Other',
@@ -1050,6 +1099,11 @@ Ext.define('Atlas.form.ReassignQueuePanel', {
 		queryMode: 'local',
 		displayField: 'name',
 		valueField: 'id',
+		listConfig: {
+			getInnerTpl: function() {
+				return '<div>{img}{name}</div>';
+			}
+		},
 		name: 'queue_category_id',
 		forceSelection: true,
 		editable: false,
@@ -1757,12 +1811,23 @@ Ext.onReady(function(){
 			},{
 				title: 'Document',
 				flex: 1,
-				layout: 'fit',
+				layout: 'vbox',
 				items : [{
+					xtype: 'component',
+					id: 'secureDocMessage',
+					html: [
+						'<p style="background:red; padding:10px; font-weight: bold">' +
+						'<img src="/img/icons/lock.png" />' +
+						'&nbsp;This is a secure document please handle with care.</p>'
+					],
+					height: 40,
+					width: '100%',
+					hidden: true
+				},{
 					xtype : 'component',
 					id: 'queuedDocumentsPdf',
-					width: 900,
-					height: 400,
+					width: '100%',
+					flex: 1,
 					html: '<p>No document currently loaded</p>'
 					//TODO: look into possibly having a no acrobat installed message here
 				}]
@@ -1803,9 +1868,9 @@ Ext.onReady(function(){
 	};
 });
 
-function embedPDF(docId){	
+function embedPDF(doc){
 	var myPDF = new PDFObject({
-		url: '/admin/queued_documents/view/'+docId,
+		url: '/admin/queued_documents/view/'+doc.id,
 		pdfOpenParams: {
 			scrollbars: '1',
 			toolbar: '1',
@@ -1815,6 +1880,14 @@ function embedPDF(docId){
 			view: "FitH"
 		}
 	}).embed('queuedDocumentsPdf');
+
+	if(doc.secure) {
+		Ext.getCmp('secureDocMessage').show();
+	}
+	else {
+		Ext.getCmp('secureDocMessage').hide();
+	}
+
 }
 
 function unlockDoc(url, passData) {

@@ -76,10 +76,27 @@ class FiledDocumentsController extends AppController {
 	function admin_view($id = null) {
 		if(!$id) {
 		    $this->Session->setFlash(__('Invalid filed document', true), 'flash_failure');
-		    $this->redirect(array('action' => 'index'));
+		    $this->redirect($this->referer());
 		}
 		$this->view = 'Media';
-		$doc = $this->FiledDocument->read(null, $id);
+		$doc = $this->FiledDocument->findById($id);
+		if($doc) {
+			if($doc['Cat1']['secure']) {
+				$secure_admins = json_decode($doc['Cat1']['secure_admins'], true);
+			}
+			elseif($doc['Cat2']['secure']) {
+				$secure_admins = json_decode($doc['Cat2']['secure_admins'], true);
+			}
+			elseif($doc['Cat3']['secure']) {
+				$secure_admins = json_decode($doc['Cat3']['secure_admins'], true);
+			}
+			if(isset($secure_admins) && is_array($secure_admins)) {
+				if($this->Auth->user('role_id') > 3 && !in_array($this->Auth->user('id'), $secure_admins)) {
+					$this->Session->setFlash(__('Not authorized to view secure documents', true), 'flash_failure');
+					$this->redirect($this->referer());
+				}
+			}		
+		}
 		$params = array(
 		    'id' => $doc['FiledDocument']['filename'],
 		    'name' => str_replace('.pdf', '', $doc['FiledDocument']['filename']),
@@ -269,7 +286,24 @@ class FiledDocumentsController extends AppController {
 					$data['docs'][$k]['modified'] = date('m-d-Y g:i a', strtotime($v['FiledDocument']['modified']));
 					$data['docs'][$k]['LastActAdmin-lastname'] = 
 						trim(ucwords($v['LastActAdmin']['lastname'] . ', ' . $v['LastActAdmin']['firstname']), ', ');
-					$data['docs'][$k]['view'] = '<a target="_blank" href="/admin/filed_documents/view/'.$v['FiledDocument']['id'].'">View</a>';
+					$allowed = true;
+					if($v['Cat1']['secure']) {
+						$allowed = in_array($this->Auth->user('id'), json_decode($v['Cat1']['secure_admins']));
+					}
+					if($v['Cat2']['secure']) {
+						$allowed = in_array($this->Auth->user('id'), json_decode($v['Cat2']['secure_admins']));
+					}
+					if($v['Cat3']['secure']) {
+						$allowed = in_array($this->Auth->user('id'), json_decode($v['Cat3']['secure_admins']));
+					}
+					if(!$allowed && $this->Auth->user('role_id') > 3) {
+						$data['docs'][$k]['view'] = '<img alt="secure" src="/img/icons/lock.png" />';	
+					}
+					else {
+						$data['docs'][$k]['view'] = 
+							'<a target="_blank" href="/admin/filed_documents/view/'.
+							$v['FiledDocument']['id'].'">View</a>';	
+					}					
 				}
 			}
 			else {

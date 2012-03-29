@@ -42,6 +42,9 @@ class DocumentQueueCategoriesController extends AppController {
 			$this->redirect(array('action' => 'index'));
 		}
 		if (!empty($this->data)) {
+			if(!$this->data['DocumentQueueCategory']['secure']) {
+				$this->data['DocumentQueueCategory']['secure_admins'] = json_encode(array());
+			}
 			if ($this->DocumentQueueCategory->save($this->data)) {
 				$this->Session->setFlash(__('The document queue category has been saved', true), 'flash_success');
 				$this->redirect(array('action' => 'index'));
@@ -71,11 +74,23 @@ class DocumentQueueCategoriesController extends AppController {
 		if($this->RequestHandler->isAjax()) {
 			$this->DocumentQueueCategory->recursive -1;
 		    $cats = $this->DocumentQueueCategory->find('all', array(
-				'fields' => array('DocumentQueueCategory.id', 'DocumentQueueCategory.name')));
+				'fields' => array(
+					'DocumentQueueCategory.id',
+					'DocumentQueueCategory.name',
+					'DocumentQueueCategory.secure',
+					'DocumentQueueCategory.secure_admins'
+					)));
 			$i = 0;
 			foreach($cats as $cat){
+				if($this->Auth->user('role_id') > 3 && $cat['DocumentQueueCategory']['secure']) {
+					$secureAdmins = json_decode($cat['DocumentQueueCategory']['secure_admins']);
+					if(!in_array($this->Auth->user('id'), $secureAdmins)) {
+						continue;
+					}
+				}
 				$data['cats'][$i]['id'] = $cat['DocumentQueueCategory']['id'];
 				$data['cats'][$i]['name'] = $cat['DocumentQueueCategory']['name'];
+				$data['cats'][$i]['secure'] = intval($cat['DocumentQueueCategory']['secure']);
 				$i++;
 			}
 			if(!empty($data['cats'])){

@@ -9,6 +9,8 @@ class DocumentFilingCategoryFixture extends CakeTestFixture {
 		'name' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'lft' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'rght' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+		'secure' => array('type' => 'integer', 'null' => false, 'default' => 0),
+		'secure_admins' => array('type' => 'text', 'null' => true, 'default' => NULL),
 		'disabled' => array('type' => 'boolean', 'null' => false, 'default' => NULL),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
@@ -224,6 +226,8 @@ class DocumentFilingCategoryFixture extends CakeTestFixture {
 			'lft' => 373,
 			'rght' => 374,
 			'disabled' => 0,
+			'secure' => 1,
+			'secure_admins' => '[2]',
 			'created' => '2010-11-01 09:03:21',
 			'modified' => '2011-03-04 16:45:54'
 		),

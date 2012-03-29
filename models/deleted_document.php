@@ -43,6 +43,10 @@ class DeletedDocument extends AppModel {
 		'Cat3' => array(
 		    'className' => 'DocumentFilingCategory',
 		    'foreignKey' => 'cat_3'
+		),
+		'DocumentQueueCategory' => array(
+			'className' => 'DocumentQueueCategory',
+			'foreignKey' => 'queue_category_id'
 		)
 	);
 }

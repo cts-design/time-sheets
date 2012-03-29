@@ -6,7 +6,7 @@ class QueuedDocument extends AppModel {
 		'DocumentQueueCategory' => array(
 		    'className' => 'DocumentQueueCategory',
 		    'foreignKey' => 'queue_category_id',
-		    'fields' => 'id, name'
+		    'fields' => 'id, name, secure'
 		),
 		'Location' => array(
 		    'className' => 'Location',
@@ -113,6 +113,10 @@ class QueuedDocument extends AppModel {
 			}				
 		    if($this->save($this->data)) {
 		    	$data = $this->findById($id);
+		    	$data['QueuedDocument']['secure'] = false;
+				if($data['DocumentQueueCategory']['secure']) {
+					$data['QueuedDocument']['secure'] = true;
+				}		    	
 		    	if($unlockedDoc) {
 					$data['unlocked'] = $unlockedDoc;
 				}				

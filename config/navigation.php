@@ -129,6 +129,11 @@
                 'title' => 'Roles'
             ),
             array(
+                'link' => array('controller' => 'secure_categories', 'action' => 'index'),
+                'rel' => 'settings_1',
+                'title' => 'Secure Categories'
+            ),            
+            array(
                 'link' => array('controller' => 'self_scan_categories', 'action' => 'index'),
                 'rel' => 'settings_1',
                 'title' => 'Self Scan Categories'
