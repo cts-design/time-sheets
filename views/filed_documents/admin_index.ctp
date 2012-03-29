@@ -39,7 +39,7 @@
 		    <th class="ui-state-default"><?php echo $this->Paginator->sort('Cat 2', 'Cat2.name');?></th>
 		    <th class="ui-state-default"><?php echo $this->Paginator->sort('Cat 3', 'Cat3.name');?></th>
 		    <th class="ui-state-default"><?php echo $this->Paginator->sort(__('Description', true), 'description');?></th>
-		    <th class="ui-state-default"><?php echo $this->Paginator->sort(__('Created', true), 'created');?></th>
+		    <th class="ui-state-default"><?php echo $this->Paginator->sort(__('Filed', true), 'filed');?></th>
 		    <th class="ui-state-default"><?php echo $this->Paginator->sort(__('Last Activity Admin', true), 'LastActAdmin.lastname');?></th>
 		    <th class="actions ui-state-default"><?php __('Actions');?></th>
 		</tr>
@@ -65,7 +65,7 @@
 		<td><?php echo $filedDocument['Cat2']['name']; ?>&nbsp;</td>
 		<td><?php echo $filedDocument['Cat3']['name']; ?>&nbsp;</td>
 		<td><?php echo $filedDocument['FiledDocument']['description']; ?>&nbsp;</td>
-		<td><?php echo $time->format('m-d-Y g:i a', $filedDocument['FiledDocument']['created']); ?>&nbsp;</td>
+		<td><?php echo $time->format('m-d-Y g:i a', $filedDocument['FiledDocument']['filed']); ?>&nbsp;</td>
 		<td><?php echo (isset($filedDocument['LastActAdmin']['lastname'])) ? $filedDocument['LastActAdmin']['lastname'] . ', ' . $filedDocument['LastActAdmin']['firstname'] : ''; ?>&nbsp;</td>
 		<?php $allowed = true; ?>
 		<?php if($filedDocument['Cat1']['secure']) : ?>

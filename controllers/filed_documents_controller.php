@@ -283,6 +283,7 @@ class FiledDocumentsController extends AppController {
 					$data['docs'][$k]['Cat3-name'] = $v['Cat3']['name'];
 					$data['docs'][$k]['description'] = $v['FiledDocument']['description'];
 					$data['docs'][$k]['created'] = date('m-d-Y g:i a', strtotime($v['FiledDocument']['created']));
+					$data['docs'][$k]['filed'] = date('m-d-Y g:i a', strtotime($v['FiledDocument']['filed']));
 					$data['docs'][$k]['modified'] = date('m-d-Y g:i a', strtotime($v['FiledDocument']['modified']));
 					$data['docs'][$k]['LastActAdmin-lastname'] = 
 						trim(ucwords($v['LastActAdmin']['lastname'] . ', ' . $v['LastActAdmin']['firstname']), ', ');
@@ -342,6 +343,7 @@ class FiledDocumentsController extends AppController {
 				$report[$k]['Description'] = $v['FiledDocument']['description'];
 				$report[$k]['Last Activity Admin'] = trim(ucwords($v['LastActAdmin']['lastname'] . ', '. $v['LastActAdmin']['firstname']), ' ,');
 				$report[$k]['Created'] = date('m/d/y h:i a', strtotime($v['FiledDocument']['created']));
+				$report[$k]['Filed'] = date('m/d/y h:i a', strtotime($v['FiledDocument']['filed']));
 				$report[$k]['Modified'] = date('m/d/y h:i a', strtotime($v['FiledDocument']['modified']));		
 			}			
 		}
@@ -422,6 +424,7 @@ class FiledDocumentsController extends AppController {
 		$this->data['FiledDocument']['user_id'] = $this->data['User']['id'];
 		$this->data['FiledDocument']['last_activity_admin_id'] = $this->data['FiledDocument']['admin_id'];
 		$this->data['FiledDocument']['entry_method'] = $entryMethod;
+		$this->data['FiledDocument']['filed'] = date('Y-m-d H:i:s');
 		if(!move_uploaded_file($this->data['FiledDocument']['submittedfile']['tmp_name'], $path . $docName)) {
 		    return false;
 		}
@@ -509,10 +512,11 @@ class FiledDocumentsController extends AppController {
                     }
                 }
             }
-			if(isset($filters['fromDate']) && isset($filters['toDate'])){
+			if(isset($filters['fromDate'], $filters['toDate'], $filters['dateType'])){
 				$from = date('Y-m-d H:i:m', strtotime($filters['fromDate'] . '12:00 AM'));
 				$to = date('Y-m-d H:i:m', strtotime($filters['toDate'] . '11:59 PM'));
-				$conditions['FiledDocument.created BETWEEN ? AND ?'] = array($from, $to);
+
+				$conditions['FiledDocument.' . $filters['dateType'] . ' BETWEEN ? AND ?'] = array($from, $to);
 			}
 			if(isset($filters['filed_location_id'])){
 				$conditions['FiledDocument.filed_location_id'] = $filters['filed_location_id'];

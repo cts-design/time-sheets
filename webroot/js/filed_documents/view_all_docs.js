@@ -3,16 +3,17 @@ Ext.onReady(function(){
 	Ext.define('FiledDocuments', {
 		extend: 'Ext.data.Model',
 		fields: [
-			'id', 
-			'User-lastname', 
-			'Location-name', 
-			'Admin-lastname', 
-			'Cat1-name', 
-			'Cat2-name', 
+			'id',
+			'User-lastname',
+			'Location-name',
+			'Admin-lastname',
+			'Cat1-name',
+			'Cat2-name',
 			'Cat3-name',
-			'description', 
-			'created', 
-			'modified', 
+			'description',
+			'created',
+			'modified',
+			'filed',
 			'LastActAdmin-lastname',
 			'view'
 		]
@@ -47,21 +48,21 @@ Ext.onReady(function(){
 			text: 'Id',
 			dataIndex: 'id',
 			sortable: true,
-			width: 30	
+			width: 30
 		}, {
 			text: 'Customer',
 			dataIndex: "User-lastname",
-			sortable: true,	
+			sortable: true,
 			width: 140
 		}, {
 			text: 'Location',
 			dataIndex: 'Location-name',
-			sortable: true,	
-			width: 50	
+			sortable: true,
+			width: 50
 		}, {
 			text: 'Filed by Admin',
 			dataIndex: 'Admin-lastname',
-			sortable: true,	
+			sortable: true,
 			width: 80
 		}, {
 			text: 'Main Cat',
@@ -86,7 +87,7 @@ Ext.onReady(function(){
 		}, {
 			text: 'Last Act. Admin',
 			dataIndex: 'LastActAdmin-lastname',
-			sortable: true,	
+			sortable: true,
 			width: 85
 		}, {
 			text: 'Created',
@@ -98,6 +99,12 @@ Ext.onReady(function(){
 			text: 'Modified',
 			dataIndex: 'modified',
 			sortable: true,
+			width: 110,
+			hidden: true
+		},{
+			text: 'Filed',
+			dataIndex: 'filed',
+			sortable: true,
 			width: 115
 		}, {
 			text: 'Actions',
@@ -108,10 +115,10 @@ Ext.onReady(function(){
 			
 		},
 		bbar: Ext.create('Ext.PagingToolbar', {
-		  store: allFiledDocsStore,
-		  displayInfo: true,
-		  displayMsg: 'Displaying documents {0} - {1} of {2}',
-		  emptyMsg: "No documents to display"
+			store: allFiledDocsStore,
+			displayInfo: true,
+			displayMsg: 'Displaying documents {0} - {1} of {2}',
+			emptyMsg: "No documents to display"
 		})
 	});
 	
@@ -137,7 +144,7 @@ Ext.onReady(function(){
 	
 	var adminStore = Ext.create('Ext.data.Store', {
 		model: 'Admin',
-		storeId: 'adminStore',	
+		storeId: 'adminStore',
 		proxy: {
 			type: 'ajax',
 			url: '/admin/filed_documents/get_all_admins',
@@ -145,7 +152,7 @@ Ext.onReady(function(){
 				type: 'json',
 				root: 'admins'
 			}
-		}	
+		}
 	});
 	
 	Ext.define('Location', {
@@ -183,7 +190,7 @@ Ext.onReady(function(){
 			},
 			extraParams: {
 				parentId: 'parent'
-			}		
+			}
 		}
 	});
 	
@@ -197,12 +204,12 @@ Ext.onReady(function(){
 				type: 'json',
 				root: 'cats'
 			}
-		}		
+		}
 	});
 	
 	var docFilingGrandChildCatStore = Ext.create('Ext.data.Store', {
 		model: 'DocumentFilingCategory',
-		storeId: 'docFilingGrandChildCatStore',	
+		storeId: 'docFilingGrandChildCatStore',
 		proxy: {
 			type: 'ajax',
 			url: '/admin/document_filing_categories/get_cats',
@@ -210,7 +217,7 @@ Ext.onReady(function(){
 				type: 'json',
 				root: 'cats'
 			}
-		}	
+		}
 	});
 	
 	var dateSearchTb = Ext.create('Ext.Toolbar', {
@@ -218,9 +225,9 @@ Ext.onReady(function(){
 		items: [{
 			text: 'Today',
 			handler: function() {
-				var dt = new Date();		
+				var dt = new Date();
 				Ext.getCmp('fromDate').setValue(Ext.Date.format(dt, 'm/d/Y'));
-				Ext.getCmp('toDate').setValue(Ext.Date.format(dt, 'm/d/Y'));		
+				Ext.getCmp('toDate').setValue(Ext.Date.format(dt, 'm/d/Y'));
 			}
 		}, {
 			xtype: 'tbseparator'
@@ -230,7 +237,7 @@ Ext.onReady(function(){
 				var dt = new Date();
 				dt.setDate(dt.getDate() - 1);
 				Ext.getCmp('fromDate').setValue(Ext.Date.format(dt, 'm/d/Y'));
-				Ext.getCmp('toDate').setValue(Ext.Date.format(dt, 'm/d/Y'));	
+				Ext.getCmp('toDate').setValue(Ext.Date.format(dt, 'm/d/Y'));
 			}
 		}, {
 			xtype: 'tbseparator'
@@ -238,9 +245,9 @@ Ext.onReady(function(){
 			text: 'Last Week',
 			handler: function() {
 				var dt = new Date();
-				dt.setDate(dt.getDate() - (parseInt(Ext.Date.format(dt, 'N')) + 6));
+				dt.setDate(dt.getDate() - (parseInt(Ext.Date.format(dt, 'N'), 10) + 6));
 				Ext.getCmp('fromDate').setValue(Ext.Date.format(dt, 'm/d/Y'));
-				dt.setDate(dt.getDate() + 6);		
+				dt.setDate(dt.getDate() + 6);
 				Ext.getCmp('toDate').setValue(Ext.Date.format(dt, 'm/d/Y'));
 			}
 		}, {
@@ -252,7 +259,7 @@ Ext.onReady(function(){
 					firstDayPrevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1),
 					lastDayPrevMonth = Ext.Date.getLastDateOfMonth(firstDayPrevMonth);
 				Ext.getCmp('fromDate').setValue(Ext.Date.format(firstDayPrevMonth, 'm/d/Y'));
-				Ext.getCmp('toDate').setValue(Ext.Date.format(lastDayPrevMonth, 'm/d/Y'));		
+				Ext.getCmp('toDate').setValue(Ext.Date.format(lastDayPrevMonth, 'm/d/Y'));
 			}
 		}]
 	});
@@ -269,12 +276,22 @@ Ext.onReady(function(){
 			{'scope' : 'matching exactly', 'label' : 'Matching Exactly'}
 		]
 	});
+
+	var dateTypeStore = Ext.create('Ext.data.ArrayStore', {
+		storeId: 'dateTypeStore',
+		fields: ['dateType', 'label'],
+		data: [
+			['created', 'Created'],
+			['filed', 'Filed'],
+			['modified', 'Modified']
+		]
+	});
 	
 	var allDocsSearch = Ext.create('Ext.form.Panel', {
 		frame: true,
 		collapsible: true,
 		fieldDefaults:{
-			labelWidth: 50,
+			labelWidth: 50
 		},
 		title: 'Filters',
 		id: 'allDocsSearchForm',
@@ -287,24 +304,34 @@ Ext.onReady(function(){
 				columnWidth: 0.3333,
 				height: 125,
 				frame: true,
-	     		bodyStyle: 'padding: 0 10px',
+				bodyStyle: 'padding: 0 10px',
 				title: 'Dates',
 				items: [{
+					xtype: 'combo',
+					fieldLabel: 'Date Type',
+					id: 'dateType',
+					name: 'dateType',
+					store: 'dateTypeStore',
+					valueField: 'dateType',
+					displayField: 'label',
+					value: 'Filed',
+					width: 200
+				},{
 					xtype: 'datefield',
 					id: 'fromDate',
 					fieldLabel: 'From',
 					name: 'fromDate',
-	        		width: 200
-				}, {
+					width: 200
+				},{
 					xtype: 'datefield',
 					fieldLabel: 'To',
 					name: 'toDate',
 					id: 'toDate',
-	        		width: 200
+					width: 200
 				}, dateSearchTb]
-			}, {
+			},{
 				layout: 'anchor',
-	      		bodyStyle: 'padding: 0 10px',
+				bodyStyle: 'padding: 0 10px',
 				title: 'Filing Categories',
 				frame: true,
 				height: 125,
@@ -330,14 +357,14 @@ Ext.onReady(function(){
 									enableCatDropDown(['cat_2']);
 									resetCatDropDown(catIds);
 									disableCatDropDown(['cat_3']);
-								}	else {							
+								}	else {
 									resetCatDropDown(catIds);
 									disableCatDropDown(catIds);
 								}
 							});
 						}
 					}
-				}, {
+				},{
 					xtype: 'combo',
 					fieldLabel: 'Cat 2',
 					disabled: 'true',
@@ -352,17 +379,17 @@ Ext.onReady(function(){
 							docFilingGrandChildCatStore.load({ params: { parentId: records[0].data.id }});
 							docFilingGrandChildCatStore.on('load', function(store, records, options) {
 								var catId = ['cat_3'];
-								if(store.data.length > 0) {							
+								if(store.data.length > 0) {
 									enableCatDropDown(catId);
-									resetCatDropDown(catId);							
+									resetCatDropDown(catId);
 								}	else {
 									disableCatDropDown(catId);
-									resetCatDropDown(catId);								
+									resetCatDropDown(catId);
 								}
 							});
 						}
 					}
-				}, {
+				},{
 					xtype: 'combo',
 					fieldLabel: 'Cat 3',
 					disabled: 'true',
@@ -371,15 +398,15 @@ Ext.onReady(function(){
 					id: 'cat_3',
 					name: 'cat_3',
 					valueField: 'id',
-					displayField: 'name'				
+					displayField: 'name'
 				}]
-			}, {
+			},{
 				layout: 'anchor',
 				title: 'Additional Filters',
-	      		bodyStyle: 'padding: 0 10px',
+				bodyStyle: 'padding: 0 10px',
 				frame: true,
 				height: 125,
-	     		anchor: '90%',
+				anchor: '90%',
 				columnWidth: 0.3333,
 				items: [{
 					xtype: 'combo',
@@ -390,7 +417,7 @@ Ext.onReady(function(){
 					store: adminStore,
 					valueField: 'id',
 					displayField: 'name'
-				}, {
+				},{
 					xtype: 'combo',
 					id: 'location',
 					name: 'filed_location_id',
@@ -404,192 +431,192 @@ Ext.onReady(function(){
 		}, {
 			layout: 'column',
 			xtype: 'container',
-	    items: [{
-	      layout: 'anchor',
-	      columnWidth: 0.333,
-	      id: 'cusSearch1',
-	      title: 'Customer Search Filter 1',
-	      bodyStyle: 'padding: 0 10px',
-	      width: 290,
-	      frame: true,
-	      height: 115,		
-	      items: [{
-	        xtype: 'combo',
-	        fieldLabel: 'Type',
-	        store: searchTypeStore,
-	        queryMode: 'local',
-	        valueField: 'type',
-	        displayField: 'label',
-	        name: 'cusSearchType1',
-	        width: 200,
-	        listeners: {
-	          select: function(combo, records, index) {
-	            if (records[0].data.type === 'lastname' || records[0].data.type === 'firstname') {
-	              Ext.getCmp('cusLastname').enable();
-	              Ext.getCmp('cusLastname').show();
-	              Ext.getCmp('cusLast4').disable();
-	              Ext.getCmp('cusLast4').hide();
-	              Ext.getCmp('cusFullSsn').disable();
-	              Ext.getCmp('cusFullSsn').hide();
-	            }
-	            if (records[0].data.type === 'last4') {
-	              Ext.getCmp('cusLast4').enable();
-	              Ext.getCmp('cusLast4').show();
-	              Ext.getCmp('cusLastname').disable();
-	              Ext.getCmp('cusLastname').hide();							
-	              Ext.getCmp('cusFullSsn').disable();
-	              Ext.getCmp('cusFullSsn').hide();
-	            }
-	            if (records[0].data.type === 'fullssn') {
-	              Ext.getCmp('cusFullSsn').enable();
-	              Ext.getCmp('cusFullSsn').show();
-	              Ext.getCmp('cusLastname').disable();
-	              Ext.getCmp('cusLastname').hide();							
-	              Ext.getCmp('cusLast4').disable();
-	              Ext.getCmp('cusLast4').hide();
-	            }
-	          }
-	        }
-	      }, {
-	        xtype: 'combo',
-	        fieldLabel: 'Scope',
-	        store: scopeStore,
-	        queryMode: 'local',
-	        name: 'cusScope1',
+			items: [{
+				layout: 'anchor',
+				columnWidth: 0.333,
+				id: 'cusSearch1',
+				title: 'Customer Search Filter 1',
+				bodyStyle: 'padding: 0 10px',
+				width: 290,
+				frame: true,
+				height: 115,
+				items: [{
+					xtype: 'combo',
+					fieldLabel: 'Type',
+					store: searchTypeStore,
+					queryMode: 'local',
+					valueField: 'type',
+					displayField: 'label',
+					name: 'cusSearchType1',
+					width: 200,
+					listeners: {
+						select: function(combo, records, index) {
+							if (records[0].data.type === 'lastname' || records[0].data.type === 'firstname') {
+								Ext.getCmp('cusLastname').enable();
+								Ext.getCmp('cusLastname').show();
+								Ext.getCmp('cusLast4').disable();
+								Ext.getCmp('cusLast4').hide();
+								Ext.getCmp('cusFullSsn').disable();
+								Ext.getCmp('cusFullSsn').hide();
+							}
+							if (records[0].data.type === 'last4') {
+								Ext.getCmp('cusLast4').enable();
+								Ext.getCmp('cusLast4').show();
+								Ext.getCmp('cusLastname').disable();
+								Ext.getCmp('cusLastname').hide();
+								Ext.getCmp('cusFullSsn').disable();
+								Ext.getCmp('cusFullSsn').hide();
+							}
+							if (records[0].data.type === 'fullssn') {
+								Ext.getCmp('cusFullSsn').enable();
+								Ext.getCmp('cusFullSsn').show();
+								Ext.getCmp('cusLastname').disable();
+								Ext.getCmp('cusLastname').hide();
+								Ext.getCmp('cusLast4').disable();
+								Ext.getCmp('cusLast4').hide();
+							}
+						}
+					}
+			},{
+			xtype: 'combo',
+			fieldLabel: 'Scope',
+			store: scopeStore,
+			queryMode: 'local',
+			name: 'cusScope1',
 			valueField: 'scope',
-			displayField: 'label',        
-	        width: 200,
-	        id: 'cusScope',
-	        listeners: {
-	          select: function(combo, records, index) {
-	            if (records[0].data.scope === 'containing') {
-	              Ext.getCmp('cusLast4').minLength = 1;
-	              Ext.getCmp('cusFullSsn').minLength = 3;
-	            }
-	            if (records[0].data.scope === 'matching exactly') {
-	              Ext.getCmp('cusLast4').minLength = 4;
-	              Ext.getCmp('cusFullSsn').minLength = 9;
-	            }
-	          }
-	        }
-	      }, {
-	        xtype: 'textfield',
-	        fieldLabel: 'Search',
-	        name: 'cusSearch1',
-	        id: 'cusLast4',
-	        maxLength: 4,
-	        width: 200
-	      }, {
-	        xtype: 'textfield',
-	        fieldLabel: 'Search',
-	        hidden: true,
-	        disabled: true,
-	        name: 'cusSearch1',
-	        id: 'cusFullSsn',
-	        maxLength: 9,
-	        width: 200
-	      }, {
-	        xtype: 'textfield',
-	        fieldLabel: 'Search',
-	        hidden: true,
-	        disabled: true,
-	        name: 'cusSearch1',
-	        id: 'cusLastname',
-	        width: 200
-	      }]
-	    }, {
-	      layout: 'anchor',
-	      title: 'Customer Search Filter 2',
-	      id: 'cusSearch2',
-	      bodyStyle: 'padding: 0 10px',
-	      width: 290,
-	      columnWidth: 0.333,
-	      frame: true,
-	      items: [{
-	        xtype: 'combo',
-	        fieldLabel: 'Type',
-	        store: searchTypeStore,
-	        queryMode: 'local',
-	        valueField: 'type',
-	        displayField: 'label',
-	        name: 'cusSearchType2',
-	        width: 200,
-	        listeners: {
-	          select: function(combo, records, index) {
-	            if (records[0].data.type === 'lastname' || records[0].data.type === 'firstname') {
-	              Ext.getCmp('cusLastname2').enable();
-	              Ext.getCmp('cusLastname2').show();
-	              Ext.getCmp('cusLast4_2').disable();
-	              Ext.getCmp('cusLast4_2').hide();
-	              Ext.getCmp('cusFullSsn_2').disable();
-	              Ext.getCmp('cusFullSsn_2').hide();
-	            }
-	            if (records[0].data.type === 'last4') {
-	              Ext.getCmp('cusLast4_2').enable();
-	              Ext.getCmp('cusLast4_2').show();
-	              Ext.getCmp('cusLastname2').disable();
-	              Ext.getCmp('cusLastname2').hide();							
-	              Ext.getCmp('cusFullSsn_2').disable();
-	              Ext.getCmp('cusFullSsn_2').hide();
-	            }
-	            if (records[0].data.type === 'fullssn') {
-	              Ext.getCmp('cusFullSsn_2').enable();
-	              Ext.getCmp('cusFullSsn_2').show();
-	              Ext.getCmp('cusLast4_2').disable();
-	              Ext.getCmp('cusLast4_2').hide();
-	              Ext.getCmp('cusLastname2').disable();
-	              Ext.getCmp('cusLastname2').hide();							
-	            }
-	          }
-	        }
-	      }, {
-	        xtype: 'combo',
-	        fieldLabel: 'Scope',
-	        queryMode: 'local',
+			displayField: 'label',
+			width: 200,
+			id: 'cusScope',
+			listeners: {
+				select: function(combo, records, index) {
+					if (records[0].data.scope === 'containing') {
+						Ext.getCmp('cusLast4').minLength = 1;
+						Ext.getCmp('cusFullSsn').minLength = 3;
+					}
+					if (records[0].data.scope === 'matching exactly') {
+						Ext.getCmp('cusLast4').minLength = 4;
+						Ext.getCmp('cusFullSsn').minLength = 9;
+					}
+				}
+			}
+		},{
+			xtype: 'textfield',
+			fieldLabel: 'Search',
+			name: 'cusSearch1',
+			id: 'cusLast4',
+			maxLength: 4,
+			width: 200
+		},{
+			xtype: 'textfield',
+			fieldLabel: 'Search',
+			hidden: true,
+			disabled: true,
+			name: 'cusSearch1',
+			id: 'cusFullSsn',
+			maxLength: 9,
+			width: 200
+		},{
+			xtype: 'textfield',
+			fieldLabel: 'Search',
+			hidden: true,
+			disabled: true,
+			name: 'cusSearch1',
+			id: 'cusLastname',
+			width: 200
+		}]
+		},{
+		layout: 'anchor',
+		title: 'Customer Search Filter 2',
+		id: 'cusSearch2',
+		bodyStyle: 'padding: 0 10px',
+		width: 290,
+		columnWidth: 0.333,
+		frame: true,
+		items: [{
+			xtype: 'combo',
+			fieldLabel: 'Type',
+			store: searchTypeStore,
+			queryMode: 'local',
+			valueField: 'type',
+			displayField: 'label',
+			name: 'cusSearchType2',
+			width: 200,
+			listeners: {
+				select: function(combo, records, index) {
+					if (records[0].data.type === 'lastname' || records[0].data.type === 'firstname') {
+						Ext.getCmp('cusLastname2').enable();
+						Ext.getCmp('cusLastname2').show();
+						Ext.getCmp('cusLast4_2').disable();
+						Ext.getCmp('cusLast4_2').hide();
+						Ext.getCmp('cusFullSsn_2').disable();
+						Ext.getCmp('cusFullSsn_2').hide();
+					}
+					if (records[0].data.type === 'last4') {
+						Ext.getCmp('cusLast4_2').enable();
+						Ext.getCmp('cusLast4_2').show();
+						Ext.getCmp('cusLastname2').disable();
+						Ext.getCmp('cusLastname2').hide();
+						Ext.getCmp('cusFullSsn_2').disable();
+						Ext.getCmp('cusFullSsn_2').hide();
+					}
+					if (records[0].data.type === 'fullssn') {
+						Ext.getCmp('cusFullSsn_2').enable();
+						Ext.getCmp('cusFullSsn_2').show();
+						Ext.getCmp('cusLast4_2').disable();
+						Ext.getCmp('cusLast4_2').hide();
+						Ext.getCmp('cusLastname2').disable();
+						Ext.getCmp('cusLastname2').hide();
+					}
+				}
+			}
+		},{
+			xtype: 'combo',
+			fieldLabel: 'Scope',
+			queryMode: 'local',
 			store: scopeStore,
 			name: 'cusScope2',
 			width: 200,
 			id: 'cusScope1',
 			valueField: 'scope',
-			displayField: 'label',  		
-	        listeners: {
-	          select: function(combo, records, index) {
-	            if (records[0].data.scope === 'containing') {
-	              Ext.getCmp('cusLast4_2').minLength = 1;
-	              Ext.getCmp('cusFullSsn_2').minLength = 3;
-	            }
-	            if (records[0].data.scope === 'matching exactly') {
-	              Ext.getCmp('cusLast4_2').minLength = 4;
-	              Ext.getCmp('cusFullSsn_2').minLength = 9;
-	            }
-	          }
-	        }
-				}, {
-					xtype: 'textfield',
-					fieldLabel: 'Search',
-					name: 'cusSearch2',
-					id: 'cusLast4_2',
-					maxLength: 4,
-					width: 200
-				}, {
-					xtype: 'textfield',
-					fieldLabel: 'Search',
-					name: 'cusSearch2',
-					id: 'cusFullSsn_2',
-					hidden: true,
-					disabled: true,
-					maxLength: 9,
-					width: 200
-	      }, {
-					xtype: 'textfield',
-					fieldLabel: 'Search',
-					hidden: true,
-					disabled: true,
-					name: 'cusSearch2',
-					id: 'cusLastname2',
-					width: 200
-				}]
-			}]
+			displayField: 'label',
+			listeners: {
+				select: function(combo, records, index) {
+					if (records[0].data.scope === 'containing') {
+						Ext.getCmp('cusLast4_2').minLength = 1;
+						Ext.getCmp('cusFullSsn_2').minLength = 3;
+					}
+					if (records[0].data.scope === 'matching exactly') {
+						Ext.getCmp('cusLast4_2').minLength = 4;
+						Ext.getCmp('cusFullSsn_2').minLength = 9;
+					}
+				}
+			}
+		},{
+			xtype: 'textfield',
+			fieldLabel: 'Search',
+			name: 'cusSearch2',
+			id: 'cusLast4_2',
+			maxLength: 4,
+			width: 200
+		},{
+			xtype: 'textfield',
+			fieldLabel: 'Search',
+			name: 'cusSearch2',
+			id: 'cusFullSsn_2',
+			hidden: true,
+			disabled: true,
+			maxLength: 9,
+			width: 200
+		},{
+			xtype: 'textfield',
+			fieldLabel: 'Search',
+			hidden: true,
+			disabled: true,
+			name: 'cusSearch2',
+			id: 'cusLastname2',
+			width: 200
+		}]
+		}]
 		}],
 		fbar: [{
 			text: 'Search',
@@ -600,7 +627,7 @@ Ext.onReady(function(){
 				var vals = f.getValues();
 				vals = Ext.JSON.encode(vals);
 				allFiledDocsStore.proxy.extraParams = {filters : vals};
-				allFiledDocsStore.loadPage(1, {limit: 25, start: 0});				
+				allFiledDocsStore.loadPage(1, {limit: 25, start: 0});
 			}
 		}, {
 			text: 'Reset',
@@ -611,7 +638,7 @@ Ext.onReady(function(){
 				allFiledDocsStore.proxy.extraParams = {filters : ''};
 				allFiledDocsStore.loadPage(1, {limit: 25, start: 0});
 				var catIds = ['cat_2', 'cat_3'];
-				disableCatDropDown(catIds);		
+				disableCatDropDown(catIds);
 			}
 		}, {
 			text: 'Report',
@@ -620,8 +647,8 @@ Ext.onReady(function(){
 				var f = allDocsSearch.getForm();
 				var vals = f.getValues();
 				vals = Ext.JSON.encode(vals);
-				allFiledDocsStore.proxy.extraParams = {filters : vals};	
-				window.location = '/admin/filed_documents/report?filters='+ vals
+				allFiledDocsStore.proxy.extraParams = {filters : vals};
+				window.location = '/admin/filed_documents/report?filters='+ vals;
 			}
 		}]
 	});
@@ -630,7 +657,7 @@ Ext.onReady(function(){
 		if(catIds){
 			Ext.each(catIds, function(catId, index){
 				Ext.getCmp(catId).reset();
-			})
+			});
 		}
 	}
 	
@@ -638,7 +665,7 @@ Ext.onReady(function(){
 		if(catIds){
 			Ext.each(catIds, function(catId, index){
 				Ext.getCmp(catId).disable();
-			})
+			});
 		}
 	}
 	
@@ -646,7 +673,7 @@ Ext.onReady(function(){
 		if(catIds){
 			Ext.each(catIds, function(catId, index){
 				Ext.getCmp(catId).enable();
-			})
+			});
 		}
 	}
 	
