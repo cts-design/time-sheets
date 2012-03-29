@@ -3,7 +3,21 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
-	<h1>Release 3.2.4 (3/08/12)</h1>
+    <h1>Release 3.3 (3-20-12)</h1>
+    <h2>Main Feature Releases</h2>
+    <ol>
+        <li>Redeveloped the document queue interface using EXTJS to make it more effiecnt &amp; user friendly.</li>
+        <li>Added Audit Module.</li>
+        <li>Added Secure Filing Categories.</li>
+    </ol>
+    <h2>Minor feature enhancements</h2>
+    <ol>
+        <li>Added ability to select date type in search filters in the document archive.</li>
+        <li>Added filed date to the filed document archive report.</li>
+        <li>Added filed date to the deleted, my filed, and customer document views.</li>
+    </ol>
+    <hr />
+    <h1>Release 3.2.4 (3/08/12)</h1>
 	<h2>Minor Feature Enhancements</h2>
 	<ol>
 		<li>Added a user activity transaction to excel report for document archive.</li>
