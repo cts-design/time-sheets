@@ -20,7 +20,7 @@
 	<thead class="ui-widget-header">
 	    <tr>
 		<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Device IP', true), 'device_ip'); ?></th>
-		<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Devise Name', true), 'device_name'); ?></th>
+		<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Device Name', true), 'device_name'); ?></th>
 		<th class="ui-state-default"><?php echo $this->Paginator->sort(__('Location Id', true), 'location_id'); ?></th>
 		<th class="actions ui-state-default"><?php __('Actions'); ?></th>
 	    </tr>
