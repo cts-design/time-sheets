@@ -6,7 +6,7 @@
     <h1>Release 3.3 (3-20-12)</h1>
     <h2>Main Feature Releases</h2>
     <ol>
-        <li>Redeveloped the document queue interface using EXTJS to make it more effiecnt &amp; user friendly.</li>
+        <li>Redeveloped the document queue interface using EXTJS to make it more efficient &amp; user friendly.</li>
         <li>Added Audit Module.</li>
         <li>Added Secure Filing Categories.</li>
     </ol>
