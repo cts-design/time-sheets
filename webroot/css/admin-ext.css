@@ -1,0 +1,13 @@
+/*
+QueuedDocuments overrides
+*/
+
+.x-accordion-hd .x-panel-header-text {
+	color: #04408C;
+	font-weight: bold;
+}
+
+#documentActions-body .x-panel-header-text-default {
+	color: black;
+	font-weight: normal;
+}

@@ -1,7 +1,20 @@
 <?php
+/**
+ * @author Daniel Nolan
+ * @copyright Complete Technology Solutions 2011
+ * @link http://ctsfla.com
+ * @package ATLAS V3
+ */
 class BarCodeDefinitionsController extends AppController {
 
 	public $name = 'BarCodeDefinitions';
+
+	public function beforeFilter(){
+		parent::beforeFilter();
+		if($this->Auth->user('role_id') > 1) {
+			$this->Auth->allow('admin_get_definitions');
+		}		
+	}
 
 	public function admin_index() {
 		if($this->RequestHandler->isAjax()) {
@@ -26,7 +39,7 @@ class BarCodeDefinitionsController extends AppController {
 				}		
 			}
 			else {
-			 	$data['definitions'] = array();
+				$data['definitions'] = array();
 			}
 			$data['total'] = $this->BarCodeDefinition->find('count');
 			$data['success'] = true;
@@ -45,9 +58,9 @@ class BarCodeDefinitionsController extends AppController {
 					$data['total'] = $this->BarCodeDefinition->find('count');
 					$data['success'] = true;
 					$data['message'] = 'Bar code definition added successfully.';
-                    $this->Transaction->createUserTransaction('BarCodeDefinition', null, null,
-                                            'Added bar code definition ID ' . 
-                                            $this->BarCodeDefinition->getLastInsertId());					
+					$this->Transaction->createUserTransaction('BarCodeDefinition', null, null,
+											'Added bar code definition ID ' . 
+											$this->BarCodeDefinition->getLastInsertId());					
 				} else {
 					$data['success'] = false;
 					$data['message'] = 'Unable to add bar code definition.';
@@ -74,9 +87,9 @@ class BarCodeDefinitionsController extends AppController {
 					$data['definitions'] = $this->getDefinition($this->data['BarCodeDefinition']['id']);
 					$data['success'] = true;
 					$data['message'] = 'Bar code definition updated successfully.';
-                    $this->Transaction->createUserTransaction('BarCodeDefinition', null, null,
-                                            'Edited bar code definition ID ' . 
-                                            $this->data['BarCodeDefinition']['id']);					
+					$this->Transaction->createUserTransaction('BarCodeDefinition', null, null,
+											'Edited bar code definition ID ' . 
+											$this->data['BarCodeDefinition']['id']);					
 				} else {
 					$data['success'] = false;
 					$data['message'] = 'Unable to update bar code definition.';
@@ -98,15 +111,43 @@ class BarCodeDefinitionsController extends AppController {
 			elseif ($this->BarCodeDefinition->delete($this->data['BarCodeDefinition']['id'])) {
 				$data['definitions'] = $this->getDefinition($this->data['BarCodeDefinition']['id']);
 				$data['success'] = true;
-                $this->Transaction->createUserTransaction('BarCodeDefinition', null, null,
-                                        'Deleted bar code definition ID ' . 
-                                        $this->data['BarCodeDefinition']['id']);				
+				$this->Transaction->createUserTransaction('BarCodeDefinition', null, null,
+										'Deleted bar code definition ID ' . 
+										$this->data['BarCodeDefinition']['id']);				
 			}
 			else {
 				$data['success'] = false;
 			}
 			$this->set(compact('data'));			
 			$this->render(null, null, '/elements/ajaxreturn');			
+		}
+	}
+	
+   public function admin_get_definitions() {
+		if($this->RequestHandler->isAjax()) {
+			$definitions = $this->BarCodeDefinition->find('all', array(
+				'fields' => array(
+					'BarCodeDefinition.id',
+					'BarCodeDefinition.cat_1',
+					'BarCodeDefinition.cat_2',
+					'BarCodeDefinition.cat_3')));
+			$i = 0;
+			foreach($definitions as $definition){
+				$data['definitions'][$i]['id'] = $definition['BarCodeDefinition']['id'];
+				$data['definitions'][$i]['cat_1'] = $definition['BarCodeDefinition']['cat_1'];
+				$data['definitions'][$i]['cat_2'] = $definition['BarCodeDefinition']['cat_2'];
+				$data['definitions'][$i]['cat_3'] = $definition['BarCodeDefinition']['cat_3'];
+				$i++;
+			}
+			if(!empty($data['definitions'])){
+				$data['success'] = true;
+			}
+			else {
+				$data['success'] = true;
+				$data['definitions'] = array();
+			}		
+			$this->set(compact('data'));
+			return $this->render(null, null, '/elements/ajaxreturn');
 		}
 	}
 	

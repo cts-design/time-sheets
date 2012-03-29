@@ -13,7 +13,7 @@ class AppController extends Controller {
     var $components = array(
     	'Session', 
     	'RequestHandler',
-    	'Auth',
+    	'AtlasAuth',
     	'AtlasAcl',
     	'Cookie',
     	'Transaction',
@@ -103,6 +103,7 @@ class AppController extends Controller {
 		$this->Auth->autoRedirect = false;
 		$this->Auth->authorize = 'actions';
 		$this->Auth->actionPath = 'controllers/';
+		$this->Auth->ajaxError = 'ajax_error';
 		//@TODO possibly change this to check specfic permissions 
 		if($this->Auth->user('role_id') > 1) {
 		    $this->Auth->allow(
@@ -157,11 +158,12 @@ class AppController extends Controller {
 		                $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => true));
 		            }
 	        	}
-	        }	
+	        }
     }
 
     public function constructClasses() {
         parent::constructClasses();
+        $this->Auth = $this->AtlasAuth;
         $this->Acl = $this->AtlasAcl;
     }
 
@@ -175,7 +177,7 @@ class AppController extends Controller {
 		$this->loadModel('ModuleAccessControl');
 		$Controllers = Configure::listObjects('controller');
 		if(in_array($controller, $Controllers)) {
-		$module = $this->ModuleAccessControl->findByName($controller);
+			$module = $this->ModuleAccessControl->findByName($controller);
 			if($module['ModuleAccessControl']['permission'] == 1) {
 				return false;
 			}

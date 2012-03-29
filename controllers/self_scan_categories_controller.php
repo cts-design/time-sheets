@@ -3,6 +3,13 @@ class SelfScanCategoriesController extends AppController {
 
 	var $name = 'SelfScanCategories';
 
+	public function beforeFilter(){
+		parent::beforeFilter();
+			if($this->Auth->user('role_id') > 1) {
+				$this->Auth->allow('admin_get_cats');		
+			}
+	}
+
 	function admin_index() {
 		$this->SelfScanCategory->recursive = 0;
 		$order = array('SelfScanCategory.name' => 'asc');
@@ -85,4 +92,31 @@ class SelfScanCategoriesController extends AppController {
 		$this->Session->setFlash(__('Self scan category was not deleted', true), 'flash_failure');
 		$this->redirect(array('action' => 'index'));
 	}
+
+    function admin_get_cats() {
+		if($this->RequestHandler->isAjax()) {
+		    $cats = $this->SelfScanCategory->find('all', array(
+				'fields' => array(
+					'SelfScanCategory.id',
+					'SelfScanCategory.cat_1',
+					'SelfScanCategory.cat_2',
+					'SelfScanCategory.cat_3')));
+			$i = 0;
+			if($cats) {
+				foreach ($cats as $cat) {
+					$data['cats'][$i] = $cat['SelfScanCategory'];
+					$i++;				
+				}				
+			}
+			if(!empty($data['cats'])){
+				$data['success'] = true;
+			}
+			else {
+				$data['success'] = true;
+				$data['cats'] = array();
+			}		
+			$this->set(compact('data'));
+			return $this->render(null, null, '/elements/ajaxreturn');
+		}
+    }
 }

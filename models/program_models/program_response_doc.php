@@ -15,8 +15,12 @@ class ProgramResponseDoc extends AppModel {
 	function processResponseDoc($data, $user) {	
 		$Program = ClassRegistry::init('Program');
 		$this->data = $data;
-		$watchedCat = $Program->WatchedFilingCat->findByCatId($this->data['FiledDocument']['cat_3']);
-		$return['cat_id'] = $this->data['FiledDocument']['cat_3'];
+		$watchedCat = null;
+		$return = false;
+		if(isset($this->data['FiledDocument']['cat_3'])) {
+			$watchedCat = $Program->WatchedFilingCat->findByCatId($this->data['FiledDocument']['cat_3']);
+			$return['cat_id'] = $this->data['FiledDocument']['cat_3'];			
+		}
 		$rejectedReason = null;
 		if(isset($this->data['FiledDocument']['description'])) {
 			$rejectedReason = $this->data['FiledDocument']['description'];
