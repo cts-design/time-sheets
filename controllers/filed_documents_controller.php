@@ -35,6 +35,10 @@ class FiledDocumentsController extends AppController {
                                     'FiledDocuments/admin_view_all_docs', '*')) {
             $this->Auth->allow('admin_get_all_admins', 'admin_report');
         }
+
+        if (preg_match('/auditor/i', $this->Session->read('Auth.User.role_name'))) {
+            $this->Auth->allow('auditor_view');
+        }
     }
 
     function admin_index($userId=null) {
@@ -110,6 +114,21 @@ class FiledDocumentsController extends AppController {
 			'Viewed filed document ID ' . $doc['FiledDocument']['id']);
 		$this->set($params);
 		return $params;
+    }
+
+	function auditor_view($id = null) {
+		$this->view = 'Media';
+		$doc = $this->FiledDocument->findById($id);
+		$params = array(
+		    'id' => $doc['FiledDocument']['filename'],
+		    'name' => str_replace('.pdf', '', $doc['FiledDocument']['filename']),
+		    'extension' => 'pdf',
+		    'cache' => true,
+		    'path' => Configure::read('Document.storage.path') .
+            substr($doc['FiledDocument']['filename'], 0, 4) . '/' .
+            substr($doc['FiledDocument']['filename'], 4, 2) . '/'
+		);
+		$this->set($params);
     }
 
     function admin_edit($id = null) {

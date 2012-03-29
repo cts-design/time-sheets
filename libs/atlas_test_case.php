@@ -22,6 +22,8 @@ class AtlasTestCase extends CakeTestCase {
             'aro',
             'alert',
             'aros_aco',
+            'audit',
+            'audits_user',
             'bar_code_definition',
             'chairman_report',
             'deleted_document',

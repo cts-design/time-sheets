@@ -395,24 +395,40 @@ class UsersController extends AppController {
 			$this->Session->write('Auth.redirect', '/' . $this->params['pass'][1] . '/index/' . $this->params['pass'][2]); 
 		}
 		if($this->Auth->user()){
-			$this->Transaction->createUserTransaction('Website', 
-				null, null, 'Logged in using website.' );
-			if($this->Auth->user('email') == null || preg_match('(none|nobody|noreply)', $this->Auth->user('email'))) {
-				$this->Session->setFlash(__('Please complete your profile to continue.', true), 'flash_success');	
-				$this->redirect(array('controller' => 'users', 'action' => 'edit', $this->Auth->user('id')));
-			}
-			if($this->Session->read('Auth.redirect') != '') {	
-				$this->redirect($this->Session->read('Auth.redirect'));
-			}
-			else {
-				$this->redirect('/');
-			}
+            $role = $this->User->Role->find('first', array(
+                'fields' => array('Role.name'),
+                'conditions' => array('Role.id' => $this->Auth->user('role_id'))
+            ));
+            $this->Session->write('Auth.User.role_name', $role['Role']['name']);
+
+            if (preg_match('/auditor/i', $this->Auth->user('role_name'))) {
+                $this->Transaction->createUserTransaction('Auditor', null, null, 'Logged into auditor dashboard');
+                $this->redirect(array('action' => 'dashboard', 'auditor' => true));
+            } else {
+                $this->Transaction->createUserTransaction('Website', 
+                    null, null, 'Logged in using website.' );
+                if($this->Auth->user('email') == null || preg_match('(none|nobody|noreply)', $this->Auth->user('email'))) {
+                    $this->Session->setFlash(__('Please complete your profile to continue.', true), 'flash_success');   
+                    $this->redirect(array('controller' => 'users', 'action' => 'edit', $this->Auth->user('id')));
+                }
+                if($this->Session->read('Auth.redirect') != '') {   
+                    $this->redirect($this->Session->read('Auth.redirect'));
+                }
+                else {
+                    $this->redirect('/');
+                }   
+            }
 		}
 		if(isset($type) && $type == 'child' || 
 			isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'child_website') {
 			$this->set('title_for_layout', 'Child Login');	
 			$this->render('child_login');
-		}				
+		}
+        if(isset($type) && $type == 'auditor' || 
+            isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'auditor') {
+            $this->set('title_for_layout', 'Auditor Login');  
+            $this->render('auditor_login');
+        }
 	}
 
     function logout($type=null, $logoutMsg=null) {
@@ -438,6 +454,10 @@ class UsersController extends AppController {
 		    $this->Session->setFlash($msg, 'flash_success_modal');
 		    $this->redirect(array('action' => 'self_sign_login', 'kiosk' => true));
 		}
+        if (preg_match('/auditor/i', $this->Session->read('Auth.User.role_name'))) {
+            $this->Session->destroy();
+            $this->redirect('/');
+        }
 		if ($this->Auth->user('role_id') != 1) {
 		    $this->redirect(array('action' => 'login', 'admin' => true));
 		}
@@ -1080,6 +1100,13 @@ class UsersController extends AppController {
 		}
 		$this -> set('options', $options);
 	}
+
+    // Auditors
+    public function auditor_dashboard() {
+        // check to see if there are any audits this user is associated 
+        // with that have started but have no expired
+        $this->layout = 'ext_fullscreen';
+    }
 	
 	private function sendCustomerDetailsAlert($detail, $user, $kiosk) {
 		$this->loadModel('Alert');

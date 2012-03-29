@@ -21,6 +21,7 @@
 				{contentEl: 'SelfSign', title: 'Self Sign'},
 				{contentEl: 'Programs', title: 'Programs'},
 				{contentEl: 'Tools', title: 'Tools'},
+				{contentEl: 'Audits', title: 'Audits'},
 				{contentEl: 'Reports', title: 'Reports'}
 			]
 		})
@@ -449,6 +450,29 @@
 			    'checked' => (isset($controllers['Users']['admin_resolve_login_issues'])) ? $controllers['Users']['admin_resolve_login_issues'] : '' ));?>
 		    </fieldset>
             <?php echo $this->PluginPermissions->buildFieldset('tools') ?>
+		    <br class="clear" />
+			<?php echo $this->Form->end(__('Submit', true))?>    
+	</div>
+	<div id="Audits" class="x-hide-display">
+		    <?php echo $this->Form->create('permission', array('action' => 'set_permissions')) ?>
+		    <?php echo $this->Form->hidden('id', array('value' => $id));?>
+		    <?php echo $this->Form->hidden('model', array('value' => $model));?>		
+		    <fieldset class="left right-mar-10">
+            <legend><?php __('Audit Administration') ?></legend>
+		       <?php echo $this->Form->input('Audits.all', array(
+			    'type' => 'checkbox',
+			   	'label' => 'Index',
+			    'checked' => (isset($controllers['Audits']['all'])) ? $controllers['Audits']['all'] : '' ));?>
+		    </fieldset>
+
+		    <fieldset class="left right-mar-10">
+            <legend><?php __('Auditors') ?></legend>
+		       <?php echo $this->Form->input('Users.auditor_dashboard', array(
+			    'type' => 'checkbox',
+			   	'label' => 'Auditor Dashboard',
+			    'checked' => (isset($controllers['Users']['auditor_dashboard'])) ? $controllers['Users']['auditor_dashboard'] : '' ));?>
+		    </fieldset>
+            <?php echo $this->PluginPermissions->buildFieldset('audits') ?>
 		    <br class="clear" />
 			<?php echo $this->Form->end(__('Submit', true))?>    
 	</div>

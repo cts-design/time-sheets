@@ -60,7 +60,7 @@ class TransactionComponent extends Object {
     function setLocation($locationId) {
 	$Location = ClassRegistry::init('Location');
 	$locations = $Location->find('list');
-	if($locationId == null && $this->Auth->user('role_id') != 1) {
+	if($locationId == null && ($this->Auth->user('role_id') != 1 && !preg_match('/auditor/i', $this->Auth->User('role_name')))) {
 	   $location = $locations[$this->Auth->user('location_id')];
 	}
 	elseif($locationId != null) {
