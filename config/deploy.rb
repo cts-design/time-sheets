@@ -16,7 +16,7 @@ set :design_branch, "master"
 # plugins, override in region namespace if region has plugins
 set :app_plugins, []
 
-# --- Server Settings. 
+# --- Server Settings.
 
 # Staging and demo servers
 namespace :cts do
@@ -27,8 +27,8 @@ namespace :cts do
     set :branch, 'staging'
     server "demo.atlasforworkforce.com", :app, :web, :db, :primary => true
   end
-  
-  task :staging do  
+
+  task :staging do
     set :deploy_to, "/var/www/vhosts/staging.atlasforworkforce.com/#{application}"
     set :server_name, 'atlas staging'
     set :user, 'atlas_staging'
@@ -37,12 +37,12 @@ namespace :cts do
     set :design_branch, ENV['DESIGN'] if ENV.has_key?('DESIGN')
     server "staging.atlasforworkforce.com", :app, :web, :db, :primary => true
   end
-  
+
   task :tradeshow do
     set :deploy_to, "/var/www/vhosts/www.ctsdemo.local/#{application}"
     set :server_name, 'cts tradeshow'
     set :user, 'demo_ftp'
-    server "www.ctsdemo.local", :app, :web, :db, :primary => true    
+    server "www.ctsdemo.local", :app, :web, :db, :primary => true
   end
 end
 
@@ -50,8 +50,8 @@ end
 task :cccp do
   set :deploy_to, "/var/www/vhosts/vpk.childcarepinellas.org/#{application}"
   set :server_name, 'cccp production'
-  set :user, 'vpk_ftp' 
-  server "vpk.childcarepinellas.org", :app, :web, :db, :primary => true       
+  set :user, 'vpk_ftp'
+  server "vpk.childcarepinellas.org", :app, :web, :db, :primary => true
 end
 
 task :cc do
@@ -71,30 +71,30 @@ end
 task :clm do
   set :deploy_to, "/var/www/vhosts/atlas.clmworkforce.com/#{application}"
   set :server_name, 'clm production'
-  set :user, 'clm_ftp' 
+  set :user, 'clm_ftp'
   server "atlas.clmworkforce.com", :app, :web, :db, :primary => true
 end
 
 task :elcm do
   set :deploy_to, "/var/www/vhosts/atlas.elc-marion.org/#{application}"
   set :server_name, 'elcm production'
-  set :user, 'elcm_ftp' 
-  server "atlas.elc-marion.org", :app, :web, :db, :primary => true       
+  set :user, 'elcm_ftp'
+  server "atlas.elc-marion.org", :app, :web, :db, :primary => true
 end
-  
+
 task :tbwa do
   set :design_branch, "tbwa"
   set :server_name, 'tbwa production'
   set :deploy_to, "/var/www/vhosts/workforcetampa.com/#{application}"
   set :user, 'ftp_tbwa'
-  server "workforcetampa.com", :app, :web, :db, :primary => true    
+  server "workforcetampa.com", :app, :web, :db, :primary => true
 end
 
 # --- Cake Settings
 set :cake_branch, "1.3"
 
-set :shared_children,       %w(config backups plugins system tmp tmp/fdf webroot/files/public 
-                               webroot/img/public storage storage/thumbnails storage/program_forms 
+set :shared_children,       %w(config backups plugins system tmp tmp/fdf webroot/files/public
+                               webroot/img/public storage storage/thumbnails storage/program_forms
                                storage/program_media)
 
 namespace :deploy do
@@ -108,7 +108,7 @@ namespace :deploy do
       end
     end
     run "ln -s #{shared_path}/system #{latest_release}/webroot/system && ln -s #{shared_path}/tmp #{latest_release}/tmp";
-    run "rm -f #{current_path} && ln -s #{latest_release} #{current_path}" 
+    run "rm -f #{current_path} && ln -s #{latest_release} #{current_path}"
     cake.database.symlink if (remote_file_exists?(database_path))
 
     run "ln -s #{shared_path}/storage #{latest_release}/storage"
@@ -116,7 +116,7 @@ namespace :deploy do
     run "ln -s #{shared_path}/webroot/img/public #{latest_release}/webroot/img/public"
     if (remote_file_exists?("#{shared_path}/webroot/img/default/default_header_logo.jpg"))
       run "ln -s #{shared_path}/webroot/img/default/default_header_logo.jpg #{latest_release}/webroot/img/default/default_header_logo.jpg"
-    end 
+    end
     run "ln -s #{shared_path}/webroot/img/admin/admin_header_logo.jpg #{latest_release}/webroot/img/admin/admin_header_logo.jpg"
     run "ln -s #{shared_path}/webroot/img/kiosk/kiosk_header.jpg #{latest_release}/webroot/img/kiosk/kiosk_header.jpg"
     run "ln -s #{shared_path}/config/core.php #{latest_release}/config/core.php"
@@ -124,8 +124,8 @@ namespace :deploy do
     run "ln -s #{shared_path}/webroot/index.php #{latest_release}/webroot/index.php"
     run "ln -s #{shared_path}/webroot/test.php #{latest_release}/webroot/test.php"
     run "ln -s #{shared_path}/webroot/js/ckfinder/config.php #{latest_release}/webroot/js/ckfinder/config.php"
-    deploy.plugins.symlink       
-  end 
+    deploy.plugins.symlink
+  end
 
   namespace :plugins do
     desc "Symlinks the configured plugins for the appliction into plugins, from the shared dirs."
@@ -137,15 +137,12 @@ namespace :deploy do
   end
 
   task :finalize_update, :except => { :no_release => true } do
-    #run "chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
-    #run "chmod 755 -R #{release_path}" #do we need this line? 
     cake.cache.clear
     cake.schema.create
     cake.schema.update
     cake.aco_update
     cake.cache.clear
   end
-
 end
 
 namespace :cake do
@@ -154,32 +151,32 @@ namespace :cake do
     task :create, roles => [:web] do
       run "cd #{current_release} && cake schema create atlas < #{current_release}/config/schema_create_prompt.txt"
     end
-    
+
     desc "Update database schema update tables"
     task :update, roles => [:web] do
       run "cd #{current_release} && yes y | cake schema update atlas"
     end
-  end 
-   
-  desc "Update ACL Access Control Object Table" 
+  end
+
+  desc "Update ACL Access Control Object Table"
   task :aco_update, roles => [:web] do
     run "cd #{current_release} && cake acl_extras aco_update"
-  end  
+  end
 end
 
 task :design do
   transaction do
-    on_rollback { run "rm -rf #{release_path}; true" } 
+    on_rollback { run "rm -rf #{release_path}; true" }
     run "cd #{release_path} && git clone --depth 1 git://github.com/CTSATLAS/atlas-design.git design"
-    set :git_flag_quiet, "-q "  
+    set :git_flag_quiet, "-q "
     stream "cd #{release_path}/design && git checkout #{git_flag_quiet}#{design_branch}"
     run "mv #{release_path}/design/img/default/ #{release_path}/webroot/img/"
-    run "mv #{release_path}/design/js/default/ #{release_path}/webroot/js/"  
+    run "mv #{release_path}/design/js/default/ #{release_path}/webroot/js/"
     run "mv #{release_path}/design/css/style.css #{release_path}/webroot/css/style.css"
     run "mv #{release_path}/design/views/layouts/default.ctp #{release_path}/views/layouts/default.ctp"
-    run "mv #{release_path}/design/views/website_views/pages/home.ctp #{release_path}/views/website_views/pages/home.ctp"  
+    run "mv #{release_path}/design/views/website_views/pages/home.ctp #{release_path}/views/website_views/pages/home.ctp"
   end
-end  
+end
 
 
 namespace :notify_campfire do
@@ -188,11 +185,11 @@ namespace :notify_campfire do
   desc 'Alert Campfire of a deploy'
   task :deploy_alert do
     branch_name = branch.split('/', 2).last
-    if current_release   
+    if current_release
       deployed = capture("cd #{current_release} && git rev-parse HEAD")[0,7]
-    else 
-      deployed = 'no current release'  
-    end  
+    else
+      deployed = 'no current release'
+    end
     deploying = capture("cd #{latest_release} && git rev-parse HEAD")[0,7]
     compare_url = "https://github.com/CTSATLAS/atlas/compare/#{deployed}...#{deploying}"
 
@@ -205,7 +202,7 @@ namespace :notify_campfire do
 
   desc 'Alert Campfire of site disabled'
   task :disabled_alert do
-    body = "#{deployer} put #{server_name} in maintenance mode."  
+    body = "#{deployer} put #{server_name} in maintenance mode."
     send_campfire_alert body
   end
 
@@ -224,7 +221,7 @@ namespace :notify_campfire do
 end
 
 def send_campfire_alert(body)
-  run "cd #{current_release} && cake campfire '#{body}'" 
+  run "cd #{current_release} && cake campfire '#{body}'"
 end
 
 
@@ -245,7 +242,7 @@ namespace :mysql do
 
 end
 
-before :deploy, 'mysql:backup' 
+before :deploy, 'mysql:backup'
 
 after "mysql:backup", "notify_campfire:mysql_backup_alert"
 after "deploy:web:disable", "notify_campfire:disabled_alert"
