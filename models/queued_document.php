@@ -32,14 +32,14 @@ class QueuedDocument extends AppModel {
 		    'className' => 'BarCodeDefinition',
 		    'foreignKey' => 'bar_code_definition_id',
 		    'fields' => 'id, name'
-		),	
+		),
 		'User' => array(
 		    'className' => 'User',
 		    'foreignKey' => 'user_id',
 		    'fields' => 'id, firstname, lastname, ssn, name_last4'
-		)	
+		)
     );
-	
+
 	var $validate = array(
 		'submittedfile' => array(
 			'pdf' => array(
@@ -61,7 +61,7 @@ class QueuedDocument extends AppModel {
 		    $deletedLocation = $this->data['QueuedDocument']['deleted_location_id'];
 		}
 		$delDoc = ClassRegistry::init('DeletedDocument');
-		$this->recursive = -1;	
+		$this->recursive = -1;
 		$doc = $this->read(null, $this->id);
 		foreach($doc as $k => $v) {
 		    $this->data['DeletedDocument'] = $v;
@@ -71,7 +71,7 @@ class QueuedDocument extends AppModel {
 				$this->data['DeletedDocument']['deleted_location_id'] = $deletedLocation;
 		    }
 
-		    unset($this->data['DeletedDocument']['modified']);	   	
+		    unset($this->data['DeletedDocument']['modified']);
 		}
 		if(!empty($adminId) && !empty($reason)) {
 		   if($delDoc->save($this->data['DeletedDocument'])) {
@@ -88,21 +88,21 @@ class QueuedDocument extends AppModel {
 		$lockedConditions['QueuedDocument.locked_status'] = 1;
 		$lockedConditions['QueuedDocument.locked_by'] = $userId;
 		$userLockedDoc = $this->find('first', array(
-			'conditions' => $lockedConditions, 
+			'conditions' => $lockedConditions,
 			'recursive' => -1));
 		if(!empty($userLockedDoc['QueuedDocument']['id'])) {
 			$id = $this->unlockDocument($userLockedDoc['QueuedDocument']['id']);
 		    if ($id) {
 				return $id;
 		    }
-		    else false; 
+		    else false;
 		}
 		else return false;
     }
 
     function lockDocument($id=null, $userId=null) {
 		if($id && $userId) {
-			$unlockedDoc = $this->checkLocked($userId);	
+			$unlockedDoc = $this->checkLocked($userId);
 		    $this->data['QueuedDocument']['id'] = $id;
 		    $this->data['QueuedDocument']['locked_by'] = $userId;
 			$this->data['QueuedDocument']['last_activity_admin_id'] = $userId;
@@ -110,16 +110,16 @@ class QueuedDocument extends AppModel {
 			$doc = $this->findById($id);
 			if($doc['QueuedDocument']['locked_status']) {
 				return false;
-			}				
+			}
 		    if($this->save($this->data)) {
 		    	$data = $this->findById($id);
 		    	$data['QueuedDocument']['secure'] = false;
 				if($data['DocumentQueueCategory']['secure']) {
 					$data['QueuedDocument']['secure'] = true;
-				}		    	
+				}
 		    	if($unlockedDoc) {
 					$data['unlocked'] = $unlockedDoc;
-				}				
+				}
 				return $data;
 		    }
 		    else return false;
@@ -160,12 +160,12 @@ class QueuedDocument extends AppModel {
 		$docName = date('YmdHis') . rand(0, pow(10, 7)) . '.pdf';
 		$data['QueuedDocument']['filename'] = $docName;
 		if($entryMethod == 'Desktop Scan') {
-			$data['QueuedDocument']['last_activity_admin_id'] = $id;		
+			$data['QueuedDocument']['last_activity_admin_id'] = $id;
 		}
 		else {
-			$data['QueuedDocument']['user_id'] = $id;			
+			$data['QueuedDocument']['user_id'] = $id;
 		}
-		$data['QueuedDocument']['entry_method'] = $entryMethod;	
+		$data['QueuedDocument']['entry_method'] = $entryMethod;
 
 		if(!isset($data['QueuedDocument']['submittedfile']) || !move_uploaded_file($data['QueuedDocument']['submittedfile']['tmp_name'], $path . $docName)) {
 		    return false;
@@ -184,12 +184,12 @@ class QueuedDocument extends AppModel {
 		}
 		return true;
 	}
-	
+
 	function lessThen5mb() {
 		if($this->data['QueuedDocument']['submittedfile']['size'] > 5242880) {
 			return false;
 		}
-		return true;		
+		return true;
 	}
 
 }
