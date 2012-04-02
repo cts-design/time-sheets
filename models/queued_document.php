@@ -108,7 +108,7 @@ class QueuedDocument extends AppModel {
 			$this->data['QueuedDocument']['last_activity_admin_id'] = $userId;
 		    $this->data['QueuedDocument']['locked_status'] = 1;
 			$doc = $this->findById($id);
-			if($doc['QueuedDocument']['locked_status']) {
+			if(! $doc || $doc['QueuedDocument']['locked_status']) {
 				return false;
 			}
 		    if($this->save($this->data)) {
