@@ -149,18 +149,18 @@ namespace :cake do
   namespace :schema do
     desc "Update database schema create tables"
     task :create, roles => [:web] do
-      run "cd #{current_release} && cake schema create atlas < #{current_release}/config/schema_create_prompt.txt"
+      run "cd #{latest_release}&& cake schema create atlas < #{latest_release}/config/schema_create_prompt.txt"
     end
 
     desc "Update database schema update tables"
     task :update, roles => [:web] do
-      run "cd #{current_release} && yes y | cake schema update atlas"
+      run "cd #{latest_release} && yes y | cake schema update atlas"
     end
   end
 
   desc "Update ACL Access Control Object Table"
   task :aco_update, roles => [:web] do
-    run "cd #{current_release} && cake acl_extras aco_update"
+    run "cd #{latest_release} && cake acl_extras aco_update"
   end
 end
 
