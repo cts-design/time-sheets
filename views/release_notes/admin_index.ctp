@@ -3,6 +3,19 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+    <h1>Release 3.3.1 (4-05-12)</h1>
+    <h2>Minor feature enhancements</h2>
+    <ol>
+        <li>Added Atlas Alerts Client download to alerts interface.</li>
+    </ol>
+    <h2>Bug Fixes</h2>
+    <ol>
+        <li>
+            Fixed bug where stale documents in the queued docs grid that had been deleted or 
+            filed could be locked, causing the user to see a blank screen in the document viewer.
+        </li>
+    </ol>
+    <hr />
     <h1>Release 3.3 (3-20-12)</h1>
     <h2>Main Feature Releases</h2>
     <ol>
