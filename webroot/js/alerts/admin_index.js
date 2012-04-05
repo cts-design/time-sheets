@@ -744,6 +744,7 @@ Ext.create('Ext.menu.Menu', {
 });
 
 Ext.onReady(function(){
+  Ext.QuickTips.init();
 				
 	Ext.create('Ext.Panel', {
 		width: 950,
@@ -753,6 +754,13 @@ Ext.onReady(function(){
 			type: 'hbox',
 			align: 'stretch'
 		},
+    tools: [{
+      type: 'save',
+      tooltip: 'Download Alerts Client',
+      handler: function() {
+        window.location = '/admin/alerts/download'
+      }
+    }],
 		renderTo: 'alerts',
 		items: [{
 			xtype: 'panel',
