@@ -4,7 +4,7 @@ class Program extends AppModel {
 	var $displayField = 'name';
 	
 	var $hasMany = array(
-		'ProgramFormField',
+		'ProgramModule',
 		'ProgramResponse',
 		'ProgramEmail',
 		'ProgramPaperForm',
