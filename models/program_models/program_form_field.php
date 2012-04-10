@@ -1,8 +1,8 @@
 <?php
 
-class ProgramField extends AppModel {
+class ProgramFormField extends AppModel {
 	
-	var $name = 'ProgramField';
+	var $name = 'ProgramFormField';
 	var $displayField = 'name';
 	
 	var $belongsTo = array('Program');	
