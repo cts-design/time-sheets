@@ -57,6 +57,9 @@ class ProgramsController extends AppController {
                     'action' => 'response_complete', $id));
             }
         }
+        if($programResponse) {
+            $this->redirect(array('action' => $program['Program']['type'], $id, $responseId));
+        }
         $data['redirect'] = '/programs/' . $program['Program']['type'] . '/' . $id;
         $data['title_for_layout'] = $program['Program']['name'];
         $data['program'] = $program;
