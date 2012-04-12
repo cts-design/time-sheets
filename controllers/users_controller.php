@@ -391,8 +391,16 @@ class UsersController extends AppController {
 	
 	function login($type=null) {		
 		$this->User->setValidation('customerLogin');
-		if(isset($this->params['pass'][1], $this->params['pass'][2]) && $this->params['pass'][1] == 'programs') {
-			$this->Session->write('Auth.redirect', '/' . $this->params['pass'][1] . '/index/' . $this->params['pass'][2]); 
+		if(isset($this->params['pass'][0], $this->params['pass'][1]) && $this->params['pass'][0] === 'programs') {
+            $this->loadModel('Program');
+            $program = $this->Program->findById($this->params['pass'][1]);
+            if($program) {
+                $this->Session->write('Auth.redirect', '/programs/' . $program['Program']['type'] . '/' . $this->params['pass'][1]);
+                $this->set('title_for_layout', $program['Program']['name'] . ' Login');	
+                if($program['Program']['atlas_registration_type'] === 'child') {
+                    $type = 'child';
+                }
+            }
 		}
 		if($this->Auth->user()){
             $role = $this->User->Role->find('first', array(
@@ -421,8 +429,13 @@ class UsersController extends AppController {
 		}
 		if(isset($type) && $type == 'child' || 
 			isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'child_website') {
-			$this->set('title_for_layout', 'Child Login');	
-			$this->render('child_login');
+                if($program) {
+                    $this->set('title_for_layout', $program['Program']['name'] . ' Child Login');
+                }
+                else {
+                    $this->set('title_for_layout', 'Child Login');	
+                }
+                $this->render('child_login');
 		}
         if(isset($type) && $type == 'auditor' || 
             isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'auditor') {
