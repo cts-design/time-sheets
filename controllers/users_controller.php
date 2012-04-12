@@ -100,8 +100,8 @@ class UsersController extends AppController {
         }
         if($this->Auth->user() &&  $this->params['action'] == 'admin_dashboard' ) {
             if(! $this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Users/admin_dashboard', '*')) {
-            $this->Session->setFlash(__('You are not authorized to access the admin dashboard.', true) , 'flash_failure') ;
-            $this->redirect('/');
+                $this->Session->setFlash(__('You are not authorized to access the admin dashboard.', true) , 'flash_failure') ;
+                $this->redirect('/');
             }
         }
         if($this->Auth->user() && $this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Users/admin_resolve_login_issues', '*') == true) {
@@ -146,28 +146,28 @@ class UsersController extends AppController {
 
         if (!empty($submittedValues) && $submittedValues['search_term1'] !== '') {
             switch ($submittedValues['search_scope1']) {
-                case 'containing':
-                    if ($submittedValues['search_by1'] === 'last4') {
-                        $conditionScope = 'RIGHT (User.ssn , 4) LIKE';
-                    } else if ($submittedValues['search_by1'] === 'fullssn') {
-                        $conditionScope = 'User.ssn LIKE';
-                    } else {
-                        $conditionScope = $submittedValues['search_by1'] . ' LIKE';
-                    }
+            case 'containing':
+                if ($submittedValues['search_by1'] === 'last4') {
+                    $conditionScope = 'RIGHT (User.ssn , 4) LIKE';
+                } else if ($submittedValues['search_by1'] === 'fullssn') {
+                    $conditionScope = 'User.ssn LIKE';
+                } else {
+                    $conditionScope = $submittedValues['search_by1'] . ' LIKE';
+                }
 
-                    $conditionValue = '%' . $submittedValues['search_term1'] . '%';
-                    break;
-                case 'matching exactly':
-                    if ($submittedValues['search_by1'] === 'last4') {
-                        $conditionScope = 'RIGHT (User.ssn , 4)';
-                    } else if ($submittedValues['search_by1'] === 'fullssn') {
-                        $conditionScope = 'User.ssn';
-                    } else {
-                        $conditionScope = $submittedValues['search_by1'];
-                    }
+                $conditionValue = '%' . $submittedValues['search_term1'] . '%';
+                break;
+            case 'matching exactly':
+                if ($submittedValues['search_by1'] === 'last4') {
+                    $conditionScope = 'RIGHT (User.ssn , 4)';
+                } else if ($submittedValues['search_by1'] === 'fullssn') {
+                    $conditionScope = 'User.ssn';
+                } else {
+                    $conditionScope = $submittedValues['search_by1'];
+                }
 
-                    $conditionValue = $submittedValues['search_term1'];
-                    break;
+                $conditionValue = $submittedValues['search_term1'];
+                break;
             }
 
             $conditions1 = array($conditionScope => $conditionValue);
@@ -175,28 +175,28 @@ class UsersController extends AppController {
 
             if (isset($submittedValues['search_by2']) && $submittedValues['search_by2'] !== '' && $submittedValues['search_term2'] !== '') {
                 switch ($submittedValues['search_scope2']) {
-                    case 'containing':
-                        if ($submittedValues['search_by2'] === 'last4') {
-                            $conditionScope2 = 'RIGHT (User.ssn , 4) LIKE';
-                        } else if ($submittedValues['search_by2'] === 'fullssn') {
-                            $conditionScope2 = 'User.ssn LIKE';
-                        } else {
-                            $conditionScope2 = $submittedValues['search_by2'] . ' LIKE';
-                        }
+                case 'containing':
+                    if ($submittedValues['search_by2'] === 'last4') {
+                        $conditionScope2 = 'RIGHT (User.ssn , 4) LIKE';
+                    } else if ($submittedValues['search_by2'] === 'fullssn') {
+                        $conditionScope2 = 'User.ssn LIKE';
+                    } else {
+                        $conditionScope2 = $submittedValues['search_by2'] . ' LIKE';
+                    }
 
-                        $conditionValue2 = '%' . $submittedValues['search_term2'] . '%';
-                        break;
-                    case 'matching exactly':
-                        if ($submittedValues['search_by2'] === 'last4') {
-                            $conditionScope2 = 'RIGHT (User.ssn , 4)';
-                        } else if ($submittedValues['search_by2'] === 'fullssn') {
-                            $conditionScope2 = 'User.ssn';
-                        } else {
-                            $conditionScope2 = $submittedValues['search_by2'];
-                        }
+                    $conditionValue2 = '%' . $submittedValues['search_term2'] . '%';
+                    break;
+                case 'matching exactly':
+                    if ($submittedValues['search_by2'] === 'last4') {
+                        $conditionScope2 = 'RIGHT (User.ssn , 4)';
+                    } else if ($submittedValues['search_by2'] === 'fullssn') {
+                        $conditionScope2 = 'User.ssn';
+                    } else {
+                        $conditionScope2 = $submittedValues['search_by2'];
+                    }
 
-                        $conditionValue2 = $submittedValues['search_term2'];
-                        break;
+                    $conditionValue2 = $submittedValues['search_term2'];
+                    break;
                 }
 
                 $conditions2 = array($conditionScope2 => $conditionValue2);
@@ -1193,16 +1193,16 @@ class UsersController extends AppController {
     }
 
     private function loadPluginConfigs() {
-      $blackList = array('AclExtras', 'DebugKit');
-      $plugins = App::objects('plugin');
+        $blackList = array('AclExtras', 'DebugKit');
+        $plugins = App::objects('plugin');
 
-      foreach ($plugins as $key => $value) {
-        if (!in_array($value, $blackList)) {
-            Configure::load(Inflector::underscore($value) . '.config');
+        foreach ($plugins as $key => $value) {
+            if (!in_array($value, $blackList)) {
+                Configure::load(Inflector::underscore($value) . '.config');
+            }
         }
-      }
 
-      return true;
+        return true;
     }
 
 }
