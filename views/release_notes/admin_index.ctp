@@ -3,6 +3,20 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+    <h1>Release 3.3.2 (4-12-12)</h1>
+    <h2>Minor feature enhancements</h2>
+    <ol>
+        <li>Added Atlas Alerts Client download to alerts interface.</li>
+    </ol>
+    <h2>Bug Fixes</h2>
+    <ol>
+        <li>
+            Fixed bug where users were unable to login to programs due to recursioni
+            being set too high on a database query causing a 500 error.
+        </li>
+        <li>Fixed bug where documents could potentially be filed to the wrong user from the new document filing queue.</li>
+    </ol>
+    <hr />
     <h1>Release 3.3.1 (4-05-12)</h1>
     <h2>Minor feature enhancements</h2>
     <ol>
