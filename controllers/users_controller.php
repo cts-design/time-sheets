@@ -395,11 +395,14 @@ class UsersController extends AppController {
             $this->Session->write('Auth.redirect', '/' . $this->params['pass'][1] . '/index/' . $this->params['pass'][2]);
         }
         if($this->Auth->user()){
-            $role = $this->User->Role->find('first', array(
-                'fields' => array('Role.name'),
-                'conditions' => array('Role.id' => $this->Auth->user('role_id'))
-            ));
-            $this->Session->write('Auth.User.role_name', $role['Role']['name']);
+            if ($this->Auth->user('role_id') > 3) {
+                $this->User->Role->recursive = -1;
+                $role = $this->User->Role->find('first', array(
+                    'fields' => array('Role.name'),
+                    'conditions' => array('Role.id' => $this->Auth->user('role_id'))
+                ));
+                $this->Session->write('Auth.User.role_name', $role['Role']['name']);
+            }
 
             if (preg_match('/auditor/i', $this->Auth->user('role_name'))) {
                 $this->Transaction->createUserTransaction('Auditor', null, null, 'Logged into auditor dashboard');
