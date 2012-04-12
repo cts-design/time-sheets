@@ -21,54 +21,14 @@ class ProgramsController extends AppController {
                         $this->Auth->allow('index', 'view_media', 'load_media');
                     }
         }
-    }
-
-    function index($id = null) {
-        if(!$id) {
-            $this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');
-            $this->redirect('/');
-        }
         if($this->Auth->user('email') == null || preg_match('(none|nobody|noreply)', $this->Auth->user('email'))) {
             $this->Session->setFlash(__('Please complete your profile to continue.', true), 'flash_success');
             $this->redirect(array('controller' => 'users', 'action' => 'edit', $this->Auth->user('id')));
         }
-        $program = $this->Program->findById($id);
-        if($program['Program']['disabled'] == 1){
-            $this->Session->setFlash(__('This program is disabled', true), 'flash_failure');
-            $this->redirect('/');
-        }
-        $programResponse = $this->Program->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
-        if($programResponse) {
-            $responseId = $programResponse['ProgramResponse']['id'];
-        }
-        if($programResponse['ProgramResponse']['not_approved']) {
-            if(strpos($programResponse['Program']['type'], 'form') &&
-                !$programResponse['ProgramResponse']['answers']) {
-                    $this->redirect(array('controller' => 'program_responses', 'action' => 'index', $id));
-            }
-            else {
-                $this->redirect(array('controller' => 'program_responses', 'action' => 'not_approved', $id));
-            }
-        }
-        if($programResponse['ProgramResponse']['complete']) {
-            if($programResponse['ProgramResponse']['complete']) {
-                $this->redirect(array(
-                    'controller' => 'program_responses',
-                    'action' => 'response_complete', $id));
-            }
-        }
-        if($programResponse) {
-            $this->redirect(array('action' => $program['Program']['type'], $id, $responseId));
-        }
-        $data['redirect'] = '/programs/' . $program['Program']['type'] . '/' . $id;
-        $data['title_for_layout'] = $program['Program']['name'];
-        $data['program'] = $program;
-        $instructions = Set::extract('/ProgramInstruction[type=main]/text', $program);
-        if($instructions) {
-            $data['instructions'] = $instructions[0];
-        }
+    }
 
-        $this->set($data);
+    function index($id = null) {
+
     }
 
     function get_started() {
@@ -94,8 +54,32 @@ class ProgramsController extends AppController {
         //ecouse logic here
     }
 
-    function registration() {
-        // registration logic here
+    function registration($id = null) {
+        if(!$id) {
+            $this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');
+            $this->redirect('/');
+        }
+        $program = $this->Program->findById($id);
+        if($program['Program']['disabled'] == 1){
+            $this->Session->setFlash(__('This program is disabled', true), 'flash_failure');
+            $this->redirect('/');
+        }
+        $getStarted = true;
+        $programResponse = $this->Program->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
+        if($programResponse) {
+            $getStarted = false;
+            $responseId = $programResponse['ProgramResponse']['id'];
+            // module and step logic here
+        }
+        $data['getStarted'] = $getStarted;
+        $data['redirect'] = '/programs/' . $program['Program']['type'] . '/' . $id;
+        $data['title_for_layout'] = $program['Program']['name'] . ' Dashboard';
+        $data['program'] = $program;
+        $instructions = Set::extract('/ProgramInstruction[type=main]/text', $program);
+        if($instructions) {
+            $data['instructions'] = $instructions[0];
+        }
+        $this->set($data);
     }
 
     function orientation() {
