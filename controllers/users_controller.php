@@ -393,6 +393,7 @@ class UsersController extends AppController {
         $this->User->setValidation('customerLogin');
         if(isset($this->params['pass'][0], $this->params['pass'][1]) && $this->params['pass'][0] === 'programs') {
             $this->loadModel('Program');
+            $this->Program->recursive = -1;
             $program = $this->Program->findById($this->params['pass'][1]);
             if($program) {
                 $this->Session->write('Auth.redirect', '/programs/' . $program['Program']['type'] . '/' . $this->params['pass'][1]);
