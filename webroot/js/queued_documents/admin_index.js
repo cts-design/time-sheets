@@ -229,6 +229,7 @@ function autoPopulateCustomerInfo(doc) {
 	Ext.getCmp('fileDocFirstname').setValue(doc.data.queued_to_customer_id);
 	Ext.getCmp('fileDocCusDetails').setValue(
 		doc.data.queued_to_customer_ssn + ', ' + doc.data.queued_to_customer_last);
+  Ext.getCmp('fileDocumentForm').getComponent('userId').setValue(doc.data.queued_to_customer_id);
 }
 
 function autoPopulateFilingCats(doc) {
@@ -642,6 +643,7 @@ Ext.define('Atlas.form.field.FirstNameComboBox', {
 	fieldLabel: 'First Name',
 	allowBlank: false,
 	forceSelection: true,
+  submitValue: false,
 	hideTrigger: true,
 	valueField: 'id',
 	displayField: 'firstname',
@@ -663,6 +665,7 @@ Ext.define('Atlas.form.field.FirstNameComboBox', {
 		select: function(combo, records, eOpts) {
 			this.nextSibling('#fileDocCusDetails').setValue(
 				records[0].data.fullssn + ', ' + records[0].data.lastname);
+      Ext.getCmp('fileDocumentForm').getComponent('userId').setValue(records[0].data.id);
 		}
 	}
 });
@@ -699,10 +702,10 @@ Ext.define('Atlas.form.field.SsnComboBox', {
 	msgTarget: 'under',
 	name: 'user_id',
 	allowBlank: false,
-	triggerAction: 'query',
 	store: 'customerSsn',
 	valueField: 'id',
 	displayField: 'ssn',
+  submitValue: false,
 	listConfig: {
 		getInnerTpl: function() {
 			return '<div>{fullname}</div>';
@@ -712,6 +715,7 @@ Ext.define('Atlas.form.field.SsnComboBox', {
 		select: function(combo, records, eOpts) {
 			this.nextSibling('#fileDocCusDetails').setValue(
 				records[0].data.fullssn + ', ' + records[0].data.lastname);
+      Ext.getCmp('fileDocumentForm').getComponent('userId').setValue(records[0].data.id);
 		}
 	}
 });
@@ -1026,7 +1030,11 @@ Ext.define('Atlas.form.FileDocumentPanel', {
 		xtype: 'hidden',
 		name: 'id',
 		itemId: 'docId'
-	}],
+	},{
+    xtype: 'hidden',
+    name: 'user_id',
+    itemId: 'userId'
+  }],
 	buttonAlign: 'left',
 	buttons:[{
 		text: 'File',
