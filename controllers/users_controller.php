@@ -388,21 +388,26 @@ class UsersController extends AppController {
         $this->set('title_for_layout', 'Self Sign Kiosk');
         $this->layout = 'kiosk';
     }
-
-    function login($type=null) {
-        $this->User->setValidation('customerLogin');
-        if(isset($this->params['pass'][1], $this->params['pass'][2]) && $this->params['pass'][1] == 'programs') {
-            $this->Session->write('Auth.redirect', '/' . $this->params['pass'][1] . '/index/' . $this->params['pass'][2]);
-        }
-        if($this->Auth->user()){
-            if ($this->Auth->user('role_id') > 3) {
-                $this->User->Role->recursive = -1;
-                $role = $this->User->Role->find('first', array(
-                    'fields' => array('Role.name'),
-                    'conditions' => array('Role.id' => $this->Auth->user('role_id'))
-                ));
-                $this->Session->write('Auth.User.role_name', $role['Role']['name']);
+	
+	function login($type=null) {		
+		$this->User->setValidation('customerLogin');
+		if(isset($this->params['pass'][0], $this->params['pass'][1]) && $this->params['pass'][0] === 'programs') {
+            $this->loadModel('Program');
+            $program = $this->Program->findById($this->params['pass'][1]);
+            if($program) {
+                $this->Session->write('Auth.redirect', '/programs/' . $program['Program']['type'] . '/' . $this->params['pass'][1]);
+                $this->set('title_for_layout', $program['Program']['name'] . ' Login');	
+                if($program['Program']['atlas_registration_type'] === 'child') {
+                    $type = 'child';
+                }
             }
+		}
+		if($this->Auth->user()){
+            $role = $this->User->Role->find('first', array(
+                'fields' => array('Role.name'),
+                'conditions' => array('Role.id' => $this->Auth->user('role_id'))
+            ));
+            $this->Session->write('Auth.User.role_name', $role['Role']['name']);
 
             if (preg_match('/auditor/i', $this->Auth->user('role_name'))) {
                 $this->Transaction->createUserTransaction('Auditor', null, null, 'Logged into auditor dashboard');
@@ -419,8 +424,23 @@ class UsersController extends AppController {
                 }
                 else {
                     $this->redirect('/');
-                }
+                }   
             }
+		}
+		if(isset($type) && $type == 'child' || 
+			isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'child_website') {
+                if($program) {
+                    $this->set('title_for_layout', $program['Program']['name'] . ' Child Login');
+                }
+                else {
+                    $this->set('title_for_layout', 'Child Login');	
+                }
+                $this->render('child_login');
+		}
+        if(isset($type) && $type == 'auditor' || 
+            isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'auditor') {
+            $this->set('title_for_layout', 'Auditor Login');  
+            $this->render('auditor_login');
         }
         if(isset($type) && $type == 'child' ||
             isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'child_website') {
