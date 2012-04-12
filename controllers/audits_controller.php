@@ -274,27 +274,36 @@ class AuditsController extends AppController {
                 array_push($this->auditors, array($username, $password));
                 array_push($auditorIds, $lastId);
             } else {
-                FireCake::log($this->Audit->User->invalidFields());
                 $i--;
             }
         }
 
-        FireCake::log($this->auditors);
         return $auditorIds;
     }
 
     private function parseCustomerList($list) {
         $customers = array();
-        $customerSSNs = preg_split("/[\s]+/", $list);
+        $customerSSNs = preg_split("/[\r|\n|\r\n]+/", $list);
 
         // we don't want to pull every associated model
         $this->Audit->User->recursive = -1;
 
         foreach ($customerSSNs as $customerSSN) {
-            $customer = $this->Audit->User->find('first', array(
-                'conditions' => array('User.ssn' => $customerSSN),
-                'fields' => array('User.id', 'User.firstname', 'User.lastname')
-            ));
+            if (is_numeric($customerSSN)) {
+                $customer = $this->Audit->User->find('first', array(
+                    'conditions' => array('User.ssn' => $customerSSN),
+                    'fields' => array('User.id', 'User.firstname', 'User.lastname')
+                ));
+            } else {
+                $cus = preg_split('/[\s,]+/', $customerSSN);
+                $customer = $this->Audit->User->find('first', array(
+                    'conditions' => array(
+                        'User.lastname' => $cus[0],
+                        'RIGHT (User.ssn, 4)' => $cus[1]
+                    ),
+                    'fields' => array('User.id', 'User.firstname', 'User.lastname')
+                ));
+            }
 
             if ($customer) {
                 $doc_count = $this->Audit->User->FiledDocument->find('count', array(
