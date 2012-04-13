@@ -180,7 +180,8 @@ class ProgramResponsesController extends AppController {
         }
         $instructions = $this->ProgramResponse->Program->ProgramInstruction->getInstructions(
             $id, 'complete');
-        $title_for_layout = 'Program Certificate';
+
+        $title_for_layout = ($programResponse['Program']['cert_type'] !== 'none') ? 'Program Certificate' : 'Thank You';
         $this->set(compact('title_for_layout', 'programResponse', 'instructions'));
     }
 
