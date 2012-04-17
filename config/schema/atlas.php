@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2012-04-17 11:04:18 : 1334675058*/
+/* atlas schema generated on: 2012-04-17 13:41:45 : 1334684505*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -488,6 +488,13 @@ class atlasSchema extends CakeSchema {
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'program_id' => array('column' => 'program__forms_id', 'unique' => 0)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
+	var $program_forms = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+		'program_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
+		'program_step_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'program_id' => array('column' => 'program_id', 'unique' => 0), 'program_step_id' => array('column' => 'program_step_id', 'unique' => 0)),
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
+	);
 	var $program_instructions = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 		'program_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
@@ -572,8 +579,7 @@ class atlasSchema extends CakeSchema {
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 		'program_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
 		'parent_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
-		'type' => array('type' => 'string', 'null' => false, 'key' => 'index', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'order' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'type' => array('type' => 'string', 'null' => true, 'default' => NULL, 'key' => 'index', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'lft' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'rght' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
