@@ -41,7 +41,22 @@ class ProgramResponsesController extends AppController {
 					'admin_generate_form');
 			}
 	}	
-	
+
+    function form($stepId) {
+        if(!$stepId) {
+            $this->Session->setFlash(__('Invalid step id.', 'flash_failure'));
+            $this->redirect($this->referer());
+        }
+        $step = $this->ProgramResponse->Program->ProgramStep->findById($stepId);
+        debug($step);
+        if($step) {
+            $data['program'] = $step['Program'];
+            $data['formFields'] = $step['ProgramFormField'];
+            $data['title_for_layout'] = $step['ProgramStep']['name'];
+        }
+        $this->set($data);
+    }
+
 	function index($id = null) {
 		if(!$id) {
 			$this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');
