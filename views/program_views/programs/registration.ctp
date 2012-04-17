@@ -1,8 +1,14 @@
 <?php echo (!empty($instructions) ? '<div id="Instructions">' . $instructions . '</div>' : '' ) ?>
 <br />
-<?php echo $form->create('Program', array('action' => 'get_started')); ?>
-<?php echo $form->input('redirect', array('type' => 'hidden', 'value' => $redirect)); ?>
-<?php echo $form->input('ProgramResponse.program_id', array('type' => 'hidden', 'value' => $this->params['pass'][0])); ?>
-<?php if($getStarted) : ?>
-    <?php echo $form->end(__('Get Started', true)) ?>
-<?php endif ?>
+<div>
+    <table width="100%">
+        <tr>
+            <th>Step</th><th>Status</th><th>Actions</th>
+        </tr>
+        <tr>
+            <td><?php echo $program['ProgramStep'][0]['name']?></td>
+            <td>Incomplete</td>
+            <td><?php echo $html->link('Complete Form', '/program_responses/form/' . $program['ProgramStep'][0]['id'])?></td>
+        </tr>
+    </table>
+</div>
