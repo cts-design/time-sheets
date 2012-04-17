@@ -15,8 +15,8 @@ class ProgramStep extends AppModel {
 	);
 
 	var $hasMany = array(
-		'ProgramForm' => array(
-			'className' => 'ProgramForm',
+		'ProgramFormField' => array(
+			'className' => 'ProgramFormField',
 			'foreignKey' => 'program_step_id',
 			'dependent' => false,
 			'conditions' => '',
