@@ -1,12 +1,13 @@
 <?php
 class ProgramStep extends AppModel {
 	var $name = 'ProgramStep';
+    var $actsAs = array('Tree');
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
 
 	var $belongsTo = array(
-		'ProgramModule' => array(
-			'className' => 'ProgramModule',
-			'foreignKey' => 'program_module_id',
+		'Program' => array(
+			'className' => 'Program',
+			'foreignKey' => 'program_id',
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''
