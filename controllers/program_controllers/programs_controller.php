@@ -27,52 +27,41 @@ class ProgramsController extends AppController {
         }
     }
 
-    function index($id = null) {
-
-    }
-
-    function get_started() {
-        if(!empty($this->data)) {
-            $this->data['ProgramResponse']['user_id'] = $this->Auth->user('id');
-            $program = $this->Program->findById($this->data['ProgramResponse']['program_id']);
-            if($program) {
-                $string = sha1(date('ymdhisu'));
-                $this->data['ProgramResponse']['confirmation_id'] =
-                    substr($string, 0, $program['Program']['confirmation_id_length']);
-            }
-            $this->data['ProgramResponse']['expires_on'] =
-                date('Y-m-d H:i:s', strtotime('+' . $program['Program']['response_expires_in'] . ' days'));
-            if($this->Program->ProgramResponse->save($this->data)){
-            $this->Transaction->createUserTransaction('Programs', null, null,
-                'Initiated program ' . $program['Program']['name']);
-                $this->redirect($this->data['Program']['redirect']);
-            }
-        }
-    }
-
-    function ecourse() {
-        //ecouse logic here
-    }
-
     function registration($id = null) {
         if(!$id) {
             $this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');
             $this->redirect('/');
         }
-        $program = $this->Program->findById($id);
-        if($program['Program']['disabled'] == 1){
+        $program = $this->Program->find('first', array(
+            'conditions' => array('Program.id' => $id),
+            'contain' => array('ProgramStep')));
+        if($program['Program']['disabled']) {
             $this->Session->setFlash(__('This program is disabled', true), 'flash_failure');
             $this->redirect('/');
         }
-        $getStarted = true;
         $programResponse = $this->Program->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
-        if($programResponse) {
-            $getStarted = false;
-            $responseId = $programResponse['ProgramResponse']['id'];
-            // module and step logic here
+        if(!$programResponse) {
+            if($program) {
+                $this->data['ProgramResponse']['user_id'] = $this->Auth->user('id');
+                $this->data['ProgramResponse']['program_id'] = $id;
+                if($program['Program']['confirmation_id_length']) {
+                    $string = sha1(date('ymdhisu'));
+                    $this->data['ProgramResponse']['confirmation_id'] =
+                        substr($string, 0, $program['Program']['confirmation_id_length']);
+                }
+                if($program['Program']['response_expires_in']) {
+                    $this->data['ProgramResponse']['expires_on'] =
+                        date('Y-m-d H:i:s', strtotime('+' . $program['Program']['response_expires_in'] . ' days'));
+                }
+                if($this->Program->ProgramResponse->save($this->data)){
+                    $this->Transaction->createUserTransaction('Programs', null, null,
+                    'Initiated program ' . $program['Program']['name']);
+                }
+            }
         }
-        $data['getStarted'] = $getStarted;
-        $data['redirect'] = '/programs/' . $program['Program']['type'] . '/' . $id;
+        if($programResponse) {
+            $responseId = $programResponse['ProgramResponse']['id'];
+        }
         $data['title_for_layout'] = $program['Program']['name'] . ' Dashboard';
         $data['program'] = $program;
         $instructions = Set::extract('/ProgramInstruction[type=main]/text', $program);
@@ -80,6 +69,10 @@ class ProgramsController extends AppController {
             $data['instructions'] = $instructions[0];
         }
         $this->set($data);
+    }
+
+    function ecourse() {
+        //ecouse logic here
     }
 
     function orientation() {
