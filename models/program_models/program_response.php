@@ -18,17 +18,26 @@ class ProgramResponse extends AppModel {
                 'ProgramResponse.user_id' => $userId,
                 'ProgramResponse.program_id' => $programId)));
         foreach($programResponses as $programResponse) {
-            if($programResponse['ProgramResponse']['complete']) {
+            if($programResponse['ProgramResponse']['status'] === 'complete') {
                 $return = $programResponse;
                 break;
             }
-            elseif($programResponse['ProgramResponse']['not_approved'] &&
-                $programResponse['ProgramResponse']['allow_new_response'] == 0) {
+            if($programResponse['ProgramResponse']['status'] === 'pending_approval') {
+                $return = $programResponse;
+                break;
+            }
+            elseif($programResponse['ProgramResponse']['status'] === 'not_approved' &&
+                ! $programResponse['ProgramResponse']['allow_new_response']) {
                     $return = $programResponse;
                     break;
             }
             elseif($programResponse['ProgramResponse']['expires_on'] > date('Y-m-d H:i:s') &&
-                $programResponse['ProgramResponse']['not_approved'] == 0) {
+                $programResponse['ProgramResponse']['status'] === 'not_approved') {
+                    $return = $programResponse;
+                    break;
+            }
+            elseif($programResponse['ProgramResponse']['status'] === 'incomplete' &&
+                $programResponse['ProgramResponse']['expires_on'] > date('Y-m-d H:i:s')) {
                     $return = $programResponse;
                     break;
             }
