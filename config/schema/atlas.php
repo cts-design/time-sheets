@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2012-04-19 10:59:51 : 1334847591*/
+/* atlas schema generated on: 2012-04-19 16:45:45 : 1334868345*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -550,14 +550,9 @@ class atlasSchema extends CakeSchema {
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 		'program_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
 		'user_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
-		'viewed_media' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'status' => array('type' => 'string', 'null' => false, 'default' => 'incomplete', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'form_esignature' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'complete' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
-		'needs_approval' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'confirmation_id' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 12, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'uploaded_docs' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
-		'dropping_off_docs' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
-		'not_approved' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'allow_new_response' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'notes' => array('type' => 'text', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
