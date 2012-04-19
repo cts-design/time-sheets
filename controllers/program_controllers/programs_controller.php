@@ -34,7 +34,10 @@ class ProgramsController extends AppController {
         }
         $program = $this->Program->find('first', array(
             'conditions' => array('Program.id' => $id),
-            'contain' => array('ProgramStep')));
+            'contain' => array(
+                'ProgramStep' => array('conditions' => array('ProgramStep.parent_id IS NOT NULL')),
+                'ProgramInstruction')));
+        debug($program);
         if($program['Program']['disabled']) {
             $this->Session->setFlash(__('This program is disabled', true), 'flash_failure');
             $this->redirect('/');
@@ -43,6 +46,7 @@ class ProgramsController extends AppController {
         if(!$programResponse) {
             if($program) {
                 $this->data['ProgramResponse']['user_id'] = $this->Auth->user('id');
+                $this->data['ProgramResponse']['next_step_id'] = $program['ProgramStep'][0];
                 $this->data['ProgramResponse']['program_id'] = $id;
                 if($program['Program']['confirmation_id_length']) {
                     $string = sha1(date('ymdhisu'));
@@ -56,11 +60,9 @@ class ProgramsController extends AppController {
                 if($this->Program->ProgramResponse->save($this->data)){
                     $this->Transaction->createUserTransaction('Programs', null, null,
                     'Initiated program ' . $program['Program']['name']);
+                    $programResponse = $this->Program->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
                 }
             }
-        }
-        if($programResponse) {
-            $responseId = $programResponse['ProgramResponse']['id'];
         }
         $data['title_for_layout'] = $program['Program']['name'] . ' Dashboard';
         $data['program'] = $program;

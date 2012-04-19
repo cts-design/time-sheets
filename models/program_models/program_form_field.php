@@ -5,5 +5,5 @@ class ProgramFormField extends AppModel {
 	var $name = 'ProgramFormField';
 	var $displayField = 'name';
 	
-	var $belongsTo = array('Program');	
+	var $belongsTo = array('ProgramStep');	
 }
