@@ -36,7 +36,6 @@
             </fieldset>
             <br />
         <?php endif ?>
-        <?php echo $form->hidden('id', array('value' => 82)) ?>
         <?php echo $form->end(__('Submit', true)); ?>
     <?php endif; ?>
 </div>
