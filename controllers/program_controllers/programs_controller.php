@@ -37,7 +37,6 @@ class ProgramsController extends AppController {
             'contain' => array(
                 'ProgramStep' => array('conditions' => array('ProgramStep.parent_id IS NOT NULL')),
                 'ProgramInstruction')));
-        debug($program);
         if($program['Program']['disabled']) {
             $this->Session->setFlash(__('This program is disabled', true), 'flash_failure');
             $this->redirect('/');
