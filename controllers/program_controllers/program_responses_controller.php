@@ -12,7 +12,6 @@ class ProgramResponsesController extends AppController {
         $this->ProgramResponse->Program->ProgramStep->ProgramFormField->recursive = 2;
         if(!empty($this->params['pass'][0]) && $this->params['action'] == 'form') {
             $query = $this->ProgramResponse->Program->ProgramStep->ProgramFormField->findAllByProgramStepId($this->params['pass'][0]);
-            debug($query);
             if($query){
                 $fields = Set::classicExtract($query, '{n}.ProgramFormField');
                 foreach($fields as $k => $v) {
@@ -48,14 +47,13 @@ class ProgramResponsesController extends AppController {
             $this->redirect($this->referer());
         }
         $step = $this->ProgramResponse->Program->ProgramStep->findById($stepId);
-        //debug($step);
         if($step) {
             $data['program'] = $step['Program'];
             $data['formFields'] = $step['ProgramFormField'];
+            $data['instructions'] = $step['ProgramInstruction']['text'];
             $data['title_for_layout'] = $step['ProgramStep']['name'];
         }
         if(!empty($this->data)) {
-            debug($this->data);
             $programResponse =
                 $this->ProgramResponse->getProgramResponse($step['Program']['id'], $this->Auth->user('id'));
             $this->data['ProgramResponseActivity'][0]['answers'] = json_encode($this->data['ProgramResponseActivity'][0]);
