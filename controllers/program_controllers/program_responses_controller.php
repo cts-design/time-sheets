@@ -56,20 +56,37 @@ class ProgramResponsesController extends AppController {
         if(!empty($this->data)) {
             $programResponse =
                 $this->ProgramResponse->getProgramResponse($step['Program']['id'], $this->Auth->user('id'));
+            $this->data['ProgramResponse']['id'] = $programResponse['ProgramResponse']['id'];
             $this->data['ProgramResponseActivity'][0]['answers'] = json_encode($this->data['ProgramResponseActivity'][0]);
             $this->data['ProgramResponseActivity'][0]['program_step_id'] = $step['ProgramStep']['id'];
             $this->data['ProgramResponseActivity'][0]['type'] = 'form';
             $this->data['ProgramResponseActivity'][0]['complete'] = 1;
+            switch ($programResponse['Program']['type']) {
+                case 'registration':
+                    if ($programResponse['Program']['approval_required']) {
+                        $this->data['ProgramResponse']['status'] = 'pending_approval';
+                    }
+                    else {
+                        $this->data['ProgramResponse']['status'] = 'complete';
+                    }
+                    $redirect = array('controller' => 'programs', 'action' => 'registration', $programResponse['Program']['id']);
+                    break;
+                default:
+                    // code...
+                    break;
+            }
+
             if($this->ProgramResponse->saveAll($this->data)) {
                 $this->Transaction->createUserTransaction('Programs', null, null,
                     'Completed ' . $step['ProgramStep']['name'] . ' ' . $programResponse['Program']['name']);
                 $programEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array(
                     'conditions' => array(
-                        'ProgramEmail.program_id' => $id,
+                        'ProgramEmail.program_id' => $programResponse['Program']['id'],
                         'ProgramEmail.type' => 'form'
                     )));
                 $this->Notifications->sendProgramEmail($programEmail);
                 $this->Session->setFlash(__('Saved', true), 'flash_success');
+                $this->redirect($redirect);
             }
         }
         $this->set($data);
