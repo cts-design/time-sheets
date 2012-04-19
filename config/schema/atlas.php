@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2012-04-17 16:44:11 : 1334695451*/
+/* atlas schema generated on: 2012-04-19 09:54:37 : 1334843677*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -520,15 +520,14 @@ class atlasSchema extends CakeSchema {
 	var $program_response_activities = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 		'program_response_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
-		'program_form_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
 		'type' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'completed' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'complete' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'answers' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'percent_correct' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 3),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'program_step_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
-		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'program_response_id' => array('column' => 'program_response_id', 'unique' => 0), 'program_form_id' => array('column' => 'program_form_id', 'unique' => 0), 'program_step_id' => array('column' => 'program_step_id', 'unique' => 0)),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'program_response_id' => array('column' => 'program_response_id', 'unique' => 0), 'program_step_id' => array('column' => 'program_step_id', 'unique' => 0)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
 	var $program_response_docs = array(
