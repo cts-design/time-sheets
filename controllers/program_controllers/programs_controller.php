@@ -21,9 +21,10 @@ class ProgramsController extends AppController {
                         $this->Auth->allow('index', 'view_media', 'load_media');
                     }
         }
-        if($this->Auth->user('email') == null || preg_match('(none|nobody|noreply)', $this->Auth->user('email'))) {
-            $this->Session->setFlash(__('Please complete your profile to continue.', true), 'flash_success');
-            $this->redirect(array('controller' => 'users', 'action' => 'edit', $this->Auth->user('id')));
+        if($this->Auth->user() && ($this->Auth->user('email') == null 
+            || preg_match('(none|nobody|noreply)', $this->Auth->user('email')))) {
+                $this->Session->setFlash(__('Please complete your profile to continue.', true), 'flash_success');
+                $this->redirect(array('controller' => 'users', 'action' => 'edit', $this->Auth->user('id')));
         }
     }
 
