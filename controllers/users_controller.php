@@ -303,10 +303,9 @@ class UsersController extends AppController {
     }
 
     function edit($id=null) {
-        $this->Auth->user('id');
         $this->User->Behaviors->disable('Disableable');
         $this->set('title_for_layout', 'Edit Profile');
-        if (!$id && empty($this->data) || $id != $this->Auth->user('id')) {
+        if ((!$id && empty($this->data)) || $id != $this->Auth->user('id')) {
             $this->Session->setFlash(__('Invalid profile', true), 'flash_failure');
             $this->redirect('/');
         }
