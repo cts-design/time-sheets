@@ -61,15 +61,26 @@ class DeletedDocumentsController extends AppController {
 	}
 	$this->view = 'Media';
 	$doc = $this->DeletedDocument->read(null, $id);
+    $path = null;
+    $root = substr(APP, 0, -1);
+    $path1 = Configure::read('Document.storage.path') .
+        substr($doc['DeletedDocument']['filename'], 0, 4) . DS .
+        substr($doc['DeletedDocument']['filename'], 4, 2) . DS;
+    $path2 = Configure::read('Document.storage.path') .
+        date('Y', strtotime($doc['DeletedDocument']['created'])) . DS .
+        date('m', strtotime($doc['DeletedDocument']['created'])) . DS;
+    if(file_exists($root . $path1 .$doc['DeletedDocument']['filename'])) {
+        $path = $path1;
+    }
+    elseif(file_exists($root . $path2 . $doc['DeletedDocument']['filename'])) {
+        $path = $path2;
+    }
 	$params = array(
 	    'id' => $doc['DeletedDocument']['filename'],
 	    'name' => str_replace('.pdf', '', $doc['DeletedDocument']['filename']),
 	    'extension' => 'pdf',
 	    'cache' => true,
-	    'path' => Configure::read('Document.storage.path') . '/' .
-	    date('Y', strtotime($doc['DeletedDocument']['created'])) . '/' .
-	    date('m', strtotime($doc['DeletedDocument']['created'])) . '/'
-	);
+	    'path' => $path);
 	$this->Transaction->createUserTransaction('Storage', null, null ,
 		'Viewed deleted document ID '. $doc['DeletedDocument']['id']);
 	$this->set($params);
