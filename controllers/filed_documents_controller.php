@@ -102,7 +102,7 @@ class FiledDocumentsController extends AppController {
 			}		
 		}
         $path = null;
-        $root = ROOT . DS . 'atlas';
+        $root = substr(APP, 0, -1);
         $path1 = Configure::read('Document.storage.path') .
             substr($doc['FiledDocument']['filename'], 0, 4) . DS .
             substr($doc['FiledDocument']['filename'], 4, 2) . DS;
