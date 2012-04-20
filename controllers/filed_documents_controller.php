@@ -102,17 +102,17 @@ class FiledDocumentsController extends AppController {
 			}		
 		}
         $path = null;
+        $root = ROOT . DS . 'atlas';
         $path1 = Configure::read('Document.storage.path') .
             substr($doc['FiledDocument']['filename'], 0, 4) . DS .
-            substr($doc['FiledDocument']['filename'], 4, 2) . DS . $doc['FiledDocument']['filename'];
-
+            substr($doc['FiledDocument']['filename'], 4, 2) . DS;
         $path2 = Configure::read('Document.storage.path') .
             date('Y', strtotime($doc['FiledDocument']['created'])) . DS .
-            date('m', strtotime($doc['FiledDocument']['created'])) . DS . $doc['FiledDocument']['filename'];
-        if(file_exists($path1)) {
+            date('m', strtotime($doc['FiledDocument']['created'])) . DS;
+        if(file_exists($root . $path1 .$doc['FiledDocument']['filename'])) {
             $path = $path1;
         }
-        elseif(file_exists($path2)) {
+        elseif(file_exists($root . $path2 . $doc['FiledDocument']['filename'])) {
             $path = $path2;
         }
 		$params = array(
