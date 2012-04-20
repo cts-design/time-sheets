@@ -139,7 +139,12 @@
 		    'before' => '<p class="left">',
 		    'between' => '</p><p class="left">',
 		    'after' => '</p>'
-	    ));				
+        ));
+		echo '<br class="clear" />' ;
+	    echo $this->Form->input('ssn', array(
+	    	'type' => 'hidden',
+	    	'empty' => 'Please Select'
+        ));
 	    ?>
 	</fieldset>
 	<?php echo $this->Form->end(__('Submit', true)); ?>
