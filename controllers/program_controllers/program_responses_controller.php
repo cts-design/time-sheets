@@ -92,6 +92,29 @@ class ProgramResponsesController extends AppController {
         $this->set($data);
     }
 
+    function edit_form($stepId = null) {
+        if(!$stepId) {
+            $this->Session->setFlash(__('Invalid step id.', 'flash_failure'));
+            $this->redirect($this->referer());
+        }
+        $step = $this->ProgramResponse->Program->ProgramStep->findById($stepId);
+        if($step) {
+            $data['program'] = $step['Program'];
+            $data['formFields'] = $step['ProgramFormField'];
+            $data['instructions'] = $step['ProgramInstruction']['text'];
+            $data['title_for_layout'] = $step['ProgramStep']['name'];
+        }
+        $programResponse =
+            $this->ProgramResponse->getProgramResponse($step['Program']['id'], $this->Auth->user('id'));
+        $responseActivity = Set::extract('/ProgramResponseActivity[program_step_id=' . $stepId .']', $programResponse);
+
+        if(empty($this->data['ProgramResponseActivity'])) {
+            $this->data['ProgramResponseActivity'][0] = json_decode($responseActivity[0]['ProgramResponseActivity']['answers'], true);
+        }
+        $this->set($data);
+        $this->render('form');
+    }
+
     function index($id = null) {
         if(!$id) {
             $this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');
