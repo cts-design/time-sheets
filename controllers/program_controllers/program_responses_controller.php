@@ -10,14 +10,15 @@ class ProgramResponsesController extends AppController {
     function beforeFilter() {
         parent::beforeFilter();
         $this->ProgramResponse->Program->ProgramStep->ProgramFormField->recursive = 2;
-        if(!empty($this->params['pass'][0]) && $this->params['action'] == 'form') {
+        if(!empty($this->params['pass'][0]) && ($this->params['action'] == 'form' || $this->params['action'] == 'edit_form')){
             $query = $this->ProgramResponse->Program->ProgramStep->ProgramFormField->findAllByProgramStepId($this->params['pass'][0]);
             if($query){
                 $fields = Set::classicExtract($query, '{n}.ProgramFormField');
                 foreach($fields as $k => $v) {
-                    if(!empty($v['validation']))
+                    if(!empty($v['validation'])) {
                         $validate[$v['name']] = json_decode($v['validation'], true);
                     }
+                }
                 if($query[0]['ProgramStep']['Program']['form_esign_required']) {
                     $validate['form_esignature'] = array(
                         'rule' => 'notempty',
@@ -97,6 +98,7 @@ class ProgramResponsesController extends AppController {
             $this->Session->setFlash(__('Invalid step id.', 'flash_failure'));
             $this->redirect($this->referer());
         }
+        // :TODO add logic to check for valid response and valid step
         $step = $this->ProgramResponse->Program->ProgramStep->findById($stepId);
         if($step) {
             $data['program'] = $step['Program'];
@@ -108,11 +110,46 @@ class ProgramResponsesController extends AppController {
             $this->ProgramResponse->getProgramResponse($step['Program']['id'], $this->Auth->user('id'));
         $responseActivity = Set::extract('/ProgramResponseActivity[program_step_id=' . $stepId .']', $programResponse);
 
+        if(!empty($this->data)) {
+            $this->data['ProgramResponse']['id'] = $programResponse['ProgramResponse']['id'];
+            $this->data['ProgramResponseActivity'][0]['id'] = $responseActivity[0]['ProgramResponseActivity']['id'];
+            $this->data['ProgramResponseActivity'][0]['answers'] = json_encode($this->data['ProgramResponseActivity'][0]);
+            $this->data['ProgramResponseActivity'][0]['program_step_id'] = $step['ProgramStep']['id'];
+            $this->data['ProgramResponseActivity'][0]['type'] = 'form';
+            $this->data['ProgramResponseActivity'][0]['complete'] = 1;
+            $this->data['ProgramResponseActivity'][0]['allow_redo'] = 0;
+            switch ($programResponse['Program']['type']) {
+                case 'registration':
+                    if ($programResponse['Program']['approval_required']) {
+                        $this->data['ProgramResponse']['status'] = 'pending_approval';
+                    }
+                    else {
+                        $this->data['ProgramResponse']['status'] = 'complete';
+                    }
+                    $redirect = array('controller' => 'programs', 'action' => 'registration', $programResponse['Program']['id']);
+                    break;
+                default:
+                    // code...
+                    break;
+            }
+
+            if($this->ProgramResponse->saveAll($this->data)) {
+                $this->Transaction->createUserTransaction('Programs', null, null,
+                    'Completed ' . $step['ProgramStep']['name'] . ' ' . $programResponse['Program']['name']);
+                $programEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array(
+                    'conditions' => array(
+                        'ProgramEmail.program_id' => $programResponse['Program']['id'],
+                        'ProgramEmail.type' => 'form'
+                    )));
+                $this->Notifications->sendProgramEmail($programEmail);
+                $this->Session->setFlash(__('Saved', true), 'flash_success');
+                $this->redirect($redirect);
+           }
+        }
         if(empty($this->data['ProgramResponseActivity'])) {
             $this->data['ProgramResponseActivity'][0] = json_decode($responseActivity[0]['ProgramResponseActivity']['answers'], true);
         }
         $this->set($data);
-        $this->render('form');
     }
 
     function index($id = null) {
