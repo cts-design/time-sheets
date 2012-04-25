@@ -1,5 +1,5 @@
 <?php
-
+App::import('Vendor', 'wkhtmltopdf/wkhtmltopdf');
 
 class ProgramResponsesController extends AppController {
 
@@ -78,6 +78,7 @@ class ProgramResponsesController extends AppController {
             }
 
             if($this->ProgramResponse->saveAll($this->data)) {
+                $this->createSnapShotPdf($this->data['ProgramResponseActivity'][0]);
                 $this->Transaction->createUserTransaction('Programs', null, null,
                     'Completed ' . $step['ProgramStep']['name'] . ' ' . $programResponse['Program']['name']);
                 $programEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array(
@@ -91,6 +92,7 @@ class ProgramResponsesController extends AppController {
             }
         }
         $this->set($data);
+        $this->render('form');
     }
 
     function edit_form($stepId = null) {
@@ -1055,6 +1057,31 @@ class ProgramResponsesController extends AppController {
             return $pdfFile;
         }
         else return false;
+    }
+
+    private function createSnapShotPdf($data) {
+        if($data){
+            $html = $this->getElementHtml($data);
+            $this->log($html, 'debug');
+            try {
+                $pdf = new WKPDF();
+                $pdf->set_html($html);
+                Configure::write('debug', 0);
+                $pdf->render();
+                $pdf->output(WKPDF::$PDF_SAVEFILE, TMP . 'test.pdf');
+            }
+            catch(Exception $e) {
+                die('Exception (line ' . $e->getLine() .'): ' . $e->getMessage());
+            }
+        }
+
+    }
+
+    private function getElementHtml ($data) {
+        $this->set($data);
+        $element = $this->render(null, 'ajax', '/elements/pdf_templates/programs');
+        $this->output = '';
+        return $element;
     }
 
 }
