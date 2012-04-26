@@ -257,15 +257,27 @@ class QueuedDocumentsController extends AppController {
     public function admin_view($id = null) {
 		$this->view = 'Media';
 		$doc = $this->QueuedDocument->findById($id);
+        $path = null;
+        $root = substr(APP, 0, -1);
+        $path1 = Configure::read('Document.storage.path') .
+            substr($doc['QueuedDocument']['filename'], 0, 4) . DS .
+            substr($doc['QueuedDocument']['filename'], 4, 2) . DS;
+        $path2 = Configure::read('Document.storage.path') .
+            date('Y', strtotime($doc['QueuedDocument']['created'])) . DS .
+            date('m', strtotime($doc['QueuedDocument']['created'])) . DS;
+        if(file_exists($root . $path1 .$doc['QueuedDocument']['filename'])) {
+            $path = $path1;
+        }
+        elseif(file_exists($root . $path2 . $doc['QueuedDocument']['filename'])) {
+            $path = $path2;
+        }
+
 		$params = array(
 		    'id' => $doc['QueuedDocument']['filename'],
 		    'name' => str_replace('.pdf', '', $doc['QueuedDocument']['filename']),
 		    'extension' => 'pdf',
 		   	'cache' => true,
-		    'path' =>  Configure::read('Document.storage.path') .
-		    substr($doc['QueuedDocument']['filename'], 0, 4) . '/' .
-		    substr($doc['QueuedDocument']['filename'], 4, 2) . '/'
-		);
+		    'path' => $path);
 		$this->set($params);
     }
 		
