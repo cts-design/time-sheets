@@ -78,7 +78,9 @@ class ProgramResponsesController extends AppController {
 			}
 
 			if($this->ProgramResponse->saveAll($this->data)) {
-				$data['answers'] = json_decode($this->data['ProgramResponseActivity'][0]['answers'], true);
+				$data['steps'][0] = array(
+					'answers' => json_decode($this->data['ProgramResponseActivity'][0]['answers'], true),
+					'name' => $step['ProgramStep']['name']);
 				$data['programName'] = $programResponse['Program']['name'];
 				$this->createSnapShotPdf($data);
 				$this->Transaction->createUserTransaction('Programs', null, null,
@@ -1065,7 +1067,7 @@ class ProgramResponsesController extends AppController {
 		return $path;
 	}
 
-	private function createSnapShotPdf($data) {
+	private function createSnapShotPdf($data, $toc=true) {
 		if($data){
 			$html = $this->getElementHtml($data);
 			$this->log($html, 'debug');
@@ -1073,7 +1075,8 @@ class ProgramResponsesController extends AppController {
 			try {
 				$pdf = new WKPDF();
 				$pdf->set_html($html);
-				$pdf->set_toc(true);
+				$pdf->set_toc($toc);
+				$pdf->args_add('--header-spacing', '5');
 				$pdf->args_add('--header-left', $this->Auth->user('name_last4'));
 				$pdf->args_add('--header-center', '[date]');
 				$pdf->args_add('--header-right', Configure::read('Company.name'));
