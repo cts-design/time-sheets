@@ -2,7 +2,6 @@
 
 // Automated configuration. Modify these if they fail. (they shouldn't ;) )
 $GLOBALS['WKPDF_BASE_PATH']= '/usr/bin/';
-$GLOBALS['WKPDF_BASE_SITE']='http://'.$_SERVER['SERVER_NAME'].'/';
 $GLOBALS['WKPDF_WINI_PATH']=''; // hope and wish that command line works, the other method with absolute path causes path space issues
 //substr($_SERVER['SystemRoot'],0,strpos($_SERVER['SystemRoot'],'\\')).'\\Program Files\\wkhtmltopdf\\';
 
