@@ -82,7 +82,12 @@ class ProgramResponsesController extends AppController {
 					'answers' => json_decode($this->data['ProgramResponseActivity'][0]['answers'], true),
 					'name' => $step['ProgramStep']['name']);
 				$data['programName'] = $programResponse['Program']['name'];
-				$this->createSnapShotPdf($data);
+
+				$payload = array('data' => $data); 
+				$options = array('priority' => 5000, 'tube' => 'pdf_snapshot');
+				$delayedTaskId = ClassRegistry::init('Queue.Job')->put($payload, $options);
+				// :TODO save $delayedTaskId to the the user activity record 
+				$this->log($delayedTaskId, 'debug');
 				$this->Transaction->createUserTransaction('Programs', null, null,
 					'Completed ' . $step['ProgramStep']['name'] . ' ' . $programResponse['Program']['name']);
 				$programEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array(
