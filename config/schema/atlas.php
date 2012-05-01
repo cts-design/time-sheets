@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2012-04-23 11:07:06 : 1335193626*/
+/* atlas schema generated on: 2012-05-01 16:24:26 : 1335903866*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -456,6 +456,21 @@ class atlasSchema extends CakeSchema {
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'title' => array('column' => array('title', 'file'), 'unique' => 0)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
+	var $program_documents = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+		'program_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
+		'program_step_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'key' => 'index'),
+		'template' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'cat_1' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'cat_2' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'cat_3' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'type' => array('type' => 'string', 'null' => false, 'default' => 'snapshot', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'program_id' => array('column' => 'program_id', 'unique' => 0), 'program_step_id' => array('column' => 'program_step_id', 'unique' => 0)),
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
+	);
 	var $program_emails = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 		'program_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
@@ -504,20 +519,6 @@ class atlasSchema extends CakeSchema {
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
-	var $program_paper_forms = array(
-		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
-		'program_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
-		'template' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'cat_1' => array('type' => 'integer', 'null' => true, 'default' => NULL),
-		'cat_2' => array('type' => 'integer', 'null' => true, 'default' => NULL),
-		'cat_3' => array('type' => 'integer', 'null' => true, 'default' => NULL),
-		'cert' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
-		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
-		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
-		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
-		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
-	);
 	var $program_response_activities = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 		'program_response_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
@@ -537,8 +538,7 @@ class atlasSchema extends CakeSchema {
 		'cat_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'key' => 'index'),
 		'program_response_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'doc_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
-		'paper_form' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
-		'cert' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'type' => array('type' => 'string', 'null' => false, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'deleted' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'deleted_reason' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'rejected_reason' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
