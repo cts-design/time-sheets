@@ -1,10 +1,10 @@
 <?php
 class ProgramStep extends AppModel {
-    var $name = 'ProgramStep';
-    var $actsAs = array('Tree');
+    public $name = 'ProgramStep';
+    public $actsAs = array('Tree');
     //The Associations below have been created with all possible keys, those that are not needed can be removed
 
-    var $belongsTo = array(
+    public $belongsTo = array(
         'Program' => array(
             'className' => 'Program',
             'foreignKey' => 'program_id',
@@ -14,14 +14,14 @@ class ProgramStep extends AppModel {
         )
     );
 
-    var $hasOne = array(
+    public $hasOne = array(
         'ProgramInstruction' => array(
             'className' => 'ProgramInstruction',
             'foreignKey' => 'program_step_id'
         )
     );
 
-    var $hasMany = array(
+    public $hasMany = array(
         'ProgramFormField' => array(
             'className' => 'ProgramFormField',
             'foreignKey' => 'program_step_id',
@@ -34,6 +34,10 @@ class ProgramStep extends AppModel {
             'exclusive' => '',
             'finderQuery' => '',
             'counterQuery' => ''
-        )
+		),
+		'ProgramDocument' => array(
+			'className' => 'ProgramDocument',
+			'foreignKey' => 'program_step_id'
+		)
     );
 }
