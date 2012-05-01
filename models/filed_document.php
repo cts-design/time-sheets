@@ -47,6 +47,12 @@ class FiledDocument extends AppModel {
 		)
 	);
 
+	var $hasOne = array(
+		'ProgramResponseDoc' => array(
+			'className' => 'ProgramResponseDoc',
+			'foreignKey' => 'doc_id'
+		));
+
 	var $validate = array(
 	    'filename' => array(
 			'notEmpty' => array(
