@@ -9,6 +9,10 @@ class ProgramResponseDoc extends AppModel {
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''
+		),
+		'FiledDocument' => array(
+			'className' => 'FiledDocument',
+			'foreignKey' => 'doc_id'
 		)
 	);
 	
@@ -17,6 +21,7 @@ class ProgramResponseDoc extends AppModel {
 		$this->data = $data;
 		$watchedCat = null;
 		$return = false;
+		// :FIXME make this work with cat_1 cat_2 or cat_3
 		if(isset($this->data['FiledDocument']['cat_3'])) {
 			$watchedCat = $Program->WatchedFilingCat->findByCatId($this->data['FiledDocument']['cat_3']);
 			$return['cat_id'] = $this->data['FiledDocument']['cat_3'];			
