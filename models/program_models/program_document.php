@@ -1,6 +1,6 @@
 <?php
-class ProgramPaperForm extends AppModel {
-	var $name = 'ProgramPaperForm';
+class ProgramDocument extends AppModel {
+	var $name = 'ProgramDocument';
 	var $displayField = 'name';
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
 
@@ -11,7 +11,10 @@ class ProgramPaperForm extends AppModel {
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''
+		),
+		'ProgramStep' => array(
+			'className' => 'ProgramStep',
+			'foreignKey' => 'program_step_id'
 		)
 	);
 }
-?>
