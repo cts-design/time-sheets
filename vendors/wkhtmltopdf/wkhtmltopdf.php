@@ -436,10 +436,10 @@ class WKPDF_MULTI extends WKPDF {
          */
         public function add_html($html){
                 do{
-                        $file=$GLOBALS['WKPDF_BASE_PATH'].'tmp/'.mt_rand().'.html';
+                        $file = TMP . mt_rand() . '.html';
                 } while(file_exists($file));
                 if(!file_put_contents($file,$html))throw new Exception('WKPDF write temporary file failed.');
-                $this->html_urls[]=$GLOBALS['WKPDF_BASE_SITE'].$GLOBALS['WKPDF_BASE_PATH'].'tmp/'.basename($file);
+                $this->html_urls[] = TMP . basename($file);
                 $this->html_files[]=$file;
         }
         /**
@@ -472,7 +472,7 @@ class WKPDF_MULTI extends WKPDF {
                                 .($this->toc?' --toc':'')                                                                               // table of contents
                                 .($this->grayscale?' --grayscale':'')                                                   // grayscale
                                 .(($this->title!='')?' --title "'.$this->title.'"':'')                  // title
-                                .' '.$urls.' -'                                                                                                 // URL and use STDOUT
+                                .$this->args_build().' '.$urls.' -'                                                                                                 // URL and use STDOUT
                 );
                 if($this->pdf['stdout']=='')self::_retError('WKPDF program error.',$this->pdf);
                 if(((int)$this->pdf['return'])>1)self::_retError('WKPDF shell error.',$this->pdf);
