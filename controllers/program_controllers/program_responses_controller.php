@@ -78,12 +78,16 @@ class ProgramResponsesController extends AppController {
 			}
 
 			if($this->ProgramResponse->saveAll($this->data)) {
-				$data['steps'][0] = array(
+				$payload['steps'][0] = array(
 					'answers' => json_decode($this->data['ProgramResponseActivity'][0]['answers'], true),
 					'name' => $step['ProgramStep']['name']);
-				$data['programName'] = $programResponse['Program']['name'];
+				$payload['programName'] = $programResponse['Program']['name'];
+				$payload['responseId'] = $programResponse['ProgramResponse']['id'];
+				$payload['toc'] = false;
+				$payload['user'] = $this->Auth->user('name_last4');
+				$payload['userId'] = $this->Auth->user('id');
+				$payload['ProgramDocument'] = $step['ProgramDocument'][0];
 
-				$payload = array('data' => $data); 
 				$options = array('priority' => 5000, 'tube' => 'pdf_snapshot');
 				$delayedTaskId = ClassRegistry::init('Queue.Job')->put($payload, $options);
 				// :TODO save $delayedTaskId to the the user activity record 
@@ -102,6 +106,20 @@ class ProgramResponsesController extends AppController {
 		}
 		$this->set($data);
 		$this->render('form');
+	}
+
+	function generate_test_data() {
+	
+		$data['steps'][0] = array(
+			'answers' =>  array('This question' => 'This answer', 'That question' => 'That Answer'),
+			'name' => 'Program Step Name');
+		$data['programName'] = 'Wia';
+		$data['toc'] = false;
+		$data['user'] = $this->Auth->user('name_last4');
+
+		$payload = array('data' => $data); 
+		$options = array('priority' => 5000, 'tube' => 'pdf_snapshot');
+		$delayedTaskId = ClassRegistry::init('Queue.Job')->put($payload, $options);
 	}
 
 	function edit_form($stepId = null) {
