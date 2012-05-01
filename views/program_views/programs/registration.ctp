@@ -12,7 +12,8 @@
                 <td><?php echo $html->link('Complete Form', '/program_responses/form/' . $program['ProgramStep'][0]['id'])?></td>
             <?php endif ?>
             <?php
-                if($programResponse['ProgramResponseActivity'][0]['complete']
+				if(!empty($porgramResponse['ProgramResponseActivity']) 
+					&& $programResponse['ProgramResponseActivity'][0]['complete']
                     && $programResponse['ProgramResponseActivity'][0]['allow_redo']
                     && $programResponse['ProgramResponse']['status'] === 'not_approved') :
             ?>
