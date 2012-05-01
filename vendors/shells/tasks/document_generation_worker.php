@@ -1,67 +1,92 @@
 <?php 
-
 App::import('Vendor', 'wkhtmltopdf/wkhtmltopdf');
 
-Configure::write('debug', 2);
-
 class DocumentGenerationWorkerTask extends QueueShell {
-	public $uses = array('Queue.Job');
+	public $uses = array('Queue.Job', 'FiledDocument');
 	public $tubes = array('pdf_snapshot');
 	
 	public function execute() {
 		while(true) {
 			$this->out('Waiting for a job....');	
 			$job = $this->Job->reserve(array('tube' => $this->tubes));
-			$this->log($job, 'debug');
 			if(!$job) {
 				$this->log('Invalid job found. Not processing.', 'error');	
 			}
 			else {
 				$this->out('Processing job ' . $job['Job']['id']);
-
-				$this->out(var_export($job, true));
-				if($this->process($job['Job']['data'])) {
-					$this->Job->delete();
+				switch($job['Job']['ProgramDocument']['type']) {
+					case 'snapshot':
+						$processed = $this->processSnapshot($job['Job']);	
+						break;
+				}
+				if($processed) {
+					$this->out('Job ' . $job['Job']['id'] . ' processed.');
+					if($this->Job->delete()) {
+						$this->out('Job ' . $job['Job']['id'] . ' deleted from queue.');
+					}
 				}
 				else {
-					$this->Job->bury(1000);
+					$this->out('Unable to process job ' .  $job['Job']['id'] . 'burying.');
+					$this->Job->bury(6000);
 				}
 			}
 		}
 	}
 
-	private function process($data, $toc=false) {
+	private function processSnapshot($data) {
 		if($data){
-			$html = $this->getElementHtml($data);
-			$this->log($html, 'debug');
+			$html = $this->getSnapshotHtml($data);
 			$path = $this->getPath();
 			try {
-				$pdf = new WKPDF();
-				$pdf->set_html($html);
-				$pdf->set_toc($toc);
+				$pdf = new WKPDF_MULTI();
+				$pdf->add_html($html);
+				$pdf->set_toc($data['toc']);
 				$pdf->args_add('--header-spacing', '5');
-				// :TODO add user info to data array
-				//$pdf->args_add('--header-left', $this->Auth->user('name_last4'));
+				$pdf->args_add('--header-left', $data['user']);
 				$pdf->args_add('--header-center', '[date]');
 				$pdf->args_add('--header-right', Configure::read('Company.name'));
 				$pdf->args_add('--footer-center', 'Page: [page] of [topage]') ;
 				Configure::write('debug', 0);
 				$pdf->render();
 				$pdfFile = date('YmdHis') . rand(0, pow(10, 7)) . '.pdf';
-				$this->log($pdfFile, 'debug');
-				$this->log($path, 'debug');
-				$pdf->output(WKPDF::$PDF_SAVEFILE, $path . $pdfFile);
+				$pdf->output(WKPDF_MULTI::$PDF_SAVEFILE, $path . $pdfFile);
 			}
 			catch(Exception $e) {
 				// TODO probably just want to log this to the error log ??? 
 				$this->log('WKPDF Exception (line ' . $e->getLine() .'): ' . $e->getMessage(), 'error');
 				return false;
 			}
-			return true;
+			if (file_exists($path . $pdfFile)) {
+				$this->FiledDocument->User->QueuedDocument->create();
+				$this->FiledDocument->User->QueuedDocument->save();
+				$docId = $this->FiledDocument->User->QueuedDocument->getLastInsertId();
+				// delete the empty record so it does not show up in the queue
+				$this->FiledDocument->User->QueuedDocument->delete($docId, false);
+				$this->data['FiledDocument']['id'] = $docId;
+				$this->data['FiledDocument']['user_id'] = $data['userId']; 
+				$this->data['FiledDocument']['filename'] = $pdfFile;
+				$this->data['FiledDocument']['cat_1'] = $data['ProgramDocument']['cat_1'];
+				$this->data['FiledDocument']['cat_2'] = $data['ProgramDocument']['cat_2'];
+				$this->data['FiledDocument']['cat_3'] = $data['ProgramDocument']['cat_3'];
+				$this->data['FiledDocument']['entry_method'] = 'Program Generated';
+				$this->data['FiledDocument']['filed'] = date('Y-m-d H:i:s');
+				$this->data['ProgramResponseDoc']['program_response_id'] = $data['responseId'];
+				$this->data['ProgramResponseDoc']['type'] = 'snapshot';
+				$this->data['ProgramResponseDoc']['doc_id'] = $docId;
+				if($this->FiledDocument->saveAll($this->data)) {
+					return true;
+				}
+				else {
+					return false;
+				}
+			}
+			else {
+				return false;
+			}
 		}
 	}
 
-	private function getElementHtml($data) {
+	private function getSnapshotHtml($data) {
 		$html = '';
 		foreach($data['steps'] as $step) {
 			$html .= '<h2>' . $step['name'] . '</h2>';
