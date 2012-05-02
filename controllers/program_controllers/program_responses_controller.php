@@ -19,6 +19,7 @@ class ProgramResponsesController extends AppController {
 						$validate[$v['name']] = json_decode($v['validation'], true);
 					}
 				}
+				// :TODO make this work with the real esign
 				if($query[0]['ProgramStep']['Program']['form_esign_required']) {
 					$validate['form_esignature'] = array(
 						'rule' => 'notempty',
@@ -65,15 +66,13 @@ class ProgramResponsesController extends AppController {
 			switch ($programResponse['Program']['type']) {
 				case 'registration':
 					if ($programResponse['Program']['approval_required']) {
+						// :TODO send emails??? 
 						$this->data['ProgramResponse']['status'] = 'pending_approval';
 					}
 					else {
 						$this->data['ProgramResponse']['status'] = 'complete';
 					}
 					$redirect = array('controller' => 'programs', 'action' => 'registration', $programResponse['Program']['id']);
-					break;
-				default:
-					// code...
 					break;
 			}
 
@@ -90,8 +89,7 @@ class ProgramResponsesController extends AppController {
 
 				$options = array('priority' => 5000, 'tube' => 'pdf_snapshot');
 				$delayedTaskId = ClassRegistry::init('Queue.Job')->put($payload, $options);
-				// :TODO save $delayedTaskId to the the user activity record 
-				$this->log($delayedTaskId, 'debug');
+				// :TODO save $delayedTaskId to the the user activity record? 
 				$this->Transaction->createUserTransaction('Programs', null, null,
 					'Completed ' . $step['ProgramStep']['name'] . ' ' . $programResponse['Program']['name']);
 				$programEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array(
@@ -108,6 +106,16 @@ class ProgramResponsesController extends AppController {
 		$this->render('form');
 	}
 
+	function send_test_email() {
+		$payload = array(
+			'Email' => array(
+				'from' => 'test@test.com',
+				'to' => $this->Auth->user('email'),
+				'subject' => 'This is a test email',
+				'body' => 'This is the body'));
+		$options = array('priority' => 5000, 'tube' => 'program_email');
+		$delayedTaskId = ClassRegistry::init('Queue.job')->put($payload, $options);
+	}
 	function generate_test_data() {
 	
 		$data['steps'][0] = array(
@@ -165,6 +173,7 @@ class ProgramResponsesController extends AppController {
 			if($this->ProgramResponse->saveAll($this->data)) {
 				$this->Transaction->createUserTransaction('Programs', null, null,
 					'Completed ' . $step['ProgramStep']['name'] . ' ' . $programResponse['Program']['name']);
+				// :TODO send proper email
 				$programEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array(
 					'conditions' => array(
 						'ProgramEmail.program_id' => $programResponse['Program']['id'],
