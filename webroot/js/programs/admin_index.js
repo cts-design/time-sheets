@@ -1,52 +1,71 @@
-/**
- * @author dnolan
- */
+var Programs;
 
-Ext.onReady(function(){
+Programs = {
+  init: function() {
+    this.programStore = Ext.create('Atlas.store.ProgramStore');
+    this.programStore.load();
+  },
 
-  Ext.QuickTips.init();
+  onReady: function() {
+    this.init();
 
-  Ext.define('Program', {
-    extend: 'Ext.data.Model',
-    idProperty: 'id',
-    fields: ['id', 'name', 'actions']
-  });
+    this.programGrid = Ext.widget('atlasprogramgrid', {
+      renderTo: 'programGrid'
+    });
 
-  var programStore = Ext.create('Ext.data.Store', {
-    storeId: 'programStore',
-    autoLoad: true,
-    model: 'Program',
-    proxy: {
-      type: 'ajax',
-      url: '/admin/programs/index',
-      reader: {
-        type: 'json',
-        root: 'programs'
-      }
-    }
-  });
+    this.newProgram = Ext.create('Ext.panel.Panel', {
+      id: 'newProgramPanel',
+      renderTo: 'programForm',
+      layout: 'card',
+      items: [{
+        xtype: 'atlasprogramform'
+      }, {
+        xtype: 'form',
+        items: [{
+          xtype: 'textfield',
+          fieldLabel: 'Test'
+        }]
+      }],
+      dockedItems: [{
+        xtype: 'toolbar',
+        dock: 'bottom',
+        layout: {
+          pack: 'end',
+          type: 'hbox'
+        },
+        items: [{
+          xtype: 'buttongroup',
+          frame: false,
+          width: 93,
+          columns: 2,
+          items: [{
+            xtype: 'button',
+            id: 'move-prev',
+            text: '« Prev',
+            handler: function(btn) {
+              this.navigate('prev');
+            },
+            scope: this
+          }, {
+            xtype: 'button',
+            id: 'move-next',
+            text: 'Next »',
+            handler: function(btn) {
+              this.navigate('next');
+            },
+            scope: this
+          }]
+        }]
+      }]
+    });
+  },
 
-  var programGrid = Ext.create('Ext.grid.Panel', {
-    store: programStore,
-    renderTo: 'programGrid',
-    height: 300,
-    title: 'Programs',
-    width: 600,
-    frame: true,
-    columns: [{
-      id: 'id',
-      text: 'Id',
-      dataIndex: 'id',
-      width: 50
+  navigate: function(direction) {
+    var layout = this.newProgram.getLayout();
+    layout[direction]();
+    Ext.getCmp('move-prev').setDisabled(!layout.getPrev());
+    Ext.getCmp('move-next').setDisabled(!layout.getNext());
+  }
+};
 
-    },{
-      text: 'Program Name',
-      dataIndex: 'name',
-      width: 220
-    },{
-      text: 'Actions',
-      dataIndex: 'actions',
-      width: 300
-    }]
-  });
-});
+Ext.onReady(Programs.onReady, Programs);

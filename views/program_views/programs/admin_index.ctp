@@ -1,11 +1,9 @@
-<?php
-/**
- * @author Daniel Nolan
- * @copyright Complete Technology Solutions 2011
- * @link http://ctsfla.com
- * @package ATLAS V3
- */
-?>
+<?php echo $this->Html->script(array(
+  'Atlas/model/Program',
+  'Atlas/store/ProgramStore',
+  'Atlas/view/ProgramGrid',
+  'Atlas/view/ProgramForm'),
+  array('inline' => false)) ?>
 <?php echo $this->Html->script('programs/admin_index', array('inline' => FALSE));?>
 
 <div id="crumbWrapper">
@@ -14,3 +12,4 @@
 </div>
 
 <div id="programGrid"></div>
+<div id="programForm"></div>
