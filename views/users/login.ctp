@@ -14,6 +14,9 @@
                          your last name and the last 4 digits of your social security
                          number", true), Configure::read('Company.name')) ?>
 	</p>
+	<?php if(isset($instructions)) : ?>
+		<p><?php echo __($instructions) ?></p>
+	<?php endif ?>
 	<br />	
 	<fieldset>
 		<legend>Login</legend>
