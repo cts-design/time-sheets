@@ -78,7 +78,7 @@ class ProgramsController extends AppController {
                 case 'not_approved':
                     $instructions = Set::extract('/ProgramInstruction[type=not_approved]/text', $program);
                     break;
-                case 'completed':
+                case 'complete':
                     $instructions = Set::extract('/ProgramInstruction[type=complete]/text', $program);
                     break;
                 default:
