@@ -392,11 +392,14 @@ class UsersController extends AppController {
         $this->User->setValidation('customerLogin');
         if(isset($this->params['pass'][0], $this->params['pass'][1]) && $this->params['pass'][0] === 'programs') {
             $this->loadModel('Program');
-            $this->Program->recursive = -1;
+            $this->Program->contain(array('ProgramInstruction' => array('conditions' => array('ProgramInstruction.type' => 'login'))));
             $program = $this->Program->findById($this->params['pass'][1]);
             if($program) {
                 $this->Session->write('Auth.redirect', '/programs/' . $program['Program']['type'] . '/' . $this->params['pass'][1]);
                 $this->set('title_for_layout', $program['Program']['name'] . ' Login');
+				if(!empty($program['ProgramInstruction'][0])) {
+					$this->set('instructions', $program['ProgramInstruction'][0]['text']);
+				}
                 if($program['Program']['atlas_registration_type'] === 'child') {
                     $type = 'child';
                 }
