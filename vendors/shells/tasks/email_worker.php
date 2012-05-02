@@ -21,7 +21,7 @@ class EmailWorkerTask extends QueueShell {
 				$this->Email->to = $job['Job']['Email']['to'];
 				$this->Email->from = $job['Job']['Email']['from'];
 				$this->Email->subject = $job['Job']['Email']['subject'];
-				$processed =  $this->Email->send($job['Job']['Email']['body']);
+				$processed = $this->Email->send($job['Job']['Email']['body']);
 				if($processed) {
 					$this->out('Job ' . $job['Job']['id'] . ' processed.');
 					if($this->Job->delete()) {
