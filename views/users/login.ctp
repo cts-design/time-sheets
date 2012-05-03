@@ -25,9 +25,13 @@
 		    echo $form->input('username', array('label' => 'Lastname'));
 		    echo '<br class="clear"/>';
 		    echo $form->input('password', array(
-		    	'label' => __('Last 4 SSN', true)
+		    	'label' => __('Last 4 SSN', true),
+				'maxlength' => 4
 		    ));
-			echo $form->hidden('User.login_type', array('value' => 'website'));
+			echo $form->hidden('User.login_type', array('value' => $loginType));
+			if(isset($this->params['pass'][0]) && $this->params['pass'][0] === 'program') {
+				echo $form->hidden('User.program_id', array('value' => $this->params['pass'][1]));
+			}
 		    echo '<br class="clear"/>';
 		    echo $form->end(__('Login', true));
 		  ?>
