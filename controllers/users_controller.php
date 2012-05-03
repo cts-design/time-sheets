@@ -70,18 +70,29 @@ class UsersController extends AppController {
                             'and' => array(
                             'User.password' => $this->Auth->password($this->data['User']['password'])))));
                     if($count === 0 && isset($this->data['User']['login_type'])) {
-                        if($this->data['User']['login_type'] == 'kiosk') {
-                            $this->redirect(array('action' => 'mini_registration',
-                            $this->data['User']['username'], 'kiosk' => true));
-                        }
-                        elseif($this->data['User']['login_type'] == 'website') {
-                            $this->redirect(array('action' => 'registration', 'regular',
-                            $this->data['User']['username'], 'kiosk' => false));
-                        }
-                        elseif($this->data['User']['login_type'] == 'child_website') {
-                            $this->redirect(array('action' => 'registration', 'child',
-                            $this->data['User']['username'], 'kiosk' => false));
-                        }
+						switch($this->data['User']['login_type']) {
+							case 'kiosk':
+								$this->redirect(array('action' => 'mini_registration',
+									$this->data['User']['username'], 'kiosk' => true));
+								break;
+							case 'website':
+								$this->redirect(array('action' => 'registration', 'regular',
+									$this->data['User']['username'], 'kiosk' => false));
+								break;
+							case 'child_website':
+								$this->redirect(array('action' => 'registration', 'child',
+									$this->data['User']['username'], 'kiosk' => false));
+								break;
+							case 'program':
+								$this->redirect(array('action' => 'registration', 'regular', 
+									$this->data['User']['username'], 'program', 
+									$this->data['User']['program_id'], 'kiosk' => false));
+								break;
+							case 'child_program':
+								$this->redirect(array('action' => 'registration', 'child', 'program',
+									$this->data['User']['username'], 'kisok' => false));
+								break;
+						}
                     }
                 }
             }
@@ -390,13 +401,15 @@ class UsersController extends AppController {
 
     function login($type=null) {
         $this->User->setValidation('customerLogin');
-        if(isset($this->params['pass'][0], $this->params['pass'][1]) && $this->params['pass'][0] === 'programs') {
+		$loginType = 'website';
+        if(isset($this->params['pass'][0], $this->params['pass'][1]) && $this->params['pass'][0] === 'program') {
             $this->loadModel('Program');
             $this->Program->contain(array('ProgramInstruction' => array('conditions' => array('ProgramInstruction.type' => 'login'))));
             $program = $this->Program->findById($this->params['pass'][1]);
             if($program) {
                 $this->Session->write('Auth.redirect', '/programs/' . $program['Program']['type'] . '/' . $this->params['pass'][1]);
                 $this->set('title_for_layout', $program['Program']['name'] . ' Login');
+				$loginType = 'program';
 				if(!empty($program['ProgramInstruction'][0])) {
 					$this->set('instructions', $program['ProgramInstruction'][0]['text']);
 				}
@@ -434,10 +447,13 @@ class UsersController extends AppController {
             isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'child_website') {
                 if($program) {
                     $this->set('title_for_layout', $program['Program']['name'] . ' Child Login');
+					$loginType = 'child_program';
                 }
                 else {
                     $this->set('title_for_layout', 'Child Login');
+					$loginType = 'child';
                 }
+				$this->set(compact('loginType'));
                 $this->render('child_login');
         }
         if(isset($type) && $type == 'auditor' ||
@@ -445,6 +461,8 @@ class UsersController extends AppController {
             $this->set('title_for_layout', 'Auditor Login');
             $this->render('auditor_login');
         }
+
+		$this->set(compact('loginType'));
     }
 
     function logout($type=null, $logoutMsg=null) {
@@ -480,7 +498,20 @@ class UsersController extends AppController {
     }
 
     function registration($type=null, $lastname=null) {
-        if (!empty($this->data)) {
+		if(isset($this->params['pass'][2], $this->params['pass'][3]) && 
+			$this->params['pass'][2] === 'program') {
+				$this->loadModel('Program');
+				$this->Program->contain(array('ProgramInstruction' =>  
+					array('conditions' => array('ProgramInstruction.type' => 'registration'))));	
+				$program = $this->Program->findById($this->params['pass'][3]);
+				if($program) {
+					$this->set('instructions', $program['ProgramInstruction'][0]['text']);
+					$title_for_layout = $program['Program']['name'] . ' Registration';
+				}
+				$this->log($program, 'debug');
+		}
+        if(!empty($this->data)) {
+			
             $this->User->Behaviors->disable('Disableable');
             $this->User->create();
             if(Configure::read('Registration.ssn') == 'last4') {
@@ -524,7 +555,9 @@ class UsersController extends AppController {
                 $this->data['User']['lastname'] = $lastname;
             }
         }
-        $title_for_layout = 'Registration';
+		if(! isset($title_for_layout)) {
+			$title_for_layout = 'Registration';
+		}
         $states = $this->states;
         $this->set(compact('title_for_layout', 'states'));
         if(isset($type) && $type == 'child' ||
