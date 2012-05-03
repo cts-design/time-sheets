@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2012-05-01 16:24:26 : 1335903866*/
+/* atlas schema generated on: 2012-05-03 14:50:47 : 1336071047*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -474,6 +474,7 @@ class atlasSchema extends CakeSchema {
 	var $program_emails = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 		'program_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
+		'program_step_id' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 11, 'key' => 'index', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'cat_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'to' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'from' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
@@ -484,7 +485,7 @@ class atlasSchema extends CakeSchema {
 		'disabled' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
-		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'program_id' => array('column' => 'program_id', 'unique' => 0)),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'program_id' => array('column' => 'program_id', 'unique' => 0), 'program_step_id' => array('column' => 'program_step_id', 'unique' => 0)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
 	var $program_form_fields = array(
