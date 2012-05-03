@@ -18,7 +18,11 @@ class ProgramStep extends AppModel {
         'ProgramInstruction' => array(
             'className' => 'ProgramInstruction',
             'foreignKey' => 'program_step_id'
-        )
+		),
+		'ProgramEmail' => array(
+			'className' => 'ProgramEmail',
+			'foreignKey' => 'program_step_id'
+		) 
     );
 
     public $hasMany = array(

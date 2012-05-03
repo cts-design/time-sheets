@@ -13,6 +13,10 @@ class ProgramEmail extends AppModel {
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''
+		),
+		'ProgramStep' => array(
+			'className' => 'Program',
+			'foreignKey' => 'program_step_id'
 		)
 	);
 }
