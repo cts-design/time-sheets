@@ -18,10 +18,10 @@ class EmailWorkerTask extends QueueShell {
 				$this->Controller =& new Controller();
 				$this->Email =& new EmailComponent(null);
 				$this->Email->initialize($this->Controller);    
-				$this->Email->to = $job['Job']['Email']['to'];
-				$this->Email->from = $job['Job']['Email']['from'];
-				$this->Email->subject = $job['Job']['Email']['subject'];
-				$processed = $this->Email->send($job['Job']['Email']['body']);
+				$this->Email->to = $job['Job']['email']['to'];
+				$this->Email->from = $job['Job']['email']['from'];
+				$this->Email->subject = $job['Job']['email']['subject'];
+				$processed = $this->Email->send($job['Job']['email']['body']);
 				if($processed) {
 					$this->out('Job ' . $job['Job']['id'] . ' processed.');
 					if($this->Job->delete()) {
