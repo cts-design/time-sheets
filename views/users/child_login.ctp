@@ -4,6 +4,9 @@
                          with your child's last name and the last 4 digits of your child's 
                          social security number", true), Configure::read('Company.name')) ?>
 	</p>
+	<?php if(isset($instructions)) : ?>
+		<p><?php echo __($instructions) ?></p>
+	<?php endif ?>
 	<br />	
 	<fieldset>
 		<legend>Login</legend>
@@ -20,9 +23,11 @@
 		    	'between' => '<br />',
 		    	'after' => '<br />'
 		    ));
-			echo $form->hidden('User.login_type', array('value' => 'child_website', ));
+			if(isset($this->params['pass'][0]) && $this->params['pass'][0] === 'program') {
+				echo $form->hidden('User.program_id', array('value' => $this->params['pass'][1]));
+			}
+			echo $form->hidden('User.login_type', array('value' => $loginType));
 		    echo '<br class="clear"/>';
-		    
 		  ?>
 	  </fieldset>
 	  <br />
