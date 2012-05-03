@@ -12,21 +12,23 @@ class NotificationsComponent extends Object {
 	function sendProgramEmail($programEmail=null, $user=null) {
 		if($programEmail) {
 			if($user) {
-				$this->Email->to = $user['User']['firstname'] . ' ' . 
+				$email['email']['to'] = $user['User']['firstname'] . ' ' . 
 				$user['User']['lastname'] .' <'. $user['User']['email']. '>';			
 			}
 			else {
-				$this->Email->to = $this->Auth->user('firstname') . ' ' . 
+				$email['email']['to'] = $this->Auth->user('firstname') . ' ' . 
 				$this->Auth->user('lastname') .' <'. $this->Auth->user('email'). '>';		
 			}
-			if($programEmail['ProgramEmail']['from']) {
-				$this->Email->from = $programEmail['ProgramEmail']['from'];
+			if($programEmail['from']) {
+				$email['email']['from'] = $programEmail['from'];
 			}
 			else {
-				$this->Email->from = Configure::read('System.email');
+				$email['email']['from'] = Configure::read('System.email');
 			}				
-			$this->Email->subject = $programEmail['ProgramEmail']['subject'];
-			return $this->Email->send($programEmail['ProgramEmail']['body']);			
+			$email['email']['subject'] = $programEmail['subject'];
+			$email['email']['body'] = $programEmail['body'];
+			$options = array('priority' => 5000, 'tube' => 'program_email');
+			return ClassRegistry::init('Queue.Job')->put($email, $options);
 		}
 		return false;
 	}
