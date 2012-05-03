@@ -49,6 +49,7 @@ class ProgramResponsesController extends AppController {
 			$this->redirect($this->referer());
 		}
 		$step = $this->ProgramResponse->Program->ProgramStep->findById($stepId);
+		$this->log($step, 'debug');
 		if($step) {
 			$data['program'] = $step['Program'];
 			$data['formFields'] = $step['ProgramFormField'];
@@ -77,27 +78,24 @@ class ProgramResponsesController extends AppController {
 			}
 
 			if($this->ProgramResponse->saveAll($this->data)) {
-				$payload['steps'][0] = array(
+				$snapshot['steps'][0] = array(
 					'answers' => json_decode($this->data['ProgramResponseActivity'][0]['answers'], true),
 					'name' => $step['ProgramStep']['name']);
-				$payload['programName'] = $programResponse['Program']['name'];
-				$payload['responseId'] = $programResponse['ProgramResponse']['id'];
-				$payload['toc'] = false;
-				$payload['user'] = $this->Auth->user('name_last4');
-				$payload['userId'] = $this->Auth->user('id');
-				$payload['ProgramDocument'] = $step['ProgramDocument'][0];
+				$snapshot['programName'] = $programResponse['Program']['name'];
+				$snapshot['responseId'] = $programResponse['ProgramResponse']['id'];
+				$snapshot['toc'] = false;
+				$snapshot['user'] = $this->Auth->user('name_last4');
+				$snapshot['userId'] = $this->Auth->user('id');
+				$snapshot['ProgramDocument'] = $step['ProgramDocument'][0];
 
 				$options = array('priority' => 5000, 'tube' => 'pdf_snapshot');
-				$delayedTaskId = ClassRegistry::init('Queue.Job')->put($payload, $options);
+				$delayedTaskId = ClassRegistry::init('Queue.Job')->put($snapshot, $options);
 				// :TODO save $delayedTaskId to the the user activity record? 
 				$this->Transaction->createUserTransaction('Programs', null, null,
 					'Completed ' . $step['ProgramStep']['name'] . ' ' . $programResponse['Program']['name']);
-				$programEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array(
-					'conditions' => array(
-						'ProgramEmail.program_id' => $programResponse['Program']['id'],
-						'ProgramEmail.type' => 'form'
-					)));
-				$this->Notifications->sendProgramEmail($programEmail);
+				if(! empty($step['ProgramEmail'])) {
+					$this->Notifications->sendProgramEmail($step['ProgramEmail']);
+				}
 				$this->Session->setFlash(__('Saved', true), 'flash_success');
 				$this->redirect($redirect);
 			}
