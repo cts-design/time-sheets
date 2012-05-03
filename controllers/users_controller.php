@@ -402,13 +402,14 @@ class UsersController extends AppController {
     function login($type=null) {
         $this->User->setValidation('customerLogin');
 		$loginType = 'website';
+		$render = 'login';
         if(isset($this->params['pass'][0], $this->params['pass'][1]) && $this->params['pass'][0] === 'program') {
             $this->loadModel('Program');
             $this->Program->contain(array('ProgramInstruction' => array('conditions' => array('ProgramInstruction.type' => 'login'))));
             $program = $this->Program->findById($this->params['pass'][1]);
             if($program) {
                 $this->Session->write('Auth.redirect', '/programs/' . $program['Program']['type'] . '/' . $this->params['pass'][1]);
-                $this->set('title_for_layout', $program['Program']['name'] . ' Login');
+				$title_for_layout = $program['Program']['name'] . ' Login';
 				$loginType = 'program';
 				if(!empty($program['ProgramInstruction'][0])) {
 					$this->set('instructions', $program['ProgramInstruction'][0]['text']);
@@ -424,11 +425,11 @@ class UsersController extends AppController {
                 'conditions' => array('Role.id' => $this->Auth->user('role_id'))
             ));
             $this->Session->write('Auth.User.role_name', $role['Role']['name']);
-
-            if (preg_match('/auditor/i', $this->Auth->user('role_name'))) {
+            if(preg_match('/auditor/i', $this->Auth->user('role_name'))) {
                 $this->Transaction->createUserTransaction('Auditor', null, null, 'Logged into auditor dashboard');
                 $this->redirect(array('action' => 'dashboard', 'auditor' => true));
-            } else {
+			} 
+			else {
                 $this->Transaction->createUserTransaction('Website',
                     null, null, 'Logged in using website.' );
                 if($this->Auth->user('email') == null || preg_match('(none|nobody|noreply)', $this->Auth->user('email'))) {
@@ -443,26 +444,23 @@ class UsersController extends AppController {
                 }
             }
         }
-        if(isset($type) && $type == 'child' ||
-            isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'child_website') {
+        if(isset($type) && $type === 'child' ||
+            isset($this->data['User']['login_type']) && $this->data['User']['login_type'] === 'child_website') {
+				$title_for_layout = 'Child Login'; 
+				$loginType = 'child';
                 if($program) {
-                    $this->set('title_for_layout', $program['Program']['name'] . ' Child Login');
+					$title_for_layout = $program['Program']['name'] . ' Child Login';
 					$loginType = 'child_program';
                 }
-                else {
-                    $this->set('title_for_layout', 'Child Login');
-					$loginType = 'child';
-                }
-				$this->set(compact('loginType'));
-                $this->render('child_login');
+				$render = 'child_login';
         }
         if(isset($type) && $type == 'auditor' ||
-            isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'auditor') {
-            $this->set('title_for_layout', 'Auditor Login');
-            $this->render('auditor_login');
+            isset($this->data['User']['login_type']) && $this->data['User']['login_type'] === 'auditor') {
+				$title_for_layout = 'Auditor Login';
+				$render = 'auditor_login';
         }
-
-		$this->set(compact('loginType'));
+		$this->set(compact('loginType', 'title_for_layout'));
+		$this->render($render);
     }
 
     function logout($type=null, $logoutMsg=null) {
@@ -508,10 +506,8 @@ class UsersController extends AppController {
 					$this->set('instructions', $program['ProgramInstruction'][0]['text']);
 					$title_for_layout = $program['Program']['name'] . ' Registration';
 				}
-				$this->log($program, 'debug');
 		}
         if(!empty($this->data)) {
-			
             $this->User->Behaviors->disable('Disableable');
             $this->User->create();
             if(Configure::read('Registration.ssn') == 'last4') {
@@ -564,7 +560,6 @@ class UsersController extends AppController {
             isset($this->data['User']['registration']) && $this->data['User']['registration'] == 'child_website') {
             $this->render('child_registration');
         }
-
     }
 
     function kiosk_auto_logout() {
