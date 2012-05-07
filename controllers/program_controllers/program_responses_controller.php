@@ -1124,38 +1124,4 @@ class ProgramResponsesController extends AppController {
 		$path .= date('m') . DS;
 		return $path;
 	}
-
-	private function createSnapShotPdf($data, $toc=true) {
-		if($data){
-			$html = $this->getElementHtml($data);
-			$this->log($html, 'debug');
-			$path = $this->getPath();
-			try {
-				$pdf = new WKPDF();
-				$pdf->set_html($html);
-				$pdf->set_toc($toc);
-				$pdf->args_add('--header-spacing', '5');
-				$pdf->args_add('--header-left', $this->Auth->user('name_last4'));
-				$pdf->args_add('--header-center', '[date]');
-				$pdf->args_add('--header-right', Configure::read('Company.name'));
-				$pdf->args_add('--footer-center', 'Page: [page] of [topage]') ;
-				Configure::write('debug', 0);
-				$pdf->render();
-				$pdfFile = date('YmdHis') . rand(0, pow(10, 7)) . '.pdf';
-				$pdf->output(WKPDF::$PDF_SAVEFILE, $path . $pdfFile);
-			}
-			catch(Exception $e) {
-				// TODO probably just want to log this to the error log ??? 
-				die('Exception (line ' . $e->getLine() .'): ' . $e->getMessage());
-			}
-		}
-	}
-
-	private function getElementHtml($data) {
-		$this->set($data);
-		$element = $this->render(null, 'ajax', '/elements/pdf_templates/programs');
-		$this->output = '';
-		return $element;
-	}
-
 }
