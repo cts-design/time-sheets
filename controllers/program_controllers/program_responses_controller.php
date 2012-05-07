@@ -49,7 +49,6 @@ class ProgramResponsesController extends AppController {
 			$this->redirect($this->referer());
 		}
 		$step = $this->ProgramResponse->Program->ProgramStep->findById($stepId);
-		$this->log($step, 'debug');
 		if($step) {
 			$data['program'] = $step['Program'];
 			$data['formFields'] = $step['ProgramFormField'];
@@ -64,14 +63,15 @@ class ProgramResponsesController extends AppController {
 			$this->data['ProgramResponseActivity'][0]['program_step_id'] = $step['ProgramStep']['id'];
 			$this->data['ProgramResponseActivity'][0]['type'] = 'form';
 			$this->data['ProgramResponseActivity'][0]['complete'] = 1;
-			switch ($programResponse['Program']['type']) {
+			switch($programResponse['Program']['type']) {
 				case 'registration':
 					if ($programResponse['Program']['approval_required']) {
-						// :TODO send emails??? 
 						$this->data['ProgramResponse']['status'] = 'pending_approval';
+						$emailType = 'pending_approval';
 					}
 					else {
 						$this->data['ProgramResponse']['status'] = 'complete';
+						$emailType = 'complete';
 					}
 					$redirect = array('controller' => 'programs', 'action' => 'registration', $programResponse['Program']['id']);
 					break;
@@ -87,12 +87,22 @@ class ProgramResponsesController extends AppController {
 				$snapshot['user'] = $this->Auth->user('name_last4');
 				$snapshot['userId'] = $this->Auth->user('id');
 				$snapshot['ProgramDocument'] = $step['ProgramDocument'][0];
-
+				if(isset($emailType)) {
+					$this->ProgramResponse->Program->ProgramEmail->recursive = -1;
+					$responseStatusEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array(
+						'conditions' => array(
+							'ProgramEmail.program_id' => $step['Program']['id'],
+							'ProgramEmail.type' => $emailType)));
+					if($responseStatusEmail) {
+						$this->Notifications->sendProgramEmail($responseStatusEmail['ProgramEmail']);
+					}
+				}
 				$options = array('priority' => 5000, 'tube' => 'pdf_snapshot');
 				$delayedTaskId = ClassRegistry::init('Queue.Job')->put($snapshot, $options);
 				// :TODO save $delayedTaskId to the the user activity record? 
 				$this->Transaction->createUserTransaction('Programs', null, null,
 					'Completed ' . $step['ProgramStep']['name'] . ' ' . $programResponse['Program']['name']);
+			
 				if(! empty($step['ProgramEmail'])) {
 					$this->Notifications->sendProgramEmail($step['ProgramEmail']);
 				}
@@ -153,35 +163,53 @@ class ProgramResponsesController extends AppController {
 			$this->data['ProgramResponseActivity'][0]['type'] = 'form';
 			$this->data['ProgramResponseActivity'][0]['complete'] = 1;
 			$this->data['ProgramResponseActivity'][0]['allow_redo'] = 0;
-			switch ($programResponse['Program']['type']) {
+			switch($programResponse['Program']['type']) {
 				case 'registration':
 					if ($programResponse['Program']['approval_required']) {
 						$this->data['ProgramResponse']['status'] = 'pending_approval';
+						$emailType = 'pending_approval';
 					}
 					else {
 						$this->data['ProgramResponse']['status'] = 'complete';
+						$emailType = 'complete';
 					}
 					$redirect = array('controller' => 'programs', 'action' => 'registration', $programResponse['Program']['id']);
-					break;
-				default:
-					// code...
 					break;
 			}
 
 			if($this->ProgramResponse->saveAll($this->data)) {
+				$snapshot['steps'][0] = array(
+					'answers' => json_decode($this->data['ProgramResponseActivity'][0]['answers'], true),
+					'name' => $step['ProgramStep']['name']);
+				$snapshot['programName'] = $programResponse['Program']['name'];
+				$snapshot['responseId'] = $programResponse['ProgramResponse']['id'];
+				$snapshot['toc'] = false;
+				$snapshot['user'] = $this->Auth->user('name_last4');
+				$snapshot['userId'] = $this->Auth->user('id');
+				$snapshot['ProgramDocument'] = $step['ProgramDocument'][0];
+				if(isset($emailType)) {
+					$this->ProgramResponse->Program->ProgramEmail->recursive = -1;
+					$responseStatusEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array(
+						'conditions' => array(
+							'ProgramEmail.program_id' => $step['Program']['id'],
+							'ProgramEmail.type' => $emailType)));
+					if($responseStatusEmail) {
+						$this->Notifications->sendProgramEmail($responseStatusEmail['ProgramEmail']);
+					}
+				}
+				$options = array('priority' => 5000, 'tube' => 'pdf_snapshot');
+				$delayedTaskId = ClassRegistry::init('Queue.Job')->put($snapshot, $options);
+				// :TODO save $delayedTaskId to the the user activity record? 
 				$this->Transaction->createUserTransaction('Programs', null, null,
-					'Completed ' . $step['ProgramStep']['name'] . ' ' . $programResponse['Program']['name']);
-				// :TODO send proper email
-				$programEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array(
-					'conditions' => array(
-						'ProgramEmail.program_id' => $programResponse['Program']['id'],
-						'ProgramEmail.type' => 'form'
-					)));
-				$this->Notifications->sendProgramEmail($programEmail);
+					'Completed ' . $step['ProgramStep']['name'] . ' ' . $programResponse['Program']['name']); // @TODO should this be completed or edited? 
+			
+				if(! empty($step['ProgramEmail'])) {
+					$this->Notifications->sendProgramEmail($step['ProgramEmail']);
+				}
 				$this->Session->setFlash(__('Saved', true), 'flash_success');
 				$this->redirect($redirect);
-		   }
-		}
+			}
+		}	
 		if(empty($this->data['ProgramResponseActivity'])) {
 			$this->data['ProgramResponseActivity'][0] = json_decode($responseActivity[0]['ProgramResponseActivity']['answers'], true);
 		}
