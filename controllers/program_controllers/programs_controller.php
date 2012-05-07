@@ -93,14 +93,77 @@ class ProgramsController extends AppController {
             $data['instructions'] = $instructions[0];
         }
         $this->set($data);
-    }
+	}
+
+	public function orientation($id=null) {
+        if(!$id) {
+            $this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');
+            $this->redirect('/');
+        }
+        $program = $this->Program->find('first', array(
+            'conditions' => array('Program.id' => $id),
+            'contain' => array(
+                'ProgramStep' => array('conditions' => array('ProgramStep.parent_id IS NOT NULL')),
+                'ProgramInstruction')));
+        if($program['Program']['disabled']) {
+            $this->Session->setFlash(__('This program is disabled', true), 'flash_failure');
+            $this->redirect('/');
+        }
+        $programResponse = $this->Program->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
+        if(!$programResponse) {
+            if($program) {
+                $this->data['ProgramResponse']['user_id'] = $this->Auth->user('id');
+                $this->data['ProgramResponse']['next_step_id'] = $program['ProgramStep'][0]['id'];
+                $this->data['ProgramResponse']['program_id'] = $id;
+                if($program['Program']['confirmation_id_length']) {
+                    $string = sha1(date('ymdhisu'));
+                    $this->data['ProgramResponse']['confirmation_id'] =
+                        substr($string, 0, $program['Program']['confirmation_id_length']);
+                }
+                if($program['Program']['response_expires_in']) {
+                    $this->data['ProgramResponse']['expires_on'] =
+                        date('Y-m-d H:i:s', strtotime('+' . $program['Program']['response_expires_in'] . ' days'));
+                }
+                if($this->Program->ProgramResponse->save($this->data)){
+                    $this->Transaction->createUserTransaction('Programs', null, null,
+                    'Initiated program ' . $program['Program']['name']);
+                    $programResponse = $this->Program->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
+                }
+            }
+        }
+        if($programResponse) {
+            switch ($programResponse['ProgramResponse']['status']) {
+                case 'incomplete':
+                    $instructions = Set::extract('/ProgramInstruction[type=main]/text', $program);
+                    break;
+                case 'pending_approval':
+                    $instructions = Set::extract('/ProgramInstruction[type=pending_approval]/text', $program);
+                    break;
+                case 'expired':
+                    $instructions = Set::extract('/ProgramInstruction[type=expired]/text', $program);
+                    break;
+                case 'not_approved':
+                    $instructions = Set::extract('/ProgramInstruction[type=not_approved]/text', $program);
+                    break;
+                case 'complete':
+                    $instructions = Set::extract('/ProgramInstruction[type=complete]/text', $program);
+                    break;
+                default:
+                    $instructions = Set::extract('/ProgramInstruction[type=main]/text', $program);
+                    break;
+            }
+        }
+        $data['title_for_layout'] = $program['Program']['name'] . ' Dashboard';
+        $data['program'] = $program;
+        $data['programResponse'] = $programResponse;
+        if(isset($instructions)) {
+            $data['instructions'] = $instructions[0];
+        }
+        $this->set($data);
+	}
 
     function ecourse() {
         //ecouse logic here
-    }
-
-    function orientation() {
-        // code...
     }
 
     function esign() {
