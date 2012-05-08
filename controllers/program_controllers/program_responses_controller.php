@@ -214,7 +214,99 @@ class ProgramResponsesController extends AppController {
 		}
 		$this->set($data);
 	}
+	
+	function media($id=null) {
+        if(!$id) {
+            $this->Session->setFlash(__('Invalid program step id.', true), 'flash_failure');
+            $this->redirect('/');
+        }
+		$this->ProgramResponse->Program->contain(array(
+			'ProgramStep' => array(
+				'order' => array('ProgramStep.lft ASC'),
+			),
+			'ProgramResponse' => array(
+				'conditions' => array('ProgramResponse.user_id' => $this->Auth->user('id')))));
+        $program = $this->ProgramResponse->Program->findById($id);
+		$currentStep = Set::extract('/ProgramStep[id=' . $program['ProgramResponse'][0]['next_step_id'] . ']/.[:first]', $program);
+        if(!empty($this->data)) {
+            $this->data['ProgramResponse']['id'] = $program['ProgramResponse'][0]['id'];
+			$this->data['ProgramResponse']['user_id'] = $program['ProgramResponse'][0]['user_id'];
+			$this->data['ProgramResponseActivity']['status'] = 'complete';
+			$this->data['ProgramResponseActivity']['program_response_id'] = $program['ProgramResponse'][0]['id'];
+            if($this->Program->ProgramResponse->save($this->data, true)) {
+                $this->Transaction->createUserTransaction('Programs', null, null,
+                    'Completed media for ' . $program['Program']['name']);
+                $email = $this->Program->ProgramEmail->find('first', array('conditions' => array(
+                    'ProgramEmail.program_id' => $id,
+                    'ProgramEmail.type' => 'media')));
+                if($email) {
+					// @TODO send email using the notifications component
+                }
+                $this->Session->setFlash(__('Saved', true), 'flash_success');
+                switch($this->Session->read('step2')) {
+                    case "form":
+                        $this->redirect(array(
+                            'controller' => 'program_responses',
+                            'action' => 'index', $id));
+                        break;
+                    case "docs":
+                        $this->redirect(array(
+                            'controller' => 'program_responses',
+                            'action' => 'required_docs', $id));
+                        break;
+                    case "complete":
+                        $this->redirect(array(
+                            'controller' => 'program_responses',
+                            'action' => 'response_complete', $id, true));
+                        break;
+                }
+            }
+            else {
+                $this->Session->setFlash(__('You must check the I acknowledge box.', true), 'flash_failure');
+            }
+        }
+        $data['acknowledgeMedia'] = true;
+		/*
+        if($program['Program']['auth_required'] == 0) {
+            $data['acknowledgeMedia'] = false;
+        }
+		 */
+		// @TODO get instructions realated to current step
+        $instructions = Set::extract('/ProgramInstruction[type=media]/text', $program);
+        $data['element'] = '/programs/' . $currentStep[0]['media_type'];
+        if(strstr($program['Program']['type'], 'uri') || strstr($program['Program']['type'], 'presenter') ) {
+            $data['media'] = $program['Program']['media'];
+        }
+        else {
+            $data['media'] = '/program_responses/load_media/' . $currentStep[0]['id'];
+        }
+        if($instructions) {
+            $data['instructions'] = $instructions[0];
+        }
+        $data['title_for_layout'] = $program['Program']['name'];
+        $this->set($data);
+    }
 
+    function load_media($id=null) {
+        if(!$id){
+            $this->Session->setFlash(__('Invalid id', true), 'flash_failure');
+            $this->redirect($this->referer());
+        }
+        $this->view = 'Media';
+        $this->ProgramResponse->Program->ProgramStep->id = $id;
+        $path = $this->ProgramResponse->Program->ProgramStep->field('media_location');
+        if($path) {
+            $explode = explode('.', $path);
+            $params = array(
+                'id' => $path,
+                'name' => $explode[0],
+                'extension' => $explode[1],
+                'path' => Configure::read('Program.media.path')
+            );
+            $this->set($params);
+            return $params;
+        }
+    }
 	function index($id = null) {
 		if(!$id) {
 			$this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');
