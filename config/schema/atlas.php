@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2012-05-03 14:50:47 : 1336071047*/
+/* atlas schema generated on: 2012-05-08 10:18:12 : 1336486692*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -524,10 +524,9 @@ class atlasSchema extends CakeSchema {
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 		'program_response_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
 		'type' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'complete' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'status' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'answers' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'percent_correct' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 3),
-		'allow_redo' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'program_step_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
