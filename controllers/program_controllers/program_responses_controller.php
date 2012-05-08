@@ -62,7 +62,7 @@ class ProgramResponsesController extends AppController {
 			$this->data['ProgramResponseActivity'][0]['answers'] = json_encode($this->data['ProgramResponseActivity'][0]);
 			$this->data['ProgramResponseActivity'][0]['program_step_id'] = $step['ProgramStep']['id'];
 			$this->data['ProgramResponseActivity'][0]['type'] = 'form';
-			$this->data['ProgramResponseActivity'][0]['complete'] = 1;
+			$this->data['ProgramResponseActivity'][0]['status'] = 'complete';
 			switch($programResponse['Program']['type']) {
 				case 'registration':
 					if ($programResponse['Program']['approval_required']) {
@@ -161,8 +161,7 @@ class ProgramResponsesController extends AppController {
 			$this->data['ProgramResponseActivity'][0]['answers'] = json_encode($this->data['ProgramResponseActivity'][0]);
 			$this->data['ProgramResponseActivity'][0]['program_step_id'] = $step['ProgramStep']['id'];
 			$this->data['ProgramResponseActivity'][0]['type'] = 'form';
-			$this->data['ProgramResponseActivity'][0]['complete'] = 1;
-			$this->data['ProgramResponseActivity'][0]['allow_redo'] = 0;
+			$this->data['ProgramResponseActivity'][0]['status'] = 'complete';
 			switch($programResponse['Program']['type']) {
 				case 'registration':
 					if ($programResponse['Program']['approval_required']) {
