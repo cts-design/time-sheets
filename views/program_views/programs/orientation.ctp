@@ -1,15 +1,18 @@
+<style>.step-incomplete{color: #999} .step-complete{color: green}</style>
 <?php echo (!empty($instructions) ? '<div id="Instructions">' . $instructions . '</div>' : '' ) ?>
 <br />
 <div>
-    <table width="100%">
-        <tr>
-            <th>Step</th><th>Status</th><th>Actions</th>
-        </tr>
+	<div class="bot-mar-10">
+            <span>Overall Status:&nbsp;</span><?php echo Inflector::humanize($programResponse['ProgramResponse']['status']) ?>
+	</div>
+	<ul>
 		<?php foreach($program['ProgramStep'] as $step) : ?>
-		   <tr>
-				<td><?php echo $step['name']; ?></td>	
-				<td></td>
-				<td>
+			<?php if(in_array($step['id'], $completedSteps)) : ?>
+				<?php $class = 'step-complete' ?>
+			<?php else : ?>
+				<?php $class = 'step-incomplete' ?>
+			<?php endif ?>
+			<li class="<?php echo $class ?>"><?php echo $step['name']; ?>:&nbsp;	
 					<?php if($step['type'] === 'media') : ?>
 						<?php $linkTitle = 'View Media'; ?>
 					<?php else : ?>
@@ -21,8 +24,7 @@
 						$program['Program']['id']));
 					?>
 					
-				</td>
-		   </tr>
+				</li>
 		<?php endforeach ?>
-    </table>
+	</ul>
 </div>
