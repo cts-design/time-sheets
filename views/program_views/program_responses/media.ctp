@@ -12,11 +12,12 @@
 
 <?php if ($acknowledgeMedia) : ?>
 	<div id="Acknowledge">
-		<?php echo $form->create('ProgramResponse', array('action' => 'media/' . $this->params['pass'][0]));?>
+		<?php echo $form->create('ProgramResponse', array('action' => 'media/' . $this->params['pass'][0] . '/' . 
+			$this->params['pass'][1]));
+		?>
 		<br />
 		<br />
 		<div>
-			<?php // @TODO possibly make this dynamic so the verbiage can be changed by the admin ?>
 		    <?php $label = sprintf(__("I acknowledge that I have viewed the orientation and completely understand its content.
 				I futher understand that it is my responsibility to abide by the rules and requirements.
 				I also understand clearly that my failure to comply with the conditions may result in the 
