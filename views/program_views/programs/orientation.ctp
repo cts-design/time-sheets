@@ -21,7 +21,7 @@
 					<?php echo $this->Html->link($linkTitle, array(
 						'controller' => 'program_responses',
 						'action' => $step['type'],
-						$program['Program']['id']));
+						$program['Program']['id'], $step['id']));
 					?>
 					
 				</li>
