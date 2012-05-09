@@ -10,8 +10,9 @@ class ProgramResponsesController extends AppController {
 	function beforeFilter() {
 		parent::beforeFilter();
 		$this->ProgramResponse->Program->ProgramStep->ProgramFormField->recursive = 2;
-		if(!empty($this->params['pass'][0]) && ($this->params['action'] == 'form' || $this->params['action'] == 'edit_form')){
-			$query = $this->ProgramResponse->Program->ProgramStep->ProgramFormField->findAllByProgramStepId($this->params['pass'][0]);
+		if(!empty($this->params['pass'][1]) && ($this->params['action'] === 'form' || $this->params['action'] === 'edit_form')){
+			$query = $this->ProgramResponse->Program->ProgramStep->ProgramFormField->findAllByProgramStepId($this->params['pass'][1]);
+			debug($query);
 			if($query){
 				$fields = Set::classicExtract($query, '{n}.ProgramFormField');
 				foreach($fields as $k => $v) {
@@ -43,7 +44,7 @@ class ProgramResponsesController extends AppController {
 			}
 	}
 
-	function form($stepId = null) {
+	function form($programId, $stepId = null) {
 		if(!$stepId) {
 			$this->Session->setFlash(__('Invalid step id.', 'flash_failure'));
 			$this->redirect($this->referer());
@@ -215,8 +216,8 @@ class ProgramResponsesController extends AppController {
 		$this->set($data);
 	}
 	
-	function media($id=null) {
-        if(!$id) {
+	function media($programId, $stepId) {
+        if(!$stepId) {
             $this->Session->setFlash(__('Invalid program step id.', true), 'flash_failure');
             $this->redirect('/');
         }
@@ -224,11 +225,23 @@ class ProgramResponsesController extends AppController {
 			'ProgramStep' => array(
 				'order' => array('ProgramStep.lft ASC'),
 			),
+			'ProgramInstruction',
 			'ProgramResponse' => array(
-				'conditions' => array('ProgramResponse.user_id' => $this->Auth->user('id')))));
-        $program = $this->ProgramResponse->Program->findById($id);
-		$currentStep = Set::extract('/ProgramStep[id=' . $program['ProgramResponse'][0]['next_step_id'] . ']/.[:first]', $program);
+				'conditions' => array('ProgramResponse.user_id' => $this->Auth->user('id')),
+				'ProgramResponseActivity')));
+        $program = $this->ProgramResponse->Program->findById($programId);
+		if(! $program) {
+			$this->Session->setFlash(__('Invalid program id', true), 'flash_falure');
+			$this->redirect($this->referer());
+		}
+		$completedStepIds = Set::extract('/ProgramResponseActivity[status=complete]/program_step_id', $program['ProgramResponse']);
+		$currentStep = Set::extract('/ProgramStep[id=' . $stepId . ']/.[:first]', $program);
+		// @TODO add some logic to check if the current step is complete and if it and and redo is not allowed 
+		// set a flash message and redirect back to the program dash board
 		$nextStep = Set::extract('/ProgramStep[lft=' . $currentStep[0]['rght'] .']/.[:first]', $program);
+		while(isset($nextStep[0]) && in_array($nextStep['0']['id'], $completedStepIds)) {
+			$nextStep = Set::extract('/ProgramStep[lft=' . $nextStep[0]['rght'] .']/.[:first]', $program);
+		}
         if(!empty($this->data)) {
             $this->data['ProgramResponse']['id'] = $program['ProgramResponse'][0]['id'];
 			$this->data['ProgramResponse']['next_step_id'] = null;
@@ -238,14 +251,22 @@ class ProgramResponsesController extends AppController {
 			$this->data['ProgramResponseActivity'][0]['type'] = 'media';
 			if(!empty($nextStep)) {
 				$this->data['ProgramResponse']['next_step_id'] = $nextStep[0]['id'];
-				$redirect = array('action' => $nextStep[0]['type'], $id);
+				$redirect = array('action' => $nextStep[0]['type'], $programId);
+			}
+			else {
+				if($program['Program']['approval_required']) {
+					$this->data['ProgramResponse']['status'] = 'pending_approval';
+				}
+				else {
+					$this->data['ProgramResponse']['status'] = 'complete';
+				}
 			}
 			// @TODO make sure validation works
             if($this->ProgramResponse->saveAll($this->data)) {
                 $this->Transaction->createUserTransaction('Programs', null, null,
-                    'Completed media for ' . $program['Program']['name']);
+                    'Completed' . $currentStep[0]['name']);
                 $email = $this->ProgramResponse->Program->ProgramEmail->find('first', array('conditions' => array(
-                    'ProgramEmail.program_id' => $id,
+                    'ProgramEmail.program_id' => $programId,
                     'ProgramEmail.type' => 'media')));
                 if($email) {
 					// @TODO send email using the notifications component
@@ -255,7 +276,7 @@ class ProgramResponsesController extends AppController {
 					$this->redirect($redirect);
 				}
 				else {
-					$this->redirect(array('controller' => 'programs', 'action' => $program['Program']['type'], $id));
+					$this->redirect(array('controller' => 'programs', 'action' => $program['Program']['type'], $programId));
 				}
             }
             else {
@@ -264,7 +285,7 @@ class ProgramResponsesController extends AppController {
         }
         $data['acknowledgeMedia'] = true;
 		// @TODO get instructions realated to current step
-        $instructions = Set::extract('/ProgramInstruction[type=media]/text', $program);
+        $instructions = Set::extract('/ProgramInstruction[program_step_id='.$stepId.']/text', $program);
         $data['element'] = '/programs/' . $currentStep[0]['media_type'];
         if(strstr($currentStep[0]['media_type'], 'uri') || strstr($currentStep[0]['media_type'], 'presenter') ) {
             $data['media'] = $currentStep[0]['location'];
