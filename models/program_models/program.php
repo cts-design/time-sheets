@@ -16,8 +16,11 @@ class Program extends AppModel {
 		$this->contain(array(
 			'ProgramStep' => array(
 				'order' => array('ProgramStep.lft ASC'),
+				'ProgramFormField'
 			),
 			'ProgramInstruction',
+			'ProgramEmail',
+			'ProgramDocument',
 			'ProgramResponse' => array(
 				'conditions' => array('ProgramResponse.user_id' => $userId),
 				'ProgramResponseActivity')));
