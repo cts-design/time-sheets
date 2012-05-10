@@ -216,31 +216,29 @@ class ProgramResponsesController extends AppController {
 		$this->set($data);
 	}
 	
-	function media($programId, $stepId) {
+	function media($programId=null, $stepId=null) {
         if(!$stepId) {
             $this->Session->setFlash(__('Invalid program step id.', true), 'flash_failure');
-            $this->redirect('/');
+            $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => false));
         }
-		$this->ProgramResponse->Program->contain(array(
-			'ProgramStep' => array(
-				'order' => array('ProgramStep.lft ASC'),
-			),
-			'ProgramInstruction',
-			'ProgramResponse' => array(
-				'conditions' => array('ProgramResponse.user_id' => $this->Auth->user('id')),
-				'ProgramResponseActivity')));
-        $program = $this->ProgramResponse->Program->findById($programId);
-		if(! $program) {
-			$this->Session->setFlash(__('Invalid program id', true), 'flash_falure');
-			$this->redirect($this->referer());
+        $program = $this->ProgramResponse->Program->getProgramAndResponse($programId, $this->Auth->user('id'));
+		if(!$program) {
+			$this->Session->setFlash(__('Invalid program.', true), 'flash_falure');
+            $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => false));
 		}
-		$completedStepIds = Set::extract('/ProgramResponseActivity[status=complete]/program_step_id', $program['ProgramResponse']);
-		$currentStep = Set::extract('/ProgramStep[id=' . $stepId . ']/.[:first]', $program);
-		// @TODO add some logic to check if the current step is complete and if it and and redo is not allowed 
-		// set a flash message and redirect back to the program dash board
-		$nextStep = Set::extract('/ProgramStep[lft=' . $currentStep[0]['rght'] .']/.[:first]', $program);
-		while(isset($nextStep[0]) && in_array($nextStep['0']['id'], $completedStepIds)) {
-			$nextStep = Set::extract('/ProgramStep[lft=' . $nextStep[0]['rght'] .']/.[:first]', $program);
+		$steps = $this->ProgramResponse->Program->ProgramStep->getSteps($program, $stepId);
+		if(!isset($steps['current'])) {
+			$this->Session->setFlash(__('Unable to determine current step.', true), 'flash_failure');
+            $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => false));
+		}
+		$currentStep = $steps['current'];
+		if(isset($steps['previous'])) {
+			$this->Session->setFlash(__('Steps must be completed in order.', true), 'flash_failure');
+			$previousStep = $steps['previous'];
+			$this->redirect(array('action' => $previousStep[0]['type'], $programId, $previousStep[0]['id']));
+		}
+		elseif(isset($nextStep['next'])) {
+			$nextStep = $steps['next'];
 		}
         if(!empty($this->data)) {
             $this->data['ProgramResponse']['id'] = $program['ProgramResponse'][0]['id'];
@@ -249,9 +247,10 @@ class ProgramResponsesController extends AppController {
 			$this->data['ProgramResponseActivity'][0]['program_response_id'] = $program['ProgramResponse'][0]['id'];
 			$this->data['ProgramResponseActivity'][0]['program_step_id'] = $currentStep[0]['id'];
 			$this->data['ProgramResponseActivity'][0]['type'] = 'media';
-			if(!empty($nextStep)) {
+			if(isset($nextStep)) {
 				$this->data['ProgramResponse']['next_step_id'] = $nextStep[0]['id'];
-				$redirect = array('action' => $nextStep[0]['type'], $programId);
+				// @TODO add the step id to the redirect below. 
+				$redirect = array('action' => $nextStep[0]['type'], $programId, $nextStep[0]['id']);
 			}
 			else {
 				if($program['Program']['approval_required']) {
