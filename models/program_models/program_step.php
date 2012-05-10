@@ -44,4 +44,31 @@ class ProgramStep extends AppModel {
 			'foreignKey' => 'program_step_id'
 		)
     );
+
+	public function getSteps($program, $stepId) {
+		$completedStepIds = Set::extract('/ProgramResponseActivity[status=complete]/program_step_id', $program['ProgramResponse']);
+		$currentStep = Set::extract('/ProgramStep[id=' . $stepId . ']/.[:first]', $program);
+		$previousStep = Set::extract('/ProgramStep[rght=' . ($currentStep[0]['rght'] - 1) .']/.[:first]', $program);
+		$return = array(); 
+		if(!empty($currentStep)) {
+			$return['current'] = $currentStep;
+		}
+		while(isset($previousStep[0]) && !in_array($previousStep[0]['id'], $completedStepIds)) {
+			$previousStep = Set::extract('/ProgramStep[rght=' . ($currentStep[0]['rght'] - 1) .']/.[:first]', $program);
+		}		
+		if(!empty($previousStep)) {
+			$return['previous'] = $previousStep;
+			return $return;
+		}
+		// @TODO add some logic to check if the current step is complete and if it and and redo is not allowed 
+		// set a flash message and redirect back to the program dash board
+		$nextStep = Set::extract('/ProgramStep[lft=' . $currentStep[0]['rght'] .']/.[:first]', $program);
+		while(isset($nextStep[0]) && in_array($nextStep['0']['id'], $completedStepIds)) {
+			$nextStep = Set::extract('/ProgramStep[lft=' . $nextStep[0]['rght'] .']/.[:first]', $program);
+		}
+		if(!empty($nextStep)) {
+			$return['next'] = $nextStep;
+		}
+		return $return;
+	}
 }
