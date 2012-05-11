@@ -73,7 +73,8 @@ class ProgramResponsesController extends AppController {
 		elseif(isset($steps['next'])) {
 			$nextStep = $steps['next'];
 		}
-		
+		$programDocuments = Set::extract('/ProgramDocument[program_step_id='.$currentStep[0]['id'].']', $program);
+		debug($programDocuments);
 		if(!empty($this->data)) {
             $this->data['ProgramResponse']['id'] = $program['ProgramResponse'][0]['id'];
 			$this->data['ProgramResponse']['next_step_id'] = null;
@@ -98,16 +99,11 @@ class ProgramResponsesController extends AppController {
 			}
 			// TODO: make sure validation works
 			if($this->ProgramResponse->saveAll($this->data)) {
-				// TODO: probably want to move this to it's own method. need logic to generate any documents as nessesary
-				$snapshot['steps'][0] = array(
-					'answers' => json_decode($this->data['ProgramResponseActivity'][0]['answers'], true),
-					'name' => $currentStep[0]['name']);
-				$snapshot['programName'] = $program['Program']['name'];
-				$snapshot['responseId'] = $program['ProgramResponse'][0]['id'];
-				$snapshot['toc'] = false;
-				$snapshot['user'] = $this->Auth->user('name_last4');
-				$snapshot['userId'] = $this->Auth->user('id');
-				$snapshot['ProgramDocument'] = $program['ProgramDocument'][0];
+				if(!empty($programDocuments)) {
+					$program['currentStep'] = $currentStep[0];
+					$program['User'] = $this->Auth->user();
+					$this->ProgramResponse->Program->ProgramDocument->processDocs($programDocuments, $program, $this->data);
+				}
 				if(isset($emailType)) {
 					// TODO: get program emails and intructions from the $program array
 					$this->ProgramResponse->Program->ProgramEmail->recursive = -1;
@@ -119,9 +115,6 @@ class ProgramResponsesController extends AppController {
 						$this->Notifications->sendProgramEmail($responseStatusEmail['ProgramEmail']);
 					}
 				}
-				$options = array('priority' => 5000, 'tube' => 'pdf_snapshot');
-				$delayedTaskId = ClassRegistry::init('Queue.Job')->put($snapshot, $options);
-				// TODO: save $delayedTaskId to the the user activity record? 
 				$this->Transaction->createUserTransaction('Programs', null, null,
 					'Completed ' .  $currentStep[0]['name'] . ' for program ' . $program['Program']['name']);
 				// TODO: get step email from $program array 	
