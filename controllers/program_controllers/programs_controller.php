@@ -2,10 +2,10 @@
 
 class ProgramsController extends AppController {
 
-	var $name = 'Programs';
-	var $components = array('Email');
+	public $name = 'Programs';
+	public $components = array('Email');
 
-	function beforeFilter() {
+	public function beforeFilter() {
 		parent::beforeFilter();
 		$validate = array('viewed_media' => array(
 			'rule' => array('comparison', '>', 0),
@@ -28,7 +28,7 @@ class ProgramsController extends AppController {
 			}
 	}
 
-	function registration($id = null) {
+	public function registration($id = null) {
 		if(!$id) {
 			$this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');
 			$this->redirect('/');
@@ -95,23 +95,23 @@ class ProgramsController extends AppController {
 		$this->set($data);
 	}
 
-	function ecourse() {
+	public function ecourse() {
 		//ecouse logic here
 	}
 
-	function orientation() {
+	public function orientation() {
 		// code...
 	}
 
-	function esign() {
+	public function esign() {
 		// code...
 	}
 
-	function enrollment() {
+	public function enrollment() {
 		// code...
 	}
 
-	function view_media($id=null, $element=null) {
+	public function view_media($id=null, $element=null) {
 		if(!$id) {
 			$this->Session->setFlash(__('Invalid program id.', true), 'flash_failure');
 			$this->redirect('/');
@@ -183,7 +183,7 @@ class ProgramsController extends AppController {
 		$this->set($data);
 	}
 
-	function load_media($id=null) {
+	public function load_media($id=null) {
 		if(!$id){
 			$this->Session->setFlash(__('Invalid id', true), 'flash_failure');
 			$this->redirect($this->referer());
@@ -204,7 +204,7 @@ class ProgramsController extends AppController {
 		}
 	}
 
-	function admin_index() {
+	public function admin_index() {
 		if($this->RequestHandler->isAjax()) {
 			$programs = $this->Program->find('all');
 
