@@ -3,6 +3,17 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+    <h1>Release 3.3.3 (4-26-12)</h1>
+    <h2>Minor feature enhancements</h2>
+    <ol>
+		<li>Allow registration type program to be created without a completion certificate.</li>
+    </ol>
+    <h2>Bug Fixes</h2>
+    <ol>
+		<li>Fixed bug where role admins could not be granted permissions to edit program response notes.</li>
+		<li>Fixed bug where legacy imported document paths were not being referenced properly casing some older documents to not open properly.</li>
+    </ol>
+    <hr />
     <h1>Release 3.3.2 (4-12-12)</h1>
     <h2>Minor feature enhancements</h2>
     <ol>

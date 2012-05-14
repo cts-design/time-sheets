@@ -28,7 +28,7 @@ class ProgramsController extends AppController {
 			}
 	}
 
-	public function registration($id = null) {
+	function registration($id = null) {
 		if(!$id) {
 			$this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');
 			$this->redirect('/');
@@ -95,116 +95,89 @@ class ProgramsController extends AppController {
 		$this->set($data);
 	}
 
-	public function ecourse() {
-		//ecouse logic here
-	}
-
-	public function orientation() {
-		// code...
-	}
-
-	public function esign() {
-		// code...
-	}
-
-	public function enrollment() {
-		// code...
-	}
-
-	public function view_media($id=null, $element=null) {
+	public function orientation($id=null) {
 		if(!$id) {
-			$this->Session->setFlash(__('Invalid program id.', true), 'flash_failure');
+			$this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');
 			$this->redirect('/');
 		}
-		if(!$element && empty($this->data)) {
-			$this->Session->setFlash(__('Invalid media element.', true), 'flash_failure');
+		$program = $this->Program->find('first', array(
+			'conditions' => array('Program.id' => $id),
+			'contain' => array(
+				'ProgramStep' => array('conditions' => array('ProgramStep.parent_id IS NOT NULL')),
+				'ProgramInstruction')));
+		if($program['Program']['disabled']) {
+			$this->Session->setFlash(__('This program is disabled', true), 'flash_failure');
 			$this->redirect('/');
 		}
-		$program = $this->Program->findById($id);
-		if(!empty($this->data)) {
-			$programResponse =
-				$this->Program->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
-			$this->data['ProgramResponse']['id'] = $programResponse['ProgramResponse']['id'];
-			$this->data['ProgramResponse']['user_id'] = $this->Auth->user('id');
-			if($this->Session->read('step2') == 'complete') {
-				$this->data['ProgramResponse']['complete'] = 1;
-			}
-			if($this->Program->ProgramResponse->save($this->data, true)) {
-				$this->Transaction->createUserTransaction('Programs', null, null,
-					'Completed media for ' . $program['Program']['name']);
-				$email = $this->Program->ProgramEmail->find('first', array('conditions' => array(
-					'ProgramEmail.program_id' => $id,
-					'ProgramEmail.type' => 'media')));
-				if($email) {
-					$this->Email->to = $this->Auth->user('firstname') . ' ' . $this->Auth->user('lastname') .' <'. $this->Auth->user('email'). '>';
-					$this->Email->from = Configure::read('System.email');
-					$this->Email->subject = $email['ProgramEmail']['subject'];
-					$this->Email->send($email['ProgramEmail']['body']);
+		$programResponse = $this->Program->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
+		if(!$programResponse) {
+			if($program) {
+				$this->data['ProgramResponse']['user_id'] = $this->Auth->user('id');
+				$this->data['ProgramResponse']['next_step_id'] = $program['ProgramStep'][0]['id'];
+				$this->data['ProgramResponse']['program_id'] = $id;
+				if($program['Program']['confirmation_id_length']) {
+					$string = sha1(date('ymdhisu'));
+					$this->data['ProgramResponse']['confirmation_id'] =
+						substr($string, 0, $program['Program']['confirmation_id_length']);
 				}
-				$this->Session->setFlash(__('Saved', true), 'flash_success');
-				switch($this->Session->read('step2')) {
-				case "form":
-					$this->redirect(array(
-						'controller' => 'program_responses',
-						'action' => 'index', $id));
-					break;
-				case "docs":
-					$this->redirect(array(
-						'controller' => 'program_responses',
-						'action' => 'required_docs', $id));
-					break;
-				case "complete":
-					$this->redirect(array(
-						'controller' => 'program_responses',
-						'action' => 'response_complete', $id, true));
-					break;
+				if($program['Program']['response_expires_in']) {
+					$this->data['ProgramResponse']['expires_on'] =
+						date('Y-m-d H:i:s', strtotime('+' . $program['Program']['response_expires_in'] . ' days'));
+				}
+				if($this->Program->ProgramResponse->save($this->data)){
+					$this->Transaction->createUserTransaction('Programs', null, null,
+						'Initiated program ' . $program['Program']['name']);
+					$programResponse = $this->Program->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
 				}
 			}
-			else {
-				$this->Session->setFlash(__('You must check the I acknowledge box.', true), 'flash_failure');
+		}
+		if($programResponse) {
+			$data['completedSteps'] = Set::extract('/ProgramResponseActivity[status=complete]/program_step_id', $programResponse);
+			switch ($programResponse['ProgramResponse']['status']) {
+			case 'incomplete':
+				$instructions = Set::extract('/ProgramInstruction[type=main]/text', $program);
+				break;
+			case 'pending_approval':
+				$instructions = Set::extract('/ProgramInstruction[type=pending_approval]/text', $program);
+				break;
+			case 'expired':
+				$instructions = Set::extract('/ProgramInstruction[type=expired]/text', $program);
+				break;
+			case 'not_approved':
+				$instructions = Set::extract('/ProgramInstruction[type=not_approved]/text', $program);
+				break;
+			case 'complete':
+				$instructions = Set::extract('/ProgramInstruction[type=complete]/text', $program);
+				break;
+			default:
+				$instructions = Set::extract('/ProgramInstruction[type=main]/text', $program);
+				break;
 			}
 		}
-		$data['acknowledgeMedia'] = true;
-		if($program['Program']['auth_required'] == 0) {
-			$data['acknowledgeMedia'] = false;
-		}
-		$instructions = Set::extract('/ProgramInstruction[type=media]/text', $program);
-		$data['element'] = '/programs/' . $element;
-		if(strstr($program['Program']['type'], 'uri') || strstr($program['Program']['type'], 'presenter') ) {
-			$data['media'] = $program['Program']['media'];
-		}
-		else {
-			$data['media'] = '/programs/load_media/' . $program['Program']['id'];
-		}
-		if($instructions) {
+		$data['title_for_layout'] = $program['Program']['name'] . ' Dashboard';
+		$data['program'] = $program;
+		$data['programResponse'] = $programResponse;
+		if(isset($instructions)) {
 			$data['instructions'] = $instructions[0];
 		}
-		$data['title_for_layout'] = $program['Program']['name'];
 		$this->set($data);
 	}
 
-	public function load_media($id=null) {
-		if(!$id){
-			$this->Session->setFlash(__('Invalid id', true), 'flash_failure');
-			$this->redirect($this->referer());
-		}
-		$this->view = 'Media';
-		$this->Program->id = $id;
-		$path = $this->Program->field('media');
-		if($path) {
-			$explode = explode('.', $path);
-			$params = array(
-				'id' => $path,
-				'name' => $explode[0],
-				'extension' => $explode[1],
-				'path' => Configure::read('Program.media.path')
-			);
-			$this->set($params);
-			return $params;
-		}
+	function ecourse() {
+		//ecouse logic here
 	}
 
-	public function admin_index() {
+	function esign() {
+		// code...
+	}
+
+	function enrollment() {
+		// code...
+	}
+
+
+
+	function admin_index() {
 		if($this->RequestHandler->isAjax()) {
 			$programs = $this->Program->find('all');
 

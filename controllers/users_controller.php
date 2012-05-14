@@ -313,6 +313,11 @@ class UsersController extends AppController {
         $this->set($data);
     }
 
+	function dashboard() {
+		$title_for_layout = 'Customer Dashboard';
+		$this->set(compact('title_for_layout'));
+	}
+
     function edit($id=null) {
         $this->User->Behaviors->disable('Disableable');
         $this->set('title_for_layout', 'Edit Profile');

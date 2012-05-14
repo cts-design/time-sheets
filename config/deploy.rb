@@ -41,17 +41,17 @@ namespace :cts do
   task :tradeshow do
     set :deploy_to, "/var/www/vhosts/www.ctsdemo.local/#{application}"
     set :server_name, 'cts tradeshow'
-    set :user, 'demo_ftp'
+    set :user, 'cts_demo'
     server "www.ctsdemo.local", :app, :web, :db, :primary => true
   end
 end
 
 # Production servers
-task :cccp do
+task :elcp do
   set :deploy_to, "/var/www/vhosts/vpk.childcarepinellas.org/#{application}"
-  set :server_name, 'cccp production'
+  set :server_name, 'elcp production'
   set :user, 'vpk_ftp'
-  server "vpk.childcarepinellas.org", :app, :web, :db, :primary => true
+  server "vpk.elcpinellas.net", :app, :web, :db, :primary => true
 end
 
 task :cc do

@@ -101,14 +101,26 @@ class FiledDocumentsController extends AppController {
 				}
 			}		
 		}
+        $path = null;
+        $root = substr(APP, 0, -1);
+        $path1 = Configure::read('Document.storage.path') .
+            substr($doc['FiledDocument']['filename'], 0, 4) . DS .
+            substr($doc['FiledDocument']['filename'], 4, 2) . DS;
+        $path2 = Configure::read('Document.storage.path') .
+            date('Y', strtotime($doc['FiledDocument']['created'])) . DS .
+            date('m', strtotime($doc['FiledDocument']['created'])) . DS;
+        if(file_exists($root . $path1 .$doc['FiledDocument']['filename'])) {
+            $path = $path1;
+        }
+        elseif(file_exists($root . $path2 . $doc['FiledDocument']['filename'])) {
+            $path = $path2;
+        }
 		$params = array(
 		    'id' => $doc['FiledDocument']['filename'],
 		    'name' => str_replace('.pdf', '', $doc['FiledDocument']['filename']),
 		    'extension' => 'pdf',
 		    'cache' => true,
-		    'path' =>  Configure::read('Document.storage.path') .
-		    substr($doc['FiledDocument']['filename'], 0, 4) . '/' .
-		    substr($doc['FiledDocument']['filename'], 4, 2) . '/'		    
+		    'path' => $path
 		);
 		$this->Transaction->createUserTransaction('Storage', null, null,
 			'Viewed filed document ID ' . $doc['FiledDocument']['id']);

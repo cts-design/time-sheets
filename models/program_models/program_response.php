@@ -2,17 +2,17 @@
 
 class ProgramResponse extends AppModel {
 
-    var $name = 'ProgramResponse';
+    public $name = 'ProgramResponse';
 
-    var $hasMany = array('ProgramResponseDoc', 'ProgramResponseActivity');
+    public $hasMany = array('ProgramResponseDoc', 'ProgramResponseActivity');
 
-    var $belongsTo = array('Program', 'User');
+    public $belongsTo = array('Program', 'User');
 
-    var $validate = array();
+    public $validate = array();
 
-    var $actsAs = array('Containable');
+    public $actsAs = array('Containable');
 
-    function getProgramResponse($programId, $userId) {
+    public function getProgramResponse($programId, $userId) {
         $programResponse = $this->find('first', array(
             'conditions' => array(
                 'ProgramResponse.user_id' => $userId,
@@ -27,7 +27,7 @@ class ProgramResponse extends AppModel {
         return $programResponse;
     }
 
-    function expireResponse($responseId) {
+    public function expireResponse($responseId) {
         $this->id = $responseId;
         $this->saveField('status', 'expired');
         $response = $this->findById($responseId);

@@ -10,8 +10,8 @@ class ProgramResponsesController extends AppController {
 	function beforeFilter() {
 		parent::beforeFilter();
 		$this->ProgramResponse->Program->ProgramStep->ProgramFormField->recursive = 2;
-		if(!empty($this->params['pass'][0]) && ($this->params['action'] == 'form' || $this->params['action'] == 'edit_form')){
-			$query = $this->ProgramResponse->Program->ProgramStep->ProgramFormField->findAllByProgramStepId($this->params['pass'][0]);
+		if(!empty($this->params['pass'][1]) && ($this->params['action'] === 'form' || $this->params['action'] === 'edit_form')){
+			$query = $this->ProgramResponse->Program->ProgramStep->ProgramFormField->findAllByProgramStepId($this->params['pass'][1]);
 			if($query){
 				$fields = Set::classicExtract($query, '{n}.ProgramFormField');
 				foreach($fields as $k => $v) {
@@ -19,7 +19,7 @@ class ProgramResponsesController extends AppController {
 						$validate[$v['name']] = json_decode($v['validation'], true);
 					}
 				}
-				// :TODO make this work with the real esign
+				// TODO: make this work with the real esign
 				if($query[0]['ProgramStep']['Program']['form_esign_required']) {
 					$validate['form_esignature'] = array(
 						'rule' => 'notempty',
@@ -43,63 +43,107 @@ class ProgramResponsesController extends AppController {
 			}
 	}
 
-	function form($stepId = null) {
-		if(!$stepId) {
-			$this->Session->setFlash(__('Invalid step id.', 'flash_failure'));
-			$this->redirect($this->referer());
+	function form($programId=null, $stepId=null) {
+        if(!$stepId) {
+            $this->Session->setFlash(__('Invalid program step id.', true), 'flash_failure');
+            $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => false));
 		}
-		$step = $this->ProgramResponse->Program->ProgramStep->findById($stepId);
-		$this->log($step, 'debug');
-		if($step) {
-			$data['program'] = $step['Program'];
-			$data['formFields'] = $step['ProgramFormField'];
-			$data['instructions'] = $step['ProgramInstruction']['text'];
-			$data['title_for_layout'] = $step['ProgramStep']['name'];
+		$program = $this->ProgramResponse->Program->getProgramAndResponse($programId, $this->Auth->user('id'));
+		// TODO: make sure logged in user has a program response 
+		if(!$program) {
+			$this->Session->setFlash(__('Invalid program.', true), 'flash_falure');
+            $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => false));
 		}
+		$steps = $this->ProgramResponse->Program->ProgramStep->getSteps($program, $stepId);
+		if(!isset($steps['current'])) {
+			$this->Session->setFlash(__('Unable to determine current step.', true), 'flash_failure');
+            $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => false));
+		}
+		if(isset($steps['error'])) {
+			$this->Session->setFlash(__($steps['error'], true), 'flash_failure');
+            $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => false));
+		}
+		$currentStep = $steps['current'];
+		if(isset($steps['previous'])) {
+			$this->Session->setFlash(__('Steps must be completed in order.', true), 'flash_failure');
+			// TODO: should this redirect to the program dashboard or the previously uncompleted step? 
+			$previousStep = $steps['previous'];
+			$this->redirect(array('action' => $previousStep[0]['type'], $programId, $previousStep[0]['id']));
+		}
+		elseif(isset($steps['next'])) {
+			$nextStep = $steps['next'];
+		}
+		$programDocuments = Set::extract('/ProgramDocument[program_step_id='.$currentStep[0]['id'].']', $program);
+		debug($programDocuments);
 		if(!empty($this->data)) {
-			$programResponse =
-				$this->ProgramResponse->getProgramResponse($step['Program']['id'], $this->Auth->user('id'));
-			$this->data['ProgramResponse']['id'] = $programResponse['ProgramResponse']['id'];
+            $this->data['ProgramResponse']['id'] = $program['ProgramResponse'][0]['id'];
+			$this->data['ProgramResponse']['next_step_id'] = null;
 			$this->data['ProgramResponseActivity'][0]['answers'] = json_encode($this->data['ProgramResponseActivity'][0]);
-			$this->data['ProgramResponseActivity'][0]['program_step_id'] = $step['ProgramStep']['id'];
+			$this->data['ProgramResponseActivity'][0]['status'] = 'complete';
+			$this->data['ProgramResponseActivity'][0]['program_response_id'] = $program['ProgramResponse'][0]['id'];
+			$this->data['ProgramResponseActivity'][0]['program_step_id'] = $currentStep[0]['id'];
 			$this->data['ProgramResponseActivity'][0]['type'] = 'form';
-			$this->data['ProgramResponseActivity'][0]['complete'] = 1;
-			switch ($programResponse['Program']['type']) {
-				case 'registration':
-					if ($programResponse['Program']['approval_required']) {
-						// :TODO send emails??? 
-						$this->data['ProgramResponse']['status'] = 'pending_approval';
-					}
-					else {
-						$this->data['ProgramResponse']['status'] = 'complete';
-					}
-					$redirect = array('controller' => 'programs', 'action' => 'registration', $programResponse['Program']['id']);
-					break;
+			if(isset($nextStep)) {
+				$this->data['ProgramResponse']['next_step_id'] = $nextStep[0]['id'];
+				$redirect = array('action' => $nextStep[0]['type'], $programId, $nextStep[0]['id']);
 			}
-
+			else {
+				if($program['Program']['approval_required']) {
+					$this->data['ProgramResponse']['status'] = 'pending_approval';
+					$emailType = 'pending_approval';
+				}
+				else {
+					$this->data['ProgramResponse']['status'] = 'complete';
+					$emailType = 'complete';
+				}
+			}
+			// TODO: make sure validation works
 			if($this->ProgramResponse->saveAll($this->data)) {
-				$snapshot['steps'][0] = array(
-					'answers' => json_decode($this->data['ProgramResponseActivity'][0]['answers'], true),
-					'name' => $step['ProgramStep']['name']);
-				$snapshot['programName'] = $programResponse['Program']['name'];
-				$snapshot['responseId'] = $programResponse['ProgramResponse']['id'];
-				$snapshot['toc'] = false;
-				$snapshot['user'] = $this->Auth->user('name_last4');
-				$snapshot['userId'] = $this->Auth->user('id');
-				$snapshot['ProgramDocument'] = $step['ProgramDocument'][0];
-
-				$options = array('priority' => 5000, 'tube' => 'pdf_snapshot');
-				$delayedTaskId = ClassRegistry::init('Queue.Job')->put($snapshot, $options);
-				// :TODO save $delayedTaskId to the the user activity record? 
+				if(!empty($programDocuments)) {
+					$program['currentStep'] = $currentStep[0];
+					$program['User'] = $this->Auth->user();
+					$this->ProgramResponse->Program->ProgramDocument->processDocs($programDocuments, $program, $this->data);
+				}
+				if(isset($emailType)) {
+					// TODO: get program emails and intructions from the $program array
+					$this->ProgramResponse->Program->ProgramEmail->recursive = -1;
+					$responseStatusEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array(
+						'conditions' => array(
+							'ProgramEmail.program_id' => $program['Program']['id'],
+							'ProgramEmail.type' => $emailType)));
+					if($responseStatusEmail) {
+						$this->Notifications->sendProgramEmail($responseStatusEmail['ProgramEmail']);
+					}
+				}
 				$this->Transaction->createUserTransaction('Programs', null, null,
-					'Completed ' . $step['ProgramStep']['name'] . ' ' . $programResponse['Program']['name']);
+					'Completed ' .  $currentStep[0]['name'] . ' for program ' . $program['Program']['name']);
+				// TODO: get step email from $program array 	
+				/*
 				if(! empty($step['ProgramEmail'])) {
 					$this->Notifications->sendProgramEmail($step['ProgramEmail']);
-				}
+				} */
 				$this->Session->setFlash(__('Saved', true), 'flash_success');
-				$this->redirect($redirect);
+				if(isset($redirect)) {
+					$this->redirect($redirect);
+				}
+				else {
+					$this->redirect(array('controller' => 'programs', 'action' => $program['Program']['type'], $programId));
+				}
 			}
 		}
+        $instructions = Set::extract('/ProgramInstruction[program_step_id='.$stepId.']/text', $program);
+		$data['formFields'] = $currentStep[0]['ProgramFormField'];
+		// TODO: determine if esign will be on the program level or on the step level
+		$data['esignRequired'] = false;
+		if($program['Program']['form_esign_required']) {
+			$data['esignRequired'] = true;
+			$data['esignInstructions'] = Set::extract('/ProgramInstruction[type=esign]/text', $program);
+		}
+        if($instructions) {
+            $data['instructions'] = $instructions[0];
+        }
+        $data['title_for_layout'] = $currentStep[0]['name'];
+
 		$this->set($data);
 		$this->render('form');
 	}
@@ -133,7 +177,7 @@ class ProgramResponsesController extends AppController {
 			$this->Session->setFlash(__('Invalid step id.', 'flash_failure'));
 			$this->redirect($this->referer());
 		}
-		// :TODO add logic to check for valid response and valid step
+		// TODO: add logic to check for valid response and valid step
 		$step = $this->ProgramResponse->Program->ProgramStep->findById($stepId);
 		if($step) {
 			$data['program'] = $step['Program'];
@@ -151,43 +195,163 @@ class ProgramResponsesController extends AppController {
 			$this->data['ProgramResponseActivity'][0]['answers'] = json_encode($this->data['ProgramResponseActivity'][0]);
 			$this->data['ProgramResponseActivity'][0]['program_step_id'] = $step['ProgramStep']['id'];
 			$this->data['ProgramResponseActivity'][0]['type'] = 'form';
-			$this->data['ProgramResponseActivity'][0]['complete'] = 1;
-			$this->data['ProgramResponseActivity'][0]['allow_redo'] = 0;
-			switch ($programResponse['Program']['type']) {
+			$this->data['ProgramResponseActivity'][0]['status'] = 'complete';
+			switch($programResponse['Program']['type']) {
 				case 'registration':
 					if ($programResponse['Program']['approval_required']) {
 						$this->data['ProgramResponse']['status'] = 'pending_approval';
+						$emailType = 'pending_approval';
 					}
 					else {
 						$this->data['ProgramResponse']['status'] = 'complete';
+						$emailType = 'complete';
 					}
 					$redirect = array('controller' => 'programs', 'action' => 'registration', $programResponse['Program']['id']);
-					break;
-				default:
-					// code...
 					break;
 			}
 
 			if($this->ProgramResponse->saveAll($this->data)) {
+				$snapshot['steps'][0] = array(
+					'answers' => json_decode($this->data['ProgramResponseActivity'][0]['answers'], true),
+					'name' => $step['ProgramStep']['name']);
+				$snapshot['programName'] = $programResponse['Program']['name'];
+				$snapshot['responseId'] = $programResponse['ProgramResponse']['id'];
+				$snapshot['toc'] = false;
+				$snapshot['user'] = $this->Auth->user('name_last4');
+				$snapshot['userId'] = $this->Auth->user('id');
+				$snapshot['ProgramDocument'] = $step['ProgramDocument'][0];
+				if(isset($emailType)) {
+					$this->ProgramResponse->Program->ProgramEmail->recursive = -1;
+					$responseStatusEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array(
+						'conditions' => array(
+							'ProgramEmail.program_id' => $step['Program']['id'],
+							'ProgramEmail.type' => $emailType)));
+					if($responseStatusEmail) {
+						$this->Notifications->sendProgramEmail($responseStatusEmail['ProgramEmail']);
+					}
+				}
+				$options = array('priority' => 5000, 'tube' => 'pdf_snapshot');
+				$delayedTaskId = ClassRegistry::init('Queue.Job')->put($snapshot, $options);
+				// TODO: save $delayedTaskId to the the user activity record? 
 				$this->Transaction->createUserTransaction('Programs', null, null,
-					'Completed ' . $step['ProgramStep']['name'] . ' ' . $programResponse['Program']['name']);
-				// :TODO send proper email
-				$programEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array(
-					'conditions' => array(
-						'ProgramEmail.program_id' => $programResponse['Program']['id'],
-						'ProgramEmail.type' => 'form'
-					)));
-				$this->Notifications->sendProgramEmail($programEmail);
+					'Completed ' . $step['ProgramStep']['name'] . ' ' . $programResponse['Program']['name']); // TODO: should this be completed or edited? 
+			
+				if(! empty($step['ProgramEmail'])) {
+					$this->Notifications->sendProgramEmail($step['ProgramEmail']);
+				}
 				$this->Session->setFlash(__('Saved', true), 'flash_success');
 				$this->redirect($redirect);
-		   }
-		}
+			}
+		}	
 		if(empty($this->data['ProgramResponseActivity'])) {
 			$this->data['ProgramResponseActivity'][0] = json_decode($responseActivity[0]['ProgramResponseActivity']['answers'], true);
 		}
 		$this->set($data);
 	}
+	
+	function media($programId=null, $stepId=null) {
+        if(!$stepId) {
+            $this->Session->setFlash(__('Invalid program step id.', true), 'flash_failure');
+            $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => false));
+        }
+        $program = $this->ProgramResponse->Program->getProgramAndResponse($programId, $this->Auth->user('id'));
+		if(!$program) {
+			$this->Session->setFlash(__('Invalid program.', true), 'flash_falure');
+            $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => false));
+		}
+		$steps = $this->ProgramResponse->Program->ProgramStep->getSteps($program, $stepId);
+		if(!isset($steps['current'])) {
+			$this->Session->setFlash(__('Unable to determine current step.', true), 'flash_failure');
+            $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => false));
+		}
+		$currentStep = $steps['current'];
+		if(isset($steps['previous'])) {
+			$this->Session->setFlash(__('Steps must be completed in order.', true), 'flash_failure');
+			$previousStep = $steps['previous'];
+			$this->redirect(array('action' => $previousStep[0]['type'], $programId, $previousStep[0]['id']));
+		}
+		elseif(isset($steps['next'])) {
+			$nextStep = $steps['next'];
+		}
+        if(!empty($this->data)) {
+            $this->data['ProgramResponse']['id'] = $program['ProgramResponse'][0]['id'];
+			$this->data['ProgramResponse']['next_step_id'] = null;
+			$this->data['ProgramResponseActivity'][0]['status'] = 'complete';
+			$this->data['ProgramResponseActivity'][0]['program_response_id'] = $program['ProgramResponse'][0]['id'];
+			$this->data['ProgramResponseActivity'][0]['program_step_id'] = $currentStep[0]['id'];
+			$this->data['ProgramResponseActivity'][0]['type'] = 'media';
+			if(isset($nextStep)) {
+				$this->data['ProgramResponse']['next_step_id'] = $nextStep[0]['id'];
+				// TODO: add the step id to the redirect below. 
+				$redirect = array('action' => $nextStep[0]['type'], $programId, $nextStep[0]['id']);
+			}
+			else {
+				if($program['Program']['approval_required']) {
+					$this->data['ProgramResponse']['status'] = 'pending_approval';
+				}
+				else {
+					$this->data['ProgramResponse']['status'] = 'complete';
+				}
+			}
+			// TODO: make sure validation works
+            if($this->ProgramResponse->saveAll($this->data)) {
+                $this->Transaction->createUserTransaction('Programs', null, null,
+                    'Completed' . $currentStep[0]['name']);
+                $email = $this->ProgramResponse->Program->ProgramEmail->find('first', array('conditions' => array(
+                    'ProgramEmail.program_id' => $programId,
+                    'ProgramEmail.type' => 'media')));
+                if($email) {
+					// TODO: send email using the notifications component
+                }
+                $this->Session->setFlash(__('Saved', true), 'flash_success');
+				if(isset($redirect)) {
+					$this->redirect($redirect);
+				}
+				else {
+					$this->redirect(array('controller' => 'programs', 'action' => $program['Program']['type'], $programId));
+				}
+            }
+            else {
+                $this->Session->setFlash(__('You must check the I acknowledge box.', true), 'flash_failure');
+            }
+        }
+        $data['acknowledgeMedia'] = true;
+		// TODO: get instructions realated to current step
+        $instructions = Set::extract('/ProgramInstruction[program_step_id='.$stepId.']/text', $program);
+        $data['element'] = '/programs/' . $currentStep[0]['media_type'];
+        if(strstr($currentStep[0]['media_type'], 'uri') || strstr($currentStep[0]['media_type'], 'presenter') ) {
+            $data['media'] = $currentStep[0]['location'];
+        }
+        else {
+            $data['media'] = '/program_responses/load_media/' . $currentStep[0]['id'];
+        }
+        if($instructions) {
+            $data['instructions'] = $instructions[0];
+        }
+        $data['title_for_layout'] = $currentStep[0]['name'];
+        $this->set($data);
+    }
 
+    function load_media($id=null) {
+        if(!$id){
+            $this->Session->setFlash(__('Invalid id', true), 'flash_failure');
+            $this->redirect($this->referer());
+        }
+        $this->view = 'Media';
+        $this->ProgramResponse->Program->ProgramStep->id = $id;
+        $path = $this->ProgramResponse->Program->ProgramStep->field('media_location');
+        if($path) {
+            $explode = explode('.', $path);
+            $params = array(
+                'id' => $path,
+                'name' => $explode[0],
+                'extension' => $explode[1],
+                'path' => Configure::read('Program.media.path')
+            );
+            $this->set($params);
+            return $params;
+        }
+    }
 	function index($id = null) {
 		if(!$id) {
 			$this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');
@@ -1096,38 +1260,4 @@ class ProgramResponsesController extends AppController {
 		$path .= date('m') . DS;
 		return $path;
 	}
-
-	private function createSnapShotPdf($data, $toc=true) {
-		if($data){
-			$html = $this->getElementHtml($data);
-			$this->log($html, 'debug');
-			$path = $this->getPath();
-			try {
-				$pdf = new WKPDF();
-				$pdf->set_html($html);
-				$pdf->set_toc($toc);
-				$pdf->args_add('--header-spacing', '5');
-				$pdf->args_add('--header-left', $this->Auth->user('name_last4'));
-				$pdf->args_add('--header-center', '[date]');
-				$pdf->args_add('--header-right', Configure::read('Company.name'));
-				$pdf->args_add('--footer-center', 'Page: [page] of [topage]') ;
-				Configure::write('debug', 0);
-				$pdf->render();
-				$pdfFile = date('YmdHis') . rand(0, pow(10, 7)) . '.pdf';
-				$pdf->output(WKPDF::$PDF_SAVEFILE, $path . $pdfFile);
-			}
-			catch(Exception $e) {
-				// TODO probably just want to log this to the error log ??? 
-				die('Exception (line ' . $e->getLine() .'): ' . $e->getMessage());
-			}
-		}
-	}
-
-	private function getElementHtml($data) {
-		$this->set($data);
-		$element = $this->render(null, 'ajax', '/elements/pdf_templates/programs');
-		$this->output = '';
-		return $element;
-	}
-
 }
