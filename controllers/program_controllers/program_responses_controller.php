@@ -102,7 +102,7 @@ class ProgramResponsesController extends AppController {
 				if(!empty($programDocuments)) {
 					$program['currentStep'] = $currentStep[0];
 					$program['User'] = $this->Auth->user();
-					$this->ProgramResponse->Program->ProgramDocument->processDocs($programDocuments, $program, $this->data);
+					$this->ProgramResponse->Program->ProgramDocument->queueProgarmDocs($programDocuments, $program, $this->data);
 				}
 				if(isset($emailType)) {
 					// TODO: get program emails and intructions from the $program array
