@@ -1,8 +1,7 @@
 <?php echo $this->Html->script(array(
   'Atlas/model/Program',
   'Atlas/store/ProgramStore',
-  'Atlas/view/ProgramGrid',
-  'Atlas/view/ProgramForm'),
+  'Atlas/view/ProgramGrid'),
   array('inline' => false)) ?>
 <?php echo $this->Html->script('programs/admin_index', array('inline' => FALSE));?>
 
