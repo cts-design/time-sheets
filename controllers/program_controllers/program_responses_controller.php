@@ -74,7 +74,6 @@ class ProgramResponsesController extends AppController {
 			$nextStep = $steps['next'];
 		}
 		$programDocuments = Set::extract('/ProgramDocument[program_step_id='.$currentStep[0]['id'].']', $program);
-		debug($programDocuments);
 		if(!empty($this->data)) {
             $this->data['ProgramResponse']['id'] = $program['ProgramResponse'][0]['id'];
 			$this->data['ProgramResponse']['next_step_id'] = null;
@@ -101,8 +100,9 @@ class ProgramResponsesController extends AppController {
 			if($this->ProgramResponse->saveAll($this->data)) {
 				if(!empty($programDocuments)) {
 					$program['currentStep'] = $currentStep[0];
-					$program['User'] = $this->Auth->user();
-					$this->ProgramResponse->Program->ProgramDocument->queueProgarmDocs($programDocuments, $program, $this->data);
+					$user = $this->Auth->user();
+					$program['User'] = $user['User'];
+					$this->ProgramResponse->Program->ProgramDocument->queueProgramDocs($programDocuments, $program, $this->data);
 				}
 				if(isset($emailType)) {
 					// TODO: get program emails and intructions from the $program array
