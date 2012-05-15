@@ -3,7 +3,7 @@ App::import('Vendor', 'wkhtmltopdf/wkhtmltopdf');
 
 class DocumentGenerationWorkerTask extends QueueShell {
 	public $uses = array('Queue.Job', 'FiledDocument');
-	public $tubes = array('pdf_snapshot');
+	public $tubes = array('pdf_snapshot', 'certificate');
 	
 	public function execute() {
 		while(true) {
@@ -11,12 +11,18 @@ class DocumentGenerationWorkerTask extends QueueShell {
 			$job = $this->Job->reserve(array('tube' => $this->tubes));
 			if(!$job) {
 				$this->log('Invalid job found. Not processing.', 'error');	
+				$this->log(var_export($job), 'error');
+				$this->Job->bury();
 			}
 			else {
 				$this->out('Processing job ' . $job['Job']['id']);
+				$this->out(var_export($job));
 				switch($job['Job']['ProgramDocument']['type']) {
 					case 'snapshot':
-						$processed = $this->processSnapshot($job['Job']);	
+						$processed = $this->generateSnapshot($job['Job']);	
+						break;
+					case 'certificate':
+						$processed = $this->generateForm($job['Job']);
 						break;
 				}
 				if($processed) {
@@ -33,7 +39,7 @@ class DocumentGenerationWorkerTask extends QueueShell {
 		}
 	}
 
-	private function processSnapshot($data) {
+	private function generateSnapshot($data) {
 		if($data){
 			$html = $this->getSnapshotHtml($data);
 			$path = $this->getPath();
@@ -67,9 +73,6 @@ class DocumentGenerationWorkerTask extends QueueShell {
 				$this->data['FiledDocument']['filename'] = $pdfFile;
 				$this->data['FiledDocument']['cat_1'] = $data['ProgramDocument']['cat_1'];
 				$this->data['FiledDocument']['cat_2'] = $data['ProgramDocument']['cat_2'];
-				$this->data['FiledDocument']['cat_3'] = $data['ProgramDocument']['cat_3'];
-				$this->data['FiledDocument']['entry_method'] = 'Program Generated';
-				$this->data['FiledDocument']['filed'] = date('Y-m-d H:i:s');
 				$this->data['ProgramResponseDoc']['program_response_id'] = $data['ProgramResponse']['id'];
 				$this->data['ProgramResponseDoc']['type'] = 'snapshot';
 				$this->data['ProgramResponseDoc']['doc_id'] = $docId;
@@ -129,26 +132,25 @@ class DocumentGenerationWorkerTask extends QueueShell {
 		$pdfData['form_completed'] = date('m/d/Y', strtotime($data['ProgramResponse']['created']));
 		$pdfData['program_name'] = $data['Program']['name'];
 		if(!empty($data['ProgramDocument'])) {
-			$pdf = $this->createPDF($formData, $data['ProgramDocument']['template']);
+			$pdf = $this->createPDF($pdfData, $data['ProgramDocument']['template']);
 			if($pdf) {
-				$this->loadModel('FiledDocument');
-				if(!$docId) {
+				if(empty($data['docId'])) {
 					$this->FiledDocument->User->QueuedDocument->create();
 					$this->FiledDocument->User->QueuedDocument->save();
-					$docId = $this->FiledDocument->User->QueuedDocument->getLastInsertId();
+					$data['docId'] = $this->FiledDocument->User->QueuedDocument->getLastInsertId();
 					// delete the empty record so it does not show up in the queue
-					$this->FiledDocument->User->QueuedDocument->delete($docId, false);
+					$this->FiledDocument->User->QueuedDocument->delete($data['docId'], false);
 					$genType = 'Generated';
 				}
 				else {
 					$this->data['ProgramResponseDoc']['id'] =
 					$this->ProgramResponse->ProgramResponseDoc->field('id', array(
-							'ProgramResponseDoc.doc_id' => $docId,
+							'ProgramResponseDoc.doc_id' => $data['docId'],
 							'ProgramResponseDoc.program_response_id' => $data['ProgramResponse']['id']));
 					$genType = 'Regenerated';
 				}
 
-				$this->data['FiledDocument']['id'] = $docId;
+				$this->data['FiledDocument']['id'] = $data['docId'];
 				$this->data['FiledDocument']['created'] = date('Y-m-d H:i:s');
 				$this->data['FiledDocument']['filename'] = $pdf;
 				if(!empty($data['Admin'])) {
@@ -173,10 +175,10 @@ class DocumentGenerationWorkerTask extends QueueShell {
 					$this->data['ProgramResponseDoc']['cat_id'] = $data['ProgramDocument']['cat_1'];
 				}
 				$this->data['ProgramResponseDoc']['program_response_id'] = $data['ProgramResponse']['id'];
-				$this->data['ProgramResponseDoc']['doc_id'] = $docId;
+				$this->data['ProgramResponseDoc']['doc_id'] = $data['docId'];
 				$this->data['ProgramResponseDoc']['type'] = $data['ProgramDocument']['type'];
 				if($this->FiledDocument->saveAll($this->data)) {
-					return;
+					return true;
 				}
 				else {
 					return false;
@@ -217,13 +219,13 @@ class DocumentGenerationWorkerTask extends QueueShell {
 		// need to know what file the data will go into
 		$pdfTemplate = APP . 'storage' . DS . 'program_forms' . DS . $template;
 		// generate the file content
-		$fdfData = $this->_createFDF($pdfTemplate,$data);
+		$fdfData = $this->createFDF($pdfTemplate,$data);
 		// write the file out
 		if($fp=fopen($fdfDir.DS.$fdfFile,'w')){
 			fwrite($fp,$fdfData,strlen($fdfData));
 		}
 		fclose($fp);
-		$pdftkCommandString = DS . 'usr' . DS . 'bin' . DS . 'pdftk ' . APP . 'storage' . DS . 'program_forms' . DS .
+		$pdftkCommandString = 'pdftk ' . DS . APP . 'storage' . DS . 'program_forms' . DS .
 			$template . ' fill_form ' . TMP . 'fdf' . DS . $fdfFile . ' output ' . $path . DS . $pdfFile . ' flatten';
 		passthru($pdftkCommandString, $return);
 		if($return == 0) {
@@ -236,7 +238,7 @@ class DocumentGenerationWorkerTask extends QueueShell {
 
 	private function getPath() {
 		// get the document relative path to the inital storage folder
-		$path = Configure::read('Document.storage.uploadPath');
+		$path = substr(APP, 0, -1) . Configure::read('Document.storage.path');
 		// check to see if the directory for the current year exists
 		if(!file_exists($path . date('Y') . DS)){
 			// if directory does not exist, create it
