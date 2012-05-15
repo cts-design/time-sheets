@@ -22,9 +22,9 @@ class ProgramDocument extends AppModel {
 		foreach($programDocuments as $doc) {
 			// TODO add Admin to the payload if the doc is genertated from the admin area.
 			$payload['Program'] = $program['Program'];
-			$payload['ProgramResponse'] = $program['ProgramResponse'];
+			$payload['ProgramResponse'] = $program['ProgramResponse'][0];
 			$payload['User'] = $program['User'];
-			$payload['ProgramDocument'] = $doc;
+			$payload['ProgramDocument'] = $doc['ProgramDocument'];
 			switch($doc['ProgramDocument']['type']) {
 				case 'snapshot': 
 					$payload['steps'][0] = array(
