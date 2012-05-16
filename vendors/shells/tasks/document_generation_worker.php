@@ -11,8 +11,6 @@ class DocumentGenerationWorkerTask extends QueueShell {
 			$job = $this->Job->reserve(array('tube' => $this->tubes));
 			if(!$job) {
 				$this->log('Invalid job found. Not processing.', 'error');	
-				$this->log(var_export($job), 'error');
-				$this->Job->bury();
 			}
 			else {
 				$this->out('Processing job ' . $job['Job']['id']);
