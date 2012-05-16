@@ -216,4 +216,7 @@ class ProgramsController extends AppController {
 		$title_for_layout = 'Programs';
 		$this->set(compact('title_for_layout'));
 	}
+
+	public function admin_add_registration() {
+	}
 }
