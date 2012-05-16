@@ -46,7 +46,6 @@ class ProgramsController extends AppController {
         if(!$programResponse) {
             if($program) {
                 $this->data['ProgramResponse']['user_id'] = $this->Auth->user('id');
-                $this->data['ProgramResponse']['next_step_id'] = $program['ProgramStep'][0]['id'];
                 $this->data['ProgramResponse']['program_id'] = $id;
                 if($program['Program']['confirmation_id_length']) {
                     $string = sha1(date('ymdhisu'));
@@ -65,26 +64,12 @@ class ProgramsController extends AppController {
             }
         }
         if($programResponse) {
-            switch ($programResponse['ProgramResponse']['status']) {
-                case 'incomplete':
-                    $instructions = Set::extract('/ProgramInstruction[type=main]/text', $program);
-                    break;
-                case 'pending_approval':
-                    $instructions = Set::extract('/ProgramInstruction[type=pending_approval]/text', $program);
-                    break;
-                case 'expired':
-                    $instructions = Set::extract('/ProgramInstruction[type=expired]/text', $program);
-                    break;
-                case 'not_approved':
-                    $instructions = Set::extract('/ProgramInstruction[type=not_approved]/text', $program);
-                    break;
-                case 'complete':
-                    $instructions = Set::extract('/ProgramInstruction[type=complete]/text', $program);
-                    break;
-                default:
-                    $instructions = Set::extract('/ProgramInstruction[type=main]/text', $program);
-                    break;
-            }
+			if($programResponse['ProgramResponse']['status'] === 'incomplete') {
+				$instructions = Set::extract('/ProgramInstruction[type=main]/text', $program);
+			}
+			else {
+				$instructions = Set::extract('/ProgramInstruction[type='.$programResponse['ProgramResponse']['status'].']/text', $program);
+			}
         }
         $data['title_for_layout'] = $program['Program']['name'] . ' Dashboard';
         $data['program'] = $program;
@@ -113,7 +98,6 @@ class ProgramsController extends AppController {
         if(!$programResponse) {
             if($program) {
                 $this->data['ProgramResponse']['user_id'] = $this->Auth->user('id');
-                $this->data['ProgramResponse']['next_step_id'] = $program['ProgramStep'][0]['id'];
                 $this->data['ProgramResponse']['program_id'] = $id;
                 if($program['Program']['confirmation_id_length']) {
                     $string = sha1(date('ymdhisu'));
@@ -133,26 +117,12 @@ class ProgramsController extends AppController {
         }
         if($programResponse) {
 			$data['completedSteps'] = Set::extract('/ProgramResponseActivity[status=complete]/program_step_id', $programResponse);
-            switch ($programResponse['ProgramResponse']['status']) {
-                case 'incomplete':
-                    $instructions = Set::extract('/ProgramInstruction[type=main]/text', $program);
-                    break;
-                case 'pending_approval':
-                    $instructions = Set::extract('/ProgramInstruction[type=pending_approval]/text', $program);
-                    break;
-                case 'expired':
-                    $instructions = Set::extract('/ProgramInstruction[type=expired]/text', $program);
-                    break;
-                case 'not_approved':
-                    $instructions = Set::extract('/ProgramInstruction[type=not_approved]/text', $program);
-                    break;
-                case 'complete':
-                    $instructions = Set::extract('/ProgramInstruction[type=complete]/text', $program);
-                    break;
-                default:
-                    $instructions = Set::extract('/ProgramInstruction[type=main]/text', $program);
-                    break;
-            }
+			if($programResponse['ProgramResponse']['status'] === 'incomplete') {
+				$instructions = Set::extract('/ProgramInstruction[type=main]/text', $program);
+			}
+			else {
+				$instructions = Set::extract('/ProgramInstruction[type='.$programResponse['ProgramResponse']['status'].']/text', $program);
+			}
         }
         $data['title_for_layout'] = $program['Program']['name'] . ' Dashboard';
         $data['program'] = $program;
