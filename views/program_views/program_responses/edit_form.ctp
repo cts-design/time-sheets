@@ -10,7 +10,7 @@
 <div class="required bot-mar-10"><label></label> <?php __('indicates required fields.') ?></div>
 <div id="ProgramForm">
     <?php if(!empty($formFields)) : ?>
-        <?php echo $form->create('ProgramResponse', array('action' => 'edit_form/' . $this->params['pass'][0])); ?>
+        <?php echo $form->create('ProgramResponse', array('action' => 'edit_form/' . $this->params['pass'][0] . '/' . $this->params['pass'][1])); ?>
         <?php asort($formFields)?>
         <?php foreach($formFields as $k => $v) : ?>
             <?php $options = json_decode($v['options'], true); ?>
@@ -26,11 +26,10 @@
             <?php echo $form->input('ProgramResponseActivity.0.' . $v['name'], $attributes); ?>
             <?php echo '<br />'; ?>
         <?php endforeach; ?>
-        <?php if($program['form_esign_required']) : ?>
-            <?php $esignInstructions = Set::extract('/ProgramInstruction[type=esign]/text', $program); ?>
+        <?php if($esignRequired) : ?>
             <fieldset>
                 <legend><?php __('Electronic Signature') ?></legend>
-                <p class="bot-mar-10"><?php echo $esignInstructions[0] ?></p>
+                <p class="bot-mar-10"><?php echo $esignInstructions; ?></p>
                 <p class="bot-mar-10"><?php __('Please enter your first and last name in the box below.') ?></p>
                 <?php echo $form->input('form_esignature', array('label' => __('I agree', true), 'after' => '<br />')) ?>
             </fieldset>
