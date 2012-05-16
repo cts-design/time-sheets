@@ -11,4 +11,3 @@
 </div>
 
 <div id="programGrid"></div>
-<div id="programForm"></div>
