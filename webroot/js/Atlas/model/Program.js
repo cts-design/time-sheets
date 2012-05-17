@@ -42,5 +42,30 @@ Ext.define('Atlas.model.Program', {
     name: 'expires',
     type: 'date',
     dateFormat: 'Y-m-d H:i:s'
+  }],
+  associations: [{
+    type: 'hasMany',
+    model: 'ProgramStep',
+    name: 'program_steps'
+  }, {
+    type: 'hasMany',
+    model: 'ProgramResponse',
+    name: 'program_responses'
+  }, {
+    type: 'hasMany',
+    model: 'ProgramEmail',
+    name: 'program_emails'
+  }, {
+    type: 'hasMany',
+    model: 'ProgramDocument',
+    name: 'program_documents'
+  },  {
+    type: 'hasMany',
+    model: 'ProgramInstruction',
+    name: 'program_instructions'
+  }, {
+    type: 'hasMany',
+    model: 'WatchedFilingCat',
+    name: 'watched_filing_cats'
   }]
 });
