@@ -37,5 +37,9 @@ Ext.define('Atlas.model.ProgramResponseDoc', {
     type: 'belongsTo',
     model: 'ProgramResponse',
     name: 'program_responses'
+  }, {
+    type: 'belongsTo',
+    model: 'FiledDocument',
+    name: 'filed_documents'
   }]
 });
