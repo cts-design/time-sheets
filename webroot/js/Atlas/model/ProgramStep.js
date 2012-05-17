@@ -1,0 +1,63 @@
+Ext.define('Atlas.model.ProgramStep', {
+  extend: 'Ext.data.Model',
+  fields: [{
+    name: 'id',
+    type: 'int'
+  }, {
+    name: 'program_id',
+    type: 'int'
+  }, {
+    name: 'parent_id',
+    type: 'int'
+  }, {
+    name: 'name',
+    type: 'string'
+  }, {
+    name: 'type',
+    type: 'string'
+  }, {
+    name: 'media_location',
+    type: 'string'
+  }, {
+    name: 'media_type',
+    type: 'string'
+  }, {
+    name: 'redoable',
+    type: 'boolean'
+  }, {
+    name: 'lft',
+    type: 'int'
+  }, {
+    name: 'rght',
+    type: 'int'
+  }, {
+    name: 'created',
+    type: 'date',
+    dateFormat: 'Y-m-d H:i:s'
+  }, {
+    name: 'modifed',
+    type: 'date',
+    dateFormat: 'Y-m-d H:i:s'
+  }],
+  associations: [{
+    type: 'belongsTo',
+    model: 'Program',
+    name: 'programs'
+  }, {
+    type: 'hasOne',
+    model: 'ProgramInstruction',
+    name: 'program_instructions'
+  }, {
+    type: 'hasOne',
+    model: 'ProgramEmail',
+    name: 'program_emails'
+  }, {
+    type: 'hasMany',
+    model: 'ProgramFormField',
+    name: 'program_form_fields'
+  }, {
+    type: 'hasMany',
+    model: 'ProgramDocument',
+    name: 'program_documents'
+  }]
+});
