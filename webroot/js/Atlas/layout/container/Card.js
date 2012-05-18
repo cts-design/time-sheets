@@ -16,7 +16,7 @@ Ext.define('Atlas.layout.container.Card', {
         if (item.xtype === 'fieldset' || item.xtype === 'fieldcontainer') {
           Ext.each(item.items.items, function (i) {
             if (i.isFormField && !i.isValid()) {
-              i.markInvalid('Invalid Field');
+              i.markInvalid('This field is required');
               isValid = false;
             }
           });
