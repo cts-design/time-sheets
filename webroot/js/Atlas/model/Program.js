@@ -14,16 +14,16 @@ Ext.define('Atlas.model.Program', {
     type: 'string'
   }, {
     name: 'disabled',
-    type: 'boolean'
+    type: 'int'
   }, {
     name: 'queue_category_id',
     type: 'int'
   }, {
     name: 'approval_required',
-    type: 'boolean'
+    type: 'int'
   }, {
     name: 'form_esign_required',
-    type: 'boolean'
+    type: 'int'
   }, {
     name: 'confirmation_id_length',
     type: 'int'
