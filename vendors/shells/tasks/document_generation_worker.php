@@ -3,7 +3,7 @@ App::import('Vendor', 'wkhtmltopdf/wkhtmltopdf');
 
 class DocumentGenerationWorkerTask extends QueueShell {
 	public $uses = array('Queue.Job', 'FiledDocument');
-	public $tubes = array('pdf_snapshot', 'certificate');
+	public $tubes = array('snapshot', 'certificate');
 	
 	public function execute() {
 		while(true) {
@@ -46,7 +46,7 @@ class DocumentGenerationWorkerTask extends QueueShell {
 				$pdf->add_html($html);
 				$pdf->set_toc($data['toc']);
 				$pdf->args_add('--header-spacing', '5');
-				$pdf->args_add('--header-left', $data['User']['last_name_last_4']);
+				$pdf->args_add('--header-left', $data['User']['name_last4']);
 				$pdf->args_add('--header-center', '[date]');
 				$pdf->args_add('--header-right', Configure::read('Company.name'));
 				$pdf->args_add('--footer-center', 'Page: [page] of [topage]') ;
