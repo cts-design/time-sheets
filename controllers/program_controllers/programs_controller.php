@@ -1,4 +1,5 @@
 <?php
+App::import('Vendor', 'chromephp/chromephp');
 
 class ProgramsController extends AppController {
 
@@ -180,5 +181,53 @@ class ProgramsController extends AppController {
 	}
 
 	public function admin_add_registration() {
+		if ($this->RequestHandler->isAjax()) {
+			$this->data['Program'] = $this->params['form'];
+			unset($this->data['Program']['created'], $this->data['Program']['modified']);
+
+			$this->Program->create();
+			$program = $this->Program->save($this->data);
+
+			if ($this->Program->save($program)) {
+				$programId = $this->Program->id;
+				$data['programs'] = $program['Program'];
+				$data['programs']['id'] = $programId;
+
+				$this->Program->ProgramStep->create();
+				$parentStepData = array(
+					'ProgramStep' => array(
+						'program_id' => $programId
+					)
+				);
+
+				$parentStep = $this->Program->ProgramStep->save($parentStepData);
+
+				if ($parentStep) {
+					$parentId = $this->Program->ProgramStep->id;
+					$this->Program->ProgramStep->create();
+					$formStepData = array(
+						'ProgramStep' => array(
+							'program_id' => $programId,
+							'parent_id' => $parentId,
+							'name' => "{$program['Program']['name']} Registration Form",
+							'type' => 'form'
+						)
+					);
+
+					$formStep = $this->Program->ProgramStep->save($formStepData);
+
+					if ($formStep) {
+						$data['programs']['program_steps'] = $formStep['ProgramStep'];
+					}
+				}
+
+				$data['success'] = true;
+			} else {
+				$data['success'] = false;
+			}
+
+			$this->set('data', $data);
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
 	}
 }
