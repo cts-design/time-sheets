@@ -42,6 +42,10 @@ class ProgramsController extends AppController {
             $this->Session->setFlash(__('This program is disabled', true), 'flash_failure');
             $this->redirect('/');
         }
+		if($program['Program']['type'] != $this->params['action']) {
+			$this->Session->setFlash(__('This program id does not match the program type specified in the url.', true), 'flash_failure');
+			$this->redirect('/');
+		}
         $programResponse = $this->Program->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
         if(!$programResponse) {
             if($program) {
@@ -94,6 +98,10 @@ class ProgramsController extends AppController {
             $this->Session->setFlash(__('This program is disabled', true), 'flash_failure');
             $this->redirect('/');
         }
+		if($program['Program']['type'] != $this->params['action']) {
+			$this->Session->setFlash(__('This program id does not match the program type specified in the url.', true), 'flash_failure');
+			$this->redirect('/');
+		}
         $programResponse = $this->Program->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
         if(!$programResponse) {
             if($program) {
