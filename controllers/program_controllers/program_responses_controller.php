@@ -130,7 +130,6 @@ class ProgramResponsesController extends AppController {
 		$this->whatsNext($program, $stepId); 
 		$programDocuments = Set::extract('/ProgramDocument[program_step_id='.$this->currentStep[0]['id'].']', $program);
 		$responseActivity = Set::extract('/ProgramResponseActivity[program_step_id=' . $stepId .']', $program['ProgramResponse'][0]);
-       debug($responseActivity); 
 		if(!empty($this->data)) {
             $this->data['ProgramResponse']['id'] = $program['ProgramResponse'][0]['id'];
 			$this->data['ProgramResponseActivity'][0]['id'] = 4; 
