@@ -51,6 +51,7 @@ class ProgramResponsesController extends AppController {
 		$this->whatsNext($program, $stepId); 
         
 		$programDocuments = Set::extract('/ProgramDocument[program_step_id='.$this->currentStep[0]['id'].']', $program);
+
 		if(!empty($this->data)) {
             $this->data['ProgramResponse']['id'] = $program['ProgramResponse'][0]['id'];
 			$this->data['ProgramResponse']['next_step_id'] = null;
@@ -65,13 +66,12 @@ class ProgramResponsesController extends AppController {
 			}
 			else {
 				if($program['Program']['approval_required']) {
-					$this->data['ProgramResponse']['status'] = 'pending_approval';
-					$emailType = 'pending_approval';
+					$status = 'pending_approval';
 				}
 				else {
-					$this->data['ProgramResponse']['status'] = 'complete';
-					$emailType = 'complete';
+					$status = 'complete';
 				}
+				$this->data['ProgramResponse']['status'] = $status;
 			}
 			// TODO: make sure validation works
 			if($this->ProgramResponse->saveAll($this->data)) {
@@ -81,24 +81,19 @@ class ProgramResponsesController extends AppController {
 					$program['User'] = $user['User'];
 					$this->ProgramResponse->Program->ProgramDocument->queueProgramDocs($programDocuments, $program, $this->data);
 				}
-				if(isset($emailType)) {
-					// TODO: get program emails and intructions from the $program array
-					$this->ProgramResponse->Program->ProgramEmail->recursive = -1;
-					$responseStatusEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array(
-						'conditions' => array(
-							'ProgramEmail.program_id' => $program['Program']['id'],
-							'ProgramEmail.type' => $emailType)));
-					if($responseStatusEmail) {
-						$this->Notifications->sendProgramEmail($responseStatusEmail['ProgramEmail']);
-					}
-				}
 				$this->Transaction->createUserTransaction('Programs', null, null,
 					'Completed ' .  $this->currentStep[0]['name'] . ' for program ' . $program['Program']['name']);
-				// TODO: get step email from $program array 	
-				/*
-				if(! empty($step['ProgramEmail'])) {
-					$this->Notifications->sendProgramEmail($step['ProgramEmail']);
-				} */
+
+				$stepEmail = Set::extract('/ProgramEmail[program_step_id='.$stepId.']', $program);
+				if(!empty($stepEmail)) {
+					$this->Notifications->sendProgramEmail($stepEmail[0]['ProgramEmail']);
+				}
+				if(isset($status)) {
+					$statusEmail = Set::extract('/ProgramEmail[type='.$status.']', $program);
+					if(!empty($statusEmail)) {
+						$this->Notifications->sendProgramEmail($statusEmail[0]['ProgramEmail']);
+					}
+				}
 				$this->Session->setFlash(__('Saved', true), 'flash_success');
 				if(isset($redirect)) {
 					$this->redirect($redirect);
@@ -143,14 +138,14 @@ class ProgramResponsesController extends AppController {
 			}
 			else {
 				if($program['Program']['approval_required']) {
-					$this->data['ProgramResponse']['status'] = 'pending_approval';
-					$emailType = 'pending_approval';
+					$status = 'pending_approval';
 				}
 				else {
-					$this->data['ProgramResponse']['status'] = 'complete';
-					$emailType = 'complete';
+					$status = 'complete';
 				}
+				$this->data['ProgramResponse']['status'] = $status;
 			}
+		
 			// TODO: make sure validation works
 			if($this->ProgramResponse->saveAll($this->data)) {
 				if(!empty($programDocuments)) {
@@ -159,25 +154,19 @@ class ProgramResponsesController extends AppController {
 					$program['User'] = $user['User'];
 					$this->ProgramResponse->Program->ProgramDocument->queueProgramDocs($programDocuments, $program, $this->data);
 				}
-				if(isset($emailType)) {
-					// TODO: get program emails and intructions from the $program array
-					$this->ProgramResponse->Program->ProgramEmail->recursive = -1;
-					$responseStatusEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array(
-						'conditions' => array(
-							'ProgramEmail.program_id' => $program['Program']['id'],
-							'ProgramEmail.type' => $emailType)));
-					if($responseStatusEmail) {
-						$this->Notifications->sendProgramEmail($responseStatusEmail['ProgramEmail']);
-					}
-				}
 				$this->Transaction->createUserTransaction('Programs', null, null,
 					'Completed ' .  $this->currentStep[0]['name'] . ' for program ' . $program['Program']['name']);
-				// TODO: get step email from $program array 	
-				/*
-				if(! empty($step['ProgramEmail'])) {
-					$this->Notifications->sendProgramEmail($step['ProgramEmail']);
-				} */
 				$this->Session->setFlash(__('Saved', true), 'flash_success');
+				$stepEmail = Set::extract('/ProgramEmail[program_step_id='.$stepId.']', $program);
+				if(!empty($stepEmail)) {
+					$this->Notifications->sendProgramEmail($stepEmail[0]['ProgramEmail']);
+				}
+				if(isset($status)) {
+					$statusEmail = Set::extract('/ProgramEmail[type='.$status.']', $program);
+					if(!empty($statusEmail)) {
+						$this->Notifications->sendProgramEmail($statusEmail[0]['ProgramEmail']);
+					}
+				}
 				if(isset($redirect)) {
 					$this->redirect($redirect);
 				}
@@ -216,28 +205,32 @@ class ProgramResponsesController extends AppController {
 			$this->data['ProgramResponseActivity'][0]['type'] = 'media';
 			if(isset($this->nextStep)) {
 				$this->data['ProgramResponse']['next_step_id'] = $this->nextStep[0]['id'];
-				// TODO: add the step id to the redirect below. 
 				$redirect = array('action' => $this->nextStep[0]['type'], $programId, $this->nextStep[0]['id']);
 			}
 			else {
 				if($program['Program']['approval_required']) {
-					$this->data['ProgramResponse']['status'] = 'pending_approval';
+					$status = 'pending_approval';
 				}
 				else {
-					$this->data['ProgramResponse']['status'] = 'complete';
+					$status = 'complete';
 				}
+				$this->data['ProgramResponse']['status'] = $status;
 			}
 			// TODO: make sure validation works
             if($this->ProgramResponse->saveAll($this->data)) {
                 $this->Transaction->createUserTransaction('Programs', null, null,
                     'Completed' . $this->currentStep[0]['name']);
-                $email = $this->ProgramResponse->Program->ProgramEmail->find('first', array('conditions' => array(
-                    'ProgramEmail.program_id' => $programId,
-                    'ProgramEmail.type' => 'media')));
-                if($email) {
-					// TODO: send email using the notifications component
-                }
                 $this->Session->setFlash(__('Saved', true), 'flash_success');
+				$stepEmail = Set::extract('/ProgramEmail[program_step_id='.$stepId.']', $program);
+				if(!empty($stepEmail)) {
+					$this->Notifications->sendProgramEmail($stepEmail[0]['ProgramEmail']);
+				}
+				if(isset($status)) {
+					$statusEmail = Set::extract('/ProgramEmail[type='.$status.']', $program);
+					if(!empty($statusEmail)) {
+						$this->Notifications->sendProgramEmail($statusEmail[0]['ProgramEmail']);
+					}
+				}
 				if(isset($redirect)) {
 					$this->redirect($redirect);
 				}
