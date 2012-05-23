@@ -24,7 +24,10 @@
 				loss of %s services.", true), $title_for_layout) ?>
 			<?php echo $form->input('ProgramResponse.viewed_media', array(
 				'type' => 'checkbox', 
-				'label' => $label)) ?>			
+				'label' => $label,
+				'error' => false)) ?>
+			<br /><br />
+			<?php echo $this->Form->error('ProgramResponse.viewed_media'); ?>
 		</div>
 		<br class="clear" />	
 		<div class="top-mar-20"><?php echo $form->end(__('Submit', true)) ?></div>
