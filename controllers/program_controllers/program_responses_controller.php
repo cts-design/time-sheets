@@ -13,6 +13,14 @@ class ProgramResponsesController extends AppController {
 	function beforeFilter() {
 		parent::beforeFilter();
 		$this->ProgramResponse->Program->ProgramStep->ProgramFormField->recursive = 2;
+		if($this->params['action'] === 'media') {
+			$mediaValidate = array('viewed_media' => array(
+            'rule' => array('comparison', '>', 0),
+            'message' => 'You must check the box to continue the online process.
+                If you do not completely understand the information please review the instructions
+                at the top of this page.'));
+			$this->ProgramResponse->modifyValidate($mediaValidate);
+		}
 		if(!empty($this->params['pass'][1]) && ($this->params['action'] === 'form' || $this->params['action'] === 'edit_form')){
 			$query = $this->ProgramResponse->Program->ProgramStep->ProgramFormField->findAllByProgramStepId($this->params['pass'][1]);
 			if($query){
