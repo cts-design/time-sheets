@@ -528,35 +528,8 @@ class ProgramResponsesController extends AppController {
 							break;
 					}
 				}
-				if(!empty($this->params['url']['tab'])) {
-					switch($this->params['url']['tab']) {
-						case 'open':
-							$conditions['ProgramResponse.complete'] = 0;
-							$conditions['ProgramResponse.needs_approval'] = 0;
-							$conditions['ProgramResponse.expires_on >'] = date('Y-m-d H:i:s');
-							$conditions['ProgramResponse.not_approved'] = 0;
-							break;
-						case 'closed':
-							$conditions['ProgramResponse.complete'] = 1;
-							$conditions['ProgramResponse.needs_approval'] = 0;
-							$conditions['ProgramResponse.not_approved'] = 0;
-							break;
-						case 'expired':
-							$conditions['ProgramResponse.complete'] = 0;
-							$conditions['ProgramResponse.not_approved'] = 0;
-							$conditions['ProgramResponse.expires_on <'] = date('Y-m-d H:i:s');
-							break;
-						case 'pending_approval':
-							$conditions['ProgramResponse.complete'] = 0;
-							$conditions['ProgramResponse.expires_on >'] = date('Y-m-d H:i:s');
-							$conditions['ProgramResponse.needs_approval'] = 1;
-							$conditions['ProgramResponse.not_approved'] = 0;
-							break;
-						case 'not_approved':
-							$conditions['ProgramResponse.complete'] = 0;
-							$conditions['ProgramResponse.not_approved'] = 1;
-							break;
-					}
+				if(!empty($this->params['url']['status'])) {
+					$conditions['ProgramResponse.status'] = $this->params['url']['status'];
 				}
 
 				$data['totalCount'] = $this->ProgramResponse->find('count', array('conditions' => $conditions));
@@ -583,43 +556,27 @@ class ProgramResponsesController extends AppController {
 							'modified' => $response['ProgramResponse']['modified'],
 							'expires_on' => $response['ProgramResponse']['expires_on'],
 							'notes' => $response['ProgramResponse']['notes'],
-							'status' => $status
+							'status' => $response['ProgramResponse']['status']
 						);
-						if($this->params['url']['tab'] == 'closed'){
+						$statuses = array('complete', 'not_approved', 'pending_approval');
+						if( in_array($this->params['url']['status'], $statuses)){
 							$data['responses'][$i]['actions'] =
 								'<a href="/admin/program_responses/view/'.
 									$response['ProgramResponse']['id'].'">View</a>';
 						}
-						elseif($this->params['url']['tab'] == 'expired'){
+						elseif($this->params['url']['status'] == 'expired'){
 							$data['responses'][$i]['actions'] =
 								'<a href="/admin/program_responses/view/'.
 									$response['ProgramResponse']['id'].'">View</a> | ' .
 									'<a href="/admin/program_responses/toggle_expired/' .
 									$response['ProgramResponse']['id'] . '/unexpire'.'" class="expire">Mark Un-Expired</a>';
 						}
-						elseif($this->params['url']['tab'] == 'not_approved') {
-							if($response['ProgramResponse']['allow_new_response'] || !$response['ProgramResponse']['answers']) {
-								$data['responses'][$i]['actions'] =
-									'<a href="/admin/program_responses/view/'.
-										$response['ProgramResponse']['id'].'">View</a>';
-							}
-							else {
-								$data['responses'][$i]['actions'] =
-									'<a href="/admin/program_responses/view/'.
-										$response['ProgramResponse']['id'].'">View</a> | ' .
-									'<a href="/admin/program_responses/reset_form/'.
-										$response['ProgramResponse']['id'].'" class="reset">Reset Form</a> | ' .
-										'<a href="/admin/program_responses/allow_new_response/' .
-										$response['ProgramResponse']['id'] . '" class="allow-new">Allow New Response</a>';
-							}
-
-						}
 						else {
 							$data['responses'][$i]['actions'] =
 								'<a href="/admin/program_responses/view/'.
-									$response['ProgramResponse']['id'].'">View</a> | ' .
-									'<a href="/admin/program_responses/toggle_expired/' .
-									$response['ProgramResponse']['id'] . '/expire'.'" class="expire">Mark Expired</a>';
+									$response['ProgramResponse']['id'].'">View</a>'; 
+							$data['responses'][$i]['actions'] .= ' | <a href="/admin/program_responses/toggle_expired/' .
+								$response['ProgramResponse']['id'] . '/expire'.'" class="expire">Mark Expired</a>';
 						}
 						$i++;
 					}
@@ -632,7 +589,7 @@ class ProgramResponsesController extends AppController {
 				$this->set('data', $data);
 				$this->render('/elements/ajaxreturn');
 			}
-			if($program['Program']['approval_required'] == 1){
+			if($program['Program']['approval_required']){
 				$approvalPermission = $this->Acl->check(array(
 					'model' => 'User',
 					'foreign_key' => $this->Auth->user('id')), 'ProgramResponses/admin_approve', '*');
@@ -642,7 +599,7 @@ class ProgramResponsesController extends AppController {
 				$approvalPermission = null;
 			}
 			$programName = $program['Program']['name'];
-			$this->set(compact('approvalPermission', 'programName'));
+			$this->set(compact('approvalPermission', 'programName', 'programType'));
 		}
 	}
 
@@ -702,16 +659,16 @@ class ProgramResponsesController extends AppController {
 				}
 				else $data['docs'] = 'No program response documents filed for this user.';
 				$forms = $this->ProgramResponse->
-					Program->ProgramPaperForm->findAllByProgramId($programResponse['Program']['id']);
+					Program->ProgramDocument->findAllByProgramId($programResponse['Program']['id']);
 				if($forms) {
 					$i = 0;
 					foreach($forms as $form) {
 						if(isset($filedForms)) {
 							foreach($filedForms as $filedForm) {
-								if($filedForm['ProgramResponseDoc']['cat_id'] == $form['ProgramPaperForm']['cat_3']) {
+								if($filedForm['ProgramResponseDoc']['cat_id'] == $form['ProgramDocument']['cat_3']) {
 									$data['forms'][$i]['link'] =
 										'<a class="generate" href="/admin/program_responses/generate_form/'.
-										$form['ProgramPaperForm']['id'] . '/' .
+										$form['ProgramDocument']['id'] . '/' .
 										$programResponse['ProgramResponse']['id'] .'/'.
 										$filedForm['ProgramResponseDoc']['doc_id'] . '">Re-Generate</a>';
 									$data['forms'][$i]['view'] = '<a href="/admin/filed_documents/view/' .
@@ -727,10 +684,10 @@ class ProgramResponsesController extends AppController {
 								$form['ProgramPaperForm']['id'] . '/' .
 								$programResponse['ProgramResponse']['id'] .'">Generate</a>';
 						}
-						$data['forms'][$i]['name'] = $form['ProgramPaperForm']['name'];
-						$data['forms'][$i]['cat_3'] = $form['ProgramPaperForm']['cat_3'];
+						$data['forms'][$i]['name'] = $form['ProgramDocument']['name'];
+						$data['forms'][$i]['cat_3'] = $form['ProgramDocument']['cat_3'];
 						$data['forms'][$i]['programResponseId'] = $programResponse['ProgramResponse']['id'];
-						$data['forms'][$i]['id'] = $form['ProgramPaperForm']['id'];
+						$data['forms'][$i]['id'] = $form['ProgramDocument']['id'];
 						$i++;
 					}
 				}
@@ -932,6 +889,7 @@ class ProgramResponsesController extends AppController {
 			if($toggle == 'expire') {
 				$this->data['ProgramResponse']['expires_on'] =
 					date('Y-m-d H:i:s', strtotime('-' . ($programResponse['Program']['response_expires_in']+1) . ' days'));
+				$this->data['ProgramResponse']['status'] = 'expired';
 			}
 			elseif($toggle == 'unexpire') {
 				$this->data['ProgramResponse']['expires_on'] = date('Y-m-d H:i:s',
