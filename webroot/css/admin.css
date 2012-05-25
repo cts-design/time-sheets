@@ -1141,3 +1141,7 @@ table.raw-data tr th,
 table.raw-data tr td {
 	padding: 2px 15px;
 }
+
+.x-form-display-field {
+  color: #778899;
+}
