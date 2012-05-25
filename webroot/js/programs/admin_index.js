@@ -48,7 +48,7 @@ Ext.onReady(function () {
         menu: [{
           text: 'Registration',
           handler: function () {
-            window.location = '/admin/programs/add_registration';
+            window.location = '/admin/programs/create_registration';
           }
         }, {
           text: 'Orientation'
