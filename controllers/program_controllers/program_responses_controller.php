@@ -604,6 +604,11 @@ class ProgramResponsesController extends AppController {
 	}
 
 	function admin_view($id, $type=null) {
+		$this->ProgramResponse->contain(array(
+			'Program' => array('ProgramStep'), 
+			'ProgramResponseActivity', 
+			'ProgramResponseDoc', 
+			'User'));
 		$programResponse = $this->ProgramResponse->findById($id);
 		if($this->RequestHandler->isAjax()){
 			if($type == 'user') {
@@ -615,13 +620,17 @@ class ProgramResponsesController extends AppController {
 				$this->render('/elements/program_responses/user_info');
 			}
 			if($type == 'answers') {
-				$yesNo = array('No', 'Yes');
-				$data['answers'] = json_decode($programResponse['ProgramResponse']['answers'], true);
-				$data['viewedMedia'] = $yesNo[$programResponse['ProgramResponse']['viewed_media']];
-				if($programResponse['ProgramResponse']['answers'] != null) {
-					$data['completedForm'] = 'Yes';
+				$formActivities = Set::extract('/ProgramResponseActivity[type=form]', $programResponse);
+				// TODO make sure that this is going to work for multiple sets of form answers
+				if(!empty($formActivities)) {
+					$i = 0;
+					foreach($formActivities as $formActivity) {
+						$data['answers'][$i] = json_decode($formActivity['ProgramResponseActivity']['answers'], true);	
+						$data['stepName'] = 
+							Set::extract('/ProgramStep[id='.$formActivity['ProgramResponseActivity']['program_step_id'].']/name', $programResponse['Program']);
+						$i++;
+					} 
 				}
-				else $data['completedForm'] = 'No';
 				$this->set($data);
 				$this->render('/elements/program_responses/answers');
 			}
@@ -629,11 +638,10 @@ class ProgramResponsesController extends AppController {
 				if(!empty($programResponse['ProgramResponseDoc'])) {
 					$this->loadModel('DocumentFilingCategory');
 					$filingCatList = $this->DocumentFilingCategory->find('list');
-					$docs = Set::extract('/ProgramResponseDoc[paper_form<1]',  $programResponse);
-					$filedForms = Set::extract('/ProgramResponseDoc[paper_form=1]',  $programResponse);
+					$docs = Set::extract('/ProgramResponseDoc[type!=system_generated]',  $programResponse);
+					$generatedDocs = Set::extract('/ProgramResponseDoc[type=system_generated]',  $programResponse);
 					$i = 0;
 					foreach($docs as $doc) {
-
 						$data['docs'][$i]['id'] = $doc['ProgramResponseDoc']['doc_id'];
 						if($doc['ProgramResponseDoc']['deleted']) {
 							$data['docs'][$i]['name'] = 'Deleted';
@@ -658,36 +666,38 @@ class ProgramResponsesController extends AppController {
 					}
 				}
 				else $data['docs'] = 'No program response documents filed for this user.';
-				$forms = $this->ProgramResponse->
+				$programDocs = $this->ProgramResponse->
 					Program->ProgramDocument->findAllByProgramId($programResponse['Program']['id']);
-				if($forms) {
+				if($programDocs) {
 					$i = 0;
-					foreach($forms as $form) {
-						if(isset($filedForms)) {
-							foreach($filedForms as $filedForm) {
-								if($filedForm['ProgramResponseDoc']['cat_id'] == $form['ProgramDocument']['cat_3']) {
-									$data['forms'][$i]['link'] =
+					foreach($programDocs as $programDoc) {
+						if(isset($generatedDocs)) {
+							foreach($generatedDocs as $generatedDoc) {
+								if($programDoc['ProgramDocument']['cat_3']) {
+									$cat = $programDoc['ProgramDocument']['cat_3'];
+								}
+								elseif($form['ProgramDocument']['cat_2']) {
+									$cat = $programDoc['ProgramDocument']['cat_2'];
+								}
+								else {
+									$cat = $programDoc['ProgramDocument']['cat_1'];
+								}
+								if($generatedDoc['ProgramResponseDoc']['cat_id'] === $cat) {
+									$data['generatedDocs'][$i]['link'] =
 										'<a class="generate" href="/admin/program_responses/generate_form/'.
-										$form['ProgramDocument']['id'] . '/' .
+										$programDoc['ProgramDocument']['id'] . '/' .
 										$programResponse['ProgramResponse']['id'] .'/'.
-										$filedForm['ProgramResponseDoc']['doc_id'] . '">Re-Generate</a>';
-									$data['forms'][$i]['view'] = '<a href="/admin/filed_documents/view/' .
-										$filedForm['ProgramResponseDoc']['doc_id'].'" target="_blank">View Doc</a>';
-									$data['forms'][$i]['doc_id'] = $filedForm['ProgramResponseDoc']['doc_id'];
-									$data['forms'][$i]['filed_on'] = $filedForm['ProgramResponseDoc']['created'];
+										$generatedDoc['ProgramResponseDoc']['doc_id'] . '">Re-Generate</a>';
+									$data['generatedDocs'][$i]['view'] = '<a href="/admin/filed_documents/view/' .
+										$generatedDoc['ProgramResponseDoc']['doc_id'].'" target="_blank">View Doc</a>';
+									$data['generatedDocs'][$i]['doc_id'] = $generatedDoc['ProgramResponseDoc']['doc_id'];
+									$data['generatedDocs'][$i]['filed_on'] = $generatedDoc['ProgramResponseDoc']['created'];
 								}
 							}
 						}
-
-						if(!isset($data['forms'][$i]['link'])) {
-							$data['forms'][$i]['link'] = '<a class="generate" href="/admin/program_responses/generate_form/'.
-								$form['ProgramPaperForm']['id'] . '/' .
-								$programResponse['ProgramResponse']['id'] .'">Generate</a>';
-						}
-						$data['forms'][$i]['name'] = $form['ProgramDocument']['name'];
-						$data['forms'][$i]['cat_3'] = $form['ProgramDocument']['cat_3'];
-						$data['forms'][$i]['programResponseId'] = $programResponse['ProgramResponse']['id'];
-						$data['forms'][$i]['id'] = $form['ProgramDocument']['id'];
+						$data['generatedDocs'][$i]['name'] = $programDoc['ProgramDocument']['name'];
+						$data['generatedDocs'][$i]['programResponseId'] = $programResponse['ProgramResponse']['id'];
+						$data['generatedDocs'][$i]['id'] = $generatedDoc['ProgramDocument']['id'];
 						$i++;
 					}
 				}
@@ -697,8 +707,7 @@ class ProgramResponsesController extends AppController {
 		}
 
 		if($programResponse['Program']['approval_required'] &&
-			$programResponse['ProgramResponse']['needs_approval'] == 1
-			&& $programResponse['ProgramResponse']['not_approved'] == 0) {
+			 $programResponse['ProgramResponse']['status'] === 'pending_approval') {
 				$approval = true;
 		}
 		else {
