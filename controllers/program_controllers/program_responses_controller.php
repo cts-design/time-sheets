@@ -676,7 +676,7 @@ class ProgramResponsesController extends AppController {
 								if($programDoc['ProgramDocument']['cat_3']) {
 									$cat = $programDoc['ProgramDocument']['cat_3'];
 								}
-								elseif($form['ProgramDocument']['cat_2']) {
+								elseif($programDoc['ProgramDocument']['cat_2']) {
 									$cat = $programDoc['ProgramDocument']['cat_2'];
 								}
 								else {
@@ -697,7 +697,7 @@ class ProgramResponsesController extends AppController {
 						}
 						$data['generatedDocs'][$i]['name'] = $programDoc['ProgramDocument']['name'];
 						$data['generatedDocs'][$i]['programResponseId'] = $programResponse['ProgramResponse']['id'];
-						$data['generatedDocs'][$i]['id'] = $generatedDoc['ProgramDocument']['id'];
+						$data['generatedDocs'][$i]['id'] = $programDoc['ProgramDocument']['id'];
 						$i++;
 					}
 				}
