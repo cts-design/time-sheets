@@ -1,4 +1,5 @@
 <?php
+// TODO - Remove chromephp
 App::import('Vendor', 'chromephp/chromephp');
 
 class ProgramsController extends AppController {
@@ -180,10 +181,12 @@ class ProgramsController extends AppController {
 		$this->set(compact('title_for_layout'));
 	}
 
-	public function admin_add_registration() {
+	public function admin_create_registration() {
 		if ($this->RequestHandler->isAjax()) {
-			$this->data['Program'] = $this->params['form'];
-			unset($this->data['Program']['created'], $this->data['Program']['modified']);
+			$programData = json_decode($this->params['form']['programs'], true);
+			unset($programData['id'], $programData['created'], $programData['modified']);
+
+			$this->data['Program'] = $programData;
 
 			$this->Program->create();
 			$program = $this->Program->save($this->data);
@@ -193,33 +196,7 @@ class ProgramsController extends AppController {
 				$data['programs'] = $program['Program'];
 				$data['programs']['id'] = $programId;
 
-				$this->Program->ProgramStep->create();
-				$parentStepData = array(
-					'ProgramStep' => array(
-						'program_id' => $programId
-					)
-				);
-
-				$parentStep = $this->Program->ProgramStep->save($parentStepData);
-
-				if ($parentStep) {
-					$parentId = $this->Program->ProgramStep->id;
-					$this->Program->ProgramStep->create();
-					$formStepData = array(
-						'ProgramStep' => array(
-							'program_id' => $programId,
-							'parent_id' => $parentId,
-							'name' => "{$program['Program']['name']} Registration Form",
-							'type' => 'form'
-						)
-					);
-
-					$formStep = $this->Program->ProgramStep->save($formStepData);
-
-					if ($formStep) {
-						$data['programs']['program_steps'] = $formStep['ProgramStep'];
-					}
-				}
+				$this->createRegistrationProgramSteps($programId, $program['Program']['name']);
 
 				$data['success'] = true;
 			} else {
@@ -229,5 +206,60 @@ class ProgramsController extends AppController {
 			$this->set('data', $data);
 			$this->render(null, null, '/elements/ajaxreturn');
 		}
+	}
+
+	public function admin_update_registration() {
+		if ($this->RequestHandler->isAjax()) {
+			$programData = json_decode($this->params['form']['programs'], true);
+
+			$this->Program->id = $programData['id'];
+			unset($programData['id']);
+
+			$this->Program->set($programData);
+
+			if ($this->Program->save()) {
+				$data['success'] = true;
+			} else {
+				$data['success'] = false;
+			}
+
+			$this->set('data', $data);
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
+
+	private function createRegistrationProgramSteps($programId, $programName) {
+		$this->Program->ProgramStep->create();
+
+		$parentStepData = array(
+			'ProgramStep' => array(
+				'program_id' => $programId
+			)
+		);
+
+		$parentStep = $this->Program->ProgramStep->save($parentStepData);
+
+		if ($parentStep) {
+			$parentId = $this->Program->ProgramStep->id;
+			$this->Program->ProgramStep->create();
+			$formStepData = array(
+				'ProgramStep' => array(
+					'program_id' => $programId,
+					'parent_id' => $parentId,
+					'name' => "$programName registration form",
+					'type' => 'form'
+				)
+			);
+
+			$formStep = $this->Program->ProgramStep->save($formStepData);
+
+			if ($formStep) {
+				$data['Programs']['program_steps'] = $formStep['ProgramStep'];
+			}
+		}
+
+		//$this->createRegistrationProgramDocuments($programId);
+
+		return true;
 	}
 }
