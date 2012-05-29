@@ -1,5 +1,6 @@
-<div id="ProgramResponseDocs">
-	<?php if(isset($docs)) : ?>
+<?php if(isset($docs)) : ?>
+	<div id="ProgramResponseDocs">
+		<h2>Customer Provided Documents </h2>
 		<?php if(is_array($docs)) :?>
 			<?php foreach($docs as $doc) : ?>
 				<?php if($doc['name'] != 'Rejected' && $doc['name'] != 'Deleted') : ?> 
@@ -33,25 +34,26 @@
 		<?php else : ?>
 			<?php echo $docs ?>	
 		<?php endif ?>
-	<?php endif ?>
-</div>
-<div id="ProgramPaperForms">
-	<?php if(isset($forms)) : ?>
-		<?php foreach($forms as $form) :?>
-			<div class="paper-form">
-				<p><strong>Form:</strong> <?php echo $form['name']; ?></p>
-				<?php if(isset($form['doc_id'])) : ?>
-					<p><strong>Doc id:</strong> <?php echo $form['doc_id'] ?></p> 
+	</div>
+<?php endif ?>
+<?php if(isset($generatedDocs)) : ?>
+	<div id="SystemGeneratedDocs">
+		<h2>System Generated Documents </h2>
+		<?php foreach($generatedDocs as $generatedDoc) :?>
+			<div class="system-generated-doc">
+				<p><strong>Name:</strong> <?php echo $generatedDoc['name']; ?></p>
+				<?php if(isset($generatedDoc['doc_id'])) : ?>
+					<p><strong>Doc id:</strong> <?php echo $generatedDoc['doc_id'] ?></p> 
 				<?php endif ?>
-				<?php if(isset($form['filed_on'])) : ?>
-					<p><strong>Filed on:</strong> <?php echo $form['filed_on']; ?></p>
+				<?php if(isset($generatedDoc['filed_on'])) : ?>
+					<p><strong>Filed on:</strong> <?php echo $generatedDoc['filed_on']; ?></p>
 				<?php endif ?>
 				<p>				
-					<?php if(isset($form['view'])) echo $form['view'] . ' | ' ?>
-					<?php echo $form['link'] ?>
+					<?php if(isset($generatedDoc['view'])) echo $generatedDoc['view'] . ' | ' ?>
+					<?php echo $generatedDoc['link'] ?>
 				</p>
 			</div>
 			
 		<?php endforeach ?>
-	<?php endif ?>
-</div>
+	</div>
+<?php endif ?>
