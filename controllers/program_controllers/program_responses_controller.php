@@ -638,7 +638,7 @@ class ProgramResponsesController extends AppController {
 				if(!empty($programResponse['ProgramResponseDoc'])) {
 					$this->loadModel('DocumentFilingCategory');
 					$filingCatList = $this->DocumentFilingCategory->find('list');
-					$docs = Set::extract('/ProgramResponseDoc[type!=system_generated]',  $programResponse);
+					$docs = Set::extract('/ProgramResponseDoc[type=customer_provided]',  $programResponse);
 					$generatedDocs = Set::extract('/ProgramResponseDoc[type=system_generated]',  $programResponse);
 					$i = 0;
 					foreach($docs as $doc) {
