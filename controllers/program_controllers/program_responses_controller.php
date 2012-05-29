@@ -750,10 +750,10 @@ class ProgramResponsesController extends AppController {
 				$programResponse = $this->ProgramResponse->findById($programResponseId);
 				if(strpos($programResponse['Program']['type'], 'docs')) {
 					if(!empty($programResponse['ProgramResponseDoc'])) {
-						$forms = $this->ProgramResponse->
+						$programDocs = $this->ProgramResponse->
 							Program->ProgramPaperForm->findAllByProgramId($programResponse['Program']['id']);
-						$catIds = Set::extract('/ProgramResponseDoc[paper_form=1]/cat_id', $programResponse);
-						$formCatIds = Set::extract('/ProgramPaperForm/cat_3', $forms);
+						$catIds = Set::extract('/ProgramResponseDoc[type=system_generated]/cat_id', $programResponse);
+						$formCatIds = Set::extract('/ProgramDocument/cat_3', $programDocs);
 						if(!empty($formCatIds)) {
 							$result = array_diff($formCatIds, $catIds);
 							if(!empty($result)) {
@@ -772,8 +772,7 @@ class ProgramResponsesController extends AppController {
 					}
 				}
 				$this->data['ProgramResponse']['id'] = $programResponseId;
-				$this->data['ProgramResponse']['needs_approval'] = 0;
-				$this->data['ProgramResponse']['complete'] = 1;
+				$this->data['ProgramResponse']['status'] = 'complete';
 				if($this->ProgramResponse->save($this->data)) {
 					$data['success'] = true;
 					$data['message'] = 'Program response was approved successfully.';
@@ -796,7 +795,6 @@ class ProgramResponsesController extends AppController {
 			}
 			$this->set(compact('data'));
 			$this->render(null, null, '/elements/ajaxreturn');
-
 		}
 	}
 
