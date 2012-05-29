@@ -71,9 +71,19 @@ class DocumentGenerationWorkerTask extends QueueShell {
 				$this->data['FiledDocument']['filename'] = $pdfFile;
 				$this->data['FiledDocument']['cat_1'] = $data['ProgramDocument']['cat_1'];
 				$this->data['FiledDocument']['cat_2'] = $data['ProgramDocument']['cat_2'];
+				$this->data['FiledDocument']['cat_3'] = $data['ProgramDocument']['cat_3'];
 				$this->data['ProgramResponseDoc']['program_response_id'] = $data['ProgramResponse']['id'];
 				$this->data['ProgramResponseDoc']['type'] = 'system_generated';
 				$this->data['ProgramResponseDoc']['doc_id'] = $docId;
+				if($data['ProgramDocument']['cat_3']) {
+					$this->data['ProgramResponseDoc']['cat_id'] = $data['ProgramDocument']['cat_3'];
+				}
+				elseif($data['ProgramDocument']['cat_2']) {
+					$this->data['ProgramResponseDoc']['cat_id'] = $data['ProgramDocument']['cat_2'];
+				}
+				else {
+					$this->data['ProgramResponseDoc']['cat_id'] = $data['ProgramDocument']['cat_1'];
+				}
 				if($this->FiledDocument->saveAll($this->data)) {
 					return true;
 				}
