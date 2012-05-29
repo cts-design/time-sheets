@@ -842,16 +842,24 @@ div.actions .ui-button-text {
 	padding: 10px;
 }
 
+#ProgramResponseDocs h2 {
+  margin-bottom: 10px;
+}
+
 .response-doc {
 	border-bottom: 1px solid #666666;
 	margin-bottom: 10px;
 }
 
-#ProgramPaperForms {
+#SystemGeneratedDocs{
 	padding: 10px;
 }
 
-.paper-form {
+#SystemGeneratedDocs h2 {
+	margin-bottom: 10px;
+}
+
+.system-generated-doc{
 	border-bottom: 1px solid #666666;
 	margin-bottom: 10px;
 }
