@@ -20,7 +20,7 @@ class DocumentGenerationWorkerTask extends QueueShell {
 						$processed = $this->generateSnapshot($job['Job']);	
 						break;
 					case 'certificate':
-						$processed = $this->generateForm($job['Job']);
+						$processed = $this->generateProgramDoc($job['Job']);
 						break;
 				}
 				if($processed) {
@@ -72,7 +72,7 @@ class DocumentGenerationWorkerTask extends QueueShell {
 				$this->data['FiledDocument']['cat_1'] = $data['ProgramDocument']['cat_1'];
 				$this->data['FiledDocument']['cat_2'] = $data['ProgramDocument']['cat_2'];
 				$this->data['ProgramResponseDoc']['program_response_id'] = $data['ProgramResponse']['id'];
-				$this->data['ProgramResponseDoc']['type'] = 'snapshot';
+				$this->data['ProgramResponseDoc']['type'] = 'system_generated';
 				$this->data['ProgramResponseDoc']['doc_id'] = $docId;
 				if($this->FiledDocument->saveAll($this->data)) {
 					return true;
@@ -101,7 +101,7 @@ class DocumentGenerationWorkerTask extends QueueShell {
 		return $html;
 	}
 
-	private function generateForm($data) {
+	private function generateProgramDoc($data) {
 		foreach($data['User'] as $k => $v) {
 			if(!preg_match('[\@]', $v)) {
 				$data['User'][$k] = ucwords($v);
@@ -174,7 +174,7 @@ class DocumentGenerationWorkerTask extends QueueShell {
 				}
 				$this->data['ProgramResponseDoc']['program_response_id'] = $data['ProgramResponse']['id'];
 				$this->data['ProgramResponseDoc']['doc_id'] = $data['docId'];
-				$this->data['ProgramResponseDoc']['type'] = $data['ProgramDocument']['type'];
+				$this->data['ProgramResponseDoc']['type'] = 'system_generated';
 				if($this->FiledDocument->saveAll($this->data)) {
 					return true;
 				}
