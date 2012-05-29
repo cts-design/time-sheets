@@ -91,16 +91,12 @@ class ProgramsController extends AppController {
 			if($program) {
 				$this->data['ProgramResponse']['user_id'] = $this->Auth->user('id');
 				$this->data['ProgramResponse']['program_id'] = $id;
-				if($program['Program']['confirmation_id_length']) {
-					$string = sha1(date('ymdhisu'));
-					$this->data['ProgramResponse']['confirmation_id'] =
-						substr($string, 0, $program['Program']['confirmation_id_length']);
-				}
-				if($program['Program']['response_expires_in']) {
-					$this->data['ProgramResponse']['expires_on'] =
-						date('Y-m-d H:i:s', strtotime('+' . $program['Program']['response_expires_in'] . ' days'));
-				}
-				if($this->Program->ProgramResponse->save($this->data)){
+				$string = sha1(date('ymdhisu'));
+				$this->data['ProgramResponse']['confirmation_id'] =
+					substr($string, 0, $program['Program']['confirmation_id_length']);
+				$this->data['ProgramResponse']['expires_on'] =
+					date('Y-m-d H:i:s', strtotime('+' . $program['Program']['response_expires_in'] . ' days'));
+				if($this->Program->ProgramResponse->save($this->data)) {
 					$this->Transaction->createUserTransaction('Programs', null, null,
 					'Initiated program ' . $program['Program']['name']);
 					$programResponse = $this->Program->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
