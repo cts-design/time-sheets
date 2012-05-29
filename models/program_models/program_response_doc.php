@@ -49,6 +49,7 @@ class ProgramResponseDoc extends AppModel {
 			$this->data['ProgramResponseDoc']['cat_id'] = $this->data['FiledDocument']['cat_3'];			
 			$this->data['ProgramResponseDoc']['doc_id'] = $this->data['FiledDocument']['id'];
 			$this->data['ProgramResponseDoc']['program_response_id'] = $programResponse['ProgramResponse']['id'];
+			$this->data['ProgramResponseDoc']['type'] = 'customer_provided';
 			if($this->save($this->data)) {					
 				$docFiledEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array(
 					'conditions' => array(
