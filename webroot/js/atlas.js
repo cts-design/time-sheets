@@ -23,7 +23,6 @@ String.prototype.lowercase = function() {
   return this.toLowerCase();
 };
 
-
 /**
  * Convenience function for uppercasing string
  * return {String} The uppercase version of the string
@@ -49,7 +48,11 @@ String.prototype.capitalize = function () {
  * return {String} The underscored version of the string
  */
 String.prototype.underscore = function() {
-  return this.trim().replace(/[^A-Za-z0-9\s]/g, '').replace(/\s/g, '_').lowercase();
+  if (Ext.isIE) {
+    return this.replace(/[^A-Za-z0-9\s]/g, '').replace(/\s/g, '_').lowercase();
+  } else {
+    return this.trim().replace(/[^A-Za-z0-9\s]/g, '').replace(/\s/g, '_').lowercase();
+  }
 };
 
 
