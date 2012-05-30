@@ -302,6 +302,12 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
+  data: [
+    { program_id: 0, program_step_id: null, text: 'Default text Main', type: 'main', created: null, modified: null },
+    { program_id: 0, program_step_id: null, text: 'Default text Pending Approval', type: 'pending_approval', created: null, modified: null },
+    { program_id: 0, program_step_id: null, text: 'Default text Expired', type: 'expired', created: null, modified: null },
+    { program_id: 0, program_step_id: null, text: 'Default text Not Approved', type: 'not_approved', created: null, modified: null }
+  ],
   storeId: 'ProgramInstructionStore',
   model: 'ProgramInstruction',
   proxy: {
@@ -1203,10 +1209,15 @@ instructions = Ext.create('Ext.panel.Panel', {
   }],
   preprocess: function () {
     var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
-      programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
-      programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore ');
+      programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
+      programId;
 
-    programInstructionStore.add({ type: 'Main' }, { type: 'Expired' });
+    programId = programStore.first().data.id;
+    programInstructionStore.each(function (rec) {
+      rec.set({
+        program_id: programId
+      });
+    });
   },
   process: function () {
     var programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
