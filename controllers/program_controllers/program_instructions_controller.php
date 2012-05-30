@@ -73,4 +73,41 @@ class ProgramInstructionsController extends AppController {
 			$this->render('/elements/ajaxreturn');				
 		}
 	}
+
+	public function admin_create() {
+			$formData = json_decode($this->params['form']['program_instructions'], true);
+			foreach ($formData as $key => $value) {
+				unset($formData[$key]['id'], $formData[$key]['created'], $formData[$key]['modified']);
+			}
+
+			$count = count($formData);
+
+			if ($count > 1) {
+				$this->data['ProgramInstruction'] = $formData;
+				$formField = $this->ProgramInstruction->saveAll($this->data['ProgramInstruction']);
+			} else {
+				$this->data['ProgramInstruction'] = $formData[0];
+				$formField = $this->ProgramInstruction->save($this->data);
+			}
+
+			if ($formField) {
+				if ($count > 1) {
+					foreach ($this->data['ProgramInstruction'] as $k => $v) {
+						$data['program_instructions'][] = $v;
+					}
+				} else {
+					$data['program_instructions'] = $formField['ProgramInstruction'];
+				}
+
+				$data['success'] = true;
+			} else {
+				$data['success'] = false;
+			}
+
+			$this->set('data', $data);
+			$this->render(null, null, '/elements/ajaxreturn');
+	}
+	public function admin_read() {}
+	public function admin_update() {}
+	public function admin_destroy() {}
 }
