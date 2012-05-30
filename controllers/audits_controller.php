@@ -116,6 +116,12 @@ class AuditsController extends AppController {
 
 		if ($this->Audit->save()) {
 			$data['success'] = true;
+			$this->Transaction->createUserTransaction(
+				'Audits',
+				$this->Auth->user('id'),
+				$this->Auth->user('location_id'),
+				'Edited Audit ' . $this->data['Audit']['name'] . ', id: ' . $id
+			);
 		} else {
 			$data['success'] = false;
 		}
