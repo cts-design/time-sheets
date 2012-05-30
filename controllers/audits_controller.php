@@ -104,6 +104,14 @@ class AuditsController extends AppController {
     public function admin_update() {
         $params = json_decode($this->params['form']['audits'], true);
 
+		if (isset($params['start_date'])) {
+			$params['start_date'] = date('Y-m-d', strtotime($params['start_date']));
+		}
+
+		if (isset($params['end_date'])) {
+			$params['end_date'] = date('Y-m-d', strtotime($params['end_date']));
+		}
+
         $this->Audit->read(null, $params['id']);
         $this->Audit->set($params);
 
