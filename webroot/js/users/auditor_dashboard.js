@@ -170,6 +170,7 @@ AuditDashboard = {
             }, {
               xtype: 'datecolumn',
               dataIndex: 'created',
+              hidden: true,
               text: 'Date'
             }],
             listeners: {
