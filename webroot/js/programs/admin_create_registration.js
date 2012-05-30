@@ -1156,11 +1156,6 @@ instructions = Ext.create('Ext.panel.Panel', {
     store: 'ProgramInstructionStore',
     width: 660,
     columns: [{
-      header: 'Name',
-      dataIndex: 'name',
-      editor: 'textfield',
-      flex: 1
-    }, {
       header: 'Type',
       dataIndex: 'type',
       flex: 1
