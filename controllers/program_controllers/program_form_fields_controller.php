@@ -14,12 +14,23 @@ class ProgramFormFieldsController extends AppController {
 				unset($formData[$key]['id'], $formData[$key]['created'], $formData[$key]['modified']);
 			}
 
-			$this->data['ProgramFormField'] = $formData;
-			$formField = $this->ProgramFormField->saveAll($this->data['ProgramFormField']);
+			$count = count($formData);
+
+			if ($count > 1) {
+				$this->data['ProgramFormField'] = $formData;
+				$formField = $this->ProgramFormField->saveAll($this->data['ProgramFormField']);
+			} else {
+				$this->data['ProgramFormField'] = $formData[0];
+				$formField = $this->ProgramFormField->save($this->data);
+			}
 
 			if ($formField) {
-				foreach ($this->data['ProgramFormField'] as $k => $v) {
-					$data['program_form_fields'][] = $v;
+				if ($count > 1) {
+					foreach ($this->data['ProgramFormField'] as $k => $v) {
+						$data['program_form_fields'][] = $v;
+					}
+				} else {
+					$data['program_form_fields'] = $formField['ProgramFormField'];
 				}
 
 				$data['success'] = true;
