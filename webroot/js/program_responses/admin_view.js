@@ -21,6 +21,24 @@ Ext.override(Ext.menu.KeyNav, {
     }
 });
 
+Ext.define('ProgramFormActivity', {
+  extend: 'Ext.data.Model',
+  fields: ['id', 'name']
+});
+
+Ext.create('Ext.data.Store', {
+  model: 'ProgramFormActivity',
+  storeId: 'programFormActivites',
+  proxy: {
+    type: 'ajax',
+    url: '/admin/program_responses/get_form_activities/7',
+    reader: {
+      type: 'json',
+      root: 'activities'
+    }
+  }
+});
+
 Ext.onReady(function(){
   Ext.QuickTips.init();
   
@@ -45,8 +63,11 @@ Ext.onReady(function(){
           name: 'email_comment'
          },{
           fieldLabel : 'Reset customer program response form',
-          xtype: 'checkbox',
-          name: 'reset_form'
+          xtype: 'boxselect',
+          store: 'programFormActivites',
+          name: 'reset_form',
+          displayField: 'name',
+          valueField: 'id'
          }
       ],
       buttons: [{
