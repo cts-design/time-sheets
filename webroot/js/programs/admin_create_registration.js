@@ -1114,38 +1114,72 @@ instructions = Ext.create('Ext.panel.Panel', {
       xtype: 'toolbar',
       dock: 'top',
       items: [{
-        xtype: 'combo',
-        displayField: 'ucase',
-        id: 'instructionTypes',
-        name: 'instructionTypes',
-        queryMode: 'local',
-        store: Ext.create('Ext.data.Store', {
-          fields: ['lcase', 'ucase'],
-          data: [{
-            lcase: 'main', ucase: 'Main'
-          }, {
-            lcase: 'pending_approval', ucase: 'Pending Approval'
-          }, {
-            lcase: 'expired', ucase: 'Expired'
-          }, {
-            lcase: 'not_approved', ucase: 'Not Approved'
-          }]
-        }),
-        value: '',
-        valueField: 'lcase'
-      }, {
         icon: '/img/icons/add.png',
-        text: 'Add Instruction',
+        text: 'Add Step Instruction',
         handler: function () {
           var store = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
             program = Ext.data.StoreManager.lookup('ProgramStore'),
-            type = Ext.getCmp('instructionTypes').getValue();
+            programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
+            programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
+            instructionWindow;
 
-          store.add({
-            program_id: program.first().data.id,
-            name: 'Double click to name this field',
-            type: type
+          stepCombo = Ext.create('Ext.data.Store', {
+            fields: ['id', 'name'],
+            data: [{
+              id: programStepStore.last().data.id,
+              name: programStepStore.last().data.name
+            }]
           });
+
+          if (!instructionWindow) {
+            instructionWindow = Ext.create('Ext.window.Window', {
+              height: 150,
+              items: [{
+                xtype: 'form',
+                bodyPadding: 25,
+                border: false,
+                items: [{
+                  xtype: 'combo',
+                  allowBlank: false,
+                  displayField: 'name',
+                  editable: false,
+                  fieldLabel: 'Choose step for instruction',
+                  id: 'instructionCombo',
+                  labelAlign: 'top',
+                  name: 'instruction',
+                  queryMode: 'local',
+                  store: stepCombo,
+                  value: '',
+                  valueField: 'id',
+                  width: 250
+                }],
+                buttons: [{
+                  bindForm: true,
+                  text: 'Add Instruction',
+                  handler: function () {
+                    var form = this.up('form').getForm(),
+                      val = Ext.getCmp('instructionCombo');
+
+                    console.log(val);
+
+                    if (form.isValid()) {
+                      programInstructionStore.add({
+                        program_id: program.first().data.id,
+                        program_step_id: val.value,
+                        type: val.rawValue.underscore(),
+                        text: 'Enter the text for your registration form instructions'
+                      });
+                    }
+
+                    instructionWindow.hide();
+                  }
+                }]
+              }],
+              layout: 'fit',
+              title: 'Add Instruction',
+              width: 300
+            }).show();
+          }
         }
       }]
     }],
@@ -1156,9 +1190,12 @@ instructions = Ext.create('Ext.panel.Panel', {
     store: 'ProgramInstructionStore',
     width: 660,
     columns: [{
-      header: 'Type',
       dataIndex: 'type',
-      flex: 1
+      header: 'Type',
+      flex: 1,
+      renderer: function (value) {
+        return value.humanize();
+      }
     }],
     listeners: {
       select: function (rm, rec, index) {
