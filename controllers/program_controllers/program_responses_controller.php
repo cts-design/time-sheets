@@ -50,7 +50,8 @@ class ProgramResponsesController extends AppController {
 					'admin_not_approved',
 					'admin_reset_form',
 					'admin_allow_new_response',
-					'admin_generate_form');
+					'admin_generate_form',
+					'admin_get_form_activities');
 			}
 	}
 
@@ -980,6 +981,20 @@ class ProgramResponsesController extends AppController {
 			}
 			$this->set(compact('data'));
 			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
+
+	function admin_get_form_activities($id=null) {
+		if($this->RequestHandler->isAjax()) {
+			$this->ProgramResponse->contain(array('ProgramResponseActivity' => array(
+				'conditions' => array('ProgramResponseActivity.type' => 'form'),
+				'fields' => array('id', 'name'))));
+			$activities = $this->ProgramResponse->findById($id);
+			$data['activities'][0]['id'] = 1;
+			$data['activities'][0]['name'] = 'Test name';
+			$this->log($activities, 'debug');
+			$this->set(compact('data'));
+			$this->render(null,null,'/elements/ajaxreturn');
 		}
 	}
 
