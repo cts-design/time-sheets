@@ -190,8 +190,36 @@ class AuditsController extends AppController {
 
         if ($user) {
             $data['success'] = true;
+			$userId = $this->Auth->user('id');
 
             foreach ($user['FiledDocument'] as $doc) {
+				FireCake::log($doc['Cat1']);
+				FireCake::log($doc['Cat2']);
+				FireCake::log($doc['Cat3']);
+				if ($doc['Cat1']['secure']) {
+					$doc['secure'] = 1;
+					if (in_array($userId, json_decode($doc['Cat1']['secure_admins']))) {
+						$doc['secure_viewable'] = 1;
+					} else {
+						$doc['secure_viewable'] = 0;
+					}
+				} else if ($doc['Cat2']['secure']) {
+					$doc['secure'] = 1;
+					if (in_array($userId, json_decode($doc['Cat2']['secure_admins']))) {
+						$doc['secure_viewable'] = 1;
+					} else {
+						$doc['secure_viewable'] = 0;
+					}
+				} else if ($doc['Cat3']['secure']) {
+					$doc['secure'] = 1;
+					if (in_array($userId, json_decode($doc['Cat3']['secure_admins']))) {
+						$doc['secure_viewable'] = 1;
+					} else {
+						$doc['secure_viewable'] = 0;
+					}
+				} else {
+					$doc['secure'] = 0;
+				}
                 $doc['cat_1'] = ($doc['cat_1'] != 0) ? $doc['Cat1']['name'] : null;
                 $doc['cat_2'] = ($doc['cat_2'] != 0) ? $doc['Cat2']['name'] : null;
                 $doc['cat_3'] = ($doc['cat_3'] != 0) ? $doc['Cat3']['name'] : null;

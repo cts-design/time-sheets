@@ -76,7 +76,7 @@ AuditDashboard = {
       fields: [{
         name: 'id',
         type: 'int'
-      }, 'cat_1', 'cat_2', 'cat_3', 'description', {
+      }, 'cat_1', 'cat_2', 'cat_3', 'secure', 'secure_viewable', 'description', {
         name: 'created',
         type: 'date',
         dateFormat: 'Y-m-d H:i:s'
@@ -151,6 +151,19 @@ AuditDashboard = {
               dataIndex: 'id',
               hidden: true,
               text: 'Id'
+            }, {
+              dataIndex: 'secure',
+              text: '',
+              renderer: function (value, meta, rec) {
+                if (value && !rec.data.secure_viewable) {
+                  return '<img src="/img/icons/lock.png" />';
+                } else if (value && rec.data.secure_viewable) {
+                  return '<img src="/img/icons/lock_open.png" />';
+                }
+
+                return '';
+              },
+              width: 50
             }, {
               dataIndex: 'cat_1',
               flex: 1,
@@ -328,7 +341,14 @@ AuditDashboard = {
   documentGridItemClicked: function (view, rec) {
     "use strict";
 
-    this.embedDocument(rec.data.id);
+    if (rec.data.secure && !rec.data.secure_viewable) {
+      Ext.Msg.alert('Secure Document', 'You do not have permissions to view this document');
+      return;
+    }
+
+    if ((rec.data.secure && rec.data.secure_viewable) || !rec.data.secure) {
+      this.embedDocument(rec.data.id);
+    }
   },
 
   embedDocument: function (id) {
@@ -365,7 +385,6 @@ AuditDashboard = {
     }
 
     Ext.getBody().on('mousemove', function () {
-      console.log('mouse is moving!');
       this.timeout.delay(300000);
     }, this);
   }
