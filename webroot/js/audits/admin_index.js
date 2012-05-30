@@ -8,13 +8,13 @@ Ext.apply(Ext.form.field.VTypes, {
     if (!date) {
       return false;
     }
-    if (field.startDateField && (!this.dateRangeMax || (date.getTime() != this.dateRangeMax.getTime()))) {
+    if (field.startDateField && (!this.dateRangeMax || (date.getTime() !== this.dateRangeMax.getTime()))) {
       var start = field.up('form').down('#' + field.startDateField);
       start.setMaxValue(date);
       start.validate();
       this.dateRangeMax = date;
     }
-    else if (field.endDateField && (!this.dateRangeMin || (date.getTime() != this.dateRangeMin.getTime()))) {
+    else if (field.endDateField && (!this.dateRangeMin || (date.getTime() !== this.dateRangeMin.getTime()))) {
       var end = field.up('form').down('#' + field.endDateField);
       end.setMinValue(date);
       end.validate();
@@ -375,10 +375,6 @@ Audits = {
   deleteAudit: function () {
     "use strict";
 
-    this.auditStore.on('datachanged', function (store, recs) {
-      store.load();
-    });
-
     this.selectedRecord.set('disabled', 1);
     this.selectedRecord.save();
   },
@@ -397,10 +393,6 @@ Audits = {
     formValues.start_date = Ext.Date.format(start_date, 'Y-m-d');
     formValues.end_date = Ext.Date.format(end_date, 'Y-m-d');
 
-    this.auditStore.on('datachanged', function (store, recs) {
-      store.load();
-    });
-
     if (form.isValid()) {
       if (this.selectedRecord) {
         this.selectedRecord.set(formValues);
@@ -412,7 +404,8 @@ Audits = {
   },
 
   exportBtnClicked: function (btn, event) {
-    var auditId = this.selectedRecord.data.id
+    var auditId = this.selectedRecord.data.id;
+
     switch (btn.id) {
       case 'auditorListBtn':
         window.location = '/admin/audits/view/' + auditId + '/auditors';
