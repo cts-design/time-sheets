@@ -136,8 +136,9 @@ class ProgramResponsesController extends AppController {
 		$responseActivity = Set::extract('/ProgramResponseActivity[program_step_id=' . $stepId .']', $program['ProgramResponse'][0]);
 		if(!empty($this->data)) {
             $this->data['ProgramResponse']['id'] = $program['ProgramResponse'][0]['id'];
-			$this->data['ProgramResponseActivity'][0]['id'] = 4; 
 			$this->data['ProgramResponseActivity'][0]['answers'] = json_encode($this->data['ProgramResponseActivity'][0]);
+			$this->data['ProgramResponseActivity'][0]['id'] = $this->data['ProgramResponseActivity']['id']; 
+			unset($this->data['ProgramResponseActivity']['id']);
 			$this->data['ProgramResponseActivity'][0]['status'] = 'complete';
 			$this->data['ProgramResponseActivity'][0]['program_step_id'] = $this->currentStep[0]['id'];
 			$this->data['ProgramResponseActivity'][0]['type'] = 'form';
@@ -154,14 +155,13 @@ class ProgramResponsesController extends AppController {
 				}
 				$this->data['ProgramResponse']['status'] = $status;
 			}
-		
 			// TODO: make sure validation works
 			if($this->ProgramResponse->saveAll($this->data)) {
 				if(!empty($programDocuments)) {
 					$program['currentStep'] = $this->currentStep[0];
 					$user = $this->Auth->user();
 					$program['User'] = $user['User'];
-					$this->ProgramResponse->Program->ProgramDocument->queueProgramDocs($programDocuments, $program, $this->data);
+					//$this->ProgramResponse->Program->ProgramDocument->queueProgramDocs($programDocuments, $program, $this->data);
 				}
 				$this->Transaction->createUserTransaction('Programs', null, null,
 					'Completed ' .  $this->currentStep[0]['name'] . ' for program ' . $program['Program']['name']);
@@ -198,6 +198,7 @@ class ProgramResponsesController extends AppController {
         $data['title_for_layout'] = $this->currentStep[0]['name'];
 		if(empty($this->data['ProgramResponseActivity'])) {
 			$this->data['ProgramResponseActivity'][0] = json_decode($responseActivity[0]['ProgramResponseActivity']['answers'], true);
+			$this->data['ProgramResponseActivity']['id'] = $responseActivity[0]['ProgramResponseActivity']['id'];
 		}
 		$this->set($data);
 	}
@@ -803,32 +804,36 @@ class ProgramResponsesController extends AppController {
 		if($this->RequestHandler->isAjax()) {
 			if(!empty($this->params['form']['id'])) {
 				$this->data['ProgramResponse']['id'] = $this->params['form']['id'];
-				$this->data['ProgramResponse']['not_approved'] = 1;
-				if(isset($this->params['form']['reset_form']) == 'on') {
-					$this->data['ProgramResponse']['answers'] = null;
+				$this->data['ProgramResponse']['status'] = 'not_approved';
+				if(isset($this->params['form']['reset_form'])) {
+					$this->data['ProgramResponseActivity'][0]['id'] = $this->params['form']['reset_form'];
+					$this->data['ProgramResponseActivity'][0]['status'] = 'allow_edit';
 				}
-				if($this->ProgramResponse->save($this->data)) {
+
+				if($this->ProgramResponse->saveAll($this->data)) {
 					$data['success'] = true;
 					$data['message'] = 'Program response marked not approved.';
-					$programResponse = $this->ProgramResponse->read(null, $this->params['form']['id']);
+					$programResponse = $this->ProgramResponse->findById($this->params['form']['id']);
 
 					$programEmail = $this->ProgramResponse->Program->ProgramEmail->find('first',
 						array('conditions' => array(
 							'ProgramEmail.program_id' => $programResponse['Program']['id'],
 							'ProgramEmail.type' => 'not_approved'
 					)));
+					$this->log($programEmail, 'debug');
 					$user['User'] = $programResponse['User'];
 					if($programEmail) {
 						if(!empty($this->params['form']['email_comment'])) {
 							$programEmail['ProgramEmail']['body'] .= "\r\n\r\n\r\n" .
 							'Comment: ' . $this->params['form']['email_comment'];
 						}
-						$this->Notifications->sendProgramEmail($programEmail, $user);
+						$this->Notifications->sendProgramEmail($programEmail['ProgramEmail'], $user);
 					}
 					$this->Transaction->createUserTransaction('Programs', null, null,
 						'Marked ' . $programResponse['Program']['name'] .
 						' response not approved for ' . ucwords($user['User']['name_last4']));
-					if(isset($this->params['form']['reset_form']) == 'on') {
+					if(isset($this->params['form']['reset_form'])) {
+						// TODO transaction for each form that was marked allow edit? or list all form that were reset in one transaction
 						$this->Transaction->createUserTransaction('Programs', null, null,
 							'Reset program response form for ' . $programResponse['Program']['name'] . ' for customer ' .
 							ucwords($programResponse['User']['name_last4']));
