@@ -22,6 +22,9 @@ AuditDashboard = {
         name: 'id',
         type: 'int'
       }, 'name', {
+        name: 'show_date_column',
+        type: 'int'
+      }, {
         name: 'start_date',
         type: 'date',
         dateFormat: 'Y-m-d'
@@ -145,6 +148,7 @@ AuditDashboard = {
           title: 'Customer Documents & Activities',
           items: [{
             xtype: 'gridpanel',
+            id: 'filedDocumentGrid',
             store: 'FiledDocumentStore',
             title: 'Documents',
             columns: [{
@@ -180,11 +184,6 @@ AuditDashboard = {
               dataIndex: 'description',
               flex: 1,
               text: 'Notes/Other'
-            }, {
-              xtype: 'datecolumn',
-              dataIndex: 'created',
-              hidden: true,
-              text: 'Date'
             }],
             listeners: {
               itemclick: {
@@ -311,11 +310,54 @@ AuditDashboard = {
 
     this.selectedAudit = rec;
 
+    console.log(rec);
+
     this.userStore.load({
       params: {
         audit_id: rec.data.id
       }
     });
+
+    if (rec.data.show_date_column) {
+      Ext.getCmp('filedDocumentGrid').reconfigure(null, [{
+        dataIndex: 'id',
+        hidden: true,
+        text: 'Id'
+      }, {
+        dataIndex: 'secure',
+        text: '',
+        renderer: function (value, meta, rec) {
+          if (value && !rec.data.secure_viewable) {
+            return '<img src="/img/icons/lock.png" />';
+          } else if (value && rec.data.secure_viewable) {
+            return '<img src="/img/icons/lock_open.png" />';
+          }
+
+          return '';
+        },
+        width: 50
+      }, {
+        dataIndex: 'cat_1',
+        flex: 1,
+        text: 'Category 1'
+      }, {
+        dataIndex: 'cat_2',
+        flex: 1,
+        text: 'Category 2'
+      }, {
+        dataIndex: 'cat_3',
+        flex: 1,
+        text: 'Category 3'
+      }, {
+        dataIndex: 'description',
+        flex: 1,
+        text: 'Notes/Other'
+      }, {
+        xtype: 'datecolumn',
+        dataIndex: 'created',
+        text: 'Date'
+      }]);
+    }
 
     auditPanel.collapse();
   },
