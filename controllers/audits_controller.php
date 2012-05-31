@@ -1,5 +1,4 @@
 <?php
-
 class AuditsController extends AppController {
     public $name = 'Audits';
 

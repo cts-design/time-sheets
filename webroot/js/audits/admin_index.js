@@ -396,10 +396,6 @@ Audits = {
   deleteAudit: function () {
     "use strict";
 
-    this.auditStore.on('datachanged', function (store, recs) {
-      store.load();
-    });
-
     this.selectedRecord.set('disabled', 1);
     this.selectedRecord.save();
   },
@@ -417,10 +413,6 @@ Audits = {
     formValues.created = Ext.Date.format(today, 'Y-m-d H:i:s');
     formValues.start_date = Ext.Date.format(start_date, 'Y-m-d');
     formValues.end_date = Ext.Date.format(end_date, 'Y-m-d');
-
-    this.auditStore.on('datachanged', function (store, recs) {
-      store.load();
-    });
 
     if (form.isValid()) {
       if (this.selectedRecord) {
