@@ -31,7 +31,8 @@ QueuedDocuments overrides
 .x-alert-window .window-message {
   background: transparent !important;
   color: #fff !important;
-  text-align: center !important;
+  margin-top: 20px;
   padding: 10px;
+  text-align: center !important;
 }
 
