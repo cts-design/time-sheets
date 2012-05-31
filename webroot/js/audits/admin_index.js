@@ -58,6 +58,9 @@ Audits = {
         name: 'number_of_auditors',
         type: 'int'
       }, 'customers', {
+        name: 'show_date_column',
+        type: 'int'
+      }, {
         name: 'disabled',
         type: 'int'
       }, {
@@ -111,13 +114,13 @@ Audits = {
       bodyPadding: 10,
       collapsed: true,
       collapsible: true,
-      height: 475,
+      height: 505,
       title: 'Audit Form',
       trackResetOnLoad: true,
       width: 950,
       items: [{
         xtype: 'fieldset',
-        height: 108,
+        height: 138,
         padding: 15,
         width: 928,
         layout: {
@@ -156,6 +159,17 @@ Audits = {
           fieldLabel: 'End Date',
           name: 'end_date',
           vtype: 'daterange',
+          width: 350
+        }, {
+          xtype: 'checkbox',
+          fieldLabel: 'Show Date Column',
+          id: 'showDateColumn',
+          inputValue: 1,
+          labelPad: 0,
+          labelWidth: 150,
+          margin: '5 100 0 40',
+          name: 'show_date_column',
+          uncheckedValue: 0,
           width: 350
         }]
       }, {
@@ -229,6 +243,16 @@ Audits = {
       }, {
         dataIndex: 'number_of_auditors',
         text: 'Auditors'
+      }, {
+        dataIndex: 'show_date_column',
+        text: 'Show Date Column',
+        renderer: function (value) {
+          if (value) {
+            return 'Yes';
+          } else {
+            return 'No';
+          }
+        }
       }, {
         xtype: 'datecolumn',
         dataIndex: 'start_date',
