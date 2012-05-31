@@ -11,3 +11,27 @@ QueuedDocuments overrides
 	color: black;
 	font-weight: normal;
 }
+
+.x-alert-window {
+  background: #000 !important;
+
+  -webkit-border-radius: 4px;
+     -moz-border-radius: 4px;
+          border-radius: 4px;
+}
+
+.x-alert-window .x-panel-body-default {
+  border: none !important;
+}
+
+.x-alert-window div {
+  background: #000 !important;
+}
+
+.x-alert-window .window-message {
+  background: transparent !important;
+  color: #fff !important;
+  text-align: center !important;
+  padding: 10px;
+}
+

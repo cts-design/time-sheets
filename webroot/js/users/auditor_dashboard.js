@@ -341,8 +341,35 @@ AuditDashboard = {
   documentGridItemClicked: function (view, rec) {
     "use strict";
 
+    var viewSize = Ext.getBody().getViewSize(),
+      x = ((viewSize.width - 150) - 70),
+      y = 15,
+      alertWindow;
+
     if (rec.data.secure && !rec.data.secure_viewable) {
-      Ext.Msg.alert('Secure Document', 'You do not have permissions to view this document');
+      if (!alertWindow) {
+        alertWindow = Ext.create('Ext.window.Window', {
+          baseCls: 'x-alert-window',
+          height: 60,
+          items: [{
+            html: '<div class="window-message">You do not have permissions to view this document</div>'
+          }],
+          layout: 'fit',
+          listeners: {
+            show: function (window) {
+              var task = new Ext.util.DelayedTask(function () {
+                window.hide();
+              });
+
+              task.delay(2500);
+            }
+          },
+          preventHeader: true,
+          resizable: false,
+          title: 'Secure Document',
+          width: 150
+        }).showAt(x, y);
+      }
       return;
     }
 
