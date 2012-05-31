@@ -10,7 +10,7 @@
 <div class="required bot-mar-10"><label></label> <?php __('indicates required fields.') ?></div>
 <div id="ProgramForm">
     <?php if(!empty($formFields)) : ?>
-        <?php echo $form->create('ProgramResponse', array('action' => 'edit_form/' . $this->params['pass'][0] . '/' . $this->params['pass'][1])); ?>
+        <?php echo $this->Form->create('ProgramResponse', array('action' => 'edit_form/' . $this->params['pass'][0] . '/' . $this->params['pass'][1])); ?>
         <?php asort($formFields)?>
         <?php foreach($formFields as $k => $v) : ?>
             <?php $options = json_decode($v['options'], true); ?>
@@ -23,7 +23,8 @@
             <?php if(!empty($v['attributes'])) : ?>
                 <?php $attributes = Set::merge($attributes, json_decode($v['attributes'])); ?>
             <?php endif; ?>
-            <?php echo $form->input('ProgramResponseActivity.0.' . $v['name'], $attributes); ?>
+            <?php echo $this->Form->input('ProgramResponseActivity.0.' . $v['name'], $attributes); ?>
+			<?php echo $this->Form->input('ProgramResponseActivity.id', array('type' => 'hidden')); ?>
             <?php echo '<br />'; ?>
         <?php endforeach; ?>
         <?php if($esignRequired) : ?>
@@ -31,10 +32,10 @@
                 <legend><?php __('Electronic Signature') ?></legend>
                 <p class="bot-mar-10"><?php echo $esignInstructions; ?></p>
                 <p class="bot-mar-10"><?php __('Please enter your first and last name in the box below.') ?></p>
-                <?php echo $form->input('form_esignature', array('label' => __('I agree', true), 'after' => '<br />')) ?>
+                <?php echo $this->Form->input('form_esignature', array('label' => __('I agree', true), 'after' => '<br />')) ?>
             </fieldset>
             <br />
         <?php endif ?>
-        <?php echo $form->end(__('Submit', true)); ?>
+        <?php echo $this->Form->end(__('Submit', true)); ?>
     <?php endif; ?>
 </div>
