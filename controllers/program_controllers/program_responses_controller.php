@@ -984,15 +984,32 @@ class ProgramResponsesController extends AppController {
 		}
 	}
 
-	function admin_get_form_activities($id=null) {
+	function admin_get_form_activities($id) {
 		if($this->RequestHandler->isAjax()) {
 			$this->ProgramResponse->contain(array('ProgramResponseActivity' => array(
 				'conditions' => array('ProgramResponseActivity.type' => 'form'),
-				'fields' => array('id', 'name'))));
-			$activities = $this->ProgramResponse->findById($id);
-			$data['activities'][0]['id'] = 1;
-			$data['activities'][0]['name'] = 'Test name';
-			$this->log($activities, 'debug');
+				'fields' => array('id', 'program_step_id'))));
+			$response = $this->ProgramResponse->findById($id);
+			if($response) {
+				$steps = $this->ProgramResponse->Program->ProgramStep->find('list', array(
+					'conditions' => array(
+						'ProgramStep.type' => 'form',
+						'ProgramStep.program_id' => $response['ProgramResponse']['program_id'])));
+				$activities = $response['ProgramResponseActivity'];
+			}
+			if(isset($activities)) {
+				$i = 0;
+				foreach($activities as $activity) {
+					$data['activities'][$i]['id'] = $activity['id'];
+					$data['activities'][$i]['name'] = $steps[$activity['program_step_id']]; 
+					$i++;
+				}
+				$data['success'] = true;
+			}
+			else {
+				$data['success'] = false;
+				$data['activities'] = array();
+			}
 			$this->set(compact('data'));
 			$this->render(null,null,'/elements/ajaxreturn');
 		}
