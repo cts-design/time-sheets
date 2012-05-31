@@ -3,22 +3,22 @@
  */
 
 
-// Kludge to fix not being able to type spaces in context menu text fields 
+// Kludge to fix not being able to type spaces in context menu text fields
 Ext.override(Ext.menu.KeyNav, {
-    constructor: function(menu) {
-        var me = this;
-        me.menu = menu;
-        me.callParent([menu.el, {
-            down: me.down,
-            enter: me.enter,
-            esc: me.escape,
-            left: me.left,
-            right: me.right,
-            //space: me.enter,
-            tab: me.tab,
-            up: me.up
-        }]);
-    }
+  constructor: function(menu) {
+    var me = this;
+    me.menu = menu;
+    me.callParent([menu.el, {
+      down: me.down,
+      enter: me.enter,
+      esc: me.escape,
+      left: me.left,
+      right: me.right,
+      //space: me.enter,
+      tab: me.tab,
+      up: me.up
+    }]);
+  }
 });
 
 Ext.define('ProgramFormActivity', {
@@ -31,7 +31,7 @@ Ext.create('Ext.data.Store', {
   storeId: 'programFormActivites',
   proxy: {
     type: 'ajax',
-    url: '/admin/program_responses/get_form_activities/7',
+    url: '/admin/program_responses/get_form_activities/'+programResponseId,
     reader: {
       type: 'json',
       root: 'activities'
@@ -41,40 +41,39 @@ Ext.create('Ext.data.Store', {
 
 Ext.onReady(function(){
   Ext.QuickTips.init();
-  
+
   var hideProgress = new Ext.util.DelayedTask(function(){
     progress.hide();
   });
 
   var approvalForm = Ext.create('Ext.form.Panel', {
-      
-      fieldDefaults: {
-        labelWidth: 90,
-        labelAlign: 'top',
-        width: 230  
-      },
-      frame:true,
-      bodyStyle:'padding:5px 5px 0',
-      width: 250,
-      height: 180,
-      defaultType: 'textarea',
-      items: [{
-          fieldLabel: 'Not approved email comment',
-          name: 'email_comment'
-         },{
-          fieldLabel : 'Reset customer program response form',
-          xtype: 'boxselect',
-          store: 'programFormActivites',
-          name: 'reset_form',
-          displayField: 'name',
-          valueField: 'id'
-         }
-      ],
-      buttons: [{
-          text: 'Not Approved',
-          icon: '/img/icons/delete.png',
-          handler: function() {
-            menu.hide();
+    fieldDefaults: {
+      labelWidth: 90,
+      labelAlign: 'top',
+      width: 230
+    },
+    frame:true,
+    bodyStyle:'padding:5px 5px 0',
+    width: 250,
+    height: 180,
+    defaultType: 'textarea',
+    items: [{
+      fieldLabel: 'Not approved email comment',
+      name: 'email_comment'
+     },{
+      fieldLabel : 'Allow customer to edit the selected form(s)',
+      xtype: 'boxselect',
+      store: 'programFormActivites',
+      name: 'reset_form',
+      displayField: 'name',
+      valueField: 'id',
+      emptyText: 'Please select'
+    }],
+    buttons: [{
+      text: 'Not Approved',
+      icon: '/img/icons/delete.png',
+      handler: function() {
+        menu.hide();
         approvalForm.getForm().doAction('submit', {
           url: '/admin/program_responses/not_approved',
           params: {
@@ -86,11 +85,11 @@ Ext.onReady(function(){
             var obj = Ext.decode(action.response.responseText);
             if(obj.success) {
               Ext.getCmp('approved').hide();
-              Ext.getCmp('notApproved').hide();       
-              Ext.Msg.alert('Status', obj.message);           
+              Ext.getCmp('notApproved').hide();
+              Ext.Msg.alert('Status', obj.message);
             }
             else {
-              opts.failure(response, opts, obj);            
+              opts.failure(response, opts, obj);
             }
           },
           failure: function(form, action, obj) {
@@ -104,21 +103,17 @@ Ext.onReady(function(){
             Ext.Msg.alert('Status', msg);
           }
         });
-          }
-      }]
+      }
+    }]
   });
 
   var menu = Ext.create('Ext.menu.Menu', {
-      layout: 'menu',
+    layout: 'menu',
     items: [
       approvalForm
     ]
-  }); 
-  
+  });
 
-  
-  
-  
   var programResponsePanel = Ext.create('Ext.panel.Panel', {
     title: progName + ' - Program Response',
     renderTo: 'ProgramResponsePanel',
@@ -143,7 +138,7 @@ Ext.onReady(function(){
               if(obj.success) {
                 Ext.getCmp('approved').hide();
                 Ext.getCmp('notApproved').hide();
-                Ext.Msg.alert('Status', obj.message);           
+                Ext.Msg.alert('Status', obj.message);
               }
               else {
                 opts.failure(response, opts, obj);
@@ -164,7 +159,7 @@ Ext.onReady(function(){
       },{
         text: 'Not Approved',
         id: 'notApproved',
-        hidden: true,       
+        hidden: true,
         icon: '/img/icons/delete.png',
         menu: menu
       }]
@@ -191,11 +186,11 @@ Ext.onReady(function(){
           beforeexpand: updateDoc = function() {
             this.getLoader().load();
             this.getLoader().on('load', function(){
-              Ext.get('ProgramPaperForms').on('click', function(e, t){            
+              Ext.get('ProgramPaperForms').on('click', function(e, t){
                 t = Ext.get(t);
                 if(t.hasCls('generate') || t.hasCls('regenerate')) {
                   e.preventDefault();
-                  Ext.Msg.progress('Status', 'Generating Form');          
+                  Ext.Msg.progress('Status', 'Generating Form');
                   Ext.Ajax.request({
                     url: t.getAttribute('href'),
                     success: function(response, opts) {
@@ -203,7 +198,7 @@ Ext.onReady(function(){
                       if(obj.success) {
                         progress = Ext.Msg.updateProgress(1, 'Complete', obj.message);
                         hideProgress.delay(2000);
-                        Ext.getCmp('documents').getLoader().load();                     
+                        Ext.getCmp('documents').getLoader().load();
                       }
                       else {
                         opts.failure(response, opts);
@@ -220,11 +215,11 @@ Ext.onReady(function(){
                     }
                   });
                 }
-              }); 
+              });
             });
             this.removeListener('beforeexpand', updateDoc);
           }
-        }     
+        }
       }]
       },{
         title: 'Program Response',
@@ -237,13 +232,11 @@ Ext.onReady(function(){
             this.getLoader().load();
             this.removeListener('beforeexpand', updateResponse);
           }
-        }       
+        }
     }]
   });
   if(requiresApproval) {
     Ext.getCmp('approved').show();
     Ext.getCmp('notApproved').show();
   }
-
-
 });
