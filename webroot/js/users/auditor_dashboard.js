@@ -350,15 +350,31 @@ AuditDashboard = {
       if (!alertWindow) {
         alertWindow = Ext.create('Ext.window.Window', {
           baseCls: 'x-alert-window',
-          height: 60,
+          floating: {
+            shadow: false
+          },
+          height: 10,
           items: [{
             html: '<div class="window-message">You do not have permissions to view this document</div>'
           }],
           layout: 'fit',
           listeners: {
             show: function (window) {
-              var task = new Ext.util.DelayedTask(function () {
-                window.hide();
+              var windowEl = window.getEl(),
+                task;
+
+              task = new Ext.util.DelayedTask(function () {
+                windowEl.animate({
+                  duration: 500,
+                  to: {
+                    opacity: 0
+                  },
+                  listeners: {
+                    afteranimate: function () {
+                      window.hide();
+                    }
+                  }
+                });
               });
 
               task.delay(2500);
