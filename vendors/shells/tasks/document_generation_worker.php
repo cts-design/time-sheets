@@ -11,6 +11,7 @@ class DocumentGenerationWorkerTask extends QueueShell {
 			$job = $this->Job->reserve(array('tube' => $this->tubes));
 			if(!$job) {
 				$this->log('Invalid job found. Not processing.', 'error');	
+				// TODO figure out if we need to exit or if it can be done with monit ?????
 				exit(99);
 			}
 			else {
