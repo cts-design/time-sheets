@@ -5,6 +5,7 @@
 		<?php foreach($answer as $k => $v) : ?>
 			<span class="label"><?php echo Inflector::humanize($k)?>:</span>
 			<span><?php echo ucwords($v)?></span>
+			<br />
 		<?php endforeach ?>	
 		<?php $i++; ?>
 	<?php endforeach ?>	
