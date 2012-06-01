@@ -1,120 +1,77 @@
-Ext.apply(Ext.form.field.VTypes, {
-  daterange: function(val, field) {
-    var date = field.parseDate(val);
-
-    if (!date) {
-      return false;
-    }
-    if (field.startDateField && (!this.dateRangeMax || (date.getTime() !== this.dateRangeMax.getTime()))) {
-      var start = field.up('form').down('#' + field.startDateField);
-      start.setMaxValue(date);
-      start.validate();
-      this.dateRangeMax = date;
-    }
-    else if (field.endDateField && (!this.dateRangeMin || (date.getTime() !== this.dateRangeMin.getTime()))) {
-      var end = field.up('form').down('#' + field.endDateField);
-      end.setMinValue(date);
-      end.validate();
-      this.dateRangeMin = date;
-    }
-    /*
-    * Always return true since we're only using this vtype to set the
-    * min/max allowed values (these are tested for after the vtype test)
-    */
-    return true;
-  },
-
-  daterangeText: 'Start date must be less than end date'
+Ext.define('Audit', {
+  id: 'Audit',
+  extend: 'Ext.data.Model',
+  fields: [{
+    name: 'id',
+    type: 'int'
+  }, 'name', {
+    name: 'start_date',
+    type: 'date',
+    dateFormat: 'Y-m-d'
+  }, {
+    name: 'end_date',
+    type: 'date',
+    dateFormat: 'Y-m-d'
+  }, {
+    name: 'number_of_customers',
+    type: 'int'
+  }, {
+    name: 'number_of_auditors',
+    type: 'int'
+  }, 'customers', {
+    name: 'show_date_column',
+    type: 'int'
+  }, {
+    name: 'disabled',
+    type: 'int'
+  }, {
+    name: 'created',
+    type: 'date',
+    dateFormat: 'Y-m-d H:i:s'
+  }],
+  hasMany: { model: 'User', name: 'users' }
 });
 
+Ext.define('User', {
+  id: 'User',
+  extend: 'Ext.data.Model',
+  fields: [{
+    name: 'id',
+    type: 'int'
+  }, 'ssn']
+});
 
-var Audits;
-Audits = {
-  auditStore: null,
-  selectedRecord: null,
-  userStore: null,
+Ext.create('Ext.data.Store', {
+  autoLoad: true,
+  autoSync: true,
+  model: 'Audit',
+  storeId: 'AuditStore',
+  proxy: {
+    type: 'ajax',
+    api: {
+      create: '/admin/audits/create',
+      read: '/admin/audits/read',
+      update: '/admin/audits/update',
+      destroy: '/admin/audits/destroy'
+    },
+    reader: { type: 'json', root: 'audits' },
+    writer: { type: 'json', encode: true, root: 'audits', writeAllFields: false }
+  }
+});
 
-  init: function () {
-    "use strict";
+Ext.create('Ext.data.Store', {
+  model: 'User',
+  storeId: 'UserStore'
+});
 
-    Ext.define('Audit', {
-      id: 'Audit',
-      extend: 'Ext.data.Model',
-      fields: [{
-        name: 'id',
-        type: 'int'
-      }, 'name', {
-        name: 'start_date',
-        type: 'date',
-        dateFormat: 'Y-m-d'
-      }, {
-        name: 'end_date',
-        type: 'date',
-        dateFormat: 'Y-m-d'
-      }, {
-        name: 'number_of_customers',
-        type: 'int'
-      }, {
-        name: 'number_of_auditors',
-        type: 'int'
-      }, 'customers', {
-        name: 'show_date_column',
-        type: 'int'
-      }, {
-        name: 'disabled',
-        type: 'int'
-      }, {
-        name: 'created',
-        type: 'date',
-        dateFormat: 'Y-m-d H:i:s'
-      }],
-      proxy: {
-        type: 'ajax',
-        api: {
-          create: '/admin/audits/create',
-          read: '/admin/audits/read',
-          update: '/admin/audits/update',
-          destroy: '/admin/audits/destroy'
-        },
-        reader: { type: 'json', root: 'audits' },
-        writer: { type: 'json', encode: true, root: 'audits', writeAllFields: false }
-      },
-      hasMany: { model: 'User', name: 'users' }
-    });
-
-    Ext.define('User', {
-      id: 'User',
-      extend: 'Ext.data.Model',
-      fields: [{
-        name: 'id',
-        type: 'int'
-      }, 'ssn']
-    });
-
-    this.auditStore = Ext.create('Ext.data.Store', {
-      autoLoad: true,
-      autoSync: true,
-      model: 'Audit',
-      storeId: 'AuditStore'
-    });
-
-    this.userStore = Ext.create('Ext.data.Store', {
-      model: 'User',
-      storeId: 'UserStore'
-    });
-
-    this.buildInterface();
-  },
-
-  buildInterface: function () {
-    "use strict";
-
-    this.auditFormPanel = Ext.create('Ext.form.Panel', {
+Ext.onReady(function () {
+    Ext.create('Ext.form.Panel', {
       renderTo: 'audit-form',
       bodyPadding: 10,
       collapsed: true,
       collapsible: true,
       height: 505,
+      id: 'formPanel',
       title: 'Audit Form',
       trackResetOnLoad: true,
       width: 950,
@@ -139,7 +96,6 @@ Audits = {
           allowBlank: false,
           fieldLabel: 'Start Date',
           name: 'start_date',
-          vtype: 'daterange',
           width: 350
         }, {
           xtype: 'slider',
@@ -158,7 +114,6 @@ Audits = {
           allowBlank: false,
           fieldLabel: 'End Date',
           name: 'end_date',
-          vtype: 'daterange',
           width: 350
         }, {
           xtype: 'checkbox',
@@ -194,32 +149,54 @@ Audits = {
             name: 'customers',
             width: 886
           }]
-        }//, {
-        //   xtype: 'panel',
-        //   padding: '10 50',
-        //   title: 'Upload Customer Excel File',
-        //   items: [{
-        //     xtype: 'filefield',
-        //     width: 365,
-        //     fieldLabel: 'Excel File'
-        //   }]
-        // }
-        ]
+        }]
       }],
       buttons: [{
         disabled: true,
         formBind: true,
         margin: '8 0 0',
         text: 'Save Audit',
-        handler: this.saveAudit,
-        scope: this
+        handler: function () {
+          var form = Ext.getCmp('formPanel').getForm(),
+            formValues = form.getValues(),
+            dirty = form.isDirty(),
+            start_date = new Date(formValues.start_date),
+            end_date = new Date(formValues.end_date),
+            today = new Date(),
+            customers = formValues.customers.split('\n'),
+            gridPanel = Ext.getCmp('gridPanel'),
+            selectedRecord = gridPanel.getSelectionModel().getSelection()[0],
+            auditStore = Ext.data.StoreManager.lookup('AuditStore');
+
+          formValues.created = Ext.Date.format(today, 'Y-m-d H:i:s');
+          formValues.start_date = Ext.Date.format(start_date, 'Y-m-d');
+          formValues.end_date = Ext.Date.format(end_date, 'Y-m-d');
+
+          console.log(selectedRecord);
+
+          if (form.isValid()) {
+            if (selectedRecord) {
+              selectedRecord.set(formValues);
+              gridPanel.getStore().sync();
+            } else {
+              gridPanel.getStore().add(formValues);
+            }
+          }
+
+          task = new Ext.util.DelayedTask(function () {
+            gridPanel.getStore().load();
+          });
+          task.delay(250);
+          form.reset();
+        }
       }]
     });
 
-    this.auditGridPanel = Ext.create('Ext.grid.Panel', {
+    Ext.create('Ext.grid.Panel', {
       renderTo: 'audits',
       collapsible: true,
       height: 250,
+      id: 'gridPanel',
       store: 'AuditStore',
       title: 'Audits',
       width: 950,
@@ -277,22 +254,116 @@ Audits = {
           icon: '/img/icons/add.png',
           id: 'newAuditBtn',
           text: 'New Audit',
-          handler: this.newAudit,
-          scope: this
+          handler: function () {
+            var selModel = Ext.getCmp('gridPanel').getSelectionModel(),
+              editAuditBtn = Ext.getCmp('editAuditBtn'),
+              deleteAuditBtn = Ext.getCmp('deleteAuditBtn'),
+              excelDownloadBtn = Ext.getCmp('excelDownloadBtn'),
+              formPanel = Ext.getCmp('formPanel'),
+              form = formPanel.getForm(),
+              slider = Ext.getCmp('auditorSlider'),
+              sliderValue = slider.originalValue,
+              dirtyFields = form.getValues(false, true);
+
+            if (formPanel.collapsed) {
+              formPanel.expand(true);
+            }
+
+            if (Ext.Object.getSize(dirtyFields) !== 0) {
+              Ext.MessageBox.show({
+                title: 'Are you sure?',
+                msg: 'The audit form has not been saved, would you like to continue anyway?',
+                buttons: Ext.MessageBox.YESNO,
+                icon: Ext.MessageBox.WARNING,
+                scope: this,
+                fn: function (btn) {
+
+                  if (btn === 'yes') {
+
+                    form.getFields().each(function (field) {
+                      field.originalValue = undefined;
+                      if (field.name === 'number_of_auditors') {
+                        field.originalValue = 1;
+                      }
+                    });
+
+                    form.reset().clearInvalid();
+                  }
+                }
+              });
+            } else {
+              form.getFields().each(function (field) {
+                field.originalValue = undefined;
+                if (field.name === 'number_of_auditors') {
+                  field.originalValue = 1;
+                }
+              });
+
+              form.reset().clearInvalid();
+            }
+
+            deleteAuditBtn.disable();
+            editAuditBtn.disable();
+            excelDownloadBtn.disable();
+            slider.enable();
+
+            selModel.deselectAll();
+            this.selectedRecord = null;
+          },
         }, {
           disabled: true,
           icon: '/img/icons/edit.png',
           id: 'editAuditBtn',
           text: 'Edit Audit',
-          handler: this.editAudit,
-          scope: this
+          handler: function () {
+            var slider = Ext.getCmp('auditorSlider'),
+              customersField = Ext.getCmp('customersField'),
+              showDate = Ext.getCmp('showDateColumn'),
+              formPanel = Ext.getCmp('formPanel'),
+              form = formPanel.getForm(),
+              selectedRecord = Ext.getCmp('gridPanel').getSelectionModel().getSelection()[0],
+              customers;
+
+            if (formPanel.collapsed) {
+              formPanel.expand(true);
+            }
+
+            formPanel.loadRecord(selectedRecord);
+
+            if (selectedRecord.data.show_date_column) {
+              showDate.setValue(true);
+            }
+
+            customers = '';
+            selectedRecord.users().each(function (user) {
+              var formattedString = user.get('ssn') + "\n";
+              customers += formattedString;
+            });
+
+            customersField.setValue(customers);
+            slider.disable();
+          }
         }, {
           disabled: true,
           icon: '/img/icons/delete.png',
           id: 'deleteAuditBtn',
           text: 'Delete Audit',
-          handler: this.deleteAudit,
-          scope: this
+          handler: function () {
+            var gridPanel = Ext.getCmp('gridPanel'),
+              selectedRecord = gridPanel.getSelectionModel().getSelection()[0],
+              form = Ext.getCmp('formPanel').getForm();
+
+            selectedRecord.set('disabled', 1);
+            gridPanel.getStore().sync();
+
+            var task = new Ext.util.DelayedTask(function () {
+              gridPanel.getStore().load();
+            });
+
+            task.delay(250);
+            form.reset();
+            gridPanel.getSelectionModel().deselectAll();
+          }
         }, {
           xtype: 'splitbutton',
           disabled: true,
@@ -304,14 +375,24 @@ Audits = {
               icon: '/img/icons/excel.png',
               id: 'auditorListBtn',
               text: 'Auditor List',
-              handler: this.exportBtnClicked,
-              scope: this
+              handler: function () {
+                var gridPanel = Ext.getCmp('gridPanel'),
+                  selectedRecord = gridPanel.getSelectionModel().getSelection()[0],
+                  auditId = selectedRecord.data.id;
+
+                window.location = '/admin/audits/view/' + auditId + '/auditors';
+              }
             }, {
               icon: '/img/icons/excel.png',
               id: 'customerListBtn',
               text: 'Customer List',
-              handler: this.exportBtnClicked,
-              scope: this
+              handler: function () {
+                var gridPanel = Ext.getCmp('gridPanel'),
+                  selectedRecord = gridPanel.getSelectionModel().getSelection()[0],
+                  auditId = selectedRecord.data.id;
+
+                window.location = '/admin/audits/view/' + auditId + '/customers';
+              }
             }]
           })
         }]
@@ -322,156 +403,41 @@ Audits = {
         store: Ext.data.StoreManager.lookup('AuditStore')
       }],
       listeners: {
-        itemclick: {
-          fn: this.gridItemClicked,
-          scope: this
-        }
-      }
-    });
-  },
+        itemclick: function () {
+          var editAuditBtn = Ext.getCmp('editAuditBtn'),
+            excelDownloadBtn = Ext.getCmp('excelDownloadBtn'),
+            deleteAuditBtn = Ext.getCmp('deleteAuditBtn'),
+            slider = Ext.getCmp('auditorSlider'),
+            customersField = Ext.getCmp('customersField'),
+            showDate = Ext.getCmp('showDateColumn'),
+            customers,
+            selectedRecord = Ext.getCmp('gridPanel').getSelectionModel().getSelection()[0],
+            formPanel = Ext.getCmp('formPanel'),
+            form = formPanel.getForm();
 
-  newAudit: function () {
-    "use strict";
-    var selModel = this.auditGridPanel.getSelectionModel(),
-      editAuditBtn = Ext.getCmp('editAuditBtn'),
-      deleteAuditBtn = Ext.getCmp('deleteAuditBtn'),
-      excelDownloadBtn = Ext.getCmp('excelDownloadBtn'),
-      form = this.auditFormPanel.getForm(),
-      slider = Ext.getCmp('auditorSlider'),
-      sliderValue = slider.originalValue,
-      dirtyFields = form.getValues(false, true);
+          editAuditBtn.enable();
+          excelDownloadBtn.enable();
+          deleteAuditBtn.enable();
 
-    if (this.auditFormPanel.collapsed) {
-      this.auditFormPanel.expand(true);
-    }
-
-    if (Ext.Object.getSize(dirtyFields) !== 0) {
-      Ext.MessageBox.show({
-        title: 'Are you sure?',
-        msg: 'The audit form has not been saved, would you like to continue anyway?',
-        buttons: Ext.MessageBox.YESNO,
-        icon: Ext.MessageBox.WARNING,
-        scope: this,
-        fn: function (btn) {
-          if (btn === 'yes') {
-            this.resetForm();
+          if (formPanel.collapsed) {
+            formPanel.expand(true);
           }
+
+          formPanel.loadRecord(selectedRecord);
+
+          if (selectedRecord.data.show_date_column) {
+            showDate.setValue(true);
+          }
+
+          customers = '';
+          selectedRecord.users().each(function (user) {
+            var formattedString = user.get('ssn') + "\n";
+            customers += formattedString;
+          });
+
+          customersField.setValue(customers);
+          slider.disable();
         }
-      });
-    } else {
-      this.resetForm();
-    }
-
-    deleteAuditBtn.disable();
-    editAuditBtn.disable();
-    excelDownloadBtn.disable();
-    slider.enable();
-
-    selModel.deselectAll();
-    this.selectedRecord = null;
-  },
-
-  editAudit: function () {
-    "use strict";
-    var slider = Ext.getCmp('auditorSlider'),
-      customersField = Ext.getCmp('customersField'),
-      showDate = Ext.getCmp('showDateColumn'),
-      customers;
-
-    if (this.auditFormPanel.collapsed) {
-      this.auditFormPanel.expand(true);
-    }
-
-    this.auditFormPanel.loadRecord(this.selectedRecord);
-
-    if (this.selectedRecord.data.show_date_column) {
-      showDate.setValue(true);
-    }
-
-    customers = '';
-    this.selectedRecord.users().each(function (user) {
-      var formattedString = user.get('ssn') + "\n";
-      customers += formattedString;
-    });
-
-    customersField.setValue(customers);
-    slider.disable();
-  },
-
-  deleteAudit: function () {
-    "use strict";
-
-    this.selectedRecord.set('disabled', 1);
-    this.selectedRecord.save();
-    this.AuditStore.sync();
-  },
-
-  saveAudit: function () {
-    "use strict";
-    var form = this.auditFormPanel.getForm(),
-      formValues = form.getValues(),
-      dirty = form.isDirty(),
-      start_date = new Date(formValues.start_date),
-      end_date = new Date(formValues.end_date),
-      today = new Date(),
-      customers = formValues.customers.split('\n');
-
-    formValues.created = Ext.Date.format(today, 'Y-m-d H:i:s');
-    formValues.start_date = Ext.Date.format(start_date, 'Y-m-d');
-    formValues.end_date = Ext.Date.format(end_date, 'Y-m-d');
-
-    if (form.isValid()) {
-      if (this.selectedRecord) {
-        this.selectedRecord.set(formValues);
-        this.selectedRecord.save();
-      } else {
-        this.auditStore.add(formValues);
-      }
-    }
-  },
-
-  exportBtnClicked: function (btn, event) {
-    var auditId = this.selectedRecord.data.id;
-
-    switch (btn.id) {
-      case 'auditorListBtn':
-        window.location = '/admin/audits/view/' + auditId + '/auditors';
-        break;
-
-      case 'customerListBtn':
-        window.location = '/admin/audits/view/' + auditId + '/customers';
-        break;
-    }
-  },
-
-  gridItemClicked: function (grid, rec) {
-    "use strict";
-    var editAuditBtn = Ext.getCmp('editAuditBtn'),
-      excelDownloadBtn = Ext.getCmp('excelDownloadBtn'),
-      deleteAuditBtn = Ext.getCmp('deleteAuditBtn');
-
-    editAuditBtn.enable();
-    excelDownloadBtn.enable();
-    deleteAuditBtn.enable();
-
-    this.selectedRecord = rec;
-    this.editAudit();
-  },
-
-  resetForm: function () {
-    "use strict";
-
-    var form = this.auditFormPanel.getForm();
-
-    form.getFields().each(function (field) {
-      field.originalValue = undefined;
-      if (field.name === 'number_of_auditors') {
-        field.originalValue = 1;
       }
     });
-
-    form.reset().clearInvalid();
-  }
-};
-
-Ext.onReady(Audits.init, Audits);
+});
