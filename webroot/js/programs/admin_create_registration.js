@@ -1120,14 +1120,17 @@ instructions = Ext.create('Ext.panel.Panel', {
           var store = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
             program = Ext.data.StoreManager.lookup('ProgramStore'),
             programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
+            programStep,
             programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
             instructionWindow;
+
+          programStep = programStepStore.findRecord('parent_id', /\w+/);
 
           stepCombo = Ext.create('Ext.data.Store', {
             fields: ['id', 'name'],
             data: [{
-              id: programStepStore.last().data.id,
-              name: programStepStore.last().data.name
+              id: programStep.data.id,
+              name: programStep.data.name
             }]
           });
 
@@ -1222,7 +1225,7 @@ instructions = Ext.create('Ext.panel.Panel', {
     dockedItems: [{
       xtype: 'toolbar',
       dock: 'bottom',
-      items: [{
+      items: ['->', {
         text: 'Save Instruction',
         id: 'saveBtn',
         handler: function () {
@@ -1256,6 +1259,7 @@ instructions = Ext.create('Ext.panel.Panel', {
       editor = Ext.getCmp('editor');
 
       programInstructionStore.sync();
+      return true;
   }
 });
 
@@ -1267,7 +1271,13 @@ navigate = function (panel, direction) {
     activeItem = layout.activeItem;
 
   if (direction === 'finish' && activeItem.process()) {
-    return;
+    Ext.Msg.alert('Success', 'Your program has been successfully saved.', function () {
+      var task = new Ext.util.DelayedTask(function () {
+        window.location = '/admin/programs';
+      });
+
+      task.delay(500);
+    });
   }
 
   if (direction === 'prev' || activeItem.process()) {
