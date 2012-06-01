@@ -1,4 +1,6 @@
 <?php
+// TODO - Remove chromephp
+App::import('Vendor', 'chromephp/chromephp');
 
 class ProgramsController extends AppController {
 
@@ -119,7 +121,160 @@ class ProgramsController extends AppController {
 			$data['instructions'] = $instructions[0];
 		}
 		$this->set($data);
+	}
 
+	public function admin_create_registration() {
+		if ($this->RequestHandler->isAjax()) {
+			$programData = json_decode($this->params['form']['programs'], true);
+			unset($programData['id'], $programData['created'], $programData['modified']);
+
+			$this->data['Program'] = $programData;
+
+			$this->Program->create();
+			$program = $this->Program->save($this->data);
+
+			if ($this->Program->save($program)) {
+				$programId = $this->Program->id;
+				$data['programs'] = $program['Program'];
+				$data['programs']['id'] = $programId;
+
+				$this->createRegistrationProgramSteps($programId, $program['Program']['name']);
+
+				$data['success'] = true;
+			} else {
+				$data['success'] = false;
+			}
+
+			$this->set('data', $data);
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
+
+	public function admin_update_registration() {
+		if ($this->RequestHandler->isAjax()) {
+			$programData = json_decode($this->params['form']['programs'], true);
+
+			$this->Program->id = $programData['id'];
+			unset($programData['id']);
+
+			$this->Program->set($programData);
+
+			if ($this->Program->save()) {
+				$data['success'] = true;
+			} else {
+				$data['success'] = false;
+			}
+
+			$this->set('data', $data);
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
+
+	public function admin_create_orientation() {
+		if ($this->RequestHandler->isAjax()) {
+			$programData = json_decode($this->params['form']['programs'], true);
+			unset($programData['id'], $programData['created'], $programData['modified']);
+
+			$this->data['Program'] = $programData;
+
+			$this->Program->create();
+			$program = $this->Program->save($this->data);
+
+			if ($this->Program->save($program)) {
+				$programId = $this->Program->id;
+				$data['programs'] = $program['Program'];
+				$data['programs']['id'] = $programId;
+
+				$this->createRegistrationProgramSteps($programId, $program['Program']['name']);
+
+				$data['success'] = true;
+			} else {
+				$data['success'] = false;
+			}
+
+			$this->set('data', $data);
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
+
+	public function admin_upload_media() {
+		$this->layout = 'ajax';
+		$storagePath = substr(APP, 0, -1) . Configure::read('Program.media.path');
+		$publicPath = WWW_ROOT . 'files/public/programs/';
+
+		//FireCake::log($_FILES);
+
+		switch ($_FILES['media']['type']) {
+			case 'application/pdf':
+				$path = $storagePath;
+				$ext = '.pdf';
+				break;
+
+			case 'video/x-flv':
+				$path = $storagePath;
+				$ext = '.flv';
+				break;
+
+			case 'application/x-shockwave-flash':
+				$path = $publicPath;
+				$ext = '.swf';
+				break;
+
+			default:
+				break;
+		}
+
+		$filename = date('YmdHis') . $ext;
+
+		if (!is_dir($path)) {
+			mkdir($path);
+		}
+
+		if (!file_exists($path . $filename)) {
+			$url = $path . $filename;
+			if (!move_uploaded_file($_FILES['media']['tmp_name'], $url)) {
+				$data['success'] = false;
+			} else {
+				$data['success'] = true;
+				$data['url'] = $filename;
+			}
+		}
+
+		$this->set(compact('data'));
+		return $this->render(null, null, '/elements/ajaxreturn');
+	}
+
+	private function createRegistrationProgramSteps($programId, $programName) {
+		$this->Program->ProgramStep->create();
+
+		$parentStepData = array(
+			'ProgramStep' => array(
+				'program_id' => $programId
+			)
+		);
+
+		$parentStep = $this->Program->ProgramStep->save($parentStepData);
+
+		if ($parentStep) {
+			$parentId = $this->Program->ProgramStep->id;
+			$this->Program->ProgramStep->create();
+			$formStepData = array(
+				'ProgramStep' => array(
+					'program_id' => $programId,
+					'parent_id' => $parentId,
+					'name' => "$programName registration form",
+					'type' => 'form'
+				)
+			);
+
+			$formStep = $this->Program->ProgramStep->save($formStepData);
+
+			if ($formStep) {
+				$data['Programs']['program_steps'] = $formStep['ProgramStep'];
+			}
+		}
+
+		return true;
 	}
 }
 

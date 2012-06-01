@@ -100,8 +100,8 @@ class UsersController extends AppController {
         }
         if($this->Auth->user() &&  $this->params['action'] == 'admin_dashboard' ) {
             if(! $this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Users/admin_dashboard', '*')) {
-            $this->Session->setFlash(__('You are not authorized to access the admin dashboard.', true) , 'flash_failure') ;
-            $this->redirect('/');
+                $this->Session->setFlash(__('You are not authorized to access the admin dashboard.', true) , 'flash_failure') ;
+                $this->redirect('/');
             }
         }
         if($this->Auth->user() && $this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Users/admin_resolve_login_issues', '*') == true) {
@@ -425,12 +425,16 @@ class UsersController extends AppController {
             }
         }
         if($this->Auth->user()){
-            $role = $this->User->Role->find('first', array(
-                'fields' => array('Role.name'),
-                'conditions' => array('Role.id' => $this->Auth->user('role_id'))
-            ));
-            $this->Session->write('Auth.User.role_name', $role['Role']['name']);
-            if(preg_match('/auditor/i', $this->Auth->user('role_name'))) {
+            if ($this->Auth->user('role_id') > 3) {
+                $this->User->Role->recursive = -1;
+                $role = $this->User->Role->find('first', array(
+                    'fields' => array('Role.name'),
+                    'conditions' => array('Role.id' => $this->Auth->user('role_id'))
+                ));
+                $this->Session->write('Auth.User.role_name', $role['Role']['name']);
+            }
+
+            if (preg_match('/auditor/i', $this->Auth->user('role_name'))) {
                 $this->Transaction->createUserTransaction('Auditor', null, null, 'Logged into auditor dashboard');
                 $this->redirect(array('action' => 'dashboard', 'auditor' => true));
 			} 

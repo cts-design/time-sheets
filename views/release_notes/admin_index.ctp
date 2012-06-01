@@ -29,7 +29,6 @@
     </ol>
     <hr />
     <h1>Release 3.3.1 (4-05-12)</h1>
-    <h1>Release 3.3.1 (4-05-12)</h1>
     <h2>Minor feature enhancements</h2>
     <ol>
         <li>Added Atlas Alerts Client download to alerts interface.</li>
