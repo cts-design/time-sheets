@@ -161,7 +161,7 @@ class ProgramResponsesController extends AppController {
 					$program['currentStep'] = $this->currentStep[0];
 					$user = $this->Auth->user();
 					$program['User'] = $user['User'];
-					//$this->ProgramResponse->Program->ProgramDocument->queueProgramDocs($programDocuments, $program, $this->data);
+					$this->ProgramResponse->Program->ProgramDocument->queueProgramDocs($programDocuments, $program, $this->data);
 				}
 				$this->Transaction->createUserTransaction('Programs', null, null,
 					'Completed ' .  $this->currentStep[0]['name'] . ' for program ' . $program['Program']['name']);
