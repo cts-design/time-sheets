@@ -3,7 +3,7 @@ App::import('Vendor', 'wkhtmltopdf/wkhtmltopdf');
 
 class DocumentGenerationWorkerTask extends QueueShell {
 	public $uses = array('Queue.Job', 'FiledDocument');
-	public $tubes = array('pdf_snapshot', 'certificate');
+	public $tubes = array('snapshot', 'certificate');
 	
 	public function execute() {
 		while(true) {
@@ -20,7 +20,7 @@ class DocumentGenerationWorkerTask extends QueueShell {
 						$processed = $this->generateSnapshot($job['Job']);	
 						break;
 					case 'certificate':
-						$processed = $this->generateForm($job['Job']);
+						$processed = $this->generateProgramDoc($job['Job']);
 						break;
 				}
 				if($processed) {
@@ -46,7 +46,7 @@ class DocumentGenerationWorkerTask extends QueueShell {
 				$pdf->add_html($html);
 				$pdf->set_toc($data['toc']);
 				$pdf->args_add('--header-spacing', '5');
-				$pdf->args_add('--header-left', $data['User']['last_name_last_4']);
+				$pdf->args_add('--header-left', $data['User']['name_last4']);
 				$pdf->args_add('--header-center', '[date]');
 				$pdf->args_add('--header-right', Configure::read('Company.name'));
 				$pdf->args_add('--footer-center', 'Page: [page] of [topage]') ;
@@ -71,9 +71,19 @@ class DocumentGenerationWorkerTask extends QueueShell {
 				$this->data['FiledDocument']['filename'] = $pdfFile;
 				$this->data['FiledDocument']['cat_1'] = $data['ProgramDocument']['cat_1'];
 				$this->data['FiledDocument']['cat_2'] = $data['ProgramDocument']['cat_2'];
+				$this->data['FiledDocument']['cat_3'] = $data['ProgramDocument']['cat_3'];
 				$this->data['ProgramResponseDoc']['program_response_id'] = $data['ProgramResponse']['id'];
-				$this->data['ProgramResponseDoc']['type'] = 'snapshot';
+				$this->data['ProgramResponseDoc']['type'] = 'system_generated';
 				$this->data['ProgramResponseDoc']['doc_id'] = $docId;
+				if($data['ProgramDocument']['cat_3']) {
+					$this->data['ProgramResponseDoc']['cat_id'] = $data['ProgramDocument']['cat_3'];
+				}
+				elseif($data['ProgramDocument']['cat_2']) {
+					$this->data['ProgramResponseDoc']['cat_id'] = $data['ProgramDocument']['cat_2'];
+				}
+				else {
+					$this->data['ProgramResponseDoc']['cat_id'] = $data['ProgramDocument']['cat_1'];
+				}
 				if($this->FiledDocument->saveAll($this->data)) {
 					return true;
 				}
@@ -101,7 +111,7 @@ class DocumentGenerationWorkerTask extends QueueShell {
 		return $html;
 	}
 
-	private function generateForm($data) {
+	private function generateProgramDoc($data) {
 		foreach($data['User'] as $k => $v) {
 			if(!preg_match('[\@]', $v)) {
 				$data['User'][$k] = ucwords($v);
@@ -174,7 +184,7 @@ class DocumentGenerationWorkerTask extends QueueShell {
 				}
 				$this->data['ProgramResponseDoc']['program_response_id'] = $data['ProgramResponse']['id'];
 				$this->data['ProgramResponseDoc']['doc_id'] = $data['docId'];
-				$this->data['ProgramResponseDoc']['type'] = $data['ProgramDocument']['type'];
+				$this->data['ProgramResponseDoc']['type'] = 'system_generated';
 				if($this->FiledDocument->saveAll($this->data)) {
 					return true;
 				}

@@ -109,6 +109,17 @@ strong {
   margin: 0px 0px 5px 0px;
   min-height: 400px;
   overflow: hidden;
+  color: white;
+
+}
+
+#content {
+  width: 970px;
+  color: #333;
+  background: #fff;
+  margin: 0px 0px 5px 0px;
+  min-height: 400px;
+  overflow: hidden;
 }
 
 #content > div,
@@ -819,24 +830,31 @@ div.actions .ui-button-text {
 }
 
 /* Programs  */
-#ProgramResponseUserInfo {padding: 10px; width: 500px;}
+#ProgramResponseUserInfo {padding: 10px; width: 440px;}
 #ProgramResponseUserInfo p {margin-bottom: 5px;}
 #ProgramResponseUserInfo .label {width: 100px; text-align: right; margin-right: 10px;}
 
-#ProgramAnswers table {
-  margin: 10px 0 5px 5px
+#ProgramAnswers {
+  padding: 10px;
 }
 
-#ProgramAnswers table tr {
-  width: 100%;
-  float: left;
-  margin-bottom: 5px;
+#ProgramAnswers h2 {
+  margin-bottom: 10px;
 }
 
-#ProgramAnswers .label {width: 200px; text-align: right; font-weight: bold}
+#ProgramAnswers .label {
+  width: 200px;
+  text-align: right;
+  font-weight: bold;
+  margin: 0 5px 0 5px;
+}
 
 #ProgramResponseDocs {
   padding: 10px;
+}
+
+#ProgramResponseDocs h2 {
+  margin-bottom: 10px;
 }
 
 .response-doc {
@@ -844,11 +862,15 @@ div.actions .ui-button-text {
   margin-bottom: 10px;
 }
 
-#ProgramPaperForms {
+#SystemGeneratedDocs{
   padding: 10px;
 }
 
-.paper-form {
+#SystemGeneratedDocs h2 {
+  margin-bottom: 10px;
+}
+
+.system-generated-doc{
   border-bottom: 1px solid #666666;
   margin-bottom: 10px;
 }

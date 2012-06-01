@@ -6,7 +6,6 @@ Ext.onReady(function() {
     }));
 
 	var responseId = null, loaded = null, itemsPerPage = 10;
-
 	Ext.define('ProgramResponse', {
 		extend: 'Ext.data.Model',
 		fields : ['id', 'User-lastname', {
@@ -32,7 +31,7 @@ Ext.onReady(function() {
 			totalProperty: 'totalCount'
 		},
 		extraParams : {
-			tab : 'open',
+			status: 'incomplete',
 			dateFrom : '',
 			dateTo : '',
 			id : '',
@@ -242,19 +241,19 @@ Ext.onReady(function() {
 				editor.reset();
 				switch (newCard.title) {
 					case 'Open':
-						programResponseProxy.extraParams.tab = 'open';
+						programResponseProxy.extraParams.status= 'incomplete';
 						break;
 					case 'Closed':
-						programResponseProxy.extraParams.tab = 'closed';
+						programResponseProxy.extraParams.status= 'complete';
 						break;
 					case 'Expired':
-						programResponseProxy.extraParams.tab = 'expired';
+						programResponseProxy.extraParams.status= 'expired';
 						break;
 					case 'Pending Approval':
-						programResponseProxy.extraParams.tab = 'pending_approval';
+						programResponseProxy.extraParams.status= 'pending_approval';
 						break;
 					case 'Not Approved':
-						programResponseProxy.extraParams.tab = 'not_approved';
+						programResponseProxy.extraParams.status= 'not_approved';
 						break;
 				}
 				if(loaded) {
@@ -266,7 +265,7 @@ Ext.onReady(function() {
 					return false;
 				}
 			},
-			beforeshow: function() {
+			beforerender: function() {
 				if(! approvalPermission) {
 					this.remove(notApprovedProgramResponsesGrid);
 					this.remove(pendingApprovalProgramResponsesGrid);

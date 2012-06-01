@@ -13,6 +13,14 @@ class ProgramResponsesController extends AppController {
 	function beforeFilter() {
 		parent::beforeFilter();
 		$this->ProgramResponse->Program->ProgramStep->ProgramFormField->recursive = 2;
+		if($this->params['action'] === 'media') {
+			$mediaValidate = array('viewed_media' => array(
+            'rule' => array('comparison', '>', 0),
+            'message' => 'You must check the box to continue the online process.
+                If you do not completely understand the information please review the instructions
+                at the top of this page.'));
+			$this->ProgramResponse->modifyValidate($mediaValidate);
+		}
 		if(!empty($this->params['pass'][1]) && ($this->params['action'] === 'form' || $this->params['action'] === 'edit_form')){
 			$query = $this->ProgramResponse->Program->ProgramStep->ProgramFormField->findAllByProgramStepId($this->params['pass'][1]);
 			if($query){
@@ -42,7 +50,8 @@ class ProgramResponsesController extends AppController {
 					'admin_not_approved',
 					'admin_reset_form',
 					'admin_allow_new_response',
-					'admin_generate_form');
+					'admin_generate_form',
+					'admin_get_form_activities');
 			}
 	}
 
@@ -51,6 +60,7 @@ class ProgramResponsesController extends AppController {
 		$this->whatsNext($program, $stepId); 
         
 		$programDocuments = Set::extract('/ProgramDocument[program_step_id='.$this->currentStep[0]['id'].']', $program);
+
 		if(!empty($this->data)) {
             $this->data['ProgramResponse']['id'] = $program['ProgramResponse'][0]['id'];
 			$this->data['ProgramResponse']['next_step_id'] = null;
@@ -65,13 +75,12 @@ class ProgramResponsesController extends AppController {
 			}
 			else {
 				if($program['Program']['approval_required']) {
-					$this->data['ProgramResponse']['status'] = 'pending_approval';
-					$emailType = 'pending_approval';
+					$status = 'pending_approval';
 				}
 				else {
-					$this->data['ProgramResponse']['status'] = 'complete';
-					$emailType = 'complete';
+					$status = 'complete';
 				}
+				$this->data['ProgramResponse']['status'] = $status;
 			}
 			// TODO: make sure validation works
 			if($this->ProgramResponse->saveAll($this->data)) {
@@ -81,24 +90,19 @@ class ProgramResponsesController extends AppController {
 					$program['User'] = $user['User'];
 					$this->ProgramResponse->Program->ProgramDocument->queueProgramDocs($programDocuments, $program, $this->data);
 				}
-				if(isset($emailType)) {
-					// TODO: get program emails and intructions from the $program array
-					$this->ProgramResponse->Program->ProgramEmail->recursive = -1;
-					$responseStatusEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array(
-						'conditions' => array(
-							'ProgramEmail.program_id' => $program['Program']['id'],
-							'ProgramEmail.type' => $emailType)));
-					if($responseStatusEmail) {
-						$this->Notifications->sendProgramEmail($responseStatusEmail['ProgramEmail']);
-					}
-				}
 				$this->Transaction->createUserTransaction('Programs', null, null,
 					'Completed ' .  $this->currentStep[0]['name'] . ' for program ' . $program['Program']['name']);
-				// TODO: get step email from $program array 	
-				/*
-				if(! empty($step['ProgramEmail'])) {
-					$this->Notifications->sendProgramEmail($step['ProgramEmail']);
-				} */
+
+				$stepEmail = Set::extract('/ProgramEmail[program_step_id='.$stepId.']', $program);
+				if(!empty($stepEmail)) {
+					$this->Notifications->sendProgramEmail($stepEmail[0]['ProgramEmail']);
+				}
+				if(isset($status)) {
+					$statusEmail = Set::extract('/ProgramEmail[type='.$status.']', $program);
+					if(!empty($statusEmail)) {
+						$this->Notifications->sendProgramEmail($statusEmail[0]['ProgramEmail']);
+					}
+				}
 				$this->Session->setFlash(__('Saved', true), 'flash_success');
 				if(isset($redirect)) {
 					$this->redirect($redirect);
@@ -130,11 +134,11 @@ class ProgramResponsesController extends AppController {
 		$this->whatsNext($program, $stepId); 
 		$programDocuments = Set::extract('/ProgramDocument[program_step_id='.$this->currentStep[0]['id'].']', $program);
 		$responseActivity = Set::extract('/ProgramResponseActivity[program_step_id=' . $stepId .']', $program['ProgramResponse'][0]);
-       debug($responseActivity); 
 		if(!empty($this->data)) {
             $this->data['ProgramResponse']['id'] = $program['ProgramResponse'][0]['id'];
-			$this->data['ProgramResponseActivity'][0]['id'] = 4; 
 			$this->data['ProgramResponseActivity'][0]['answers'] = json_encode($this->data['ProgramResponseActivity'][0]);
+			$this->data['ProgramResponseActivity'][0]['id'] = $this->data['ProgramResponseActivity']['id']; 
+			unset($this->data['ProgramResponseActivity']['id']);
 			$this->data['ProgramResponseActivity'][0]['status'] = 'complete';
 			$this->data['ProgramResponseActivity'][0]['program_step_id'] = $this->currentStep[0]['id'];
 			$this->data['ProgramResponseActivity'][0]['type'] = 'form';
@@ -144,13 +148,12 @@ class ProgramResponsesController extends AppController {
 			}
 			else {
 				if($program['Program']['approval_required']) {
-					$this->data['ProgramResponse']['status'] = 'pending_approval';
-					$emailType = 'pending_approval';
+					$status = 'pending_approval';
 				}
 				else {
-					$this->data['ProgramResponse']['status'] = 'complete';
-					$emailType = 'complete';
+					$status = 'complete';
 				}
+				$this->data['ProgramResponse']['status'] = $status;
 			}
 			// TODO: make sure validation works
 			if($this->ProgramResponse->saveAll($this->data)) {
@@ -158,27 +161,21 @@ class ProgramResponsesController extends AppController {
 					$program['currentStep'] = $this->currentStep[0];
 					$user = $this->Auth->user();
 					$program['User'] = $user['User'];
-					$this->ProgramResponse->Program->ProgramDocument->queueProgramDocs($programDocuments, $program, $this->data);
-				}
-				if(isset($emailType)) {
-					// TODO: get program emails and intructions from the $program array
-					$this->ProgramResponse->Program->ProgramEmail->recursive = -1;
-					$responseStatusEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array(
-						'conditions' => array(
-							'ProgramEmail.program_id' => $program['Program']['id'],
-							'ProgramEmail.type' => $emailType)));
-					if($responseStatusEmail) {
-						$this->Notifications->sendProgramEmail($responseStatusEmail['ProgramEmail']);
-					}
+					//$this->ProgramResponse->Program->ProgramDocument->queueProgramDocs($programDocuments, $program, $this->data);
 				}
 				$this->Transaction->createUserTransaction('Programs', null, null,
 					'Completed ' .  $this->currentStep[0]['name'] . ' for program ' . $program['Program']['name']);
-				// TODO: get step email from $program array 	
-				/*
-				if(! empty($step['ProgramEmail'])) {
-					$this->Notifications->sendProgramEmail($step['ProgramEmail']);
-				} */
 				$this->Session->setFlash(__('Saved', true), 'flash_success');
+				$stepEmail = Set::extract('/ProgramEmail[program_step_id='.$stepId.']', $program);
+				if(!empty($stepEmail)) {
+					$this->Notifications->sendProgramEmail($stepEmail[0]['ProgramEmail']);
+				}
+				if(isset($status)) {
+					$statusEmail = Set::extract('/ProgramEmail[type='.$status.']', $program);
+					if(!empty($statusEmail)) {
+						$this->Notifications->sendProgramEmail($statusEmail[0]['ProgramEmail']);
+					}
+				}
 				if(isset($redirect)) {
 					$this->redirect($redirect);
 				}
@@ -201,6 +198,7 @@ class ProgramResponsesController extends AppController {
         $data['title_for_layout'] = $this->currentStep[0]['name'];
 		if(empty($this->data['ProgramResponseActivity'])) {
 			$this->data['ProgramResponseActivity'][0] = json_decode($responseActivity[0]['ProgramResponseActivity']['answers'], true);
+			$this->data['ProgramResponseActivity']['id'] = $responseActivity[0]['ProgramResponseActivity']['id'];
 		}
 		$this->set($data);
 	}
@@ -217,28 +215,32 @@ class ProgramResponsesController extends AppController {
 			$this->data['ProgramResponseActivity'][0]['type'] = 'media';
 			if(isset($this->nextStep)) {
 				$this->data['ProgramResponse']['next_step_id'] = $this->nextStep[0]['id'];
-				// TODO: add the step id to the redirect below. 
 				$redirect = array('action' => $this->nextStep[0]['type'], $programId, $this->nextStep[0]['id']);
 			}
 			else {
 				if($program['Program']['approval_required']) {
-					$this->data['ProgramResponse']['status'] = 'pending_approval';
+					$status = 'pending_approval';
 				}
 				else {
-					$this->data['ProgramResponse']['status'] = 'complete';
+					$status = 'complete';
 				}
+				$this->data['ProgramResponse']['status'] = $status;
 			}
 			// TODO: make sure validation works
             if($this->ProgramResponse->saveAll($this->data)) {
                 $this->Transaction->createUserTransaction('Programs', null, null,
                     'Completed' . $this->currentStep[0]['name']);
-                $email = $this->ProgramResponse->Program->ProgramEmail->find('first', array('conditions' => array(
-                    'ProgramEmail.program_id' => $programId,
-                    'ProgramEmail.type' => 'media')));
-                if($email) {
-					// TODO: send email using the notifications component
-                }
                 $this->Session->setFlash(__('Saved', true), 'flash_success');
+				$stepEmail = Set::extract('/ProgramEmail[program_step_id='.$stepId.']', $program);
+				if(!empty($stepEmail)) {
+					$this->Notifications->sendProgramEmail($stepEmail[0]['ProgramEmail']);
+				}
+				if(isset($status)) {
+					$statusEmail = Set::extract('/ProgramEmail[type='.$status.']', $program);
+					if(!empty($statusEmail)) {
+						$this->Notifications->sendProgramEmail($statusEmail[0]['ProgramEmail']);
+					}
+				}
 				if(isset($redirect)) {
 					$this->redirect($redirect);
 				}
@@ -528,35 +530,8 @@ class ProgramResponsesController extends AppController {
 							break;
 					}
 				}
-				if(!empty($this->params['url']['tab'])) {
-					switch($this->params['url']['tab']) {
-						case 'open':
-							$conditions['ProgramResponse.complete'] = 0;
-							$conditions['ProgramResponse.needs_approval'] = 0;
-							$conditions['ProgramResponse.expires_on >'] = date('Y-m-d H:i:s');
-							$conditions['ProgramResponse.not_approved'] = 0;
-							break;
-						case 'closed':
-							$conditions['ProgramResponse.complete'] = 1;
-							$conditions['ProgramResponse.needs_approval'] = 0;
-							$conditions['ProgramResponse.not_approved'] = 0;
-							break;
-						case 'expired':
-							$conditions['ProgramResponse.complete'] = 0;
-							$conditions['ProgramResponse.not_approved'] = 0;
-							$conditions['ProgramResponse.expires_on <'] = date('Y-m-d H:i:s');
-							break;
-						case 'pending_approval':
-							$conditions['ProgramResponse.complete'] = 0;
-							$conditions['ProgramResponse.expires_on >'] = date('Y-m-d H:i:s');
-							$conditions['ProgramResponse.needs_approval'] = 1;
-							$conditions['ProgramResponse.not_approved'] = 0;
-							break;
-						case 'not_approved':
-							$conditions['ProgramResponse.complete'] = 0;
-							$conditions['ProgramResponse.not_approved'] = 1;
-							break;
-					}
+				if(!empty($this->params['url']['status'])) {
+					$conditions['ProgramResponse.status'] = $this->params['url']['status'];
 				}
 
 				$data['totalCount'] = $this->ProgramResponse->find('count', array('conditions' => $conditions));
@@ -583,43 +558,27 @@ class ProgramResponsesController extends AppController {
 							'modified' => $response['ProgramResponse']['modified'],
 							'expires_on' => $response['ProgramResponse']['expires_on'],
 							'notes' => $response['ProgramResponse']['notes'],
-							'status' => $status
+							'status' => $response['ProgramResponse']['status']
 						);
-						if($this->params['url']['tab'] == 'closed'){
+						$statuses = array('complete', 'not_approved', 'pending_approval');
+						if( in_array($this->params['url']['status'], $statuses)){
 							$data['responses'][$i]['actions'] =
 								'<a href="/admin/program_responses/view/'.
 									$response['ProgramResponse']['id'].'">View</a>';
 						}
-						elseif($this->params['url']['tab'] == 'expired'){
+						elseif($this->params['url']['status'] == 'expired'){
 							$data['responses'][$i]['actions'] =
 								'<a href="/admin/program_responses/view/'.
 									$response['ProgramResponse']['id'].'">View</a> | ' .
 									'<a href="/admin/program_responses/toggle_expired/' .
 									$response['ProgramResponse']['id'] . '/unexpire'.'" class="expire">Mark Un-Expired</a>';
 						}
-						elseif($this->params['url']['tab'] == 'not_approved') {
-							if($response['ProgramResponse']['allow_new_response'] || !$response['ProgramResponse']['answers']) {
-								$data['responses'][$i]['actions'] =
-									'<a href="/admin/program_responses/view/'.
-										$response['ProgramResponse']['id'].'">View</a>';
-							}
-							else {
-								$data['responses'][$i]['actions'] =
-									'<a href="/admin/program_responses/view/'.
-										$response['ProgramResponse']['id'].'">View</a> | ' .
-									'<a href="/admin/program_responses/reset_form/'.
-										$response['ProgramResponse']['id'].'" class="reset">Reset Form</a> | ' .
-										'<a href="/admin/program_responses/allow_new_response/' .
-										$response['ProgramResponse']['id'] . '" class="allow-new">Allow New Response</a>';
-							}
-
-						}
 						else {
 							$data['responses'][$i]['actions'] =
 								'<a href="/admin/program_responses/view/'.
-									$response['ProgramResponse']['id'].'">View</a> | ' .
-									'<a href="/admin/program_responses/toggle_expired/' .
-									$response['ProgramResponse']['id'] . '/expire'.'" class="expire">Mark Expired</a>';
+									$response['ProgramResponse']['id'].'">View</a>'; 
+							$data['responses'][$i]['actions'] .= ' | <a href="/admin/program_responses/toggle_expired/' .
+								$response['ProgramResponse']['id'] . '/expire'.'" class="expire">Mark Expired</a>';
 						}
 						$i++;
 					}
@@ -632,7 +591,7 @@ class ProgramResponsesController extends AppController {
 				$this->set('data', $data);
 				$this->render('/elements/ajaxreturn');
 			}
-			if($program['Program']['approval_required'] == 1){
+			if($program['Program']['approval_required']){
 				$approvalPermission = $this->Acl->check(array(
 					'model' => 'User',
 					'foreign_key' => $this->Auth->user('id')), 'ProgramResponses/admin_approve', '*');
@@ -642,11 +601,16 @@ class ProgramResponsesController extends AppController {
 				$approvalPermission = null;
 			}
 			$programName = $program['Program']['name'];
-			$this->set(compact('approvalPermission', 'programName'));
+			$this->set(compact('approvalPermission', 'programName', 'programType'));
 		}
 	}
 
 	function admin_view($id, $type=null) {
+		$this->ProgramResponse->contain(array(
+			'Program' => array('ProgramStep'), 
+			'ProgramResponseActivity', 
+			'ProgramResponseDoc', 
+			'User'));
 		$programResponse = $this->ProgramResponse->findById($id);
 		if($this->RequestHandler->isAjax()){
 			if($type == 'user') {
@@ -658,13 +622,17 @@ class ProgramResponsesController extends AppController {
 				$this->render('/elements/program_responses/user_info');
 			}
 			if($type == 'answers') {
-				$yesNo = array('No', 'Yes');
-				$data['answers'] = json_decode($programResponse['ProgramResponse']['answers'], true);
-				$data['viewedMedia'] = $yesNo[$programResponse['ProgramResponse']['viewed_media']];
-				if($programResponse['ProgramResponse']['answers'] != null) {
-					$data['completedForm'] = 'Yes';
+				$formActivities = Set::extract('/ProgramResponseActivity[type=form]', $programResponse);
+				// TODO make sure that this is going to work for multiple sets of form answers
+				if(!empty($formActivities)) {
+					$i = 0;
+					foreach($formActivities as $formActivity) {
+						$data['answers'][$i] = json_decode($formActivity['ProgramResponseActivity']['answers'], true);	
+						$data['stepName'] = 
+							Set::extract('/ProgramStep[id='.$formActivity['ProgramResponseActivity']['program_step_id'].']/name', $programResponse['Program']);
+						$i++;
+					} 
 				}
-				else $data['completedForm'] = 'No';
 				$this->set($data);
 				$this->render('/elements/program_responses/answers');
 			}
@@ -672,11 +640,10 @@ class ProgramResponsesController extends AppController {
 				if(!empty($programResponse['ProgramResponseDoc'])) {
 					$this->loadModel('DocumentFilingCategory');
 					$filingCatList = $this->DocumentFilingCategory->find('list');
-					$docs = Set::extract('/ProgramResponseDoc[paper_form<1]',  $programResponse);
-					$filedForms = Set::extract('/ProgramResponseDoc[paper_form=1]',  $programResponse);
+					$docs = Set::extract('/ProgramResponseDoc[type=customer_provided]',  $programResponse);
+					$generatedDocs = Set::extract('/ProgramResponseDoc[type=system_generated]',  $programResponse);
 					$i = 0;
 					foreach($docs as $doc) {
-
 						$data['docs'][$i]['id'] = $doc['ProgramResponseDoc']['doc_id'];
 						if($doc['ProgramResponseDoc']['deleted']) {
 							$data['docs'][$i]['name'] = 'Deleted';
@@ -701,36 +668,38 @@ class ProgramResponsesController extends AppController {
 					}
 				}
 				else $data['docs'] = 'No program response documents filed for this user.';
-				$forms = $this->ProgramResponse->
-					Program->ProgramPaperForm->findAllByProgramId($programResponse['Program']['id']);
-				if($forms) {
+				$programDocs = $this->ProgramResponse->
+					Program->ProgramDocument->findAllByProgramId($programResponse['Program']['id']);
+				if($programDocs) {
 					$i = 0;
-					foreach($forms as $form) {
-						if(isset($filedForms)) {
-							foreach($filedForms as $filedForm) {
-								if($filedForm['ProgramResponseDoc']['cat_id'] == $form['ProgramPaperForm']['cat_3']) {
-									$data['forms'][$i]['link'] =
+					foreach($programDocs as $programDoc) {
+						if(isset($generatedDocs)) {
+							foreach($generatedDocs as $generatedDoc) {
+								if($programDoc['ProgramDocument']['cat_3']) {
+									$cat = $programDoc['ProgramDocument']['cat_3'];
+								}
+								elseif($programDoc['ProgramDocument']['cat_2']) {
+									$cat = $programDoc['ProgramDocument']['cat_2'];
+								}
+								else {
+									$cat = $programDoc['ProgramDocument']['cat_1'];
+								}
+								if($generatedDoc['ProgramResponseDoc']['cat_id'] === $cat) {
+									$data['generatedDocs'][$i]['link'] =
 										'<a class="generate" href="/admin/program_responses/generate_form/'.
-										$form['ProgramPaperForm']['id'] . '/' .
+										$programDoc['ProgramDocument']['id'] . '/' .
 										$programResponse['ProgramResponse']['id'] .'/'.
-										$filedForm['ProgramResponseDoc']['doc_id'] . '">Re-Generate</a>';
-									$data['forms'][$i]['view'] = '<a href="/admin/filed_documents/view/' .
-										$filedForm['ProgramResponseDoc']['doc_id'].'" target="_blank">View Doc</a>';
-									$data['forms'][$i]['doc_id'] = $filedForm['ProgramResponseDoc']['doc_id'];
-									$data['forms'][$i]['filed_on'] = $filedForm['ProgramResponseDoc']['created'];
+										$generatedDoc['ProgramResponseDoc']['doc_id'] . '">Re-Generate</a>';
+									$data['generatedDocs'][$i]['view'] = '<a href="/admin/filed_documents/view/' .
+										$generatedDoc['ProgramResponseDoc']['doc_id'].'" target="_blank">View Doc</a>';
+									$data['generatedDocs'][$i]['doc_id'] = $generatedDoc['ProgramResponseDoc']['doc_id'];
+									$data['generatedDocs'][$i]['filed_on'] = $generatedDoc['ProgramResponseDoc']['created'];
 								}
 							}
 						}
-
-						if(!isset($data['forms'][$i]['link'])) {
-							$data['forms'][$i]['link'] = '<a class="generate" href="/admin/program_responses/generate_form/'.
-								$form['ProgramPaperForm']['id'] . '/' .
-								$programResponse['ProgramResponse']['id'] .'">Generate</a>';
-						}
-						$data['forms'][$i]['name'] = $form['ProgramPaperForm']['name'];
-						$data['forms'][$i]['cat_3'] = $form['ProgramPaperForm']['cat_3'];
-						$data['forms'][$i]['programResponseId'] = $programResponse['ProgramResponse']['id'];
-						$data['forms'][$i]['id'] = $form['ProgramPaperForm']['id'];
+						$data['generatedDocs'][$i]['name'] = $programDoc['ProgramDocument']['name'];
+						$data['generatedDocs'][$i]['programResponseId'] = $programResponse['ProgramResponse']['id'];
+						$data['generatedDocs'][$i]['id'] = $programDoc['ProgramDocument']['id'];
 						$i++;
 					}
 				}
@@ -740,8 +709,7 @@ class ProgramResponsesController extends AppController {
 		}
 
 		if($programResponse['Program']['approval_required'] &&
-			$programResponse['ProgramResponse']['needs_approval'] == 1
-			&& $programResponse['ProgramResponse']['not_approved'] == 0) {
+			 $programResponse['ProgramResponse']['status'] === 'pending_approval') {
 				$approval = true;
 		}
 		else {
@@ -784,10 +752,10 @@ class ProgramResponsesController extends AppController {
 				$programResponse = $this->ProgramResponse->findById($programResponseId);
 				if(strpos($programResponse['Program']['type'], 'docs')) {
 					if(!empty($programResponse['ProgramResponseDoc'])) {
-						$forms = $this->ProgramResponse->
+						$programDocs = $this->ProgramResponse->
 							Program->ProgramPaperForm->findAllByProgramId($programResponse['Program']['id']);
-						$catIds = Set::extract('/ProgramResponseDoc[paper_form=1]/cat_id', $programResponse);
-						$formCatIds = Set::extract('/ProgramPaperForm/cat_3', $forms);
+						$catIds = Set::extract('/ProgramResponseDoc[type=system_generated]/cat_id', $programResponse);
+						$formCatIds = Set::extract('/ProgramDocument/cat_3', $programDocs);
 						if(!empty($formCatIds)) {
 							$result = array_diff($formCatIds, $catIds);
 							if(!empty($result)) {
@@ -806,8 +774,7 @@ class ProgramResponsesController extends AppController {
 					}
 				}
 				$this->data['ProgramResponse']['id'] = $programResponseId;
-				$this->data['ProgramResponse']['needs_approval'] = 0;
-				$this->data['ProgramResponse']['complete'] = 1;
+				$this->data['ProgramResponse']['status'] = 'complete';
 				if($this->ProgramResponse->save($this->data)) {
 					$data['success'] = true;
 					$data['message'] = 'Program response was approved successfully.';
@@ -830,7 +797,6 @@ class ProgramResponsesController extends AppController {
 			}
 			$this->set(compact('data'));
 			$this->render(null, null, '/elements/ajaxreturn');
-
 		}
 	}
 
@@ -838,32 +804,36 @@ class ProgramResponsesController extends AppController {
 		if($this->RequestHandler->isAjax()) {
 			if(!empty($this->params['form']['id'])) {
 				$this->data['ProgramResponse']['id'] = $this->params['form']['id'];
-				$this->data['ProgramResponse']['not_approved'] = 1;
-				if(isset($this->params['form']['reset_form']) == 'on') {
-					$this->data['ProgramResponse']['answers'] = null;
+				$this->data['ProgramResponse']['status'] = 'not_approved';
+				if(isset($this->params['form']['reset_form'])) {
+					$this->data['ProgramResponseActivity'][0]['id'] = $this->params['form']['reset_form'];
+					$this->data['ProgramResponseActivity'][0]['status'] = 'allow_edit';
 				}
-				if($this->ProgramResponse->save($this->data)) {
+
+				if($this->ProgramResponse->saveAll($this->data)) {
 					$data['success'] = true;
 					$data['message'] = 'Program response marked not approved.';
-					$programResponse = $this->ProgramResponse->read(null, $this->params['form']['id']);
+					$programResponse = $this->ProgramResponse->findById($this->params['form']['id']);
 
 					$programEmail = $this->ProgramResponse->Program->ProgramEmail->find('first',
 						array('conditions' => array(
 							'ProgramEmail.program_id' => $programResponse['Program']['id'],
 							'ProgramEmail.type' => 'not_approved'
 					)));
+					$this->log($programEmail, 'debug');
 					$user['User'] = $programResponse['User'];
 					if($programEmail) {
 						if(!empty($this->params['form']['email_comment'])) {
 							$programEmail['ProgramEmail']['body'] .= "\r\n\r\n\r\n" .
 							'Comment: ' . $this->params['form']['email_comment'];
 						}
-						$this->Notifications->sendProgramEmail($programEmail, $user);
+						$this->Notifications->sendProgramEmail($programEmail['ProgramEmail'], $user);
 					}
 					$this->Transaction->createUserTransaction('Programs', null, null,
 						'Marked ' . $programResponse['Program']['name'] .
 						' response not approved for ' . ucwords($user['User']['name_last4']));
-					if(isset($this->params['form']['reset_form']) == 'on') {
+					if(isset($this->params['form']['reset_form'])) {
+						// TODO transaction for each form that was marked allow edit? or list all form that were reset in one transaction
 						$this->Transaction->createUserTransaction('Programs', null, null,
 							'Reset program response form for ' . $programResponse['Program']['name'] . ' for customer ' .
 							ucwords($programResponse['User']['name_last4']));
@@ -928,47 +898,37 @@ class ProgramResponsesController extends AppController {
 	function admin_toggle_expired($programResponseId, $toggle) {
 		if($this->RequestHandler->isAjax()) {
 			$programResponse = $this->ProgramResponse->findById($programResponseId);
-			$allProgramResponses = null;
 			if($toggle == 'expire') {
 				$this->data['ProgramResponse']['expires_on'] =
 					date('Y-m-d H:i:s', strtotime('-' . ($programResponse['Program']['response_expires_in']+1) . ' days'));
+				$this->data['ProgramResponse']['status'] = 'expired';
 			}
 			elseif($toggle == 'unexpire') {
 				$this->data['ProgramResponse']['expires_on'] = date('Y-m-d H:i:s',
 					strtotime('+' . ($programResponse['Program']['response_expires_in']) . ' days'));
-				$allProgramResponses = $this->ProgramResponse->find('all', array(
-					'conditions' => array(
-						'ProgramResponse.user_id' => $programResponse['ProgramResponse']['user_id'],
-						'ProgramResponse.program_id' => $programResponse['ProgramResponse']['program_id'],
-						'ProgramResponse.expires_on >= ' => date('Y-m-d H:i:s'))));
+				$this->data['ProgramResponse']['status'] = 'incomplete';
 			}
-			if($allProgramResponses) {
-				$data['success'] = false;
-				$data['message'] = 'Customer already has an non-expired response for this program.';
+			$this->data['ProgramResponse']['id'] = $programResponseId;
+			if($this->ProgramResponse->save($this->data)) {
+				$data['success'] = true;
+				switch($toggle) {
+					case 'unexpire':
+						$data['message'] = 'Response marked un-expired successfully.';
+						$this->Transaction->createUserTransaction('Programs', null, null,
+							'Marked response un-expired for ' . $programResponse['Program']['name'] . ' for customer ' .
+							ucwords($programResponse['User']['name_last4']));
+						break;
+					case 'expire':
+						$data['message'] = 'Response marked expired successfully.';
+						$this->Transaction->createUserTransaction('Programs', null, null,
+							'Marked response expired for ' . $programResponse['Program']['name'] . ' for customer ' .
+							ucwords($programResponse['User']['name_last4']));
+						break;
+				}
 			}
 			else {
-				$this->data['ProgramResponse']['id'] = $programResponseId;
-				if($this->ProgramResponse->save($this->data)) {
-					$data['success'] = true;
-					switch($toggle) {
-						case 'unexpire':
-							$data['message'] = 'Response marked un-expired successfully.';
-							$this->Transaction->createUserTransaction('Programs', null, null,
-								'Marked response un-expired for ' . $programResponse['Program']['name'] . ' for customer ' .
-								ucwords($programResponse['User']['name_last4']));
-							break;
-						case 'expire':
-							$data['message'] = 'Response marked expired successfully.';
-							$this->Transaction->createUserTransaction('Programs', null, null,
-								'Marked response expired for ' . $programResponse['Program']['name'] . ' for customer ' .
-								ucwords($programResponse['User']['name_last4']));
-							break;
-					}
-				}
-				else {
-					$data['success'] = false;
-					$data['message'] = 'An error has occured, please try again.';
-				}
+				$data['success'] = false;
+				$data['message'] = 'An error has occured, please try again.';
 			}
 			$this->set(compact('data'));
 			$this->render(null, null, '/elements/ajaxreturn');
@@ -1026,6 +986,37 @@ class ProgramResponsesController extends AppController {
 			}
 			$this->set(compact('data'));
 			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
+
+	function admin_get_form_activities($id) {
+		if($this->RequestHandler->isAjax()) {
+			$this->ProgramResponse->contain(array('ProgramResponseActivity' => array(
+				'conditions' => array('ProgramResponseActivity.type' => 'form'),
+				'fields' => array('id', 'program_step_id'))));
+			$response = $this->ProgramResponse->findById($id);
+			if($response) {
+				$steps = $this->ProgramResponse->Program->ProgramStep->find('list', array(
+					'conditions' => array(
+						'ProgramStep.type' => 'form',
+						'ProgramStep.program_id' => $response['ProgramResponse']['program_id'])));
+				$activities = $response['ProgramResponseActivity'];
+			}
+			if(isset($activities)) {
+				$i = 0;
+				foreach($activities as $activity) {
+					$data['activities'][$i]['id'] = $activity['id'];
+					$data['activities'][$i]['name'] = $steps[$activity['program_step_id']]; 
+					$i++;
+				}
+				$data['success'] = true;
+			}
+			else {
+				$data['success'] = false;
+				$data['activities'] = array();
+			}
+			$this->set(compact('data'));
+			$this->render(null,null,'/elements/ajaxreturn');
 		}
 	}
 
