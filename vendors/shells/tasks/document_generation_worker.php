@@ -31,9 +31,8 @@ class DocumentGenerationWorkerTask extends QueueShell {
 					}
 				}
 				else {
-					$this->out('Unable to process job ' .  $job['Job']['id'] . 'burying.');
-					$this->Job->bury(6000);
-					exit(98);
+					$this->out('Unable to process job ' .  $job['Job']['id'] . ' burying.');
+					$this->Job->bury();
 				}
 			}
 		}
