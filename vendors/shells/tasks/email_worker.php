@@ -29,8 +29,8 @@ class EmailWorkerTask extends QueueShell {
 					}
 				}
 				else {
-					$this->out('Unable to process job ' .  $job['Job']['id'] . 'burying.');
-					$this->Job->bury(6000);
+					$this->out('Unable to process job ' .  $job['Job']['id'] . ' burying.');
+					$this->Job->bury();
 				}
 			}
 		}
