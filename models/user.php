@@ -569,15 +569,17 @@ class User extends AppModel {
 		parent::afterFind($results, $primary);
 		if(is_array($results)) {
 			foreach ($results as $key => $value) {
-			    if(isset($value['User']['created'])) {
-					$results[$key]['User']['created'] = $this->formatDateTimeAfterFind($value['User']['created']);
-			    }
-			    if(isset($value['User']['modified'])) {
-					$results[$key]['User']['modified'] = $this->formatDateTimeAfterFind($value['User']['modified']);
-			    }
-			    if(isset($value['User']['dob'])) {
-					$results[$key]['User']['dob'] = $this->formatDateAfterFind($value['User']['dob']);
-			    }
+				if(is_array($value)) {
+					if(isset($value['User']['created'])) {
+						$results[$key]['User']['created'] = $this->formatDateTimeAfterFind($value['User']['created']);
+					}
+					if(isset($value['User']['modified'])) {
+						$results[$key]['User']['modified'] = $this->formatDateTimeAfterFind($value['User']['modified']);
+					}
+					if(isset($value['User']['dob'])) {
+						$results[$key]['User']['dob'] = $this->formatDateAfterFind($value['User']['dob']);
+					}	
+				}
 			}			
 		}
 		return $results;
