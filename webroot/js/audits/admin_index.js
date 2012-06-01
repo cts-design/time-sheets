@@ -375,6 +375,7 @@ Audits = {
     "use strict";
     var slider = Ext.getCmp('auditorSlider'),
       customersField = Ext.getCmp('customersField'),
+      showDate = Ext.getCmp('showDateColumn'),
       customers;
 
     if (this.auditFormPanel.collapsed) {
@@ -382,6 +383,10 @@ Audits = {
     }
 
     this.auditFormPanel.loadRecord(this.selectedRecord);
+
+    if (this.selectedRecord.data.show_date_column) {
+      showDate.setValue(true);
+    }
 
     customers = '';
     this.selectedRecord.users().each(function (user) {
@@ -398,6 +403,7 @@ Audits = {
 
     this.selectedRecord.set('disabled', 1);
     this.selectedRecord.save();
+    this.AuditStore.sync();
   },
 
   saveAudit: function () {
@@ -449,6 +455,7 @@ Audits = {
     deleteAuditBtn.enable();
 
     this.selectedRecord = rec;
+    this.editAudit();
   },
 
   resetForm: function () {
