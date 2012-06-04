@@ -8,7 +8,9 @@
 # and for one particular code, exit the script entirely.
 # The numbers 97, 98, 99 must match what is returned from the PHP script
 
-cake queue document_generation_worker  -- $@
+/var/www/vhosts/staging.atlasforworkforce.com/atlas/shared/cakephp/cake/console/cake -app /var/www/vhosts/staging.atlasforworkforce.com/atlas/current queue document_generation_worker -- $@
+
+# cake queue document_generation_worker  -- $@
 ERR=$?
 
 ## Possibilities
