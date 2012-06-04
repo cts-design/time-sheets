@@ -24,7 +24,7 @@ Ext.define('ProgramStep', {
   fields: [
     { name: 'id', type: 'int' },
     { name: 'program_id', type: 'int' },
-    { name: 'parent_id', type: 'int' },
+    { name: 'parent_id', type: 'int', useNull: true },
     'name',
     'type',
     'media_location',
@@ -354,7 +354,6 @@ Ext.create('Ext.data.Store', {
     }
   }
 });
-
 
 /**
  * Variable Declarations
@@ -1105,10 +1104,6 @@ instructions = Ext.create('Ext.panel.Panel', {
   height: 406,
   layout: 'border',
   items: [{
-    border: 0,
-    html: '<h1>Where would you like to file the registration snapshot?</h1>',
-    margin: '0 0 10'
-  }, {
     xtype: 'grid',
     dockedItems: [{
       xtype: 'toolbar',
@@ -1124,7 +1119,7 @@ instructions = Ext.create('Ext.panel.Panel', {
             programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
             instructionWindow;
 
-          programStep = programStepStore.findRecord('parent_id', /\w+/);
+          programStep = programStepStore.findRecord('parent_id', /\d+/);
 
           stepCombo = Ext.create('Ext.data.Store', {
             fields: ['id', 'name'],
