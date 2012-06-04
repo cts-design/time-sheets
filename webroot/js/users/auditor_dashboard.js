@@ -245,6 +245,12 @@ AuditDashboard = {
           id: 'auditPanel',
           store: 'AuditStore',
           title: 'Active Audits',
+          tools: [{
+            type: 'prev',
+            handler: function () {
+              window.location = '/users/logout/auditor';
+            }
+          }],
           columns: [{
             xtype: 'gridcolumn',
             dataIndex: 'id',
