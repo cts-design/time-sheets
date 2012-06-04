@@ -1104,10 +1104,6 @@ instructions = Ext.create('Ext.panel.Panel', {
   height: 406,
   layout: 'border',
   items: [{
-    border: 0,
-    html: '<h1>Where would you like to file the registration snapshot?</h1>',
-    margin: '0 0 10'
-  }, {
     xtype: 'grid',
     dockedItems: [{
       xtype: 'toolbar',
