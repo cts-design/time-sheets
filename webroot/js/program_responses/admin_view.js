@@ -55,7 +55,7 @@ Ext.onReady(function(){
     frame:true,
     bodyStyle:'padding:5px 5px 0',
     width: 250,
-    height: 180,
+    height: 250,
     defaultType: 'textarea',
     items: [{
       fieldLabel: 'Not approved email comment',
