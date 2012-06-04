@@ -776,7 +776,7 @@ class ProgramResponsesController extends AppController {
 					$programEmail = $this->ProgramResponse->Program->ProgramEmail->find('first',
 						array('conditions' => array(
 							'ProgramEmail.program_id' => $programResponse['Program']['id'],
-							'ProgramEmail.type' => 'final'
+							'ProgramEmail.type' => 'complete'
 					)));
 					$user['User'] = $programResponse['User'];
 					$this->Notifications->sendProgramEmail($programEmail, $user);
