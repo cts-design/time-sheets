@@ -472,11 +472,11 @@ AuditDashboard = {
         window.location = '/users/logout';
       });
 
-      this.timeout.delay(300000);
+      this.timeout.delay(7200000);
     }
 
     Ext.getBody().on('mousemove', function () {
-      this.timeout.delay(300000);
+      this.timeout.delay(7200000);
     }, this);
   }
 };
