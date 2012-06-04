@@ -843,6 +843,7 @@ div.actions .ui-button-text {
 }
 
 #ProgramAnswers .label {
+  float: left;
   width: 200px;
   text-align: right;
   font-weight: bold;
