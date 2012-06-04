@@ -685,11 +685,6 @@ class ProgramResponsesController extends AppController {
 									$cat = $programDoc['ProgramDocument']['cat_1'];
 								}
 								if($generatedDoc['ProgramResponseDoc']['cat_id'] === $cat) {
-									$data['generatedDocs'][$i]['link'] =
-										'<a class="generate" href="/admin/program_responses/generate_form/'.
-										$programDoc['ProgramDocument']['id'] . '/' .
-										$programResponse['ProgramResponse']['id'] .'/'.
-										$generatedDoc['ProgramResponseDoc']['doc_id'] . '">Re-Generate</a>';
 									$data['generatedDocs'][$i]['view'] = '<a href="/admin/filed_documents/view/' .
 										$generatedDoc['ProgramResponseDoc']['doc_id'].'" target="_blank">View Doc</a>';
 									$data['generatedDocs'][$i]['doc_id'] = $generatedDoc['ProgramResponseDoc']['doc_id'];
