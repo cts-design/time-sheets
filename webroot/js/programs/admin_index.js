@@ -29,6 +29,7 @@ Ext.onReady(function () {
 
   var programGrid = Ext.create('Ext.grid.Panel', {
     store: programStore,
+    store: 'ProgramStore',
     renderTo: 'programGrid',
     height: 300,
     title: 'Programs',
@@ -36,6 +37,8 @@ Ext.onReady(function () {
       id: 'id',
       text: 'Id',
       dataIndex: 'id',
+      hidden: true,
+      text: 'Id',
       width: 50
     }, {
       text: 'Program Name',
