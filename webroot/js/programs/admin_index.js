@@ -16,7 +16,10 @@ Ext.create('Ext.data.Store', {
   model: 'Program',
   proxy: {
     type: 'ajax',
-    url: '/admin/programs/index',
+    api: {
+      read: '/admin/programs/index',
+      update: '/admin/programs/update'
+    },
     reader: {
       type: 'json',
       root: 'programs'
