@@ -1204,7 +1204,7 @@ instructions = Ext.create('Ext.panel.Panel', {
       program_id: programId,
       program_step_id: formStep.data.id,
       text: program.data.name + ' Registration Form Step Instructions',
-      type: (program.data.name + ' Registration Media Step Instructions').underscore()
+      type: (program.data.name + ' Registration Form Step Instructions').underscore()
     });
   },
   process: function () {
