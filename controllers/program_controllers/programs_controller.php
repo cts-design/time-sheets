@@ -123,6 +123,26 @@ class ProgramsController extends AppController {
 		$this->set($data);
 	}
 
+	public function admin_update() {
+		if ($this->RequestHandler->isAjax()) {
+			$programData = json_decode($this->params['form']['programs'], true);
+
+			$this->Program->id = $programData['id'];
+			unset($programData['id']);
+
+			$this->Program->set($programData);
+
+			if ($this->Program->save()) {
+				$data['success'] = true;
+			} else {
+				$data['success'] = false;
+			}
+
+			$this->set('data', 'test');
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
+
 	public function admin_create_registration() {
 		if ($this->RequestHandler->isAjax()) {
 			$programData = json_decode($this->params['form']['programs'], true);
