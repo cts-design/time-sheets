@@ -28,14 +28,12 @@ Ext.onReady(function () {
   Ext.QuickTips.init();
 
   var programGrid = Ext.create('Ext.grid.Panel', {
-    store: programStore,
     store: 'ProgramStore',
     renderTo: 'programGrid',
     height: 300,
     title: 'Programs',
     columns: [{
       id: 'id',
-      text: 'Id',
       dataIndex: 'id',
       hidden: true,
       text: 'Id',
@@ -73,6 +71,24 @@ Ext.onReady(function () {
           Ext.Msg.alert('Not yet implemented', 'This feature is not yet implemented');
         }
       }]
-    }]
+    }],
+    listeners: {
+      itemcontextmenu: function (gridView, rec, item, index, event) {
+        event.preventDefault();
+
+        contextMenu = Ext.create('Ext.menu.Menu', {
+          height: 100,
+          margin: '0 0 10 0',
+          width: 100,
+          items: [{
+            icon: '/img/icons/delete.png',
+            text: 'Disable',
+            handler: function () {
+              rec.set({ disabled: 1 });
+            }
+          }]
+        }).showAt(event.getXY());
+      }
+    }
   });
 });
