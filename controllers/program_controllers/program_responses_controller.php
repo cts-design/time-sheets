@@ -541,13 +541,6 @@ class ProgramResponsesController extends AppController {
 				if($responses) {
 					$i = 0;
 					foreach($responses as $response) {
-						if($response['ProgramResponse']['complete'] == 1) {
-							$status = 'Closed';
-						}
-						else {
-							$status = 'Open';
-						}
-
 						$data['responses'][$i] = array(
 							'id' => $response['ProgramResponse']['id'],
 							'User-lastname' => trim(ucwords($response['User']['lastname'] . ', ' .
@@ -632,8 +625,8 @@ class ProgramResponsesController extends AppController {
 							Set::extract('/ProgramStep[id='.$formActivity['ProgramResponseActivity']['program_step_id'].']/name', $programResponse['Program']);
 						$i++;
 					} 
+					$this->set($data);
 				}
-				$this->set($data);
 				$this->render('/elements/program_responses/answers');
 			}
 			if($type == 'documents') {
