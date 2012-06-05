@@ -46,6 +46,11 @@ Ext.onReady(function () {
     renderTo: 'programGrid',
     height: 300,
     title: 'Programs',
+    plugins: [
+      Ext.create('Ext.grid.plugin.CellEditing', {
+        clicksToEdit: 2
+      })
+    ],
     columns: [{
       id: 'id',
       dataIndex: 'id',
@@ -53,13 +58,32 @@ Ext.onReady(function () {
       text: 'Id',
       width: 50
     }, {
-      text: 'Program Name',
       dataIndex: 'name',
+      editor: {
+        xtype: 'textfield',
+        allowBlank: false
+      },
+      text: 'Program Name',
       flex: 1
     }, {
       align: 'center',
       text: 'Status',
       dataIndex: 'disabled',
+      editor: {
+        xtype: 'combo',
+        allowBlank: false,
+        displayField: 'stringVal',
+        store: Ext.create('Ext.data.Store', {
+          fields: ['intVal', 'stringVal'],
+          data: [{
+            'intVal': 1, stringVal: 'Disabled'
+          }, {
+            'intVal': 0, stringVal: 'Active'
+          }]
+        }),
+        queryMode: 'local',
+        valueField: 'intVal'
+      },
       renderer: function (value) {
         if (value) {
           return "Disabled";
@@ -92,24 +116,6 @@ Ext.onReady(function () {
         handler: function (grid, rowIndex, colIndex) {
           var rec = grid.getStore().getAt(rowIndex);
           window.location = '/admin/program_responses/index/' + rec.get('id');
-        }
-      }],
-    }, {
-      xtype: 'actioncolumn',
-      align: 'center',
-      header: 'Disable',
-      renderer: function (value, metaData, record) {
-        console.log(value);
-        console.log(metaData);
-        console.log(record);
-      },
-      width: 50,
-      items: [{
-        icon: '/img/icons/delete.png',
-        tooltip: 'Disable Program',
-        handler: function (grid, rowIndex, colIndex) {
-          var rec = grid.getStore().getAt(rowIndex);
-          rec.set('disabled', 1);
         }
       }],
     }],
