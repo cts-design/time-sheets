@@ -50,11 +50,11 @@ Ext.onReady(function () {
           handler: function () {
             window.location = '/admin/programs/create_registration';
           }
-        //}, {
-          //text: 'Orientation',
-          //handler: function () {
-            //window.location = '/admin/programs/create_orientation';
-          //}
+        }, {
+          text: 'Orientation',
+          handler: function () {
+            window.location = '/admin/programs/create_orientation';
+          }
         }]
       }]
     }]

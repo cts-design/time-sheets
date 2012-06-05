@@ -1361,8 +1361,6 @@ emails = Ext.create('Ext.panel.Panel', {
           subjectField = Ext.getCmp('subjectField'),
           form = Ext.getCmp('formPanel');
 
-        console.log(rec);
-
         if (!rec.data.body) {
           rec.data.text = '';
         }
@@ -1438,10 +1436,6 @@ emails = Ext.create('Ext.panel.Panel', {
             subject = Ext.getCmp('subjectField'),
             editor = Ext.getCmp('emailEditor'),
             rec = grid.getSelectionModel().getSelection()[0];
-
-          console.log(from.getValue());
-          console.log(subject.getValue());
-          console.log(editor.getValue());
 
           rec.set({
             body: editor.getValue(),

@@ -1246,8 +1246,6 @@ emails = Ext.create('Ext.panel.Panel', {
           subjectField = Ext.getCmp('subjectField'),
           form = Ext.getCmp('formPanel');
 
-        console.log(rec);
-
         if (!rec.data.body) {
           rec.data.text = '';
         }
