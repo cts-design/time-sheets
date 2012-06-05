@@ -94,6 +94,7 @@ Ext.define('ProgramEmail', {
     { name: 'cat_id', type: 'int' },
     'to',
     'from',
+    'subject',
     'body',
     'type',
     'name',
@@ -332,6 +333,13 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
+  data: [
+    { program_id: 0, program_step_id: null, name: 'Registration Main', from: null, subject: 'Main', body: 'Default text Main', type: 'main', created: null, modified: null },
+    { program_id: 0, program_step_id: null, name: 'Registration Pending Approval', from: null, subject: 'Pending Approval', body: 'Default text Pending Approval', type: 'pending_approval', created: null, modified: null },
+    { program_id: 0, program_step_id: null, name: 'Registration Expired', from: null, subject: 'Expired', body: 'Default text Expired', type: 'expired', created: null, modified: null },
+    { program_id: 0, program_step_id: null, name: 'Registration Not Approved', from: null, subject: 'Not Approved', body: 'Default text Main', type: 'not_approved', created: null, modified: null },
+    { program_id: 0, program_step_id: null, name: 'Registration Complete', from: null, subject: 'Complete', body: 'Default text Complete', type: 'complete', created: null, modified: null }
+  ],
   storeId: 'ProgramEmailStore',
   model: 'ProgramEmail',
   proxy: {
@@ -358,7 +366,7 @@ Ext.create('Ext.data.Store', {
 /**
  * Variable Declarations
  */
-var registrationForm, formBuilder, filingCategories, instructions, navigate, statusBar, states;
+var registrationForm, formBuilder, filingCategories, instructions, emails, navigate, statusBar, states;
 
 states = {
   AL: 'Alabama',
@@ -1105,82 +1113,6 @@ instructions = Ext.create('Ext.panel.Panel', {
   layout: 'border',
   items: [{
     xtype: 'grid',
-    dockedItems: [{
-      xtype: 'toolbar',
-      dock: 'top',
-      items: [{
-        icon: '/img/icons/add.png',
-        text: 'Add Step Instruction',
-        handler: function () {
-          var store = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
-            program = Ext.data.StoreManager.lookup('ProgramStore'),
-            programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
-            programStep,
-            programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
-            instructionWindow;
-
-          programStep = programStepStore.findRecord('parent_id', /\d+/);
-
-          stepCombo = Ext.create('Ext.data.Store', {
-            fields: ['id', 'name'],
-            data: [{
-              id: programStep.data.id,
-              name: programStep.data.name
-            }]
-          });
-
-          if (!instructionWindow) {
-            instructionWindow = Ext.create('Ext.window.Window', {
-              height: 150,
-              items: [{
-                xtype: 'form',
-                bodyPadding: 25,
-                border: false,
-                items: [{
-                  xtype: 'combo',
-                  allowBlank: false,
-                  displayField: 'name',
-                  editable: false,
-                  fieldLabel: 'Choose step for instruction',
-                  id: 'instructionCombo',
-                  labelAlign: 'top',
-                  name: 'instruction',
-                  queryMode: 'local',
-                  store: stepCombo,
-                  value: '',
-                  valueField: 'id',
-                  width: 250
-                }],
-                buttons: [{
-                  bindForm: true,
-                  text: 'Add Instruction',
-                  handler: function () {
-                    var form = this.up('form').getForm(),
-                      val = Ext.getCmp('instructionCombo');
-
-                    console.log(val);
-
-                    if (form.isValid()) {
-                      programInstructionStore.add({
-                        program_id: program.first().data.id,
-                        program_step_id: val.value,
-                        type: val.rawValue.underscore(),
-                        text: 'Enter the text for your registration form instructions'
-                      });
-                    }
-
-                    instructionWindow.hide();
-                  }
-                }]
-              }],
-              layout: 'fit',
-              title: 'Add Instruction',
-              width: 300
-            }).show();
-          }
-        }
-      }]
-    }],
     frame: false,
     height: 156,
     id: 'instructionsGrid',
@@ -1239,14 +1171,40 @@ instructions = Ext.create('Ext.panel.Panel', {
   }],
   preprocess: function () {
     var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
+      programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
       programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
-      programId;
+      program = programStore.first(),
+      programId = program.data.id,
+      formStep;
 
-    programId = programStore.first().data.id;
+    if (!program.data.approval_required) {
+      var notApproved,
+        pendingApproval;
+
+      notApproved = programInstructionStore.findExact('type', 'not_approved');
+      pendingApproval = programInstructionStore.findExact('type', 'pending_approval');
+
+      if (notApproved !== -1) {
+        programInstructionStore.removeAt(notApproved);
+      }
+
+      if (pendingApproval !== -1) {
+        programInstructionStore.removeAt(pendingApproval);
+      }
+    }
+
+    formStep = programStepStore.findRecord('type', /^form$/gi);
+
     programInstructionStore.each(function (rec) {
       rec.set({
         program_id: programId
       });
+    });
+    programInstructionStore.add({
+      program_id: programId,
+      program_step_id: formStep.data.id,
+      text: program.data.name + ' Registration Form Step Instructions',
+      type: (program.data.name + ' Registration Media Step Instructions').underscore()
     });
   },
   process: function () {
@@ -1254,6 +1212,172 @@ instructions = Ext.create('Ext.panel.Panel', {
       editor = Ext.getCmp('editor');
 
       programInstructionStore.sync();
+      return true;
+  }
+});
+
+/**
+ * email
+ */
+emails = Ext.create('Ext.panel.Panel', {
+  bodyPadding: 0,
+  height: 500,
+  layout: 'border',
+  items: [{
+    xtype: 'grid',
+    frame: false,
+    height: 156,
+    id: 'emailGrid',
+    region: 'center',
+    store: 'ProgramEmailStore',
+    width: 660,
+    columns: [{
+      dataIndex: 'type',
+      header: 'Type',
+      flex: 1,
+      renderer: function (value) {
+        return value.humanize();
+      }
+    }],
+    listeners: {
+      select: function (rm, rec, index) {
+        var editor = Ext.getCmp('emailEditor'),
+          fromField = Ext.getCmp('fromField'),
+          subjectField = Ext.getCmp('subjectField'),
+          form = Ext.getCmp('formPanel');
+
+        console.log(rec);
+
+        if (!rec.data.body) {
+          rec.data.text = '';
+        }
+
+        if (!rec.data.from) {
+          rec.data.text = '';
+        }
+
+        if (!rec.data.subject) {
+          rec.data.subject = '';
+        }
+
+        editor.setValue(rec.data.body);
+        fromField.setValue(rec.data.from);
+        subjectField.setValue(rec.data.subject);
+        Ext.getCmp('saveBtn').enable();
+      }
+    },
+    plugins: [
+      Ext.create('Ext.grid.plugin.CellEditing', {
+        clicksToEdit: 1
+      })
+    ]
+  }, {
+    xtype: 'form',
+    bodyPadding: '20 20 20 30',
+    fieldDefaults: {
+      labelAlign: 'top',
+      msgTarget: 'side'
+    },
+    region: 'south',
+    height: 350,
+    items: [{
+      xtype: 'container',
+      anchor: '100%',
+      layout: 'column',
+      items: [{
+        xtype: 'container',
+        columnWidth: '.5',
+        layout: 'anchor',
+        items: [{
+          xtype: 'textfield',
+          fieldLabel: 'From',
+          id: 'fromField',
+          name: 'from',
+          anchor: '96%'
+        }, {
+          xtype: 'textfield',
+          fieldLabel: 'Subject',
+          id: 'subjectField',
+          name: 'subject',
+          anchor: '96%'
+        }]
+      }]
+    }, {
+      xtype: 'htmleditor',
+      fieldLabel: 'Body',
+      id: 'emailEditor',
+      name: 'body',
+      margin: '18 0 0 0',
+      height: 175,
+      width: 878
+    }],
+    dockedItems: [{
+      xtype: 'toolbar',
+      dock: 'bottom',
+      items: ['->', {
+        text: 'Save Email',
+        id: 'saveBtn',
+        handler: function () {
+          var grid = Ext.getCmp('emailGrid'),
+            from = Ext.getCmp('fromField'),
+            subject = Ext.getCmp('subjectField'),
+            editor = Ext.getCmp('emailEditor'),
+            rec = grid.getSelectionModel().getSelection()[0];
+
+          rec.set({
+            body: editor.getValue(),
+            subject: subject.getValue(),
+            from: from.getValue()
+          });
+        }
+      }]
+    }]
+  }],
+  preprocess: function () {
+    var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
+      programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
+      programEmailStore = Ext.data.StoreManager.lookup('ProgramEmailStore'),
+      program = programStore.first(),
+      programId = program.data.id,
+      formStep;
+
+    if (!program.data.approval_required) {
+      var notApproved,
+        pendingApproval;
+
+      notApproved = programEmailStore.findExact('type', 'not_approved');
+      pendingApproval = programEmailStore.findExact('type', 'pending_approval');
+
+      if (notApproved !== -1) {
+        programEmailStore.removeAt(notApproved);
+      }
+
+      if (pendingApproval !== -1) {
+        programEmailStore.removeAt(pendingApproval);
+      }
+    }
+
+    formStep = programStepStore.findRecord('type', /^form$/gi);
+
+    programEmailStore.each(function (rec) {
+      rec.set({
+        program_id: programId
+      });
+    });
+    // add our step emails
+    programEmailStore.add({
+      program_id: programId,
+      program_step_id: formStep.data.id,
+      name: program.data.name + ' Registration Form Step Email',
+      type: (program.data.name + ' Registration Form Step Instructions').underscore(),
+      body: 'Your registration form step email'
+    });
+  },
+  process: function () {
+    var programEmailStore = Ext.data.StoreManager.lookup('ProgramEmailStore'),
+      editor = Ext.getCmp('emailEditor');
+
+      programEmailStore.sync();
       return true;
   }
 });
@@ -1339,7 +1463,8 @@ Ext.onReady(function () {
       registrationForm,
       formBuilder,
       filingCategories,
-      instructions
+      instructions,
+      emails
     ],
     layout: 'card',
     renderTo: 'registrationForm',
