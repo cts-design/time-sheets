@@ -1,25 +1,31 @@
-Ext.onReady(function () {
+/**
+ * Models
+ */
+Ext.define('Program', {
+  extend: 'Ext.data.Model',
+  fields: ['id', 'name', 'actions', 'disabled']
+});
 
-  Ext.QuickTips.init();
-
-  Ext.define('Program', {
-    extend: 'Ext.data.Model',
-    fields: ['id', 'name', 'actions']
-  });
-
-  var programStore = Ext.create('Ext.data.Store', {
-    storeId: 'programStore',
-    autoLoad: true,
-    model: 'Program',
-    proxy: {
-      type: 'ajax',
-      url: '/admin/programs/index',
-      reader: {
-        type: 'json',
-        root: 'programs'
-      }
+/**
+ * DataStores
+ */
+Ext.create('Ext.data.Store', {
+  storeId: 'ProgramStore',
+  autoLoad: true,
+  autoSync: true,
+  model: 'Program',
+  proxy: {
+    type: 'ajax',
+    url: '/admin/programs/index',
+    reader: {
+      type: 'json',
+      root: 'programs'
     }
-  });
+  }
+});
+
+Ext.onReady(function () {
+  Ext.QuickTips.init();
 
   var programGrid = Ext.create('Ext.grid.Panel', {
     store: programStore,
