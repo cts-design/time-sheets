@@ -3,7 +3,7 @@
 
 <div id="crumbWrapper">
     <span><?php __('You are here') ?> > </span>
-    <?php echo $crumb->getHtml(__('New Registration Program', true), null, 'unique') ; ?>
+    <?php echo $crumb->getHtml(__('New Orientation Program', true), null, 'unique') ; ?>
 </div>
 
 <div id="registrationForm"></div>

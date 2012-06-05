@@ -44,6 +44,40 @@ class ProgramEmailsController extends AppController {
 		$this->set(compact('title_for_layout'));
 	}
 
+	public function admin_create() {
+			$formData = json_decode($this->params['form']['program_emails'], true);
+			foreach ($formData as $key => $value) {
+				unset($formData[$key]['id'], $formData[$key]['created'], $formData[$key]['modified']);
+			}
+
+			$count = count($formData);
+
+			if ($count > 1) {
+				$this->data['ProgramEmail'] = $formData;
+				$formField = $this->ProgramEmail->saveAll($this->data['ProgramEmail']);
+			} else {
+				$this->data['ProgramEmail'] = $formData[0];
+				$formField = $this->ProgramEmail->save($this->data);
+			}
+
+			if ($formField) {
+				if ($count > 1) {
+					foreach ($this->data['ProgramEmail'] as $k => $v) {
+						$data['program_emails'][] = $v;
+					}
+				} else {
+					$data['program_emails'] = $formField['ProgramEmail'];
+				}
+
+				$data['success'] = true;
+			} else {
+				$data['success'] = false;
+			}
+
+			$this->set('data', $data);
+			$this->render(null, null, '/elements/ajaxreturn');
+	}
+
 	function admin_edit() {
 		if($this->RequestHandler->isAjax()) {
 			if(!empty($this->data)) {

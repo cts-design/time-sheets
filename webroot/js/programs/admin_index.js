@@ -1,35 +1,45 @@
-Ext.onReady(function () {
+/**
+ * Models
+ */
+Ext.define('Program', {
+  extend: 'Ext.data.Model',
+  fields: ['id', 'name', 'actions', 'disabled']
+});
 
+/**
+ * DataStores
+ */
+Ext.create('Ext.data.Store', {
+  storeId: 'ProgramStore',
+  autoLoad: true,
+  autoSync: true,
+  model: 'Program',
+  proxy: {
+    type: 'ajax',
+    api: {
+      read: '/admin/programs/index',
+      update: '/admin/programs/update'
+    },
+    reader: {
+      type: 'json',
+      root: 'programs'
+    }
+  }
+});
+
+Ext.onReady(function () {
   Ext.QuickTips.init();
 
-  Ext.define('Program', {
-    extend: 'Ext.data.Model',
-    fields: ['id', 'name', 'actions']
-  });
-
-  var programStore = Ext.create('Ext.data.Store', {
-    storeId: 'programStore',
-    autoLoad: true,
-    model: 'Program',
-    proxy: {
-      type: 'ajax',
-      url: '/admin/programs/index',
-      reader: {
-        type: 'json',
-        root: 'programs'
-      }
-    }
-  });
-
   var programGrid = Ext.create('Ext.grid.Panel', {
-    store: programStore,
+    store: 'ProgramStore',
     renderTo: 'programGrid',
     height: 300,
     title: 'Programs',
     columns: [{
       id: 'id',
-      text: 'Id',
       dataIndex: 'id',
+      hidden: true,
+      text: 'Id',
       width: 50
     }, {
       text: 'Program Name',
@@ -50,13 +60,38 @@ Ext.onReady(function () {
           handler: function () {
             window.location = '/admin/programs/create_registration';
           }
-        //}, {
-          //text: 'Orientation',
-          //handler: function () {
-            //window.location = '/admin/programs/create_orientation';
-          //}
+        }, {
+          text: 'Orientation',
+          handler: function () {
+            window.location = '/admin/programs/create_orientation';
+          }
         }]
+      }, {
+        disabled: true,
+        icon: '/img/icons/copy.png',
+        text: 'Duplicate Program',
+        handler: function () {
+          Ext.Msg.alert('Not yet implemented', 'This feature is not yet implemented');
+        }
       }]
-    }]
+    }],
+    listeners: {
+      itemcontextmenu: function (gridView, rec, item, index, event) {
+        event.preventDefault();
+
+        contextMenu = Ext.create('Ext.menu.Menu', {
+          height: 100,
+          margin: '0 0 10 0',
+          width: 100,
+          items: [{
+            icon: '/img/icons/delete.png',
+            text: 'Disable',
+            handler: function () {
+              rec.set({ disabled: 1 });
+            }
+          }]
+        }).showAt(event.getXY());
+      }
+    }
   });
 });

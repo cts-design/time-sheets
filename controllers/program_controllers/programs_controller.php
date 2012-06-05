@@ -173,6 +173,7 @@ class ProgramsController extends AppController {
 	public function admin_create_orientation() {
 		if ($this->RequestHandler->isAjax()) {
 			$programData = json_decode($this->params['form']['programs'], true);
+            $programMedia = json_decode($this->params['form']['media'], true);
 			unset($programData['id'], $programData['created'], $programData['modified']);
 
 			$this->data['Program'] = $programData;
@@ -185,7 +186,7 @@ class ProgramsController extends AppController {
 				$data['programs'] = $program['Program'];
 				$data['programs']['id'] = $programId;
 
-				$this->createRegistrationProgramSteps($programId, $program['Program']['name']);
+				$this->createOrientationProgramSteps($programId, $program, $programMedia);
 
 				$data['success'] = true;
 			} else {
@@ -201,8 +202,6 @@ class ProgramsController extends AppController {
 		$this->layout = 'ajax';
 		$storagePath = substr(APP, 0, -1) . Configure::read('Program.media.path');
 		$publicPath = WWW_ROOT . 'files/public/programs/';
-
-		//FireCake::log($_FILES);
 
 		switch ($_FILES['media']['type']) {
 			case 'application/pdf':
@@ -268,6 +267,53 @@ class ProgramsController extends AppController {
 			);
 
 			$formStep = $this->Program->ProgramStep->save($formStepData);
+
+			if ($formStep) {
+				$data['Programs']['program_steps'] = $formStep['ProgramStep'];
+			}
+		}
+
+		return true;
+	}
+
+	private function createOrientationProgramSteps($programId, $program, $programMedia) {
+		FireCake::log($programId);
+		FireCake::log($program);
+		FireCake::log($programMedia);
+		$this->Program->ProgramStep->create();
+
+		$parentStepData = array(
+			'ProgramStep' => array(
+				'program_id' => $programId
+			)
+		);
+
+		$parentStep = $this->Program->ProgramStep->save($parentStepData);
+
+		if ($parentStep) {
+			$parentId = $this->Program->ProgramStep->id;
+			$this->Program->ProgramStep->create();
+			$formStepData = array(
+				'ProgramStep' => array(
+					array(
+						'program_id' => $programId,
+						'parent_id' => $parentId,
+						'name' => "{$program['Program']['name']} Orientation " . Inflector::humanize($programMedia['type']),
+						'type' => 'media',
+						'media_location' => $programMedia['location'],
+						'redoable' => 1,
+						'media_type' => $programMedia['type']
+					),
+					array(
+						'program_id' => $programId,
+						'parent_id' => $parentId,
+						'name' => "{$program['Program']['name']} Orientation Quiz",
+						'type' => 'form'
+					)
+				)
+			);
+
+			$formStep = $this->Program->ProgramStep->saveAll($formStepData['ProgramStep']);
 
 			if ($formStep) {
 				$data['Programs']['program_steps'] = $formStep['ProgramStep'];
