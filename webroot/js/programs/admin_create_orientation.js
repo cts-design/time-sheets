@@ -94,6 +94,7 @@ Ext.define('ProgramEmail', {
     { name: 'cat_id', type: 'int' },
     'to',
     'from',
+    'subject',
     'body',
     'type',
     'name',
