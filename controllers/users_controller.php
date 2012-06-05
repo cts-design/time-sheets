@@ -314,8 +314,13 @@ class UsersController extends AppController {
     }
 
 	function dashboard() {
+		$this->loadModel('Program');
+		$this->Program->recursive = -1;
+		$programs = $this->Program->find('all');
+		$orientations = Set::extract('/Program[type=orientation]', $programs);
+		$registrations = Set::extract('/Program[type=registration]', $programs);
 		$title_for_layout = 'Customer Dashboard';
-		$this->set(compact('title_for_layout'));
+		$this->set(compact('title_for_layout', 'orientations', 'registrations'));
 	}
 
     function edit($id=null) {
@@ -449,7 +454,7 @@ class UsersController extends AppController {
                     $this->redirect($this->Session->read('Auth.redirect'));
                 }
                 else {
-                    $this->redirect('/');
+                    $this->redirect(array('action' => 'dashboard'));
                 }
             }
         }
