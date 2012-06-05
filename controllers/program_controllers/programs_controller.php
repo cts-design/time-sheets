@@ -47,6 +47,7 @@ class ProgramsController extends AppController {
 					$data['programs'][$i] = array(
 						'id' => $program['Program']['id'],
 						'name' => $program['Program']['name'],
+						'type' => $program['Program']['type'],
 						'disabled' => $program['Program']['disabled']
 					);
 
