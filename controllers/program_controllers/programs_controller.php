@@ -37,25 +37,19 @@ class ProgramsController extends AppController {
 	}
 
 	public function admin_index() {
-		if($this->RequestHandler->isAjax()) {
+		if ($this->RequestHandler->isAjax()) {
 			$this->Program->contain('ProgramEmail', 'ProgramInstruction');
 			$programs = $this->Program->find('all');
-			if($programs) {
+
+			if ($programs) {
 				$i = 0;
-				foreach($programs as $program){
+				foreach ($programs as $program) {
 					$data['programs'][$i] = array(
 						'id' => $program['Program']['id'],
 						'name' => $program['Program']['name'],
-						'disabled' => $program['Program']['disabled']);
-						$data['programs'][$i]['actions'] = '<a href="/admin/program_responses/index/'.
-							$program['Program']['id'].'">View Responses</a> |
-							<a class="edit" href="/admin/program_instructions/index/'.
-							$program['Program']['id'].'">Edit Instructions</a>';
-					if(!empty($program['ProgramEmail'])) {
-						$data['programs'][$i]['actions'] .=
-							' | <a class="edit" href="/admin/program_emails/index/'.
-							$program['Program']['id'].'">Edit Emails</a>';
-					}
+						'disabled' => $program['Program']['disabled']
+					);
+
 					$i++;
 				}
 				$data['success'] = true;
