@@ -1173,3 +1173,7 @@ table.raw-data tr td {
   background: transparent;
   color: #778899;
 }
+
+.x-action-col-cell div img {
+  cursor: pointer !important;
+}

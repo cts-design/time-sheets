@@ -37,24 +37,20 @@ class ProgramsController extends AppController {
 	}
 
 	public function admin_index() {
-		if($this->RequestHandler->isAjax()) {
+		if ($this->RequestHandler->isAjax()) {
 			$this->Program->contain('ProgramEmail', 'ProgramInstruction');
 			$programs = $this->Program->find('all');
-			if($programs) {
+
+			if ($programs) {
 				$i = 0;
-				foreach($programs as $program){
+				foreach ($programs as $program) {
 					$data['programs'][$i] = array(
 						'id' => $program['Program']['id'],
-						'name' => $program['Program']['name']);
-						$data['programs'][$i]['actions'] = '<a href="/admin/program_responses/index/'.
-							$program['Program']['id'].'">View Responses</a> |
-							<a class="edit" href="/admin/program_instructions/index/'.
-							$program['Program']['id'].'">Edit Instructions</a>';
-					if(!empty($program['ProgramEmail'])) {
-						$data['programs'][$i]['actions'] .=
-							' | <a class="edit" href="/admin/program_emails/index/'.
-							$program['Program']['id'].'">Edit Emails</a>';
-					}
+						'name' => $program['Program']['name'],
+						'type' => $program['Program']['type'],
+						'disabled' => $program['Program']['disabled']
+					);
+
 					$i++;
 				}
 				$data['success'] = true;
@@ -121,6 +117,26 @@ class ProgramsController extends AppController {
 			$data['instructions'] = $instructions[0];
 		}
 		$this->set($data);
+	}
+
+	public function admin_update() {
+		if ($this->RequestHandler->isAjax()) {
+			$programData = json_decode($this->params['form']['programs'], true);
+
+			$this->Program->id = $programData['id'];
+			unset($programData['id']);
+
+			$this->Program->set($programData);
+
+			if ($this->Program->save()) {
+				$data['success'] = true;
+			} else {
+				$data['success'] = false;
+			}
+
+			$this->set('data', $data);
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
 	}
 
 	public function admin_create_registration() {
