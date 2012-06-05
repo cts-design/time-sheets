@@ -133,7 +133,7 @@ class ProgramsController extends AppController {
 				$data['success'] = false;
 			}
 
-			$this->set('data', 'test');
+			$this->set('data', $data);
 			$this->render(null, null, '/elements/ajaxreturn');
 		}
 	}
