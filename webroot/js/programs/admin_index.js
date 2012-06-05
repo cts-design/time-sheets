@@ -71,8 +71,8 @@ Ext.onReady(function () {
     }, {
       xtype: 'actioncolumn',
       align: 'center',
-      text: 'Edit',
-      width: 70,
+      header: 'Edit',
+      width: 50,
       items: [{
         icon: '/img/icons/edit.png',
         tooltip: 'Edit Program',
@@ -80,14 +80,38 @@ Ext.onReady(function () {
           var rec = grid.getStore().getAt(rowIndex);
           window.location = '/admin/programs/edit/' + rec.get('id');
         }
-      }, {
+      }],
+    }, {
+      xtype: 'actioncolumn',
+      align: 'center',
+      header: 'View Responses',
+      width: 100,
+      items: [{
         icon: '/img/icons/file-cab.png',
         tooltip: 'View Responses',
         handler: function (grid, rowIndex, colIndex) {
           var rec = grid.getStore().getAt(rowIndex);
           window.location = '/admin/program_responses/index/' + rec.get('id');
         }
-      }]
+      }],
+    }, {
+      xtype: 'actioncolumn',
+      align: 'center',
+      header: 'Disable',
+      renderer: function (value, metaData, record) {
+        console.log(value);
+        console.log(metaData);
+        console.log(record);
+      },
+      width: 50,
+      items: [{
+        icon: '/img/icons/delete.png',
+        tooltip: 'Disable Program',
+        handler: function (grid, rowIndex, colIndex) {
+          var rec = grid.getStore().getAt(rowIndex);
+          rec.set('disabled', 1);
+        }
+      }],
     }],
     dockedItems: [{
       xtype: 'toolbar',
@@ -113,24 +137,6 @@ Ext.onReady(function () {
           Ext.Msg.alert('Not yet implemented', 'This feature is not yet implemented');
         }
       }]
-    }],
-    listeners: {
-      itemcontextmenu: function (gridView, rec, item, index, event) {
-        event.preventDefault();
-
-        contextMenu = Ext.create('Ext.menu.Menu', {
-          height: 100,
-          margin: '0 0 10 0',
-          width: 100,
-          items: [{
-            icon: '/img/icons/delete.png',
-            text: 'Disable',
-            handler: function () {
-              rec.set({ disabled: 1 });
-            }
-          }]
-        }).showAt(event.getXY());
-      }
-    }
+    }]
   });
 });
