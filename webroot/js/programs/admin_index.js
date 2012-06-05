@@ -56,6 +56,13 @@ Ext.onReady(function () {
             window.location = '/admin/programs/create_orientation';
           }
         }]
+      }, {
+        disabled: true,
+        icon: '/img/icons/copy.png',
+        text: 'Duplicate Program',
+        handler: function () {
+          Ext.Msg.alert('Not yet implemented', 'This feature is not yet implemented');
+        }
       }]
     }]
   });
