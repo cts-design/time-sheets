@@ -45,7 +45,8 @@ class ProgramsController extends AppController {
 				foreach($programs as $program){
 					$data['programs'][$i] = array(
 						'id' => $program['Program']['id'],
-						'name' => $program['Program']['name']);
+						'name' => $program['Program']['name'],
+						'disabled' => $program['Program']['disabled']);
 						$data['programs'][$i]['actions'] = '<a href="/admin/program_responses/index/'.
 							$program['Program']['id'].'">View Responses</a> |
 							<a class="edit" href="/admin/program_instructions/index/'.
