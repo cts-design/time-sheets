@@ -3,7 +3,12 @@
  */
 Ext.define('Program', {
   extend: 'Ext.data.Model',
-  fields: ['id', 'name', 'actions', 'disabled']
+  fields: [
+    { name: 'id', type: 'int' },
+    'name',
+    'actions',
+    { name: 'disabled', type: 'int' }
+  ]
 });
 
 /**
@@ -23,6 +28,12 @@ Ext.create('Ext.data.Store', {
     reader: {
       type: 'json',
       root: 'programs'
+    },
+    writer: {
+      encode: true,
+      root: 'programs',
+      type: 'json',
+      writeAllFields: false
     }
   }
 });
