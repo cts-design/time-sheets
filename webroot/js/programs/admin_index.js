@@ -57,9 +57,37 @@ Ext.onReady(function () {
       dataIndex: 'name',
       flex: 1
     }, {
-      text: 'Actions',
-      dataIndex: 'actions',
-      flex: 1
+      align: 'center',
+      text: 'Status',
+      dataIndex: 'disabled',
+      renderer: function (value) {
+        if (value) {
+          return "Disabled";
+        } else {
+          return "Active";
+        }
+      },
+      width: 75
+    }, {
+      xtype: 'actioncolumn',
+      align: 'center',
+      text: 'Edit',
+      width: 70,
+      items: [{
+        icon: '/img/icons/edit.png',
+        tooltip: 'Edit Program',
+        handler: function (grid, rowIndex, colIndex) {
+          var rec = grid.getStore().getAt(rowIndex);
+          window.location = '/admin/programs/edit/' + rec.get('id');
+        }
+      }, {
+        icon: '/img/icons/file-cab.png',
+        tooltip: 'View Responses',
+        handler: function (grid, rowIndex, colIndex) {
+          var rec = grid.getStore().getAt(rowIndex);
+          window.location = '/admin/program_responses/index/' + rec.get('id');
+        }
+      }]
     }],
     dockedItems: [{
       xtype: 'toolbar',
