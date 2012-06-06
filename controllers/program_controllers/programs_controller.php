@@ -66,8 +66,8 @@ class ProgramsController extends AppController {
 		$this->set(compact('title_for_layout'));
 	}
 
-	public function admin_edit($program_type, $id) {
-		if (!$program_type || !$id) {
+	public function admin_edit($programType, $id) {
+		if (!$programType || !$id) {
 			$this->Session->setFlash(__('Invalid Program', true), 'flash_failure');
 			$this->redirect(array(
 				'controller' => 'programs',
@@ -79,7 +79,7 @@ class ProgramsController extends AppController {
 		$program = $this->Program->find('first', array(
 			'conditions' => array(
 				'id'   => $id,
-				'type' => $program_type
+				'type' => $programType
 			)
 		));
 
@@ -92,7 +92,7 @@ class ProgramsController extends AppController {
 		}
 
 		$title_for_layout = 'Edit Program';
-		$this->set(compact('title_for_layout', 'id', 'program_type'));
+		$this->set(compact('title_for_layout', 'id', 'programType'));
 	}
 
 	private function loadProgram($id) {
