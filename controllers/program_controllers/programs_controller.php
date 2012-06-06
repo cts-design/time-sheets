@@ -91,8 +91,6 @@ class ProgramsController extends AppController {
 			));
 		}
 
-		debug($program);
-
 		$title_for_layout = 'Edit Program';
 		$this->set(compact('title_for_layout', 'id', 'program_type'));
 	}
