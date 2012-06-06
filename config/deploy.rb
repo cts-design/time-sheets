@@ -33,7 +33,7 @@ namespace :cts do
     set :server_name, 'atlas staging'
     set :user, 'atlas_staging'
     set :keep_releases, 1
-    set :branch, 'staging'
+    set :branch, 'tic-365'
     set :design_branch, ENV['DESIGN'] if ENV.has_key?('DESIGN')
     server "staging.atlasforworkforce.com", :app, :web, :db, :primary => true
   end
