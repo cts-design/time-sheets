@@ -988,20 +988,25 @@ formBuilder = Ext.create('Ext.panel.Panel', {
     }]
   }],
   preprocess: function () {
-    var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
-      programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
-      program = programStore.first(),
-      programId;
+    var programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
+      programFormFieldStore = Ext.data.StoreManager.lookup('ProgramFormFieldStore');
 
-    task = new Ext.util.DelayedTask(function () {
-      programId = programStore.first().data.id;
-      programStepStore.load({
-        params: {
-          program_id: programId
+    programStepStore.load({
+      params: {
+        program_id: ProgramId
+      },
+      callback: function (recs, op, success) {
+        if (success) {
+          step = programStepStore.findRecord('name', /form/gi);
+
+          programFormFieldStore.load({
+            params: {
+              program_step_id: step.data.id
+            }
+          });
         }
-      });
+      }
     });
-    task.delay(1000);
   },
   process: function () {
     var programFormFieldStore = Ext.data.StoreManager.lookup('ProgramFormFieldStore');
