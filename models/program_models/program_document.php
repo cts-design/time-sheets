@@ -21,20 +21,19 @@ class ProgramDocument extends AppModel {
 	public function queueProgramDocs($programDocuments, $program, $data) {
 		foreach($programDocuments as $doc) {
 			// TODO add Admin to the payload if the doc is genertated from the admin area.
-			$payload['Program'] = $program['Program'];
-			$payload['ProgramResponse'] = $program['ProgramResponse'][0];
-			$payload['User'] = $program['User'];
-			$payload['ProgramDocument'] = $doc['ProgramDocument'];
+			$data['Program'] = $program['Program'];
+			$data['ProgramResponse'] = $program['ProgramResponse'][0];
+			$data['User'] = $program['User'];
+			$data['ProgramDocument'] = $doc['ProgramDocument'];
 			switch($doc['ProgramDocument']['type']) {
 				case 'snapshot': 
-					$payload['steps'][0] = array(
+					$data['steps'][0] = array(
 						'answers' => json_decode($data['ProgramResponseActivity'][0]['answers'], true),
 						'name' => $program['currentStep']['name']);
-					$payload['toc'] = false;
+					$data['toc'] = false;
 					break;
 			}
-			$options = array('priority' => 5000, 'tube' => $doc['ProgramDocument']['type']);
-			ClassRegistry::init('Queue.Job')->put($payload, $options);
+			return ClassRegistry::init('Queue.QueuedTask')->createJob('document', $data);
 		}
 	}
 }
