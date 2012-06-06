@@ -66,6 +66,58 @@ class ProgramsController extends AppController {
 		$this->set(compact('title_for_layout'));
 	}
 
+	public function admin_read() {
+		FireCake::log($this->params);
+		$programId = $this->params['url']['program_id'];
+
+		$program = $this->Program->find('first', array(
+			'conditions' => array(
+				'Program.id' => $programId
+			)
+		));
+
+		if ($program) {
+			$data['success'] = true;
+			$data['programs'] = $program['Program'];
+		} else {
+			$data['success'] = false;
+		}
+
+		$this->set('data', $data);
+		$this->render('/elements/ajaxreturn');
+	}
+
+	public function admin_edit($programType, $id) {
+		if (!$programType || !$id) {
+			$this->Session->setFlash(__('Invalid Program', true), 'flash_failure');
+			$this->redirect(array(
+				'controller' => 'programs',
+				'action' => 'index'
+			));
+		}
+
+		$this->Program->recursive = -1;
+		$program = $this->Program->find('first', array(
+			'conditions' => array(
+				'id'   => $id,
+				'type' => $programType
+			)
+		));
+
+		if (!$program) {
+			$this->Session->setFlash(__('Invalid Program', true), 'flash_failure');
+			$this->redirect(array(
+				'controller' => 'programs',
+				'action' => 'index'
+			));
+		} else {
+			$programName = $program['Program']['name'];
+		}
+
+		$title_for_layout = 'Edit Program';
+		$this->set(compact('title_for_layout', 'id', 'programName', 'programType'));
+	}
+
 	private function loadProgram($id) {
 		if(!$id) {
 			$this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');

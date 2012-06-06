@@ -43,12 +43,19 @@ class ProgramFormFieldsController extends AppController {
 	}
 
 	public function admin_read() {
-		$steps = $this->ProgramStep->find('all');
+		$programStepId = $this->params['url']['program_step_id'];
 
-		if ($steps) {
+		$this->ProgramFormField->recursive = -1;
+		$formFields = $this->ProgramFormField->find('all', array(
+			'conditions' => array(
+				'ProgramFormField.program_step_id' => $programStepId
+			)
+		));
+
+		if ($formFields) {
 			$data['success'] = true;
-			foreach ($steps as $key => $value) {
-				
+			foreach ($formFields as $key => $value) {
+				$data['program_form_fields'][] = $value['ProgramFormField'];
 			}
 		} else {
 			$data['success'] = false;
