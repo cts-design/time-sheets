@@ -7,28 +7,29 @@
 
 class NotificationsComponent extends Object {
 	
-	var $components = array('Email', 'Auth');
+	var $components = array('Auth');
 	
 	function sendProgramEmail($programEmail=null, $user=null) {
 		if($programEmail) {
 			if($user) {
-				$email['email']['to'] = $user['User']['firstname'] . ' ' . 
+				$data['settings']['to'] = $user['User']['firstname'] . ' ' . 
 				$user['User']['lastname'] .' <'. $user['User']['email']. '>';			
 			}
 			else {
-				$email['email']['to'] = $this->Auth->user('firstname') . ' ' . 
+				$data['settings']['to'] = $this->Auth->user('firstname') . ' ' . 
 				$this->Auth->user('lastname') .' <'. $this->Auth->user('email'). '>';		
 			}
 			if($programEmail['from']) {
-				$email['email']['from'] = $programEmail['from'];
+				$data['settings']['from'] = $programEmail['from'];
 			}
 			else {
-				$email['email']['from'] = Configure::read('System.email');
+				$data['settings']['from'] = Configure::read('System.email');
 			}				
-			$email['email']['subject'] = $programEmail['subject'];
-			$email['email']['body'] = $programEmail['body'];
-			$options = array('priority' => 5000, 'tube' => 'program_email');
-			return ClassRegistry::init('Queue.Job')->put($email, $options);
+			$data['settings']['sendAs'] = 'text';
+			$data['settings']['template'] = 'programs';
+			$data['settings']['subject'] = $programEmail['subject'];
+			$data['vars']['text'] = $programEmail['body'];
+			return ClassRegistry::init('Queue.QueuedTask')->createJob('email', $data);
 		}
 		return false;
 	}
