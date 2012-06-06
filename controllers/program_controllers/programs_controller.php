@@ -89,10 +89,12 @@ class ProgramsController extends AppController {
 				'controller' => 'programs',
 				'action' => 'index'
 			));
+		} else {
+			$programName = $program['Program']['name'];
 		}
 
 		$title_for_layout = 'Edit Program';
-		$this->set(compact('title_for_layout', 'id', 'programType'));
+		$this->set(compact('title_for_layout', 'id', 'programName', 'programType'));
 	}
 
 	private function loadProgram($id) {
