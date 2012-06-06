@@ -66,6 +66,37 @@ class ProgramsController extends AppController {
 		$this->set(compact('title_for_layout'));
 	}
 
+	public function admin_edit($program_type, $id) {
+		if (!$program_type || !$id) {
+			$this->Session->setFlash(__('Invalid Program', true), 'flash_failure');
+			$this->redirect(array(
+				'controller' => 'programs',
+				'action' => 'index'
+			));
+		}
+
+		$this->Program->recursive = -1;
+		$program = $this->Program->find('first', array(
+			'conditions' => array(
+				'id'   => $id,
+				'type' => $program_type
+			)
+		));
+
+		if (!$program) {
+			$this->Session->setFlash(__('Invalid Program', true), 'flash_failure');
+			$this->redirect(array(
+				'controller' => 'programs',
+				'action' => 'index'
+			));
+		}
+
+		debug($program);
+
+		$title_for_layout = 'Edit Program';
+		$this->set(compact('title_for_layout', 'id', 'program_type'));
+	}
+
 	private function loadProgram($id) {
 		if(!$id) {
 			$this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');
