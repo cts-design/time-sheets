@@ -1,41 +1,17 @@
 <?php 
 App::import('Vendor', 'wkhtmltopdf/wkhtmltopdf');
 
-class DocumentGenerationWorkerTask extends QueueShell {
-	public $uses = array('Queue.Job', 'FiledDocument');
-	public $tubes = array('snapshot', 'certificate');
+class QueueDocumentTask extends Shell {
+	public $uses = array('Queue.QueuedTask', 'FiledDocument');
 	
-	public function execute() {
-		while(true) {
-			$this->out('Waiting for a job....');	
-			$job = $this->Job->reserve(array('tube' => $this->tubes));
-			if(!$job) {
-				$this->log('Invalid job found. Not processing.', 'error');	
-				// TODO figure out if we need to exit or if it can be done with monit ?????
-				exit(99);
-			}
-			else {
-				$this->out('Processing job ' . $job['Job']['id']);
-				$this->out(var_export($job));
-				switch($job['Job']['ProgramDocument']['type']) {
-					case 'snapshot':
-						$processed = $this->generateSnapshot($job['Job']);	
-						break;
-					case 'certificate':
-						$processed = $this->generateProgramDoc($job['Job']);
-						break;
-				}
-				if($processed) {
-					$this->out('Job ' . $job['Job']['id'] . ' processed.');
-					if($this->Job->delete()) {
-						$this->out('Job ' . $job['Job']['id'] . ' deleted from queue.');
-					}
-				}
-				else {
-					$this->out('Unable to process job ' .  $job['Job']['id'] . ' burying.');
-					$this->Job->bury();
-				}
-			}
+	public function run($data) {
+		switch($data['ProgramDocument']['type']) {
+			case 'snapshot':
+				return  $this->generateSnapshot($data);	
+				break;
+			case 'certificate':
+				return $this->generateProgramDoc($data);
+				break;
 		}
 	}
 
