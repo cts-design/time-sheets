@@ -143,16 +143,6 @@ namespace :deploy do
     cake.aco_update
     cake.cache.clear
   end
-
-  task :stop_queue_workers do
-    run "stop docworker"
-    run "stop email_worker"
-  end
-
-  task :start_queue_workers do
-    run "start docworker"
-    run "start emailworker"
-  end
 end
 
 namespace :cake do
@@ -252,14 +242,12 @@ namespace :mysql do
 end
 
 before :deploy, 'mysql:backup'
-before :deploy, 'deploy:stop_queue_workers'
 
 after "mysql:backup", "notify_campfire:mysql_backup_alert"
 after "deploy:web:disable", "notify_campfire:disabled_alert"
 after "deploy:web:enable", "notify_campfire:enabled_alert"
 after "deploy:update_code", :design
 after "deploy:plugins:symlink", "deploy:finalize_update"
-after "deploy:finalize_update", "deploy:start_queue_workers"
 after "deploy:finalize_update", "notify_campfire:deploy_alert"
 
 capcake
