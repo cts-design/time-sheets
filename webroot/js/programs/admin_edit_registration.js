@@ -559,22 +559,15 @@ registrationForm = Ext.create('Ext.form.Panel', {
   listeners: {
     activate: function () {
       var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
-        loadMask = new Ext.LoadMask(Ext.getBody(), {
-          msg: 'Loading...'
-        }),
         form = this;
 
-      loadMask.show();
+      form.getEl().mask('Loading...');
 
       programStore.load({
         callback: function (recs, op, success) {
-          console.log(recs);
-          console.log(op);
-          console.log(success);
-
           if (success) {
             form.loadRecord(recs[0]);
-            loadMask.hide();
+            form.getEl().unmask();
           }
         },
         params: {
