@@ -337,7 +337,6 @@ Ext.create('Ext.data.Store', {
     api:{
       create: '/admin/program_emails/create',
       read: '/admin/program_emails/read',
-      update: '/admin/program_emails/edit',
       update: '/admin/program_emails/update',
       destroy: '/admin/program_emails/destroy'
     },
@@ -347,7 +346,6 @@ Ext.create('Ext.data.Store', {
       root: 'program_emails'
     },
     writer: {
-      allowSingle: false,
       encode: true,
       root: 'program_emails',
       writeAllFields: false
@@ -1297,13 +1295,7 @@ instructions = Ext.create('Ext.panel.Panel', {
     }]
   }],
   preprocess: function () {
-    var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
-      programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
-      programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
-      program = programStore.first(),
-      formStep;
-
-    programInstructionStore.load({
+    Ext.data.StoreManager.lookup('ProgramInstructionStore').load({
       params: {
         program_id: ProgramId
       }
@@ -1431,25 +1423,15 @@ emails = Ext.create('Ext.panel.Panel', {
     }]
   }],
   preprocess: function () {
-    var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
-      programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
-      programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
-      program = programStore.first(),
-      formStep;
-
-    programInstructionStore.load({
+    Ext.data.StoreManager.lookup('ProgramEmailStore').load({
       params: {
         program_id: ProgramId
-      },
-      callback: function (recs, ops, success) {}
+      }
     });
   },
   process: function () {
-    var programEmailStore = Ext.data.StoreManager.lookup('ProgramEmailStore'),
-      editor = Ext.getCmp('emailEditor');
-
-      programEmailStore.sync();
-      return true;
+    Ext.data.StoreManager.lookup('ProgramEmailStore').sync();
+    return true;
   }
 });
 
