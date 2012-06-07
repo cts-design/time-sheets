@@ -530,7 +530,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
   }, {
     xtype: 'fieldcontainer',
     height: 24,
-    width: 250,
+    width: 300,
     layout: {
       align: 'stretch',
       type: 'vbox'
@@ -582,7 +582,8 @@ registrationForm = Ext.create('Ext.form.Panel', {
         }]
       }),
       value: '',
-      valueField: 'lcase'
+      valueField: 'lcase',
+      width: 300
     }]
   }, {
     xtype: 'fieldcontainer',
