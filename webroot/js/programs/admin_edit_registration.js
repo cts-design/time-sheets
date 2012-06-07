@@ -829,10 +829,12 @@ formBuilder = Ext.create('Ext.panel.Panel', {
     }, {
       xtype: 'checkbox',
       fieldLabel: 'Required',
+      id: 'requiredCb',
       name: 'required'
     }, {
       xtype: 'checkbox',
       fieldLabel: 'Read only',
+      id: 'readOnlyCb',
       name: 'read_only',
       listeners: {
         change: function (field, newVal, oldVal) {
