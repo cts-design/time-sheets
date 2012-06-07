@@ -1335,7 +1335,8 @@ emails = Ext.create('Ext.panel.Panel', {
         var editor = Ext.getCmp('emailEditor'),
           fromField = Ext.getCmp('fromField'),
           subjectField = Ext.getCmp('subjectField'),
-          form = Ext.getCmp('formPanel');
+          form = Ext.getCmp('formPanel'),
+          saveBtn = Ext.getCmp('emailSaveBtn');
 
         if (!rec.data.body) {
           rec.data.text = '';
@@ -1352,7 +1353,7 @@ emails = Ext.create('Ext.panel.Panel', {
         editor.setValue(rec.data.body);
         fromField.setValue(rec.data.from);
         subjectField.setValue(rec.data.subject);
-        Ext.getCmp('saveBtn').enable();
+        saveBtn.enable();
       }
     },
     plugins: [
@@ -1404,8 +1405,9 @@ emails = Ext.create('Ext.panel.Panel', {
       xtype: 'toolbar',
       dock: 'bottom',
       items: ['->', {
+        disabled: true,
+        id: 'emailSaveBtn',
         text: 'Save Email',
-        id: 'saveBtn',
         handler: function () {
           var grid = Ext.getCmp('emailGrid'),
             from = Ext.getCmp('fromField'),
