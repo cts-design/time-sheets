@@ -210,8 +210,9 @@ Ext.create('Ext.data.Store', {
   proxy: {
     type: 'ajax',
     api: {
-      create: '/admin/programs/create_orientation',
-      update: '/admin/programs/update_orientation'
+      create: '/admin/programs/create_registration',
+      read:   '/admin/programs/read',
+      update: '/admin/programs/update_registration'
     },
     reader: {
       type: 'json',
@@ -305,7 +306,9 @@ Ext.create('Ext.data.Store', {
 Ext.create('Ext.data.Store', {
   data: [
     { program_id: 0, program_step_id: null, text: 'Default text Main', type: 'main', created: null, modified: null },
+    { program_id: 0, program_step_id: null, text: 'Default text Pending Approval', type: 'pending_approval', created: null, modified: null },
     { program_id: 0, program_step_id: null, text: 'Default text Expired', type: 'expired', created: null, modified: null },
+    { program_id: 0, program_step_id: null, text: 'Default text Not Approved', type: 'not_approved', created: null, modified: null }
   ],
   storeId: 'ProgramInstructionStore',
   model: 'ProgramInstruction',
@@ -332,9 +335,11 @@ Ext.create('Ext.data.Store', {
 
 Ext.create('Ext.data.Store', {
   data: [
-    { program_id: 0, program_step_id: null, name: 'Orientation Main', from: null, subject: 'Main email', body: 'Default text Main', type: 'main', created: null, modified: null },
-    { program_id: 0, program_step_id: null, name: 'Orientation Expired', from: null, subject: 'Expired email', body: 'Default text Expired', type: 'expired', created: null, modified: null },
-    { program_id: 0, program_step_id: null, name: 'Orientation Complete', from: null, subject: 'Complete email', body: 'Default text Complete', type: 'complete', created: null, modified: null }
+    { program_id: 0, program_step_id: null, name: 'Registration Main', from: null, subject: 'Main', body: 'Default text Main', type: 'main', created: null, modified: null },
+    { program_id: 0, program_step_id: null, name: 'Registration Pending Approval', from: null, subject: 'Pending Approval', body: 'Default text Pending Approval', type: 'pending_approval', created: null, modified: null },
+    { program_id: 0, program_step_id: null, name: 'Registration Expired', from: null, subject: 'Expired', body: 'Default text Expired', type: 'expired', created: null, modified: null },
+    { program_id: 0, program_step_id: null, name: 'Registration Not Approved', from: null, subject: 'Not Approved', body: 'Default text Main', type: 'not_approved', created: null, modified: null },
+    { program_id: 0, program_step_id: null, name: 'Registration Complete', from: null, subject: 'Complete', body: 'Default text Complete', type: 'complete', created: null, modified: null }
   ],
   storeId: 'ProgramEmailStore',
   model: 'ProgramEmail',
@@ -445,7 +450,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
   }, {
     xtype: 'hiddenfield',
     name: 'type',
-    value: 'orientation'
+    value: 'registration'
   }, {
     xtype: 'fieldcontainer',
     height: 22,
@@ -465,6 +470,29 @@ registrationForm = Ext.create('Ext.form.Panel', {
       }, {
         boxLabel: 'No',
         name: 'form_esign_required',
+        inputValue: '0',
+        checked: true
+      }]
+    }]
+  }, {
+    xtype: 'fieldcontainer',
+    height: 22,
+    width: 250,
+    layout: {
+      align: 'stretch',
+      type: 'vbox'
+    },
+    items: [{
+      xtype: 'radiogroup',
+      fieldLabel: 'Approval Required?',
+      labelWidth: 150,
+      items: [{
+        boxLabel: 'Yes',
+        name: 'approval_required',
+        inputValue: '1'
+      }, {
+        boxLabel: 'No',
+        name: 'approval_required',
         inputValue: '0',
         checked: true
       }]
@@ -524,129 +552,33 @@ registrationForm = Ext.create('Ext.form.Panel', {
       value: 'days'
     }]
   }, {
-    border: 0,
-    html: '<h1>Program Media</h1>',
-    margin: '0 0 10'
-  }, {
-    xtype: 'fieldcontainer',
-    height: 24,
-    width: 300,
-    layout: {
-      align: 'stretch',
-      type: 'vbox'
-    },
-    items: [{
-      xtype: 'combo',
-      allowBlank: false,
-      displayField: 'ucase',
-      fieldLabel: 'Media Type',
-      labelWidth: 150,
-      listeners: {
-        change: {
-          fn: function (field, newValue, oldValue) {
-            var container = Ext.getCmp('uploadContainer'),
-              uploadField = Ext.getCmp('uploadField'),
-              urlContainer = Ext.getCmp('urlContainer'),
-              urlField = Ext.getCmp('urlField');
-
-            if (newValue !== 'url') {
-              container.setVisible(true);
-              uploadField.allowBlank = false;
-              urlContainer.setVisible(false);
-              urlField.allowBlank = true;
-              if (oldValue === 'url') {
-                container.getEl().highlight('C9DFEE', { duration: 1000 });
-              }
-            } else {
-              container.setVisible(false);
-              uploadField.allowBlank = true;
-              urlContainer.setVisible(true);
-              urlField.allowBlank = false;
-              urlContainer.getEl().highlight('C9DFEE', { duration: 1000 });
-            }
-          }
-        }
-      },
-      name: 'media_type',
-      queryMode: 'local',
-      store: Ext.create('Ext.data.Store', {
-        fields: ['lcase', 'ucase'],
-        data: [{
-          lcase: 'pdf', ucase: 'PDF Document'
-        }, {
-          lcase: 'video', ucase: 'Flash Video'
-        }, {
-          lcase: 'presenter', ucase: 'Adobe Presenter'
-        }, {
-          lcase: 'url', ucase: 'Website URL'
-        }]
-      }),
-      value: '',
-      valueField: 'lcase',
-      width: 300
-    }]
-  }, {
-    xtype: 'fieldcontainer',
-    height: 22,
-    id: 'uploadContainer',
-    width: 500,
-    layout: {
-      defaultMargins: {
-        top: 0,
-        right: 5,
-        bottom: 0,
-        left: 0
-      },
-      type: 'hbox'
-    },
-    items: [{
-      xtype: 'filefield',
-      allowBlank: false,
-      fieldLabel: 'Upload Media',
-      id: 'uploadField',
-      labelWidth: 150,
-      name: 'media',
-      width: 400
-    }, {
-      xtype: 'displayfield',
-      style: {
-        color: '#445566'
-      },
-      value: 'E.g. flv, pdf'
-    }]
-  }, {
-    xtype: 'fieldcontainer',
-    height: 22,
-    hidden: true,
-    id: 'urlContainer',
-    width: 500,
-    layout: {
-      defaultMargins: {
-        top: 0,
-        right: 5,
-        bottom: 0,
-        left: 0
-      },
-      type: 'hbox'
-    },
-    items: [{
-      xtype: 'textfield',
-      allowBlank: false,
-      fieldLabel: 'Media Url',
-      id: 'urlField',
-      labelWidth: 150,
-      name: 'media_location',
-      width: 400
-    }]
-  }, {
     xtype: 'hiddenfield',
     name: 'confirmation_id_length',
     value: '10'
   }],
+  listeners: {
+    activate: function () {
+      var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
+        form = this;
+
+      form.getEl().mask('Loading...');
+
+      programStore.load({
+        callback: function (recs, op, success) {
+          if (success) {
+            form.loadRecord(recs[0]);
+            form.getEl().unmask();
+          }
+        },
+        params: {
+          program_id: ProgramId
+        }
+      });
+    }
+  },
   process: function () {
     var form = this.getForm(),
       programStore = Ext.data.StoreManager.lookup('ProgramStore'),
-      uploadContainer = Ext.getCmp('uploadContainer'),
       record,
       vals;
 
@@ -654,51 +586,20 @@ registrationForm = Ext.create('Ext.form.Panel', {
 
     if (form.isValid()) {
       vals = form.getValues();
+      record = programStore.first();
 
-      if (uploadContainer.hidden) {
-        if (!vals.media_location.match(/[http|https]:\/\//)) {
-          vals.media_location = 'http://' + vals.media_location;
-        }
-
-        media = {
-          location: vals.media_location,
-          type: vals.media_type
-        };
-
-        programStore.getProxy().extraParams = {
-          media: Ext.JSON.encode(media)
-        };
-
-        programStore.add(vals);
-        return true;
+      if (record) {
+        record.set(vals);
       } else {
-        form.submit({
-          url: '/admin/programs/upload_media',
-          waitMsg: 'Uploading Media...',
-          scope: this,
-          success: function (form, action) {
-            form.reset();
-
-            media = {
-              location: action.result.url,
-              type: vals.media_type
-            };
-
-            programStore.getProxy().extraParams = {
-              media: Ext.JSON.encode(media)
-            };
-
-            programStore.add(vals);
-          },
-          failure: function (form, action) {
-            Ext.Msg.alert('Could not upload file', action.result.msg);
-          }
-        });
+        form.setValues(vals);
+        programStore.add(vals);
       }
+
+      statusBar.clearStatus();
+      return true;
     }
 
     statusBar.clearStatus();
-    return true;
   }
 });
 
@@ -924,10 +825,9 @@ formBuilder = Ext.create('Ext.panel.Panel', {
         padding: 5
       }]
     }, {
-      xtype: 'textfield',
-      allowBlank: false,
-      fieldLabel: 'Correct Answer',
-      name: 'answer'
+      xtype: 'checkbox',
+      fieldLabel: 'Required',
+      name: 'required'
     }, {
       xtype: 'checkbox',
       fieldLabel: 'Read only',
@@ -975,10 +875,8 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           options = {},
           validation = {},
           programStep = Ext.data.StoreManager.lookup('ProgramStepStore'),
-          programStepId,
+          programStepId = programStep.last().data.id,
           grid = Ext.getCmp('formFieldGrid');
-
-        programStepId = programStep.findRecord('name', /quiz/i).data.id;
 
         switch (vals.type) {
           case 'datepicker':
@@ -1013,9 +911,10 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           attributes.readonly = 'readonly';
         }
 
-        validation.rule = ['equalTo', vals.answer];
-        validation.message = 'Incorrect';
-        vals.validation = Ext.JSON.encode(validation);
+        if (vals.required === 'on') {
+          validation.rule = 'notEmpty';
+          vals.validation = Ext.JSON.encode(validation);
+        }
 
         vals.program_step_id = programStepId;
         vals.attributes = (!Ext.isEmpty(attributes)) ? Ext.JSON.encode(attributes) : null;
@@ -1089,22 +988,25 @@ formBuilder = Ext.create('Ext.panel.Panel', {
     }]
   }],
   preprocess: function () {
-    var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
-      programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
-      programId,
-      statusBar = Ext.getCmp('statusBar');
+    var programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
+      programFormFieldStore = Ext.data.StoreManager.lookup('ProgramFormFieldStore');
 
-    statusBar.setText('Step 2 of 5');
+    programStepStore.load({
+      params: {
+        program_id: ProgramId
+      },
+      callback: function (recs, op, success) {
+        if (success) {
+          step = programStepStore.findRecord('name', /form/gi);
 
-    task = new Ext.util.DelayedTask(function () {
-      programId = programStore.first().data.id;
-      programStepStore.load({
-        params: {
-          program_id: programId
+          programFormFieldStore.load({
+            params: {
+              program_step_id: step.data.id
+            }
+          });
         }
-      });
+      }
     });
-    task.delay(1500);
   },
   process: function () {
     var programFormFieldStore = Ext.data.StoreManager.lookup('ProgramFormFieldStore');
@@ -1122,7 +1024,7 @@ filingCategories = Ext.create('Ext.form.Panel', {
   height: 406,
   items: [{
     border: 0,
-    html: '<h1>Where would you like to file the orientation certificate?</h1>',
+    html: '<h1>Where would you like to file the registration snapshot?</h1>',
     margin: '0 0 10'
   }, {
     xtype: 'combo',
@@ -1215,11 +1117,10 @@ filingCategories = Ext.create('Ext.form.Panel', {
     if (form.isValid()) {
       vals = form.getValues();
       program = programStore.first();
-      programStep = programStepStore.findRecord('type', /form/);
+      programStep = programStepStore.last();
 
-      vals.template = 'atlas_cert.pdf';
-      vals.name = program.data.name + " Orientation Certificate";
-      vals.type = 'certificate';
+      vals.name = program.data.name + " registration snapshot";
+      vals.type = 'snapshot';
       vals.program_id = program.data.id;
       vals.program_step_id = programStep.data.id;
       programDocumentStore.add(vals);
@@ -1300,11 +1201,25 @@ instructions = Ext.create('Ext.panel.Panel', {
       programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
       program = programStore.first(),
       programId = program.data.id,
-      mediaStep,
-      quizStep;
+      formStep;
 
-    mediaStep = programStepStore.findRecord('type', /^media$/gi);
-    quizStep = programStepStore.findRecord('type', /^form$/gi);
+    if (!program.data.approval_required) {
+      var notApproved,
+        pendingApproval;
+
+      notApproved = programInstructionStore.findExact('type', 'not_approved');
+      pendingApproval = programInstructionStore.findExact('type', 'pending_approval');
+
+      if (notApproved !== -1) {
+        programInstructionStore.removeAt(notApproved);
+      }
+
+      if (pendingApproval !== -1) {
+        programInstructionStore.removeAt(pendingApproval);
+      }
+    }
+
+    formStep = programStepStore.findRecord('type', /^form$/gi);
 
     programInstructionStore.each(function (rec) {
       rec.set({
@@ -1313,14 +1228,9 @@ instructions = Ext.create('Ext.panel.Panel', {
     });
     programInstructionStore.add({
       program_id: programId,
-      program_step_id: mediaStep.data.id,
-      text: program.data.name + ' Orientation Media Step Instructions',
-      type: 'Orientation Media Step Instructions'.underscore()
-    }, {
-      program_id: programId,
-      program_step_id: quizStep.data.id,
-      text: program.data.name + ' Orientation Quiz Step Instructions',
-      type: 'Orientation Quiz Step Instructions'.underscore()
+      program_step_id: formStep.data.id,
+      text: program.data.name + ' Registration Form Step Instructions',
+      type: (program.data.name + ' Registration Form Step Instructions').underscore()
     });
   },
   process: function () {
@@ -1453,11 +1363,25 @@ emails = Ext.create('Ext.panel.Panel', {
       programEmailStore = Ext.data.StoreManager.lookup('ProgramEmailStore'),
       program = programStore.first(),
       programId = program.data.id,
-      mediaStep,
-      quizStep;
+      formStep;
 
-    mediaStep = programStepStore.findRecord('type', /^media$/gi);
-    quizStep = programStepStore.findRecord('type', /^form$/gi);
+    if (!program.data.approval_required) {
+      var notApproved,
+        pendingApproval;
+
+      notApproved = programEmailStore.findExact('type', 'not_approved');
+      pendingApproval = programEmailStore.findExact('type', 'pending_approval');
+
+      if (notApproved !== -1) {
+        programEmailStore.removeAt(notApproved);
+      }
+
+      if (pendingApproval !== -1) {
+        programEmailStore.removeAt(pendingApproval);
+      }
+    }
+
+    formStep = programStepStore.findRecord('type', /^form$/gi);
 
     programEmailStore.each(function (rec) {
       rec.set({
@@ -1467,16 +1391,10 @@ emails = Ext.create('Ext.panel.Panel', {
     // add our step emails
     programEmailStore.add({
       program_id: programId,
-      program_step_id: mediaStep.data.id,
-      name: program.data.name + ' Orientation Media Step Email',
-      type: 'Orientation Media Step Instructions'.underscore(),
-      body: 'Your Orientation media step email'
-    }, {
-      program_id: programId,
-      program_step_id: quizStep.data.id,
-      name: program.data.name + ' Orientation Quiz Step Email',
-      type: 'Orientation Quiz Step Instructions'.underscore(),
-      body: 'Your Orientation quiz step email'
+      program_step_id: formStep.data.id,
+      name: program.data.name + ' Registration Form Step Email',
+      type: (program.data.name + ' Registration Form Step Instructions').underscore(),
+      body: 'Your registration form step email'
     });
   },
   process: function () {
@@ -1532,7 +1450,6 @@ statusBar = Ext.create('Ext.ux.statusbar.StatusBar', {
   defaultText: '',
   dock: 'bottom',
   id: 'statusBar',
-  text: 'Step 1 of 5',
   items: [{
     disabled: true,
     id: 'back',
@@ -1574,8 +1491,8 @@ Ext.onReady(function () {
       emails
     ],
     layout: 'card',
-    renderTo: 'registrationForm',
-    title: 'New Program Orientation'
+    renderTo: 'editPanel',
+    title: 'New Program Registration'
   });
 
 });
