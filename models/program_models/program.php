@@ -3,7 +3,7 @@ class Program extends AppModel {
 
 	public $name = 'Program';
 	public $displayField = 'name';
-    public $actsAs = array('Containable');
+    public $actsAs = array('Containable', 'Disableable');
 	public $hasMany = array(
 						'ProgramStep',
 						'ProgramResponse',
@@ -19,7 +19,7 @@ class Program extends AppModel {
 				'ProgramFormField'
 			),
 			'ProgramInstruction',
-			'ProgramEmail',
+			'ProgramEmail' => array('conditions' => array('disabled' => 0)),
 			'ProgramDocument',
 			'ProgramResponse' => array(
 				'conditions' => array('ProgramResponse.user_id' => $userId),
