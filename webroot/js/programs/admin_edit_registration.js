@@ -1171,7 +1171,6 @@ filingCategories = Ext.create('Ext.form.Panel', {
   }],
   preprocess: function () {
     var programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
-      programDocumentStore = Ext.data.StoreManager.lookup('ProgramDocumentStore');
       programDocumentStore = Ext.data.StoreManager.lookup('ProgramDocumentStore'),
       queueCategoryStore = Ext.data.StoreManager.lookup('DocumentQueueCategoryStore'),
       Cat1Store = Ext.data.StoreManager.lookup('Cat1Store'),
@@ -1222,22 +1221,14 @@ filingCategories = Ext.create('Ext.form.Panel', {
   process: function () {
     var form = this.getForm(),
       programDocumentStore = Ext.data.StoreManager.lookup('ProgramDocumentStore'),
-      programStore = Ext.data.StoreManager.lookup('ProgramStore'),
-      programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
-      program,
-      programStep,
+      programDocument = programDocumentStore.first(),
+      programId = ProgramId,
       vals;
 
     if (form.isValid()) {
       vals = form.getValues();
-      program = programStore.first();
-      programStep = programStepStore.last();
 
-      vals.name = program.data.name + " registration snapshot";
-      vals.type = 'snapshot';
-      vals.program_id = program.data.id;
-      vals.program_step_id = programStep.data.id;
-      programDocumentStore.add(vals);
+      programDocument.set(vals);
 
       return true;
     }

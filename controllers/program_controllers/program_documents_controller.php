@@ -49,6 +49,17 @@ class ProgramDocumentsController extends AppController {
 	}
 
 	public function admin_update() {
+		$document = json_decode($this->params['form']['program_documents'], true);
+
+		$this->ProgramDocument->id = $document['id'];
+		$this->ProgramDocument->set($document);
+
+		if ($this->ProgramDocument->save()) {
+			$data['success'] = true;
+		} else {
+			$data['success'] = false;
+		}
+
 		$this->set('data', $data);
 		$this->render(null, null, '/elements/ajaxreturn');
 	}
