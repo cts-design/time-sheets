@@ -779,7 +779,9 @@ formBuilder = Ext.create('Ext.panel.Panel', {
         handler: function () {
           var store = Ext.data.StoreManager.lookup('ProgramFormFieldStore'),
             formPanel = Ext.getCmp('formPanel'),
-            form = formPanel.getForm();
+            form = formPanel.getForm(),
+            updateBtn = Ext.getCmp('updateBtn'),
+            builderSaveBtn = Ext.getCmp('builderSaveBtn');
 
           Ext.Msg.show({
             title: 'Delete Field?',
@@ -790,6 +792,8 @@ formBuilder = Ext.create('Ext.panel.Panel', {
               if (btn === 'yes') {
                 store.remove(formPanel.getRecord());
                 form.reset();
+                updateBtn.hide().disable();
+                builderSaveBtn.show().enable();
                 this.disable();
               }
             },
