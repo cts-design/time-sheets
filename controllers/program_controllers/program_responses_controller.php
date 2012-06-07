@@ -808,7 +808,6 @@ class ProgramResponsesController extends AppController {
 							'ProgramEmail.program_id' => $programResponse['Program']['id'],
 							'ProgramEmail.type' => 'not_approved'
 					)));
-					$this->log($programEmail, 'debug');
 					$user['User'] = $programResponse['User'];
 					if($programEmail) {
 						if(!empty($this->params['form']['email_comment'])) {
