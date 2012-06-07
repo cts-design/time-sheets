@@ -254,6 +254,7 @@ Ext.create('Ext.data.Store', {
 
 Ext.create('Ext.data.Store', {
   storeId: 'ProgramFormFieldStore',
+  autoSync: true,
   model: 'ProgramFormField',
   proxy: {
     type: 'ajax',
@@ -272,7 +273,8 @@ Ext.create('Ext.data.Store', {
       type: 'json',
       allowSingle: false,
       encode: true,
-      root: 'program_form_fields'
+      root: 'program_form_fields',
+      writeAllFields: false
     }
   }
 });
@@ -938,7 +940,8 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           validation = {},
           programStep = Ext.data.StoreManager.lookup('ProgramStepStore'),
           programStepId = programStep.last().data.id,
-          grid = Ext.getCmp('formFieldGrid');
+          grid = Ext.getCmp('formFieldGrid'),
+          selectedRecord = grid.getSelectionModel().getSelection()[0];
 
         switch (vals.type) {
           case 'datepicker':
@@ -982,7 +985,7 @@ formBuilder = Ext.create('Ext.panel.Panel', {
         vals.attributes = (!Ext.isEmpty(attributes)) ? Ext.JSON.encode(attributes) : null;
         vals.name = vals.label.underscore();
 
-        grid.store.add(vals);
+        selectedRecord.set(vals);
         form.reset();
       }
     }]
@@ -1105,6 +1108,27 @@ filingCategories = Ext.create('Ext.form.Panel', {
     },
     allowBlank: false
   }],
+  preprocess: function () {
+    var programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
+      programDocumentStore = Ext.data.StoreManager.lookup('ProgramDocumentStore');
+
+    programStepStore.load({
+      params: {
+        program_id: ProgramId
+      },
+      callback: function (recs, op, success) {
+        if (success) {
+          step = programStepStore.findRecord('name', /form/gi);
+
+          programDocumentStore.load({
+            params: {
+              program_step_id: step.data.id
+            }
+          });
+        }
+      }
+    });
+  },
   process: function () {
     var form = this.getForm(),
       programDocumentStore = Ext.data.StoreManager.lookup('ProgramDocumentStore'),

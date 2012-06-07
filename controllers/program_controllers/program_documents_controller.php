@@ -26,12 +26,19 @@ class ProgramDocumentsController extends AppController {
 	}
 
 	public function admin_read() {
-		$steps = $this->ProgramStep->find('all');
+		$programStepId = $this->params['url']['program_step_id'];
 
-		if ($steps) {
+		$this->ProgramDocument->recursive = -1;
+		$documents = $this->ProgramDocument->find('all', array(
+			'conditions' => array(
+				'ProgramDocument.program_step_id' => $programStepId
+			)
+		));
+
+		if ($documents) {
 			$data['success'] = true;
-			foreach ($steps as $key => $value) {
-				
+			foreach ($documents as $key => $value) {
+				$data['program_documents'][] = $value['ProgramDocument'];
 			}
 		} else {
 			$data['success'] = false;

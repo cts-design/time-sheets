@@ -66,6 +66,18 @@ class ProgramFormFieldsController extends AppController {
 	}
 
 	public function admin_update() {
+		$formField = json_decode($this->params['form']['program_form_fields'], true);
+		$formField = $formField[0];
+
+		$this->ProgramFormField->id = $formField['id'];
+		$this->ProgramFormField->set($formField);
+
+		if ($this->ProgramFormField->save()) {
+			$data['success'] = true;
+		} else {
+			$data['success'] = false;
+		}
+
 		$this->set('data', $data);
 		$this->render(null, null, '/elements/ajaxreturn');
 	}
