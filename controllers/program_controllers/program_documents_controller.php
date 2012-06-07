@@ -26,12 +26,19 @@ class ProgramDocumentsController extends AppController {
 	}
 
 	public function admin_read() {
-		$steps = $this->ProgramStep->find('all');
+		$programStepId = $this->params['url']['program_step_id'];
 
-		if ($steps) {
+		$this->ProgramDocument->recursive = -1;
+		$documents = $this->ProgramDocument->find('all', array(
+			'conditions' => array(
+				'ProgramDocument.program_step_id' => $programStepId
+			)
+		));
+
+		if ($documents) {
 			$data['success'] = true;
-			foreach ($steps as $key => $value) {
-				
+			foreach ($documents as $key => $value) {
+				$data['program_documents'][] = $value['ProgramDocument'];
 			}
 		} else {
 			$data['success'] = false;
@@ -42,6 +49,17 @@ class ProgramDocumentsController extends AppController {
 	}
 
 	public function admin_update() {
+		$document = json_decode($this->params['form']['program_documents'], true);
+
+		$this->ProgramDocument->id = $document['id'];
+		$this->ProgramDocument->set($document);
+
+		if ($this->ProgramDocument->save()) {
+			$data['success'] = true;
+		} else {
+			$data['success'] = false;
+		}
+
 		$this->set('data', $data);
 		$this->render(null, null, '/elements/ajaxreturn');
 	}

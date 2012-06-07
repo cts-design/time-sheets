@@ -46,10 +46,10 @@ Ext.define('ProgramFormField', {
     'label',
     'type',
     'name',
-    'attributes',
-    'options',
-    'validation',
-    'instructions',
+    { name: 'attributes', type: 'string', useNull: true },
+    { name: 'options', type: 'string', useNull: true },
+    { name: 'validation', type: 'string', useNull: true },
+    { name: 'instructions', type: 'string', useNull: true },
     { name: 'created',  type: 'date', dateFormat: 'Y-m-d H:i:s' },
     { name: 'modified', type: 'date', dateFormat: 'Y-m-d H:i:s' }
   ]
@@ -77,7 +77,7 @@ Ext.define('ProgramInstruction', {
   fields: [
     { name: 'id', type: 'int' },
     { name: 'program_id', type: 'int' },
-    { name: 'program_step_id', type: 'int' },
+    { name: 'program_step_id', type: 'int', useNull: true },
     'text',
     'type',
     { name: 'created',  type: 'date', dateFormat: 'Y-m-d H:i:s' },
@@ -90,10 +90,10 @@ Ext.define('ProgramEmail', {
   fields: [
     { name: 'id', type: 'int' },
     { name: 'program_id', type: 'int' },
-    { name: 'program_step_id', type: 'int' },
+    { name: 'program_step_id', type: 'int', useNull: true },
     { name: 'cat_id', type: 'int' },
     'to',
-    'from',
+    { name: 'from', type: 'string', useNull: true },
     'subject',
     'body',
     'type',
@@ -304,10 +304,10 @@ Ext.create('Ext.data.Store', {
 
 Ext.create('Ext.data.Store', {
   data: [
-    { program_id: 0, program_step_id: null, text: 'Default text Main', type: 'main', created: null, modified: null },
-    { program_id: 0, program_step_id: null, text: 'Default text Pending Approval', type: 'pending_approval', created: null, modified: null },
-    { program_id: 0, program_step_id: null, text: 'Default text Expired', type: 'expired', created: null, modified: null },
-    { program_id: 0, program_step_id: null, text: 'Default text Not Approved', type: 'not_approved', created: null, modified: null }
+    { program_id: 0, text: 'Default text Main', type: 'main', created: null, modified: null },
+    { program_id: 0, text: 'Default text Pending Approval', type: 'pending_approval', created: null, modified: null },
+    { program_id: 0, text: 'Default text Expired', type: 'expired', created: null, modified: null },
+    { program_id: 0, text: 'Default text Not Approved', type: 'not_approved', created: null, modified: null }
   ],
   storeId: 'ProgramInstructionStore',
   model: 'ProgramInstruction',
@@ -334,11 +334,11 @@ Ext.create('Ext.data.Store', {
 
 Ext.create('Ext.data.Store', {
   data: [
-    { program_id: 0, program_step_id: null, name: 'Registration Main', from: null, subject: 'Main', body: 'Default text Main', type: 'main', created: null, modified: null },
-    { program_id: 0, program_step_id: null, name: 'Registration Pending Approval', from: null, subject: 'Pending Approval', body: 'Default text Pending Approval', type: 'pending_approval', created: null, modified: null },
-    { program_id: 0, program_step_id: null, name: 'Registration Expired', from: null, subject: 'Expired', body: 'Default text Expired', type: 'expired', created: null, modified: null },
-    { program_id: 0, program_step_id: null, name: 'Registration Not Approved', from: null, subject: 'Not Approved', body: 'Default text Main', type: 'not_approved', created: null, modified: null },
-    { program_id: 0, program_step_id: null, name: 'Registration Complete', from: null, subject: 'Complete', body: 'Default text Complete', type: 'complete', created: null, modified: null }
+    { program_id: 0, name: 'Registration Main', from: null, subject: 'Main', body: 'Default text Main', type: 'main', created: null, modified: null },
+    { program_id: 0, name: 'Registration Pending Approval', from: null, subject: 'Pending Approval', body: 'Default text Pending Approval', type: 'pending_approval', created: null, modified: null },
+    { program_id: 0, name: 'Registration Expired', from: null, subject: 'Expired', body: 'Default text Expired', type: 'expired', created: null, modified: null },
+    { program_id: 0, name: 'Registration Not Approved', from: null, subject: 'Not Approved', body: 'Default text Main', type: 'not_approved', created: null, modified: null },
+    { program_id: 0, name: 'Registration Complete', from: null, subject: 'Complete', body: 'Default text Complete', type: 'complete', created: null, modified: null }
   ],
   storeId: 'ProgramEmailStore',
   model: 'ProgramEmail',
@@ -537,11 +537,13 @@ registrationForm = Ext.create('Ext.form.Panel', {
       type: 'hbox'
     },
     items: [{
-      xtype: 'textfield',
+      xtype: 'numberfield',
       allowBlank: false,
       fieldLabel: 'Responses Expire In',
       labelWidth: 150,
+      minValue: 30,
       name: 'response_expires_in',
+      value: 30,
       width: 250
     }, {
       xtype: 'displayfield',
@@ -877,11 +879,9 @@ formBuilder = Ext.create('Ext.panel.Panel', {
             }
 
             attributes.empty = 'Please Select';
-            vals.options = Ext.JSON.encode(options);
             break;
 
           case 'states':
-            vals.options = Ext.JSON.encode(states);
             vals.type = 'select';
             break;
         }
@@ -892,11 +892,21 @@ formBuilder = Ext.create('Ext.panel.Panel', {
 
         if (vals.required === 'on') {
           validation.rule = 'notEmpty';
+        }
+
+        if (!Ext.isEmpty(attributes)) {
+          vals.attributes = Ext.JSON.encode(attributes);
+        }
+
+        if (!Ext.isEmpty(options)) {
+          vals.options = Ext.JSON.encode(options);
+        }
+
+        if (!Ext.isEmpty(validation)) {
           vals.validation = Ext.JSON.encode(validation);
         }
 
         vals.program_step_id = programStepId;
-        vals.attributes = (!Ext.isEmpty(attributes)) ? Ext.JSON.encode(attributes) : null;
         vals.name = vals.label.underscore();
 
         grid.store.add(vals);
@@ -917,7 +927,8 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           validation = {},
           programStep = Ext.data.StoreManager.lookup('ProgramStepStore'),
           programStepId = programStep.last().data.id,
-          grid = Ext.getCmp('formFieldGrid');
+          grid = Ext.getCmp('formFieldGrid'),
+          selectedRecord = grid.getSelectionModel().getSelection()[0];
 
         switch (vals.type) {
           case 'datepicker':
@@ -939,11 +950,9 @@ formBuilder = Ext.create('Ext.panel.Panel', {
             }
 
             attributes.empty = 'Please Select';
-            vals.options = Ext.JSON.encode(options);
             break;
 
           case 'states':
-            vals.options = Ext.JSON.encode(states);
             vals.type = 'select';
             break;
         }
@@ -954,14 +963,24 @@ formBuilder = Ext.create('Ext.panel.Panel', {
 
         if (vals.required === 'on') {
           validation.rule = 'notEmpty';
+        }
+
+        if (!Ext.isEmpty(attributes)) {
+          vals.attributes = Ext.JSON.encode(attributes);
+        }
+
+        if (!Ext.isEmpty(options)) {
+          vals.options = Ext.JSON.encode(options);
+        }
+
+        if (!Ext.isEmpty(validation)) {
           vals.validation = Ext.JSON.encode(validation);
         }
 
         vals.program_step_id = programStepId;
-        vals.attributes = (!Ext.isEmpty(attributes)) ? Ext.JSON.encode(attributes) : null;
         vals.name = vals.label.underscore();
 
-        grid.store.add(vals);
+        selectedRecord.set(vals);
         form.reset();
       }
     }]
@@ -1129,14 +1148,15 @@ instructions = Ext.create('Ext.panel.Panel', {
     }],
     listeners: {
       select: function (rm, rec, index) {
-        var editor = Ext.getCmp('editor');
+        var editor = Ext.getCmp('editor'),
+          saveBtn = Ext.getCmp('instructionSaveBtn');
 
         if (!rec.data.text) {
           rec.data.text = '';
         }
 
         editor.setValue(rec.data.text);
-        Ext.getCmp('saveBtn').enable();
+        saveBtn.enable();
       }
     },
     plugins: [
@@ -1153,8 +1173,9 @@ instructions = Ext.create('Ext.panel.Panel', {
       xtype: 'toolbar',
       dock: 'bottom',
       items: ['->', {
+        disabled: true,
+        id: 'instructionSaveBtn',
         text: 'Save Instruction',
-        id: 'saveBtn',
         handler: function () {
           var grid = Ext.getCmp('instructionsGrid'),
             editor = Ext.getCmp('editor'),
@@ -1244,24 +1265,13 @@ emails = Ext.create('Ext.panel.Panel', {
         var editor = Ext.getCmp('emailEditor'),
           fromField = Ext.getCmp('fromField'),
           subjectField = Ext.getCmp('subjectField'),
-          form = Ext.getCmp('formPanel');
-
-        if (!rec.data.body) {
-          rec.data.text = '';
-        }
-
-        if (!rec.data.from) {
-          rec.data.text = '';
-        }
-
-        if (!rec.data.subject) {
-          rec.data.subject = '';
-        }
+          form = Ext.getCmp('formPanel'),
+          saveBtn = Ext.getCmp('emailSaveBtn');
 
         editor.setValue(rec.data.body);
         fromField.setValue(rec.data.from);
         subjectField.setValue(rec.data.subject);
-        Ext.getCmp('saveBtn').enable();
+        saveBtn.enable();
       }
     },
     plugins: [
@@ -1313,8 +1323,9 @@ emails = Ext.create('Ext.panel.Panel', {
       xtype: 'toolbar',
       dock: 'bottom',
       items: ['->', {
+        disabled: true,
+        id: 'emailSaveBtn',
         text: 'Save Email',
-        id: 'saveBtn',
         handler: function () {
           var grid = Ext.getCmp('emailGrid'),
             from = Ext.getCmp('fromField'),
@@ -1367,8 +1378,10 @@ emails = Ext.create('Ext.panel.Panel', {
       program_id: programId,
       program_step_id: formStep.data.id,
       name: program.data.name + ' Registration Form Step Email',
-      type: (program.data.name + ' Registration Form Step Instructions').underscore(),
-      body: 'Your registration form step email'
+      type: 'step',
+      body: 'Your registration form step email',
+      subject: 'Registration Form Complete',
+      from: null
     });
   },
   process: function () {
@@ -1395,6 +1408,7 @@ navigate = function (panel, direction) {
 
       task.delay(500);
     });
+    return;
   }
 
   if (direction === 'prev' || activeItem.process()) {

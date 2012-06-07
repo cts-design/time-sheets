@@ -254,6 +254,7 @@ Ext.create('Ext.data.Store', {
 
 Ext.create('Ext.data.Store', {
   storeId: 'ProgramFormFieldStore',
+  autoSync: true,
   model: 'ProgramFormField',
   proxy: {
     type: 'ajax',
@@ -272,7 +273,8 @@ Ext.create('Ext.data.Store', {
       type: 'json',
       allowSingle: false,
       encode: true,
-      root: 'program_form_fields'
+      root: 'program_form_fields',
+      writeAllFields: false
     }
   }
 });
@@ -304,19 +306,14 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
-  data: [
-    { program_id: 0, program_step_id: null, text: 'Default text Main', type: 'main', created: null, modified: null },
-    { program_id: 0, program_step_id: null, text: 'Default text Pending Approval', type: 'pending_approval', created: null, modified: null },
-    { program_id: 0, program_step_id: null, text: 'Default text Expired', type: 'expired', created: null, modified: null },
-    { program_id: 0, program_step_id: null, text: 'Default text Not Approved', type: 'not_approved', created: null, modified: null }
-  ],
+  autoSync: true,
   storeId: 'ProgramInstructionStore',
   model: 'ProgramInstruction',
   proxy: {
     api:{
       create: '/admin/program_instructions/create',
       read: '/admin/program_instructions/read',
-      update: '/admin/program_instructions/edit',
+      update: '/admin/program_instructions/update',
       destroy: '/admin/program_instructions/destroy'
     },
     type: 'ajax',
@@ -325,7 +322,6 @@ Ext.create('Ext.data.Store', {
       root: 'program_instructions'
     },
     writer: {
-      allowSingle: false,
       encode: true,
       root: 'program_instructions',
       writeAllFields: false
@@ -334,20 +330,14 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
-  data: [
-    { program_id: 0, program_step_id: null, name: 'Registration Main', from: null, subject: 'Main', body: 'Default text Main', type: 'main', created: null, modified: null },
-    { program_id: 0, program_step_id: null, name: 'Registration Pending Approval', from: null, subject: 'Pending Approval', body: 'Default text Pending Approval', type: 'pending_approval', created: null, modified: null },
-    { program_id: 0, program_step_id: null, name: 'Registration Expired', from: null, subject: 'Expired', body: 'Default text Expired', type: 'expired', created: null, modified: null },
-    { program_id: 0, program_step_id: null, name: 'Registration Not Approved', from: null, subject: 'Not Approved', body: 'Default text Main', type: 'not_approved', created: null, modified: null },
-    { program_id: 0, program_step_id: null, name: 'Registration Complete', from: null, subject: 'Complete', body: 'Default text Complete', type: 'complete', created: null, modified: null }
-  ],
+  autoSync: true,
   storeId: 'ProgramEmailStore',
   model: 'ProgramEmail',
   proxy: {
     api:{
       create: '/admin/program_emails/create',
       read: '/admin/program_emails/read',
-      update: '/admin/program_emails/edit',
+      update: '/admin/program_emails/update',
       destroy: '/admin/program_emails/destroy'
     },
     type: 'ajax',
@@ -356,7 +346,6 @@ Ext.create('Ext.data.Store', {
       root: 'program_emails'
     },
     writer: {
-      allowSingle: false,
       encode: true,
       root: 'program_emails',
       writeAllFields: false
@@ -462,6 +451,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
     items: [{
       xtype: 'radiogroup',
       fieldLabel: 'Esign Required?',
+      id: 'esignRequired',
       labelWidth: 150,
       items: [{
         boxLabel: 'Yes',
@@ -485,6 +475,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
     items: [{
       xtype: 'radiogroup',
       fieldLabel: 'Approval Required?',
+      id: 'approvalRequired',
       labelWidth: 150,
       items: [{
         boxLabel: 'Yes',
@@ -567,6 +558,8 @@ registrationForm = Ext.create('Ext.form.Panel', {
         callback: function (recs, op, success) {
           if (success) {
             form.loadRecord(recs[0]);
+            form.down('#approvalRequired').disable();
+            form.down('#esignRequired').disable();
             form.getEl().unmask();
           }
         },
@@ -648,6 +641,11 @@ formBuilder = Ext.create('Ext.panel.Panel', {
       select: function (rm, rec, index) {
         var formPanel = Ext.getCmp('formPanel'),
           form = formPanel.getForm(),
+          requiredCb = formPanel.down('#requiredCb'),
+          readOnlyCb = formPanel.down('#readOnlyCb'),
+          fieldType = Ext.getCmp('fieldType'),
+          fieldOptionsContainer = Ext.getCmp('fieldOptionsContainer'),
+          fieldOptions = Ext.getCmp('fieldOptions'),
           deleteFieldBtn = Ext.getCmp('deleteFieldBtn'),
           updateBtn = Ext.getCmp('updateBtn'),
           builderSaveBtn = Ext.getCmp('builderSaveBtn');
@@ -661,6 +659,27 @@ formBuilder = Ext.create('Ext.panel.Panel', {
             fn: function (btn) {
               if (btn === 'yes') {
                 form.reset();
+
+                // check the appropriate checkboxes
+                if (rec.data.validation.match(/notEmpty/g)) {
+                  requiredCb.setValue(true);
+                }
+
+                if (rec.data.attributes.match(/readonly/g)) {
+                  readOnlyCb.setValue(true);
+                }
+
+                // if it's a state list we need to present it
+                // differently to the user
+                if (rec.data.options.match(/"AL":"Alabama"/g)
+                    && rec.data.options.match(/"WY":"Wyoming"/g)) {
+                  fieldType.setValue('states');
+                  fieldOptions.setValue('');
+                  fieldOptionsContainer.setVisible(false);
+                  rec.data.type = 'states';
+                  rec.data.options = '';
+                }
+
                 form.loadRecord(rec);
                 deleteFieldBtn.enable();
                 updateBtn.show();
@@ -669,7 +688,29 @@ formBuilder = Ext.create('Ext.panel.Panel', {
             }
           });
         } else {
+
+          // check the appropriate checkboxes
+          if (rec.data.validation.match(/notEmpty/g)) {
+            requiredCb.setValue(true);
+          }
+
+          if (rec.data.attributes.match(/readonly/g)) {
+            readOnlyCb.setValue(true);
+          }
+
+          // if it's a state list we need to present it
+          // differently to the user
+          if (rec.data.options.match(/"AL":"Alabama"/g)
+              && rec.data.options.match(/"WY":"Wyoming"/g)) {
+            fieldType.setValue('states');
+            fieldOptions.setValue('');
+            fieldOptionsContainer.setVisible(false);
+            rec.data.type = 'states';
+            rec.data.options = '';
+          }
+
           form.loadRecord(rec);
+
           deleteFieldBtn.enable();
           updateBtn.show();
           builderSaveBtn.hide();
@@ -729,7 +770,9 @@ formBuilder = Ext.create('Ext.panel.Panel', {
         handler: function () {
           var store = Ext.data.StoreManager.lookup('ProgramFormFieldStore'),
             formPanel = Ext.getCmp('formPanel'),
-            form = formPanel.getForm();
+            form = formPanel.getForm(),
+            updateBtn = Ext.getCmp('updateBtn'),
+            builderSaveBtn = Ext.getCmp('builderSaveBtn');
 
           Ext.Msg.show({
             title: 'Delete Field?',
@@ -740,6 +783,8 @@ formBuilder = Ext.create('Ext.panel.Panel', {
               if (btn === 'yes') {
                 store.remove(formPanel.getRecord());
                 form.reset();
+                updateBtn.hide().disable();
+                builderSaveBtn.show().enable();
                 this.disable();
               }
             },
@@ -762,6 +807,7 @@ formBuilder = Ext.create('Ext.panel.Panel', {
       displayField: 'ucase',
       editable: false,
       fieldLabel: 'Field Type',
+      id: 'fieldType',
       listeners: {
         change: {
           fn: function (field, newValue, oldValue) {
@@ -827,10 +873,12 @@ formBuilder = Ext.create('Ext.panel.Panel', {
     }, {
       xtype: 'checkbox',
       fieldLabel: 'Required',
+      id: 'requiredCb',
       name: 'required'
     }, {
       xtype: 'checkbox',
       fieldLabel: 'Read only',
+      id: 'readOnlyCb',
       name: 'read_only',
       listeners: {
         change: function (field, newVal, oldVal) {
@@ -898,11 +946,9 @@ formBuilder = Ext.create('Ext.panel.Panel', {
             }
 
             attributes.empty = 'Please Select';
-            vals.options = Ext.JSON.encode(options);
             break;
 
           case 'states':
-            vals.options = Ext.JSON.encode(states);
             vals.type = 'select';
             break;
         }
@@ -913,11 +959,21 @@ formBuilder = Ext.create('Ext.panel.Panel', {
 
         if (vals.required === 'on') {
           validation.rule = 'notEmpty';
+        }
+
+        if (!Ext.isEmpty(attributes)) {
+          vals.attributes = Ext.JSON.encode(attributes);
+        }
+
+        if (!Ext.isEmpty(options)) {
+          vals.options = Ext.JSON.encode(options);
+        }
+
+        if (!Ext.isEmpty(validation)) {
           vals.validation = Ext.JSON.encode(validation);
         }
 
         vals.program_step_id = programStepId;
-        vals.attributes = (!Ext.isEmpty(attributes)) ? Ext.JSON.encode(attributes) : null;
         vals.name = vals.label.underscore();
 
         grid.store.add(vals);
@@ -938,7 +994,8 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           validation = {},
           programStep = Ext.data.StoreManager.lookup('ProgramStepStore'),
           programStepId = programStep.last().data.id,
-          grid = Ext.getCmp('formFieldGrid');
+          grid = Ext.getCmp('formFieldGrid'),
+          selectedRecord = grid.getSelectionModel().getSelection()[0];
 
         switch (vals.type) {
           case 'datepicker':
@@ -960,11 +1017,9 @@ formBuilder = Ext.create('Ext.panel.Panel', {
             }
 
             attributes.empty = 'Please Select';
-            vals.options = Ext.JSON.encode(options);
             break;
 
           case 'states':
-            vals.options = Ext.JSON.encode(states);
             vals.type = 'select';
             break;
         }
@@ -975,14 +1030,24 @@ formBuilder = Ext.create('Ext.panel.Panel', {
 
         if (vals.required === 'on') {
           validation.rule = 'notEmpty';
+        }
+
+        if (!Ext.isEmpty(attributes)) {
+          vals.attributes = Ext.JSON.encode(attributes);
+        }
+
+        if (!Ext.isEmpty(options)) {
+          vals.options = Ext.JSON.encode(options);
+        }
+
+        if (!Ext.isEmpty(validation)) {
           vals.validation = Ext.JSON.encode(validation);
         }
 
         vals.program_step_id = programStepId;
-        vals.attributes = (!Ext.isEmpty(attributes)) ? Ext.JSON.encode(attributes) : null;
         vals.name = vals.label.underscore();
 
-        grid.store.add(vals);
+        selectedRecord.set(vals);
         form.reset();
       }
     }]
@@ -1105,25 +1170,66 @@ filingCategories = Ext.create('Ext.form.Panel', {
     },
     allowBlank: false
   }],
+  preprocess: function () {
+    var programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
+      programDocumentStore = Ext.data.StoreManager.lookup('ProgramDocumentStore'),
+      queueCategoryStore = Ext.data.StoreManager.lookup('DocumentQueueCategoryStore'),
+      Cat1Store = Ext.data.StoreManager.lookup('Cat1Store'),
+      Cat2Store = Ext.data.StoreManager.lookup('Cat2Store'),
+      Cat3Store = Ext.data.StoreManager.lookup('Cat3Store'),
+      cat1Name = Ext.getCmp('cat1Name'),
+      cat2Name = Ext.getCmp('cat2Name'),
+      cat3Name = Ext.getCmp('cat3Name'),
+      form = this;
+
+    form.getEl().mask('Loading...');
+
+    programStepStore.load({
+      params: {
+        program_id: ProgramId
+      },
+      callback: function (recs, op, success) {
+        if (success) {
+          step = programStepStore.findRecord('name', /form/gi);
+
+          programDocumentStore.load({
+            params: {
+              program_step_id: step.data.id
+            },
+            callback: function (recs, op, succes) {
+              rec = recs[0];
+
+              Cat2Store.load({
+                params: {
+                  parentId: rec.data.cat_1
+                }
+              });
+
+              Cat3Store.load({
+                params: {
+                  parentId: rec.data.cat_2
+                }
+              });
+
+              form.loadRecord(recs[0]);
+              form.getEl().unmask();
+            }
+          });
+        }
+      }
+    });
+  },
   process: function () {
     var form = this.getForm(),
       programDocumentStore = Ext.data.StoreManager.lookup('ProgramDocumentStore'),
-      programStore = Ext.data.StoreManager.lookup('ProgramStore'),
-      programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
-      program,
-      programStep,
+      programDocument = programDocumentStore.first(),
+      programId = ProgramId,
       vals;
 
     if (form.isValid()) {
       vals = form.getValues();
-      program = programStore.first();
-      programStep = programStepStore.last();
 
-      vals.name = program.data.name + " registration snapshot";
-      vals.type = 'snapshot';
-      vals.program_id = program.data.id;
-      vals.program_step_id = programStep.data.id;
-      programDocumentStore.add(vals);
+      programDocument.set(vals);
 
       return true;
     }
@@ -1155,14 +1261,16 @@ instructions = Ext.create('Ext.panel.Panel', {
     }],
     listeners: {
       select: function (rm, rec, index) {
-        var editor = Ext.getCmp('editor');
+        var editor = Ext.getCmp('editor'),
+          instructionSaveBtn = Ext.getCmp('instructionSaveBtn');
 
-        if (!rec.data.text) {
-          rec.data.text = '';
-        }
+        if (!rec.data.text) { rec.data.text = ''; }
 
         editor.setValue(rec.data.text);
-        Ext.getCmp('saveBtn').enable();
+        instructionSaveBtn.enable();
+      },
+      deselect: function () {
+        Ext.getCmp('instructionSaveBtn').disable();
       }
     },
     plugins: [
@@ -1179,8 +1287,9 @@ instructions = Ext.create('Ext.panel.Panel', {
       xtype: 'toolbar',
       dock: 'bottom',
       items: ['->', {
+        disabled: true,
+        id: 'instructionSaveBtn',
         text: 'Save Instruction',
-        id: 'saveBtn',
         handler: function () {
           var grid = Ext.getCmp('instructionsGrid'),
             editor = Ext.getCmp('editor'),
@@ -1196,49 +1305,15 @@ instructions = Ext.create('Ext.panel.Panel', {
     }]
   }],
   preprocess: function () {
-    var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
-      programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
-      programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
-      program = programStore.first(),
-      programId = program.data.id,
-      formStep;
-
-    if (!program.data.approval_required) {
-      var notApproved,
-        pendingApproval;
-
-      notApproved = programInstructionStore.findExact('type', 'not_approved');
-      pendingApproval = programInstructionStore.findExact('type', 'pending_approval');
-
-      if (notApproved !== -1) {
-        programInstructionStore.removeAt(notApproved);
+    Ext.data.StoreManager.lookup('ProgramInstructionStore').load({
+      params: {
+        program_id: ProgramId
       }
-
-      if (pendingApproval !== -1) {
-        programInstructionStore.removeAt(pendingApproval);
-      }
-    }
-
-    formStep = programStepStore.findRecord('type', /^form$/gi);
-
-    programInstructionStore.each(function (rec) {
-      rec.set({
-        program_id: programId
-      });
-    });
-    programInstructionStore.add({
-      program_id: programId,
-      program_step_id: formStep.data.id,
-      text: program.data.name + ' Registration Form Step Instructions',
-      type: (program.data.name + ' Registration Form Step Instructions').underscore()
     });
   },
   process: function () {
-    var programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
-      editor = Ext.getCmp('editor');
-
-      programInstructionStore.sync();
-      return true;
+    Ext.data.StoreManager.lookup('ProgramInstructionStore').sync();
+    return true;
   }
 });
 
@@ -1270,7 +1345,8 @@ emails = Ext.create('Ext.panel.Panel', {
         var editor = Ext.getCmp('emailEditor'),
           fromField = Ext.getCmp('fromField'),
           subjectField = Ext.getCmp('subjectField'),
-          form = Ext.getCmp('formPanel');
+          form = Ext.getCmp('formPanel'),
+          saveBtn = Ext.getCmp('emailSaveBtn');
 
         if (!rec.data.body) {
           rec.data.text = '';
@@ -1287,7 +1363,7 @@ emails = Ext.create('Ext.panel.Panel', {
         editor.setValue(rec.data.body);
         fromField.setValue(rec.data.from);
         subjectField.setValue(rec.data.subject);
-        Ext.getCmp('saveBtn').enable();
+        saveBtn.enable();
       }
     },
     plugins: [
@@ -1339,8 +1415,9 @@ emails = Ext.create('Ext.panel.Panel', {
       xtype: 'toolbar',
       dock: 'bottom',
       items: ['->', {
+        disabled: true,
+        id: 'emailSaveBtn',
         text: 'Save Email',
-        id: 'saveBtn',
         handler: function () {
           var grid = Ext.getCmp('emailGrid'),
             from = Ext.getCmp('fromField'),
@@ -1358,51 +1435,15 @@ emails = Ext.create('Ext.panel.Panel', {
     }]
   }],
   preprocess: function () {
-    var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
-      programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
-      programEmailStore = Ext.data.StoreManager.lookup('ProgramEmailStore'),
-      program = programStore.first(),
-      programId = program.data.id,
-      formStep;
-
-    if (!program.data.approval_required) {
-      var notApproved,
-        pendingApproval;
-
-      notApproved = programEmailStore.findExact('type', 'not_approved');
-      pendingApproval = programEmailStore.findExact('type', 'pending_approval');
-
-      if (notApproved !== -1) {
-        programEmailStore.removeAt(notApproved);
+    Ext.data.StoreManager.lookup('ProgramEmailStore').load({
+      params: {
+        program_id: ProgramId
       }
-
-      if (pendingApproval !== -1) {
-        programEmailStore.removeAt(pendingApproval);
-      }
-    }
-
-    formStep = programStepStore.findRecord('type', /^form$/gi);
-
-    programEmailStore.each(function (rec) {
-      rec.set({
-        program_id: programId
-      });
-    });
-    // add our step emails
-    programEmailStore.add({
-      program_id: programId,
-      program_step_id: formStep.data.id,
-      name: program.data.name + ' Registration Form Step Email',
-      type: (program.data.name + ' Registration Form Step Instructions').underscore(),
-      body: 'Your registration form step email'
     });
   },
   process: function () {
-    var programEmailStore = Ext.data.StoreManager.lookup('ProgramEmailStore'),
-      editor = Ext.getCmp('emailEditor');
-
-      programEmailStore.sync();
-      return true;
+    Ext.data.StoreManager.lookup('ProgramEmailStore').sync();
+    return true;
   }
 });
 
@@ -1414,13 +1455,14 @@ navigate = function (panel, direction) {
     activeItem = layout.activeItem;
 
   if (direction === 'finish' && activeItem.process()) {
-    Ext.Msg.alert('Success', 'Your program has been successfully saved.', function () {
+    Ext.Msg.alert('Success', 'Your program has been successfully updated.', function () {
       var task = new Ext.util.DelayedTask(function () {
         window.location = '/admin/programs';
       });
 
       task.delay(500);
     });
+    return;
   }
 
   if (direction === 'prev' || activeItem.process()) {

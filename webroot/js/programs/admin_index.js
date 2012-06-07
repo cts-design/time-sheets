@@ -104,8 +104,10 @@ Ext.define('ProgramGridPanel', {
       icon: '/img/icons/edit.png',
       tooltip: 'Edit Program',
       handler: function (grid, rowIndex, colIndex) {
-        var rec = grid.getStore().getAt(rowIndex);
-        window.location = '/admin/programs/edit/' + rec.get('id');
+        var rec = grid.getStore().getAt(rowIndex),
+          type = Ext.util.Inflector.singularize(grid.ownerCt.id);
+
+        window.location = '/admin/programs/edit/' + type + '/' + rec.get('id');
       }
     }],
   }, {
@@ -117,7 +119,9 @@ Ext.define('ProgramGridPanel', {
       icon: '/img/icons/file-cab.png',
       tooltip: 'View Responses',
       handler: function (grid, rowIndex, colIndex) {
-        var rec = grid.getStore().getAt(rowIndex);
+        var rec = grid.getStore().getAt(rowIndex),
+          type = Ext.util.Inflector.singularize(grid.ownerCt.id);
+
         window.location = '/admin/program_responses/index/' + rec.get('id');
       }
     }],
