@@ -1373,6 +1373,8 @@ emails = Ext.create('Ext.panel.Panel', {
       name: program.data.name + ' Registration Form Step Email',
       type: 'step',
       body: 'Your registration form step email'
+      body: 'Your registration form step email',
+      subject: 'Registration Form Complete',
     });
   },
   process: function () {
