@@ -3,7 +3,7 @@
 $config['queue']['sleeptime'] = 10;
 
 #Propability in percent of a old job cleanup happening
-$config['queue']['gcprop'] = 10;
+$config['queue']['gcprop'] = 20;
 
 #Default timeout after which a job is requeued if the worker doesn’t report back
 $config['queue']['defaultworkertimeout'] = 120;
