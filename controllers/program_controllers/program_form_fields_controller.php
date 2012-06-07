@@ -83,6 +83,15 @@ class ProgramFormFieldsController extends AppController {
 	}
 
 	public function admin_destroy() {
+		$formField = json_decode($this->params['form']['program_form_fields'], true);
+		$formField = $formField[0];
+
+		if ($this->ProgramFormField->delete($formField['id'])) {
+			$data['success'] = true;
+		} else {
+			$data['success'] = false;
+		}
+
 		$this->set('data', $data);
 		$this->render(null, null, '/elements/ajaxreturn');
 	}
