@@ -1172,6 +1172,17 @@ filingCategories = Ext.create('Ext.form.Panel', {
   preprocess: function () {
     var programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
       programDocumentStore = Ext.data.StoreManager.lookup('ProgramDocumentStore');
+      programDocumentStore = Ext.data.StoreManager.lookup('ProgramDocumentStore'),
+      queueCategoryStore = Ext.data.StoreManager.lookup('DocumentQueueCategoryStore'),
+      Cat1Store = Ext.data.StoreManager.lookup('Cat1Store'),
+      Cat2Store = Ext.data.StoreManager.lookup('Cat2Store'),
+      Cat3Store = Ext.data.StoreManager.lookup('Cat3Store'),
+      cat1Name = Ext.getCmp('cat1Name'),
+      cat2Name = Ext.getCmp('cat2Name'),
+      cat3Name = Ext.getCmp('cat3Name'),
+      form = this;
+
+    form.getEl().mask('Loading...');
 
     programStepStore.load({
       params: {
@@ -1184,6 +1195,24 @@ filingCategories = Ext.create('Ext.form.Panel', {
           programDocumentStore.load({
             params: {
               program_step_id: step.data.id
+            },
+            callback: function (recs, op, succes) {
+              rec = recs[0];
+
+              Cat2Store.load({
+                params: {
+                  parentId: rec.data.cat_1
+                }
+              });
+
+              Cat3Store.load({
+                params: {
+                  parentId: rec.data.cat_2
+                }
+              });
+
+              form.loadRecord(recs[0]);
+              form.getEl().unmask();
             }
           });
         }
