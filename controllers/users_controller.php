@@ -454,7 +454,7 @@ class UsersController extends AppController {
                     $this->redirect($this->Session->read('Auth.redirect'));
                 }
                 else {
-                    $this->redirect(array('action' => 'dashboard'));
+                    $this->redirect(array('action' => 'dashboard', 'admin' => false));
                 }
             }
         }
