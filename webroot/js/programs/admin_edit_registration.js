@@ -764,6 +764,7 @@ formBuilder = Ext.create('Ext.panel.Panel', {
       displayField: 'ucase',
       editable: false,
       fieldLabel: 'Field Type',
+      id: 'fieldType',
       listeners: {
         change: {
           fn: function (field, newValue, oldValue) {
