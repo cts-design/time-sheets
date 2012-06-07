@@ -131,6 +131,21 @@ class ProgramInstructionsController extends AppController {
 		$this->render(null, null, '/elements/ajaxreturn');
 	}
 
-	public function admin_update() {}
+	public function admin_update() {
+		$instruction = json_decode($this->params['form']['program_instructions'], true);
+
+		$this->ProgramInstruction->id = $instruction['id'];
+		$this->ProgramInstruction->set($instruction);
+
+		if ($this->ProgramInstruction->save()) {
+			$data['success'] = true;
+		} else {
+			$data['success'] = false;
+		}
+
+		$this->set('data', $data);
+		$this->render(null, null, '/elements/ajaxreturn');
+	}
+
 	public function admin_destroy() {}
 }

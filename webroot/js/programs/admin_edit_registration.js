@@ -306,13 +306,14 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
+  autoSync: true,
   storeId: 'ProgramInstructionStore',
   model: 'ProgramInstruction',
   proxy: {
     api:{
       create: '/admin/program_instructions/create',
       read: '/admin/program_instructions/read',
-      update: '/admin/program_instructions/edit',
+      update: '/admin/program_instructions/update',
       destroy: '/admin/program_instructions/destroy'
     },
     type: 'ajax',
@@ -321,7 +322,6 @@ Ext.create('Ext.data.Store', {
       root: 'program_instructions'
     },
     writer: {
-      allowSingle: false,
       encode: true,
       root: 'program_instructions',
       writeAllFields: false
@@ -1311,16 +1311,12 @@ instructions = Ext.create('Ext.panel.Panel', {
     programInstructionStore.load({
       params: {
         program_id: ProgramId
-      },
-      callback: function (recs, ops, success) {}
+      }
     });
   },
   process: function () {
-    var programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
-      editor = Ext.getCmp('editor');
-
-      programInstructionStore.sync();
-      return true;
+    Ext.data.StoreManager.lookup('ProgramInstructionStore').sync();
+    return true;
   }
 });
 
@@ -1442,41 +1438,15 @@ emails = Ext.create('Ext.panel.Panel', {
   preprocess: function () {
     var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
       programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
-      programEmailStore = Ext.data.StoreManager.lookup('ProgramEmailStore'),
+      programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
       program = programStore.first(),
-      programId = program.data.id,
       formStep;
 
-    if (!program.data.approval_required) {
-      var notApproved,
-        pendingApproval;
-
-      notApproved = programEmailStore.findExact('type', 'not_approved');
-      pendingApproval = programEmailStore.findExact('type', 'pending_approval');
-
-      if (notApproved !== -1) {
-        programEmailStore.removeAt(notApproved);
-      }
-
-      if (pendingApproval !== -1) {
-        programEmailStore.removeAt(pendingApproval);
-      }
-    }
-
-    formStep = programStepStore.findRecord('type', /^form$/gi);
-
-    programEmailStore.each(function (rec) {
-      rec.set({
-        program_id: programId
-      });
-    });
-    // add our step emails
-    programEmailStore.add({
-      program_id: programId,
-      program_step_id: formStep.data.id,
-      name: program.data.name + ' Registration Form Step Email',
-      type: (program.data.name + ' Registration Form Step Instructions').underscore(),
-      body: 'Your registration form step email'
+    programInstructionStore.load({
+      params: {
+        program_id: ProgramId
+      },
+      callback: function (recs, ops, success) {}
     });
   },
   process: function () {
