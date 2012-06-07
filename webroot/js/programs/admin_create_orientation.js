@@ -1503,6 +1503,7 @@ navigate = function (panel, direction) {
 
       task.delay(500);
     });
+    return;
   }
 
   if (direction === 'prev' || activeItem.process()) {
