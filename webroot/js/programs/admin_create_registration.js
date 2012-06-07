@@ -1371,7 +1371,7 @@ emails = Ext.create('Ext.panel.Panel', {
       program_id: programId,
       program_step_id: formStep.data.id,
       name: program.data.name + ' Registration Form Step Email',
-      type: (program.data.name + ' Registration Form Step Instructions').underscore(),
+      type: 'step',
       body: 'Your registration form step email'
     });
   },

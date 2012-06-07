@@ -1473,13 +1473,13 @@ emails = Ext.create('Ext.panel.Panel', {
       program_id: programId,
       program_step_id: mediaStep.data.id,
       name: program.data.name + ' Orientation Media Step Email',
-      type: 'Orientation Media Step Instructions'.underscore(),
+      type: 'step',
       body: 'Your Orientation media step email'
     }, {
       program_id: programId,
       program_step_id: quizStep.data.id,
       name: program.data.name + ' Orientation Quiz Step Email',
-      type: 'Orientation Quiz Step Instructions'.underscore(),
+      type: 'step',
       body: 'Your Orientation quiz step email'
     });
   },
