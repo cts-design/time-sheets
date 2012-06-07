@@ -1254,14 +1254,16 @@ instructions = Ext.create('Ext.panel.Panel', {
     }],
     listeners: {
       select: function (rm, rec, index) {
-        var editor = Ext.getCmp('editor');
+        var editor = Ext.getCmp('editor'),
+          instructionSaveBtn = Ext.getCmp('instructionSaveBtn');
 
-        if (!rec.data.text) {
-          rec.data.text = '';
-        }
+        if (!rec.data.text) { rec.data.text = ''; }
 
         editor.setValue(rec.data.text);
-        Ext.getCmp('saveBtn').enable();
+        instructionSaveBtn.enable();
+      },
+      deselect: function () {
+        Ext.getCmp('instructionSaveBtn').disable();
       }
     },
     plugins: [
