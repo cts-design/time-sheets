@@ -510,11 +510,13 @@ registrationForm = Ext.create('Ext.form.Panel', {
       type: 'hbox'
     },
     items: [{
-      xtype: 'textfield',
+      xtype: 'numberfield',
       allowBlank: false,
       fieldLabel: 'Responses Expire In',
       labelWidth: 150,
+      minValue: 30,
       name: 'response_expires_in',
+      value: 30,
       width: 250
     }, {
       xtype: 'displayfield',
