@@ -77,7 +77,7 @@ Ext.define('ProgramInstruction', {
   fields: [
     { name: 'id', type: 'int' },
     { name: 'program_id', type: 'int' },
-    { name: 'program_step_id', type: 'int' },
+    { name: 'program_step_id', type: 'int', useNull: true },
     'text',
     'type',
     { name: 'created',  type: 'date', dateFormat: 'Y-m-d H:i:s' },
@@ -90,7 +90,7 @@ Ext.define('ProgramEmail', {
   fields: [
     { name: 'id', type: 'int' },
     { name: 'program_id', type: 'int' },
-    { name: 'program_step_id', type: 'int' },
+    { name: 'program_step_id', type: 'int', useNull: true },
     { name: 'cat_id', type: 'int' },
     'to',
     'from',
@@ -304,8 +304,8 @@ Ext.create('Ext.data.Store', {
 
 Ext.create('Ext.data.Store', {
   data: [
-    { program_id: 0, program_step_id: null, text: 'Default text Main', type: 'main', created: null, modified: null },
-    { program_id: 0, program_step_id: null, text: 'Default text Expired', type: 'expired', created: null, modified: null },
+    { program_id: 0, text: 'Default text Main', type: 'main', created: null, modified: null },
+    { program_id: 0, text: 'Default text Expired', type: 'expired', created: null, modified: null },
   ],
   storeId: 'ProgramInstructionStore',
   model: 'ProgramInstruction',
@@ -332,9 +332,9 @@ Ext.create('Ext.data.Store', {
 
 Ext.create('Ext.data.Store', {
   data: [
-    { program_id: 0, program_step_id: null, name: 'Orientation Main', from: null, subject: 'Main email', body: 'Default text Main', type: 'main', created: null, modified: null },
-    { program_id: 0, program_step_id: null, name: 'Orientation Expired', from: null, subject: 'Expired email', body: 'Default text Expired', type: 'expired', created: null, modified: null },
-    { program_id: 0, program_step_id: null, name: 'Orientation Complete', from: null, subject: 'Complete email', body: 'Default text Complete', type: 'complete', created: null, modified: null }
+    { program_id: 0, name: 'Orientation Main', from: null, subject: 'Main email', body: 'Default text Main', type: 'main', created: null, modified: null },
+    { program_id: 0, name: 'Orientation Expired', from: null, subject: 'Expired email', body: 'Default text Expired', type: 'expired', created: null, modified: null },
+    { program_id: 0, name: 'Orientation Complete', from: null, subject: 'Complete email', body: 'Default text Complete', type: 'complete', created: null, modified: null }
   ],
   storeId: 'ProgramEmailStore',
   model: 'ProgramEmail',
