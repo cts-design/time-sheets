@@ -1443,7 +1443,7 @@ navigate = function (panel, direction) {
     activeItem = layout.activeItem;
 
   if (direction === 'finish' && activeItem.process()) {
-    Ext.Msg.alert('Success', 'Your program has been successfully saved.', function () {
+    Ext.Msg.alert('Success', 'Your program has been successfully updated.', function () {
       var task = new Ext.util.DelayedTask(function () {
         window.location = '/admin/programs';
       });
