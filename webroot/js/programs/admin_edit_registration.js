@@ -330,6 +330,7 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
+  autoSync: true,
   storeId: 'ProgramEmailStore',
   model: 'ProgramEmail',
   proxy: {
@@ -337,6 +338,7 @@ Ext.create('Ext.data.Store', {
       create: '/admin/program_emails/create',
       read: '/admin/program_emails/read',
       update: '/admin/program_emails/edit',
+      update: '/admin/program_emails/update',
       destroy: '/admin/program_emails/destroy'
     },
     type: 'ajax',
