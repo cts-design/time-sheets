@@ -650,6 +650,11 @@ formBuilder = Ext.create('Ext.panel.Panel', {
       select: function (rm, rec, index) {
         var formPanel = Ext.getCmp('formPanel'),
           form = formPanel.getForm(),
+          requiredCb = formPanel.down('#requiredCb'),
+          readOnlyCb = formPanel.down('#readOnlyCb'),
+          fieldType = Ext.getCmp('fieldType'),
+          fieldOptionsContainer = Ext.getCmp('fieldOptionsContainer'),
+          fieldOptions = Ext.getCmp('fieldOptions'),
           deleteFieldBtn = Ext.getCmp('deleteFieldBtn'),
           updateBtn = Ext.getCmp('updateBtn'),
           builderSaveBtn = Ext.getCmp('builderSaveBtn');
@@ -663,6 +668,27 @@ formBuilder = Ext.create('Ext.panel.Panel', {
             fn: function (btn) {
               if (btn === 'yes') {
                 form.reset();
+
+                // check the appropriate checkboxes
+                if (rec.data.validation.match(/notEmpty/g)) {
+                  requiredCb.setValue(true);
+                }
+
+                if (rec.data.attributes.match(/readonly/g)) {
+                  readOnlyCb.setValue(true);
+                }
+
+                // if it's a state list we need to present it
+                // differently to the user
+                if (rec.data.options.match(/"AL":"Alabama"/g)
+                    && rec.data.options.match(/"WY":"Wyoming"/g)) {
+                  fieldType.setValue('states');
+                  fieldOptions.setValue('');
+                  fieldOptionsContainer.setVisible(false);
+                  rec.data.type = 'states';
+                  rec.data.options = '';
+                }
+
                 form.loadRecord(rec);
                 deleteFieldBtn.enable();
                 updateBtn.show();
@@ -671,7 +697,29 @@ formBuilder = Ext.create('Ext.panel.Panel', {
             }
           });
         } else {
+
+          // check the appropriate checkboxes
+          if (rec.data.validation.match(/notEmpty/g)) {
+            requiredCb.setValue(true);
+          }
+
+          if (rec.data.attributes.match(/readonly/g)) {
+            readOnlyCb.setValue(true);
+          }
+
+          // if it's a state list we need to present it
+          // differently to the user
+          if (rec.data.options.match(/"AL":"Alabama"/g)
+              && rec.data.options.match(/"WY":"Wyoming"/g)) {
+            fieldType.setValue('states');
+            fieldOptions.setValue('');
+            fieldOptionsContainer.setVisible(false);
+            rec.data.type = 'states';
+            rec.data.options = '';
+          }
+
           form.loadRecord(rec);
+
           deleteFieldBtn.enable();
           updateBtn.show();
           builderSaveBtn.hide();
