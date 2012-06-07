@@ -992,7 +992,10 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           programStep = Ext.data.StoreManager.lookup('ProgramStepStore'),
           programStepId = programStep.last().data.id,
           grid = Ext.getCmp('formFieldGrid'),
-          selectedRecord = grid.getSelectionModel().getSelection()[0];
+          selectedRecord = grid.getSelectionModel().getSelection()[0],
+          deleteFieldBtn = Ext.getCmp('deleteFieldBtn'),
+          updateBtn = Ext.getCmp('updateBtn'),
+          builderSaveBtn = Ext.getCmp('builderSaveBtn');
 
         switch (vals.type) {
           case 'datepicker':
@@ -1037,6 +1040,9 @@ formBuilder = Ext.create('Ext.panel.Panel', {
         vals.name = vals.label.underscore();
 
         selectedRecord.set(vals);
+        builderSaveBtn.show().enable();
+        updateBtn.hide().disable();
+        deleteFieldBtn.disable();
         form.reset();
       }
     }]
