@@ -458,6 +458,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
     items: [{
       xtype: 'radiogroup',
       fieldLabel: 'Esign Required?',
+      id: 'esignRequired',
       labelWidth: 150,
       items: [{
         boxLabel: 'Yes',
@@ -481,6 +482,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
     items: [{
       xtype: 'radiogroup',
       fieldLabel: 'Approval Required?',
+      id: 'approvalRequired',
       labelWidth: 150,
       items: [{
         boxLabel: 'Yes',
@@ -563,6 +565,8 @@ registrationForm = Ext.create('Ext.form.Panel', {
         callback: function (recs, op, success) {
           if (success) {
             form.loadRecord(recs[0]);
+            form.down('#approvalRequired').disable();
+            form.down('#esignRequired').disable();
             form.getEl().unmask();
           }
         },
