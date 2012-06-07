@@ -330,13 +330,6 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
-  data: [
-    { program_id: 0, program_step_id: null, name: 'Registration Main', from: null, subject: 'Main', body: 'Default text Main', type: 'main', created: null, modified: null },
-    { program_id: 0, program_step_id: null, name: 'Registration Pending Approval', from: null, subject: 'Pending Approval', body: 'Default text Pending Approval', type: 'pending_approval', created: null, modified: null },
-    { program_id: 0, program_step_id: null, name: 'Registration Expired', from: null, subject: 'Expired', body: 'Default text Expired', type: 'expired', created: null, modified: null },
-    { program_id: 0, program_step_id: null, name: 'Registration Not Approved', from: null, subject: 'Not Approved', body: 'Default text Main', type: 'not_approved', created: null, modified: null },
-    { program_id: 0, program_step_id: null, name: 'Registration Complete', from: null, subject: 'Complete', body: 'Default text Complete', type: 'complete', created: null, modified: null }
-  ],
   storeId: 'ProgramEmailStore',
   model: 'ProgramEmail',
   proxy: {
