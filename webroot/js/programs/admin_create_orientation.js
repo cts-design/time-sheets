@@ -93,7 +93,7 @@ Ext.define('ProgramEmail', {
     { name: 'program_step_id', type: 'int', useNull: true },
     { name: 'cat_id', type: 'int' },
     'to',
-    'from',
+    { name: 'from', type: 'string', useNull: true },
     'subject',
     'body',
     'type',
@@ -1365,18 +1365,6 @@ emails = Ext.create('Ext.panel.Panel', {
           form = Ext.getCmp('formPanel'),
           saveBtn = Ext.getCmp('emailSaveBtn');
 
-        if (!rec.data.body) {
-          rec.data.text = '';
-        }
-
-        if (!rec.data.from) {
-          rec.data.text = '';
-        }
-
-        if (!rec.data.subject) {
-          rec.data.subject = '';
-        }
-
         editor.setValue(rec.data.body);
         fromField.setValue(rec.data.from);
         subjectField.setValue(rec.data.subject);
@@ -1474,13 +1462,15 @@ emails = Ext.create('Ext.panel.Panel', {
       program_step_id: mediaStep.data.id,
       name: program.data.name + ' Orientation Media Step Email',
       type: 'step',
-      body: 'Your Orientation media step email'
+      body: 'Your Orientation media step email',
+      from: null
     }, {
       program_id: programId,
       program_step_id: quizStep.data.id,
       name: program.data.name + ' Orientation Quiz Step Email',
       type: 'step',
-      body: 'Your Orientation quiz step email'
+      body: 'Your Orientation quiz step email',
+      from: null
     });
   },
   process: function () {
