@@ -107,7 +107,30 @@ class ProgramInstructionsController extends AppController {
 			$this->set('data', $data);
 			$this->render(null, null, '/elements/ajaxreturn');
 	}
-	public function admin_read() {}
+
+	public function admin_read() {
+		$programId = $this->params['url']['program_id'];
+
+		$this->ProgramInstruction->recursive = -1;
+		$instructions = $this->ProgramInstruction->find('all', array(
+			'conditions' => array(
+				'ProgramInstruction.program_id' => $programId
+			)
+		));
+
+		if ($instructions) {
+			$data['success'] = true;
+			foreach ($instructions as $key => $value) {
+				$data['program_instructions'][] = $value['ProgramInstruction'];
+			}
+		} else {
+			$data['success'] = false;
+		}
+	
+		$this->set('data', $data);
+		$this->render(null, null, '/elements/ajaxreturn');
+	}
+
 	public function admin_update() {}
 	public function admin_destroy() {}
 }

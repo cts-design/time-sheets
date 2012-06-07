@@ -1302,37 +1302,13 @@ instructions = Ext.create('Ext.panel.Panel', {
       programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
       programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
       program = programStore.first(),
-      programId = program.data.id,
       formStep;
 
-    if (!program.data.approval_required) {
-      var notApproved,
-        pendingApproval;
-
-      notApproved = programInstructionStore.findExact('type', 'not_approved');
-      pendingApproval = programInstructionStore.findExact('type', 'pending_approval');
-
-      if (notApproved !== -1) {
-        programInstructionStore.removeAt(notApproved);
-      }
-
-      if (pendingApproval !== -1) {
-        programInstructionStore.removeAt(pendingApproval);
-      }
-    }
-
-    formStep = programStepStore.findRecord('type', /^form$/gi);
-
-    programInstructionStore.each(function (rec) {
-      rec.set({
-        program_id: programId
-      });
-    });
-    programInstructionStore.add({
-      program_id: programId,
-      program_step_id: formStep.data.id,
-      text: program.data.name + ' Registration Form Step Instructions',
-      type: (program.data.name + ' Registration Form Step Instructions').underscore()
+    programInstructionStore.load({
+      params: {
+        program_id: ProgramId
+      },
+      callback: function (recs, ops, success) {}
     });
   },
   process: function () {
