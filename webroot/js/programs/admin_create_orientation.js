@@ -46,10 +46,10 @@ Ext.define('ProgramFormField', {
     'label',
     'type',
     'name',
-    'attributes',
-    'options',
-    'validation',
-    'instructions',
+    { name: 'attributes', type: 'string', useNull: true },
+    { name: 'options', type: 'string', useNull: true },
+    { name: 'validation', type: 'string', useNull: true },
+    { name: 'instructions', type: 'string', useNull: true },
     { name: 'created',  type: 'date', dateFormat: 'Y-m-d H:i:s' },
     { name: 'modified', type: 'date', dateFormat: 'Y-m-d H:i:s' }
   ]
@@ -1000,25 +1000,33 @@ formBuilder = Ext.create('Ext.panel.Panel', {
             }
 
             attributes.empty = 'Please Select';
-            vals.options = Ext.JSON.encode(options);
             break;
 
           case 'states':
-            vals.options = Ext.JSON.encode(states);
             vals.type = 'select';
             break;
         }
+
+        validation.rule = ['equalTo', vals.answer];
+        validation.message = 'Incorrect';
 
         if (vals.read_only === 'on') {
           attributes.readonly = 'readonly';
         }
 
-        validation.rule = ['equalTo', vals.answer];
-        validation.message = 'Incorrect';
-        vals.validation = Ext.JSON.encode(validation);
+        if (!Ext.isEmpty(attributes)) {
+          vals.attributes = Ext.JSON.encode(attributes);
+        }
+
+        if (!Ext.isEmpty(options)) {
+          vals.options = Ext.JSON.encode(options);
+        }
+
+        if (!Ext.isEmpty(validation)) {
+          vals.validation = Ext.JSON.encode(validation);
+        }
 
         vals.program_step_id = programStepId;
-        vals.attributes = (!Ext.isEmpty(attributes)) ? Ext.JSON.encode(attributes) : null;
         vals.name = vals.label.underscore();
 
         grid.store.add(vals);
@@ -1039,7 +1047,8 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           validation = {},
           programStep = Ext.data.StoreManager.lookup('ProgramStepStore'),
           programStepId = programStep.last().data.id,
-          grid = Ext.getCmp('formFieldGrid');
+          grid = Ext.getCmp('formFieldGrid'),
+          selectedRecord = grid.getSelectionModel().getSelection()[0];
 
         switch (vals.type) {
           case 'datepicker':
@@ -1061,29 +1070,36 @@ formBuilder = Ext.create('Ext.panel.Panel', {
             }
 
             attributes.empty = 'Please Select';
-            vals.options = Ext.JSON.encode(options);
             break;
 
           case 'states':
-            vals.options = Ext.JSON.encode(states);
             vals.type = 'select';
             break;
         }
+
+        validation.rule = ['equalTo', vals.answer];
+        validation.message = 'Incorrect';
 
         if (vals.read_only === 'on') {
           attributes.readonly = 'readonly';
         }
 
-        if (vals.required === 'on') {
-          validation.rule = 'notEmpty';
+        if (!Ext.isEmpty(attributes)) {
+          vals.attributes = Ext.JSON.encode(attributes);
+        }
+
+        if (!Ext.isEmpty(options)) {
+          vals.options = Ext.JSON.encode(options);
+        }
+
+        if (!Ext.isEmpty(validation)) {
           vals.validation = Ext.JSON.encode(validation);
         }
 
         vals.program_step_id = programStepId;
-        vals.attributes = (!Ext.isEmpty(attributes)) ? Ext.JSON.encode(attributes) : null;
         vals.name = vals.label.underscore();
 
-        grid.store.add(vals);
+        selectedRecord.set(vals);
         form.reset();
       }
     }]
