@@ -1280,8 +1280,9 @@ instructions = Ext.create('Ext.panel.Panel', {
       xtype: 'toolbar',
       dock: 'bottom',
       items: ['->', {
+        disabled: true,
+        id: 'instructionSaveBtn',
         text: 'Save Instruction',
-        id: 'saveBtn',
         handler: function () {
           var grid = Ext.getCmp('instructionsGrid'),
             editor = Ext.getCmp('editor'),
