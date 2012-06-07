@@ -50,11 +50,11 @@ Ext.onReady(function(){
     fieldDefaults: {
       labelWidth: 90,
       labelAlign: 'top',
-      width: 230
+      width: 430
     },
     frame:true,
     bodyStyle:'padding:5px 5px 0',
-    width: 250,
+    width: 450,
     height: 250,
     defaultType: 'textarea',
     items: [{
