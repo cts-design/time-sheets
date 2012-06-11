@@ -437,7 +437,7 @@ class ProgramResponsesController extends AppController {
 			$this->redirect(array('action' => 'index'));
 		}
 		$programResponse = $this->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
-		$docId = Set::extract('/ProgramResponseDoc[type=certificate]/doc_id', $programResponse);
+		$docId = Set::extract('/ProgramResponseDoc[type=system_generated]/doc_id', $programResponse);
 		$this->view = 'Media';
 		$this->loadModel('FiledDocument');
 		if($docId) {
