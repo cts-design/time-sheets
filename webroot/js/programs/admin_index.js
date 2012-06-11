@@ -71,6 +71,14 @@ Ext.define('ProgramGridPanel', {
     flex: 1
   }, {
     align: 'center',
+    dataIndex: 'program_response_count',
+    text: 'Response Count',
+    width: 100,
+    renderer: function (value) {
+      return value || 0;
+    }
+  }, {
+    align: 'center',
     text: 'Status',
     dataIndex: 'disabled',
     editor: {
