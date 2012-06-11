@@ -38,6 +38,7 @@ class ProgramsController extends AppController {
 
 	public function admin_index() {
 		if ($this->RequestHandler->isAjax()) {
+			$this->Program->Behaviors->disable('Disableable');
 			$this->Program->contain('ProgramEmail', 'ProgramInstruction');
 			$programs = $this->Program->find('all');
 
