@@ -153,8 +153,11 @@ Ext.define('ProgramGridPanel', {
   }],
   viewConfig: {
     deferEmptyText: false,
+    emptyText: 'There are no programs at this time',
     loadMask: true,
-    emptyText: 'No programs at this time'
+    getRowClass: function (rec) {
+      return rec.get('disabled') ? 'row-disabled' : 'row-active';
+    }
   }
 });
 

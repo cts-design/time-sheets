@@ -1177,3 +1177,8 @@ table.raw-data tr td {
 .x-action-col-cell div img {
   cursor: pointer !important;
 }
+
+.x-grid-row.row-disabled {
+  color: #999;
+}
+
