@@ -6,7 +6,12 @@ class ProgramResponse extends AppModel {
 
     public $hasMany = array('ProgramResponseDoc', 'ProgramResponseActivity');
 
-    public $belongsTo = array('Program', 'User');
+	public $belongsTo = array(
+		'Program' => array(
+			'counterCache' => true
+		),
+		'User'
+	);
 
     public $validate = array();
 
