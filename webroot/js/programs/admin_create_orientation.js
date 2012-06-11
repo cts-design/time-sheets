@@ -1165,7 +1165,7 @@ formBuilder = Ext.create('Ext.panel.Panel', {
         }
       });
     });
-    task.delay(1500);
+    task.delay(2500);
   },
   process: function () {
     var programFormFieldStore = Ext.data.StoreManager.lookup('ProgramFormFieldStore');
