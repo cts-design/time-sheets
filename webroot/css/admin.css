@@ -1182,3 +1182,18 @@ table.raw-data tr td {
   color: #999;
 }
 
+.x-action-col-cell img {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.x-action-col-cell img.editable {
+  background-image: url(../img/icons/edit.png);
+}
+
+.x-action-col-cell img.not-editable {
+  background-image: url(../img/icons/edit-grayed.png);
+}

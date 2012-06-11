@@ -6,7 +6,8 @@ Ext.define('Program', {
   fields: [
     { name: 'id', type: 'int' },
     'name',
-    'actions',
+    'type',
+    { name: 'program_response_count', type: 'int', useNull: true },
     { name: 'disabled', type: 'int' }
   ]
 });
@@ -101,13 +102,25 @@ Ext.define('ProgramGridPanel', {
     header: 'Edit',
     width: 50,
     items: [{
-      icon: '/img/icons/edit.png',
-      tooltip: 'Edit Program',
+      getClass: function (val, meta, rec) {
+        if (rec.get('program_response_count')) {
+          this.tooltip = 'You cannot edit this program';
+          return 'not-editable';
+        } else {
+          this.tooltip = 'Edit Program';
+          return 'editable';
+        }
+      },
       handler: function (grid, rowIndex, colIndex) {
         var rec = grid.getStore().getAt(rowIndex),
           type = Ext.util.Inflector.singularize(grid.ownerCt.id);
 
-        window.location = '/admin/programs/edit/' + type + '/' + rec.get('id');
+        if (rec.get('program_response_count')) {
+          Ext.Msg.alert('Can not edit', 'You can not edit a program with existing responses');
+        } else {
+          window.location = '/admin/programs/edit/' + type + '/' + rec.get('id');
+        }
+
       }
     }],
   }, {
