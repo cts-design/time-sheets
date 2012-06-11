@@ -743,7 +743,9 @@ formBuilder = Ext.create('Ext.panel.Panel', {
         text: 'Add Field',
         handler: function () {
           var formPanel = Ext.getCmp('formPanel'),
-            form = formPanel.getForm();
+            form = formPanel.getForm(),
+            saveBtn = formPanel.down('#builderSaveBtn'),
+            updateBtn = formPanel.down('#updateBtn');
 
           if (form.isDirty()) {
             Ext.Msg.show({
@@ -754,11 +756,15 @@ formBuilder = Ext.create('Ext.panel.Panel', {
               fn: function (btn) {
                 if (btn === 'yes') {
                   form.reset();
+                  saveBtn.enable().show();
+                  updateBtn.disable().hide();
                 }
               }
             });
           } else {
             form.reset();
+            saveBtn.enable().show();
+            updateBtn.disable().hide();
           }
 
         }
