@@ -4,7 +4,7 @@ class ProgramEmail extends AppModel {
 	
 	var $displayField = 'name';
 	
-	var $actsAs = array('Disableable');
+	var $actsAs = array('Containable','Disableable');
 
 	var $belongsTo = array(
 		'Program' => array(
