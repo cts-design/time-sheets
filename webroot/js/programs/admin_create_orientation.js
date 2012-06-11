@@ -1023,7 +1023,7 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           programStepId,
           grid = Ext.getCmp('formFieldGrid');
 
-        programStepId = programStep.findRecord('name', /quiz/i).data.id;
+        programStepId = programStep.findRecord('type', /form/gi).data.id;
 
         switch (vals.type) {
           case 'datepicker':
