@@ -14,6 +14,7 @@ Ext.define('Program', {
     { name: 'form_esign_required', type: 'int' },
     { name: 'confirmation_id_length', type: 'int' },
     { name: 'response_expires_in', type: 'int' },
+    { name: 'send_expiring_soon', type: 'int' },
     { name: 'created',  type: 'date', dateFormat: 'Y-m-d H:i:s' },
     { name: 'modified', type: 'date', dateFormat: 'Y-m-d H:i:s' }
   ]
@@ -333,6 +334,7 @@ Ext.create('Ext.data.Store', {
 Ext.create('Ext.data.Store', {
   data: [
     { program_id: 0, name: 'Orientation Main', from: null, subject: 'Main email', body: 'Default text Main', type: 'main', created: null, modified: null },
+    { program_id: 0, name: 'Orientation Expiring Soon', from: null, subject: 'Expiring Soon', body: 'Default text Expiring Soon', type: 'expiring_soon', created: null, modified: null },
     { program_id: 0, name: 'Orientation Expired', from: null, subject: 'Expired email', body: 'Default text Expired', type: 'expired', created: null, modified: null },
     { program_id: 0, name: 'Orientation Complete', from: null, subject: 'Complete email', body: 'Default text Complete', type: 'complete', created: null, modified: null }
   ],
@@ -524,6 +526,47 @@ registrationForm = Ext.create('Ext.form.Panel', {
         color: '#445566'
       },
       value: 'days'
+    }],
+  }, {
+    xtype: 'fieldcontainer',
+    height: 24,
+    width: 400,
+    layout: {
+      defaultMargins: {
+        top: 0,
+        right: 5,
+        bottom: 0,
+        left: 0
+      },
+      type: 'hbox'
+    },
+    items: [{
+      xtype: 'combo',
+      allowBlank: false,
+      displayField: 'ucase',
+      fieldLabel: 'Send expiring soon emails',
+      labelWidth: 150,
+      name: 'send_expiring_soon',
+      queryMode: 'local',
+      store: Ext.create('Ext.data.Store', {
+        fields: ['lcase', 'ucase'],
+        data: [{
+          lcase: '3', ucase: '3'
+        }, {
+          lcase: '5', ucase: '5'
+        }, {
+          lcase: '7', ucase: '7'
+        }]
+      }),
+      value: '3',
+      valueField: 'lcase',
+      width: 250
+    }, {
+      xtype: 'displayfield',
+      style: {
+        color: '#445566'
+      },
+      value: 'days prior to expiration'
     }]
   }, {
     border: 0,
