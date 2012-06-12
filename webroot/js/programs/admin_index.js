@@ -51,14 +51,6 @@ Ext.define('ProgramGridPanel', {
   forceFit: true,
   height: 300,
   store: 'ProgramStore',
-  viewConfig: {
-    deferEmptyText: false,
-    emptyText: 'There are no programs at this time',
-    loadMask: true,
-    getRowClass: function (rec) {
-      return rec.get('disabled') ? 'row-disabled' : 'row-active';
-    }
-  }
 });
 
 Ext.onReady(function () {
@@ -177,6 +169,19 @@ Ext.onReady(function () {
 
           }
         }],
+        viewConfig: {
+          deferEmptyText: false,
+          emptyText: 'There are no programs at this time',
+          getRowClass: function (rec) {
+            return rec.get('disabled') ? 'row-disabled' : 'row-active';
+          },
+          loadMask: true,
+          style: {
+            color: '#999999',
+            "font-style": 'italic',
+            padding: '10px'
+          }
+        }
       }, {
         xtype: 'actioncolumn',
         align: 'center',
@@ -293,7 +298,20 @@ Ext.onReady(function () {
             window.location = '/admin/program_responses/index/' + rec.get('id');
           }
         }]
-      }]
-    }]
+      }],
+      viewConfig: {
+        deferEmptyText: false,
+        emptyText: 'There are no orientations in the system',
+        getRowClass: function (rec) {
+          return rec.get('disabled') ? 'row-disabled' : 'row-active';
+        },
+        loadMask: true,
+        style: {
+          color: '#999999',
+          "font-style": 'italic',
+          padding: '10px'
+        }
+      }
+    }],
   });
 });
