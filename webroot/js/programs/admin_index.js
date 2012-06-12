@@ -199,6 +199,26 @@ Ext.onReady(function () {
           }
         }],
       }],
+      listeners: {
+        itemcontextmenu: function (view, rec, item, index, e) {
+          e.preventDefault();
+          Ext.create('Ext.menu.Menu', {
+            items: [{
+              icon: '/img/icons/eye.png',
+              text: 'Show Production Url',
+              handler: function () {
+                var msg;
+
+                msg = 'Please copy the following url.<br /><br />';
+                msg += window.location.origin + '/programs/registration/' + rec.data.id;
+                msg += '<br /><br />';
+
+                Ext.Msg.alert('Production Url', msg);
+              }
+            }]
+          }).showAt(e.getXY());
+        }
+      },
       viewConfig: {
         deferEmptyText: false,
         emptyText: 'There are no programs at this time',
@@ -307,6 +327,26 @@ Ext.onReady(function () {
           }
         }]
       }],
+      listeners: {
+        itemcontextmenu: function (view, rec, item, index, e) {
+          e.preventDefault();
+          Ext.create('Ext.menu.Menu', {
+            items: [{
+              icon: '/img/icons/eye.png',
+              text: 'Show Production Url ',
+              handler: function () {
+                var msg;
+
+                msg = 'Please copy the following url.<br /><br />';
+                msg += window.location.origin + '/programs/orientation/' + rec.data.id;
+                msg += '<br /><br />';
+
+                Ext.Msg.alert('Production Url', msg);
+              }
+            }]
+          }).showAt(e.getXY());
+        }
+      },
       viewConfig: {
         deferEmptyText: false,
         emptyText: 'There are no orientations in the system',
