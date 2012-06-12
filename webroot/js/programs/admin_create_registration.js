@@ -12,6 +12,7 @@ Ext.define('Program', {
     { name: 'queue_category_id', type: 'int' },
     { name: 'approval_required', type: 'int' },
     { name: 'form_esign_required', type: 'int' },
+    { name: 'user_acceptance_required', type: 'int' },
     { name: 'confirmation_id_length', type: 'int' },
     { name: 'response_expires_in', type: 'int' },
     { name: 'send_expiring_soon', type: 'int' },
@@ -453,6 +454,10 @@ registrationForm = Ext.create('Ext.form.Panel', {
     name: 'type',
     value: 'registration'
   }, {
+    xtype: 'hiddenfield',
+    name: 'form_esign_required',
+    value: '0'
+  }, {
     xtype: 'fieldcontainer',
     height: 22,
     width: 250,
@@ -462,15 +467,15 @@ registrationForm = Ext.create('Ext.form.Panel', {
     },
     items: [{
       xtype: 'radiogroup',
-      fieldLabel: 'Esign Required?',
+      fieldLabel: 'Acknowledgement Required?',
       labelWidth: 150,
       items: [{
         boxLabel: 'Yes',
-        name: 'form_esign_required',
+        name: 'user_acceptance_required',
         inputValue: '1'
       }, {
         boxLabel: 'No',
-        name: 'form_esign_required',
+        name: 'user_acceptance_required',
         inputValue: '0',
         checked: true
       }]
