@@ -65,8 +65,8 @@ class ProgramsController extends AppController {
 				$data['success'] = true;
 			}
 			else {
-				$data['success'] = false;
-				$data['message'] = 'No programs were found.';
+				$data['programs'] = array();
+				$data['success'] = true;
 			}
 			$this->set('data', $data);
 			$this->render('/elements/ajaxreturn');
