@@ -27,7 +27,7 @@ Ext.create('Ext.data.Store', {
       update: '/admin/programs/update'
     },
     extraParams: {
-      type: 'registrations'
+      program_type: 'registration'
     },
     reader: {
       type: 'json',
@@ -94,7 +94,7 @@ Ext.onReady(function () {
     }],
     items: [{
       xtype: 'programgridpanel',
-      id: 'registrations',
+      id: 'registration',
       title: 'Registrations',
       plugins: [
         Ext.create('Ext.grid.plugin.CellEditing', {
@@ -196,7 +196,7 @@ Ext.onReady(function () {
     }, {
       xtype: 'programgridpanel',
       title: 'Orientations',
-      id: 'orientations',
+      id: 'orientation',
       plugins: [
         Ext.create('Ext.grid.plugin.CellEditing', {
           clicksToEdit: 2
