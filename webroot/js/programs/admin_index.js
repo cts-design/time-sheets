@@ -173,13 +173,12 @@ Ext.onReady(function () {
             }
           },
           handler: function (grid, rowIndex, colIndex) {
-            var rec = grid.getStore().getAt(rowIndex),
-              type = Ext.util.Inflector.singularize(grid.ownerCt.id);
+            var rec = grid.getStore().getAt(rowIndex);
 
             if (rec.get('program_response_count')) {
               Ext.Msg.alert('Can not edit', 'You can not edit a program with existing responses');
             } else {
-              window.location = '/admin/programs/edit/' + type + '/' + rec.get('id');
+              window.location = '/admin/programs/edit/registration/' + rec.get('id');
             }
 
           }
@@ -287,13 +286,12 @@ Ext.onReady(function () {
             }
           },
           handler: function (grid, rowIndex, colIndex) {
-            var rec = grid.getStore().getAt(rowIndex),
-              type = Ext.util.Inflector.singularize(grid.ownerCt.id);
+            var rec = grid.getStore().getAt(rowIndex);
 
             if (rec.get('program_response_count')) {
               Ext.Msg.alert('Can not edit', 'You can not edit a program with existing responses');
             } else {
-              window.location = '/admin/programs/edit/' + type + '/' + rec.get('id');
+              window.location = '/admin/programs/edit/orientation/' + rec.get('id');
             }
 
           }
