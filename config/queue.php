@@ -12,7 +12,7 @@ $config['queue']['defaultworkertimeout'] = 120;
 $config['queue']['defaultworkerretries'] = 4;
 
 #Seconds of runnig time after which the worker will terminate (0 = unlimited)
-$config['queue']['workermaxruntime'] = 0;
+$config['queue']['workermaxruntime'] = 3600;
 
 #Should a Workerprocess quit when there are no more tasks for it to execute (true = exit, false = keep running)
 $config['queue']['exitwhennothingtodo'] = false;

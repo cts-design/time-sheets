@@ -144,7 +144,7 @@ class QueueDocumentTask extends Shell {
 					$this->data['FiledDocument']['filed_location_id'] = $data['Admin']['location_id'];
 					$this->data['FiledDocument']['last_activity_admin_id'] = $data['Admin']['id'];
 				}
-				$this->data['FiledDocument']['user_id'] = $data['id'];
+				$this->data['FiledDocument']['user_id'] = $data['User']['id'];
 				$this->data['FiledDocument']['cat_1'] = $data['ProgramDocument']['cat_1'];
 				$this->data['FiledDocument']['cat_2'] = $data['ProgramDocument']['cat_2'];
 				$this->data['FiledDocument']['cat_3'] = $data['ProgramDocument']['cat_3'];
