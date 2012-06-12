@@ -40,7 +40,14 @@ class ProgramsController extends AppController {
 		if ($this->RequestHandler->isAjax()) {
 			$this->Program->Behaviors->disable('Disableable');
 			$this->Program->contain('ProgramEmail', 'ProgramInstruction');
-			$programs = $this->Program->find('all');
+
+			$programType = $this->params['url']['program_type'];
+
+			$programs = $this->Program->find('all', array(
+				'conditions' => array(
+					'Program.type' => $programType
+				)
+			));
 
 			if ($programs) {
 				$i = 0;
