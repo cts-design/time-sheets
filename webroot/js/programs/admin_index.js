@@ -56,8 +56,15 @@ Ext.define('ProgramGridPanel', {
 Ext.onReady(function () {
   Ext.QuickTips.init();
 
+  Ext.state.Manager.setProvider(new Ext.state.CookieProvider({
+      expires: new Date(new Date().getTime()+(1000*60*60*24*365)) // 1 year
+  }));
+
   var tabPanel = Ext.create('Ext.tab.Panel', {
     renderTo: 'programGrid',
+    stateful: true,
+    stateEvents: ['tabchange'],
+    stateId: 'programsIndexTabs',
     title: 'Programs',
     dockedItems: [{
       xtype: 'toolbar',
@@ -84,6 +91,14 @@ Ext.onReady(function () {
         }
       }]
     }],
+    applyState: function (state) {
+      if (typeof state.activeTab !== 'undefined') {
+        this.setActiveTab(state.activeTab);
+      }
+    },
+    getState: function () {
+      return { activeTab: this.getActiveTab().id };
+    },
     items: [{
       xtype: 'programgridpanel',
       id: 'registration',
