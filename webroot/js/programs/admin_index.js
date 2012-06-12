@@ -182,20 +182,7 @@ Ext.onReady(function () {
             }
 
           }
-        }],
-        viewConfig: {
-          deferEmptyText: false,
-          emptyText: 'There are no programs at this time',
-          getRowClass: function (rec) {
-            return rec.get('disabled') ? 'row-disabled' : 'row-active';
-          },
-          loadMask: true,
-          style: {
-            color: '#999999',
-            "font-style": 'italic',
-            padding: '10px'
-          }
-        }
+        }]
       }, {
         xtype: 'actioncolumn',
         align: 'center',
@@ -211,7 +198,15 @@ Ext.onReady(function () {
             window.location = '/admin/program_responses/index/' + rec.get('id');
           }
         }],
-      }]
+      }],
+      viewConfig: {
+        deferEmptyText: false,
+        emptyText: 'There are no programs at this time',
+        getRowClass: function (rec) {
+          return rec.get('disabled') ? 'row-disabled' : 'row-active';
+        },
+        loadMask: true
+      }
     }, {
       xtype: 'programgridpanel',
       title: 'Orientations',
@@ -318,12 +313,7 @@ Ext.onReady(function () {
         getRowClass: function (rec) {
           return rec.get('disabled') ? 'row-disabled' : 'row-active';
         },
-        loadMask: true,
-        style: {
-          color: '#999999',
-          "font-style": 'italic',
-          padding: '10px'
-        }
+        loadMask: true
       }
     }],
     listeners: {
