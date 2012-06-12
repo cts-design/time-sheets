@@ -278,7 +278,6 @@ class ProgramsController extends AppController {
 	public function admin_upload_media() {
 		$this->layout = 'ajax';
 		$storagePath = substr(APP, 0, -1) . Configure::read('Program.media.path');
-		$publicPath = WWW_ROOT . 'files/public/programs/';
 
 		switch ($_FILES['media']['type']) {
 			case 'application/pdf':
@@ -289,11 +288,6 @@ class ProgramsController extends AppController {
 			case 'video/x-flv':
 				$path = $storagePath;
 				$ext = '.flv';
-				break;
-
-			case 'application/x-shockwave-flash':
-				$path = $publicPath;
-				$ext = '.swf';
 				break;
 
 			default:

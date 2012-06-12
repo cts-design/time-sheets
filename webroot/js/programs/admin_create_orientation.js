@@ -599,8 +599,6 @@ registrationForm = Ext.create('Ext.form.Panel', {
         }, {
           lcase: 'video', ucase: 'Flash Video'
         }, {
-          lcase: 'presenter', ucase: 'Adobe Presenter'
-        }, {
           lcase: 'url', ucase: 'Website URL'
         }]
       }),
