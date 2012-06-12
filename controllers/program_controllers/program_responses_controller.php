@@ -120,6 +120,10 @@ class ProgramResponsesController extends AppController {
 			$data['esignRequired'] = true;
 			$data['esignInstructions'] = Set::extract('/ProgramInstruction[type=esign]/text', $program);
 		}
+		if($program['Program']['acceptanceRequired']) {
+			$data['acceptanceRequired'] = true;	
+			$data['acceptanceInstructions'] = Set::extract('/ProgramInstruction[type=acceptance]/text', $program);
+		}
         if($instructions) {
             $data['instructions'] = $instructions[0];
         }
