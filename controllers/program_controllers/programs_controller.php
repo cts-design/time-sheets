@@ -135,7 +135,12 @@ class ProgramsController extends AppController {
 		$program = $this->Program->find('first', array(
 			'conditions' => array('Program.id' => $id),
 			'contain' => array(
-				'ProgramStep' => array('conditions' => array('ProgramStep.parent_id IS NOT NULL')),
+				'ProgramStep' => array(
+					'conditions' => array(
+						'ProgramStep.parent_id IS NOT NULL'
+					),
+					'order' => 'lft ASC'
+				),
 				'ProgramInstruction')));
 		if($program['Program']['disabled']) {
 			$this->Session->setFlash(__('This program is disabled', true), 'flash_failure');
