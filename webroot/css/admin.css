@@ -1177,3 +1177,23 @@ table.raw-data tr td {
 .x-action-col-cell div img {
   cursor: pointer !important;
 }
+
+.x-grid-row.row-disabled {
+  color: #999;
+}
+
+.x-action-col-cell img {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.x-action-col-cell img.editable {
+  background-image: url(../img/icons/edit.png);
+}
+
+.x-action-col-cell img.not-editable {
+  background-image: url(../img/icons/edit-grayed.png);
+}

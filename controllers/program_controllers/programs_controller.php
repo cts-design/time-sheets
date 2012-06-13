@@ -38,8 +38,16 @@ class ProgramsController extends AppController {
 
 	public function admin_index() {
 		if ($this->RequestHandler->isAjax()) {
+			$this->Program->Behaviors->disable('Disableable');
 			$this->Program->contain('ProgramEmail', 'ProgramInstruction');
-			$programs = $this->Program->find('all');
+
+			$programType = $this->params['url']['program_type'];
+
+			$programs = $this->Program->find('all', array(
+				'conditions' => array(
+					'Program.type' => $programType
+				)
+			));
 
 			if ($programs) {
 				$i = 0;
@@ -48,7 +56,8 @@ class ProgramsController extends AppController {
 						'id' => $program['Program']['id'],
 						'name' => $program['Program']['name'],
 						'type' => $program['Program']['type'],
-						'disabled' => $program['Program']['disabled']
+						'disabled' => $program['Program']['disabled'],
+						'program_response_count' => $program['Program']['program_response_count']
 					);
 
 					$i++;
@@ -56,8 +65,8 @@ class ProgramsController extends AppController {
 				$data['success'] = true;
 			}
 			else {
-				$data['success'] = false;
-				$data['message'] = 'No programs were found.';
+				$data['programs'] = array();
+				$data['success'] = true;
 			}
 			$this->set('data', $data);
 			$this->render('/elements/ajaxreturn');
@@ -270,7 +279,6 @@ class ProgramsController extends AppController {
 	public function admin_upload_media() {
 		$this->layout = 'ajax';
 		$storagePath = substr(APP, 0, -1) . Configure::read('Program.media.path');
-		$publicPath = WWW_ROOT . 'files/public/programs/';
 
 		switch ($_FILES['media']['type']) {
 			case 'application/pdf':
@@ -281,11 +289,6 @@ class ProgramsController extends AppController {
 			case 'video/x-flv':
 				$path = $storagePath;
 				$ext = '.flv';
-				break;
-
-			case 'application/x-shockwave-flash':
-				$path = $publicPath;
-				$ext = '.swf';
 				break;
 
 			default:
