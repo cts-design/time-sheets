@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2012-06-12 14:23:02 : 1339525382*/
+/* atlas schema generated on: 2012-06-13 15:09:12 : 1339614552*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -588,6 +588,7 @@ class atlasSchema extends CakeSchema {
 		'response_expires_in' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'send_expiring_soon' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 1),
 		'program_response_count' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'show_in_dash' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'expires' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
