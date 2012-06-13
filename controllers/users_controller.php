@@ -84,8 +84,8 @@ class UsersController extends AppController {
 									$this->data['User']['username'], 'kiosk' => false));
 								break;
 							case 'program':
-								$this->redirect(array('action' => 'registration', 'regular', 
-									$this->data['User']['username'], 'program', 
+								$this->redirect(array('action' => 'registration', 'regular',
+									$this->data['User']['username'], 'program',
 									$this->data['User']['program_id'], 'kiosk' => false));
 								break;
 							case 'child_program':
@@ -315,10 +315,35 @@ class UsersController extends AppController {
 
 	function dashboard() {
 		$this->loadModel('Program');
-		$this->Program->recursive = -1;
-		$programs = $this->Program->find('all');
-		$orientations = Set::extract('/Program[type=orientation]', $programs);
-		$registrations = Set::extract('/Program[type=registration]', $programs);
+		$this->Program->contain(
+			array('ProgramResponse' => array(
+				'conditions' => array('user_id' => $this->Auth->user('id')),
+				'fields' => array('id', 'status'))));
+		$programs = $this->Program->find('all',
+			array('conditions' => array('Program.show_in_dash' => 1),
+				  'fields' => array('id', 'name', 'type')));
+		if($programs) {
+			$orientations = array();
+			$registrations = array();
+			$ecourses = array();
+			$enrollments = array();
+			foreach($programs as $program) {
+				switch($program['Program']['type']) {
+					case 'orientation':
+						$orientations[] = $program;
+						break;
+					case 'registration':
+						$registrations[] = $program;
+						break;
+					case 'enrollments':
+						$enrollments[] = $program;
+						break;
+					case 'ecourses':
+						$ecourses[] = $program;
+						break;
+				}
+			}
+		}
 		$title_for_layout = 'Customer Dashboard';
 		$this->set(compact('title_for_layout', 'orientations', 'registrations'));
 	}
@@ -442,7 +467,7 @@ class UsersController extends AppController {
             if (preg_match('/auditor/i', $this->Auth->user('role_name'))) {
                 $this->Transaction->createUserTransaction('Auditor', null, null, 'Logged into auditor dashboard');
                 $this->redirect(array('action' => 'dashboard', 'auditor' => true));
-			} 
+			}
 			else {
                 $this->Transaction->createUserTransaction('Website',
                     null, null, 'Logged in using website.' );
@@ -460,7 +485,7 @@ class UsersController extends AppController {
         }
         if(isset($type) && $type === 'child' ||
             isset($this->data['User']['login_type']) && $this->data['User']['login_type'] === 'child_website') {
-				$title_for_layout = 'Child Login'; 
+				$title_for_layout = 'Child Login';
 				$loginType = 'child';
                 if($program) {
 					$title_for_layout = $program['Program']['name'] . ' Child Login';
@@ -510,11 +535,11 @@ class UsersController extends AppController {
     }
 
     function registration($type=null, $lastname=null) {
-		if(isset($this->params['pass'][2], $this->params['pass'][3]) && 
+		if(isset($this->params['pass'][2], $this->params['pass'][3]) &&
 			$this->params['pass'][2] === 'program') {
 				$this->loadModel('Program');
-				$this->Program->contain(array('ProgramInstruction' =>  
-					array('conditions' => array('ProgramInstruction.type' => 'registration'))));	
+				$this->Program->contain(array('ProgramInstruction' =>
+					array('conditions' => array('ProgramInstruction.type' => 'registration'))));
 				$program = $this->Program->findById($this->params['pass'][3]);
 				if($program) {
 					$this->set('instructions', $program['ProgramInstruction'][0]['text']);
