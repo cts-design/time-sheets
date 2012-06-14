@@ -27,12 +27,12 @@
 			<?php echo $this->Form->input('ProgramResponseActivity.id', array('type' => 'hidden')); ?>
             <?php echo '<br />'; ?>
         <?php endforeach; ?>
-        <?php if($esignRequired) : ?>
+		 <?php if($acceptanceRequired) : ?>
             <fieldset>
-                <legend><?php __('Electronic Signature') ?></legend>
-                <p class="bot-mar-10"><?php echo $esignInstructions; ?></p>
+                <legend><?php __('User Acceptance') ?></legend>
+                <p class="bot-mar-10"><?php echo $acceptanceInstructions[0]; ?></p>
                 <p class="bot-mar-10"><?php __('Please enter your first and last name in the box below.') ?></p>
-                <?php echo $this->Form->input('form_esignature', array('label' => __('I agree', true), 'after' => '<br />')) ?>
+                <?php echo $form->input('ProgramResponseActivity.0.user_acceptance', array('label' => __('I agree', true), 'after' => '<br />')) ?>
             </fieldset>
             <br />
         <?php endif ?>
