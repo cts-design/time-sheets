@@ -30,9 +30,8 @@ class ProgramResponsesController extends AppController {
 						$validate[$v['name']] = json_decode($v['validation'], true);
 					}
 				}
-				// TODO: make this work with the real esign
-				if($query[0]['ProgramStep']['Program']['form_esign_required']) {
-					$validate['form_esignature'] = array(
+				if($query[0]['ProgramStep']['Program']['user_acceptance_required']) {
+					$validate['user_acceptance'] = array(
 						'rule' => 'notempty',
 						'message' => 'You must put your first & last name in the box.');
 				}
