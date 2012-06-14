@@ -121,7 +121,7 @@ class ProgramResponsesController extends AppController {
 			$data['esignInstructions'] = Set::extract('/ProgramInstruction[type=esign]/text', $program);
 		}
 		$data['acceptanceRequired'] = false;
-		if($program['Program']['acceptanceRequired']) {
+		if($program['Program']['user_acceptance_required']) {
 			$data['acceptanceRequired'] = true;	
 			$data['acceptanceInstructions'] = Set::extract('/ProgramInstruction[type=acceptance]/text', $program);
 		}
@@ -198,7 +198,7 @@ class ProgramResponsesController extends AppController {
 			$data['esignInstructions'] = Set::extract('/ProgramInstruction[type=esign]/text', $program);
 		}
 		$data['acceptanceRequired'] = false;
-		if($program['Program']['acceptanceRequired']) {
+		if($program['Program']['user_acceptance_required']) {
 			$data['acceptanceRequired'] = true;	
 			$data['acceptanceInstructions'] = Set::extract('/ProgramInstruction[type=acceptance]/text', $program);
 		}
