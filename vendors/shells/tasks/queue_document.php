@@ -50,6 +50,8 @@ class QueueDocumentTask extends Shell {
 				$this->data['FiledDocument']['cat_1'] = $data['ProgramDocument']['cat_1'];
 				$this->data['FiledDocument']['cat_2'] = $data['ProgramDocument']['cat_2'];
 				$this->data['FiledDocument']['cat_3'] = $data['ProgramDocument']['cat_3'];
+				$this->data['FiledDocument']['filed'] = date('Y-m-d H:i:s');
+				$this->data['FiledDocument']['entry_method'] = 'Program Generated'; 
 				$this->data['ProgramResponseDoc']['program_response_id'] = $data['ProgramResponse']['id'];
 				$this->data['ProgramResponseDoc']['type'] = 'system_generated';
 				$this->data['ProgramResponseDoc']['doc_id'] = $docId;
@@ -137,7 +139,6 @@ class QueueDocumentTask extends Shell {
 				}
 
 				$this->data['FiledDocument']['id'] = $data['docId'];
-				$this->data['FiledDocument']['created'] = date('Y-m-d H:i:s');
 				$this->data['FiledDocument']['filename'] = $pdf;
 				if(!empty($data['Admin'])) {
 					$this->data['FiledDocument']['admin_id'] = $data['Admin']['id'];
@@ -148,9 +149,8 @@ class QueueDocumentTask extends Shell {
 				$this->data['FiledDocument']['cat_1'] = $data['ProgramDocument']['cat_1'];
 				$this->data['FiledDocument']['cat_2'] = $data['ProgramDocument']['cat_2'];
 				$this->data['FiledDocument']['cat_3'] = $data['ProgramDocument']['cat_3'];
-				$this->data['FiledDocument']['entry_method'] = 'Program Generated';
 				$this->data['FiledDocument']['filed'] = date('Y-m-d H:i:s');
-				$this->data['ProgramResponseDoc']['created'] = date('Y-m-d H:i:s');
+				$this->data['FiledDocument']['entry_method'] = 'Program Generated';
 				if($data['ProgramDocument']['cat_3']) {
 					$this->data['ProgramResponseDoc']['cat_id'] = $data['ProgramDocument']['cat_3'];
 				}
