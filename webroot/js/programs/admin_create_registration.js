@@ -314,7 +314,8 @@ Ext.create('Ext.data.Store', {
     { program_id: 0, text: 'Default text Pending Approval', type: 'pending_approval', created: null, modified: null },
     { program_id: 0, text: 'Default text Expired', type: 'expired', created: null, modified: null },
     { program_id: 0, text: 'Default text Not Approved', type: 'not_approved', created: null, modified: null },
-    { program_id: 0, text: 'Default text Complete', type: 'complete', created: null, modified: null }
+    { program_id: 0, text: 'Default text Complete', type: 'complete', created: null, modified: null },
+    { program_id: 0, text: 'Default text Acceptance', type: 'user_acceptance', created: null, modified: null }
   ],
   storeId: 'ProgramInstructionStore',
   model: 'ProgramInstruction',
