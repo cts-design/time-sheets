@@ -489,11 +489,14 @@ div.required label:after {
 
 /* Login */
 
-#ChildLoginForm #UserPassword {width: 30px}
-#ChildLoginForm { width: 350px;}
-#ChildLoginForm label { margin-right: 10px;}
-#ChildLoginForm .input {margin-bottom: 10px;}
-#ChildLoginForm .error-message {margin: 0}
+#ChildLoginForm #UserPassword, 
+#UserLoginForm #UserPassword {width: 30px}
+#ChildLoginForm label,
+#UserLoginForm label {margin-right: 10px;}
+#ChildLoginForm .input,
+#UserLoginForm .input {margin-bottom: 10px;}
+#ChildLoginForm .error-message,
+#UserLoginForm .error-message {margin: 0}
 
 /* Registration */
 
