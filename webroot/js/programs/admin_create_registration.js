@@ -1,3 +1,7 @@
+var isEmptyObject = function (obj) {
+  return Object.keys(obj).length === 0;
+};
+
 /**
  * Data Models
  */
@@ -966,15 +970,15 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           validation.rule = 'notEmpty';
         }
 
-        if (!Ext.isEmpty(attributes)) {
+        if (!isEmptyObject(attributes)) {
           vals.attributes = Ext.JSON.encode(attributes);
         }
 
-        if (!Ext.isEmpty(options)) {
+        if (!isEmptyObject(options)) {
           vals.options = Ext.JSON.encode(options);
         }
 
-        if (!Ext.isEmpty(validation)) {
+        if (!isEmptyObject(validation)) {
           vals.validation = Ext.JSON.encode(validation);
         }
 
@@ -1037,15 +1041,15 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           validation.rule = 'notEmpty';
         }
 
-        if (!Ext.isEmpty(attributes)) {
+        if (!isEmptyObject(attributes)) {
           vals.attributes = Ext.JSON.encode(attributes);
         }
 
-        if (!Ext.isEmpty(options)) {
+        if (!isEmptyObject(options)) {
           vals.options = Ext.JSON.encode(options);
         }
 
-        if (!Ext.isEmpty(validation)) {
+        if (!isEmptyObject(validation)) {
           vals.validation = Ext.JSON.encode(validation);
         }
 
