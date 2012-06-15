@@ -48,11 +48,3 @@
     </li>
   </ol>
 </div>
-
-<br />
-<div>
-  <div class="bot-mar-10">
-  </div>
-  <ul>
-  </ul>
-</div>
