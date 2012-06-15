@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2012-06-13 15:09:12 : 1339614552*/
+/* atlas schema generated on: 2012-06-15 10:08:59 : 1339769339*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -534,6 +534,7 @@ class atlasSchema extends CakeSchema {
 		'cat_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'key' => 'index'),
 		'program_response_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'doc_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+		'program_doc_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'type' => array('type' => 'string', 'null' => false, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'deleted' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'deleted_reason' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),

@@ -55,6 +55,7 @@ class QueueDocumentTask extends Shell {
 				$this->data['ProgramResponseDoc']['program_response_id'] = $data['ProgramResponse']['id'];
 				$this->data['ProgramResponseDoc']['type'] = 'system_generated';
 				$this->data['ProgramResponseDoc']['doc_id'] = $docId;
+				$this->data['ProgramResponseDoc']['program_doc_id'] = $data['ProgramDocument']['id']; 
 				if($data['ProgramDocument']['cat_3']) {
 					$this->data['ProgramResponseDoc']['cat_id'] = $data['ProgramDocument']['cat_3'];
 				}
@@ -163,6 +164,7 @@ class QueueDocumentTask extends Shell {
 				$this->data['ProgramResponseDoc']['program_response_id'] = $data['ProgramResponse']['id'];
 				$this->data['ProgramResponseDoc']['doc_id'] = $data['docId'];
 				$this->data['ProgramResponseDoc']['type'] = 'system_generated';
+				$this->data['ProgramResponseDoc']['program_doc_id'] = $data['ProgramDocument']['id']; 
 				if($this->FiledDocument->saveAll($this->data)) {
 					return true;
 				}

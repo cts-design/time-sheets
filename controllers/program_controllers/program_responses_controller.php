@@ -30,9 +30,8 @@ class ProgramResponsesController extends AppController {
 						$validate[$v['name']] = json_decode($v['validation'], true);
 					}
 				}
-				// TODO: make this work with the real esign
-				if($query[0]['ProgramStep']['Program']['form_esign_required']) {
-					$validate['form_esignature'] = array(
+				if($query[0]['ProgramStep']['Program']['user_acceptance_required']) {
+					$validate['user_acceptance'] = array(
 						'rule' => 'notempty',
 						'message' => 'You must put your first & last name in the box.');
 				}
@@ -57,8 +56,8 @@ class ProgramResponsesController extends AppController {
 
 	function form($programId=null, $stepId=null) {
         $program = $this->ProgramResponse->Program->getProgramAndResponse($programId, $this->Auth->user('id'));
-		$this->whatsNext($program, $stepId); 
-        
+		$this->whatsNext($program, $stepId);
+
 		$programDocuments = Set::extract('/ProgramDocument[program_step_id='.$this->currentStep[0]['id'].']', $program);
 
 		if(!empty($this->data)) {
@@ -122,7 +121,7 @@ class ProgramResponsesController extends AppController {
 		}
 		$data['acceptanceRequired'] = false;
 		if($program['Program']['user_acceptance_required']) {
-			$data['acceptanceRequired'] = true;	
+			$data['acceptanceRequired'] = true;
 			$data['acceptanceInstructions'] = Set::extract('/ProgramInstruction[type=acceptance]/text', $program);
 		}
         if($instructions) {
@@ -136,13 +135,13 @@ class ProgramResponsesController extends AppController {
 
 	function edit_form($programId=null, $stepId=null) {
         $program = $this->ProgramResponse->Program->getProgramAndResponse($programId, $this->Auth->user('id'));
-		$this->whatsNext($program, $stepId); 
+		$this->whatsNext($program, $stepId);
 		$programDocuments = Set::extract('/ProgramDocument[program_step_id='.$this->currentStep[0]['id'].']', $program);
 		$responseActivity = Set::extract('/ProgramResponseActivity[program_step_id=' . $stepId .']', $program['ProgramResponse'][0]);
 		if(!empty($this->data)) {
             $this->data['ProgramResponse']['id'] = $program['ProgramResponse'][0]['id'];
 			$this->data['ProgramResponseActivity'][0]['answers'] = json_encode($this->data['ProgramResponseActivity'][0]);
-			$this->data['ProgramResponseActivity'][0]['id'] = $this->data['ProgramResponseActivity']['id']; 
+			$this->data['ProgramResponseActivity'][0]['id'] = $this->data['ProgramResponseActivity']['id'];
 			unset($this->data['ProgramResponseActivity']['id']);
 			$this->data['ProgramResponseActivity'][0]['status'] = 'complete';
 			$this->data['ProgramResponseActivity'][0]['program_step_id'] = $this->currentStep[0]['id'];
@@ -199,7 +198,7 @@ class ProgramResponsesController extends AppController {
 		}
 		$data['acceptanceRequired'] = false;
 		if($program['Program']['user_acceptance_required']) {
-			$data['acceptanceRequired'] = true;	
+			$data['acceptanceRequired'] = true;
 			$data['acceptanceInstructions'] = Set::extract('/ProgramInstruction[type=acceptance]/text', $program);
 		}
         if($instructions) {
@@ -215,7 +214,7 @@ class ProgramResponsesController extends AppController {
 
 	function media($programId=null, $stepId=null) {
         $program = $this->ProgramResponse->Program->getProgramAndResponse($programId, $this->Auth->user('id'));
-		$this->whatsNext($program, $stepId); 
+		$this->whatsNext($program, $stepId);
         if(!empty($this->data)) {
             $this->data['ProgramResponse']['id'] = $program['ProgramResponse'][0]['id'];
 			$this->data['ProgramResponse']['next_step_id'] = null;
@@ -583,7 +582,7 @@ class ProgramResponsesController extends AppController {
 						else {
 							$data['responses'][$i]['actions'] =
 								'<a href="/admin/program_responses/view/'.
-									$response['ProgramResponse']['id'].'">View</a>'; 
+									$response['ProgramResponse']['id'].'">View</a>';
 							$data['responses'][$i]['actions'] .= ' | <a href="/admin/program_responses/toggle_expired/' .
 								$response['ProgramResponse']['id'] . '/expire'.'" class="expire">Mark Expired</a>';
 						}
@@ -614,9 +613,9 @@ class ProgramResponsesController extends AppController {
 
 	function admin_view($id, $type=null) {
 		$this->ProgramResponse->contain(array(
-			'Program' => array('ProgramStep'), 
-			'ProgramResponseActivity', 
-			'ProgramResponseDoc', 
+			'Program' => array('ProgramStep'),
+			'ProgramResponseActivity',
+			'ProgramResponseDoc' => array('order' => array('created DESC')),
 			'User'));
 		$programResponse = $this->ProgramResponse->findById($id);
 		if($this->RequestHandler->isAjax()){
@@ -634,11 +633,11 @@ class ProgramResponsesController extends AppController {
 				if(!empty($formActivities)) {
 					$i = 0;
 					foreach($formActivities as $formActivity) {
-						$data['answers'][$i] = json_decode($formActivity['ProgramResponseActivity']['answers'], true);	
-						$data['stepName'] = 
+						$data['answers'][$i] = json_decode($formActivity['ProgramResponseActivity']['answers'], true);
+						$data['stepName'] =
 							Set::extract('/ProgramStep[id='.$formActivity['ProgramResponseActivity']['program_step_id'].']/name', $programResponse['Program']);
 						$i++;
-					} 
+					}
 					$this->set($data);
 				}
 				$this->render('/elements/program_responses/answers');
@@ -678,31 +677,26 @@ class ProgramResponsesController extends AppController {
 				$programDocs = $this->ProgramResponse->
 					Program->ProgramDocument->findAllByProgramId($programResponse['Program']['id']);
 				if($programDocs) {
-					$i = 0;
+					$data['generatedDocs'] = array();
 					foreach($programDocs as $programDoc) {
 						if(isset($generatedDocs)) {
 							foreach($generatedDocs as $generatedDoc) {
-								if($programDoc['ProgramDocument']['cat_3']) {
-									$cat = $programDoc['ProgramDocument']['cat_3'];
-								}
-								elseif($programDoc['ProgramDocument']['cat_2']) {
-									$cat = $programDoc['ProgramDocument']['cat_2'];
-								}
-								else {
-									$cat = $programDoc['ProgramDocument']['cat_1'];
-								}
-								if($generatedDoc['ProgramResponseDoc']['cat_id'] === $cat) {
-									$data['generatedDocs'][$i]['view'] = '<a href="/admin/filed_documents/view/' .
+								if(!array_key_exists($programDoc['ProgramDocument']['id'], $data['generatedDocs'])) {
+									$data['generatedDocs'][$programDoc['ProgramDocument']['id']]['name'] =
+										$programDoc['ProgramDocument']['name'];
+									$data['generatedDocs'][$programDoc['ProgramDocument']['id']]['programResponseId'] =
+										$programResponse['ProgramResponse']['id'];
+									$data['generatedDocs'][$programDoc['ProgramDocument']['id']]['id'] =
+										$programDoc['ProgramDocument']['id'];
+									$data['generatedDocs'][$programDoc['ProgramDocument']['id']]['view'] = '<a href="/admin/filed_documents/view/' .
 										$generatedDoc['ProgramResponseDoc']['doc_id'].'" target="_blank">View Doc</a>';
-									$data['generatedDocs'][$i]['doc_id'] = $generatedDoc['ProgramResponseDoc']['doc_id'];
-									$data['generatedDocs'][$i]['filed_on'] = $generatedDoc['ProgramResponseDoc']['created'];
+									$data['generatedDocs'][$programDoc['ProgramDocument']['id']]['doc_id'] =
+										$generatedDoc['ProgramResponseDoc']['doc_id'];
+									$data['generatedDocs'][$programDoc['ProgramDocument']['id']]['filed_on'] =
+										$generatedDoc['ProgramResponseDoc']['created'];
 								}
 							}
 						}
-						$data['generatedDocs'][$i]['name'] = $programDoc['ProgramDocument']['name'];
-						$data['generatedDocs'][$i]['programResponseId'] = $programResponse['ProgramResponse']['id'];
-						$data['generatedDocs'][$i]['id'] = $programDoc['ProgramDocument']['id'];
-						$i++;
 					}
 				}
 				$this->set($data);
@@ -1007,7 +1001,7 @@ class ProgramResponsesController extends AppController {
 				$i = 0;
 				foreach($activities as $activity) {
 					$data['activities'][$i]['id'] = $activity['id'];
-					$data['activities'][$i]['name'] = $steps[$activity['program_step_id']]; 
+					$data['activities'][$i]['name'] = $steps[$activity['program_step_id']];
 					$i++;
 				}
 				$data['success'] = true;
@@ -1213,3 +1207,4 @@ class ProgramResponsesController extends AppController {
 		}
 	}
 }
+
