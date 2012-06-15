@@ -1,6 +1,6 @@
 <?= $this->Html->script('programs/dashboard', array('inline' => false)) ?>
 <?= $this->Html->script('adobe-reader-check', array('inline' => false)) ?>
-<?php echo (!empty($instructions) ? '<div id="instructions">' . $instructions . '</div>' : '' ) ?>
+<?= (!empty($instructions) ? '<div id="instructions">' . $instructions . '</div>' : '' ) ?>
 
 <div class="steps-container">
   <ol class="steps">
@@ -11,7 +11,7 @@
         <p><?= count($completedSteps) ?> of 2 steps completed</p>
       </div>
       <span class="status">
-        <?php echo Inflector::humanize($programResponse['ProgramResponse']['status']) ?>
+        <?= Inflector::humanize($programResponse['ProgramResponse']['status']) ?>
       </span>
       <ol>
         <?php foreach($program['ProgramStep'] as $step) : ?>
@@ -39,11 +39,23 @@
         <p><?= count($completedSteps) ?> of 2 steps completed</p>
       </div>
       <span class="status">
-        <?php echo Inflector::humanize($programResponse['ProgramResponse']['status']) ?>
-      <?php echo $this->Html->link('View Certificate', array(
-        'controller' => 'program_responses', 
-        'action' => 'view_cert', $program['Program']['id'])); ?>
+        <?= Inflector::humanize($programResponse['ProgramResponse']['status']) ?>
       </span>
+      <ol>
+        <li class="step certificate">
+          <div class="inner-container">
+            <?= $this->Html->link(
+              'View Certificate',
+              array(
+                'controller' => 'program_responses',
+                'action' => 'view_cert',
+                $program['Program']['id']
+              )
+            )
+            ?>
+          </div>
+        </li>
+      </ol>
       <?php endif ?>
     </li>
   </ol>
