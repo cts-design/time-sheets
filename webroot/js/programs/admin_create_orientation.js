@@ -443,8 +443,31 @@ registrationForm = Ext.create('Ext.form.Panel', {
       xtype: 'textfield',
       allowBlank: false,
       fieldLabel: 'Name',
-      labelWidth: 150,
+      labelWidth: 175,
       name: 'name'
+    }]
+  }, {
+    xtype: 'fieldcontainer',
+    height: 22,
+    width: 300,
+    layout: {
+      align: 'stretch',
+      type: 'vbox'
+    },
+    items: [{
+      xtype: 'radiogroup',
+      fieldLabel: 'Show in Customer Dashboard?',
+      labelWidth: 175,
+      items: [{
+        boxLabel: 'Yes',
+        name: 'show_in_dash',
+        inputValue: '1',
+        checked: true
+      }, {
+        boxLabel: 'No',
+        name: 'show_in_dash',
+        inputValue: '0'
+      }]
     }]
   }, {
     xtype: 'hiddenfield',
@@ -463,7 +486,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       allowBlank: false,
       displayField: 'ucase',
       fieldLabel: 'Registration Type',
-      labelWidth: 150,
+      labelWidth: 175,
       name: 'atlas_registration_type',
       queryMode: 'local',
       store: Ext.create('Ext.data.Store', {
@@ -494,7 +517,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       xtype: 'numberfield',
       allowBlank: false,
       fieldLabel: 'Responses Expire In',
-      labelWidth: 150,
+      labelWidth: 175,
       minValue: 30,
       name: 'response_expires_in',
       value: 30,
@@ -524,7 +547,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       allowBlank: false,
       displayField: 'ucase',
       fieldLabel: 'Send expiring soon emails',
-      labelWidth: 150,
+      labelWidth: 175,
       name: 'send_expiring_soon',
       queryMode: 'local',
       store: Ext.create('Ext.data.Store', {
@@ -564,7 +587,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       allowBlank: false,
       displayField: 'ucase',
       fieldLabel: 'Media Type',
-      labelWidth: 150,
+      labelWidth: 175,
       listeners: {
         change: {
           fn: function (field, newValue, oldValue) {
@@ -626,7 +649,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       allowBlank: false,
       fieldLabel: 'Upload Media',
       id: 'uploadField',
-      labelWidth: 150,
+      labelWidth: 175,
       name: 'media',
       width: 400
     }, {
@@ -656,7 +679,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       allowBlank: false,
       fieldLabel: 'Media Url',
       id: 'urlField',
-      labelWidth: 150,
+      labelWidth: 175,
       name: 'media_location',
       width: 400
     }]

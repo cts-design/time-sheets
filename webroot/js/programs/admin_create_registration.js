@@ -309,7 +309,8 @@ Ext.create('Ext.data.Store', {
     { program_id: 0, text: 'Default text Main', type: 'main', created: null, modified: null },
     { program_id: 0, text: 'Default text Pending Approval', type: 'pending_approval', created: null, modified: null },
     { program_id: 0, text: 'Default text Expired', type: 'expired', created: null, modified: null },
-    { program_id: 0, text: 'Default text Not Approved', type: 'not_approved', created: null, modified: null }
+    { program_id: 0, text: 'Default text Not Approved', type: 'not_approved', created: null, modified: null },
+    { program_id: 0, text: 'Default text Complete', type: 'complete', created: null, modified: null }
   ],
   storeId: 'ProgramInstructionStore',
   model: 'ProgramInstruction',
@@ -446,7 +447,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       xtype: 'textfield',
       allowBlank: false,
       fieldLabel: 'Name',
-      labelWidth: 150,
+      labelWidth: 190,
       name: 'name'
     }]
   }, {
@@ -460,15 +461,38 @@ registrationForm = Ext.create('Ext.form.Panel', {
   }, {
     xtype: 'fieldcontainer',
     height: 22,
-    width: 250,
+    width: 300,
     layout: {
       align: 'stretch',
       type: 'vbox'
     },
     items: [{
       xtype: 'radiogroup',
-      fieldLabel: 'Acknowledgement Required?',
-      labelWidth: 150,
+      fieldLabel: 'Approval Required?',
+      labelWidth: 190,
+      items: [{
+        boxLabel: 'Yes',
+        name: 'approval_required',
+        inputValue: '1'
+      }, {
+        boxLabel: 'No',
+        name: 'approval_required',
+        inputValue: '0',
+        checked: true
+      }]
+    }]
+  }, {
+    xtype: 'fieldcontainer',
+    height: 22,
+    width: 300,
+    layout: {
+      align: 'stretch',
+      type: 'vbox'
+    },
+    items: [{
+      xtype: 'radiogroup',
+      fieldLabel: 'User Acknowledgement Required?',
+      labelWidth: 190,
       items: [{
         boxLabel: 'Yes',
         name: 'user_acceptance_required',
@@ -483,30 +507,30 @@ registrationForm = Ext.create('Ext.form.Panel', {
   }, {
     xtype: 'fieldcontainer',
     height: 22,
-    width: 250,
+    width: 300,
     layout: {
       align: 'stretch',
       type: 'vbox'
     },
     items: [{
       xtype: 'radiogroup',
-      fieldLabel: 'Approval Required?',
-      labelWidth: 150,
+      fieldLabel: 'Show in Customer Dashboard?',
+      labelWidth: 190,
       items: [{
         boxLabel: 'Yes',
-        name: 'approval_required',
-        inputValue: '1'
+        name: 'show_in_dash',
+        inputValue: '1',
+        checked: true
       }, {
         boxLabel: 'No',
-        name: 'approval_required',
-        inputValue: '0',
-        checked: true
+        name: 'show_in_dash',
+        inputValue: '0'
       }]
     }]
   }, {
     xtype: 'fieldcontainer',
     height: 24,
-    width: 250,
+    width: 300,
     layout: {
       align: 'stretch',
       type: 'vbox'
@@ -516,7 +540,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       allowBlank: false,
       displayField: 'ucase',
       fieldLabel: 'Registration Type',
-      labelWidth: 150,
+      labelWidth: 190,
       name: 'atlas_registration_type',
       queryMode: 'local',
       store: Ext.create('Ext.data.Store', {
@@ -547,7 +571,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       xtype: 'numberfield',
       allowBlank: false,
       fieldLabel: 'Responses Expire In',
-      labelWidth: 150,
+      labelWidth: 190,
       minValue: 30,
       name: 'response_expires_in',
       value: 30,
@@ -577,7 +601,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       allowBlank: false,
       displayField: 'ucase',
       fieldLabel: 'Send expiring soon emails',
-      labelWidth: 150,
+      labelWidth: 190,
       name: 'send_expiring_soon',
       queryMode: 'local',
       store: Ext.create('Ext.data.Store', {
