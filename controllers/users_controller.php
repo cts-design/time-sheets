@@ -486,11 +486,6 @@ class UsersController extends AppController {
         if(isset($type) && $type === 'child' ||
             isset($this->data['User']['login_type']) && $this->data['User']['login_type'] === 'child_website') {
 				$title_for_layout = 'Child Login';
-				$loginType = 'child';
-                if($program) {
-					$title_for_layout = $program['Program']['name'] . ' Child Login';
-					$loginType = 'child_program';
-                }
 				$render = 'child_login';
         }
         if(isset($type) && $type == 'auditor' ||
