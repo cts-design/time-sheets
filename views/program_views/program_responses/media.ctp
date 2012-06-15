@@ -1,9 +1,16 @@
 <?php if(isset($instructions)) : ?>
 	<?php echo $html->script('program_responses/toggle_instructions', array('inline' => false)) ?>
-	<div><a id="Toggle" class="small" style="display: none"><?php __('Hide Instructions') ?></a></div>
-	<div id="Instructions"><?php echo $instructions ?></div>
+  <div class="show-instructions">
+    <a href="#" ><?php __('Show instructions') ?></a>
+  </div>
+  <div id="instructions">
+    <?php echo $instructions ?>
+    <div class="hide-instructions">
+      <a href="#"><?php __('Hide these instructions') ?></a>
+    </div>
+  </div>
 	<noscript>
-		<div id="Instructions"><?php echo $instructions ?></div>
+		<div id="instructions"><?php echo $instructions ?></div>
 	</noscript>
 	<br />
 <?php endif ?>

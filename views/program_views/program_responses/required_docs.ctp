@@ -1,9 +1,16 @@
 <?php echo $html->script('program_responses/toggle_instructions', array('inline' => false)) ?>
-<a id="Toggle" class="small" style="display: none"><?php __('Hide Instructions') ?></a>
-<div id="Instructions"><?php echo $instructions ?></div>
-<noscript>
-	<div id="Instructions"><?php echo $instructions ?></div>
-</noscript>
+  <div class="show-instructions">
+    <a href="#" ><?php __('Show instructions') ?></a>
+  </div>
+  <div id="instructions">
+    <?php echo $instructions ?>
+    <div class="hide-instructions">
+      <a href="#"><?php __('Hide these instructions') ?></a>
+    </div>
+  </div>
+	<noscript>
+		<div id="instructions"><?php echo $instructions ?></div>
+	</noscript>
 <div id="RequiredDocs">
 		
 	<?php echo $form->create('ProgramResponse', array('action' => 'required_docs/'.$this->params['pass'][0], 'type' => 'file')) ?>

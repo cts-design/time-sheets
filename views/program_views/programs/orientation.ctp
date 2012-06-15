@@ -1,37 +1,58 @@
-<style>.step-incomplete{color: #999} .step-complete{color: green}</style>
-<?php echo (!empty($instructions) ? '<div id="Instructions">' . $instructions . '</div>' : '' ) ?>
+<?= $this->Html->script('programs/dashboard', array('inline' => false)) ?>
+<?= $this->Html->script('adobe-reader-check', array('inline' => false)) ?>
+<?php echo (!empty($instructions) ? '<div id="instructions">' . $instructions . '</div>' : '' ) ?>
+
+<div class="steps-container">
+  <ol class="steps">
+    <?php if($programResponse['ProgramResponse']['status'] === 'incomplete') : ?>
+    <li class="module incomplete">
+      <div class="details">
+        <h3><?= $program['Program']['name'] ?> Orientation</h3>
+        <p><?= count($completedSteps) ?> of 2 steps completed</p>
+      </div>
+      <span class="status">
+        <?php echo Inflector::humanize($programResponse['ProgramResponse']['status']) ?>
+      </span>
+      <ol>
+        <?php foreach($program['ProgramStep'] as $step) : ?>
+          <?php $class = (in_array($step['id'], $completedSteps)) ? 'complete' : 'incomplete' ?>
+          <li class="step <?= $class ?>">
+            <div class="inner-container">
+              <?= $step['name'] ?>
+              <?php $link = ($step['type'] === 'media') ? 'View Media' : 'Take Quiz' ?>
+              <span class="action">
+                <?= $this->Html->link($link, array(
+                  'controller' => 'program_responses',
+                  'action' => $step['type'],
+                  $program['Program']['id'],
+                  $step['id']
+                )) ?>
+              </span>
+            </div>
+          </li>
+        <?php endforeach ?>
+      </ol>
+      <?php elseif($programResponse['ProgramResponse']['status'] === 'complete') : ?>
+    <li class="module complete">
+      <div class="details">
+        <h3><?= $program['Program']['name'] ?> Orientation</h3>
+        <p><?= count($completedSteps) ?> of 2 steps completed</p>
+      </div>
+      <span class="status">
+        <?php echo Inflector::humanize($programResponse['ProgramResponse']['status']) ?>
+      <?php echo $this->Html->link('View Certificate', array(
+        'controller' => 'program_responses', 
+        'action' => 'view_cert', $program['Program']['id'])); ?>
+      </span>
+      <?php endif ?>
+    </li>
+  </ol>
+</div>
+
 <br />
 <div>
-	<div class="bot-mar-10">
-            <span>Overall Status:&nbsp;</span><?php echo Inflector::humanize($programResponse['ProgramResponse']['status']) ?>
-	</div>
-	<ul>
-		<?php if($programResponse['ProgramResponse']['status'] === 'incomplete') : ?>
-			<?php foreach($program['ProgramStep'] as $step) : ?>
-				<?php if(in_array($step['id'], $completedSteps)) : ?>
-					<?php $class = 'step-complete' ?>
-				<?php else : ?>
-					<?php $class = 'step-incomplete' ?>
-				<?php endif ?>
-				<li class="<?php echo $class ?>"><?php echo $step['name']; ?>:&nbsp;	
-						<?php if($step['type'] === 'media') : ?>
-							<?php $linkTitle = 'View Media'; ?>
-						<?php else : ?>
-							<?php $linkTitle = 'Take Quiz'; ?>
-						<?php endif ?>
-						<?php echo $this->Html->link($linkTitle, array(
-							'controller' => 'program_responses',
-							'action' => $step['type'],
-							$program['Program']['id'], $step['id']));
-						?>
-						
-					</li>
-			<?php endforeach ?>
-		<?php elseif($programResponse['ProgramResponse']['status'] === 'complete') : ?>
-			<li> <?php echo $this->Html->link('View Certificate', array(
-					'controller' => 'program_responses', 
-					'action' => 'view_cert', $program['Program']['id'])); ?>
-			</li>
-		<?php endif ?>
-	</ul>
+  <div class="bot-mar-10">
+  </div>
+  <ul>
+  </ul>
 </div>
