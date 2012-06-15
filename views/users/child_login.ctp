@@ -23,10 +23,7 @@
 		    	'between' => '<br />',
 		    	'after' => '<br />'
 		    ));
-			if(isset($this->params['pass'][0]) && $this->params['pass'][0] === 'program') {
-				echo $form->hidden('User.program_id', array('value' => $this->params['pass'][1]));
-			}
-			echo $form->hidden('User.login_type', array('value' => $loginType));
+			echo $form->hidden('User.login_type', array('value' => 'child_website'));
 		    echo '<br class="clear"/>';
 		  ?>
 	  </fieldset>
