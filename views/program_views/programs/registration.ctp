@@ -1,6 +1,6 @@
 <?= $this->Html->script('programs/dashboard', array('inline' => false)) ?>
 <?= $this->Html->script('adobe-reader-check', array('inline' => false)) ?>
-<?php echo (!empty($instructions) ? '<div id="Instructions">' . $instructions . '</div>' : '' ) ?>
+<?php echo (!empty($instructions) ? '<div id="instructions">' . $instructions . '</div>' : '' ) ?>
 
 <div class="steps-container">
   <ol class="steps">
