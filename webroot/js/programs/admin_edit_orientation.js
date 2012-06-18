@@ -451,30 +451,6 @@ registrationForm = Ext.create('Ext.form.Panel', {
     value: 'orientation'
   }, {
     xtype: 'fieldcontainer',
-    height: 22,
-    width: 250,
-    layout: {
-      align: 'stretch',
-      type: 'vbox'
-    },
-    items: [{
-      xtype: 'radiogroup',
-      fieldLabel: 'Esign Required?',
-      id: 'esignRequired',
-      labelWidth: 150,
-      items: [{
-        boxLabel: 'Yes',
-        name: 'form_esign_required',
-        inputValue: '1'
-      }, {
-        boxLabel: 'No',
-        name: 'form_esign_required',
-        inputValue: '0',
-        checked: true
-      }]
-    }]
-  }, {
-    xtype: 'fieldcontainer',
     height: 24,
     width: 250,
     layout: {
@@ -486,6 +462,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       allowBlank: false,
       displayField: 'ucase',
       fieldLabel: 'Registration Type',
+      id: 'registrationType',
       labelWidth: 150,
       name: 'atlas_registration_type',
       queryMode: 'local',
@@ -517,6 +494,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       xtype: 'numberfield',
       allowBlank: false,
       fieldLabel: 'Responses Expire In',
+      id: 'responsesExpireIn',
       labelWidth: 150,
       minValue: 30,
       name: 'response_expires_in',
@@ -662,7 +640,14 @@ registrationForm = Ext.create('Ext.form.Panel', {
         callback: function (recs, op, success) {
           if (success) {
             form.loadRecord(recs[0]);
-            form.down('#esignRequired').disable();
+
+            if (!recs[0].data.in_test) {
+              form.down('#registrationType').disable();
+              form.down('#mediaType').disable();
+              form.down('#uploadField').disable();
+              form.down('#responsesExpireIn').disable();
+            }
+
             programStepStore.load({
               params: {
                 program_id: ProgramId

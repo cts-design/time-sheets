@@ -510,6 +510,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       allowBlank: false,
       displayField: 'ucase',
       fieldLabel: 'Registration Type',
+      id: 'registrationType',
       labelWidth: 150,
       name: 'atlas_registration_type',
       queryMode: 'local',
@@ -541,6 +542,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       xtype: 'textfield',
       allowBlank: false,
       fieldLabel: 'Responses Expire In',
+      id: 'responsesExpireIn',
       labelWidth: 150,
       name: 'response_expires_in',
       width: 250
@@ -567,8 +569,14 @@ registrationForm = Ext.create('Ext.form.Panel', {
         callback: function (recs, op, success) {
           if (success) {
             form.loadRecord(recs[0]);
-            form.down('#approvalRequired').disable();
-            form.down('#esignRequired').disable();
+
+            if (!recs[0].data.in_test) {
+              form.down('#approvalRequired').disable();
+              form.down('#esignRequired').disable();
+              form.down('#registrationType').disable();
+              form.down('#responsesExpireIn').disable();
+            }
+
             form.getEl().unmask();
           }
         },
