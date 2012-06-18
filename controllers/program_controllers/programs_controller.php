@@ -32,8 +32,8 @@ class ProgramsController extends AppController {
 		// code...
 	}
 
-	public function enrollment() {
-		// code...
+	public function enrollment($id=null) {
+		$this->loadProgram($id);
 	}
 
 	public function admin_index() {
