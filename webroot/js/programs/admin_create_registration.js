@@ -1,3 +1,7 @@
+var isEmptyObject = function (obj) {
+  return Object.keys(obj).length === 0;
+};
+
 /**
  * Data Models
  */
@@ -310,7 +314,8 @@ Ext.create('Ext.data.Store', {
     { program_id: 0, text: 'Default text Pending Approval', type: 'pending_approval', created: null, modified: null },
     { program_id: 0, text: 'Default text Expired', type: 'expired', created: null, modified: null },
     { program_id: 0, text: 'Default text Not Approved', type: 'not_approved', created: null, modified: null },
-    { program_id: 0, text: 'Default text Complete', type: 'complete', created: null, modified: null }
+    { program_id: 0, text: 'Default text Complete', type: 'complete', created: null, modified: null },
+    { program_id: 0, text: 'Default text Acceptance', type: 'acceptance', created: null, modified: null }
   ],
   storeId: 'ProgramInstructionStore',
   model: 'ProgramInstruction',
@@ -966,15 +971,15 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           validation.rule = 'notEmpty';
         }
 
-        if (!Ext.isEmpty(attributes)) {
+        if (!isEmptyObject(attributes)) {
           vals.attributes = Ext.JSON.encode(attributes);
         }
 
-        if (!Ext.isEmpty(options)) {
+        if (!isEmptyObject(options)) {
           vals.options = Ext.JSON.encode(options);
         }
 
-        if (!Ext.isEmpty(validation)) {
+        if (!isEmptyObject(validation)) {
           vals.validation = Ext.JSON.encode(validation);
         }
 
@@ -1037,15 +1042,15 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           validation.rule = 'notEmpty';
         }
 
-        if (!Ext.isEmpty(attributes)) {
+        if (!isEmptyObject(attributes)) {
           vals.attributes = Ext.JSON.encode(attributes);
         }
 
-        if (!Ext.isEmpty(options)) {
+        if (!isEmptyObject(options)) {
           vals.options = Ext.JSON.encode(options);
         }
 
-        if (!Ext.isEmpty(validation)) {
+        if (!isEmptyObject(validation)) {
           vals.validation = Ext.JSON.encode(validation);
         }
 
