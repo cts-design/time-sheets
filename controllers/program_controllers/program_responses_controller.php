@@ -68,7 +68,7 @@ class ProgramResponsesController extends AppController {
 			$this->data['ProgramResponseActivity'][0]['program_response_id'] = $program['ProgramResponse'][0]['id'];
 			$this->data['ProgramResponseActivity'][0]['program_step_id'] = $this->currentStep[0]['id'];
 			$this->data['ProgramResponseActivity'][0]['type'] = 'form';
-			if(isset($nextStep)) {
+			if(isset($this->nextStep)) {
 				$this->data['ProgramResponse']['next_step_id'] = $this->nextStep[0]['id'];
 				$redirect = array('action' => $this->nextStep[0]['type'], $programId, $this->nextStep[0]['id']);
 			}
@@ -146,7 +146,7 @@ class ProgramResponsesController extends AppController {
 			$this->data['ProgramResponseActivity'][0]['status'] = 'complete';
 			$this->data['ProgramResponseActivity'][0]['program_step_id'] = $this->currentStep[0]['id'];
 			$this->data['ProgramResponseActivity'][0]['type'] = 'form';
-			if(isset($nextStep)) {
+			if(isset($this->nextStep)) {
 				$this->data['ProgramResponse']['next_step_id'] = $this->nextStep[0]['id'];
 				$redirect = array('action' => $this->nextStep[0]['type'], $programId, $this->nextStep[0]['id']);
 			}
