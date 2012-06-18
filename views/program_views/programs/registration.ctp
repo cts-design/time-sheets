@@ -16,7 +16,7 @@
       <?php if($programResponse['ProgramResponse']['status'] === 'incomplete') : ?>
         <li class="step incomplete">
           <div class="inner-container">
-            <?= $program['ProgramStep'][0]['name'] ?>
+            <?= $program['ProgramStep'][1]['name'] ?>
             <span class="action">
               <?php echo $html->link(
                 'Complete Form',
@@ -24,7 +24,7 @@
                   'controller' => 'program_responses',
                   'action' => 'form',
                   $program['Program']['id'],
-                  $program['ProgramStep'][0]['id']
+                  $program['ProgramStep'][1]['id']
                 ))
               ?>
             </span>
@@ -32,12 +32,12 @@
         </li>
       <?php endif; ?>
       <?php if(!empty($programResponse['ProgramResponseActivity'])
-          && $programResponse['ProgramResponseActivity'][0]['status'] === 'allow_edit'
+          && $programResponse['ProgramResponseActivity'][1]['status'] === 'allow_edit'
           && $programResponse['ProgramResponse']['status'] === 'not_approved') : 
       ?>
         <li class="step complete">
           <div class="inner-container">
-            <?= $program['ProgramStep'][0]['name'] ?>
+            <?= $program['ProgramStep'][1]['name'] ?>
             <span class="action">
               <?php echo $html->link(
                 'Edit Form',
@@ -45,7 +45,7 @@
                   'controller' => 'program_responses',
                   'action' => 'edit_form',
                   $program['Program']['id'],
-                  $program['ProgramStep'][0]['id']
+                  $program['ProgramStep'][1]['id']
                 )
               )
               ?>
