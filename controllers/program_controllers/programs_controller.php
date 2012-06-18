@@ -136,9 +136,6 @@ class ProgramsController extends AppController {
 			'conditions' => array('Program.id' => $id),
 			'contain' => array(
 				'ProgramStep' => array(
-					'conditions' => array(
-						'ProgramStep.parent_id IS NOT NULL'
-					),
 					'order' => 'lft ASC'
 				),
 				'ProgramInstruction')));
