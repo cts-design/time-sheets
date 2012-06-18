@@ -16,6 +16,7 @@
       <ol>
         <?php foreach($program['ProgramStep'] as $step) : ?>
           <?php $class = (in_array($step['id'], $completedSteps)) ? 'complete' : 'incomplete' ?>
+		  <?php if($step['parent_id']) : ?>
           <li class="step <?= $class ?>">
             <div class="inner-container">
               <?= $step['name'] ?>
@@ -30,6 +31,7 @@
               </span>
             </div>
           </li>
+		  <?php endif ?>
         <?php endforeach ?>
       </ol>
       <?php elseif($programResponse['ProgramResponse']['status'] === 'complete') : ?>
