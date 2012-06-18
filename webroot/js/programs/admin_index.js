@@ -165,22 +165,17 @@ Ext.onReady(function () {
         items: [{
           getClass: function (val, meta, rec) {
             if (rec.get('program_response_count')) {
-              this.tooltip = 'You cannot edit this program';
-              return 'not-editable';
+              this.tooltip = 'Editing a live program is limited';
             } else {
               this.tooltip = 'Edit Program';
-              return 'editable';
             }
+
+            return 'editable';
           },
           handler: function (grid, rowIndex, colIndex) {
             var rec = grid.getStore().getAt(rowIndex);
 
-            if (rec.get('program_response_count')) {
-              Ext.Msg.alert('Can not edit', 'You can not edit a program with existing responses');
-            } else {
-              window.location = '/admin/programs/edit/registration/' + rec.get('id');
-            }
-
+            window.location = '/admin/programs/edit/registration/' + rec.get('id');
           }
         }]
       }, {
@@ -293,22 +288,17 @@ Ext.onReady(function () {
         items: [{
           getClass: function (val, meta, rec) {
             if (rec.get('program_response_count')) {
-              this.tooltip = 'You cannot edit this program';
-              return 'not-editable';
+              this.tooltip = 'Editing a live program is limited';
             } else {
               this.tooltip = 'Edit Program';
-              return 'editable';
             }
+
+            return 'editable';
           },
           handler: function (grid, rowIndex, colIndex) {
             var rec = grid.getStore().getAt(rowIndex);
 
-            if (rec.get('program_response_count')) {
-              Ext.Msg.alert('Can not edit', 'You can not edit a program with existing responses');
-            } else {
-              window.location = '/admin/programs/edit/orientation/' + rec.get('id');
-            }
-
+            window.location = '/admin/programs/edit/orientation/' + rec.get('id');
           }
         }],
       }, {

@@ -1,3 +1,7 @@
+var isEmptyObject = function (obj) {
+  return Object.keys(obj).length === 0;
+};
+
 /**
  * Data Models
  */
@@ -8,12 +12,17 @@ Ext.define('Program', {
     'name',
     'type',
     'atlas_registration_type',
-    { name: 'disabled', type: 'int' },
     { name: 'queue_category_id', type: 'int' },
     { name: 'approval_required', type: 'int' },
     { name: 'form_esign_required', type: 'int' },
+    { name: 'user_acceptance_required', type: 'int' },
     { name: 'confirmation_id_length', type: 'int' },
     { name: 'response_expires_in', type: 'int' },
+    { name: 'send_expiring_soon', type: 'int' },
+    { name: 'program_response_count', type: 'int' },
+    { name: 'show_in_dash', type: 'int' },
+    { name: 'in_test', type: 'int' },
+    { name: 'disabled', type: 'int' },
     { name: 'created',  type: 'date', dateFormat: 'Y-m-d H:i:s' },
     { name: 'modified', type: 'date', dateFormat: 'Y-m-d H:i:s' }
   ]
@@ -501,6 +510,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       allowBlank: false,
       displayField: 'ucase',
       fieldLabel: 'Registration Type',
+      id: 'registrationType',
       labelWidth: 150,
       name: 'atlas_registration_type',
       queryMode: 'local',
@@ -532,6 +542,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       xtype: 'textfield',
       allowBlank: false,
       fieldLabel: 'Responses Expire In',
+      id: 'responsesExpireIn',
       labelWidth: 150,
       name: 'response_expires_in',
       width: 250
@@ -558,8 +569,14 @@ registrationForm = Ext.create('Ext.form.Panel', {
         callback: function (recs, op, success) {
           if (success) {
             form.loadRecord(recs[0]);
-            form.down('#approvalRequired').disable();
-            form.down('#esignRequired').disable();
+
+            if (!recs[0].data.in_test) {
+              form.down('#approvalRequired').disable();
+              form.down('#esignRequired').disable();
+              form.down('#registrationType').disable();
+              form.down('#responsesExpireIn').disable();
+            }
+
             form.getEl().unmask();
           }
         },
