@@ -12,12 +12,17 @@ Ext.define('Program', {
     'name',
     'type',
     'atlas_registration_type',
-    { name: 'disabled', type: 'int' },
     { name: 'queue_category_id', type: 'int' },
     { name: 'approval_required', type: 'int' },
     { name: 'form_esign_required', type: 'int' },
+    { name: 'user_acceptance_required', type: 'int' },
     { name: 'confirmation_id_length', type: 'int' },
     { name: 'response_expires_in', type: 'int' },
+    { name: 'send_expiring_soon', type: 'int' },
+    { name: 'program_response_count', type: 'int' },
+    { name: 'show_in_dash', type: 'int' },
+    { name: 'in_test', type: 'int' },
+    { name: 'disabled', type: 'int' },
     { name: 'created',  type: 'date', dateFormat: 'Y-m-d H:i:s' },
     { name: 'modified', type: 'date', dateFormat: 'Y-m-d H:i:s' }
   ]
