@@ -24,3 +24,14 @@
 		<?php endforeach ?>
 	<?php endif ?>
 </div>
+
+<div id="Enrollments" style="border: 1px solid; width: 400px; margin-top: 10px"> 
+	<h1>Enrollments</h1>
+	<?php if(!empty($enrollments)) : ?>	
+		<?php foreach($enrollments as $key => $value) : ?>
+			<?php echo $this->Html->link($value['Program']['name'], array('controller' => 'programs', 'action' => 'enrollment', $value['Program']['id'])) ?>
+			<span class="response-status"><?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Enroll Now')?></span>
+			<br />
+		<?php endforeach ?>
+	<?php endif ?>
+</div>

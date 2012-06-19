@@ -335,17 +335,17 @@ class UsersController extends AppController {
 					case 'registration':
 						$registrations[] = $program;
 						break;
-					case 'enrollments':
+					case 'enrollment':
 						$enrollments[] = $program;
 						break;
-					case 'ecourses':
+					case 'ecourse':
 						$ecourses[] = $program;
 						break;
 				}
 			}
 		}
 		$title_for_layout = 'Customer Dashboard';
-		$this->set(compact('title_for_layout', 'orientations', 'registrations'));
+		$this->set(compact('title_for_layout', 'orientations', 'registrations', 'enrollments'));
 	}
 
     function edit($id=null) {
