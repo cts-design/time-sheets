@@ -13,7 +13,7 @@
 	</noscript>
 <div id="RequiredDocs">
 		
-	<?php echo $form->create('ProgramResponse', array('action' => 'required_docs/'.$this->params['pass'][0], 'type' => 'file')) ?>
+	<?php echo $form->create('ProgramResponse', array('action' => 'required_docs/'.$this->params['pass'][0].'/'.$this->params['pass'][1], 'type' => 'file')) ?>
 	<fieldset>
         <legend><?php __('Upload Documents') ?></legend>
 	<?php echo $form->file('QueuedDocument.submittedfile', array('label' => 'Document')) ?>
@@ -31,7 +31,7 @@
 	<p>
 		<strong>
 			<?php echo $html->link(__('I am finished uploading my documents.', true), 
-			'/program_responses/provided_docs/' . $this->params['pass'][0] .'/uploaded_docs'); ?>
+			'/program_responses/provided_docs/' . $this->params['pass'][0] . '/' . $this->params['pass'][1] .'/uploaded_docs'); ?>
 		</strong>		
 	</p>
 	

@@ -43,9 +43,24 @@
 												$program['Program']['id'],
 												$step['id'])) ?>
 										<?php endif ?>
+									<?php elseif($step['type'] === 'required_docs') : ?>
+										<?php $link = $this->Html->link('Upload Documents', array(
+											'controller' => 'program_responses',
+											'action' => 'required_docs',
+											$program['Program']['id'],
+											$step['id'])) ?>
+										<?php $link2 = $this->Html->link('Drop Off Documents', array(
+											'controller' => 'program_responses',
+											'action' => 'provided_docs',
+											$program['Program']['id'],
+											$step['id'],
+											'dropping_off_docs')) ?>
 									<?php endif ?>
 									<span class="action">
 										<?= $link ?>
+										<?php if(isset($link2)) : ?>
+											<?= $link2?>
+										<?php endif ?>
 									</span>
 								</div>
 							</li>
