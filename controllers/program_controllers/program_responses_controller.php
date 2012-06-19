@@ -298,78 +298,7 @@ class ProgramResponsesController extends AppController {
             return $params;
         }
     }
-	function index($id = null) {
-		if(!$id) {
-			$this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');
-			$this->redirect($this->referer());
-		}
-		$program = $this->ProgramResponse->Program->findById($id);
-		if(!empty($this->data)) {
-			$programResponse =
-				$this->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
-			$this->data['ProgramResponse']['answers'] = json_encode($this->data['ProgramResponse']);
-			$this->data['ProgramResponse']['id'] = $programResponse['ProgramResponse']['id'];
-			$this->data['ProgramResponse']['program_id'] = $id;
-			$this->data['ProgramResponse']['not_approved'] = 0;
-			if(!strpos($program['Program']['type'], 'docs', 0) && $program['Program']['approval_required'] == 0) {
-				$this->data['ProgramResponse']['complete'] = 1;
-			}
-			elseif(!strpos($program['Program']['type'], 'docs', 0) && $program['Program']['approval_required'] == 1) {
-				$this->data['ProgramResponse']['needs_approval'] = 1;
-			}
-			if($this->ProgramResponse->save($this->data)) {
-				$this->Transaction->createUserTransaction('Programs', null, null,
-					'Completed form for ' . $programResponse['Program']['name']);
-				$programEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array(
-					'conditions' => array(
-						'ProgramEmail.program_id' => $id,
-						'ProgramEmail.type' => 'form'
-					)));
-				$this->Notifications->sendProgramEmail($programEmail);
-				$this->Session->setFlash(__('Saved', true), 'flash_success');
-				if(strpos($program['Program']['type'], 'docs', 0)) {
-					if($programResponse['ProgramResponse']['uploaded_docs']) {
-						$this->redirect(array('action' => 'provided_docs', $id, 'uploaded_docs'));
-					}
-					if($programResponse['ProgramResponse']['dropping_off_docs']) {
-						$this->redirect(array('action' => 'provided_docs', $id, 'dropping_off_docs'));
-					}
-					else {
-						$this->redirect(array('action' => 'required_docs', $id));
-					}
-				}
-				elseif($program['Program']['approval_required']) {
-					$this->redirect(array('action' => 'pending_approval', $id));
-				}
-				else {
-					$this->redirect(array('action' => 'response_complete', $id, true));
-				}
-			}
-			else {
-				$this->Session->setFlash(__('Unable to save', true), 'flash_failure');
-			}
-		}
-		$instructions = Set::extract('/ProgramInstruction[type=form]/text', $program);
-		if($instructions) {
-			$data['instructions'] = $instructions[0];
-		}
-		if($program['Program']['form_type'] === 'quiz') {
-			$data['title_for_layout'] = $program['Program']['name'] . ' Quiz Form';
-		}
-		else {
-			$data['title_for_layout'] = $program['Program']['name'] . ' Registration Form' ;
-		}
-		$data['program'] = $program;
-		if($program['Program']['view_media_again']) {
-			$type = explode('_', $program['Program']['type']);
-			$data['viewMediaAgainLink'] = '/programs/view_media/'.$program['Program']['id'].'/'.$type[0];
-		}
-		else {
-			$data['viewMediaAgainLink'] = null;
-		}
-		$this->set($data);
-	}
-
+	
 	function required_docs($id = null, $reset = null) {
 		if(!$id){
 			$this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');
@@ -412,32 +341,6 @@ class ProgramResponsesController extends AppController {
 		$data['title_for_layout'] = 'Required Documentation';
 		$data['queueCategoryId'] = $program['Program']['queue_category_id'];
 		$this->set($data);
-	}
-
-	function response_complete($id=null, $autoApprove=false) {
-		$programResponse = $this->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
-		if($autoApprove) {
-			$form = $this->ProgramResponse->Program->ProgramPaperForm->find('first', array(
-				'conditions' => array(
-					'ProgramPaperForm.program_id' => $programResponse['Program']['id'],
-					'ProgramPaperForm.cert' => 1)));
-			$generated = $this->_generateForm($form['ProgramPaperForm']['id'], $programResponse['ProgramResponse']['id']);
-			$this->Transaction->createUserTransaction('Programs', null, null,
-				'Completed program ' . $programResponse['Program']['name']);
-			$programEmail = $this->ProgramResponse->Program->ProgramEmail->find('first',
-				array('conditions' => array(
-					'ProgramEmail.program_id' => $programResponse['Program']['id'],
-					'ProgramEmail.type' => 'final'
-			)));
-			$this->Notifications->sendProgramEmail($programEmail);
-		}
-		if(!$programResponse) {
-			$this->Session->setFlash(__('An error has occured.', true), 'flash_failure');
-		}
-		$instructions = $this->ProgramResponse->Program->ProgramInstruction->getInstructions(
-			$id, 'complete');
-		$title_for_layout = 'Program Certificate';
-		$this->set(compact('title_for_layout', 'programResponse', 'instructions'));
 	}
 
 	function view_cert($id=null) {
@@ -493,20 +396,6 @@ class ProgramResponsesController extends AppController {
 		$data['instructions'] = $this->ProgramResponse->Program->ProgramInstruction->getInstructions(
 			$id, $type);
 		$data['title_for_layout'] = 'Program Response Documents';
-		$this->set($data);
-	}
-
-	function pending_approval($programId) {
-		$data['instructions'] = $this->ProgramResponse->Program->ProgramInstruction->getInstructions(
-			$programId, 'pending_approval');
-		$data['title_for_layout'] = 'Program Response Pending Approval';
-		$this->set($data);
-	}
-
-	function not_approved($programId) {
-		$data['title_for_layout'] = 'Program Response Not Approved';
-		$data['instructions'] = $this->ProgramResponse->Program->ProgramInstruction->getInstructions(
-			$programId, 'not_approved');
 		$this->set($data);
 	}
 
