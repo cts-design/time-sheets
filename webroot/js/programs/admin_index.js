@@ -8,7 +8,8 @@ Ext.define('Program', {
     'name',
     'type',
     { name: 'program_response_count', type: 'int', useNull: true },
-    { name: 'disabled', type: 'int' }
+    { name: 'disabled', type: 'int' },
+    { name: 'in_test', type: 'int' }
   ]
 });
 
@@ -196,9 +197,12 @@ Ext.onReady(function () {
       }],
       listeners: {
         itemcontextmenu: function (view, rec, item, index, e) {
+          var menu,
+            items = [];
+
           e.preventDefault();
-          Ext.create('Ext.menu.Menu', {
-            items: [{
+
+          items.push({
               icon: '/img/icons/eye.png',
               text: 'Show Production Url',
               handler: function () {
@@ -210,8 +214,24 @@ Ext.onReady(function () {
 
                 Ext.Msg.alert('Production Url', msg);
               }
-            }]
-          }).showAt(e.getXY());
+          });
+
+          if (rec.data.in_test) {
+            items.push({ xtype: 'menuseparator' });
+            items.push({
+              icon: '/img/icons/delete.png',
+              text: 'Purge Test Data',
+              handler: function () {
+                Ext.Msg.alert('Purging test data', 'Purging');
+              }
+            });
+          }
+
+          menu = Ext.create('Ext.menu.Menu', {
+            items: items
+          });
+
+          menu.showAt(e.getXY());
         }
       },
       viewConfig: {
@@ -319,22 +339,41 @@ Ext.onReady(function () {
       }],
       listeners: {
         itemcontextmenu: function (view, rec, item, index, e) {
+          var menu,
+            items = [];
+
           e.preventDefault();
-          Ext.create('Ext.menu.Menu', {
-            items: [{
+
+          items.push({
               icon: '/img/icons/eye.png',
-              text: 'Show Production Url ',
+              text: 'Show Production Url',
               handler: function () {
                 var msg;
 
                 msg = 'Please copy the following url.<br /><br />';
-                msg += window.location.origin + '/programs/orientation/' + rec.data.id;
+                msg += window.location.origin + '/programs/registration/' + rec.data.id;
                 msg += '<br /><br />';
 
                 Ext.Msg.alert('Production Url', msg);
               }
-            }]
-          }).showAt(e.getXY());
+          });
+
+          if (rec.data.in_test) {
+            items.push({ xtype: 'menuseparator' });
+            items.push({
+              icon: '/img/icons/delete.png',
+              text: 'Purge Test Data',
+              handler: function () {
+                Ext.Msg.alert('Purging test data', 'Purging');
+              }
+            });
+          }
+
+          menu = Ext.create('Ext.menu.Menu', {
+            items: items
+          });
+
+          menu.showAt(e.getXY());
         }
       },
       viewConfig: {
