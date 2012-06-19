@@ -3,14 +3,15 @@ class Program extends AppModel {
 
 	public $name = 'Program';
 	public $displayField = 'name';
-    public $actsAs = array('Containable', 'Disableable');
+	public $actsAs = array('Containable', 'Disableable');
 	public $hasMany = array(
-						'ProgramStep',
-						'ProgramResponse',
-						'ProgramEmail',
-						'ProgramDocument',
-						'WatchedFilingCat',
-						'ProgramInstruction');
+		'ProgramStep',
+		'ProgramResponse',
+		'ProgramEmail',
+		'ProgramDocument',
+		'WatchedFilingCat',
+		'ProgramInstruction'
+	);
 
 	public function getProgramAndResponse($programId, $userId) {
 		$this->contain(array(
@@ -25,7 +26,7 @@ class Program extends AppModel {
 			'ProgramResponse' => array(
 				'conditions' => array('ProgramResponse.user_id' => $userId),
 				'ProgramResponseActivity')));
-         return $this->findById($programId);
+		return $this->findById($programId);
 	}
 }
 
