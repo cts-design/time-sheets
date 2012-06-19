@@ -2,46 +2,46 @@
 
 class ProgramResponse extends AppModel {
 
-    public $name = 'ProgramResponse';
-
-    public $hasMany = array('ProgramResponseDoc', 'ProgramResponseActivity');
-
+	public $name = 'ProgramResponse';
+	public $actsAs = array('Containable');
+	public $hasMany = array(
+		'ProgramResponseDoc',
+		'ProgramResponseActivity'
+	);
 	public $belongsTo = array(
 		'Program' => array(
 			'counterCache' => true
 		),
 		'User'
 	);
+	public $validate = array();
 
-    public $validate = array();
 
-    public $actsAs = array('Containable');
+	public function getProgramResponse($programId, $userId) {
+		$programResponse = $this->find('first', array(
+			'conditions' => array(
+				'ProgramResponse.user_id' => $userId,
+				'ProgramResponse.program_id' => $programId)));
+		if($programResponse['ProgramResponse']['expires_on'] <= date('Y-m-d H:i:s') &&
+			$programResponse['ProgramResponse']['status'] === 'incomplete') {
+				$expiredResponse = $this->expireResponse($programResponse['ProgramResponse']['id']);
+				if($expiredResponse) {
+					$programResponse = $expiredResponse;
+				}
+			}
+		return $programResponse;
+	}
 
-    public function getProgramResponse($programId, $userId) {
-        $programResponse = $this->find('first', array(
-            'conditions' => array(
-                'ProgramResponse.user_id' => $userId,
-                'ProgramResponse.program_id' => $programId)));
-        if($programResponse['ProgramResponse']['expires_on'] <= date('Y-m-d H:i:s') &&
-            $programResponse['ProgramResponse']['status'] === 'incomplete') {
-                $expiredResponse = $this->expireResponse($programResponse['ProgramResponse']['id']);
-                if($expiredResponse) {
-                    $programResponse = $expiredResponse;
-                }
-        }
-        return $programResponse;
-    }
+	public function expireResponse($responseId) {
+		$this->id = $responseId;
+		$this->saveField('status', 'expired');
+		$response = $this->findById($responseId);
+		if($response['ProgramResponse']['status'] === 'expired') {
+			return $response;
+		}
+		else {
+			return false;
+		}
 
-    public function expireResponse($responseId) {
-        $this->id = $responseId;
-        $this->saveField('status', 'expired');
-        $response = $this->findById($responseId);
-        if($response['ProgramResponse']['status'] === 'expired') {
-            return $response;
-        }
-        else {
-            return false;
-        }
-
-    }
+	}
 }
