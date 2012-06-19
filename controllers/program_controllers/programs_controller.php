@@ -57,6 +57,7 @@ class ProgramsController extends AppController {
 						'name' => $program['Program']['name'],
 						'type' => $program['Program']['type'],
 						'disabled' => $program['Program']['disabled'],
+						'in_test' => $program['Program']['in_test'],
 						'program_response_count' => $program['Program']['program_response_count']
 					);
 
@@ -196,6 +197,23 @@ class ProgramsController extends AppController {
 			} else {
 				$data['success'] = false;
 			}
+
+			$this->set('data', $data);
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
+
+	public function admin_purge_test_data() {
+		if ($this->RequestHandler->isAjax()) {
+			$programId = $this->params['form']['program_id'];
+
+			$programResponses = $this->Program->ProgramResponse->deleteAll(
+				array(
+					'ProgramResponse.program_id' => $programId
+				)
+			);
+
+			$data['program_id'] = $programId;
 
 			$this->set('data', $data);
 			$this->render(null, null, '/elements/ajaxreturn');
