@@ -198,7 +198,8 @@ Ext.onReady(function () {
       listeners: {
         itemcontextmenu: function (view, rec, item, index, e) {
           var menu,
-            items = [];
+            items = [],
+            progressMsg;
 
           e.preventDefault();
 
@@ -222,7 +223,24 @@ Ext.onReady(function () {
               icon: '/img/icons/delete.png',
               text: 'Purge Test Data',
               handler: function () {
-                Ext.Msg.alert('Purging test data', 'Purging');
+                progressMsg = Ext.Msg.wait(
+                  'Please wait while we purge your test data',
+                  'Purging Test Data', {
+                    interval: 150
+                  });
+                Ext.Ajax.request({
+                  url: '/admin/programs/purge_test_data',
+                  params: {
+                    program_id: rec.data.id
+                  },
+                  success: function (res) {
+                    var task = new Ext.util.DelayedTask(function () {
+                      progressMsg.close();
+                    });
+
+                    task.delay(1240);
+                  }
+                });
               }
             });
           }
@@ -340,7 +358,8 @@ Ext.onReady(function () {
       listeners: {
         itemcontextmenu: function (view, rec, item, index, e) {
           var menu,
-            items = [];
+            items = [],
+            progressMsg;
 
           e.preventDefault();
 
@@ -364,7 +383,24 @@ Ext.onReady(function () {
               icon: '/img/icons/delete.png',
               text: 'Purge Test Data',
               handler: function () {
-                Ext.Msg.alert('Purging test data', 'Purging');
+                progressMsg = Ext.Msg.wait(
+                  'Please wait while we purge your test data',
+                  'Purging Test Data', {
+                    interval: 150
+                  });
+                Ext.Ajax.request({
+                  url: '/admin/programs/purge_test_data',
+                  params: {
+                    program_id: rec.data.id
+                  },
+                  success: function (res) {
+                    var task = new Ext.util.DelayedTask(function () {
+                      progressMsg.close();
+                    });
+
+                    task.delay(1240);
+                  }
+                });
               }
             });
           }
