@@ -5,8 +5,12 @@ class ProgramResponse extends AppModel {
 	public $name = 'ProgramResponse';
 	public $actsAs = array('Containable');
 	public $hasMany = array(
-		'ProgramResponseDoc',
-		'ProgramResponseActivity'
+		'ProgramResponseDoc' => array(
+			'dependent' => true
+		),
+		'ProgramResponseActivity' => array(
+			'dependent' => true
+		)
 	);
 	public $belongsTo = array(
 		'Program' => array(
