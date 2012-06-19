@@ -21,10 +21,17 @@ class ProgramResponseDoc extends AppModel {
 		$this->data = $data;
 		$watchedCat = null;
 		$return = false;
-		// :FIXME make this work with cat_1 cat_2 or cat_3
 		if(isset($this->data['FiledDocument']['cat_3'])) {
 			$watchedCat = $Program->WatchedFilingCat->findByCatId($this->data['FiledDocument']['cat_3']);
 			$return['cat_id'] = $this->data['FiledDocument']['cat_3'];			
+		}
+		elseif(isset($this->data['FiledDocument']['cat_2'])) {
+			$watchedCat = $Program->WatchedFilingCat->findByCatId($this->data['FiledDocument']['cat_2']);
+			$return['cat_id'] = $this->data['FiledDocument']['cat_2'];			
+		}
+		elseif(isset($this->data['FiledDocument']['cat_1'])) {
+			$watchedCat = $Program->WatchedFilingCat->findByCatId($this->data['FiledDocument']['cat_1']);
+			$return['cat_id'] = $this->data['FiledDocument']['cat_1'];			
 		}
 		$rejectedReason = null;
 		if(isset($this->data['FiledDocument']['description'])) {
@@ -46,11 +53,12 @@ class ProgramResponseDoc extends AppModel {
 			$programResponse = $this->ProgramResponse->getProgramResponse($watchedCat['Program']['id'], $user['User']['id']);	
 			$return['program_id'] = $watchedCat['Program']['id'];
 			$this->data['ProgramResponseDoc']['rejected_reason'] = $rejectedReason;				
-			$this->data['ProgramResponseDoc']['cat_id'] = $this->data['FiledDocument']['cat_3'];			
+			$this->data['ProgramResponseDoc']['cat_id'] = $return['cat_id'];
 			$this->data['ProgramResponseDoc']['doc_id'] = $this->data['FiledDocument']['id'];
 			$this->data['ProgramResponseDoc']['program_response_id'] = $programResponse['ProgramResponse']['id'];
 			$this->data['ProgramResponseDoc']['type'] = 'customer_provided';
 			if($this->save($this->data)) {					
+				// TODO should this be sent via the background queue? 
 				$docFiledEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array(
 					'conditions' => array(
 						'ProgramEmail.program_id' => $watchedCat['Program']['id'],
@@ -75,8 +83,7 @@ class ProgramResponseDoc extends AppModel {
 			'conditions' => array(
 				'ProgramResponse.id' => $responseId,
 				'ProgramResponseDoc.deleted' => 0,
-				'ProgramResponseDoc.paper_form' => 0,
-				'ProgramResponseDoc.cert' => 0
+				'ProgramResponseDoc.type' => 'customer_provided'
 			),
 			'fields' => array(
 				'DISTINCT ProgramResponseDoc.cat_id' 
@@ -100,26 +107,15 @@ class ProgramResponseDoc extends AppModel {
 		$this->getFiledResponseDocCats(
 			$programResponse['Program']['id'], $programResponse['ProgramResponse']['id']);																
 		$result = array_diff($watchedCats, $filedResponseDocCats);
+		$this->ProgramResponse->id = $programResponse['ProgramResponse']['id'];					
 		if(empty($result)){
-			$this->ProgramResponse->id = $programResponse['ProgramResponse']['id'];					
-			if($programResponse['Program']['approval_required'] == 1 && $programResponse['ProgramResponse']['complete'] == 0) {
-				$this->ProgramResponse->saveField('needs_approval', 1);
+			if($programResponse['status'] === 'incomplete') {
+				$this->ProgramResponse->saveField('status', 'pending_approval');
 			}
-			else{
-				$this->ProgramResponse->saveField('complete', 1);
-				$finalEmail = $Program->ProgramEmail->find('first', array(
-					'conditions' => array(
-						'ProgramEmail.program_id' => $programResponse['Program']['id'],
-						'ProgramEmail.type' => 'final')));
-				if($finalEmail) {
-					$return['finalEmail'] = $finalEmail;
-				}						
-			} 
 		}
 		if(!empty($result)) {
-			$this->ProgramResponse->id = $programResponse['ProgramResponse']['id'];					
-			if($programResponse['Program']['approval_required'] == 1 && !$programResponse['ProgramResponse']['complete']) {
-				$this->ProgramResponse->saveField('needs_approval', 0);
+			if($programResponse['status'] === 'pending_approval') {
+				$this->ProgramResponse->saveField('status', 'incomplete');
 			}					
 		}					
 	}	
