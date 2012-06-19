@@ -203,6 +203,23 @@ class ProgramsController extends AppController {
 		}
 	}
 
+	public function admin_purge_test_data() {
+		if ($this->RequestHandler->isAjax()) {
+			$programId = $this->params['form']['program_id'];
+
+			$programResponses = $this->Program->ProgramResponse->deleteAll(
+				array(
+					'ProgramResponse.program_id' => $programId
+				)
+			);
+
+			$data['program_id'] = $programId;
+
+			$this->set('data', $data);
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
+
 	public function admin_create_registration() {
 		if ($this->RequestHandler->isAjax()) {
 			$programData = json_decode($this->params['form']['programs'], true);
