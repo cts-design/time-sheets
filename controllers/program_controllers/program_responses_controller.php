@@ -299,18 +299,14 @@ class ProgramResponsesController extends AppController {
         }
     }
 	
-	function required_docs($id = null, $reset = null) {
-		if(!$id){
+	function required_docs($programId=null, $stepId=null) {
+		if(!$programId){
 			$this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');
 			$this->redirect($this->referer());
 		}
-		$programResponse = $this->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
-		if($reset == 1) {
-			$this->ProgramResponse->id = $programResponse['ProgramResponse']['id'];
-			$this->ProgramResponse->saveField('uploaded_docs', 0);
-			$this->ProgramResponse->saveField('dropping_off_docs', 0);
-
-		}
+        $program = $this->ProgramResponse->Program->getProgramAndResponse($programId, $this->Auth->user('id'));
+		$this->whatsNext($program, $stepId);
+		
 		if(!empty($this->data)) {
 			$this->loadModel('QueuedDocument');
 			$this->data['QueuedDocument']['req_program_doc'] = 1;
@@ -318,13 +314,13 @@ class ProgramResponsesController extends AppController {
 			if($this->QueuedDocument->validates()) {
 				if($this->QueuedDocument->uploadDocument($this->data, 'Program Upload', $this->Auth->user('id'))) {
 					$this->Transaction->createUserTransaction('Programs', null, null,
-						'Uploaded document for ' . $programResponse['Program']['name']);
+						'Uploaded document for ' . $program['Program']['name']);
 					$this->Session->setFlash(__('Document uploaded successfully.', true), 'flash_success');
-					$this->redirect(array('action' => 'required_docs', $id));
+					$this->redirect(array('action' => 'required_docs', $programId, $stepId));
 				}
 				else {
 					$this->Session->setFlash(__('Unable to upload document, please try again', true), 'flash_failure');
-					$this->redirect(array('action' => 'required_docs', $id));
+					$this->redirect(array('action' => 'required_docs', $programId, $stepId));
 				}
 			}
 			else {
@@ -333,12 +329,11 @@ class ProgramResponsesController extends AppController {
 			}
 
 		}
-		$program = $this->ProgramResponse->Program->findById($id);
 		$instructions = Set::extract('/ProgramInstruction[type=document]/text', $program);
 		if($instructions) {
 			$data['instructions'] = $instructions[0];
 		}
-		$data['title_for_layout'] = 'Required Documentation';
+		$data['title_for_layout'] = $program['Program']['name'] . ' Required Documentation';
 		$data['queueCategoryId'] = $program['Program']['queue_category_id'];
 		$this->set($data);
 	}
@@ -374,29 +369,29 @@ class ProgramResponsesController extends AppController {
 		}
 	}
 
-	function provided_docs($id, $type) {
-		$programResponse = $this->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
-		$this->ProgramResponse->Program->ProgramInstruction->recursive = -1;
-		if($programResponse['ProgramResponse']['uploaded_docs'] == 0 &&
-			$programResponse['ProgramResponse']['dropping_off_docs'] == 0) {
-				if($type == 'uploaded_docs') {
-					$this->ProgramResponse->id = $programResponse['ProgramResponse']['id'];
-					$this->ProgramResponse->saveField('uploaded_docs', 1);
+	function provided_docs($programId, $stepId, $type) {
+		$programResponse = $this->ProgramResponse->getProgramResponse($programId, $this->Auth->user('id'));
+		$this->data['ProgramResponseActivity']['program_response_id'] = $programResponse['ProgramResponse']['id'];
+		$this->data['ProgramResponseActivity']['program_step_id'] = $stepId;
+		$this->data['ProgramResponseActivity']['type'] = 'required_docs';
+		$this->data['ProgramResponseActivity']['status'] = 'complete';
+		$this->ProgramResponse->ProgramResponseActivity->create();
+		if($this->ProgramResponse->ProgramResponseActivity->save($this->data)) {
+			if($type == 'uploaded_docs') {
 					$this->Transaction->createUserTransaction('Programs', null, null,
 						'Selected I am done uploading documents for ' . $programResponse['Program']['name']);
-				}
-				elseif($type == 'dropping_off_docs') {
-					$this->ProgramResponse->id = $programResponse['ProgramResponse']['id'];
-					$this->ProgramResponse->saveField('dropping_off_docs', 1);
-					$this->Transaction->createUserTransaction('Programs', null, null,
-						'Selected dropping off documents for ' . $programResponse['Program']['name']);
-				}
 			}
-
-		$data['instructions'] = $this->ProgramResponse->Program->ProgramInstruction->getInstructions(
-			$id, $type);
-		$data['title_for_layout'] = 'Program Response Documents';
-		$this->set($data);
+			elseif($type == 'dropping_off_docs') {
+				$this->Transaction->createUserTransaction('Programs', null, null,
+					'Selected dropping off documents for ' . $programResponse['Program']['name']);
+			}
+			$this->Session->setFlash(__('Required documentation step complete', true), 'flash_success');
+			$this->redirect(array('controller' => 'programs', 'action' => 'enrollment', $programResponse['Program']['id']));
+		}
+		else {
+			$this->Session->setFlash(__('Unable to complete required documentation step, please try again', true), 'flash_failure');
+			$this->redirect($this->referer());
+		}
 	}
 
 	function admin_index($id = null) {
