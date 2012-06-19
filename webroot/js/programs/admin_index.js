@@ -220,6 +220,17 @@ Ext.onReady(function () {
           if (rec.data.in_test) {
             items.push({ xtype: 'menuseparator' });
             items.push({
+              icon: '/img/icons/publish.png',
+              text: 'Set Program Live',
+              handler: function () {
+                rec.set({
+                  in_test: 0,
+                  disabled: 0
+                });
+                rec.save();
+              }
+            });
+            items.push({
               icon: '/img/icons/delete.png',
               text: 'Purge Test Data',
               handler: function () {
@@ -379,6 +390,17 @@ Ext.onReady(function () {
 
           if (rec.data.in_test) {
             items.push({ xtype: 'menuseparator' });
+            items.push({
+              icon: '/img/icons/publish.png',
+              text: 'Set Program Live',
+              handler: function () {
+                rec.set({
+                  in_test: 0,
+                  disabled: 0
+                });
+                rec.save();
+              }
+            });
             items.push({
               icon: '/img/icons/delete.png',
               text: 'Purge Test Data',
