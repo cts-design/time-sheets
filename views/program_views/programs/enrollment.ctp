@@ -43,6 +43,12 @@
 												$program['Program']['id'],
 												$step['id'])) ?>
 										<?php endif ?>
+									<?php elseif($step['type'] === 'upload') : ?>
+										<?php $link = $this->Html->link('Upload Documents', array(
+											'controller' => 'program_responses',
+											'action' => 'required_docs',
+											$program['Program']['id'],
+											$step['id'])) ?>
 									<?php endif ?>
 									<span class="action">
 										<?= $link ?>
