@@ -50,10 +50,10 @@ Ext.create('Ext.data.Store', {
   autoLoad: true,
   proxy: {
     type: 'ajax',
-    url: '/admin/program_responses/get_pending_approval_responses/'+programId,
+    url: '/admin/program_responses/get_pending_approval_responses/'+programId+'/'+programResponseId,
     reader: {
       type: 'json',
-      root: 'responses'
+      root: 'response'
     }
   }
 });
@@ -181,6 +181,20 @@ Ext.onReady(function(){
         hidden: true,
         icon: '/img/icons/delete.png',
         menu: menu
+      },{
+        text: 'Next Response',
+        id: 'nextResponse',
+        handler: function() {
+          // TODO finsh up this logic. make sure the button only shows in pending approval responses
+          var store = Ext.data.StoreManager.lookup('pendingApprovalResponses');
+          if(store.totalCount > 0) {
+            window.location = '/admin/program_responses/view/'+store.data.items[0].data.id;
+          }
+          else {
+            Ext.Msg.alert('Message', 'No more records at this time');
+            this.hide();
+          }
+        }
       }]
     }],
     layout: 'border',
