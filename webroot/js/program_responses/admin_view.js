@@ -39,6 +39,25 @@ Ext.create('Ext.data.Store', {
   }
 });
 
+Ext.define('PendingApprovalProgramResponse', {
+  extend: 'Ext.data.Model',
+  fields: ['id']
+});
+
+Ext.create('Ext.data.Store', {
+  model: 'PendingApprovalProgramResponse',
+  storeId: 'pendingApprovalResponses',
+  autoLoad: true,
+  proxy: {
+    type: 'ajax',
+    url: '/admin/program_responses/get_pending_approval_responses/'+programId,
+    reader: {
+      type: 'json',
+      root: 'responses'
+    }
+  }
+});
+
 Ext.onReady(function(){
   Ext.QuickTips.init();
 
