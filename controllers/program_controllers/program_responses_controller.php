@@ -595,9 +595,10 @@ class ProgramResponsesController extends AppController {
 		else {
 			$approval = 'false';
 		}
+		$programId = $programResponse['Program']['id'];
 		$programName = $programResponse['Program']['name'];
 		$title_for_layout = 'Program Response';
-		$this->set(compact('title_for_layout', 'approval', 'programName'));
+		$this->set(compact('title_for_layout', 'approval', 'programName', 'programId'));
 	}
 
 
@@ -895,6 +896,25 @@ class ProgramResponsesController extends AppController {
 			}
 			$this->set(compact('data'));
 			$this->render(null,null,'/elements/ajaxreturn');
+		}
+	}
+
+	public function admin_get_pending_approval_responses($programId) {
+		if($this->RequestHandler->isAjax()) {
+			$responses = $this->ProgramResponse->find('all', array('conditions' => array(
+				'ProgramResponse.program_id' => $programId,
+				'ProgramResponse.status' => 'pending_approval')));	
+			$this->log($responses, 'debug');
+			if($responses) {
+				foreach($responses as $response) {
+					$data['responses'][]['id'] = $response['ProgramResponse']['id'];
+				}
+			}
+			else {
+				$data['responses'] = array();
+			}
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
 		}
 	}
 
