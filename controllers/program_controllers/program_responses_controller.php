@@ -689,7 +689,6 @@ class ProgramResponsesController extends AppController {
 					$this->data['ProgramResponseActivity'][0]['id'] = $this->params['form']['reset_form'];
 					$this->data['ProgramResponseActivity'][0]['status'] = 'allow_edit';
 				}
-				
 				if($this->ProgramResponse->saveAll($this->data)) {
 					$data['success'] = true;
 					$data['message'] = 'Program response marked not approved.';
