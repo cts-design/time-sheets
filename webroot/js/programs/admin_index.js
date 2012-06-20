@@ -617,7 +617,6 @@ Ext.onReady(function () {
     listeners: {
       tabchange: function (panel, newCard) {
         var store = newCard.getStore();
-
         store.getProxy().extraParams.program_type = newCard.id;
         store.load();
       }
