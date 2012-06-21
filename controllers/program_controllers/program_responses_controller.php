@@ -441,7 +441,12 @@ class ProgramResponsesController extends AppController {
 					}
 				}
 				if(!empty($this->params['url']['status'])) {
-					$conditions['ProgramResponse.status'] = $this->params['url']['status'];
+					if($this->params['url']['status'] === 'incomplete') {
+						$conditions['ProgramResponse.status'] = array('incomplete', 'pending_document_review');
+					}
+					else {
+						$conditions['ProgramResponse.status'] = $this->params['url']['status'];
+					}
 				}
 
 				$data['totalCount'] = $this->ProgramResponse->find('count', array('conditions' => $conditions));
