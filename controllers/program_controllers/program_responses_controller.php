@@ -899,13 +899,12 @@ class ProgramResponsesController extends AppController {
 		}
 	}
 
-	public function admin_get_pending_approval_responses($programId, $programResponseId) {
+	public function admin_get_next_pending_approval_response($programId, $programResponseId) {
 		if($this->RequestHandler->isAjax()) {
 			$response = $this->ProgramResponse->find('first', array('conditions' => array(
 				'ProgramResponse.program_id' => $programId,
 				'ProgramResponse.status' => 'pending_approval',
 				'ProgramResponse.id !=' => $programResponseId)));	
-			$this->log($response, 'debug');
 			if($response) {
 				$data['response'][]['id'] = $response['ProgramResponse']['id'];
 			}
