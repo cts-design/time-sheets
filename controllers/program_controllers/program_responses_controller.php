@@ -299,7 +299,7 @@ class ProgramResponsesController extends AppController {
         }
     }
 	
-	function required_docs($programId=null, $stepId=null) {
+	function upload_docs($programId=null, $stepId=null) {
 		if(!$programId){
 			$this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');
 			$this->redirect($this->referer());
@@ -316,11 +316,11 @@ class ProgramResponsesController extends AppController {
 					$this->Transaction->createUserTransaction('Programs', null, null,
 						'Uploaded document for ' . $program['Program']['name']);
 					$this->Session->setFlash(__('Document uploaded successfully.', true), 'flash_success');
-					$this->redirect(array('action' => 'required_docs', $programId, $stepId));
+					$this->redirect(array('action' => 'upload_docs', $programId, $stepId));
 				}
 				else {
 					$this->Session->setFlash(__('Unable to upload document, please try again', true), 'flash_failure');
-					$this->redirect(array('action' => 'required_docs', $programId, $stepId));
+					$this->redirect(array('action' => 'upload_docs', $programId, $stepId));
 				}
 			}
 			else {
@@ -329,12 +329,26 @@ class ProgramResponsesController extends AppController {
 			}
 
 		}
-		$instructions = Set::extract('/ProgramInstruction[type=document]/text', $program);
+		$instructions = Set::extract('/ProgramInstruction[type=upload_documents]/text', $program);
 		if($instructions) {
 			$data['instructions'] = $instructions[0];
 		}
-		$data['title_for_layout'] = $program['Program']['name'] . ' Required Documentation';
+		$data['title_for_layout'] = $program['Program']['name'] . ' Upload Required Documentation';
 		$data['queueCategoryId'] = $program['Program']['queue_category_id'];
+		$this->set($data);
+	}
+
+	public function drop_off_docs($programId) {
+		if(!$programId){
+			$this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');
+			$this->redirect($this->referer());
+		}
+        $program = $this->ProgramResponse->Program->getProgramAndResponse($programId, $this->Auth->user('id'));
+		$instructions = Set::extract('/ProgramInstruction[type=drop_off_documents]/text', $program);
+		if($instructions) {
+			$data['instructions'] = $instructions[0];
+		}
+		$data['title_for_layout'] = $program['Program']['name'] . '  Drop Off Required Documentation';
 		$this->set($data);
 	}
 
@@ -371,19 +385,18 @@ class ProgramResponsesController extends AppController {
 
 	function provided_docs($programId, $stepId, $type) {
 		$programResponse = $this->ProgramResponse->getProgramResponse($programId, $this->Auth->user('id'));
-		$this->data['ProgramResponseActivity']['program_response_id'] = $programResponse['ProgramResponse']['id'];
-		$this->data['ProgramResponseActivity']['program_step_id'] = $stepId;
-		$this->data['ProgramResponseActivity']['type'] = 'required_docs';
-		$this->data['ProgramResponseActivity']['status'] = 'complete';
-		$this->ProgramResponse->ProgramResponseActivity->create();
-		if($this->ProgramResponse->ProgramResponseActivity->save($this->data)) {
-			if($type == 'uploaded_docs') {
+		$this->data['ProgramResponse']['id'] = $programResponse['ProgramResponse']['id'];
+		if($programResponse['ProgramResponse']['status'] === 'incomplete') {
+			$this->data['ProgramResponse']['status'] = 'pending_document_review';
+		}
+		if($this->ProgramResponse->save($this->data)) {
+			if($type === 'uploaded_docs') {
 					$this->Transaction->createUserTransaction('Programs', null, null,
 						'Selected I am done uploading documents for ' . $programResponse['Program']['name']);
 			}
-			elseif($type == 'dropping_off_docs') {
+			elseif($type === 'drop_off_docs') {
 				$this->Transaction->createUserTransaction('Programs', null, null,
-					'Selected dropping off documents for ' . $programResponse['Program']['name']);
+					'Selected drop off documents for ' . $programResponse['Program']['name']);
 			}
 			$this->Session->setFlash(__('Required documentation step complete', true), 'flash_success');
 			$this->redirect(array('controller' => 'programs', 'action' => 'enrollment', $programResponse['Program']['id']));
