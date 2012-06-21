@@ -46,11 +46,11 @@ Ext.define('PendingApprovalProgramResponse', {
 
 Ext.create('Ext.data.Store', {
   model: 'PendingApprovalProgramResponse',
-  storeId: 'pendingApprovalResponses',
+  storeId: 'pendingApprovalResponse',
   autoLoad: true,
   proxy: {
     type: 'ajax',
-    url: '/admin/program_responses/get_pending_approval_responses/'+programId+'/'+programResponseId,
+    url: '/admin/program_responses/get_next_pending_approval_response/'+programId+'/'+programResponseId,
     reader: {
       type: 'json',
       root: 'response'
@@ -184,14 +184,15 @@ Ext.onReady(function(){
       },{
         text: 'Next Response',
         id: 'nextResponse',
+        icon: '/img/icons/arrow_right.png',
+        hidden: true,
         handler: function() {
-          // TODO finsh up this logic. make sure the button only shows in pending approval responses
-          var store = Ext.data.StoreManager.lookup('pendingApprovalResponses');
+          var store = Ext.data.StoreManager.lookup('pendingApprovalResponse');
           if(store.totalCount > 0) {
             window.location = '/admin/program_responses/view/'+store.data.items[0].data.id;
           }
           else {
-            Ext.Msg.alert('Message', 'No more records at this time');
+            Ext.Msg.alert('Message', 'No more pending approval responses at this time');
             this.hide();
           }
         }
@@ -271,5 +272,6 @@ Ext.onReady(function(){
   if(requiresApproval) {
     Ext.getCmp('approved').show();
     Ext.getCmp('notApproved').show();
+    Ext.getCmp('nextResponse').show();
   }
 });
