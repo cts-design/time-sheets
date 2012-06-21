@@ -77,8 +77,8 @@ Ext.onReady(function(){
     height: 250,
     defaultType: 'textarea',
     items: [{
-      fieldLabel: 'Not approved email comment',
-      name: 'email_comment'
+      fieldLabel: 'Not approved comment <br />  (this will be included in the email and on the program dash)',
+      name: 'comment'
      },{
       fieldLabel : 'Allow customer to edit the selected form(s)',
       xtype: 'boxselect',
