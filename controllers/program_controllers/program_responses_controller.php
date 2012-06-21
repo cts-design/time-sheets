@@ -518,7 +518,7 @@ class ProgramResponsesController extends AppController {
 					$i = 0;
 					foreach($formActivities as $formActivity) {
 						$data['answers'][$i] = json_decode($formActivity['ProgramResponseActivity']['answers'], true);
-						$data['stepName'] =
+						$data['stepName'][$i] =
 							Set::extract('/ProgramStep[id='.$formActivity['ProgramResponseActivity']['program_step_id'].']/name', $programResponse['Program']);
 						$i++;
 					}
