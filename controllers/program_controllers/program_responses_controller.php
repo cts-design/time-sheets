@@ -689,6 +689,9 @@ class ProgramResponsesController extends AppController {
 					$this->data['ProgramResponseActivity'][0]['id'] = $this->params['form']['reset_form'];
 					$this->data['ProgramResponseActivity'][0]['status'] = 'allow_edit';
 				}
+				if(!empty($this->params['form']['comment'])) {
+					$this->data['ProgramResponse']['not_approved_comment'] = $this->params['form']['comment'];
+				}
 				if($this->ProgramResponse->saveAll($this->data)) {
 					$data['success'] = true;
 					$data['message'] = 'Program response marked not approved.';
@@ -701,9 +704,9 @@ class ProgramResponsesController extends AppController {
 					)));
 					$user['User'] = $programResponse['User'];
 					if($programEmail) {
-						if(!empty($this->params['form']['email_comment'])) {
+						if(!empty($this->params['form']['comment'])) {
 							$programEmail['ProgramEmail']['body'] .= "\r\n\r\n\r\n" .
-							'Comment: ' . $this->params['form']['email_comment'];
+							'Comment: ' . $this->params['form']['comment'];
 						}
 						$this->Notifications->sendProgramEmail($programEmail['ProgramEmail'], $user);
 					}
