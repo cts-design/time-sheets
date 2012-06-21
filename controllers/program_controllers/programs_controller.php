@@ -172,6 +172,11 @@ class ProgramsController extends AppController {
 			}
 			else {
 				$instructions = Set::extract('/ProgramInstruction[type='.$programResponse['ProgramResponse']['status'].']/text', $program);
+				if($programResponse['ProgramResponse']['status'] === 'not_approved' && $programResponse['ProgramResponse']['not_approved_comment']) {
+					$instructions[0] .=
+						'<div class="not-approved-comment"><b>Admin Comment:&nbsp;</b>' .
+						$programResponse['ProgramResponse']['not_approved_comment'] . '</div>';
+				}
 			}
 		}
 		$data['title_for_layout'] = $program['Program']['name'] . ' Dashboard';
