@@ -513,7 +513,6 @@ class ProgramResponsesController extends AppController {
 			}
 			if($type == 'answers') {
 				$formActivities = Set::extract('/ProgramResponseActivity[type=form]', $programResponse);
-				// TODO make sure that this is going to work for multiple sets of form answers
 				if(!empty($formActivities)) {
 					$i = 0;
 					foreach($formActivities as $formActivity) {
