@@ -18,7 +18,7 @@ class ProgramDocument extends AppModel {
 		)
 	);
 
-	public function queueProgramDocs($programDocuments, $program, $data) {
+	public function queueProgramDocs($programDocuments, $program) {
 		foreach($programDocuments as $doc) {
 			// TODO add Admin to the payload if the doc is genertated from the admin area.
 			$data['Program'] = $program['Program'];
@@ -35,5 +35,19 @@ class ProgramDocument extends AppModel {
 			}
 			return ClassRegistry::init('Queue.QueuedTask')->createJob('document', $data);
 		}
+	}
+
+	public function queueMultiSnapshot($programDocument, $program, $formStepAnswers) {
+		$data['Program'] = $program['Program'];
+		$data['ProgramResponse'] = $program['ProgramResponse'][0];
+		$data['User'] = $program['User'];
+		$data['ProgramDocument'] = $programDocument['ProgramDocument'];
+		foreach($formStepAnswers as $k => $v) {
+			$data['steps'][] = array(
+				'answers' => json_decode($v['answers'], true),
+				'name' => $v['name']);
+		}
+		$data['toc'] = false;
+		return ClassRegistry::init('Queue.QueuedTask')->createJob('document', $data);
 	}
 }
