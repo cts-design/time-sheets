@@ -651,28 +651,12 @@ class ProgramResponsesController extends AppController {
 			}
 			else {
 				$programResponse = $this->ProgramResponse->findById($programResponseId);
-				if(strpos($programResponse['Program']['type'], 'docs')) {
-					if(!empty($programResponse['ProgramResponseDoc'])) {
-						$programDocs = $this->ProgramResponse->
-							Program->ProgramPaperForm->findAllByProgramId($programResponse['Program']['id']);
-						$catIds = Set::extract('/ProgramResponseDoc[type=system_generated]/cat_id', $programResponse);
-						$formCatIds = Set::extract('/ProgramDocument/cat_3', $programDocs);
-						if(!empty($formCatIds)) {
-							$result = array_diff($formCatIds, $catIds);
-							if(!empty($result)) {
-								$data['success'] = false;
-								$data['message'] = 'You must generate all program forms before approving response.';
-								$this->set(compact('data'));
-								return $this->render(null, null, '/elements/ajaxreturn');
-							}
-						}
-					}
-					else {
-						$data['success'] = false;
-						$data['message'] = 'All required documents must be filed to customer before approving response.';
-						$this->set(compact('data'));
-						return $this->render(null, null, '/elements/ajaxreturn');
-					}
+				$programDocuments = $this->ProgramResponse->Program->ProgramDocument->find('all', 
+					array('conditions' => array(
+						'ProgramDocument.program_id' => $programResponse['Program']['id'],
+						'ProgramDocument.type' => 'pdf')));
+				if(!empty($programDocuments)) {
+					$this->ProgramResponse->Program->ProgramDocument->queueProgramDocs($programDocuments, $programResponse);
 				}
 				$this->data['ProgramResponse']['id'] = $programResponseId;
 				$this->data['ProgramResponse']['status'] = 'complete';
@@ -1158,7 +1142,9 @@ class ProgramResponsesController extends AppController {
 				$result = array_diff($formSteps, $completedFormSteps);
 				if(empty($result)) {
 					if(!empty($programDocument) || !empty($formStepAnswers)) {
-						$this->ProgramResponse->Program->ProgramDocument->queueMultiSnapshot($programDocument[0], $program, $formStepAnswers);
+						unset($program['ProgramDocument']);
+						$program['ProgramDocument'] = $programDocument[0]['ProgramDocument'];
+						$this->ProgramResponse->Program->ProgramDocument->queueMultiSnapshot($program, $formStepAnswers);
 					}
 				}	
 			}
@@ -1167,6 +1153,8 @@ class ProgramResponsesController extends AppController {
 			$programDocuments = Set::extract('/ProgramDocument[program_step_id='.$this->currentStep[0]['id'].']', $program);
 			if(!empty($programDocuments)) {
 				$program['currentStep'] = $this->currentStep[0];
+				unset($program['ProgramDocument']);
+				$program['ProgramDocument'] = $programDocuments;
 				$this->ProgramResponse->Program->ProgramDocument->queueProgramDocs($programDocuments, $program);
 			}	
 		}	
