@@ -5,13 +5,11 @@ class QueueDocumentTask extends Shell {
 	public $uses = array('Queue.QueuedTask', 'FiledDocument');
 	
 	public function run($data) {
-		switch($data['ProgramDocument']['type']) {
-			case 'snapshot':
-				return  $this->generateSnapshot($data);	
-				break;
-			case 'certificate':
-				return $this->generateProgramDoc($data);
-				break;
+		if($data['ProgramDocument']['type'] === 'snapshot' || $data['ProgramDocument']['type'] === 'multi_snapshot') {
+			return  $this->generateSnapshot($data);	
+		}
+		else {
+			return $this->generateProgramDoc($data);
 		}
 	}
 
