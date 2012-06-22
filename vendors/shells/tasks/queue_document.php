@@ -182,7 +182,9 @@ class QueueDocumentTask extends Shell {
 			if(is_array($val)){
 				$data.='<</T('.$field.')/V[';
 				foreach($val as $opt)
-					$data.='('.trim($opt).')';
+					if(!is_array($opt)) {
+						$data.='('.trim($opt).')';
+					}
 				$data.=']>>';
 			}else{
 				$data.='<</T('.$field.')/V('.trim($val).')>>';
