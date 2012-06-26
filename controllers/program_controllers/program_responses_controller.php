@@ -551,7 +551,7 @@ class ProgramResponsesController extends AppController {
 					$this->loadModel('DocumentFilingCategory');
 					$filingCatList = $this->DocumentFilingCategory->find('list');
 					$docs = Set::extract('/ProgramResponseDoc[type=customer_provided]',  $programResponse);
-					$generatedDocs = Set::extract('/ProgramResponseDoc[type=system_generated]',  $programResponse);
+					$generatedDocs = Set::extract('/ProgramResponseDoc[type!=customer_provided]',  $programResponse);
 					$i = 0;
 					foreach($docs as $doc) {
 						$data['docs'][$i]['id'] = $doc['ProgramResponseDoc']['doc_id'];
@@ -579,26 +579,21 @@ class ProgramResponsesController extends AppController {
 				}
 				else $data['docs'] = 'No program response documents filed for this user.';
 				$programDocs = $this->ProgramResponse->
-					Program->ProgramDocument->findAllByProgramId($programResponse['Program']['id']);
+					Program->ProgramDocument->find('list', $programResponse['Program']['id']);
 				if($programDocs) {
 					$data['generatedDocs'] = array();
-					foreach($programDocs as $programDoc) {
-						if(isset($generatedDocs)) {
-							foreach($generatedDocs as $generatedDoc) {
-								if(!array_key_exists($programDoc['ProgramDocument']['id'], $data['generatedDocs'])) {
-									$data['generatedDocs'][$programDoc['ProgramDocument']['id']]['name'] =
-										$programDoc['ProgramDocument']['name'];
-									$data['generatedDocs'][$programDoc['ProgramDocument']['id']]['programResponseId'] =
-										$programResponse['ProgramResponse']['id'];
-									$data['generatedDocs'][$programDoc['ProgramDocument']['id']]['id'] =
-										$programDoc['ProgramDocument']['id'];
-									$data['generatedDocs'][$programDoc['ProgramDocument']['id']]['view'] = '<a href="/admin/filed_documents/view/' .
-										$generatedDoc['ProgramResponseDoc']['doc_id'].'" target="_blank">View Doc</a>';
-									$data['generatedDocs'][$programDoc['ProgramDocument']['id']]['doc_id'] =
-										$generatedDoc['ProgramResponseDoc']['doc_id'];
-									$data['generatedDocs'][$programDoc['ProgramDocument']['id']]['filed_on'] =
-										$generatedDoc['ProgramResponseDoc']['created'];
-								}
+					if(isset($generatedDocs)) {
+						foreach($generatedDocs as $generatedDoc) {
+							if(!array_key_exists($generatedDoc['doc_id'], $data['generatedDocs'])) {
+								$data['generatedDocs'][$generatedDoc['ProgramResponseDoc']['doc_id']]['doc_id'] =
+									$generatedDoc['ProgramResponseDoc']['doc_id'];
+								$data['generatedDocs'][$generatedDoc['ProgramResponseDoc']['doc_id']]['name'] =
+									$programDocs[$generatedDoc['ProgramResponseDoc']['program_doc_id']];
+								$data['generatedDocs'][$generatedDoc['ProgramResponseDoc']['doc_id']]['filed_on'] =
+									$generatedDoc['ProgramResponseDoc']['created'];
+								$data['generatedDocs'][$generatedDoc['ProgramResponseDoc']['doc_id']]['link'] =
+									'<a href="/admin/deleted_documents/view/' .
+									$generatedDoc['ProgramResponseDoc']['doc_id'] . '" target="_blank">View Doc</a>';
 							}
 						}
 					}
