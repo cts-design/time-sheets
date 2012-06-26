@@ -48,7 +48,7 @@
 				<?php if(isset($generatedDoc['filed_on'])) : ?>
 					<p><strong>Filed on:</strong> <?php echo $this->Time->format('m/d/y g:i:s a', $generatedDoc['filed_on']); ?></p>
 				<?php endif ?>
-				<p><?php if(isset($generatedDoc['view'])) echo $generatedDoc['view']; ?></p>
+				<p><?php if(isset($generatedDoc['link'])) echo $generatedDoc['link']; ?></p>
 			</div>
 			
 		<?php endforeach ?>
