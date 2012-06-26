@@ -56,10 +56,10 @@ class ProgramStep extends AppModel {
 		if(!empty($currentStep)) {
 			$return['current'] = $currentStep;
 		}
-		while(isset($previousStep[0]) && in_array($previousStep[0]['id'], $completedStepIds)) {
+		while(isset($previousStep[0]) && $previousStep[0]['type'] && in_array($previousStep[0]['id'], $completedStepIds)) {
 			$previousStep = Set::extract('/ProgramStep[rght=' . ($previousStep[0]['lft'] - 1) .']/.[:first]', $program);
 		}		
-		if(!empty($previousStep)) {
+		if(!empty($previousStep) && $previousStep[0]['type']) {
 			$return['previous'] = $previousStep;
 			return $return;
 		}
