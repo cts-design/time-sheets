@@ -66,6 +66,7 @@ class ProgramResponsesController extends AppController {
 			$this->data['ProgramResponseActivity'][0]['program_step_id'] = $this->currentStep[0]['id'];
 			$this->data['ProgramResponseActivity'][0]['type'] = 'form';
 			if(isset($this->nextStep)) {
+				$this->log($this->nextStep, 'debug');
 				$this->data['ProgramResponse']['next_step_id'] = $this->nextStep[0]['id'];
 				if($this->nextStep[0]['type'] === 'required_docs') {
 					$redirect = array('controller' => 'programs', 'action' => $program['Program']['type'], $programId);
@@ -1095,6 +1096,7 @@ class ProgramResponsesController extends AppController {
             $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => false));
 		}
 		$steps = $this->ProgramResponse->Program->ProgramStep->getSteps($program, $stepId);
+		$this->log($program, 'debug');
 		if(!isset($steps['current'])) {
 			$this->Session->setFlash(__('Unable to determine current step.', true), 'flash_failure');
             $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => false));
