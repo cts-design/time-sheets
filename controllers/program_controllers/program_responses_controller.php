@@ -592,7 +592,7 @@ class ProgramResponsesController extends AppController {
 								$data['generatedDocs'][$generatedDoc['ProgramResponseDoc']['doc_id']]['filed_on'] =
 									$generatedDoc['ProgramResponseDoc']['created'];
 								$data['generatedDocs'][$generatedDoc['ProgramResponseDoc']['doc_id']]['link'] =
-									'<a href="/admin/deleted_documents/view/' .
+									'<a href="/admin/filed_documents/view/' .
 									$generatedDoc['ProgramResponseDoc']['doc_id'] . '" target="_blank">View Doc</a>';
 							}
 						}
