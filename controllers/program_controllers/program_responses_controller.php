@@ -360,7 +360,7 @@ class ProgramResponsesController extends AppController {
 			$this->redirect($this->referer());
 		}
 		$programResponse = $this->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
-		$docId = Set::extract('/ProgramResponseDoc[type=system_generated]/doc_id', $programResponse);
+		$docId = Set::extract('/ProgramResponseDoc[type=certificate]/doc_id', $programResponse);
 		if(!$docId) {
 			$this->Session->setFlash(__('Document has not been generated just yet. Please try again in a few minutes.', true), 'flash_failure');
 			$this->redirect($this->referer());
