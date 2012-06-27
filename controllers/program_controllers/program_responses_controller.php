@@ -663,7 +663,7 @@ class ProgramResponsesController extends AppController {
 							'ProgramEmail.type' => 'complete'
 					)));
 					$user['User'] = $programResponse['User'];
-					$this->Notifications->sendProgramEmail($programEmail, $user);
+					$this->Notifications->sendProgramEmail($programEmail['ProgramEmail'], $user);
 					$this->Transaction->createUserTransaction('Programs', null, null,
 						'Approved program response for ' . $programResponse['Program']['name'] . ' for customer ' .
 						ucwords($user['User']['name_last4']));
