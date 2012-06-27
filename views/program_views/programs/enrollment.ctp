@@ -85,6 +85,7 @@
 					<?= Inflector::humanize($programResponse['ProgramResponse']['status']) ?>
 				</span>
 				<ol>
+					<?php //TODO add a check if program has a certificate for download ?>
 					<li class="step certificate">
 						<div class="inner-container">
 							<?= $this->Html->link(
