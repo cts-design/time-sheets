@@ -32,7 +32,7 @@
         </li>
       <?php endif; ?>
       <?php if(!empty($programResponse['ProgramResponseActivity'])
-          && $programResponse['ProgramResponseActivity'][1]['status'] === 'allow_edit'
+          && $programResponse['ProgramResponseActivity'][0]['status'] === 'allow_edit'
           && $programResponse['ProgramResponse']['status'] === 'not_approved') : 
       ?>
         <li class="step complete">

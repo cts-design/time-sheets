@@ -4,9 +4,8 @@
 
 <div class="steps-container">
 	<ol class="steps">
-		<?php if($programResponse['ProgramResponse']['status'] === 'incomplete' 
-			|| $programResponse['ProgramResponse']['status'] === 'pending_approval' 
-			|| $programResponse['ProgramResponse']['status'] === 'not_approved') : ?>
+		<?php $statuses = array('incomplete','not_approved', 'pending_document_review') ?>
+		<?php if(in_array($programResponse['ProgramResponse']['status'], $statuses)) : ?>
 			<li class="module incomplete">
 				<div class="details">
 					<h3><?= $program['Program']['name'] ?> Enrollment</h3>
@@ -46,15 +45,14 @@
 									<?php elseif($step['type'] === 'required_docs') : ?>
 										<?php $link = $this->Html->link('Upload Documents', array(
 											'controller' => 'program_responses',
-											'action' => 'required_docs',
+											'action' => 'upload_docs',
 											$program['Program']['id'],
 											$step['id'])) ?>
 										<?php $link2 = $this->Html->link('Drop Off Documents', array(
 											'controller' => 'program_responses',
-											'action' => 'provided_docs',
+											'action' => 'drop_off_docs',
 											$program['Program']['id'],
-											$step['id'],
-											'dropping_off_docs')) ?>
+											$step['id'])) ?>
 									<?php endif ?>
 									<span class="action">
 										<?= $link ?>
@@ -67,6 +65,16 @@
 						<?php endif ?>
 					<?php endforeach ?>
 				</ol>
+		<?php elseif($programResponse['ProgramResponse']['status'] === 'pending_approval') : ?>
+			<li class="module incomplete">
+				<div class="details">
+					<h3><?= $program['Program']['name'] ?> Enrollment</h3>
+					<p><?= count($completedSteps) ?> of X steps completed</p>
+				</div>
+				<span class="status">
+					<?= Inflector::humanize($programResponse['ProgramResponse']['status']) ?>
+				</span>
+			</li>
 		<?php elseif($programResponse['ProgramResponse']['status'] === 'complete') : ?>
 			<li class="module complete">
 				<div class="details">
@@ -77,6 +85,7 @@
 					<?= Inflector::humanize($programResponse['ProgramResponse']['status']) ?>
 				</span>
 				<ol>
+					<?php //TODO add a check if program has a certificate for download ?>
 					<li class="step certificate">
 						<div class="inner-container">
 							<?= $this->Html->link(

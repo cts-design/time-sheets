@@ -5,13 +5,11 @@ class QueueDocumentTask extends Shell {
 	public $uses = array('Queue.QueuedTask', 'FiledDocument');
 	
 	public function run($data) {
-		switch($data['ProgramDocument']['type']) {
-			case 'snapshot':
-				return  $this->generateSnapshot($data);	
-				break;
-			case 'certificate':
-				return $this->generateProgramDoc($data);
-				break;
+		if($data['ProgramDocument']['type'] === 'snapshot' || $data['ProgramDocument']['type'] === 'multi_snapshot') {
+			return  $this->generateSnapshot($data);	
+		}
+		else {
+			return $this->generateProgramDoc($data);
 		}
 	}
 
@@ -53,7 +51,7 @@ class QueueDocumentTask extends Shell {
 				$this->data['FiledDocument']['filed'] = date('Y-m-d H:i:s');
 				$this->data['FiledDocument']['entry_method'] = 'Program Generated'; 
 				$this->data['ProgramResponseDoc']['program_response_id'] = $data['ProgramResponse']['id'];
-				$this->data['ProgramResponseDoc']['type'] = 'system_generated';
+				$this->data['ProgramResponseDoc']['type'] = $data['ProgramDocument']['type'];
 				$this->data['ProgramResponseDoc']['doc_id'] = $docId;
 				$this->data['ProgramResponseDoc']['program_doc_id'] = $data['ProgramDocument']['id']; 
 				if($data['ProgramDocument']['cat_3']) {
@@ -163,7 +161,7 @@ class QueueDocumentTask extends Shell {
 				}
 				$this->data['ProgramResponseDoc']['program_response_id'] = $data['ProgramResponse']['id'];
 				$this->data['ProgramResponseDoc']['doc_id'] = $data['docId'];
-				$this->data['ProgramResponseDoc']['type'] = 'system_generated';
+				$this->data['ProgramResponseDoc']['type'] = $data['ProgramDocument']['type'];
 				$this->data['ProgramResponseDoc']['program_doc_id'] = $data['ProgramDocument']['id']; 
 				if($this->FiledDocument->saveAll($this->data)) {
 					return true;
@@ -184,7 +182,9 @@ class QueueDocumentTask extends Shell {
 			if(is_array($val)){
 				$data.='<</T('.$field.')/V[';
 				foreach($val as $opt)
-					$data.='('.trim($opt).')';
+					if(!is_array($opt)) {
+						$data.='('.trim($opt).')';
+					}
 				$data.=']>>';
 			}else{
 				$data.='<</T('.$field.')/V('.trim($val).')>>';

@@ -16,7 +16,6 @@ class Program extends AppModel {
 	public function getProgramAndResponse($programId, $userId) {
 		$this->contain(array(
 			'ProgramStep' => array(
-				'conditions' => array('ProgramStep.parent_id IS NOT NULL'),
 				'order' => array('ProgramStep.lft ASC'),
 				'ProgramFormField'
 			),

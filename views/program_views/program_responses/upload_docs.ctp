@@ -11,9 +11,9 @@
 	<noscript>
 		<div id="instructions"><?php echo $instructions ?></div>
 	</noscript>
-<div id="RequiredDocs">
+<div id="UploadRequiredDocs">
 		
-	<?php echo $form->create('ProgramResponse', array('action' => 'required_docs/'.$this->params['pass'][0].'/'.$this->params['pass'][1], 'type' => 'file')) ?>
+	<?php echo $form->create('ProgramResponse', array('action' => 'upload_docs/'.$this->params['pass'][0].'/'.$this->params['pass'][1], 'type' => 'file')) ?>
 	<fieldset>
         <legend><?php __('Upload Documents') ?></legend>
 	<?php echo $form->file('QueuedDocument.submittedfile', array('label' => 'Document')) ?>

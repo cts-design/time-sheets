@@ -57,9 +57,6 @@ class ProgramResponsesController extends AppController {
 	function form($programId=null, $stepId=null) {
         $program = $this->ProgramResponse->Program->getProgramAndResponse($programId, $this->Auth->user('id'));
 		$this->whatsNext($program, $stepId);
-
-		$programDocuments = Set::extract('/ProgramDocument[program_step_id='.$this->currentStep[0]['id'].']', $program);
-
 		if(!empty($this->data)) {
             $this->data['ProgramResponse']['id'] = $program['ProgramResponse'][0]['id'];
 			$this->data['ProgramResponse']['next_step_id'] = null;
@@ -69,8 +66,12 @@ class ProgramResponsesController extends AppController {
 			$this->data['ProgramResponseActivity'][0]['program_step_id'] = $this->currentStep[0]['id'];
 			$this->data['ProgramResponseActivity'][0]['type'] = 'form';
 			if(isset($this->nextStep)) {
-				$this->data['ProgramResponse']['next_step_id'] = $this->nextStep[0]['id'];
-				$redirect = array('action' => $this->nextStep[0]['type'], $programId, $this->nextStep[0]['id']);
+				if($this->nextStep[0]['type'] === 'required_docs' || !$this->nextStep[0]['type']) {
+					$redirect = array('controller' => 'programs', 'action' => $program['Program']['type'], $programId);
+				}
+				else {
+					$redirect = array('action' => $this->nextStep[0]['type'], $programId, $this->nextStep[0]['id']);
+				}
 			}
 			else {
 				if($program['Program']['approval_required']) {
@@ -83,12 +84,8 @@ class ProgramResponsesController extends AppController {
 			}
 			// TODO: make sure validation works
 			if($this->ProgramResponse->saveAll($this->data)) {
-				if(!empty($programDocuments)) {
-					$program['currentStep'] = $this->currentStep[0];
-					$user = $this->Auth->user();
-					$program['User'] = $user['User'];
-					$this->ProgramResponse->Program->ProgramDocument->queueProgramDocs($programDocuments, $program, $this->data);
-				}
+				$program = $this->ProgramResponse->Program->getProgramAndResponse($programId, $this->Auth->user('id'));
+				$this->programDocuments($program);	
 				$this->Transaction->createUserTransaction('Programs', null, null,
 					'Completed ' .  $this->currentStep[0]['name'] . ' for program ' . $program['Program']['name']);
 
@@ -136,7 +133,6 @@ class ProgramResponsesController extends AppController {
 	function edit_form($programId=null, $stepId=null) {
         $program = $this->ProgramResponse->Program->getProgramAndResponse($programId, $this->Auth->user('id'));
 		$this->whatsNext($program, $stepId);
-		$programDocuments = Set::extract('/ProgramDocument[program_step_id='.$this->currentStep[0]['id'].']', $program);
 		$responseActivity = Set::extract('/ProgramResponseActivity[program_step_id=' . $stepId .']', $program['ProgramResponse'][0]);
 		if(!empty($this->data)) {
             $this->data['ProgramResponse']['id'] = $program['ProgramResponse'][0]['id'];
@@ -148,7 +144,12 @@ class ProgramResponsesController extends AppController {
 			$this->data['ProgramResponseActivity'][0]['type'] = 'form';
 			if(isset($this->nextStep)) {
 				$this->data['ProgramResponse']['next_step_id'] = $this->nextStep[0]['id'];
-				$redirect = array('action' => $this->nextStep[0]['type'], $programId, $this->nextStep[0]['id']);
+				if($this->nextStep[0]['type'] === 'required_docs' || !$this->nextStep[0]['type']) {
+					$redirect = array('controller' => 'programs', 'action' => $program['Program']['type'], $programId);
+				}
+				else {
+					$redirect = array('action' => $this->nextStep[0]['type'], $programId, $this->nextStep[0]['id']);
+				}
 			}
 			else {
 				if($program['Program']['approval_required']) {
@@ -161,12 +162,8 @@ class ProgramResponsesController extends AppController {
 			}
 			// TODO: make sure validation works
 			if($this->ProgramResponse->saveAll($this->data)) {
-				if(!empty($programDocuments)) {
-					$program['currentStep'] = $this->currentStep[0];
-					$user = $this->Auth->user();
-					$program['User'] = $user['User'];
-					$this->ProgramResponse->Program->ProgramDocument->queueProgramDocs($programDocuments, $program, $this->data);
-				}
+				$program = $this->ProgramResponse->Program->getProgramAndResponse($programId, $this->Auth->user('id'));
+				$this->programDocuments($program);	
 				$this->Transaction->createUserTransaction('Programs', null, null,
 					'Completed ' .  $this->currentStep[0]['name'] . ' for program ' . $program['Program']['name']);
 				$this->Session->setFlash(__('Saved', true), 'flash_success');
@@ -224,7 +221,12 @@ class ProgramResponsesController extends AppController {
 			$this->data['ProgramResponseActivity'][0]['type'] = 'media';
 			if(isset($this->nextStep)) {
 				$this->data['ProgramResponse']['next_step_id'] = $this->nextStep[0]['id'];
-				$redirect = array('action' => $this->nextStep[0]['type'], $programId, $this->nextStep[0]['id']);
+				if($this->nextStep[0]['type'] === 'required_docs' || !$this->nextStep[0]['type']) {
+					$redirect = array('controller' => 'programs', 'action' => $program['Program']['type'], $programId);
+				}
+				else {
+					$redirect = array('action' => $this->nextStep[0]['type'], $programId, $this->nextStep[0]['id']);
+				}
 			}
 			else {
 				if($program['Program']['approval_required']) {
@@ -299,7 +301,7 @@ class ProgramResponsesController extends AppController {
         }
     }
 	
-	function required_docs($programId=null, $stepId=null) {
+	function upload_docs($programId=null, $stepId=null) {
 		if(!$programId){
 			$this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');
 			$this->redirect($this->referer());
@@ -316,11 +318,11 @@ class ProgramResponsesController extends AppController {
 					$this->Transaction->createUserTransaction('Programs', null, null,
 						'Uploaded document for ' . $program['Program']['name']);
 					$this->Session->setFlash(__('Document uploaded successfully.', true), 'flash_success');
-					$this->redirect(array('action' => 'required_docs', $programId, $stepId));
+					$this->redirect(array('action' => 'upload_docs', $programId, $stepId));
 				}
 				else {
 					$this->Session->setFlash(__('Unable to upload document, please try again', true), 'flash_failure');
-					$this->redirect(array('action' => 'required_docs', $programId, $stepId));
+					$this->redirect(array('action' => 'upload_docs', $programId, $stepId));
 				}
 			}
 			else {
@@ -329,12 +331,26 @@ class ProgramResponsesController extends AppController {
 			}
 
 		}
-		$instructions = Set::extract('/ProgramInstruction[type=document]/text', $program);
+		$instructions = Set::extract('/ProgramInstruction[type=upload_documents]/text', $program);
 		if($instructions) {
 			$data['instructions'] = $instructions[0];
 		}
-		$data['title_for_layout'] = $program['Program']['name'] . ' Required Documentation';
+		$data['title_for_layout'] = $program['Program']['name'] . ' Upload Required Documentation';
 		$data['queueCategoryId'] = $program['Program']['queue_category_id'];
+		$this->set($data);
+	}
+
+	public function drop_off_docs($programId) {
+		if(!$programId){
+			$this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');
+			$this->redirect($this->referer());
+		}
+        $program = $this->ProgramResponse->Program->getProgramAndResponse($programId, $this->Auth->user('id'));
+		$instructions = Set::extract('/ProgramInstruction[type=drop_off_documents]/text', $program);
+		if($instructions) {
+			$data['instructions'] = $instructions[0];
+		}
+		$data['title_for_layout'] = $program['Program']['name'] . '  Drop Off Required Documentation';
 		$this->set($data);
 	}
 
@@ -344,7 +360,7 @@ class ProgramResponsesController extends AppController {
 			$this->redirect($this->referer());
 		}
 		$programResponse = $this->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
-		$docId = Set::extract('/ProgramResponseDoc[type=system_generated]/doc_id', $programResponse);
+		$docId = Set::extract('/ProgramResponseDoc[type=certificate]/doc_id', $programResponse);
 		if(!$docId) {
 			$this->Session->setFlash(__('Document has not been generated just yet. Please try again in a few minutes.', true), 'flash_failure');
 			$this->redirect($this->referer());
@@ -371,19 +387,18 @@ class ProgramResponsesController extends AppController {
 
 	function provided_docs($programId, $stepId, $type) {
 		$programResponse = $this->ProgramResponse->getProgramResponse($programId, $this->Auth->user('id'));
-		$this->data['ProgramResponseActivity']['program_response_id'] = $programResponse['ProgramResponse']['id'];
-		$this->data['ProgramResponseActivity']['program_step_id'] = $stepId;
-		$this->data['ProgramResponseActivity']['type'] = 'required_docs';
-		$this->data['ProgramResponseActivity']['status'] = 'complete';
-		$this->ProgramResponse->ProgramResponseActivity->create();
-		if($this->ProgramResponse->ProgramResponseActivity->save($this->data)) {
-			if($type == 'uploaded_docs') {
+		$this->data['ProgramResponse']['id'] = $programResponse['ProgramResponse']['id'];
+		if($programResponse['ProgramResponse']['status'] === 'incomplete') {
+			$this->data['ProgramResponse']['status'] = 'pending_document_review';
+		}
+		if($this->ProgramResponse->save($this->data)) {
+			if($type === 'uploaded_docs') {
 					$this->Transaction->createUserTransaction('Programs', null, null,
 						'Selected I am done uploading documents for ' . $programResponse['Program']['name']);
 			}
-			elseif($type == 'dropping_off_docs') {
+			elseif($type === 'drop_off_docs') {
 				$this->Transaction->createUserTransaction('Programs', null, null,
-					'Selected dropping off documents for ' . $programResponse['Program']['name']);
+					'Selected drop off documents for ' . $programResponse['Program']['name']);
 			}
 			$this->Session->setFlash(__('Required documentation step complete', true), 'flash_success');
 			$this->redirect(array('controller' => 'programs', 'action' => 'enrollment', $programResponse['Program']['id']));
@@ -428,7 +443,12 @@ class ProgramResponsesController extends AppController {
 					}
 				}
 				if(!empty($this->params['url']['status'])) {
-					$conditions['ProgramResponse.status'] = $this->params['url']['status'];
+					if($this->params['url']['status'] === 'incomplete') {
+						$conditions['ProgramResponse.status'] = array('incomplete', 'pending_document_review');
+					}
+					else {
+						$conditions['ProgramResponse.status'] = $this->params['url']['status'];
+					}
 				}
 
 				$data['totalCount'] = $this->ProgramResponse->find('count', array('conditions' => $conditions));
@@ -513,12 +533,11 @@ class ProgramResponsesController extends AppController {
 			}
 			if($type == 'answers') {
 				$formActivities = Set::extract('/ProgramResponseActivity[type=form]', $programResponse);
-				// TODO make sure that this is going to work for multiple sets of form answers
 				if(!empty($formActivities)) {
 					$i = 0;
 					foreach($formActivities as $formActivity) {
 						$data['answers'][$i] = json_decode($formActivity['ProgramResponseActivity']['answers'], true);
-						$data['stepName'] =
+						$data['stepName'][$i] =
 							Set::extract('/ProgramStep[id='.$formActivity['ProgramResponseActivity']['program_step_id'].']/name', $programResponse['Program']);
 						$i++;
 					}
@@ -531,7 +550,7 @@ class ProgramResponsesController extends AppController {
 					$this->loadModel('DocumentFilingCategory');
 					$filingCatList = $this->DocumentFilingCategory->find('list');
 					$docs = Set::extract('/ProgramResponseDoc[type=customer_provided]',  $programResponse);
-					$generatedDocs = Set::extract('/ProgramResponseDoc[type=system_generated]',  $programResponse);
+					$generatedDocs = Set::extract('/ProgramResponseDoc[type!=customer_provided]',  $programResponse);
 					$i = 0;
 					foreach($docs as $doc) {
 						$data['docs'][$i]['id'] = $doc['ProgramResponseDoc']['doc_id'];
@@ -559,26 +578,21 @@ class ProgramResponsesController extends AppController {
 				}
 				else $data['docs'] = 'No program response documents filed for this user.';
 				$programDocs = $this->ProgramResponse->
-					Program->ProgramDocument->findAllByProgramId($programResponse['Program']['id']);
+					Program->ProgramDocument->find('list', $programResponse['Program']['id']);
 				if($programDocs) {
 					$data['generatedDocs'] = array();
-					foreach($programDocs as $programDoc) {
-						if(isset($generatedDocs)) {
-							foreach($generatedDocs as $generatedDoc) {
-								if(!array_key_exists($programDoc['ProgramDocument']['id'], $data['generatedDocs'])) {
-									$data['generatedDocs'][$programDoc['ProgramDocument']['id']]['name'] =
-										$programDoc['ProgramDocument']['name'];
-									$data['generatedDocs'][$programDoc['ProgramDocument']['id']]['programResponseId'] =
-										$programResponse['ProgramResponse']['id'];
-									$data['generatedDocs'][$programDoc['ProgramDocument']['id']]['id'] =
-										$programDoc['ProgramDocument']['id'];
-									$data['generatedDocs'][$programDoc['ProgramDocument']['id']]['view'] = '<a href="/admin/filed_documents/view/' .
-										$generatedDoc['ProgramResponseDoc']['doc_id'].'" target="_blank">View Doc</a>';
-									$data['generatedDocs'][$programDoc['ProgramDocument']['id']]['doc_id'] =
-										$generatedDoc['ProgramResponseDoc']['doc_id'];
-									$data['generatedDocs'][$programDoc['ProgramDocument']['id']]['filed_on'] =
-										$generatedDoc['ProgramResponseDoc']['created'];
-								}
+					if(isset($generatedDocs)) {
+						foreach($generatedDocs as $generatedDoc) {
+							if(!array_key_exists($generatedDoc['doc_id'], $data['generatedDocs'])) {
+								$data['generatedDocs'][$generatedDoc['ProgramResponseDoc']['doc_id']]['doc_id'] =
+									$generatedDoc['ProgramResponseDoc']['doc_id'];
+								$data['generatedDocs'][$generatedDoc['ProgramResponseDoc']['doc_id']]['name'] =
+									$programDocs[$generatedDoc['ProgramResponseDoc']['program_doc_id']];
+								$data['generatedDocs'][$generatedDoc['ProgramResponseDoc']['doc_id']]['filed_on'] =
+									$generatedDoc['ProgramResponseDoc']['created'];
+								$data['generatedDocs'][$generatedDoc['ProgramResponseDoc']['doc_id']]['link'] =
+									'<a href="/admin/filed_documents/view/' .
+									$generatedDoc['ProgramResponseDoc']['doc_id'] . '" target="_blank">View Doc</a>';
 							}
 						}
 					}
@@ -631,28 +645,12 @@ class ProgramResponsesController extends AppController {
 			}
 			else {
 				$programResponse = $this->ProgramResponse->findById($programResponseId);
-				if(strpos($programResponse['Program']['type'], 'docs')) {
-					if(!empty($programResponse['ProgramResponseDoc'])) {
-						$programDocs = $this->ProgramResponse->
-							Program->ProgramPaperForm->findAllByProgramId($programResponse['Program']['id']);
-						$catIds = Set::extract('/ProgramResponseDoc[type=system_generated]/cat_id', $programResponse);
-						$formCatIds = Set::extract('/ProgramDocument/cat_3', $programDocs);
-						if(!empty($formCatIds)) {
-							$result = array_diff($formCatIds, $catIds);
-							if(!empty($result)) {
-								$data['success'] = false;
-								$data['message'] = 'You must generate all program forms before approving response.';
-								$this->set(compact('data'));
-								return $this->render(null, null, '/elements/ajaxreturn');
-							}
-						}
-					}
-					else {
-						$data['success'] = false;
-						$data['message'] = 'All required documents must be filed to customer before approving response.';
-						$this->set(compact('data'));
-						return $this->render(null, null, '/elements/ajaxreturn');
-					}
+				$programDocuments = $this->ProgramResponse->Program->ProgramDocument->find('all', 
+					array('conditions' => array(
+						'ProgramDocument.program_id' => $programResponse['Program']['id'],
+						'ProgramDocument.type' => 'pdf')));
+				if(!empty($programDocuments)) {
+					$this->ProgramResponse->Program->ProgramDocument->queueProgramDocs($programDocuments, $programResponse);
 				}
 				$this->data['ProgramResponse']['id'] = $programResponseId;
 				$this->data['ProgramResponse']['status'] = 'complete';
@@ -665,7 +663,7 @@ class ProgramResponsesController extends AppController {
 							'ProgramEmail.type' => 'complete'
 					)));
 					$user['User'] = $programResponse['User'];
-					$this->Notifications->sendProgramEmail($programEmail, $user);
+					$this->Notifications->sendProgramEmail($programEmail['ProgramEmail'], $user);
 					$this->Transaction->createUserTransaction('Programs', null, null,
 						'Approved program response for ' . $programResponse['Program']['name'] . ' for customer ' .
 						ucwords($user['User']['name_last4']));
@@ -690,6 +688,9 @@ class ProgramResponsesController extends AppController {
 					$this->data['ProgramResponseActivity'][0]['id'] = $this->params['form']['reset_form'];
 					$this->data['ProgramResponseActivity'][0]['status'] = 'allow_edit';
 				}
+				if(!empty($this->params['form']['comment'])) {
+					$this->data['ProgramResponse']['not_approved_comment'] = $this->params['form']['comment'];
+				}
 				if($this->ProgramResponse->saveAll($this->data)) {
 					$data['success'] = true;
 					$data['message'] = 'Program response marked not approved.';
@@ -702,9 +703,9 @@ class ProgramResponsesController extends AppController {
 					)));
 					$user['User'] = $programResponse['User'];
 					if($programEmail) {
-						if(!empty($this->params['form']['email_comment'])) {
+						if(!empty($this->params['form']['comment'])) {
 							$programEmail['ProgramEmail']['body'] .= "\r\n\r\n\r\n" .
-							'Comment: ' . $this->params['form']['email_comment'];
+							'Comment: ' . $this->params['form']['comment'];
 						}
 						$this->Notifications->sendProgramEmail($programEmail['ProgramEmail'], $user);
 					}
@@ -1107,5 +1108,49 @@ class ProgramResponsesController extends AppController {
 			$this->nextStep = $steps['next'];
 		}
 	}
-}
 
+	private function programDocuments($program) {
+		$user = $this->Auth->user();
+		$program['User'] = $user['User'];
+		if($program['Program']['type'] === 'enrollment') {
+			$programDocument = Set::extract('/ProgramDocument[type=multi_snapshot]', $program);
+			if($programDocument) {
+				$formSteps = Set::extract('/ProgramStep[type=form]/id', $program);
+				$formStepNames = array();
+				foreach($program['ProgramStep'] as $step) {
+					if(in_array($step['id'], $formSteps)) {
+						$formStepNames[$step['id']] = $step['name'];
+					}
+				}
+				$completedFormSteps = array();
+				$formStepAnswers = array();
+				$i = 0;
+				foreach($program['ProgramResponse'][0]['ProgramResponseActivity'] as $activity) {
+					if($activity['type'] === 'form' && $activity['status'] === 'complete') {
+						$completedFormSteps[] = $activity['program_step_id'];
+						$formStepAnswers[$i]['name'] = $formStepNames[$activity['program_step_id']];
+						$formStepAnswers[$i]['answers'] = $activity['answers'];
+						$i++;
+					}
+				}
+				$result = array_diff($formSteps, $completedFormSteps);
+				if(empty($result)) {
+					if(!empty($programDocument) || !empty($formStepAnswers)) {
+						unset($program['ProgramDocument']);
+						$program['ProgramDocument'] = $programDocument[0]['ProgramDocument'];
+						$this->ProgramResponse->Program->ProgramDocument->queueMultiSnapshot($program, $formStepAnswers);
+					}
+				}	
+			}
+		}
+		elseif($program['Program']['type'] === 'orientation' || $program['Program']['type'] === 'registration') {
+			$programDocuments = Set::extract('/ProgramDocument[program_step_id='.$this->currentStep[0]['id'].']', $program);
+			if(!empty($programDocuments)) {
+				$program['currentStep'] = $this->currentStep[0];
+				unset($program['ProgramDocument']);
+				$program['ProgramDocument'] = $programDocuments;
+				$this->ProgramResponse->Program->ProgramDocument->queueProgramDocs($programDocuments, $program);
+			}	
+		}	
+	}
+}

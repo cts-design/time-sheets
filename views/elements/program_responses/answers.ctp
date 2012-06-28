@@ -1,7 +1,7 @@
 <div id="ProgramAnswers">
 	<?php $i = 0 ?>
 	<?php foreach($answers as $answer) : ?>
-		<h2><?php echo $stepName[$i]?> </h2>
+		<h2><?php echo $stepName[$i][0]?> </h2>
 		<?php foreach($answer as $k => $v) : ?>
 			<p class="label"><?php echo Inflector::humanize($k)?>:</p>
 			<p class="left"><?php echo ucwords($v)?></p>
