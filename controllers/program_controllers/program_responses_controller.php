@@ -410,6 +410,11 @@ class ProgramResponsesController extends AppController {
 	}
 
 	function download_esign_form($programId) {
+		$programResponse = $this->ProgramResponse->getProgramResponse($programId, $this->Auth->user('id'));
+		$this->data['ProgramResponse']['id'] = $programResponse['ProgramResponse']['id'];
+		if($programResponse['ProgramResponse']['status'] === 'incomplete') {
+			$this->data['ProgramResponse']['status'] = 'pending_document_review';
+		}
 		$program = $this->ProgramResponse->Program->findById($programId);
 		$this->loadModel('BarCodeDefinition');
 		$barCodeDefintion = $this->BarCodeDefinition->findById($program['Program']['bar_code_definition_id']);
@@ -432,6 +437,7 @@ class ProgramResponsesController extends AppController {
 					substr($pdf, 0, 4) . DS .
 					substr($pdf, 4, 2) . DS
 			);
+			$this->ProgramResponse->save($this->data);
 			$this->Transaction->createUserTransaction('Programs', null, null,
 				'Downloaded e-signature enrollment form');
 			$this->view = 'Media';
