@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2012-06-21 14:12:38 : 1340302358*/
+/* atlas schema generated on: 2012-06-29 14:46:04 : 1340995564*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -591,6 +591,7 @@ class atlasSchema extends CakeSchema {
 		'program_response_count' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'show_in_dash' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'in_test' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'bar_code_definition_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'expires' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
