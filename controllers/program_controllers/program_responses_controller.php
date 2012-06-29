@@ -53,7 +53,7 @@ class ProgramResponsesController extends AppController {
 					'admin_get_form_activities');
 			}
 	}
-
+	
 	function form($programId=null, $stepId=null) {
         $program = $this->ProgramResponse->Program->getProgramAndResponse($programId, $this->Auth->user('id'));
 		$this->whatsNext($program, $stepId);
@@ -409,6 +409,36 @@ class ProgramResponsesController extends AppController {
 		}
 	}
 
+	function download_esign_form($programId) {
+		$program = $this->ProgramResponse->Program->findById($programId);
+		$this->loadModel('BarCodeDefinition');
+		$barCodeDefintion = $this->BarCodeDefinition->findById($program['Program']['bar_code_definition_id']);
+		$str_len = strlen($this->Auth->user('id'));
+		$str_diff = (8-$str_len);
+		$un_id = str_repeat('0',$str_diff) . $this->Auth->user('id');
+		$barCode = '*'. $barCodeDefintion['BarCodeDefinition']['number'] . '-' . $un_id . '*';
+		$decoded = $barCodeDefintion['BarCodeDefinition']['number'] . '-' . $un_id;
+		$data = array();
+		$data['User'] = $this->Session->read('Auth.User');
+		$data['barcode'] = $barCode;
+		$data['decoded'] = $decoded;
+		$pdf = $this->generateForm($program['ProgramDocument'][0], $data);
+			$params = array(
+				'id' => $pdf,
+				'name' => str_replace('.pdf', '', $pdf),
+				'extension' => 'pdf',
+				'cache' => true,
+				'path' => Configure::read('Document.storage.path') .
+					substr($pdf, 0, 4) . DS .
+					substr($pdf, 4, 2) . DS
+			);
+			$this->Transaction->createUserTransaction('Programs', null, null,
+				'Downloaded e-signature enrollment form');
+			$this->view = 'Media';
+			$this->set($params);
+			return $params;
+	}
+
 	function admin_index($id = null) {
 		if($id){
 			$this->ProgramResponse->Program->recursive = -1;
@@ -648,7 +678,7 @@ class ProgramResponsesController extends AppController {
 				$programDocuments = $this->ProgramResponse->Program->ProgramDocument->find('all', 
 					array('conditions' => array(
 						'ProgramDocument.program_id' => $programResponse['Program']['id'],
-						'ProgramDocument.type' => 'pdf')));
+						'ProgramDocument.type' => array('pdf', 'certificate'))));
 				if(!empty($programDocuments)) {
 					$this->ProgramResponse->Program->ProgramDocument->queueProgramDocs($programDocuments, $programResponse);
 				}
@@ -917,92 +947,20 @@ class ProgramResponsesController extends AppController {
 		}
 	}
 
-	function _generateForm($formId, $programResponseId, $docId=null) {
-
-			$programResponse = $this->ProgramResponse->findById($programResponseId);
-
-			foreach($programResponse['User'] as $k => $v) {
+	private	function generateForm($form, $data) {
+			$data['email'] = $data['User']['email'];
+			foreach($data['User'] as $k => $v) {
 				if(!preg_match('[\@]', $v)) {
-					$programResponse['User'][$k] = ucwords($v);
+					$data[$k] = ucwords($v);
 				}
 			}
-
-			$data = $programResponse['User'];
-
-			$programPaperForm = $this->ProgramResponse->Program->ProgramPaperForm->findById($formId);
-
-			if($programResponse['ProgramResponse']['answers']) {
-				$answers = json_decode($programResponse['ProgramResponse']['answers'], true);
-
-				foreach($answers as $k => $v) {
-					if(!preg_match('[\@]', $v)) {
-						$data[$k] = ucwords($v);
-					}
-				}
-			}
-
-			$data['masked_ssn'] = '***-**-' . substr($data['ssn'], -4);
-			$data['confirmation_id'] = $programResponse['ProgramResponse']['confirmation_id'];
+			unset($data['User']);
 			$data['dob'] = date('m/d/Y', strtotime($data['dob']));
-			$data['admin'] = $this->Auth->user('firstname') . ' ' . $this->Auth->user('lastname');
-			$data['todays_date'] = date('m/d/Y');
-			$data['form_completed'] = date('m/d/Y', strtotime($programResponse['ProgramResponse']['created']));
-			$data['program_name'] = $programResponse['Program']['name'];
-
-			if($programPaperForm) {
-				$pdf = $this->_createPDF($data, $programPaperForm['ProgramPaperForm']['template']);
+			$data['date'] = date('m/d/Y');
+			if($form) {
+				$pdf = $this->createPDF($data, $form['template']);
 				if($pdf) {
-					$this->loadModel('FiledDocument');
-					if(!$docId) {
-						$this->FiledDocument->User->QueuedDocument->create();
-						$this->FiledDocument->User->QueuedDocument->save();
-						$docId = $this->FiledDocument->User->QueuedDocument->getLastInsertId();
-						// delete the empty record so it does not show up in the queue
-						$this->FiledDocument->User->QueuedDocument->delete($docId, false);
-						$genType = 'Generated';
-					}
-					else {
-						$this->data['ProgramResponseDoc']['id'] =
-						$this->ProgramResponse->ProgramResponseDoc->field('id', array(
-								'ProgramResponseDoc.doc_id' => $docId,
-								'ProgramResponseDoc.program_response_id' => $programResponseId));
-						$genType = 'Regenerated';
-					}
-
-					$this->data['FiledDocument']['id'] = $docId;
-					$this->data['FiledDocument']['created'] = date('Y-m-d H:i:s');
-					$this->data['FiledDocument']['filename'] = $pdf;
-					if($this->Auth->user('role_id')!= 1) {
-						$this->data['FiledDocument']['admin_id'] = $this->Auth->user('id');
-						$this->data['FiledDocument']['filed_location_id'] = $this->Auth->user('location_id');
-						$this->data['FiledDocument']['last_activity_admin_id'] = $this->Auth->user('id');
-					}
-					$this->data['FiledDocument']['user_id'] = $data['id'];
-					$this->data['FiledDocument']['cat_1'] = $programPaperForm['ProgramPaperForm']['cat_1'];
-					$this->data['FiledDocument']['cat_2'] = $programPaperForm['ProgramPaperForm']['cat_2'];
-					$this->data['FiledDocument']['cat_3'] = $programPaperForm['ProgramPaperForm']['cat_3'];
-					$this->data['FiledDocument']['entry_method'] = 'Program Generated';
-					$this->data['FiledDocument']['filed'] = date('Y-m-d H:i:s');
-					$this->data['ProgramResponseDoc']['created'] = date('Y-m-d H:i:s');
-					$this->data['ProgramResponseDoc']['cat_id'] = $programPaperForm['ProgramPaperForm']['cat_3'];
-					$this->data['ProgramResponseDoc']['program_response_id'] =	$programResponseId;
-					$this->data['ProgramResponseDoc']['doc_id'] = $docId;
-					$this->data['ProgramResponseDoc']['paper_form'] = 1;
-					if($programPaperForm['ProgramPaperForm']['cert']) {
-						$this->data['ProgramResponseDoc']['cert'] = 1;
-					}
-					if($this->FiledDocument->save($this->data['FiledDocument']) &&
-					$this->ProgramResponse->ProgramResponseDoc->save($this->data['ProgramResponseDoc'])) {
-						return array($programPaperForm, $programResponse, $genType);
-					}
-					else {
-						$path = Configure::read('Document.storage.uploadPath');
-						$path .= substr($pdf, 0, 4) . DS;
-						$path .= substr($pdf, 4, 2) . DS;
-						$file = $path . $pdf;
-						unlink($file);
-						return false;
-					}
+					return $pdf;	
 				}
 				else {
 					return false;
@@ -1010,7 +968,7 @@ class ProgramResponsesController extends AppController {
 			}
 	}
 
-	function _createFDF($file,$info){
+	private function createFDF($file,$info){
 		$data="%FDF-1.2\n%����\n1 0 obj\n<< \n/FDF << /Fields [ ";
 		foreach($info as $field => $val){
 			if(is_array($val)){
@@ -1028,8 +986,7 @@ class ProgramResponsesController extends AppController {
 		return $data;
 	}
 
-	function _createPDF($data, $template){
-
+	private function createPDF($data, $template){
 		$path = $this->getPath();
 		// build our fancy unique filename
 		$fdfFile = date('YmdHis') . rand(0, pow(10, 7)) . '.fdf';
@@ -1043,7 +1000,7 @@ class ProgramResponsesController extends AppController {
 		$pdfTemplate = APP . 'storage' . DS . 'program_forms' . DS . $template;
 
 		// generate the file content
-		$fdfData = $this->_createFDF($pdfTemplate,$data);
+		$fdfData = $this->createFDF($pdfTemplate,$data);
 
 		// write the file out
 		if($fp=fopen($fdfDir.DS.$fdfFile,'w')){
@@ -1051,9 +1008,8 @@ class ProgramResponsesController extends AppController {
 		}
 		fclose($fp);
 
-		$pdftkCommandString = DS . 'usr' . DS . 'bin' . DS . 'pdftk ' . APP . 'storage' . DS . 'program_forms' . DS .
-			$template . ' fill_form ' . TMP . 'fdf' . DS . $fdfFile . ' output ' . $path . DS . $pdfFile . ' flatten';
-
+		$pdftkCommandString = '/usr/local/bin/pdftk ' . APP . 'storage' . DS . 'program_forms' . DS .
+			$template . ' fill_form ' . TMP . 'fdf' . DS . $fdfFile . ' output ' . $path . $pdfFile . ' flatten';
 		passthru($pdftkCommandString, $return);
 
 		if($return == 0) {
@@ -1063,10 +1019,10 @@ class ProgramResponsesController extends AppController {
 		}
 		else return false;
 	}
-
+	
 	private function getPath() {
 		// get the document relative path to the inital storage folder
-		$path = Configure::read('Document.storage.uploadPath');
+		$path = substr(APP, 0, -1) . Configure::read('Document.storage.path');
 		// check to see if the directory for the current year exists
 		if(!file_exists($path . date('Y') . DS)){
 			// if directory does not exist, create it
