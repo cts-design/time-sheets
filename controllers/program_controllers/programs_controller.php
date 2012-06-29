@@ -149,6 +149,11 @@ class ProgramsController extends AppController {
 			$this->Session->setFlash(__('This program id does not match the program type specified in the url.', true), 'flash_failure');
 			$this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
 		}
+		if($program['Program']['form_esign_required'] && !$this->Auth->user('signature')) {
+			$esignId = $this->Program->field('id', array('Program.type' => 'esign'));
+			$this->Session->setFlash(__('This program requires that you be enrolled in the e-sign program first', true), 'flash_failure');
+			$this->redirect(array('controller' => 'programs', 'action' => 'esign', $esignId));
+		}
 		$programResponse = $this->Program->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
 		if(!$programResponse) {
 			if($program) {
