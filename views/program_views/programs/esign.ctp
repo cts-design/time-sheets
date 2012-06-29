@@ -4,10 +4,10 @@
 
 <div class="steps-container">
   <ol class="steps">
-    <li class="module <?= $class = (count($completedSteps)) ? 'complete' : 'incomplete' ?>">
+    <li class="module incomplete">
       <div class="details">
         <h3>E-Signature</h3>
-        <p><?= count($completedSteps) ?> of 1 steps completed</p>
+        <p><?= ($programResponse['ProgramResponse']['status'] === 'incomplete') ? 0 : 1 ?> of 1 steps completed</p>
       </div>
       <span class="status">
         <?php echo Inflector::humanize($programResponse['ProgramResponse']['status']) ?>
@@ -16,7 +16,7 @@
       <?php if($programResponse['ProgramResponse']['status'] === 'incomplete') : ?>
         <li class="step incomplete">
           <div class="inner-container">
-            <?= $program['ProgramStep'][1]['name'] ?>
+			E-Signature Form Download	
             <span class="action">
               <?php echo $html->link(
                 'Download Form',
@@ -30,21 +30,20 @@
           </div>
         </li>
       <?php endif; ?>
-      <?php if(!empty($programResponse['ProgramResponseActivity'])
-          && $programResponse['ProgramResponseActivity'][0]['status'] === 'allow_edit'
-          && $programResponse['ProgramResponse']['status'] === 'not_approved') : 
-      ?>
+		<?php if($programResponse['ProgramResponse']['status'] === 'not_approved' ||
+			$programResponse['ProgramResponse']['status'] === 'pending_document_review' ||
+			$programResponse['ProgramResponse']['status'] === 'complete') : 
+		?>
         <li class="step complete">
           <div class="inner-container">
-            <?= $program['ProgramStep'][1]['name'] ?>
+			E-Signature Form Download	
             <span class="action">
               <?php echo $html->link(
-                'Edit Form',
+                'Re-Download Form',
                 array(
                   'controller' => 'program_responses',
-                  'action' => 'edit_form',
-                  $program['Program']['id'],
-                  $program['ProgramStep'][1]['id']
+                  'action' => 'download_esign_form',
+                  $program['Program']['id']
                 )
               )
               ?>
