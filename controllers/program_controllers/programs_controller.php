@@ -15,7 +15,8 @@ class ProgramsController extends AppController {
 				$this->redirect(array('controller' => 'users', 'action' => 'edit', $this->Auth->user('id')));
 		}
 	}
-
+	
+	// TODO make these actions work with an index method and routes ?? 
 	public function registration($id=null) {
 		$this->loadProgram($id);
 	}
@@ -28,8 +29,8 @@ class ProgramsController extends AppController {
 		//ecouse logic here
 	}
 
-	public function esign() {
-		// code...
+	public function esign($id=null) {
+		$this->loadProgram($id);
 	}
 
 	public function enrollment($id=null) {
