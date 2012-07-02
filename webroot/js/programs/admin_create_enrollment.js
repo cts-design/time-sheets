@@ -734,331 +734,331 @@ registrationForm = Ext.create('Ext.form.Panel', {
   }
 });
 
-  /**
-   * stepTree
-   */
-  stepTree = Ext.create('Ext.panel.Panel', {
-    bodyPadding: 0,
-    height: 406,
-    layout: 'border',
-    items: [{
-      xtype: 'treepanel',
-      frame: false,
-      dockedItems: [{
-        xtype: 'toolbar',
-        dock: 'top',
-        items: [{
-          icon: '/img/icons/add.png',
-          id: 'addModuleBtn',
-          text: 'Add Module',
-          handler: function () {
-            var programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
-              program = Ext.data.StoreManager.lookup('ProgramStore').first(),
-              root = programStepStore.getRootNode();
-
-            Ext.Msg.prompt('Module Name', 'What would you like to name this module?', function (btn, text) {
-              if (btn === 'ok') {
-                root.appendChild({
-                  expandable: true,
-                  expanded: true,
-                  leaf: false,
-                  name: text,
-                  program_id: program.data.id
-                });
-              }
-            });
-          }
-        }, {
-          disabled: true,
-          icon: '/img/icons/delete.png',
-          id: 'deleteModuleBtn',
-          text: 'Delete Module',
-          handler: function () {
-            var selectedModule = this.up('panel').getSelectionModel().getSelection()[0];
-            Ext.Msg.show({
-              title: 'Are you sure?',
-              msg: 'Are you sure you want to delete this module?',
-              buttons: Ext.Msg.YESNO,
-              icon: Ext.Msg.QUESTION,
-              fn: function (btn) {
-                if (btn === 'yes') { selectedModule.remove(); }
-              }
-            });
-          }
-        }]
-      }],
-      height: 350,
-      region: 'west',
-      rootVisible: false,
-      store: 'ProgramStepStore',
-      width: 660,
-      columns: [{
-        xtype: 'treecolumn',
-        dataIndex: 'name',
-        text: 'Name',
-        flex: 1,
-        sortable: false
-      }, {
-        dataIndex: 'type',
-        text: 'Type'
-    }],
-      listeners: {
-        select: function (rm, rec, index) {
-          var deleteModuleBtn = Ext.getCmp('deleteModuleBtn'),
-            addStepBtn = Ext.getCmp('addStepBtn'),
-            deleteStepBtn = Ext.getCmp('deleteStepBtn');
-
-          if (!rec.isLeaf()) {
-            deleteModuleBtn.enable();
-            addStepBtn.enable();
-            deleteStepBtn.disable();
-          } else {
-            deleteStepBtn.enable();
-            deleteModuleBtn.disable();
-          }
-        }
-      }
-    }, {
-      xtype: 'form',
-      bodyPadding: 10,
-      dockedItems: [{
-        xtype: 'toolbar',
-        dock: 'top',
-        items: [{
-          disabled: true,
-          icon: '/img/icons/add.png',
-          id: 'addStepBtn',
-          text: 'Add Step',
-          handler: function () {
-            var formPanel = this.up('form');
-            formPanel.enable();
-          }
-        }, {
-          disabled: true,
-          icon: '/img/icons/delete.png',
-          id: 'deleteStepBtn',
-          text: 'Delete Step',
-          handler: function () {
-          }
-        }]
-      }],
-      margin: '0 0 15',
-      region: 'center',
+/**
+ * stepTree
+ */
+stepTree = Ext.create('Ext.panel.Panel', {
+  bodyPadding: 0,
+  height: 406,
+  layout: 'border',
+  items: [{
+    xtype: 'treepanel',
+    frame: false,
+    dockedItems: [{
+      xtype: 'toolbar',
+      dock: 'top',
       items: [{
-        xtype: 'textfield',
-        allowBlank: false,
-        fieldLabel: 'Name',
-        name: 'name'
-      }, {
-        xtype: 'fieldcontainer',
-        id: 'stepTypeContainer',
-        items: [{
-          xtype: 'combo',
-          allowBlank: false,
-          displayField: 'ucase',
-          fieldLabel: 'Step Type',
-          id: 'stepType',
-          listeners: {
-            change: {
-              fn: function (field, newValue, oldValue) {
-                var container = Ext.getCmp('mediaTypeContainer'),
-                  typeField = Ext.getCmp('mediaTypeField'),
-                  uploadContainer = Ext.getCmp('mediaUploadContainer'),
-                  uploadField = Ext.getCmp('mediaUploadField'),
-                  urlContainer = Ext.getCmp('mediaUrlContainer'),
-                  urlField = Ext.getCmp('mediaUrlField');
-
-                if (newValue === 'media') {
-                  container.setVisible(true);
-                  uploadContainer.setVisible(true);
-                  container.getEl().highlight('C9DFEE', { duration: 1000 });
-                  uploadContainer.getEl().highlight('C9DFEE', { duration: 1000 });
-                  typeField.allowBlank = false;
-                  typeField.setValue('pdf');
-                  uploadField.allowBlank = false;
-                } else {
-                  container.setVisible(false);
-                  typeField.allowBlank = true;
-                  typeField.setValue('pdf');
-                  uploadField.allowBlank = true;
-                  uploadContainer.setVisible(false);
-                  urlField.allowBlank = true;
-                  urlContainer.setVisible(false);
-                }
-              }
-            }
-          },
-          name: 'type',
-          queryMode: 'local',
-          store: Ext.create('Ext.data.Store', {
-            fields: ['lcase', 'ucase'],
-            data: [{
-              lcase: 'form', ucase: 'Form'
-            }, {
-              lcase: 'media', ucase: 'Media'
-            }, {
-              lcase: 'download', ucase: 'Document Download'
-            }]
-          }),
-          value: '',
-          valueField: 'lcase'
-        }]
-      }, {
-        xtype: 'fieldcontainer',
-        hidden: true,
-        id: 'mediaTypeContainer',
-        items: [{
-          xtype: 'combo',
-          allowBlank: true,
-          displayField: 'ucase',
-          fieldLabel: 'Media Type',
-          id: 'mediaTypeField',
-          listeners: {
-            change: {
-              fn: function (field, newValue, oldValue) {
-                var container = Ext.getCmp('mediaUploadContainer'),
-                  uploadField = Ext.getCmp('mediaUploadField'),
-                  urlContainer = Ext.getCmp('mediaUrlContainer'),
-                  urlField = Ext.getCmp('mediaUrlField');
-
-                if (newValue !== 'url') {
-                  container.setVisible(true);
-                  uploadField.allowBlank = false;
-                  urlContainer.setVisible(false);
-                  urlField.allowBlank = true;
-                  if (oldValue === 'url') {
-                    container.getEl().highlight('C9DFEE', { duration: 1000 });
-                  }
-                } else {
-                  container.setVisible(false);
-                  uploadField.allowBlank = true;
-                  urlContainer.setVisible(true);
-                  urlField.allowBlank = false;
-                  urlContainer.getEl().highlight('C9DFEE', { duration: 1000 });
-                }
-              }
-            }
-          },
-          name: 'media_type',
-          queryMode: 'local',
-          store: Ext.create('Ext.data.Store', {
-            fields: ['lcase', 'ucase'],
-            data: [{
-              lcase: 'pdf', ucase: 'PDF Document'
-            }, {
-              lcase: 'video', ucase: 'Flash Video'
-            }, {
-              lcase: 'url', ucase: 'Website URL'
-            }]
-          }),
-          value: '',
-          valueField: 'lcase'
-        }]
-      }, {
-        xtype: 'fieldcontainer',
-        hidden: true,
-        id: 'mediaUploadContainer',
-        items: [{
-          xtype: 'filefield',
-          allowBlank: true,
-          fieldLabel: 'Media Upload',
-          id: 'mediaUploadField',
-          name: 'media'
-        }]
-      }, {
-        xtype: 'fieldcontainer',
-        hidden: true,
-        id: 'mediaUrlContainer',
-        items: [{
-          xtype: 'textfield',
-          allowBlank: true,
-          fieldLabel: 'Media URL',
-          id: 'mediaUrlField',
-          name: 'media_location'
-        }]
-      }],
-      buttons: [{
-        id: 'builderSaveBtn',
-        text: 'Save',
+        icon: '/img/icons/add.png',
+        id: 'addModuleBtn',
+        text: 'Add Module',
         handler: function () {
-          var formPanel = this.up('form'),
-            form = formPanel.getForm(),
-            treePanel = formPanel.up('panel').down('treepanel'),
-            selectedModule = treePanel.getSelectionModel().getSelection()[0],
-            programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
+          var programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
             program = Ext.data.StoreManager.lookup('ProgramStore').first(),
-            vals,
-            processStepType;
+            root = programStepStore.getRootNode();
 
-          if (form.isValid()) {
-            vals = form.getValues();
-            vals.leaf = true;
-            vals.program_id = program.data.id;
-
-            if (selectedModule.isLeaf()) { selectedModule = selectedModule.parentNode; }
-
-            switch (vals.type) {
-              case 'form':
-                selectedModule.appendChild(vals);
-                form.reset();
-                break;
-
-              case 'media':
-                if (vals.media_type === 'url' && vals.media_location) {
-                  selectedModule.appendChild(vals);
-                  form.reset();
-                } else {
-                  form.submit({
-                    url: '/admin/programs/upload_media',
-                    waitMsg: 'Uploading Media...',
-                    scope: this,
-                    success: function (form, action) {
-                      vals.media_location = action.result.url;
-                      selectedModule.appendChild(vals);
-                      form.reset();
-                    },
-                    failure: function (form, action) {
-                      Ext.Msg.alert('Could not upload file', action.result.msg);
-                    }
-                  });
-                }
-                break;
-
-              default:
-                Ext.Msg.alert('Something Went Wrong',
-                    'Your media type is invalid. Please check it and try again');
-                break;
+          Ext.Msg.prompt('Module Name', 'What would you like to name this module?', function (btn, text) {
+            if (btn === 'ok') {
+              root.appendChild({
+                expandable: true,
+                expanded: true,
+                leaf: false,
+                name: text,
+                program_id: program.data.id
+              });
             }
-          }
+          });
         }
       }, {
         disabled: true,
-        formBind: true,
-        hidden: true,
-        id: 'updateBtn',
-        text: 'Update',
+        icon: '/img/icons/delete.png',
+        id: 'deleteModuleBtn',
+        text: 'Delete Module',
+        handler: function () {
+          var selectedModule = this.up('panel').getSelectionModel().getSelection()[0];
+          Ext.Msg.show({
+            title: 'Are you sure?',
+            msg: 'Are you sure you want to delete this module?',
+            buttons: Ext.Msg.YESNO,
+            icon: Ext.Msg.QUESTION,
+            fn: function (btn) {
+              if (btn === 'yes') { selectedModule.remove(); }
+            }
+          });
+        }
+      }]
+    }],
+    height: 350,
+    region: 'west',
+    rootVisible: false,
+    store: 'ProgramStepStore',
+    width: 660,
+    columns: [{
+      xtype: 'treecolumn',
+      dataIndex: 'name',
+      text: 'Name',
+      flex: 1,
+      sortable: false
+    }, {
+      dataIndex: 'type',
+      text: 'Type'
+  }],
+    listeners: {
+      select: function (rm, rec, index) {
+        var deleteModuleBtn = Ext.getCmp('deleteModuleBtn'),
+          addStepBtn = Ext.getCmp('addStepBtn'),
+          deleteStepBtn = Ext.getCmp('deleteStepBtn');
+
+        if (!rec.isLeaf()) {
+          deleteModuleBtn.enable();
+          addStepBtn.enable();
+          deleteStepBtn.disable();
+        } else {
+          deleteStepBtn.enable();
+          deleteModuleBtn.disable();
+        }
+      }
+    }
+  }, {
+    xtype: 'form',
+    bodyPadding: 10,
+    dockedItems: [{
+      xtype: 'toolbar',
+      dock: 'top',
+      items: [{
+        disabled: true,
+        icon: '/img/icons/add.png',
+        id: 'addStepBtn',
+        text: 'Add Step',
+        handler: function () {
+          var formPanel = this.up('form');
+          formPanel.enable();
+        }
+      }, {
+        disabled: true,
+        icon: '/img/icons/delete.png',
+        id: 'deleteStepBtn',
+        text: 'Delete Step',
         handler: function () {
         }
       }]
     }],
-    preprocess: function () {
-      var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
-        programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
-        task = new Ext.util.DelayedTask(function () {
-          var program = programStore.first();
+    margin: '0 0 15',
+    region: 'center',
+    items: [{
+      xtype: 'textfield',
+      allowBlank: false,
+      fieldLabel: 'Name',
+      name: 'name'
+    }, {
+      xtype: 'fieldcontainer',
+      id: 'stepTypeContainer',
+      items: [{
+        xtype: 'combo',
+        allowBlank: false,
+        displayField: 'ucase',
+        fieldLabel: 'Step Type',
+        id: 'stepType',
+        listeners: {
+          change: {
+            fn: function (field, newValue, oldValue) {
+              var container = Ext.getCmp('mediaTypeContainer'),
+                typeField = Ext.getCmp('mediaTypeField'),
+                uploadContainer = Ext.getCmp('mediaUploadContainer'),
+                uploadField = Ext.getCmp('mediaUploadField'),
+                urlContainer = Ext.getCmp('mediaUrlContainer'),
+                urlField = Ext.getCmp('mediaUrlField');
 
-          programStepStore.getProxy().extraParams = {
-            program_id: program.data.id
-          };
-        });
+              if (newValue === 'media') {
+                container.setVisible(true);
+                uploadContainer.setVisible(true);
+                container.getEl().highlight('C9DFEE', { duration: 1000 });
+                uploadContainer.getEl().highlight('C9DFEE', { duration: 1000 });
+                typeField.allowBlank = false;
+                typeField.setValue('pdf');
+                uploadField.allowBlank = false;
+              } else {
+                container.setVisible(false);
+                typeField.allowBlank = true;
+                typeField.setValue('pdf');
+                uploadField.allowBlank = true;
+                uploadContainer.setVisible(false);
+                urlField.allowBlank = true;
+                urlContainer.setVisible(false);
+              }
+            }
+          }
+        },
+        name: 'type',
+        queryMode: 'local',
+        store: Ext.create('Ext.data.Store', {
+          fields: ['lcase', 'ucase'],
+          data: [{
+            lcase: 'form', ucase: 'Form'
+          }, {
+            lcase: 'media', ucase: 'Media'
+          }, {
+            lcase: 'download', ucase: 'Document Download'
+          }]
+        }),
+        value: '',
+        valueField: 'lcase'
+      }]
+    }, {
+      xtype: 'fieldcontainer',
+      hidden: true,
+      id: 'mediaTypeContainer',
+      items: [{
+        xtype: 'combo',
+        allowBlank: true,
+        displayField: 'ucase',
+        fieldLabel: 'Media Type',
+        id: 'mediaTypeField',
+        listeners: {
+          change: {
+            fn: function (field, newValue, oldValue) {
+              var container = Ext.getCmp('mediaUploadContainer'),
+                uploadField = Ext.getCmp('mediaUploadField'),
+                urlContainer = Ext.getCmp('mediaUrlContainer'),
+                urlField = Ext.getCmp('mediaUrlField');
 
-      task.delay(2500);
-    },
-    process: function () {
-      Ext.data.StoreManager.lookup('ProgramStepStore').sync();
-      return true;
-    }
-  });
+              if (newValue !== 'url') {
+                container.setVisible(true);
+                uploadField.allowBlank = false;
+                urlContainer.setVisible(false);
+                urlField.allowBlank = true;
+                if (oldValue === 'url') {
+                  container.getEl().highlight('C9DFEE', { duration: 1000 });
+                }
+              } else {
+                container.setVisible(false);
+                uploadField.allowBlank = true;
+                urlContainer.setVisible(true);
+                urlField.allowBlank = false;
+                urlContainer.getEl().highlight('C9DFEE', { duration: 1000 });
+              }
+            }
+          }
+        },
+        name: 'media_type',
+        queryMode: 'local',
+        store: Ext.create('Ext.data.Store', {
+          fields: ['lcase', 'ucase'],
+          data: [{
+            lcase: 'pdf', ucase: 'PDF Document'
+          }, {
+            lcase: 'video', ucase: 'Flash Video'
+          }, {
+            lcase: 'url', ucase: 'Website URL'
+          }]
+        }),
+        value: '',
+        valueField: 'lcase'
+      }]
+    }, {
+      xtype: 'fieldcontainer',
+      hidden: true,
+      id: 'mediaUploadContainer',
+      items: [{
+        xtype: 'filefield',
+        allowBlank: true,
+        fieldLabel: 'Media Upload',
+        id: 'mediaUploadField',
+        name: 'media'
+      }]
+    }, {
+      xtype: 'fieldcontainer',
+      hidden: true,
+      id: 'mediaUrlContainer',
+      items: [{
+        xtype: 'textfield',
+        allowBlank: true,
+        fieldLabel: 'Media URL',
+        id: 'mediaUrlField',
+        name: 'media_location'
+      }]
+    }],
+    buttons: [{
+      id: 'builderSaveBtn',
+      text: 'Save',
+      handler: function () {
+        var formPanel = this.up('form'),
+          form = formPanel.getForm(),
+          treePanel = formPanel.up('panel').down('treepanel'),
+          selectedModule = treePanel.getSelectionModel().getSelection()[0],
+          programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
+          program = Ext.data.StoreManager.lookup('ProgramStore').first(),
+          vals,
+          processStepType;
+
+        if (form.isValid()) {
+          vals = form.getValues();
+          vals.leaf = true;
+          vals.program_id = program.data.id;
+
+          if (selectedModule.isLeaf()) { selectedModule = selectedModule.parentNode; }
+
+          switch (vals.type) {
+            case 'form':
+              selectedModule.appendChild(vals);
+              form.reset();
+              break;
+
+            case 'media':
+              if (vals.media_type === 'url' && vals.media_location) {
+                selectedModule.appendChild(vals);
+                form.reset();
+              } else {
+                form.submit({
+                  url: '/admin/programs/upload_media',
+                  waitMsg: 'Uploading Media...',
+                  scope: this,
+                  success: function (form, action) {
+                    vals.media_location = action.result.url;
+                    selectedModule.appendChild(vals);
+                    form.reset();
+                  },
+                  failure: function (form, action) {
+                    Ext.Msg.alert('Could not upload file', action.result.msg);
+                  }
+                });
+              }
+              break;
+
+            default:
+              Ext.Msg.alert('Something Went Wrong',
+                  'Your media type is invalid. Please check it and try again');
+              break;
+          }
+        }
+      }
+    }, {
+      disabled: true,
+      formBind: true,
+      hidden: true,
+      id: 'updateBtn',
+      text: 'Update',
+      handler: function () {
+      }
+    }]
+  }],
+  preprocess: function () {
+    var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
+      programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
+      task = new Ext.util.DelayedTask(function () {
+        var program = programStore.first();
+
+        programStepStore.getProxy().extraParams = {
+          program_id: program.data.id
+        };
+      });
+
+    task.delay(2500);
+  },
+  process: function () {
+    Ext.data.StoreManager.lookup('ProgramStepStore').sync();
+    return true;
+  }
+});
 
 /**
  * formBuilderContainer
