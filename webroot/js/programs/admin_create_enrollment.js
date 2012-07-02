@@ -1071,10 +1071,9 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
     xtype: 'grid',
     frame: false,
     height: 350,
-    id: 'programStepForms',
+    id: 'ProgramFormStepGrid',
     region: 'west',
     store: 'ProgramStepFormStore',
-    width: 660,
     columns: [{
       header: 'Name',
       dataIndex: 'name',
@@ -1087,10 +1086,16 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
   preprocess: function () {
     var program = Ext.data.StoreManager.lookup('ProgramStore').first(),
       programStepFormStore = Ext.data.StoreManager.lookup('ProgramStepFormStore'),
-      task;
+      grid = Ext.getCmp('ProgramFormStepGrid'),
+      task = new Ext.util.DelayedTask(function () {
+        programStepFormStore.load({
+          params: {
+            program_id: program.data.id
+          }
+        });
+      });
 
-    task = new Ext.util.DelayedTask(function () {});
-    task.delay(2500);
+    task.delay(1000);
   },
   process: function () {
     return true;
