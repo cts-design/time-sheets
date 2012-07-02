@@ -42,6 +42,16 @@
             </fieldset>
             <br />
         <?php endif ?>
+		<?php if($esignRequired) : ?>
+            <fieldset>
+                <legend><?php __('Electronic Signature') ?></legend>
+                <p class="bot-mar-10"><?php echo $esignInstructions[0]; ?></p>
+                <p class="bot-mar-10"><?php __('Please enter your first and last name in the box below.') ?></p>
+                <?php echo $form->input('ProgramResponseActivity.0.esign', array('label' => __('I agree', true), 'after' => '<br />')) ?>
+            </fieldset>
+            <br />
+        <?php endif ?>
+
         <?php echo $form->end(__('Submit', true)); ?>
     <?php endif; ?>
 </div>
