@@ -58,6 +58,23 @@ class ProgramStepsController extends AppController {
 	}
 
 	public function admin_update() {
+		$program_steps = json_decode($this->params['form']['program_steps'], true);
+		$currentParent = 0;
+
+		foreach ($program_steps as $step) {
+			unset($step['checked'], $step['created'], $step['modified'], $step['expires'],
+				$step['parentId'], $step['lft'], $step['rght']);
+
+			if (intval($step['depth']) === 1) {
+				$this->ProgramStep->save($step);
+				$currentParent = $this->ProgramStep->id;
+			} else {
+				$step['parent_id'] = $currentParent;
+				$this->ProgramStep->save($step);
+			}
+		}
+
+		$data['success'] = true;
 		$this->set('data', $data);
 		$this->render(null, null, '/elements/ajaxreturn');
 	}
