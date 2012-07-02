@@ -400,9 +400,6 @@ class ProgramsController extends AppController {
 	}
 
 	private function createOrientationProgramSteps($programId, $program, $programMedia) {
-		FireCake::log($programId);
-		FireCake::log($program);
-		FireCake::log($programMedia);
 		$this->Program->ProgramStep->create();
 
 		$parentStepData = array(
