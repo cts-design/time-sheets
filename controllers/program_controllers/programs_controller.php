@@ -300,6 +300,31 @@ class ProgramsController extends AppController {
 		}
 	}
 
+	public function admin_create_enrollment() {
+		if ($this->RequestHandler->isAjax()) {
+			$programData = json_decode($this->params['form']['programs'], true);
+			unset($programData['id'], $programData['created'], $programData['modified']);
+
+			$this->data['Program'] = $programData;
+
+			$this->Program->create();
+			$program = $this->Program->save($this->data);
+
+			if ($this->Program->save($program)) {
+				$programId = $this->Program->id;
+				$data['programs'] = $program['Program'];
+				$data['programs']['id'] = $programId;
+
+				$data['success'] = true;
+			} else {
+				$data['success'] = false;
+			}
+
+			$this->set('data', $data);
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
+
 	public function admin_upload_media() {
 		$this->layout = 'ajax';
 		$storagePath = substr(APP, 0, -1) . Configure::read('Program.media.path');
