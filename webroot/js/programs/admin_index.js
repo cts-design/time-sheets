@@ -61,6 +61,27 @@ Ext.onReady(function () {
       expires: new Date(new Date().getTime()+(1000*60*60*24*365)) // 1 year
   }));
 
+  var menuItems = [{
+    text: 'Registration',
+    handler: function () {
+      window.location = '/admin/programs/create_registration';
+    }
+  }, {
+    text: 'Orientation',
+    handler: function () {
+      window.location = '/admin/programs/create_orientation';
+    }
+  }];
+
+  if (roleId === 3) {
+    menuItems.push({
+      text: 'Enrollment',
+      handler: function () {
+        window.location = '/admin/programs/create_enrollment';
+      }
+    });
+  }
+
   var tabPanel = Ext.create('Ext.tab.Panel', {
     renderTo: 'programGrid',
     stateful: true,
@@ -72,17 +93,7 @@ Ext.onReady(function () {
       dock: 'top',
       items: [{
         text: 'New Program',
-        menu: [{
-          text: 'Registration',
-          handler: function () {
-            window.location = '/admin/programs/create_registration';
-          }
-        }, {
-          text: 'Orientation',
-          handler: function () {
-            window.location = '/admin/programs/create_orientation';
-          }
-        }]
+        menu: menuItems
       }, {
         disabled: true,
         icon: '/img/icons/copy.png',

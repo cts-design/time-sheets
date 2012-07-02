@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2012-07-02 16:51:52 : 1341262312*/
+/* atlas schema generated on: 2012-06-28 10:34:42 : 1340894082*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -580,7 +580,6 @@ class atlasSchema extends CakeSchema {
 		'name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'type' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'atlas_registration_type' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 10, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'disabled' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'queue_category_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'approval_required' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'form_esign_required' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
@@ -588,10 +587,12 @@ class atlasSchema extends CakeSchema {
 		'confirmation_id_length' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 2),
 		'response_expires_in' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'send_expiring_soon' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 1),
+		'rolling_registration' => array('type' => 'boolean', 'null' => true, 'default' => NULL),
 		'program_response_count' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'show_in_dash' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'in_test' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'bar_code_definition_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'disabled' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'expires' => array('type' => 'datetime', 'null' => false, 'default' => NULL),

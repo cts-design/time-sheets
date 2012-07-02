@@ -1039,6 +1039,7 @@ formBuilder = Ext.create('Ext.panel.Panel', {
         var formPanel = this.up('form'),
           form = formPanel.getForm(),
           vals = form.getValues(),
+          parseVals,
           attributes = {},
           options = {},
           validation = {},
@@ -1048,35 +1049,34 @@ formBuilder = Ext.create('Ext.panel.Panel', {
 
         programStepId = programStep.findRecord('type', /form/gi).data.id;
 
-        switch (vals.type) {
-          case 'datepicker':
-            attributes['class'] = 'datepicker';
-            vals.type = 'text';
-            break;
+        parseVals = (function () {
+          return {
+            datepicker: function () {
+              attributes['class'] = 'datepicker';
+              vals.type = 'text';
+            },
+            select: function () {
+              if (vals.options === 'truefalse') {
+                options.True = 'True';
+                options.False = 'False';
+              } else if (vals.options === 'yesno') {
+                options.Yes = 'Yes';
+                options.No = 'No';
+              } else {
+                Ext.Array.each(vals.options.split(','), function (item, index) {
+                  options[item] = item;
+                });
+              }
 
-          case 'select':
-            if (vals.options === 'truefalse') {
-              options.True = 'True';
-              options.False = 'False';
-            } else if (vals.options === 'yesno') {
-              options.Yes = 'Yes';
-              options.No = 'No';
-            } else {
-              Ext.Array.each(vals.options.split(','), function (item, index) {
-                options[item] = item;
-              });
+              attributes.empty = 'Please Select';
+            },
+            states: function () {
+              vals.type = 'select';
             }
+          };
+        }());
 
-            attributes.empty = 'Please Select';
-            break;
-
-          case 'states':
-            vals.type = 'select';
-            break;
-        }
-
-        validation.rule = ['equalTo', vals.answer];
-        validation.message = 'Incorrect';
+        parseVals[vals.type] && parseVals[vals.type]();
 
         if (vals.read_only === 'on') {
           attributes.readonly = 'readonly';
@@ -1110,6 +1110,7 @@ formBuilder = Ext.create('Ext.panel.Panel', {
         var formPanel = this.up('form'),
           form = formPanel.getForm(),
           vals = form.getValues(),
+          parseVals,
           attributes = {},
           options = {},
           validation = {},
@@ -1118,35 +1119,34 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           grid = Ext.getCmp('formFieldGrid'),
           selectedRecord = grid.getSelectionModel().getSelection()[0];
 
-        switch (vals.type) {
-          case 'datepicker':
-            attributes['class'] = 'datepicker';
-            vals.type = 'text';
-            break;
+        parseVals = (function () {
+          return {
+            datepicker: function () {
+              attributes['class'] = 'datepicker';
+              vals.type = 'text';
+            },
+            select: function () {
+              if (vals.options === 'truefalse') {
+                options.True = 'True';
+                options.False = 'False';
+              } else if (vals.options === 'yesno') {
+                options.Yes = 'Yes';
+                options.No = 'No';
+              } else {
+                Ext.Array.each(vals.options.split(','), function (item, index) {
+                  options[item] = item;
+                });
+              }
 
-          case 'select':
-            if (vals.options === 'truefalse') {
-              options.True = 'True';
-              options.False = 'False';
-            } else if (vals.options === 'yesno') {
-              options.Yes = 'Yes';
-              options.No = 'No';
-            } else {
-              Ext.Array.each(vals.options.split(','), function (item, index) {
-                options[item] = item;
-              });
+              attributes.empty = 'Please Select';
+            },
+            states: function () {
+              vals.type = 'select';
             }
+          };
+        }());
 
-            attributes.empty = 'Please Select';
-            break;
-
-          case 'states':
-            vals.type = 'select';
-            break;
-        }
-
-        validation.rule = ['equalTo', vals.answer];
-        validation.message = 'Incorrect';
+        parseVals[vals.type] && parseVals[vals.type]();
 
         if (vals.read_only === 'on') {
           attributes.readonly = 'readonly';
