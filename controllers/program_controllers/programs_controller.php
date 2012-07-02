@@ -73,6 +73,8 @@ class ProgramsController extends AppController {
 			$this->render('/elements/ajaxreturn');
 		}
 		$title_for_layout = 'Programs';
+		$roleId = $this->Auth->user('role_id');
+		$this->set('roleId', $roleId);
 		$this->set(compact('title_for_layout'));
 	}
 
