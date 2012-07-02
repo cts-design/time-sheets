@@ -1,5 +1,8 @@
-var isEmptyObject = function (obj) {
-  return Object.keys(obj).length === 0;
+var encodeObject = function (obj) {
+  if (Object.keys(obj).length) {
+    return Ext.JSON.encode(obj);
+  }
+  return null;
 };
 
 /**
@@ -1082,20 +1085,13 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           attributes.readonly = 'readonly';
         }
 
-        if (!isEmptyObject(attributes)) {
-          vals.attributes = Ext.JSON.encode(attributes);
-        }
-
-        if (!isEmptyObject(options)) {
-          vals.options = Ext.JSON.encode(options);
-        }
-
-        if (!isEmptyObject(validation)) {
-          vals.validation = Ext.JSON.encode(validation);
-        }
-
+        validation.rule      = ['equalTo', vals.answer];
+        validation.message   = 'Incorrect';
+        vals.attributes      = encodeObject(attributes);
+        vals.options         = encodeObject(options);
+        vals.validation      = encodeObject(validation);
         vals.program_step_id = programStepId;
-        vals.name = vals.label.underscore();
+        vals.name            = vals.label.underscore();
 
         grid.store.add(vals);
         form.reset();
@@ -1152,20 +1148,13 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           attributes.readonly = 'readonly';
         }
 
-        if (!isEmptyObject(attributes)) {
-          vals.attributes = Ext.JSON.encode(attributes);
-        }
-
-        if (!isEmptyObject(options)) {
-          vals.options = Ext.JSON.encode(options);
-        }
-
-        if (!isEmptyObject(validation)) {
-          vals.validation = Ext.JSON.encode(validation);
-        }
-
+        validation.rule      = ['equalTo', vals.answer];
+        validation.message   = 'Incorrect';
+        vals.attributes      = encodeObject(attributes);
+        vals.options         = encodeObject(options);
+        vals.validation      = encodeObject(validation);
         vals.program_step_id = programStepId;
-        vals.name = vals.label.underscore();
+        vals.name            = vals.label.underscore();
 
         selectedRecord.set(vals);
         form.reset();
