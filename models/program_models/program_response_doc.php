@@ -52,6 +52,12 @@ class ProgramResponseDoc extends AppModel {
 		if($watchedCat) {	
 			$programResponse = $this->ProgramResponse->getProgramResponse($watchedCat['Program']['id'], $user['User']['id']);	
 			$return['program_id'] = $watchedCat['Program']['id'];
+			$this->log($watchedCat, 'debug');
+			if($watchedCat['WatchedFilingCat']['name'] === 'esign') {
+				$this->ProgramResponse->User->id = $user['User']['id'];
+				$this->ProgramResponse->User->saveField('signature', 1);
+				$this->ProgramResponse->User->saveField('signature_created', date('Y-m-d H:i:s'));
+			}
 			$this->data['ProgramResponseDoc']['rejected_reason'] = $rejectedReason;				
 			$this->data['ProgramResponseDoc']['cat_id'] = $return['cat_id'];
 			$this->data['ProgramResponseDoc']['doc_id'] = $this->data['FiledDocument']['id'];
