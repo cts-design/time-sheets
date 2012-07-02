@@ -57,6 +57,28 @@ class ProgramStepsController extends AppController {
 		$this->render(null, null, '/elements/ajaxreturn');
 	}
 
+	public function admin_read_forms() {
+		$programId = $this->params['url']['program_id'];
+		$programSteps = $this->ProgramStep->find('all', array(
+			'conditions' => array(
+				'ProgramStep.program_id' => $programId,
+				'ProgramStep.type' => 'form'
+			)
+		));
+
+		if ($programSteps) {
+			foreach ($programSteps as $step) {
+				$data['program_steps'][] = $step['ProgramStep'];
+			}
+			$data['success'] = true;
+		} else {
+			$data['success'] = false;
+		}
+
+		$this->set('data', $data);
+		$this->render(null, null, '/elements/ajaxreturn');
+	}
+
 	public function admin_update() {
 		$program_steps = json_decode($this->params['form']['program_steps'], true);
 		$currentParent = 0;
