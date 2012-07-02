@@ -82,8 +82,16 @@ class QueueDocumentTask extends Shell {
 			$html .= '<h2>' . $step['name'] . '</h2>';
 			$html .= '<ol>';
 			foreach($step['answers'] as $k => $v) {
-				$html .= '<li><span class="question">' . Inflector::humanize($k); 
-				$html .= ':&nbsp;</span><span class="answer">' . Inflector::humanize($v) . '</span>';
+				if($k === 'esign') {
+					$html .= '<div class="esign" style="border: 1px solid #000; height: 80px; padding-left: 10px">';
+					$html .= '<p style="float: left"><img src="http://' . Configure::read("domain") . '/webroot/img/sig.jpg" />';
+					$html .= '<p style="float:left"><b>Electronic Signature</b><br /><span class="question">Name:&nbsp;</span>';
+					$html .= '<span class="answer">' . Inflector::humanize($v) . '</p></span></div>';
+				}
+				else {
+					$html .= '<li><span class="question">' . Inflector::humanize($k); 
+					$html .= ':&nbsp;</span><span class="answer">' . Inflector::humanize($v) . '</span>';
+				}
 			}
 			$html .= '</ol>';
 		}
