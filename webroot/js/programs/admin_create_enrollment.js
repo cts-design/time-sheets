@@ -1360,8 +1360,6 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                       programStepId,
                       grid = Ext.getCmp('formFieldGrid');
 
-                    programStepId = programStep.findRecord('type', /form/gi).data.id;
-
                     parseVals = (function () {
                       return {
                         datepicker: function () {
@@ -1398,7 +1396,7 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                     vals.attributes      = encodeObject(attributes);
                     vals.options         = encodeObject(options);
                     vals.validation      = encodeObject(validation);
-                    vals.program_step_id = programStepId;
+                    vals.program_step_id = rec.get('id');
                     vals.name            = vals.label.underscore();
 
                     grid.store.add(vals);
