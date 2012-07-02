@@ -35,6 +35,11 @@ class ProgramResponsesController extends AppController {
 						'rule' => 'notempty',
 						'message' => 'You must put your first & last name in the box.');
 				}
+				if($query[0]['ProgramStep']['Program']['form_esign_required']) {
+					$validate['esign'] = array(
+						'rule' => 'notempty',
+						'message' => 'You must put your first & last name in the box.');
+				}
 				if(isset($validate)) {
 					$this->ProgramResponse->ProgramResponseActivity->modifyValidate($validate);
 				}
