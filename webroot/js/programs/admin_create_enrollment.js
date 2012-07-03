@@ -1089,7 +1089,7 @@ stepTree = Ext.create('Ext.panel.Panel', {
       }]
     }],
     buttons: [{
-      id: 'builderSaveBtn',
+      id: 'stepSaveBtn',
       text: 'Save',
       handler: function () {
         var formPanel = this.up('form'),
@@ -1254,6 +1254,7 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
               }]
             }],
             items: [{
+              xtype: 'panel',
               bodyPadding: 0,
               height: 406,
               layout: 'border',
@@ -1724,15 +1725,15 @@ uploadStep = Ext.create('Ext.panel.Panel', {
       dock: 'top',
       items: [{
         icon: '/img/icons/add.png',
-        id: 'addFieldBtn',
+        id: 'addDocumentBtn',
         text: 'Add Document',
         handler: function () {
         }
       }, {
         disabled: true,
         icon: '/img/icons/delete.png',
-        id: 'deleteFieldBtn',
-        text: 'Delete Field',
+        id: 'deleteDocumentBtn',
+        text: 'Delete Document',
         handler: function () {
         }
       }]
@@ -1827,7 +1828,7 @@ uploadStep = Ext.create('Ext.panel.Panel', {
       allowBlank: false
     }],
     buttons: [{
-        id: 'builderSaveBtn',
+        id: 'documentSaveBtn',
         text: 'Save',
         handler: function () {
           var formPanel = this.up('form'),
@@ -1863,7 +1864,7 @@ uploadStep = Ext.create('Ext.panel.Panel', {
       disabled: true,
       formBind: true,
       hidden: true,
-      id: 'updateBtn',
+      id: 'documentUpdateBtn',
       text: 'Update',
       handler: function () {
       }
