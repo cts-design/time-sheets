@@ -1904,20 +1904,7 @@ uploadStep = Ext.create('Ext.panel.Panel', {
       }
     }]
   }],
-  preprocess: function () {
-    var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
-      programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
-      programId,
-      statusBar = Ext.getCmp('statusBar');
-
-    task = new Ext.util.DelayedTask(function () {
-    });
-    task.delay(2500);
-  },
   process: function () {
-    var programFormFieldStore = Ext.data.StoreManager.lookup('ProgramFormFieldStore');
-
-    programFormFieldStore.sync();
     return true;
   }
 });
@@ -2259,7 +2246,6 @@ Ext.onReady(function () {
       stepTree,
       formBuilderContainer,
       uploadStep,
-      //filingCategories,
       instructions,
       emails
     ],
