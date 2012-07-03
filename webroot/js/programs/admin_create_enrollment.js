@@ -1087,7 +1087,14 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
     }],
     listeners: {
       itemdblclick: function (view, rec) {
-        var window;
+        var window,
+          programFormFieldStore = Ext.data.StoreManager.lookup('ProgramFormFieldStore');
+
+        programFormFieldStore.load({
+          params: {
+            program_step_id: rec.data.id
+          }
+        });
 
         if (!window) {
           window = Ext.widget('window', {
