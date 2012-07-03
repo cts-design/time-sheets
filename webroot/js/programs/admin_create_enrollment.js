@@ -1107,8 +1107,10 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                 xtype: 'button',
                 text: 'Save & Close',
                 handler: function () {
-                  var programFormFieldStore = Ext.data.StoreManager.lookup('ProgramFormFieldStore');
+                  var win = this.up('window');
 
+                  programFormFieldStore.sync();
+                  win.close();
                 }
               }]
             }],
