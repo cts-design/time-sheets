@@ -613,6 +613,177 @@ Ext.onReady(function () {
         },
         loadMask: true
       }
+    },{
+      xtype: 'programgridpanel',
+      title: 'E-Sign',
+      id: 'esign',
+      plugins: [
+        Ext.create('Ext.grid.plugin.CellEditing', {
+          clicksToEdit: 2
+        })
+      ],
+      columns: [{
+        id: 'id',
+        dataIndex: 'id',
+        hidden: true,
+        text: 'Id',
+        width: 50
+      }, {
+        dataIndex: 'name',
+        editor: {
+          xtype: 'textfield',
+          allowBlank: false
+        },
+        text: 'Program Name',
+        flex: 1
+      }, {
+        align: 'center',
+        dataIndex: 'program_response_count',
+        text: 'Response Count',
+        width: 100,
+        renderer: function (value) {
+          return value || 0;
+        }
+      }, {
+        align: 'center',
+        text: 'Status',
+        dataIndex: 'disabled',
+        editor: {
+          xtype: 'combo',
+          allowBlank: false,
+          displayField: 'stringVal',
+          store: Ext.create('Ext.data.Store', {
+            fields: ['intVal', 'stringVal'],
+            data: [{
+              'intVal': 1, stringVal: 'Disabled'
+            }, {
+              'intVal': 0, stringVal: 'Active'
+            }]
+          }),
+          queryMode: 'local',
+          valueField: 'intVal'
+        },
+        renderer: function (value) {
+          if (value) {
+            return "Disabled";
+          } else {
+            return "Active";
+          }
+        },
+        width: 75
+      }, {
+        xtype: 'actioncolumn',
+        align: 'center',
+        header: 'Edit',
+        width: 50,
+        items: [{
+          getClass: function (val, meta, rec) {
+            if (rec.get('program_response_count')) {
+              this.tooltip = 'Editing a live program is limited';
+            } else {
+              this.tooltip = 'Edit Program';
+            }
+
+            return 'editable';
+          },
+          handler: function (grid, rowIndex, colIndex) {
+            var rec = grid.getStore().getAt(rowIndex);
+
+            window.location = '/admin/programs/edit/esign/' + rec.get('id');
+          }
+        }],
+      }, {
+        xtype: 'actioncolumn',
+        align: 'center',
+        header: 'View Responses',
+        width: 100,
+        items: [{
+          icon: '/img/icons/file-cab.png',
+          tooltip: 'View Responses',
+          handler: function (grid, rowIndex, colIndex) {
+            var rec = grid.getStore().getAt(rowIndex),
+              type = Ext.util.Inflector.singularize(grid.ownerCt.id);
+
+            window.location = '/admin/program_responses/index/' + rec.get('id');
+          }
+        }]
+      }],
+      listeners: {
+        itemcontextmenu: function (view, rec, item, index, e) {
+          var menu,
+            items = [],
+            progressMsg;
+
+          e.preventDefault();
+
+          items.push({
+              icon: '/img/icons/eye.png',
+              text: 'Show Production Url',
+              handler: function () {
+                var msg;
+
+                msg = 'Please copy the following url.<br /><br />';
+                msg += window.location.origin + '/programs/esign/' + rec.data.id;
+                msg += '<br /><br />';
+
+                Ext.Msg.alert('Production Url', msg);
+              }
+          });
+
+          if (rec.data.in_test) {
+            items.push({ xtype: 'menuseparator' });
+            items.push({
+              icon: '/img/icons/publish.png',
+              text: 'Set Program Live',
+              handler: function () {
+                rec.set({
+                  in_test: 0,
+                  disabled: 0
+                });
+                rec.save();
+              }
+            });
+            items.push({
+              icon: '/img/icons/delete.png',
+              text: 'Purge Test Data',
+              handler: function () {
+                progressMsg = Ext.Msg.wait(
+                  'Please wait while we purge your test data',
+                  'Purging Test Data', {
+                    interval: 150
+                  });
+                Ext.Ajax.request({
+                  url: '/admin/programs/purge_test_data',
+                  params: {
+                    program_id: rec.data.id
+                  },
+                  success: function (res) {
+                    var task = new Ext.util.DelayedTask(function () {
+                      progressMsg.close();
+                    });
+
+                    task.delay(1240);
+                  }
+                });
+              }
+            });
+          }
+
+          menu = Ext.create('Ext.menu.Menu', {
+            items: items
+          });
+
+          menu.showAt(e.getXY());
+        }
+      },
+      viewConfig: {
+        deferEmptyText: false,
+        emptyText: 'There are no esign enrollments in the system',
+        getRowClass: function (rec) {
+          return rec.get('disabled') ? 'row-disabled' : 'row-active';
+        },
+        loadMask: true
+      }
     }],
     listeners: {
       tabchange: function (panel, newCard) {
