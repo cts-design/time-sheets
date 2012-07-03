@@ -544,27 +544,6 @@ registrationForm = Ext.create('Ext.form.Panel', {
     }]
   }, {
     xtype: 'fieldcontainer',
-    height: 24,
-    width: 350,
-    layout: {
-      align: 'stretch',
-      type: 'vbox'
-    },
-    items: [{
-      xtype: 'combo',
-      allowBlank: false,
-      displayField: 'name',
-      fieldLabel: 'Document Queue Category',
-      labelWidth: 175,
-      name: 'queue_category_id',
-      queryMode: 'local',
-      store: 'DocumentQueueCategoryStore',
-      value: '',
-      valueField: 'id',
-      width: 200
-    }]
-  }, {
-    xtype: 'fieldcontainer',
     height: 22,
     width: 350,
     layout: {
@@ -734,8 +713,6 @@ registrationForm = Ext.create('Ext.form.Panel', {
     items: [{
       xtype: 'radiogroup',
       fieldLabel: 'Will this enrollment require users to upload documents?',
-      labelAlign: 'top',
-      labelWidth: 375,
       items: [{
         boxLabel: 'Yes',
         name: 'upload_docs',
@@ -745,7 +722,49 @@ registrationForm = Ext.create('Ext.form.Panel', {
         boxLabel: 'No',
         name: 'upload_docs',
         inputValue: '0'
-      }]
+      }],
+      labelAlign: 'top',
+      labelWidth: 375,
+      listeners: {
+        change: function (cbgroup, newVal, oldVal) {
+          var container = this.up('form').down('#documentQueueCategoryContainer'),
+            field = this.up('form').down('#documentQueueCategoryField');
+
+          if (typeof newVal.upload_docs !== "string") {
+            return;
+          } else {
+            if (newVal.upload_docs === '1') {
+              container.setVisible(true);
+              container.getEl().highlight('C9DFEE', { duration: 1000 });
+            } else {
+              container.setVisible(false);
+            }
+          }
+        }
+      }
+    }]
+  }, {
+    xtype: 'fieldcontainer',
+    height: 24,
+    id: 'documentQueueCategoryContainer',
+    width: 350,
+    layout: {
+      align: 'stretch',
+      type: 'vbox'
+    },
+    items: [{
+      xtype: 'combo',
+      allowBlank: false,
+      displayField: 'name',
+      fieldLabel: 'Document Queue Category',
+      id: 'documentQueueCategoryField',
+      labelWidth: 175,
+      name: 'queue_category_id',
+      queryMode: 'local',
+      store: 'DocumentQueueCategoryStore',
+      value: '',
+      valueField: 'id',
+      width: 200
     }]
   }, {
     xtype: 'hiddenfield',
