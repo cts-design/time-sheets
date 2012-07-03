@@ -1237,7 +1237,6 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
 
         if (!window) {
           window = Ext.widget('window', {
-            height: 406,
             height: 466,
             dockedItems: [{
               xtype: 'toolbar',
@@ -1911,15 +1910,7 @@ uploadStep = Ext.create('Ext.panel.Panel', {
       programId,
       statusBar = Ext.getCmp('statusBar');
 
-    statusBar.setText('Step 2 of 5');
-
     task = new Ext.util.DelayedTask(function () {
-      programId = programStore.first().data.id;
-      programStepStore.load({
-        params: {
-          program_id: programId
-        }
-      });
     });
     task.delay(2500);
   },
