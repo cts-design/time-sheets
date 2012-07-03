@@ -159,6 +159,16 @@ Ext.define('DocumentFilingCategory', {
   }]
 });
 
+Ext.define('WatchedFilingCat', {
+  extend: 'Ext.data.Model',
+  fields: [
+    { name: 'id', type: 'int' },
+    { name: 'cat_id', type: 'int' },
+    { name: 'program_id', type: 'int' },
+    'name',
+  ]
+});
+
 /**
  * Data Stores
  */
@@ -399,6 +409,30 @@ Ext.create('Ext.data.Store', {
       allowSingle: false,
       encode: true,
       root: 'program_emails',
+      writeAllFields: false
+    }
+  }
+});
+
+Ext.create('Ext.data.Store', {
+  storeId: 'WatchedFilingCatStore',
+  model: 'WatchedFilingCat',
+  proxy: {
+    api:{
+      create: '/admin/watched_filing_cats/create',
+      read: '/admin/watched_filing_cats/read',
+      update: '/admin/watched_filing_cats/edit',
+      destroy: '/admin/watched_filing_cats/destroy'
+    },
+    type: 'ajax',
+    reader: {
+      type: 'json',
+      root: 'cats'
+    },
+    writer: {
+      allowSingle: false,
+      encode: true,
+      root: 'cats',
       writeAllFields: false
     }
   }
