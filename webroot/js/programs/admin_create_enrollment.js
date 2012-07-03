@@ -25,6 +25,9 @@ Ext.define('Program', {
     { name: 'rolling_registration', type: 'int' },
     { name: 'program_response_count', type: 'int' },
     { name: 'show_in_dash', type: 'int' },
+    { name: 'paper_forms', type: 'int' },
+    { name: 'download_docs', type: 'int' },
+    { name: 'upload_docs', type: 'int' },
     { name: 'in_test', type: 'int' },
     { name: 'disabled', type: 'int' },
     { name: 'created',  type: 'date', dateFormat: 'Y-m-d H:i:s' },
@@ -687,12 +690,12 @@ registrationForm = Ext.create('Ext.form.Panel', {
       labelWidth: 375,
       items: [{
         boxLabel: 'Yes',
-        name: 'show_in_dash',
+        name: 'paper_forms',
         inputValue: '1',
         checked: true
       }, {
         boxLabel: 'No',
-        name: 'show_in_dash',
+        name: 'paper_forms',
         inputValue: '0'
       }]
     }]
@@ -711,12 +714,36 @@ registrationForm = Ext.create('Ext.form.Panel', {
       labelWidth: 375,
       items: [{
         boxLabel: 'Yes',
-        name: 'show_in_dash',
+        name: 'download_docs',
         inputValue: '1',
         checked: true
       }, {
         boxLabel: 'No',
-        name: 'show_in_dash',
+        name: 'download_docs',
+        inputValue: '0'
+      }]
+    }]
+  }, {
+    xtype: 'fieldcontainer',
+    height: 50,
+    width: 500,
+    layout: {
+      align: 'stretch',
+      type: 'vbox'
+    },
+    items: [{
+      xtype: 'radiogroup',
+      fieldLabel: 'Will this enrollment require users to upload documents?',
+      labelAlign: 'top',
+      labelWidth: 375,
+      items: [{
+        boxLabel: 'Yes',
+        name: 'upload_docs',
+        inputValue: '1',
+        checked: true
+      }, {
+        boxLabel: 'No',
+        name: 'upload_docs',
         inputValue: '0'
       }]
     }]
@@ -920,7 +947,7 @@ stepTree = Ext.create('Ext.panel.Panel', {
           }, {
             lcase: 'media', ucase: 'Media'
           }, {
-            lcase: 'download', ucase: 'Document Download'
+            lcase: 'upload', ucase: 'Document Upload'
           }]
         }),
         value: '',
@@ -974,7 +1001,7 @@ stepTree = Ext.create('Ext.panel.Panel', {
             lcase: 'url', ucase: 'Website URL'
           }]
         }),
-        value: '',
+        value: null,
         valueField: 'lcase'
       }]
     }, {
@@ -1053,6 +1080,21 @@ stepTree = Ext.create('Ext.panel.Panel', {
               }
               break;
 
+            case 'upload':
+              var root = treePanel.getRootNode(),
+                docUploadStep;
+
+              docUploadStep = root.appendChild({
+                expandable: true,
+                expanded: true,
+                leaf: false,
+                name: 'Upload Docs',
+                program_id: program.data.id
+              });
+
+              docUploadStep.appendChild(vals);
+              break;
+
             default:
               Ext.Msg.alert('Something Went Wrong',
                   'Your media type is invalid. Please check it and try again');
@@ -1084,6 +1126,19 @@ stepTree = Ext.create('Ext.panel.Panel', {
     task.delay(2500);
   },
   process: function () {
+    var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
+      program = programStore.first(),
+      treePanel = this.down('treepanel'),
+      root = treePanel.getRootNode();
+
+    if (program.data.upload_docs) {
+      if (root.lastChild.data.name !== 'Upload Docs') {
+        Ext.Msg.alert('Error',
+            'You have specified this program requires documents to be uploaded, but have not added the required step');
+        return false;
+      }
+    }
+
     Ext.data.StoreManager.lookup('ProgramStepStore').sync();
     return true;
   }
