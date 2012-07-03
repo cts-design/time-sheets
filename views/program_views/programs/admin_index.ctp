@@ -1,3 +1,6 @@
+<?php echo $this->Html->scriptStart(array('inline' => false)) ?>
+  var roleId = <?php echo $roleId ?>;
+<?php echo $this->Html->scriptEnd() ?>
 <?php echo $this->Html->script('programs/admin_index', array('inline' => FALSE));?>
 
 <div id="crumbWrapper">
