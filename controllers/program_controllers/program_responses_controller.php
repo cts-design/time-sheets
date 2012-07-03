@@ -723,6 +723,11 @@ class ProgramResponsesController extends AppController {
 	function admin_not_approved() {
 		if($this->RequestHandler->isAjax()) {
 			if(!empty($this->params['form']['id'])) {
+				$programResponse = $this->ProgramResponse->findById($this->params['form']['id']);
+				if($programResponse['Program']['type'] === 'esign') {
+					$this->ProgramResponse->User->id = $programResponse['ProgramResponse']['user_id'];
+					$this->ProgramResponse->User->saveField('signature', 0);
+				}
 				$this->data['ProgramResponse']['id'] = $this->params['form']['id'];
 				$this->data['ProgramResponse']['status'] = 'not_approved';
 				if(isset($this->params['form']['reset_form'])) {
