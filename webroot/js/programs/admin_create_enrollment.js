@@ -204,6 +204,7 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
+  autoLoad: true,
   storeId: 'DocumentQueueCategoryStore',
   model: 'DocumentQueueCategory',
   proxy: {
@@ -536,6 +537,27 @@ registrationForm = Ext.create('Ext.form.Panel', {
       }),
       value: 'normal',
       valueField: 'lcase'
+    }]
+  }, {
+    xtype: 'fieldcontainer',
+    height: 24,
+    width: 350,
+    layout: {
+      align: 'stretch',
+      type: 'vbox'
+    },
+    items: [{
+      xtype: 'combo',
+      allowBlank: false,
+      displayField: 'name',
+      fieldLabel: 'Document Queue Category',
+      labelWidth: 175,
+      name: 'queue_category_id',
+      queryMode: 'local',
+      store: 'DocumentQueueCategoryStore',
+      value: '',
+      valueField: 'id',
+      width: 200
     }]
   }, {
     xtype: 'fieldcontainer',
