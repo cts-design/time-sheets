@@ -1693,6 +1693,13 @@ uploadStep = Ext.create('Ext.panel.Panel', {
       dataIndex: 'name',
       flex: 1
     }, {
+      header: 'Type',
+      dataIndex: 'type',
+      flex: 1,
+      renderer: function (value) {
+        return value.humanize();
+      }
+    }, {
       header: 'Template',
       dataIndex: 'template'
     }, {
@@ -1747,9 +1754,36 @@ uploadStep = Ext.create('Ext.panel.Panel', {
       fieldLabel: 'Name',
       name: 'name'
     }, {
-      xtype: 'filefield',
+      xtype: 'combo',
       allowBlank: false,
+      displayField: 'ucase',
+      fieldLabel: 'Type',
+      id: 'documentType',
+      listeners: {
+        select: function(combo, records, Eopts) {
+        }
+      },
+      name: 'type',
+      queryMode: 'local',
+      store: Ext.create('Ext.data.Store', {
+        fields: ['lcase', 'ucase'],
+        data: [{
+          lcase: 'certificate', ucase: 'Certificate'
+        }, {
+          lcase: 'multisnapshot', ucase: 'Multi-Snapshot'
+        }, {
+          lcase: 'pdf', ucase: 'Enrollment Forms'
+        }, {
+          lcase: 'upload', ucase: 'Document Upload'
+        }]
+      }),
+      valueField: 'lcase',
+      value: null
+    }, {
+      xtype: 'filefield',
+      allowBlank: true,
       fieldLabel: 'Document',
+      id: 'documentUploadField',
       name: 'document'
     }, {
       xtype: 'combo',
