@@ -1483,11 +1483,17 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
     }
   }],
   preprocess: function () {
-    var program = Ext.data.StoreManager.lookup('ProgramStore').first(),
+    var me = this,
+      program = Ext.data.StoreManager.lookup('ProgramStore').first(),
       programStepFormStore = Ext.data.StoreManager.lookup('ProgramStepFormStore'),
       grid = Ext.getCmp('ProgramFormStepGrid'),
       task = new Ext.util.DelayedTask(function () {
         programStepFormStore.load({
+          callback: function (recs, ops, success) {
+            if (!recs) {
+              navigate(me.up('panel'), 'next');
+            }
+          },
           params: {
             program_id: program.data.id
           }
