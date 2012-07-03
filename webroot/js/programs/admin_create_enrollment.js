@@ -995,6 +995,12 @@ stepTree = Ext.create('Ext.panel.Panel', {
           vals.leaf = true;
           vals.program_id = program.data.id;
 
+          if (!selectedModule) {
+            Ext.Msg.alert('Please select a module',
+                'Please select a module to add steps to');
+            return false;
+          }
+
           if (selectedModule.isLeaf()) { selectedModule = selectedModule.parentNode; }
 
           switch (vals.type) {
