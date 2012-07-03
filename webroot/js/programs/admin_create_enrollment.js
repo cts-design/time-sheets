@@ -1099,6 +1099,19 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
         if (!window) {
           window = Ext.widget('window', {
             height: 406,
+            height: 466,
+            dockedItems: [{
+              xtype: 'toolbar',
+              dock: 'bottom',
+              items: [{
+                xtype: 'button',
+                text: 'Save & Close',
+                handler: function () {
+                  var programFormFieldStore = Ext.data.StoreManager.lookup('ProgramFormFieldStore');
+
+                }
+              }]
+            }],
             items: [{
               bodyPadding: 0,
               height: 406,
