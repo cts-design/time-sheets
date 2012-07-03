@@ -1831,33 +1831,34 @@ uploadStep = Ext.create('Ext.panel.Panel', {
         id: 'documentSaveBtn',
         text: 'Save',
         handler: function () {
-          var formPanel = this.up('form'),
-            form = formPanel.getForm();
+          var formPanel = Ext.getCmp('uploadStepForm'),
+            form = formPanel.getForm(),
+            uploadField = formPanel.down('#documentUploadField'),
+            programDocumentStore = Ext.data.StoreManager.lookup('ProgramDocumentStore'),
+            program = Ext.data.StoreManager.lookup('ProgramStore').first();
 
           if (form.isValid()) {
             vals = form.getValues();
-            form.submit({
-              url: '/admin/programs/upload_media',
-              waitMsg: 'Uploading Media...',
-              scope: this,
-              success: function (form, action) {
-                form.reset();
+            vals.program_id = program.data.id;
 
-                media = {
-                  location: action.result.url,
-                  type: vals.media_type
-                };
+            if (uploadField.getValue()) {
+              form.submit({
+                url: '/admin/program_documents/upload',
+                waitMsg: 'Uploading Document...',
+                success: function (form, action) {
+                  form.reset();
+                  vals.template = action.result.url;
+                  programDocumentStore.add(vals);
+                },
+                failure: function (form, action) {
+                  Ext.Msg.alert('Could not upload file', action.result.msg);
+                }
+              });
+            } else {
+              form.reset();
+              programDocumentStore.add(vals);
+            }
 
-                programStore.getProxy().extraParams = {
-                  media: Ext.JSON.encode(media)
-                };
-
-                programStore.add(vals);
-              },
-              failure: function (form, action) {
-                Ext.Msg.alert('Could not upload file', action.result.msg);
-              }
-            });
           }
       }
     }, {
