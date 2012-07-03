@@ -58,7 +58,8 @@ class ProgramFormFieldsController extends AppController {
 				$data['program_form_fields'][] = $value['ProgramFormField'];
 			}
 		} else {
-			$data['success'] = false;
+			$data['success'] = true;
+			$data['program_form_fields'] = array();
 		}
 	
 		$this->set('data', $data);

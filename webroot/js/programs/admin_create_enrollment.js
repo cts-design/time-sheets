@@ -25,6 +25,9 @@ Ext.define('Program', {
     { name: 'rolling_registration', type: 'int' },
     { name: 'program_response_count', type: 'int' },
     { name: 'show_in_dash', type: 'int' },
+    { name: 'paper_forms', type: 'int' },
+    { name: 'download_docs', type: 'int' },
+    { name: 'upload_docs', type: 'int' },
     { name: 'in_test', type: 'int' },
     { name: 'disabled', type: 'int' },
     { name: 'created',  type: 'date', dateFormat: 'Y-m-d H:i:s' },
@@ -156,6 +159,16 @@ Ext.define('DocumentFilingCategory', {
   }]
 });
 
+Ext.define('WatchedFilingCat', {
+  extend: 'Ext.data.Model',
+  fields: [
+    { name: 'id', type: 'int' },
+    { name: 'cat_id', type: 'int' },
+    { name: 'program_id', type: 'int' },
+    'name',
+  ]
+});
+
 /**
  * Data Stores
  */
@@ -204,6 +217,7 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
+  autoLoad: true,
   storeId: 'DocumentQueueCategoryStore',
   model: 'DocumentQueueCategory',
   proxy: {
@@ -400,6 +414,30 @@ Ext.create('Ext.data.Store', {
   }
 });
 
+Ext.create('Ext.data.Store', {
+  storeId: 'WatchedFilingCatStore',
+  model: 'WatchedFilingCat',
+  proxy: {
+    api:{
+      create: '/admin/watched_filing_cats/create',
+      read: '/admin/watched_filing_cats/read',
+      update: '/admin/watched_filing_cats/edit',
+      destroy: '/admin/watched_filing_cats/destroy'
+    },
+    type: 'ajax',
+    reader: {
+      type: 'json',
+      root: 'cats'
+    },
+    writer: {
+      allowSingle: false,
+      encode: true,
+      root: 'cats',
+      writeAllFields: false
+    }
+  }
+});
+
 /**
  * Variable Declarations
  */
@@ -463,6 +501,7 @@ states = {
  * registrationForm
  */
 registrationForm = Ext.create('Ext.form.Panel', {
+  autoScroll: true,
   height: 406,
   items: [{
     border: 0,
@@ -664,12 +703,12 @@ registrationForm = Ext.create('Ext.form.Panel', {
       labelWidth: 375,
       items: [{
         boxLabel: 'Yes',
-        name: 'show_in_dash',
+        name: 'paper_forms',
         inputValue: '1',
         checked: true
       }, {
         boxLabel: 'No',
-        name: 'show_in_dash',
+        name: 'paper_forms',
         inputValue: '0'
       }]
     }]
@@ -688,14 +727,78 @@ registrationForm = Ext.create('Ext.form.Panel', {
       labelWidth: 375,
       items: [{
         boxLabel: 'Yes',
-        name: 'show_in_dash',
+        name: 'download_docs',
         inputValue: '1',
         checked: true
       }, {
         boxLabel: 'No',
-        name: 'show_in_dash',
+        name: 'download_docs',
         inputValue: '0'
       }]
+    }]
+  }, {
+    xtype: 'fieldcontainer',
+    height: 50,
+    width: 500,
+    layout: {
+      align: 'stretch',
+      type: 'vbox'
+    },
+    items: [{
+      xtype: 'radiogroup',
+      fieldLabel: 'Will this enrollment require users to upload documents?',
+      items: [{
+        boxLabel: 'Yes',
+        name: 'upload_docs',
+        inputValue: '1',
+        checked: true
+      }, {
+        boxLabel: 'No',
+        name: 'upload_docs',
+        inputValue: '0'
+      }],
+      labelAlign: 'top',
+      labelWidth: 375,
+      listeners: {
+        change: function (cbgroup, newVal, oldVal) {
+          var container = this.up('form').down('#documentQueueCategoryContainer'),
+            field = this.up('form').down('#documentQueueCategoryField');
+
+          if (typeof newVal.upload_docs !== "string") {
+            return;
+          } else {
+            if (newVal.upload_docs === '1') {
+              container.setVisible(true);
+              container.getEl().highlight('C9DFEE', { duration: 1000 });
+            } else {
+              container.setVisible(false);
+            }
+          }
+        }
+      }
+    }]
+  }, {
+    xtype: 'fieldcontainer',
+    height: 24,
+    id: 'documentQueueCategoryContainer',
+    width: 350,
+    layout: {
+      align: 'stretch',
+      type: 'vbox'
+    },
+    items: [{
+      xtype: 'combo',
+      allowBlank: false,
+      displayField: 'name',
+      fieldLabel: 'Document Queue Category',
+      id: 'documentQueueCategoryField',
+      labelWidth: 175,
+      name: 'queue_category_id',
+      queryMode: 'local',
+      store: 'DocumentQueueCategoryStore',
+      value: '',
+      valueField: 'id',
+      width: 200
     }]
   }, {
     xtype: 'hiddenfield',
@@ -754,17 +857,25 @@ stepTree = Ext.create('Ext.panel.Panel', {
         handler: function () {
           var programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
             program = Ext.data.StoreManager.lookup('ProgramStore').first(),
-            root = programStepStore.getRootNode();
+            root = programStepStore.getRootNode(),
+            lastChild = root.lastChild;
 
           Ext.Msg.prompt('Module Name', 'What would you like to name this module?', function (btn, text) {
+            var module;
+
             if (btn === 'ok') {
-              root.appendChild({
+              module = {
                 expandable: true,
                 expanded: true,
                 leaf: false,
                 name: text,
                 program_id: program.data.id
-              });
+              };
+              if (lastChild && lastChild.data.name === 'Upload Docs') {
+                root.insertBefore(module, lastChild);
+              } else {
+                root.appendChild(module);
+              }
             }
           });
         }
@@ -897,7 +1008,7 @@ stepTree = Ext.create('Ext.panel.Panel', {
           }, {
             lcase: 'media', ucase: 'Media'
           }, {
-            lcase: 'download', ucase: 'Document Download'
+            lcase: 'upload', ucase: 'Document Upload'
           }]
         }),
         value: '',
@@ -951,7 +1062,7 @@ stepTree = Ext.create('Ext.panel.Panel', {
             lcase: 'url', ucase: 'Website URL'
           }]
         }),
-        value: '',
+        value: null,
         valueField: 'lcase'
       }]
     }, {
@@ -978,7 +1089,7 @@ stepTree = Ext.create('Ext.panel.Panel', {
       }]
     }],
     buttons: [{
-      id: 'builderSaveBtn',
+      id: 'stepSaveBtn',
       text: 'Save',
       handler: function () {
         var formPanel = this.up('form'),
@@ -994,6 +1105,12 @@ stepTree = Ext.create('Ext.panel.Panel', {
           vals = form.getValues();
           vals.leaf = true;
           vals.program_id = program.data.id;
+
+          if (!selectedModule) {
+            Ext.Msg.alert('Please select a module',
+                'Please select a module to add steps to');
+            return false;
+          }
 
           if (selectedModule.isLeaf()) { selectedModule = selectedModule.parentNode; }
 
@@ -1022,6 +1139,21 @@ stepTree = Ext.create('Ext.panel.Panel', {
                   }
                 });
               }
+              break;
+
+            case 'upload':
+              var root = treePanel.getRootNode(),
+                docUploadStep;
+
+              docUploadStep = root.appendChild({
+                expandable: true,
+                expanded: true,
+                leaf: false,
+                name: 'Upload Docs',
+                program_id: program.data.id
+              });
+
+              docUploadStep.appendChild(vals);
               break;
 
             default:
@@ -1055,6 +1187,19 @@ stepTree = Ext.create('Ext.panel.Panel', {
     task.delay(2500);
   },
   process: function () {
+    var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
+      program = programStore.first(),
+      treePanel = this.down('treepanel'),
+      root = treePanel.getRootNode();
+
+    if (program.data.upload_docs) {
+      if (root.lastChild.data.name !== 'Upload Docs') {
+        Ext.Msg.alert('Error',
+            'You have specified this program requires documents to be uploaded, but have not added the required step');
+        return false;
+      }
+    }
+
     Ext.data.StoreManager.lookup('ProgramStepStore').sync();
     return true;
   }
@@ -1081,12 +1226,34 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
     }],
     listeners: {
       itemdblclick: function (view, rec) {
-        var window;
+        var window,
+          programFormFieldStore = Ext.data.StoreManager.lookup('ProgramFormFieldStore');
+
+        programFormFieldStore.load({
+          params: {
+            program_step_id: rec.data.id
+          }
+        });
 
         if (!window) {
           window = Ext.widget('window', {
-            height: 406,
+            height: 466,
+            dockedItems: [{
+              xtype: 'toolbar',
+              dock: 'bottom',
+              items: [{
+                xtype: 'button',
+                text: 'Save & Close',
+                handler: function () {
+                  var win = this.up('window');
+
+                  programFormFieldStore.sync();
+                  win.close();
+                }
+              }]
+            }],
             items: [{
+              xtype: 'panel',
               bodyPadding: 0,
               height: 406,
               layout: 'border',
@@ -1477,11 +1644,17 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
     }
   }],
   preprocess: function () {
-    var program = Ext.data.StoreManager.lookup('ProgramStore').first(),
+    var me = this,
+      program = Ext.data.StoreManager.lookup('ProgramStore').first(),
       programStepFormStore = Ext.data.StoreManager.lookup('ProgramStepFormStore'),
       grid = Ext.getCmp('ProgramFormStepGrid'),
       task = new Ext.util.DelayedTask(function () {
         programStepFormStore.load({
+          callback: function (recs, ops, success) {
+            if (!recs) {
+              navigate(me.up('panel'), 'next');
+            }
+          },
           params: {
             program_id: program.data.id
           }
@@ -1519,6 +1692,13 @@ uploadStep = Ext.create('Ext.panel.Panel', {
       dataIndex: 'name',
       flex: 1
     }, {
+      header: 'Type',
+      dataIndex: 'type',
+      flex: 1,
+      renderer: function (value) {
+        return value.humanize();
+      }
+    }, {
       header: 'Template',
       dataIndex: 'template'
     }, {
@@ -1551,15 +1731,15 @@ uploadStep = Ext.create('Ext.panel.Panel', {
       dock: 'top',
       items: [{
         icon: '/img/icons/add.png',
-        id: 'addFieldBtn',
+        id: 'addDocumentBtn',
         text: 'Add Document',
         handler: function () {
         }
       }, {
         disabled: true,
         icon: '/img/icons/delete.png',
-        id: 'deleteFieldBtn',
-        text: 'Delete Field',
+        id: 'deleteDocumentBtn',
+        text: 'Delete Document',
         handler: function () {
         }
       }]
@@ -1573,9 +1753,36 @@ uploadStep = Ext.create('Ext.panel.Panel', {
       fieldLabel: 'Name',
       name: 'name'
     }, {
-      xtype: 'filefield',
+      xtype: 'combo',
       allowBlank: false,
+      displayField: 'ucase',
+      fieldLabel: 'Type',
+      id: 'documentType',
+      listeners: {
+        select: function(combo, records, Eopts) {
+        }
+      },
+      name: 'type',
+      queryMode: 'local',
+      store: Ext.create('Ext.data.Store', {
+        fields: ['lcase', 'ucase'],
+        data: [{
+          lcase: 'certificate', ucase: 'Certificate'
+        }, {
+          lcase: 'multisnapshot', ucase: 'Multi-Snapshot'
+        }, {
+          lcase: 'pdf', ucase: 'Enrollment Forms'
+        }, {
+          lcase: 'upload', ucase: 'Document Upload'
+        }]
+      }),
+      valueField: 'lcase',
+      value: null
+    }, {
+      xtype: 'filefield',
+      allowBlank: true,
       fieldLabel: 'Document',
+      id: 'documentUploadField',
       name: 'document'
     }, {
       xtype: 'combo',
@@ -1654,185 +1861,51 @@ uploadStep = Ext.create('Ext.panel.Panel', {
       allowBlank: false
     }],
     buttons: [{
-        id: 'builderSaveBtn',
+        id: 'documentSaveBtn',
         text: 'Save',
         handler: function () {
-          var formPanel = this.up('form'),
-            form = formPanel.getForm();
+          var formPanel = Ext.getCmp('uploadStepForm'),
+            form = formPanel.getForm(),
+            uploadField = formPanel.down('#documentUploadField'),
+            programDocumentStore = Ext.data.StoreManager.lookup('ProgramDocumentStore'),
+            program = Ext.data.StoreManager.lookup('ProgramStore').first();
 
           if (form.isValid()) {
             vals = form.getValues();
-            form.submit({
-              url: '/admin/programs/upload_media',
-              waitMsg: 'Uploading Media...',
-              scope: this,
-              success: function (form, action) {
-                form.reset();
+            vals.program_id = program.data.id;
 
-                media = {
-                  location: action.result.url,
-                  type: vals.media_type
-                };
+            if (uploadField.getValue()) {
+              form.submit({
+                url: '/admin/program_documents/upload',
+                waitMsg: 'Uploading Document...',
+                success: function (form, action) {
+                  form.reset();
+                  vals.template = action.result.url;
+                  programDocumentStore.add(vals);
+                },
+                failure: function (form, action) {
+                  Ext.Msg.alert('Could not upload file', action.result.msg);
+                }
+              });
+            } else {
+              form.reset();
+              programDocumentStore.add(vals);
+            }
 
-                programStore.getProxy().extraParams = {
-                  media: Ext.JSON.encode(media)
-                };
-
-                programStore.add(vals);
-              },
-              failure: function (form, action) {
-                Ext.Msg.alert('Could not upload file', action.result.msg);
-              }
-            });
           }
       }
     }, {
       disabled: true,
       formBind: true,
       hidden: true,
-      id: 'updateBtn',
+      id: 'documentUpdateBtn',
       text: 'Update',
       handler: function () {
       }
     }]
   }],
-  preprocess: function () {
-    var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
-      programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
-      programId,
-      statusBar = Ext.getCmp('statusBar');
-
-    statusBar.setText('Step 2 of 5');
-
-    task = new Ext.util.DelayedTask(function () {
-      programId = programStore.first().data.id;
-      programStepStore.load({
-        params: {
-          program_id: programId
-        }
-      });
-    });
-    task.delay(2500);
-  },
   process: function () {
-    var programFormFieldStore = Ext.data.StoreManager.lookup('ProgramFormFieldStore');
-
-    programFormFieldStore.sync();
     return true;
-  }
-});
-
-/**
- * filingCategories
- */
-filingCategories = Ext.create('Ext.form.Panel', {
-  height: 406,
-  items: [{
-    border: 0,
-    html: '<h1>Where would you like to file the orientation certificate?</h1>',
-    margin: '0 0 10'
-  }, {
-    xtype: 'combo',
-    allowBlank: false,
-    displayField: 'name',
-    fieldLabel: 'Filing Category 1',
-    //id: 'cat1Name',
-    labelWidth: 150,
-    listConfig: {
-        getInnerTpl: function() {
-            return '<div>{img}{name}</div>';
-        }
-    },
-    listeners: {
-      select: function(combo, records, Eopts) {
-        var store = Ext.data.StoreManager.lookup('Cat2Store');
-
-        if(records[0]) {
-          Ext.getCmp('cat2Name').disable();
-          Ext.getCmp('cat2Name').reset();
-          Ext.getCmp('cat3Name').disable();
-          Ext.getCmp('cat3Name').reset();
-          store.load({params: {parentId: records[0].data.id}});
-        }
-
-      }
-    },
-    name: 'cat_1',
-    queryMode: 'local',
-    store: 'Cat1Store',
-    valueField: 'id',
-    value: null
-  },{
-    xtype: 'combo',
-    fieldLabel: 'Filing Category 2',
-    name: 'cat_2',
-    //id: 'cat2Name',
-    disabled: true,
-    store: 'Cat2Store',
-    displayField: 'name',
-    valueField: 'id',
-    queryMode: 'local',
-    value: null,
-    labelWidth: 150,
-    listConfig: {
-        getInnerTpl: function() {
-            return '<div>{img}{name}</div>';
-        }
-    },
-    allowBlank: false,
-    listeners: {
-      select: function(combo, records, Eopts) {
-        var store = Ext.data.StoreManager.lookup('Cat3Store');
-
-        if(records[0]) {
-          Ext.getCmp('cat3Name').disable();
-          Ext.getCmp('cat3Name').reset();
-          store.load({params: {parentId: records[0].data.id}});
-        }
-      }
-    }
-  },{
-    fieldLabel: 'Filing Category 3',
-    name: 'cat_3',
-    //id: 'cat3Name',
-    xtype: 'combo',
-    store: 'Cat3Store',
-    disabled: true,
-    displayField: 'name',
-    valueField: 'id',
-    queryMode: 'local',
-    value: null,
-    labelWidth: 150,
-    listConfig: {
-        getInnerTpl: function() {
-            return '<div>{img}{name}</div>';
-        }
-    },
-    allowBlank: false
-  }],
-  process: function () {
-    var form = this.getForm(),
-      programDocumentStore = Ext.data.StoreManager.lookup('ProgramDocumentStore'),
-      programStore = Ext.data.StoreManager.lookup('ProgramStore'),
-      programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
-      program,
-      programStep,
-      vals;
-
-    if (form.isValid()) {
-      vals = form.getValues();
-      program = programStore.first();
-      programStep = programStepStore.findRecord('type', /form/);
-
-      vals.template = 'atlas_cert.pdf';
-      vals.name = program.data.name + " Orientation Certificate";
-      vals.type = 'certificate';
-      vals.program_id = program.data.id;
-      vals.program_step_id = programStep.data.id;
-      programDocumentStore.add(vals);
-
-      return true;
-    }
   }
 });
 
@@ -2173,7 +2246,6 @@ Ext.onReady(function () {
       stepTree,
       formBuilderContainer,
       uploadStep,
-      //filingCategories,
       instructions,
       emails
     ],
