@@ -804,17 +804,25 @@ stepTree = Ext.create('Ext.panel.Panel', {
         handler: function () {
           var programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
             program = Ext.data.StoreManager.lookup('ProgramStore').first(),
-            root = programStepStore.getRootNode();
+            root = programStepStore.getRootNode(),
+            lastChild = root.lastChild;
 
           Ext.Msg.prompt('Module Name', 'What would you like to name this module?', function (btn, text) {
+            var module;
+
             if (btn === 'ok') {
-              root.appendChild({
+              module = {
                 expandable: true,
                 expanded: true,
                 leaf: false,
                 name: text,
                 program_id: program.data.id
-              });
+              };
+              if (lastChild && lastChild.data.name === 'Upload Docs') {
+                root.insertBefore(module, lastChild);
+              } else {
+                root.appendChild(module);
+              }
             }
           });
         }
