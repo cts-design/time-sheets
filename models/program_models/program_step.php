@@ -64,6 +64,9 @@ class ProgramStep extends AppModel {
 			return $return;
 		}
 		$nextStep = Set::extract('/ProgramStep[lft=' . ($currentStep[0]['rght'] + 1) .']/.[:first]', $program);
+		if(empty($nextStep)) {
+			$nextStep = Set::extract('/ProgramStep[lft=' . ($currentStep[0]['rght'] + 2) .']/.[:first]', $program);
+		}
 		while(isset($nextStep[0]) && in_array($nextStep['0']['id'], $completedStepIds)) {
 			$nextStep = Set::extract('/ProgramStep[lft=' . ($nextStep[0]['rght'] + 1) .']/.[:first]', $program);
 		}
