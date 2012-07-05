@@ -1148,17 +1148,22 @@ stepTree = Ext.create('Ext.panel.Panel', {
 
             case 'upload':
               var root = treePanel.getRootNode(),
+                lastChild = root.lastChild,
                 docUploadStep;
 
-              docUploadStep = root.appendChild({
-                expandable: true,
-                expanded: true,
-                leaf: false,
-                name: 'Upload Docs',
-                program_id: program.data.id
-              });
+              if (lastChild.data.name === 'Upload Docs') {
+                lastChild.appendChild(vals);
+              } else {
+                docUploadStep = root.appendChild({
+                  expandable: true,
+                  expanded: true,
+                  leaf: false,
+                  name: 'Upload Docs',
+                  program_id: program.data.id
+                });
 
-              docUploadStep.appendChild(vals);
+                docUploadStep.appendChild(vals);
+              }
               break;
 
             default:
