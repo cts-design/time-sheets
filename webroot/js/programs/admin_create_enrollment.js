@@ -601,6 +601,10 @@ registrationForm = Ext.create('Ext.form.Panel', {
     name: 'type',
     value: 'enrollment'
   }, {
+    xtype: 'hiddenfield',
+    name: 'approval_required',
+    value: 1
+  }, {
     xtype: 'fieldcontainer',
     height: 24,
     width: 300,
