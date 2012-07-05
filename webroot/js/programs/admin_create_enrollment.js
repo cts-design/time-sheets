@@ -1899,8 +1899,10 @@ uploadStep = Ext.create('Ext.panel.Panel', {
           var formPanel = Ext.getCmp('uploadStepForm'),
             form = formPanel.getForm(),
             uploadField = formPanel.down('#documentUploadField'),
-            programDocumentStore = Ext.data.StoreManager.lookup('ProgramDocumentStore'),
-            program = Ext.data.StoreManager.lookup('ProgramStore').first();
+            sm = Ext.data.StoreManager,
+            programDocumentStore = sm.lookup('ProgramDocumentStore'),
+            programEmailStore = sm.lookup('ProgramEmailStore'),
+            program = sm.lookup('ProgramStore').first();
 
           if (form.isValid()) {
             vals = form.getValues();
@@ -1914,6 +1916,15 @@ uploadStep = Ext.create('Ext.panel.Panel', {
                   form.reset();
                   vals.template = action.result.url;
                   programDocumentStore.add(vals);
+                  programEmailStore.add({
+                    program_id: vals.program_id,
+                    to: null,
+                    from: null,
+                    subject: vals.name + ' Email',
+                    body: 'Email for ' + vals.name,
+                    type: 'document',
+                    name: vals.name + ' Document Email'
+                  });
                 },
                 failure: function (form, action) {
                   Ext.Msg.alert('Could not upload file', action.result.msg);
@@ -1922,8 +1933,16 @@ uploadStep = Ext.create('Ext.panel.Panel', {
             } else {
               form.reset();
               programDocumentStore.add(vals);
+              programEmailStore.add({
+                program_id: vals.program_id,
+                to: null,
+                from: null,
+                subject: vals.name + ' Email',
+                body: 'Email for ' + vals.name,
+                type: 'document',
+                name: vals.name + ' Document Email'
+              });
             }
-
           }
       }
     }, {
@@ -2135,37 +2154,15 @@ emails = Ext.create('Ext.panel.Panel', {
     }]
   }],
   preprocess: function () {
-    var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
-      programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
-      programEmailStore = Ext.data.StoreManager.lookup('ProgramEmailStore'),
-      program = programStore.first(),
-      programId = program.data.id,
-      mediaStep,
-      quizStep;
-
-    mediaStep = programStepStore.findRecord('type', /^media$/gi);
-    quizStep = programStepStore.findRecord('type', /^form$/gi);
+    var program = Ext.data.StoreManager.lookup('ProgramStore').first(),
+      programEmailStore = Ext.data.StoreManager.lookup('ProgramEmailStore');
 
     programEmailStore.each(function (rec) {
-      rec.set({
-        program_id: programId
-      });
-    });
-    // add our step emails
-    programEmailStore.add({
-      program_id: programId,
-      program_step_id: mediaStep.data.id,
-      name: program.data.name + ' Orientation Media Step Email',
-      type: 'step',
-      body: 'Your Orientation media step email',
-      from: null
-    }, {
-      program_id: programId,
-      program_step_id: quizStep.data.id,
-      name: program.data.name + ' Orientation Quiz Step Email',
-      type: 'step',
-      body: 'Your Orientation quiz step email',
-      from: null
+      if (!rec.data.program_id) {
+        rec.set({
+          program_id: program.data.id
+        });
+      }
     });
   },
   process: function () {

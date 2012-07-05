@@ -73,7 +73,7 @@ Ext.onReady(function () {
     }
   }];
 
-  if (roleId === 3) {
+  if (roleId === 2) {
     menuItems.push({
       text: 'Enrollment',
       handler: function () {
