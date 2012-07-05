@@ -884,25 +884,17 @@ stepTree = Ext.create('Ext.panel.Panel', {
         handler: function () {
           var programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
             program = Ext.data.StoreManager.lookup('ProgramStore').first(),
-            root = programStepStore.getRootNode(),
-            lastChild = root.lastChild;
+            root = programStepStore.getRootNode();
 
           Ext.Msg.prompt('Module Name', 'What would you like to name this module?', function (btn, text) {
-            var module;
-
             if (btn === 'ok') {
-              module = {
+              root.appendChild({
                 expandable: true,
                 expanded: true,
                 leaf: false,
                 name: text,
                 program_id: program.data.id
-              };
-              if (lastChild && lastChild.data.name === 'Upload Docs') {
-                root.insertBefore(module, lastChild);
-              } else {
-                root.appendChild(module);
-              }
+              });
             }
           });
         }
@@ -1169,23 +1161,9 @@ stepTree = Ext.create('Ext.panel.Panel', {
               break;
 
             case 'upload':
-              var root = treePanel.getRootNode(),
-                lastChild = root.lastChild,
-                docUploadStep;
-
-              if (lastChild.data.name === 'Upload Docs') {
-                lastChild.appendChild(vals);
-              } else {
-                docUploadStep = root.appendChild({
-                  expandable: true,
-                  expanded: true,
-                  leaf: false,
-                  name: 'Upload Docs',
-                  program_id: program.data.id
-                });
-
-                docUploadStep.appendChild(vals);
-              }
+              treePanel.getRootNode()
+                       .lastChild
+                       .appendChild(vals);
               break;
 
             default:
@@ -1222,10 +1200,10 @@ stepTree = Ext.create('Ext.panel.Panel', {
     var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
       program = programStore.first(),
       treePanel = this.down('treepanel'),
-      root = treePanel.getRootNode();
+      lastStep = treePanel.getRootNode().lastChild.lastChild;
 
     if (program.data.upload_docs) {
-      if (root.lastChild.data.name !== 'Upload Docs') {
+      if (!lastStep || lastStep.data.type !== 'upload') {
         Ext.Msg.alert('Error',
             'You have specified this program requires documents to be uploaded, but have not added the required step');
         return false;
