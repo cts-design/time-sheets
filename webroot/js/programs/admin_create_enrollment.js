@@ -2096,6 +2096,7 @@ emails = Ext.create('Ext.panel.Panel', {
   layout: 'border',
   items: [{
     xtype: 'grid',
+    autoScroll: true,
     frame: false,
     height: 156,
     id: 'emailGrid',
