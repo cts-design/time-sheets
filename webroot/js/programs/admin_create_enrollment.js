@@ -773,30 +773,6 @@ registrationForm = Ext.create('Ext.form.Panel', {
     },
     items: [{
       xtype: 'radiogroup',
-      fieldLabel: 'Will this enrollment have forms for the user to download?',
-      labelAlign: 'top',
-      labelWidth: 375,
-      items: [{
-        boxLabel: 'Yes',
-        name: 'download_docs',
-        inputValue: '1',
-        checked: true
-      }, {
-        boxLabel: 'No',
-        name: 'download_docs',
-        inputValue: '0'
-      }]
-    }]
-  }, {
-    xtype: 'fieldcontainer',
-    height: 50,
-    width: 500,
-    layout: {
-      align: 'stretch',
-      type: 'vbox'
-    },
-    items: [{
-      xtype: 'radiogroup',
       fieldLabel: 'Will this enrollment require users to upload documents?',
       items: [{
         boxLabel: 'Yes',
