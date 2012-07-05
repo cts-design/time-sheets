@@ -12,33 +12,36 @@ class ProgramDocumentsController extends AppController {
 		$this->loadModel('WatchedFilingCat');
 		$document = json_decode($this->params['form']['program_documents'], true);
 
-		$this->data['ProgramDocument'] = $document;
+		if ($document['type'] === 'upload') {
+			if ($document['cat_3']) {
+				$watchedCatId = $document['cat_3'];
+			} else if ($document['cat_2']) {
+				$watchedCatId = $document['cat_2'];
+			} else if ($document['cat_1']) {
+				$watchedCatId = $document['cat_1'];
+			}
 
-		if ($document['cat_3']) {
-			$watchedCatId = $document['cat_3'];
-		} else if ($document['cat_2']) {
-			$watchedCatId = $document['cat_2'];
-		} else if ($document['cat_1']) {
-			$watchedCatId = $document['cat_1'];
-		}
+			// get name of cat
+			$watchedFilingCat['WatchedFilingCat'] = $document;
+			$name = strtolower(Inflector::slug($watchedFilingCat['WatchedFilingCat']['name']));
+			$watchedFilingCat['WatchedFilingCat']['name'] = $name;
+			$watchedFilingCat['WatchedFilingCat']['cat_id'] = $watchedCatId;
 
-		// get name of cat
-
-		$watchedFilingCat['WatchedFilingCat'] = array(
-			'cat_id' => $watchedCatId,
-			'program_id' => $document['program_id'],
-			'name' => 'Cat Name'
-		);
-
-		$programDocument  = $this->ProgramDocument->save($this->data);
-
-		if ($programDocument) {
-			$this->WatchedFilingCat->save($watchedFilingCat);
-			$data['program_documents'] = $programDocument['ProgramDocument'];
-			$data['success'] = true;
+			$saved = $this->WatchedFilingCat->save($watchedFilingCat);
+			$watchedFilingCat['WatchedFilingCat']['id'] = $this->WatchedFilingCat->id;
+			$programData = $watchedFilingCat['WatchedFilingCat'];
 		} else {
-			$data['success'] = false;
+			$this->data['ProgramDocument'] = $document;
+			$saved  = $this->ProgramDocument->save($this->data);
+			$programData = $saved['ProgramDocument'];
 		}
+
+			if ($saved) {
+				$data['program_documents'] = $programData;
+				$data['success'] = true;
+			} else {
+				$data['success'] = false;
+			}
 
 		$this->set('data', $data);
 		$this->render(null, null, '/elements/ajaxreturn');
