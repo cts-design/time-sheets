@@ -1961,6 +1961,36 @@ uploadStep = Ext.create('Ext.panel.Panel', {
     }]
   }],
   process: function () {
+    var program = Ext.data.StoreManager.lookup('ProgramStore').first(),
+      programDocumentStore = Ext.data.StoreManager.lookup('ProgramDocumentStore'),
+      esignDownload,
+      esignUpload;
+
+    if (program.data.form_esign_required) {
+      esignDownload = programDocumentStore.findBy(function (rec, id) {
+        var name = rec.get('name').toLowerCase(),
+          type = rec.get('type').toLowerCase();
+
+        if (name === 'esign' && type === 'download') {
+          return true;
+        }
+      });
+
+      esignUpload = programDocumentStore.findBy(function (rec, id) {
+        var name = rec.get('name').toLowerCase(),
+          type = rec.get('type').toLowerCase();
+
+        if (name === 'esign' && type === 'upload') {
+          return true;
+        }
+      });
+
+      if (esignDownload === -1 || esignUpload === -1) {
+        Ext.Msg.alert('Esign', 'You specified Esign should be required, but did not define the required Esign documents');
+        return false;
+      }
+    }
+
     return true;
   }
 });
