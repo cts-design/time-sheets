@@ -54,13 +54,23 @@ class ProgramStepsController extends AppController {
 	}
 
 	public function admin_read() {
+		$programId = null;
+
 		if (isset($this->params['url']['program_id'])) {
+			$programId = $this->params['url']['program_id'];
+		} else if (isset($this->params['form']['program_id'])) {
+			$programId = $this->params['form']['program_id'];
+		}
+
+		if ($programId) {
 			$steps = $this->ProgramStep->find('all', array(
-				'conditions' => array('ProgramStep.program_id' => $this->params['url']['program_id'])
+				'conditions' => array('ProgramStep.program_id' => $programId)
 			));
 		} else {
 			$steps = $this->ProgramStep->find('all');
 		}
+
+		$this->log($this->params, 'debug');
 
 		if ($steps) {
 			$data['success'] = true;

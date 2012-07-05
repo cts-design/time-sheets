@@ -1027,7 +1027,7 @@ stepTree = Ext.create('Ext.panel.Panel', {
           }, {
             lcase: 'media', ucase: 'Media'
           }, {
-            lcase: 'upload', ucase: 'Document Upload'
+            lcase: 'required_docs', ucase: 'Document Upload'
           }]
         }),
         value: '',
@@ -1115,8 +1115,9 @@ stepTree = Ext.create('Ext.panel.Panel', {
           form = formPanel.getForm(),
           treePanel = formPanel.up('panel').down('treepanel'),
           selectedModule = treePanel.getSelectionModel().getSelection()[0],
-          programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
-          program = Ext.data.StoreManager.lookup('ProgramStore').first(),
+          sm = Ext.data.StoreManager,
+          programStepStore = sm.lookup('ProgramStepStore'),
+          program = sm.lookup('ProgramStore').first(),
           vals,
           processStepType;
 
@@ -2044,7 +2045,28 @@ instructions = Ext.create('Ext.panel.Panel', {
     var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
       programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
       programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
-      program = programStore.first();
+      program = programStore.first(),
+      rootNode = programStepStore.tree.root;
+
+    Ext.Ajax.request({
+      url: '/admin/program_steps/read',
+      params: {
+        program_id: program.data.id
+      },
+      success: function (response) {
+        var res = Ext.JSON.decode(response.responseText);
+        Ext.Object.each(res.program_steps, function (key, value, me) {
+          if (value.type) {
+            programInstructionStore.add({
+              program_id: program.data.id,
+              program_step_id: value.id,
+              text: 'Instructions for ' + value.name + ' step',
+              type: value.type.underscore() + '_step'
+            });
+          }
+        });
+      }
+    });
 
     programInstructionStore.each(function (rec) {
       rec.set({
