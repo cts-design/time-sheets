@@ -359,7 +359,12 @@ Ext.create('Ext.data.Store', {
   data: [
     { program_id: 0, text: 'Default text Main', type: 'main', created: null, modified: null },
     { program_id: 0, text: 'Default text Expired', type: 'expired', created: null, modified: null },
-    { program_id: 0, text: 'Default text Complete', type: 'complete', created: null, modified: null }
+    { program_id: 0, text: 'Default text Complete', type: 'complete', created: null, modified: null },
+    { program_id: 0, text: 'Default text Esign', type: 'esign', created: null, modified: null },
+    { program_id: 0, text: 'Default text User Acceptance', type: 'acceptance', created: null, modified: null },
+    { program_id: 0, text: 'Default text Pending Document Review', type: 'pending_document_review', created: null, modified: null },
+    { program_id: 0, text: 'Default text Drop-off Documents', type: 'drop_off_documents', created: null, modified: null },
+    { program_id: 0, text: 'Default text Upload Documents', type: 'upload_documents', created: null, modified: null }
   ],
   storeId: 'ProgramInstructionStore',
   model: 'ProgramInstruction',
