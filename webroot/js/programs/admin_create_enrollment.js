@@ -524,7 +524,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       xtype: 'textfield',
       allowBlank: false,
       fieldLabel: 'Name',
-      labelWidth: 175,
+      labelWidth: 190,
       name: 'name'
     }]
   }, {
@@ -537,8 +537,54 @@ registrationForm = Ext.create('Ext.form.Panel', {
     },
     items: [{
       xtype: 'radiogroup',
+      fieldLabel: 'User Acknowledgement Required?',
+      labelWidth: 190,
+      items: [{
+        boxLabel: 'Yes',
+        name: 'user_acceptance_required',
+        inputValue: '1'
+      }, {
+        boxLabel: 'No',
+        name: 'user_acceptance_required',
+        inputValue: '0',
+        checked: true
+      }]
+    }]
+  }, {
+    xtype: 'fieldcontainer',
+    height: 22,
+    width: 300,
+    layout: {
+      align: 'stretch',
+      type: 'vbox'
+    },
+    items: [{
+      xtype: 'radiogroup',
+      fieldLabel: 'Esign Required?',
+      labelWidth: 190,
+      items: [{
+        boxLabel: 'Yes',
+        name: 'form_esign_required',
+        inputValue: '1'
+      }, {
+        boxLabel: 'No',
+        name: 'form_esign_required',
+        inputValue: '0',
+        checked: true
+      }]
+    }]
+  }, {
+    xtype: 'fieldcontainer',
+    height: 22,
+    width: 300,
+    layout: {
+      align: 'stretch',
+      type: 'vbox'
+    },
+    items: [{
+      xtype: 'radiogroup',
       fieldLabel: 'Show in Customer Dashboard?',
-      labelWidth: 175,
+      labelWidth: 190,
       items: [{
         boxLabel: 'Yes',
         name: 'show_in_dash',
@@ -557,7 +603,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
   }, {
     xtype: 'fieldcontainer',
     height: 24,
-    width: 250,
+    width: 300,
     layout: {
       align: 'stretch',
       type: 'vbox'
@@ -567,7 +613,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       allowBlank: false,
       displayField: 'ucase',
       fieldLabel: 'Registration Type',
-      labelWidth: 175,
+      labelWidth: 190,
       name: 'atlas_registration_type',
       queryMode: 'local',
       store: Ext.create('Ext.data.Store', {
@@ -598,7 +644,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       xtype: 'numberfield',
       allowBlank: false,
       fieldLabel: 'Responses Expire In',
-      labelWidth: 175,
+      labelWidth: 190,
       minValue: 30,
       name: 'response_expires_in',
       value: 30,
@@ -621,7 +667,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
     items: [{
       xtype: 'radiogroup',
       fieldLabel: 'Expiration resets on user login',
-      labelWidth: 175,
+      labelWidth: 190,
       items: [{
         boxLabel: 'Yes',
         name: 'rolling_registration',
@@ -651,7 +697,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       allowBlank: false,
       displayField: 'ucase',
       fieldLabel: 'Send expiring soon emails',
-      labelWidth: 175,
+      labelWidth: 190,
       name: 'send_expiring_soon',
       queryMode: 'local',
       store: Ext.create('Ext.data.Store', {
@@ -686,7 +732,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       xtype: 'textfield',
       allowBlank: false,
       fieldLabel: 'Confirmation Id Length',
-      labelWidth: 175,
+      labelWidth: 190,
       name: 'confirmation_id_length'
     }]
   }, {
@@ -1990,29 +2036,12 @@ instructions = Ext.create('Ext.panel.Panel', {
     var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
       programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
       programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
-      program = programStore.first(),
-      programId = program.data.id,
-      mediaStep,
-      quizStep;
-
-    mediaStep = programStepStore.findRecord('type', /^media$/gi);
-    quizStep = programStepStore.findRecord('type', /^form$/gi);
+      program = programStore.first();
 
     programInstructionStore.each(function (rec) {
       rec.set({
-        program_id: programId
+        program_id: program.data.id
       });
-    });
-    programInstructionStore.add({
-      program_id: programId,
-      program_step_id: mediaStep.data.id,
-      text: program.data.name + ' Orientation Media Step Instructions',
-      type: 'Orientation Media Step Instructions'.underscore()
-    }, {
-      program_id: programId,
-      program_step_id: quizStep.data.id,
-      text: program.data.name + ' Orientation Quiz Step Instructions',
-      type: 'Orientation Quiz Step Instructions'.underscore()
     });
   },
   process: function () {
