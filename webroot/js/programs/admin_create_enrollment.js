@@ -359,7 +359,12 @@ Ext.create('Ext.data.Store', {
   data: [
     { program_id: 0, text: 'Default text Main', type: 'main', created: null, modified: null },
     { program_id: 0, text: 'Default text Expired', type: 'expired', created: null, modified: null },
-    { program_id: 0, text: 'Default text Complete', type: 'complete', created: null, modified: null }
+    { program_id: 0, text: 'Default text Complete', type: 'complete', created: null, modified: null },
+    { program_id: 0, text: 'Default text Esign', type: 'esign', created: null, modified: null },
+    { program_id: 0, text: 'Default text User Acceptance', type: 'acceptance', created: null, modified: null },
+    { program_id: 0, text: 'Default text Pending Document Review', type: 'pending_document_review', created: null, modified: null },
+    { program_id: 0, text: 'Default text Drop-off Documents', type: 'drop_off_documents', created: null, modified: null },
+    { program_id: 0, text: 'Default text Upload Documents', type: 'upload_documents', created: null, modified: null }
   ],
   storeId: 'ProgramInstructionStore',
   model: 'ProgramInstruction',
@@ -519,7 +524,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       xtype: 'textfield',
       allowBlank: false,
       fieldLabel: 'Name',
-      labelWidth: 175,
+      labelWidth: 190,
       name: 'name'
     }]
   }, {
@@ -532,8 +537,54 @@ registrationForm = Ext.create('Ext.form.Panel', {
     },
     items: [{
       xtype: 'radiogroup',
+      fieldLabel: 'User Acknowledgement Required?',
+      labelWidth: 190,
+      items: [{
+        boxLabel: 'Yes',
+        name: 'user_acceptance_required',
+        inputValue: '1'
+      }, {
+        boxLabel: 'No',
+        name: 'user_acceptance_required',
+        inputValue: '0',
+        checked: true
+      }]
+    }]
+  }, {
+    xtype: 'fieldcontainer',
+    height: 22,
+    width: 300,
+    layout: {
+      align: 'stretch',
+      type: 'vbox'
+    },
+    items: [{
+      xtype: 'radiogroup',
+      fieldLabel: 'Esign Required?',
+      labelWidth: 190,
+      items: [{
+        boxLabel: 'Yes',
+        name: 'form_esign_required',
+        inputValue: '1'
+      }, {
+        boxLabel: 'No',
+        name: 'form_esign_required',
+        inputValue: '0',
+        checked: true
+      }]
+    }]
+  }, {
+    xtype: 'fieldcontainer',
+    height: 22,
+    width: 300,
+    layout: {
+      align: 'stretch',
+      type: 'vbox'
+    },
+    items: [{
+      xtype: 'radiogroup',
       fieldLabel: 'Show in Customer Dashboard?',
-      labelWidth: 175,
+      labelWidth: 190,
       items: [{
         boxLabel: 'Yes',
         name: 'show_in_dash',
@@ -552,7 +603,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
   }, {
     xtype: 'fieldcontainer',
     height: 24,
-    width: 250,
+    width: 300,
     layout: {
       align: 'stretch',
       type: 'vbox'
@@ -562,7 +613,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       allowBlank: false,
       displayField: 'ucase',
       fieldLabel: 'Registration Type',
-      labelWidth: 175,
+      labelWidth: 190,
       name: 'atlas_registration_type',
       queryMode: 'local',
       store: Ext.create('Ext.data.Store', {
@@ -593,7 +644,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       xtype: 'numberfield',
       allowBlank: false,
       fieldLabel: 'Responses Expire In',
-      labelWidth: 175,
+      labelWidth: 190,
       minValue: 30,
       name: 'response_expires_in',
       value: 30,
@@ -616,7 +667,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
     items: [{
       xtype: 'radiogroup',
       fieldLabel: 'Expiration resets on user login',
-      labelWidth: 175,
+      labelWidth: 190,
       items: [{
         boxLabel: 'Yes',
         name: 'rolling_registration',
@@ -646,7 +697,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       allowBlank: false,
       displayField: 'ucase',
       fieldLabel: 'Send expiring soon emails',
-      labelWidth: 175,
+      labelWidth: 190,
       name: 'send_expiring_soon',
       queryMode: 'local',
       store: Ext.create('Ext.data.Store', {
@@ -681,7 +732,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       xtype: 'textfield',
       allowBlank: false,
       fieldLabel: 'Confirmation Id Length',
-      labelWidth: 175,
+      labelWidth: 190,
       name: 'confirmation_id_length'
     }]
   }, {
@@ -709,30 +760,6 @@ registrationForm = Ext.create('Ext.form.Panel', {
       }, {
         boxLabel: 'No',
         name: 'paper_forms',
-        inputValue: '0'
-      }]
-    }]
-  }, {
-    xtype: 'fieldcontainer',
-    height: 50,
-    width: 500,
-    layout: {
-      align: 'stretch',
-      type: 'vbox'
-    },
-    items: [{
-      xtype: 'radiogroup',
-      fieldLabel: 'Will this enrollment have forms for the user to download?',
-      labelAlign: 'top',
-      labelWidth: 375,
-      items: [{
-        boxLabel: 'Yes',
-        name: 'download_docs',
-        inputValue: '1',
-        checked: true
-      }, {
-        boxLabel: 'No',
-        name: 'download_docs',
         inputValue: '0'
       }]
     }]
@@ -1143,17 +1170,22 @@ stepTree = Ext.create('Ext.panel.Panel', {
 
             case 'upload':
               var root = treePanel.getRootNode(),
+                lastChild = root.lastChild,
                 docUploadStep;
 
-              docUploadStep = root.appendChild({
-                expandable: true,
-                expanded: true,
-                leaf: false,
-                name: 'Upload Docs',
-                program_id: program.data.id
-              });
+              if (lastChild.data.name === 'Upload Docs') {
+                lastChild.appendChild(vals);
+              } else {
+                docUploadStep = root.appendChild({
+                  expandable: true,
+                  expanded: true,
+                  leaf: false,
+                  name: 'Upload Docs',
+                  program_id: program.data.id
+                });
 
-              docUploadStep.appendChild(vals);
+                docUploadStep.appendChild(vals);
+              }
               break;
 
             default:
@@ -1690,7 +1722,10 @@ uploadStep = Ext.create('Ext.panel.Panel', {
     }, {
       header: 'Name',
       dataIndex: 'name',
-      flex: 1
+      flex: 1,
+      renderer: function (val) {
+        return val.humanize();
+      }
     }, {
       header: 'Type',
       dataIndex: 'type',
@@ -1769,11 +1804,13 @@ uploadStep = Ext.create('Ext.panel.Panel', {
         data: [{
           lcase: 'certificate', ucase: 'Certificate'
         }, {
-          lcase: 'multisnapshot', ucase: 'Multi-Snapshot'
-        }, {
-          lcase: 'pdf', ucase: 'Enrollment Forms'
+          lcase: 'download', ucase: 'Document Download'
         }, {
           lcase: 'upload', ucase: 'Document Upload'
+        }, {
+          lcase: 'pdf', ucase: 'Enrollment Form'
+        }, {
+          lcase: 'multisnapshot', ucase: 'Multi-Snapshot'
         }]
       }),
       valueField: 'lcase',
@@ -1867,8 +1904,10 @@ uploadStep = Ext.create('Ext.panel.Panel', {
           var formPanel = Ext.getCmp('uploadStepForm'),
             form = formPanel.getForm(),
             uploadField = formPanel.down('#documentUploadField'),
-            programDocumentStore = Ext.data.StoreManager.lookup('ProgramDocumentStore'),
-            program = Ext.data.StoreManager.lookup('ProgramStore').first();
+            sm = Ext.data.StoreManager,
+            programDocumentStore = sm.lookup('ProgramDocumentStore'),
+            programEmailStore = sm.lookup('ProgramEmailStore'),
+            program = sm.lookup('ProgramStore').first();
 
           if (form.isValid()) {
             vals = form.getValues();
@@ -1882,6 +1921,15 @@ uploadStep = Ext.create('Ext.panel.Panel', {
                   form.reset();
                   vals.template = action.result.url;
                   programDocumentStore.add(vals);
+                  programEmailStore.add({
+                    program_id: vals.program_id,
+                    to: null,
+                    from: null,
+                    subject: vals.name + ' Email',
+                    body: 'Email for ' + vals.name,
+                    type: 'document',
+                    name: vals.name + ' Document Email'
+                  });
                 },
                 failure: function (form, action) {
                   Ext.Msg.alert('Could not upload file', action.result.msg);
@@ -1890,8 +1938,16 @@ uploadStep = Ext.create('Ext.panel.Panel', {
             } else {
               form.reset();
               programDocumentStore.add(vals);
+              programEmailStore.add({
+                program_id: vals.program_id,
+                to: null,
+                from: null,
+                subject: vals.name + ' Email',
+                body: 'Email for ' + vals.name,
+                type: 'document',
+                name: vals.name + ' Document Email'
+              });
             }
-
           }
       }
     }, {
@@ -1905,6 +1961,36 @@ uploadStep = Ext.create('Ext.panel.Panel', {
     }]
   }],
   process: function () {
+    var program = Ext.data.StoreManager.lookup('ProgramStore').first(),
+      programDocumentStore = Ext.data.StoreManager.lookup('ProgramDocumentStore'),
+      esignDownload,
+      esignUpload;
+
+    if (program.data.form_esign_required) {
+      esignDownload = programDocumentStore.findBy(function (rec, id) {
+        var name = rec.get('name').toLowerCase(),
+          type = rec.get('type').toLowerCase();
+
+        if (name === 'esign' && type === 'download') {
+          return true;
+        }
+      });
+
+      esignUpload = programDocumentStore.findBy(function (rec, id) {
+        var name = rec.get('name').toLowerCase(),
+          type = rec.get('type').toLowerCase();
+
+        if (name === 'esign' && type === 'upload') {
+          return true;
+        }
+      });
+
+      if (esignDownload === -1 || esignUpload === -1) {
+        Ext.Msg.alert('Esign', 'You specified Esign should be required, but did not define the required Esign documents');
+        return false;
+      }
+    }
+
     return true;
   }
 });
@@ -1980,29 +2066,12 @@ instructions = Ext.create('Ext.panel.Panel', {
     var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
       programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
       programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
-      program = programStore.first(),
-      programId = program.data.id,
-      mediaStep,
-      quizStep;
-
-    mediaStep = programStepStore.findRecord('type', /^media$/gi);
-    quizStep = programStepStore.findRecord('type', /^form$/gi);
+      program = programStore.first();
 
     programInstructionStore.each(function (rec) {
       rec.set({
-        program_id: programId
+        program_id: program.data.id
       });
-    });
-    programInstructionStore.add({
-      program_id: programId,
-      program_step_id: mediaStep.data.id,
-      text: program.data.name + ' Orientation Media Step Instructions',
-      type: 'Orientation Media Step Instructions'.underscore()
-    }, {
-      program_id: programId,
-      program_step_id: quizStep.data.id,
-      text: program.data.name + ' Orientation Quiz Step Instructions',
-      type: 'Orientation Quiz Step Instructions'.underscore()
     });
   },
   process: function () {
@@ -2120,37 +2189,15 @@ emails = Ext.create('Ext.panel.Panel', {
     }]
   }],
   preprocess: function () {
-    var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
-      programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
-      programEmailStore = Ext.data.StoreManager.lookup('ProgramEmailStore'),
-      program = programStore.first(),
-      programId = program.data.id,
-      mediaStep,
-      quizStep;
-
-    mediaStep = programStepStore.findRecord('type', /^media$/gi);
-    quizStep = programStepStore.findRecord('type', /^form$/gi);
+    var program = Ext.data.StoreManager.lookup('ProgramStore').first(),
+      programEmailStore = Ext.data.StoreManager.lookup('ProgramEmailStore');
 
     programEmailStore.each(function (rec) {
-      rec.set({
-        program_id: programId
-      });
-    });
-    // add our step emails
-    programEmailStore.add({
-      program_id: programId,
-      program_step_id: mediaStep.data.id,
-      name: program.data.name + ' Orientation Media Step Email',
-      type: 'step',
-      body: 'Your Orientation media step email',
-      from: null
-    }, {
-      program_id: programId,
-      program_step_id: quizStep.data.id,
-      name: program.data.name + ' Orientation Quiz Step Email',
-      type: 'step',
-      body: 'Your Orientation quiz step email',
-      from: null
+      if (!rec.data.program_id) {
+        rec.set({
+          program_id: program.data.id
+        });
+      }
     });
   },
   process: function () {
