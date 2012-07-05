@@ -1722,7 +1722,10 @@ uploadStep = Ext.create('Ext.panel.Panel', {
     }, {
       header: 'Name',
       dataIndex: 'name',
-      flex: 1
+      flex: 1,
+      renderer: function (val) {
+        return val.humanize();
+      }
     }, {
       header: 'Type',
       dataIndex: 'type',
