@@ -52,7 +52,6 @@ class ProgramResponseDoc extends AppModel {
 		if($watchedCat) {	
 			$programResponse = $this->ProgramResponse->getProgramResponse($watchedCat['Program']['id'], $user['User']['id']);	
 			$return['program_id'] = $watchedCat['Program']['id'];
-			$this->log($watchedCat, 'debug');
 			if($watchedCat['WatchedFilingCat']['name'] === 'esign') {
 				$this->ProgramResponse->User->id = $user['User']['id'];
 				$this->ProgramResponse->User->saveField('signature', 1);
@@ -64,11 +63,9 @@ class ProgramResponseDoc extends AppModel {
 			$this->data['ProgramResponseDoc']['program_response_id'] = $programResponse['ProgramResponse']['id'];
 			$this->data['ProgramResponseDoc']['type'] = 'customer_provided';
 			if($this->save($this->data)) {					
-				// TODO should this be sent via the background queue? 
 				$docFiledEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array(
 					'conditions' => array(
-						'ProgramEmail.program_id' => $watchedCat['Program']['id'],
-						'ProgramEmail.cat_id' => $return['cat_id'])));				
+						'ProgramEmail.program_email_id' => $watchedCat['WatchedFilingCat']['program_email_id'])));				
 				if($docFiledEmail['ProgramEmail']['type'] == 'rejected') {				
 					$docFiledEmail['ProgramEmail']['body'] = $docFiledEmail['ProgramEmail']['body'] . 
 					 "\r\n\r\n\r\n\r\n" . 'Comment: ' . $rejectedReason;
@@ -76,7 +73,7 @@ class ProgramResponseDoc extends AppModel {
 				if($docFiledEmail) {
 					$return['docFiledEmail'] = $docFiledEmail;	
 				}
-				$this->updateResponse($Program, $programResponse)	;
+				$this->updateResponse($Program, $programResponse);
 			}				
 		}
 		return $return;		
