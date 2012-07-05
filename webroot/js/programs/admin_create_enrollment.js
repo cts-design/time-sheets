@@ -1804,11 +1804,13 @@ uploadStep = Ext.create('Ext.panel.Panel', {
         data: [{
           lcase: 'certificate', ucase: 'Certificate'
         }, {
-          lcase: 'multisnapshot', ucase: 'Multi-Snapshot'
-        }, {
-          lcase: 'pdf', ucase: 'Enrollment Forms'
+          lcase: 'download', ucase: 'Document Download'
         }, {
           lcase: 'upload', ucase: 'Document Upload'
+        }, {
+          lcase: 'pdf', ucase: 'Enrollment Form'
+        }, {
+          lcase: 'multisnapshot', ucase: 'Multi-Snapshot'
         }]
       }),
       valueField: 'lcase',
