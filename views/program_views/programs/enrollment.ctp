@@ -2,23 +2,39 @@
 <?= $this->Html->script('adobe-reader-check', array('inline' => false)) ?>
 <?= (!empty($instructions) ? '<div id="instructions">' . $instructions . '</div>' : '' ) ?>
 
-<div class="steps-container">
+<div class="steps-container enrollment">
 	<ol class="steps">
 		<?php $statuses = array('incomplete','not_approved', 'pending_document_review') ?>
 		<?php if(in_array($programResponse['ProgramResponse']['status'], $statuses)) : ?>
-			<li class="module incomplete">
+			<li class="program current incomplete">
 				<div class="details">
 					<h3><?= $program['Program']['name'] ?> Enrollment</h3>
-					<p><?= count($completedSteps)//TODO: get total steps per module ?> of X steps completed</p>
 				</div>
 				<span class="status">
 					<?= Inflector::humanize($programResponse['ProgramResponse']['status']) ?>
 				</span>
-				 <ol>
-					<?php foreach($program['ProgramStep'] as $step) : ?>
-						<?php if(!$step['type']) : ?>
-							<li class="module"><?php echo $step['name'] ?></li>
-						<?php else : ?>
+			</li>
+			<?php $k = 0; ?>
+			<?php foreach($program['ProgramStep'] as $step) : ?>
+				<?php if(!$step['type']) : ?>
+				<?php if ($k): ?></ol><?php endif ?>
+					<li class="module">
+						<div class="details">
+							<h3><?php echo $step['name'] ?></h3>
+						</div>
+						<?php
+							$i = 0;
+							foreach ($completedSteps as $completedStep) {
+								if (in_array($completedStep, $programSteps[$step['id']])) {
+									$i++;
+								}
+							}
+						?>
+						<?php $stepStatus = ($i === count($programSteps[$step['id']])) ? 'complete' : 'incomplete' ?>
+						<span class="steps status <?= $stepStatus ?>"><?= $i ?> of <?= count($programSteps[$step['id']]) ?> steps completed</span>
+						<ol>
+						<?php $k++ ?>
+				<?php else : ?>
 							<?php $class = (in_array($step['id'], $completedSteps)) ? 'complete' : 'incomplete' ?>
 							<li class="step <?= $class ?>">
 								<div class="inner-container">
@@ -64,7 +80,8 @@
 							</li>
 						<?php endif ?>
 					<?php endforeach ?>
-				</ol>
+						</ol>
+					</li>
 		<?php elseif($programResponse['ProgramResponse']['status'] === 'pending_approval') : ?>
 			<li class="module incomplete">
 				<div class="details">
