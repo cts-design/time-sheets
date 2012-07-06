@@ -38,3 +38,5 @@ plugins/*
 !plugins/debug_kit
 *.taskpaper
 tags
+docs
+docs/*
