@@ -597,6 +597,7 @@ div.required label:after {
   line-height: 1.7em;
   padding: 8px 15px;
 }
+
 .steps-container.enrollment li.module .details {
   line-height: 3em !important;
 }
@@ -702,7 +703,7 @@ li.module.incomplete span.status {
 }
 
 .steps-container li.step.complete {
-  background: transparent url(../img/completed-step-indicator.png) 0 10px no-repeat;
+  background: transparent url(../img/completed-step-indicator.png) 0 22px no-repeat;
 }
 
 .steps-container li.step.incomplete {
