@@ -14,8 +14,10 @@
 					<?= Inflector::humanize($programResponse['ProgramResponse']['status']) ?>
 				</span>
 			</li>
+			<?php $k = 0; ?>
 			<?php foreach($program['ProgramStep'] as $step) : ?>
 				<?php if(!$step['type']) : ?>
+				<?php if ($k): ?></ol><?php endif ?>
 					<li class="module current">
 						<div class="details">
 							<h3><?php echo $step['name'] ?></h3>
@@ -30,6 +32,7 @@
 						?>
 						<span class="steps status"><?= $i ?> of <?= count($programSteps[$step['id']]) ?> steps completed</span>
 						<ol>
+						<?php $k++ ?>
 				<?php else : ?>
 							<?php $class = (in_array($step['id'], $completedSteps)) ? 'complete' : 'incomplete' ?>
 							<li class="step <?= $class ?>">
