@@ -20,9 +20,6 @@ Programs = {
   onReady: function () {
     Programs.init();
 
-    console.log($firstIncompleteItem);
-    console.log($currentModule);
-
     $firstIncompleteItem.css('opacity', '1').addClass('current');
     $currentModule.addClass('current');
 
@@ -35,13 +32,13 @@ Programs = {
     });
 
     $incompleteSteps.bind('click', function (e) {
-      if (!$(this).hasClass('current') || !$(this).hasClass('redoable')) {
+      if (!$(this).hasClass('current') && !$(this).hasClass('redoable')) {
         e.preventDefault();
       }
     });
 
     $completeSteps.bind('click', function (e) {
-      if (!$(this).hasClass('current') || !$(this).hasClass('redoable')) {
+      if (!$(this).hasClass('current') && !$(this).hasClass('redoable')) {
         e.preventDefault();
       }
     });
