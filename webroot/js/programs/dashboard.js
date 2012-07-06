@@ -6,6 +6,7 @@ Programs = {
   $allIncompleteSteps: null,
   $completeSteps: null,
   $stepsContainer: null,
+  $programHeader: null,
 
   init: function () {
     $firstIncompleteItem = $('li.step.incomplete:first');
@@ -13,6 +14,7 @@ Programs = {
     $completeSteps = $('li.step.complete');
     $incompleteSteps = $('li.step.incomplete');
     $stepsContainer = $('ol.steps');
+    $programHeader = $('li.program');
   },
 
   onReady: function () {
@@ -30,7 +32,13 @@ Programs = {
     });
 
     $incompleteSteps.bind('click', function (e) {
-      if (!$(this).hasClass('current')) {
+      if (!$(this).hasClass('current') || !$(this).hasClass('redoable')) {
+        e.preventDefault();
+      }
+    });
+
+    $completeSteps.bind('click', function (e) {
+      if (!$(this).hasClass('current') || !$(this).hasClass('redoable')) {
         e.preventDefault();
       }
     });
