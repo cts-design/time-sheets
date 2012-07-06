@@ -597,6 +597,9 @@ div.required label:after {
   line-height: 1.7em;
   padding: 8px 15px;
 }
+.steps-container.enrollment li.module .details {
+  line-height: 3em !important;
+}
 
 li.program .details h3,
 li.module .details h3 {
@@ -613,6 +616,14 @@ li.module .details p {
   font-size: 12px;
   font-weight: 300 !important;
   line-height: 1.2em;
+}
+
+li.module span.steps.status {
+  color: #8899aa !important;
+  font-family: 'Lato', 'helvetica neue', helvetica, arial, sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 300 !important;
+  line-height: 1.2em !important;
 }
 
 li.program span.status,

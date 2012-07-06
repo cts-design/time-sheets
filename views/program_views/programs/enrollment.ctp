@@ -2,11 +2,11 @@
 <?= $this->Html->script('adobe-reader-check', array('inline' => false)) ?>
 <?= (!empty($instructions) ? '<div id="instructions">' . $instructions . '</div>' : '' ) ?>
 
-<div class="steps-container">
+<div class="steps-container enrollment">
 	<ol class="steps">
 		<?php $statuses = array('incomplete','not_approved', 'pending_document_review') ?>
 		<?php if(in_array($programResponse['ProgramResponse']['status'], $statuses)) : ?>
-			<li class="program incomplete">
+			<li class="program current incomplete">
 				<div class="details">
 					<h3><?= $program['Program']['name'] ?> Enrollment</h3>
 				</div>
@@ -19,9 +19,8 @@
 					<li class="module current">
 						<div class="details">
 							<h3><?php echo $step['name'] ?></h3>
-							<p><?= count($completedSteps)//TODO: get total steps per module ?> of X steps completed</p>
 						</div>
-						<span class="status">Status</span>
+						<span class="steps status"><?= count($completedSteps) ?> of <?= count($programSteps[$step['id']]) ?> steps completed</span>
 						<ol>
 				<?php else : ?>
 							<?php $class = (in_array($step['id'], $completedSteps)) ? 'complete' : 'incomplete' ?>
