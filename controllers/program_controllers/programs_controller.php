@@ -190,7 +190,8 @@ class ProgramsController extends AppController {
 		$data['title_for_layout'] = $program['Program']['name'] . ' Dashboard';
 		$data['program'] = $program;
 		$data['programResponse'] = $programResponse;
-
+		
+		$programSteps = null;
 		$modules = Set::extract('/ProgramStep[type=/^$/i]/id', $program);
 		foreach ($modules as $key => $value) {
 			$programSteps[$value] = Set::extract('/ProgramStep[parent_id=' . $value . ']/id', $program);
