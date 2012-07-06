@@ -621,10 +621,10 @@ li.module .details p {
 
 li.module span.steps.status {
   color: #8899aa !important;
-  font-family: 'Lato', 'helvetica neue', helvetica, arial, sans-serif !important;
-  font-size: 12px !important;
+  font-family: 'Lato', 'helvetica neue', helvetica, arial, sans-serif;
+  font-size: 13.5px;
   font-weight: 300 !important;
-  line-height: 1.2em !important;
+  line-height: 1.2em;
 }
 
 li.program span.status,
