@@ -18,7 +18,7 @@
 			<?php foreach($program['ProgramStep'] as $step) : ?>
 				<?php if(!$step['type']) : ?>
 				<?php if ($k): ?></ol><?php endif ?>
-					<li class="module current">
+					<li class="module">
 						<div class="details">
 							<h3><?php echo $step['name'] ?></h3>
 						</div>
@@ -30,7 +30,8 @@
 								}
 							}
 						?>
-						<span class="steps status"><?= $i ?> of <?= count($programSteps[$step['id']]) ?> steps completed</span>
+						<?php $stepStatus = ($i === count($programSteps[$step['id']])) ? 'complete' : 'incomplete' ?>
+						<span class="steps status <?= $stepStatus ?>"><?= $i ?> of <?= count($programSteps[$step['id']]) ?> steps completed</span>
 						<ol>
 						<?php $k++ ?>
 				<?php else : ?>

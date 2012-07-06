@@ -20,6 +20,9 @@ Programs = {
   onReady: function () {
     Programs.init();
 
+    console.log($firstIncompleteItem);
+    console.log($currentModule);
+
     $firstIncompleteItem.css('opacity', '1').addClass('current');
     $currentModule.addClass('current');
 
