@@ -5,12 +5,14 @@ Programs = {
   $firstIncompleteItem: null,
   $allIncompleteSteps: null,
   $completeSteps: null,
+  $stepsContainer: null,
 
   init: function () {
     $firstIncompleteItem = $('li.step.incomplete:first');
     $currentModule = $firstIncompleteItem.parents('li');
     $completeSteps = $('li.step.complete');
     $incompleteSteps = $('li.step.incomplete');
+    $stepsContainer = $('ol.steps');
   },
 
   onReady: function () {
@@ -30,7 +32,6 @@ Programs = {
     $incompleteSteps.bind('click', function (e) {
       if (!$(this).hasClass('current')) {
         e.preventDefault();
-        alert('stop it');
       }
     });
   }

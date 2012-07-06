@@ -6,19 +6,24 @@
 	<ol class="steps">
 		<?php $statuses = array('incomplete','not_approved', 'pending_document_review') ?>
 		<?php if(in_array($programResponse['ProgramResponse']['status'], $statuses)) : ?>
-			<li class="module incomplete">
+			<li class="program incomplete">
 				<div class="details">
 					<h3><?= $program['Program']['name'] ?> Enrollment</h3>
-					<p><?= count($completedSteps)//TODO: get total steps per module ?> of X steps completed</p>
 				</div>
 				<span class="status">
 					<?= Inflector::humanize($programResponse['ProgramResponse']['status']) ?>
 				</span>
-				 <ol>
-					<?php foreach($program['ProgramStep'] as $step) : ?>
-						<?php if(!$step['type']) : ?>
-							<li class="module"><?php echo $step['name'] ?></li>
-						<?php else : ?>
+			</li>
+			<?php foreach($program['ProgramStep'] as $step) : ?>
+				<?php if(!$step['type']) : ?>
+					<li class="module current">
+						<div class="details">
+							<h3><?php echo $step['name'] ?></h3>
+							<p><?= count($completedSteps)//TODO: get total steps per module ?> of X steps completed</p>
+						</div>
+						<span class="status">Status</span>
+						<ol>
+				<?php else : ?>
 							<?php $class = (in_array($step['id'], $completedSteps)) ? 'complete' : 'incomplete' ?>
 							<li class="step <?= $class ?>">
 								<div class="inner-container">
@@ -64,7 +69,8 @@
 							</li>
 						<?php endif ?>
 					<?php endforeach ?>
-				</ol>
+						</ol>
+					</li>
 		<?php elseif($programResponse['ProgramResponse']['status'] === 'pending_approval') : ?>
 			<li class="module incomplete">
 				<div class="details">
