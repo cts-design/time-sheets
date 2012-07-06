@@ -1165,7 +1165,7 @@ stepTree = Ext.create('Ext.panel.Panel', {
               }
               break;
 
-            case 'upload':
+            case 'required_docs':
               treePanel.getRootNode()
                        .lastChild
                        .appendChild(vals);
