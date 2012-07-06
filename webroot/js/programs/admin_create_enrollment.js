@@ -1208,7 +1208,7 @@ stepTree = Ext.create('Ext.panel.Panel', {
       lastStep = treePanel.getRootNode().lastChild.lastChild;
 
     if (program.data.upload_docs) {
-      if (!lastStep || lastStep.data.type !== 'upload') {
+      if (!lastStep || lastStep.data.type !== 'required_docs') {
         Ext.Msg.alert('Error',
             'You have specified this program requires documents to be uploaded, but have not added the required step');
         return false;
