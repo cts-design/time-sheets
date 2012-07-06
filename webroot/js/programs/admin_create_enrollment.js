@@ -601,6 +601,10 @@ registrationForm = Ext.create('Ext.form.Panel', {
     name: 'type',
     value: 'enrollment'
   }, {
+    xtype: 'hiddenfield',
+    name: 'approval_required',
+    value: 1
+  }, {
     xtype: 'fieldcontainer',
     height: 24,
     width: 300,
@@ -884,25 +888,17 @@ stepTree = Ext.create('Ext.panel.Panel', {
         handler: function () {
           var programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
             program = Ext.data.StoreManager.lookup('ProgramStore').first(),
-            root = programStepStore.getRootNode(),
-            lastChild = root.lastChild;
+            root = programStepStore.getRootNode();
 
           Ext.Msg.prompt('Module Name', 'What would you like to name this module?', function (btn, text) {
-            var module;
-
             if (btn === 'ok') {
-              module = {
+              root.appendChild({
                 expandable: true,
                 expanded: true,
                 leaf: false,
                 name: text,
                 program_id: program.data.id
-              };
-              if (lastChild && lastChild.data.name === 'Upload Docs') {
-                root.insertBefore(module, lastChild);
-              } else {
-                root.appendChild(module);
-              }
+              });
             }
           });
         }
@@ -1035,7 +1031,7 @@ stepTree = Ext.create('Ext.panel.Panel', {
           }, {
             lcase: 'media', ucase: 'Media'
           }, {
-            lcase: 'upload', ucase: 'Document Upload'
+            lcase: 'required_docs', ucase: 'Document Upload'
           }]
         }),
         value: '',
@@ -1123,8 +1119,9 @@ stepTree = Ext.create('Ext.panel.Panel', {
           form = formPanel.getForm(),
           treePanel = formPanel.up('panel').down('treepanel'),
           selectedModule = treePanel.getSelectionModel().getSelection()[0],
-          programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
-          program = Ext.data.StoreManager.lookup('ProgramStore').first(),
+          sm = Ext.data.StoreManager,
+          programStepStore = sm.lookup('ProgramStepStore'),
+          program = sm.lookup('ProgramStore').first(),
           vals,
           processStepType;
 
@@ -1169,23 +1166,9 @@ stepTree = Ext.create('Ext.panel.Panel', {
               break;
 
             case 'upload':
-              var root = treePanel.getRootNode(),
-                lastChild = root.lastChild,
-                docUploadStep;
-
-              if (lastChild.data.name === 'Upload Docs') {
-                lastChild.appendChild(vals);
-              } else {
-                docUploadStep = root.appendChild({
-                  expandable: true,
-                  expanded: true,
-                  leaf: false,
-                  name: 'Upload Docs',
-                  program_id: program.data.id
-                });
-
-                docUploadStep.appendChild(vals);
-              }
+              treePanel.getRootNode()
+                       .lastChild
+                       .appendChild(vals);
               break;
 
             default:
@@ -1222,10 +1205,10 @@ stepTree = Ext.create('Ext.panel.Panel', {
     var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
       program = programStore.first(),
       treePanel = this.down('treepanel'),
-      root = treePanel.getRootNode();
+      lastStep = treePanel.getRootNode().lastChild.lastChild;
 
     if (program.data.upload_docs) {
-      if (root.lastChild.data.name !== 'Upload Docs') {
+      if (!lastStep || lastStep.data.type !== 'upload') {
         Ext.Msg.alert('Error',
             'You have specified this program requires documents to be uploaded, but have not added the required step');
         return false;
@@ -2066,7 +2049,28 @@ instructions = Ext.create('Ext.panel.Panel', {
     var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
       programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
       programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
-      program = programStore.first();
+      program = programStore.first(),
+      rootNode = programStepStore.tree.root;
+
+    Ext.Ajax.request({
+      url: '/admin/program_steps/read',
+      params: {
+        program_id: program.data.id
+      },
+      success: function (response) {
+        var res = Ext.JSON.decode(response.responseText);
+        Ext.Object.each(res.program_steps, function (key, value, me) {
+          if (value.type) {
+            programInstructionStore.add({
+              program_id: program.data.id,
+              program_step_id: value.id,
+              text: 'Instructions for ' + value.name + ' step',
+              type: value.type.underscore() + '_step'
+            });
+          }
+        });
+      }
+    });
 
     programInstructionStore.each(function (rec) {
       rec.set({
@@ -2092,6 +2096,7 @@ emails = Ext.create('Ext.panel.Panel', {
   layout: 'border',
   items: [{
     xtype: 'grid',
+    autoScroll: true,
     frame: false,
     height: 156,
     id: 'emailGrid',
