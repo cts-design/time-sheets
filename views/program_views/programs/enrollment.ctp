@@ -20,7 +20,15 @@
 						<div class="details">
 							<h3><?php echo $step['name'] ?></h3>
 						</div>
-						<span class="steps status"><?= count($completedSteps) ?> of <?= count($programSteps[$step['id']]) ?> steps completed</span>
+						<?php
+							$i = 0;
+							foreach ($completedSteps as $completedStep) {
+								if (in_array($completedStep, $programSteps[$step['id']])) {
+									$i++;
+								}
+							}
+						?>
+						<span class="steps status"><?= $i ?> of <?= count($programSteps[$step['id']]) ?> steps completed</span>
 						<ol>
 				<?php else : ?>
 							<?php $class = (in_array($step['id'], $completedSteps)) ? 'complete' : 'incomplete' ?>
