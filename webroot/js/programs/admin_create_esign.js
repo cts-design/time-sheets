@@ -769,23 +769,42 @@ instructions = Ext.create('Ext.panel.Panel', {
     var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
       programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
       programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
-      program = programStore.first(),
-      programId = program.data.id,
-      downloadStep;
+      grid = Ext.getCmp('instructionsGrid'),
+      program,
+      downloadStep,
+      task;
 
-    downloadStep = programStepStore.findRecord('type', /^form_download$/gi);
+    grid.getEl().mask('Loading...');
 
-    programInstructionStore.each(function (rec) {
-      rec.set({
-        program_id: programId
+    task = new Ext.util.DelayedTask(function () {
+      program = programStore.first();
+
+      programStepStore.load({
+        params: {
+          program_id: program.data.id
+        },
+        callback: function (recs, op, success) {
+          downloadStep = programStepStore.findRecord('type', /^form_download$/gi);
+
+          programInstructionStore.each(function (rec) {
+            rec.set({
+              program_id: program.data.id
+            });
+          });
+
+          programInstructionStore.add({
+            program_id: program.data.id,
+            program_step_id: downloadStep.data.id,
+            text: 'Esign Enrollment Form Step Instructions',
+            type: 'Esign Enrollment Form Step Instructions'.underscore()
+          });
+
+          grid.getEl().unmask();
+        }
       });
     });
-    programInstructionStore.add({
-      program_id: programId,
-      program_step_id: downloadStep.data.id,
-      text: 'Esign Enrollment Form Step Instructions',
-      type: 'Esign Enrollment Form Step Instructions'.underscore()
-    });
+
+    task.delay(1000);
   },
   process: function () {
     var programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
