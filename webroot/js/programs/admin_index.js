@@ -80,6 +80,13 @@ Ext.onReady(function () {
         window.location = '/admin/programs/create_enrollment';
       }
     });
+
+    menuItems.push({
+      text: 'Esign',
+      handler: function () {
+        window.location = '/admin/programs/create_esign';
+      }
+    });
   }
 
   var tabPanel = Ext.create('Ext.tab.Panel', {

@@ -70,8 +70,6 @@ class ProgramStepsController extends AppController {
 			$steps = $this->ProgramStep->find('all');
 		}
 
-		$this->log($this->params, 'debug');
-
 		if ($steps) {
 			$data['success'] = true;
 			foreach ($steps as $key => $value) {
@@ -110,7 +108,6 @@ class ProgramStepsController extends AppController {
 	public function admin_update() {
 		$program_steps = json_decode($this->params['form']['program_steps'], true);
 		$currentParent = 0;
-		$this->log($program_steps, 'debug');
 
 		foreach ($program_steps as $step) {
 			unset($step['checked'], $step['created'], $step['modified'], $step['expires'],
