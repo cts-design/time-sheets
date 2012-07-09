@@ -320,8 +320,7 @@ Ext.create('Ext.data.Store', {
     { program_id: 0, text: 'Default text Pending Approval', type: 'pending_approval', created: null, modified: null },
     { program_id: 0, text: 'Default text Expired', type: 'expired', created: null, modified: null },
     { program_id: 0, text: 'Default text Not Approved', type: 'not_approved', created: null, modified: null },
-    { program_id: 0, text: 'Default text Complete', type: 'complete', created: null, modified: null },
-    { program_id: 0, text: 'Default text Acceptance', type: 'acceptance', created: null, modified: null }
+    { program_id: 0, text: 'Default text Complete', type: 'complete', created: null, modified: null }
   ],
   storeId: 'ProgramInstructionStore',
   model: 'ProgramInstruction',
@@ -695,6 +694,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
     }
 
     statusBar.clearStatus();
+    return true;
   }
 });
 
@@ -771,25 +771,9 @@ instructions = Ext.create('Ext.panel.Panel', {
       programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
       program = programStore.first(),
       programId = program.data.id,
-      formStep;
+      downloadStep;
 
-    if (!program.data.approval_required) {
-      var notApproved,
-        pendingApproval;
-
-      notApproved = programInstructionStore.findExact('type', 'not_approved');
-      pendingApproval = programInstructionStore.findExact('type', 'pending_approval');
-
-      if (notApproved !== -1) {
-        programInstructionStore.removeAt(notApproved);
-      }
-
-      if (pendingApproval !== -1) {
-        programInstructionStore.removeAt(pendingApproval);
-      }
-    }
-
-    formStep = programStepStore.findRecord('type', /^form$/gi);
+    downloadStep = programStepStore.findRecord('type', /^form_download$/gi);
 
     programInstructionStore.each(function (rec) {
       rec.set({
@@ -798,9 +782,9 @@ instructions = Ext.create('Ext.panel.Panel', {
     });
     programInstructionStore.add({
       program_id: programId,
-      program_step_id: formStep.data.id,
-      text: program.data.name + ' Registration Form Step Instructions',
-      type: (program.data.name + ' Registration Form Step Instructions').underscore()
+      program_step_id: downloadStep.data.id,
+      text: 'Esign Enrollment Form Step Instructions',
+      type: 'Esign Enrollment Form Step Instructions'.underscore()
     });
   },
   process: function () {
