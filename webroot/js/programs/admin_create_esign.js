@@ -928,38 +928,10 @@ emails = Ext.create('Ext.panel.Panel', {
       programId = program.data.id,
       formStep;
 
-    if (!program.data.approval_required) {
-      var notApproved,
-        pendingApproval;
-
-      notApproved = programEmailStore.findExact('type', 'not_approved');
-      pendingApproval = programEmailStore.findExact('type', 'pending_approval');
-
-      if (notApproved !== -1) {
-        programEmailStore.removeAt(notApproved);
-      }
-
-      if (pendingApproval !== -1) {
-        programEmailStore.removeAt(pendingApproval);
-      }
-    }
-
-    formStep = programStepStore.findRecord('type', /^form$/gi);
-
     programEmailStore.each(function (rec) {
       rec.set({
         program_id: programId
       });
-    });
-    // add our step emails
-    programEmailStore.add({
-      program_id: programId,
-      program_step_id: formStep.data.id,
-      name: program.data.name + ' Registration Form Step Email',
-      type: 'step',
-      body: 'Your registration form step email',
-      subject: 'Registration Form Complete',
-      from: null
     });
   },
   process: function () {
