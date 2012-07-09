@@ -84,7 +84,7 @@ class QueueDocumentTask extends Shell {
 			foreach($step['answers'] as $k => $v) {
 				if($k === 'esign') {
 					$html .= '<div class="esign" style="border: 1px solid #000; height: 80px; padding-left: 10px">';
-					$html .= '<p style="float: left"><img src="http://' . Configure::read("domain") . '/webroot/img/sig.jpg" />';
+					$html .= '<p style="float: left"><img src="http://' . Configure::read("domain") . '/img/sig.jpg" />';
 					$html .= '<p style="float:left"><b>Electronic Signature</b><br /><span class="question">Name:&nbsp;</span>';
 					$html .= '<span class="answer">' . Inflector::humanize($v) . '</p></span></div>';
 				}
