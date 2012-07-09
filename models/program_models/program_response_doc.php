@@ -112,12 +112,13 @@ class ProgramResponseDoc extends AppModel {
 		$result = array_diff($watchedCats, $filedResponseDocCats);
 		$this->ProgramResponse->id = $programResponse['ProgramResponse']['id'];					
 		if(empty($result)){
-			if($programResponse['status'] === 'incomplete' || $programResponse['status'] === 'pending_document_review') {
-				$this->ProgramResponse->saveField('status', 'pending_approval');
+			if($programResponse['ProgramResponse']['status'] === 'incomplete' ||
+				$programResponse['ProgramResponse']['status'] === 'pending_document_review') {
+					$this->ProgramResponse->saveField('status', 'pending_approval');
 			}
 		}
 		if(!empty($result)) {
-			if($programResponse['status'] === 'pending_approval') {
+			if($programResponse['ProgramResponse']['status'] === 'pending_approval') {
 				$this->ProgramResponse->saveField('status', 'incomplete');
 			}					
 		}					
