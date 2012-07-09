@@ -222,8 +222,8 @@ Ext.create('Ext.data.Store', {
   proxy: {
     type: 'ajax',
     api: {
-      create: '/admin/programs/create_registration',
-      update: '/admin/programs/update_registration'
+      create: '/admin/programs/create_esign',
+      update: '/admin/programs/update_esign'
     },
     reader: {
       type: 'json',
@@ -381,61 +381,7 @@ Ext.create('Ext.data.Store', {
 /**
  * Variable Declarations
  */
-var registrationForm, formBuilder, filingCategories, instructions, emails, navigate, statusBar, states;
-
-states = {
-  AL: 'Alabama',
-  AK: 'Alaska',
-  AZ: 'Arizona',
-  AR: 'Arkansas',
-  CA: 'California',
-  CO: 'Colorado',
-  CT: 'Connecticut',
-  DE: 'Delaware',
-  DC: 'District Of Columbia',
-  FL: 'Florida',
-  GA: 'Georgia',
-  HI: 'Hawaii',
-  ID: 'Idaho',
-  IL: 'Illinois',
-  IN: 'Indiana',
-  IA: 'Iowa',
-  KS: 'Kansas',
-  KY: 'Kentucky',
-  LA: 'Louisiana',
-  ME: 'Maine',
-  MD: 'Maryland',
-  MA: 'Massachusetts',
-  MI: 'Michigan',
-  MN: 'Minnesota',
-  MS: 'Mississippi',
-  MO: 'Missouri',
-  MT: 'Montana',
-  NE: 'Nebraska',
-  NV: 'Nevada',
-  NH: 'New Hampshire',
-  NJ: 'New Jersey',
-  NM: 'New Mexico',
-  NY: 'New York',
-  NC: 'North Carolina',
-  ND: 'North Dakota',
-  OH: 'Ohio',
-  OK: 'Oklahoma',
-  OR: 'Oregon',
-  PA: 'Pennsylvania',
-  RI: 'Rhode Island',
-  SC: 'South Carolina',
-  SD: 'South Dakota',
-  TN: 'Tennessee',
-  TX: 'Texas',
-  UT: 'Utah',
-  VT: 'Vermont',
-  VA: 'Virginia',
-  WA: 'Washington',
-  WI: 'Wisconsin',
-  WV: 'West Virginia',
-  WY: 'Wyoming'
-};
+var registrationForm, instructions, emails, navigate, statusBar;
 
 /**
  * registrationForm
@@ -458,90 +404,14 @@ registrationForm = Ext.create('Ext.form.Panel', {
       xtype: 'textfield',
       allowBlank: false,
       fieldLabel: 'Name',
-      labelWidth: 190,
-      name: 'name'
-    }]
-  }, {
-    xtype: 'hiddenfield',
-    name: 'type',
-    value: 'registration'
-  }, {
-    xtype: 'hiddenfield',
-    name: 'form_esign_required',
-    value: '0'
-  }, {
-    xtype: 'fieldcontainer',
-    height: 22,
-    width: 300,
-    layout: {
-      align: 'stretch',
-      type: 'vbox'
-    },
-    items: [{
-      xtype: 'radiogroup',
-      fieldLabel: 'Approval Required?',
-      labelWidth: 190,
-      items: [{
-        boxLabel: 'Yes',
-        name: 'approval_required',
-        inputValue: '1'
-      }, {
-        boxLabel: 'No',
-        name: 'approval_required',
-        inputValue: '0',
-        checked: true
-      }]
-    }]
-  }, {
-    xtype: 'fieldcontainer',
-    height: 22,
-    width: 300,
-    layout: {
-      align: 'stretch',
-      type: 'vbox'
-    },
-    items: [{
-      xtype: 'radiogroup',
-      fieldLabel: 'User Acknowledgement Required?',
-      labelWidth: 190,
-      items: [{
-        boxLabel: 'Yes',
-        name: 'user_acceptance_required',
-        inputValue: '1'
-      }, {
-        boxLabel: 'No',
-        name: 'user_acceptance_required',
-        inputValue: '0',
-        checked: true
-      }]
-    }]
-  }, {
-    xtype: 'fieldcontainer',
-    height: 22,
-    width: 300,
-    layout: {
-      align: 'stretch',
-      type: 'vbox'
-    },
-    items: [{
-      xtype: 'radiogroup',
-      fieldLabel: 'Show in Customer Dashboard?',
-      labelWidth: 190,
-      items: [{
-        boxLabel: 'Yes',
-        name: 'show_in_dash',
-        inputValue: '1',
-        checked: true
-      }, {
-        boxLabel: 'No',
-        name: 'show_in_dash',
-        inputValue: '0'
-      }]
+      labelWidth: 175,
+      name: 'name',
+      value: 'Esign'
     }]
   }, {
     xtype: 'fieldcontainer',
     height: 24,
-    width: 300,
+    width: 250,
     layout: {
       align: 'stretch',
       type: 'vbox'
@@ -551,7 +421,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       allowBlank: false,
       displayField: 'ucase',
       fieldLabel: 'Registration Type',
-      labelWidth: 190,
+      labelWidth: 175,
       name: 'atlas_registration_type',
       queryMode: 'local',
       store: Ext.create('Ext.data.Store', {
@@ -565,6 +435,30 @@ registrationForm = Ext.create('Ext.form.Panel', {
       value: 'normal',
       valueField: 'lcase'
     }]
+  }, {
+    xtype: 'hiddenfield',
+    name: 'type',
+    value: 'esign'
+  }, {
+    xtype: 'hiddenfield',
+    name: 'approval_required',
+    value: '1'
+  }, {
+    xtype: 'hiddenfield',
+    name: 'show_in_dash',
+    value: '1'
+  }, {
+    xtype: 'hiddenfield',
+    name: 'confirmation_id_length',
+    value: '10'
+  }, {
+    xtype: 'hiddenfield',
+    name: 'in_test',
+    value: 1
+  }, {
+    xtype: 'hiddenfield',
+    name: 'disabled',
+    value: 1
   }, {
     xtype: 'fieldcontainer',
     height: 22,
@@ -582,7 +476,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       xtype: 'numberfield',
       allowBlank: false,
       fieldLabel: 'Responses Expire In',
-      labelWidth: 190,
+      labelWidth: 175,
       minValue: 30,
       name: 'response_expires_in',
       value: 30,
@@ -612,7 +506,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       allowBlank: false,
       displayField: 'ucase',
       fieldLabel: 'Send expiring soon emails',
-      labelWidth: 190,
+      labelWidth: 175,
       name: 'send_expiring_soon',
       queryMode: 'local',
       store: Ext.create('Ext.data.Store', {
@@ -636,17 +530,130 @@ registrationForm = Ext.create('Ext.form.Panel', {
       value: 'days prior to expiration'
     }]
   }, {
-    xtype: 'hiddenfield',
-    name: 'confirmation_id_length',
-    value: '10'
+    border: 0,
+    html: '<h1>Esign Document</h1>',
+    margin: '0 0 10'
   }, {
-    xtype: 'hiddenfield',
-    name: 'in_test',
-    value: 1
+    xtype: 'fieldcontainer',
+    height: 24,
+    width: 400,
+    layout: {
+      align: 'stretch',
+      type: 'vbox'
+    },
+    items: [{
+      xtype: 'filefield',
+      allowBlank: false,
+      fieldLabel: 'Esign Template',
+      labelWidth: 175,
+      name: 'document',
+      value: ''
+    }]
   }, {
-    xtype: 'hiddenfield',
-    name: 'disabled',
-    value: 1
+    xtype: 'fieldcontainer',
+    height: 24,
+    width: 400,
+    layout: {
+      align: 'stretch',
+      type: 'vbox'
+    },
+    items: [{
+      xtype: 'combo',
+      allowBlank: false,
+      displayField: 'name',
+      fieldLabel: 'Filing Category 1',
+      id: 'cat1Name',
+      labelWidth: 175,
+      listConfig: {
+          getInnerTpl: function() {
+              return '<div>{img}{name}</div>';
+          }
+      },
+      listeners: {
+        select: function(combo, records, Eopts) {
+          var store = Ext.data.StoreManager.lookup('Cat2Store');
+
+          if(records[0]) {
+            Ext.getCmp('cat2Name').disable();
+            Ext.getCmp('cat2Name').reset();
+            Ext.getCmp('cat3Name').disable();
+            Ext.getCmp('cat3Name').reset();
+            store.load({params: {parentId: records[0].data.id}});
+          }
+
+        }
+      },
+      name: 'cat_1',
+      queryMode: 'local',
+      store: 'Cat1Store',
+      valueField: 'id',
+      value: null
+    }]
+  }, {
+    xtype: 'fieldcontainer',
+    height: 24,
+    width: 400,
+    layout: {
+      align: 'stretch',
+      type: 'vbox'
+    },
+    items: [{
+      xtype: 'combo',
+      fieldLabel: 'Filing Category 2',
+      name: 'cat_2',
+      id: 'cat2Name',
+      disabled: true,
+      store: 'Cat2Store',
+      displayField: 'name',
+      valueField: 'id',
+      queryMode: 'local',
+      value: null,
+      labelWidth: 175,
+      listConfig: {
+          getInnerTpl: function() {
+              return '<div>{img}{name}</div>';
+          }
+      },
+      allowBlank: false,
+      listeners: {
+        select: function(combo, records, Eopts) {
+          var store = Ext.data.StoreManager.lookup('Cat3Store');
+
+          if(records[0]) {
+            Ext.getCmp('cat3Name').disable();
+            Ext.getCmp('cat3Name').reset();
+            store.load({params: {parentId: records[0].data.id}});
+          }
+        }
+      }
+    }]
+  }, {
+    xtype: 'fieldcontainer',
+    height: 24,
+    width: 400,
+    layout: {
+      align: 'stretch',
+      type: 'vbox'
+    },
+    items: [{
+      fieldLabel: 'Filing Category 3',
+      name: 'cat_3',
+      id: 'cat3Name',
+      xtype: 'combo',
+      store: 'Cat3Store',
+      disabled: true,
+      displayField: 'name',
+      valueField: 'id',
+      queryMode: 'local',
+      value: null,
+      labelWidth: 175,
+      listConfig: {
+          getInnerTpl: function() {
+              return '<div>{img}{name}</div>';
+          }
+      },
+      allowBlank: false
+    }]
   }],
   process: function () {
     var form = this.getForm(),
@@ -658,547 +665,36 @@ registrationForm = Ext.create('Ext.form.Panel', {
 
     if (form.isValid()) {
       vals = form.getValues();
-      record = programStore.first();
 
-      if (record) {
-        record.set(vals);
-      } else {
-        form.setValues(vals);
-        programStore.add(vals);
-      }
+      form.submit({
+        url: '/admin/program_documents/upload',
+        waitMsg: 'Uploading Document...',
+        scope: this,
+        success: function (form, action) {
+          form.reset();
 
-      statusBar.clearStatus();
-      return true;
+          programDoc = {
+            name: 'Esign Enrollment Form',
+            template: action.result.url,
+            type: 'download',
+            cat_1: vals.cat_1,
+            cat_2: vals.cat_2,
+            cat_3: vals.cat_3
+          };
+
+          programStore.getProxy().extraParams = {
+            program_document: Ext.JSON.encode(programDoc)
+          };
+
+          programStore.add(vals);
+        },
+        failure: function (form, action) {
+          Ext.Msg.alert('Could not upload esign document', action.result.msg);
+        }
+      });
     }
 
     statusBar.clearStatus();
-  }
-});
-
-/**
- * formBuilder
- */
-formBuilder = Ext.create('Ext.panel.Panel', {
-  bodyPadding: 0,
-  height: 406,
-  layout: 'border',
-  items: [{
-    xtype: 'grid',
-    frame: false,
-    height: 350,
-    id: 'formFieldGrid',
-    region: 'west',
-    store: 'ProgramFormFieldStore',
-    width: 660,
-    columns: [{
-      header: 'Label',
-      dataIndex: 'label',
-      flex: 1
-    }, {
-      header: 'Type',
-      dataIndex: 'type'
-    }, {
-      header: 'Name',
-      dataIndex: 'name'
-    }, {
-      header: 'Attributes',
-      dataIndex: 'attributes',
-      hidden: true
-    }, {
-      header: 'Options',
-      dataIndex: 'options',
-      hidden: true
-    }, {
-      header: 'Validation',
-      dataIndex: 'validation',
-      hidden: true
-    }, {
-      header: 'Instructions',
-      dataIndex: 'instructions'
-    }],
-    listeners: {
-      select: function (rm, rec, index) {
-        var formPanel = Ext.getCmp('formPanel'),
-          form = formPanel.getForm(),
-          deleteFieldBtn = Ext.getCmp('deleteFieldBtn'),
-          updateBtn = Ext.getCmp('updateBtn'),
-          builderSaveBtn = Ext.getCmp('builderSaveBtn');
-
-        if (form.isDirty()) {
-          Ext.Msg.show({
-            title: 'Discard Changes?',
-            msg: 'You have an unsaved form field, discard changes?',
-            buttons: Ext.Msg.YESNO,
-            icon: Ext.Msg.QUESTION,
-            fn: function (btn) {
-              if (btn === 'yes') {
-                form.reset();
-                form.loadRecord(rec);
-                deleteFieldBtn.enable();
-                updateBtn.show();
-                builderSaveBtn.hide();
-              }
-            }
-          });
-        } else {
-          form.loadRecord(rec);
-          deleteFieldBtn.enable();
-          updateBtn.show();
-          builderSaveBtn.hide();
-        }
-
-      }
-    },
-    viewConfig: {
-      emptyText: 'Please add your form fields',
-      listeners: {
-        beforedrop: function (node, data, overModel, dropPos, dropFunc, eOpts) {
-        },
-        drop: function (node, data, overModel, dropPos, eOpts) {
-        }
-      },
-      plugins: {
-        ptype: 'gridviewdragdrop',
-        dragText: 'Drag and drop to reorder form fields'
-      }
-    }
-  }, {
-    xtype: 'form',
-    bodyPadding: 10,
-    dockedItems: [{
-      xtype: 'toolbar',
-      dock: 'top',
-      items: [{
-        icon: '/img/icons/add.png',
-        id: 'addFieldBtn',
-        text: 'Add Field',
-        handler: function () {
-          var formPanel = Ext.getCmp('formPanel'),
-            form = formPanel.getForm();
-
-          if (form.isDirty()) {
-            Ext.Msg.show({
-              title: 'Discard Changes?',
-              msg: 'You have an unsaved form field, discard changes?',
-              buttons: Ext.Msg.YESNO,
-              icon: Ext.Msg.QUESTION,
-              fn: function (btn) {
-                if (btn === 'yes') {
-                  form.reset();
-                }
-              }
-            });
-          } else {
-            form.reset();
-          }
-
-        }
-      }, {
-        disabled: true,
-        icon: '/img/icons/delete.png',
-        id: 'deleteFieldBtn',
-        text: 'Delete Field',
-        handler: function () {
-          var store = Ext.data.StoreManager.lookup('ProgramFormFieldStore'),
-            formPanel = Ext.getCmp('formPanel'),
-            form = formPanel.getForm();
-
-          Ext.Msg.show({
-            title: 'Delete Field?',
-            msg: 'Are you sure you want to delete this field?',
-            buttons: Ext.Msg.YESNO,
-            icon: Ext.Msg.QUESTION,
-            fn: function (btn) {
-              if (btn === 'yes') {
-                store.remove(formPanel.getRecord());
-                form.reset();
-                this.disable();
-              }
-            },
-            scope: this
-          });
-        }
-      }]
-    }],
-    id: 'formPanel',
-    margin: '0 0 15',
-    region: 'center',
-    items: [{
-      xtype: 'textfield',
-      allowBlank: false,
-      fieldLabel: 'Label',
-      name: 'label'
-    }, {
-      xtype: 'combo',
-      allowBlank: false,
-      displayField: 'ucase',
-      editable: false,
-      fieldLabel: 'Field Type',
-      listeners: {
-        change: {
-          fn: function (field, newValue, oldValue) {
-            var container = Ext.getCmp('fieldOptionsContainer'),
-              fieldOptions = Ext.getCmp('fieldOptions');
-
-            if (newValue === 'select') {
-              container.setVisible(true);
-              fieldOptions.allowBlank = false;
-              container.getEl().highlight('C9DFEE', { duration: 1000 });
-            } else {
-              container.setVisible(false);
-              fieldOptions.allowBlank = true;
-            }
-          }
-        }
-      },
-      name: 'type',
-      queryMode: 'local',
-      store: Ext.create('Ext.data.Store', {
-        fields: ['lcase', 'ucase'],
-        data: [{
-          lcase: 'checkbox', ucase: 'Checkbox'
-        }, {
-          lcase: 'datepicker', ucase: 'Datepicker'
-        }, {
-          lcase: 'states', ucase: 'List of States'
-        }, {
-          lcase: 'text', ucase: 'Textbox'
-        }, {
-          lcase: 'select', ucase: 'Select'
-        }]
-      }),
-      value: 'text',
-      valueField: 'lcase'
-    }, {
-      xtype: 'fieldcontainer',
-      hidden: true,
-      id: 'fieldOptionsContainer',
-      items: [{
-        xtype: 'combo',
-        displayField: 'ucase',
-        fieldLabel: 'Field Options',
-        id: 'fieldOptions',
-        name: 'options',
-        queryMode: 'local',
-        store: Ext.create('Ext.data.Store', {
-          fields: ['lcase', 'ucase'],
-          data: [{
-            lcase: 'truefalse', ucase: 'True/False'
-          }, {
-            lcase: 'yesno', ucase: 'Yes/No'
-          }]
-        }),
-        value: '',
-        valueField: 'lcase'
-      }, {
-        border: false,
-        cls: 'x-text-light',
-        html: '<em>Enter options as comma separated values, or choose from the list</em>',
-        padding: 5
-      }]
-    }, {
-      xtype: 'checkbox',
-      fieldLabel: 'Required',
-      name: 'required'
-    }, {
-      xtype: 'checkbox',
-      fieldLabel: 'Read only',
-      name: 'read_only',
-      listeners: {
-        change: function (field, newVal, oldVal) {
-          var container = Ext.getCmp('defaultValueContainer'),
-            defaultValue = Ext.getCmp('defaultValue');
-
-          if (newVal) {
-            container.setVisible(newVal);
-            defaultValue.allowBlank = false;
-            container.getEl().highlight('C9DFEE', { duration: 1000 });
-          } else {
-            container.setVisible(false);
-            defaultValue.allowBlank = true;
-          }
-        }
-      }
-    }, {
-      xtype: 'fieldcontainer',
-      hidden: true,
-      id: 'defaultValueContainer',
-      items: [{
-        xtype: 'textfield',
-        fieldLabel: 'Default Value',
-        id: 'defaultValue',
-        name: 'default_value'
-      }]
-    }, {
-      xtype: 'textarea',
-      fieldLabel: 'Instructions',
-      name: 'instructions'
-    }],
-    buttons: [{
-      disabled: true,
-      formBind: true,
-      id: 'builderSaveBtn',
-      text: 'Save',
-      handler: function () {
-        var formPanel = this.up('form'),
-          form = formPanel.getForm(),
-          vals = form.getValues(),
-          parseVals,
-          attributes = {},
-          options = {},
-          validation = {},
-          programStep = Ext.data.StoreManager.lookup('ProgramStepStore'),
-          programStepId = programStep.last().data.id,
-          grid = Ext.getCmp('formFieldGrid');
-
-        parseVals = (function () {
-          return {
-            datepicker: function () {
-              attributes['class'] = 'datepicker';
-              vals.type = 'text';
-            },
-            select: function () {
-              if (vals.options === 'truefalse') {
-                options.True = 'True';
-                options.False = 'False';
-              } else if (vals.options === 'yesno') {
-                options.Yes = 'Yes';
-                options.No = 'No';
-              } else {
-                Ext.Array.each(vals.options.split(','), function (item, index) {
-                  options[item] = item;
-                });
-              }
-
-              attributes.empty = 'Please Select';
-            },
-            states: function () {
-              vals.type = 'select';
-            }
-          };
-        }());
-
-        parseVals[vals.type] && parseVals[vals.type]();
-
-        if (vals.read_only === 'on') {
-          attributes.readonly = 'readonly';
-        }
-
-        if (vals.required === 'on') {
-          validation.rule = 'notEmpty';
-        }
-
-        vals.attributes      = encodeObject(attributes);
-        vals.options         = encodeObject(options);
-        vals.validation      = encodeObject(validation);
-        vals.program_step_id = programStepId;
-        vals.name            = vals.label.underscore();
-
-        grid.store.add(vals);
-        form.reset();
-      }
-    }, {
-      disabled: true,
-      formBind: true,
-      hidden: true,
-      id: 'updateBtn',
-      text: 'Update',
-      handler: function () {
-        var formPanel = this.up('form'),
-          form = formPanel.getForm(),
-          vals = form.getValues(),
-          parseVals,
-          attributes = {},
-          options = {},
-          validation = {},
-          programStep = Ext.data.StoreManager.lookup('ProgramStepStore'),
-          programStepId = programStep.last().data.id,
-          grid = Ext.getCmp('formFieldGrid'),
-          selectedRecord = grid.getSelectionModel().getSelection()[0];
-
-        parseVals = (function () {
-          return {
-            datepicker: function () {
-              attributes['class'] = 'datepicker';
-              vals.type = 'text';
-            },
-            select: function () {
-              if (vals.options === 'truefalse') {
-                options.True = 'True';
-                options.False = 'False';
-              } else if (vals.options === 'yesno') {
-                options.Yes = 'Yes';
-                options.No = 'No';
-              } else {
-                Ext.Array.each(vals.options.split(','), function (item, index) {
-                  options[item] = item;
-                });
-              }
-
-              attributes.empty = 'Please Select';
-            },
-            states: function () {
-              vals.type = 'select';
-            }
-          };
-        }());
-
-        parseVals[vals.type] && parseVals[vals.type]();
-
-        if (vals.read_only === 'on') {
-          attributes.readonly = 'readonly';
-        }
-
-        if (vals.required === 'on') {
-          validation.rule = 'notEmpty';
-        }
-
-        vals.attributes      = encodeObject(attributes);
-        vals.options         = encodeObject(options);
-        vals.validation      = encodeObject(validation);
-        vals.program_step_id = programStepId;
-        vals.name            = vals.label.underscore();
-
-        selectedRecord.set(vals);
-        form.reset();
-      }
-    }]
-  }],
-  preprocess: function () {
-    var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
-      programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
-      program = programStore.first(),
-      programId;
-
-    task = new Ext.util.DelayedTask(function () {
-      programId = programStore.first().data.id;
-      programStepStore.load({
-        params: {
-          program_id: programId
-        }
-      });
-    });
-    task.delay(1000);
-  },
-  process: function () {
-    var programFormFieldStore = Ext.data.StoreManager.lookup('ProgramFormFieldStore');
-
-    programFormFieldStore.sync();
-    return true;
-  }
-});
-
-
-/**
- * filingCategories
- */
-filingCategories = Ext.create('Ext.form.Panel', {
-  height: 406,
-  items: [{
-    border: 0,
-    html: '<h1>Where would you like to file the registration snapshot?</h1>',
-    margin: '0 0 10'
-  }, {
-    xtype: 'combo',
-    allowBlank: false,
-    displayField: 'name',
-    fieldLabel: 'Filing Category 1',
-    id: 'cat1Name',
-    labelWidth: 150,
-    listConfig: {
-        getInnerTpl: function() {
-            return '<div>{img}{name}</div>';
-        }
-    },
-    listeners: {
-      select: function(combo, records, Eopts) {
-        var store = Ext.data.StoreManager.lookup('Cat2Store');
-
-        if(records[0]) {
-          Ext.getCmp('cat2Name').disable();
-          Ext.getCmp('cat2Name').reset();
-          Ext.getCmp('cat3Name').disable();
-          Ext.getCmp('cat3Name').reset();
-          store.load({params: {parentId: records[0].data.id}});
-        }
-
-      }
-    },
-    name: 'cat_1',
-    queryMode: 'local',
-    store: 'Cat1Store',
-    valueField: 'id',
-    value: null
-  },{
-    xtype: 'combo',
-    fieldLabel: 'Filing Category 2',
-    name: 'cat_2',
-    id: 'cat2Name',
-    disabled: true,
-    store: 'Cat2Store',
-    displayField: 'name',
-    valueField: 'id',
-    queryMode: 'local',
-    value: null,
-    labelWidth: 150,
-    listConfig: {
-        getInnerTpl: function() {
-            return '<div>{img}{name}</div>';
-        }
-    },
-    allowBlank: false,
-    listeners: {
-      select: function(combo, records, Eopts) {
-        var store = Ext.data.StoreManager.lookup('Cat3Store');
-
-        if(records[0]) {
-          Ext.getCmp('cat3Name').disable();
-          Ext.getCmp('cat3Name').reset();
-          store.load({params: {parentId: records[0].data.id}});
-        }
-      }
-    }
-  },{
-    fieldLabel: 'Filing Category 3',
-    name: 'cat_3',
-    id: 'cat3Name',
-    xtype: 'combo',
-    store: 'Cat3Store',
-    disabled: true,
-    displayField: 'name',
-    valueField: 'id',
-    queryMode: 'local',
-    value: null,
-    labelWidth: 150,
-    listConfig: {
-        getInnerTpl: function() {
-            return '<div>{img}{name}</div>';
-        }
-    },
-    allowBlank: false
-  }],
-  process: function () {
-    var form = this.getForm(),
-      programDocumentStore = Ext.data.StoreManager.lookup('ProgramDocumentStore'),
-      programStore = Ext.data.StoreManager.lookup('ProgramStore'),
-      programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
-      program,
-      programStep,
-      vals;
-
-    if (form.isValid()) {
-      vals = form.getValues();
-      program = programStore.first();
-      programStep = programStepStore.last();
-
-      vals.name = program.data.name + " registration snapshot";
-      vals.type = 'snapshot';
-      vals.program_id = program.data.id;
-      vals.program_step_id = programStep.data.id;
-      programDocumentStore.add(vals);
-
-      return true;
-    }
   }
 });
 
@@ -1552,8 +1048,6 @@ Ext.onReady(function () {
     dockedItems: [ statusBar ],
     items: [
       registrationForm,
-      formBuilder,
-      filingCategories,
       instructions,
       emails
     ],
