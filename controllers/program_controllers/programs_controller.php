@@ -490,16 +490,30 @@ class ProgramsController extends AppController {
 		$this->loadModel('WatchedFilingCat');
 		$this->Program->ProgramStep->create();
 
-		$downloadStep = array(
+		$parentStep = array(
 			'ProgramStep' => array(
-				'program_id' => $programId,
-				'type' => 'form_download'
+				'program_id' => $programId
 			)
 		);
 
-		$parentStep = $this->Program->ProgramStep->save($downloadStep);
+		$parent = $this->Program->ProgramStep->save($parentStep);
 
-		if ($parentStep) {
+		$downloadStep = array(
+			'ProgramStep' => array(
+				'program_id' => $programId,
+				'parent_id' => $this->Program->ProgramStep->id,
+				'type' => 'form_download',
+				'name' => 'Esign Download'
+			)
+		);
+
+		$this->Program->ProgramStep->create();
+		$download = $this->Program->ProgramStep->save($downloadStep);
+
+		$this->log($download, 'debug');
+
+		if ($download) {
+			$this->log('in download', 'debug');
 			if (isset($programDoc['cat_3'])) {
 				$watchedCat = $programDoc['cat_3'];
 			} else if (isset($programDoc['cat_2'])) {
