@@ -1024,7 +1024,7 @@ class ProgramResponsesController extends AppController {
 		}
 		fclose($fp);
 
-		$pdftkCommandString = DS . 'bin' . DS . 'pdftk ' . APP . 'storage' . DS . 'program_forms' . DS .
+		$pdftkCommandString = DS . 'usr' . DS . 'bin' . DS . 'pdftk ' . APP . 'storage' . DS . 'program_forms' . DS .
 			$template . ' fill_form ' . TMP . 'fdf' . DS . $fdfFile . ' output ' . $path . $pdfFile . ' flatten';
 		passthru($pdftkCommandString, $return);
 
