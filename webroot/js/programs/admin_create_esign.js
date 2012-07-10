@@ -23,6 +23,7 @@ Ext.define('Program', {
     { name: 'response_expires_in', type: 'int' },
     { name: 'send_expiring_soon', type: 'int' },
     { name: 'program_response_count', type: 'int' },
+    { name: 'bar_code_definition_id', type: 'int' },
     { name: 'show_in_dash', type: 'int' },
     { name: 'in_test', type: 'int' },
     { name: 'disabled', type: 'int' },
@@ -153,6 +154,14 @@ Ext.define('DocumentFilingCategory', {
         return img;
       }
   }]
+});
+
+Ext.define('BarCodeDefinition', {
+  extend: 'Ext.data.Model',
+  fields: [
+    { name: 'id', type: 'int' },
+    { name: 'name' },
+  ]
 });
 
 /**
@@ -318,6 +327,7 @@ Ext.create('Ext.data.Store', {
   data: [
     { program_id: 0, text: 'Default text Main', type: 'main', created: null, modified: null },
     { program_id: 0, text: 'Default text Pending Approval', type: 'pending_approval', created: null, modified: null },
+    { program_id: 0, text: 'Default text Pending Document Review', type: 'pending_document_review', created: null, modified: null },
     { program_id: 0, text: 'Default text Expired', type: 'expired', created: null, modified: null },
     { program_id: 0, text: 'Default text Not Approved', type: 'not_approved', created: null, modified: null },
     { program_id: 0, text: 'Default text Complete', type: 'complete', created: null, modified: null }
@@ -375,6 +385,22 @@ Ext.create('Ext.data.Store', {
       writeAllFields: false
     }
   }
+});
+
+Ext.create('Ext.data.Store', {
+  autoLoad: true,
+  model: 'BarCodeDefinition',
+  proxy: {
+    api:{
+      read: '/admin/bar_code_definitions/index'
+    },
+    type: 'ajax',
+    reader: {
+      type: 'json',
+      root: 'definitions'
+    }
+  },
+  storeId: 'BarCodeDefinitionStore',
 });
 
 /**
@@ -547,6 +573,27 @@ registrationForm = Ext.create('Ext.form.Panel', {
       labelWidth: 175,
       name: 'document',
       value: ''
+    }]
+  }, {
+    xtype: 'fieldcontainer',
+    height: 24,
+    width: 400,
+    layout: {
+      align: 'stretch',
+      type: 'vbox'
+    },
+    items: [{
+      xtype: 'combo',
+      allowBlank: false,
+      displayField: 'name',
+      fieldLabel: 'Bar Code Definition',
+      id: 'barCodeDefinition',
+      labelWidth: 175,
+      name: 'bar_code_definition_id',
+      queryMode: 'local',
+      store: 'BarCodeDefinitionStore',
+      valueField: 'id',
+      value: null
     }]
   }, {
     xtype: 'fieldcontainer',
