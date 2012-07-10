@@ -7,6 +7,7 @@ Ext.define('Program', {
     { name: 'id', type: 'int' },
     'name',
     'type',
+    { name: 'show_in_dash', type: 'int' },
     { name: 'program_response_count', type: 'int', useNull: true },
     { name: 'disabled', type: 'int' },
     { name: 'in_test', type: 'int' }
@@ -274,6 +275,31 @@ Ext.onReady(function () {
             });
           }
 
+          if (rec.data.show_in_dash) {
+            showInDashText = 'Remove From Customer Dashboard';
+          } else {
+            showInDashText = 'Show In Customer Dashboard';
+          }
+
+          items.push({ xtype: 'menuseparator' });
+          items.push({
+              icon: '/img/icons/survey.png',
+              text: showInDashText,
+              handler: function () {
+                var showInDash = rec.get('show_in_dash');
+                if (showInDash) {
+                  rec.set({
+                    show_in_dash: 0
+                  });
+                } else {
+                  rec.set({
+                    show_in_dash: 1
+                  });
+                }
+                rec.save();
+              }
+          });
+
           menu = Ext.create('Ext.menu.Menu', {
             items: items
           });
@@ -444,6 +470,31 @@ Ext.onReady(function () {
               }
             });
           }
+
+          if (rec.data.show_in_dash) {
+            showInDashText = 'Remove From Customer Dashboard';
+          } else {
+            showInDashText = 'Show In Customer Dashboard';
+          }
+
+          items.push({ xtype: 'menuseparator' });
+          items.push({
+              icon: '/img/icons/survey.png',
+              text: showInDashText,
+              handler: function () {
+                var showInDash = rec.get('show_in_dash');
+                if (showInDash) {
+                  rec.set({
+                    show_in_dash: 0
+                  });
+                } else {
+                  rec.set({
+                    show_in_dash: 1
+                  });
+                }
+                rec.save();
+              }
+          });
 
           menu = Ext.create('Ext.menu.Menu', {
             items: items
@@ -616,6 +667,31 @@ Ext.onReady(function () {
             });
           }
 
+          if (rec.data.show_in_dash) {
+            showInDashText = 'Remove From Customer Dashboard';
+          } else {
+            showInDashText = 'Show In Customer Dashboard';
+          }
+
+          items.push({ xtype: 'menuseparator' });
+          items.push({
+              icon: '/img/icons/survey.png',
+              text: showInDashText,
+              handler: function () {
+                var showInDash = rec.get('show_in_dash');
+                if (showInDash) {
+                  rec.set({
+                    show_in_dash: 0
+                  });
+                } else {
+                  rec.set({
+                    show_in_dash: 1
+                  });
+                }
+                rec.save();
+              }
+          });
+
           menu = Ext.create('Ext.menu.Menu', {
             items: items
           });
@@ -730,7 +806,8 @@ Ext.onReady(function () {
         itemcontextmenu: function (view, rec, item, index, e) {
           var menu,
             items = [],
-            progressMsg;
+            progressMsg,
+            showInDashText;
 
           e.preventDefault();
 
@@ -786,6 +863,31 @@ Ext.onReady(function () {
               }
             });
           }
+
+          if (rec.data.show_in_dash) {
+            showInDashText = 'Remove From Customer Dashboard';
+          } else {
+            showInDashText = 'Show In Customer Dashboard';
+          }
+
+          items.push({ xtype: 'menuseparator' });
+          items.push({
+              icon: '/img/icons/survey.png',
+              text: showInDashText,
+              handler: function () {
+                var showInDash = rec.get('show_in_dash');
+                if (showInDash) {
+                  rec.set({
+                    show_in_dash: 0
+                  });
+                } else {
+                  rec.set({
+                    show_in_dash: 1
+                  });
+                }
+                rec.save();
+              }
+          });
 
           menu = Ext.create('Ext.menu.Menu', {
             items: items

@@ -58,6 +58,7 @@ class ProgramsController extends AppController {
 						'name' => $program['Program']['name'],
 						'type' => $program['Program']['type'],
 						'disabled' => $program['Program']['disabled'],
+						'show_in_dash' => $program['Program']['show_in_dash'],
 						'in_test' => $program['Program']['in_test'],
 						'program_response_count' => $program['Program']['program_response_count']
 					);
