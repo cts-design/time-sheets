@@ -102,6 +102,9 @@ class ProgramsController extends AppController {
 	}
 
 	public function admin_edit($programType, $id) {
+		$this->Program->Behaviors->detach('Disableable');
+		$this->Program->recursive = -1;
+
 		if (!$programType || !$id) {
 			$this->Session->setFlash(__('Invalid Program', true), 'flash_failure');
 			$this->redirect(array(
@@ -110,7 +113,6 @@ class ProgramsController extends AppController {
 			));
 		}
 
-		$this->Program->recursive = -1;
 		$program = $this->Program->find('first', array(
 			'conditions' => array(
 				'id'   => $id,
@@ -332,6 +334,26 @@ class ProgramsController extends AppController {
 				$data['programs'] = $program['Program'];
 				$data['programs']['id'] = $programId;
 
+				$data['success'] = true;
+			} else {
+				$data['success'] = false;
+			}
+
+			$this->set('data', $data);
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
+
+	public function admin_update_enrollment() {
+		if ($this->RequestHandler->isAjax()) {
+			$programData = json_decode($this->params['form']['programs'], true);
+
+			$this->Program->id = $programData['id'];
+			unset($programData['id']);
+
+			$this->Program->set($programData);
+
+			if ($this->Program->save()) {
 				$data['success'] = true;
 			} else {
 				$data['success'] = false;
