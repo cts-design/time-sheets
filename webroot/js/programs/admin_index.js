@@ -641,30 +641,33 @@ Ext.onReady(function () {
                 rec.save();
               }
             });
-            items.push({
-              icon: '/img/icons/delete.png',
-              text: 'Purge Test Data',
-              handler: function () {
-                progressMsg = Ext.Msg.wait(
-                  'Please wait while we purge your test data',
-                  'Purging Test Data', {
-                    interval: 150
-                  });
-                Ext.Ajax.request({
-                  url: '/admin/programs/purge_test_data',
-                  params: {
-                    program_id: rec.data.id
-                  },
-                  success: function (res) {
-                    var task = new Ext.util.DelayedTask(function () {
-                      progressMsg.close();
-                    });
 
-                    task.delay(1240);
-                  }
-                });
-              }
-            });
+            if (roleId === 2) {
+              items.push({
+                icon: '/img/icons/delete.png',
+                text: 'Purge Test Data',
+                handler: function () {
+                  progressMsg = Ext.Msg.wait(
+                    'Please wait while we purge your test data',
+                    'Purging Test Data', {
+                      interval: 150
+                    });
+                  Ext.Ajax.request({
+                    url: '/admin/programs/purge_test_data',
+                    params: {
+                      program_id: rec.data.id
+                    },
+                    success: function (res) {
+                      var task = new Ext.util.DelayedTask(function () {
+                        progressMsg.close();
+                      });
+
+                      task.delay(1240);
+                    }
+                  });
+                }
+              });
+            }
           }
 
           if (rec.data.show_in_dash) {
