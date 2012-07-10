@@ -93,7 +93,7 @@ class ProgramDocumentsController extends AppController {
 
 	public function admin_upload() {
 		$this->layout = 'ajax';
-		$storagePath = substr(APP, 0, -1) . Configure::read('Program.media.path');
+		$storagePath = substr(APP, 0, -1) . Configure::read('Document.storage.path');
 
 		switch ($_FILES['document']['type']) {
 			case 'application/pdf':

@@ -341,6 +341,35 @@ class ProgramsController extends AppController {
 		}
 	}
 
+	public function admin_create_esign() {
+		if ($this->RequestHandler->isAjax()) {
+			$programData = json_decode($this->params['form']['programs'], true);
+			$programDoc  = json_decode($this->params['form']['program_document'], true);
+
+			unset($programData['id'], $programData['created'], $programData['modified']);
+
+			$this->data['Program'] = $programData;
+
+			$this->Program->create();
+			$program = $this->Program->save($this->data);
+
+			if ($this->Program->save($program)) {
+				$programId = $this->Program->id;
+				$data['programs'] = $program['Program'];
+				$data['programs']['id'] = $programId;
+
+				$this->createEsignProgramStep($programId, $programDoc);
+
+				$data['success'] = true;
+			} else {
+				$data['success'] = false;
+			}
+
+			$this->set('data', $data);
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
+
 	public function admin_upload_media() {
 		$this->layout = 'ajax';
 		$storagePath = substr(APP, 0, -1) . Configure::read('Program.media.path');
@@ -452,6 +481,64 @@ class ProgramsController extends AppController {
 			if ($formStep) {
 				$data['Programs']['program_steps'] = $formStep['ProgramStep'];
 			}
+		}
+
+		return true;
+	}
+
+	private function createEsignProgramStep($programId, $programDoc) {
+		$this->loadModel('WatchedFilingCat');
+		$this->Program->ProgramStep->create();
+
+		$parentStep = array(
+			'ProgramStep' => array(
+				'program_id' => $programId
+			)
+		);
+
+		$parent = $this->Program->ProgramStep->save($parentStep);
+
+		$downloadStep = array(
+			'ProgramStep' => array(
+				'program_id' => $programId,
+				'parent_id' => $this->Program->ProgramStep->id,
+				'type' => 'form_download',
+				'name' => 'Esign Download'
+			)
+		);
+
+		$this->Program->ProgramStep->create();
+		$download = $this->Program->ProgramStep->save($downloadStep);
+
+		$this->log($download, 'debug');
+
+		if ($download) {
+			$this->log('in download', 'debug');
+			if (isset($programDoc['cat_3'])) {
+				$watchedCat = $programDoc['cat_3'];
+			} else if (isset($programDoc['cat_2'])) {
+				$watchedCat = $programDoc['cat_2'];
+			} else {
+				$watchedCat = $programDoc['cat_1'];
+			}
+
+			unset($programDoc['cat_1'], $programDoc['cat_2'], $programDoc['cat_3']);
+
+			$watchedFilingCat['WatchedFilingCat'] = array(
+				'program_id' => $programId,
+				'cat_id' => $watchedCat,
+				'name' => 'esign'
+			);
+
+			$this->WatchedFilingCat->create();
+			$this->WatchedFilingCat->save($watchedFilingCat);
+
+			$programDocument['ProgramDocument'] = $programDoc;
+			$programDocument['ProgramDocument']['program_id'] = $programId;
+			$programDocument['ProgramDocument']['program_step_id'] = $this->Program->ProgramStep->id;
+
+			$this->Program->ProgramDocument->create();
+			$this->Program->ProgramDocument->save($programDocument);
 		}
 
 		return true;
