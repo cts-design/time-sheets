@@ -81,7 +81,7 @@ class ProgramsController extends AppController {
 	}
 
 	public function admin_read() {
-		FireCake::log($this->params);
+		$this->Program->Behaviors->detach('Disableable');
 		$programId = $this->params['url']['program_id'];
 
 		$program = $this->Program->find('first', array(
