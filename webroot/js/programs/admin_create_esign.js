@@ -23,6 +23,7 @@ Ext.define('Program', {
     { name: 'response_expires_in', type: 'int' },
     { name: 'send_expiring_soon', type: 'int' },
     { name: 'program_response_count', type: 'int' },
+    { name: 'bar_code_definition_id', type: 'int' },
     { name: 'show_in_dash', type: 'int' },
     { name: 'in_test', type: 'int' },
     { name: 'disabled', type: 'int' },
@@ -153,6 +154,14 @@ Ext.define('DocumentFilingCategory', {
         return img;
       }
   }]
+});
+
+Ext.define('BarCodeDefinition', {
+  extend: 'Ext.data.Model',
+  fields: [
+    { name: 'id', type: 'int' },
+    { name: 'name' },
+  ]
 });
 
 /**
@@ -377,6 +386,22 @@ Ext.create('Ext.data.Store', {
   }
 });
 
+Ext.create('Ext.data.Store', {
+  autoLoad: true,
+  model: 'BarCodeDefinition',
+  proxy: {
+    api:{
+      read: '/admin/bar_code_definitions/index'
+    },
+    type: 'ajax',
+    reader: {
+      type: 'json',
+      root: 'definitions'
+    }
+  },
+  storeId: 'BarCodeDefinitionStore',
+});
+
 /**
  * Variable Declarations
  */
@@ -547,6 +572,27 @@ registrationForm = Ext.create('Ext.form.Panel', {
       labelWidth: 175,
       name: 'document',
       value: ''
+    }]
+  }, {
+    xtype: 'fieldcontainer',
+    height: 24,
+    width: 400,
+    layout: {
+      align: 'stretch',
+      type: 'vbox'
+    },
+    items: [{
+      xtype: 'combo',
+      allowBlank: false,
+      displayField: 'name',
+      fieldLabel: 'Bar Code Definition',
+      id: 'barCodeDefinition',
+      labelWidth: 175,
+      name: 'bar_code_definition_id',
+      queryMode: 'local',
+      store: 'BarCodeDefinitionStore',
+      valueField: 'id',
+      value: null
     }]
   }, {
     xtype: 'fieldcontainer',
