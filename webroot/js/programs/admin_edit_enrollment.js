@@ -238,6 +238,7 @@ Ext.create('Ext.data.Store', {
     type: 'ajax',
     api: {
       create: '/admin/programs/create_enrollment',
+      read: '/admin/programs/read',
       update: '/admin/programs/update_enrollment'
     },
     reader: {
@@ -701,6 +702,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       allowBlank: false,
       displayField: 'ucase',
       fieldLabel: 'Send expiring soon emails',
+      id: 'sendExpiringSoon',
       labelWidth: 190,
       name: 'send_expiring_soon',
       queryMode: 'local',
@@ -780,6 +782,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       fieldLabel: 'Will this enrollment require users to upload documents?',
       items: [{
         boxLabel: 'Yes',
+        id: 'uploadDocsYes',
         name: 'upload_docs',
         inputValue: '1',
         checked: true
@@ -857,10 +860,21 @@ registrationForm = Ext.create('Ext.form.Panel', {
 
       programStore.load({
         callback: function (recs, op, success) {
-          if (success) {
-            form.loadRecord(recs[0]);
+          var rec,
+            expiringSoonString;
 
-            if (!recs[0].data.in_test) {
+          if (success) {
+            rec = recs[0];
+            expiringSoonString = rec.data.send_expiring_soon.toString();
+
+            form.loadRecord(rec);
+            form.down('#sendExpiringSoon').setValue(expiringSoonString);
+
+            if (rec.data.queue_category_id) {
+              form.down('#uploadDocsYes').setValue(1);
+            }
+
+            if (!rec.data.in_test) {
               form.down('#approvalRequired').disable();
               form.down('#esignRequired').disable();
               form.down('#registrationType').disable();
