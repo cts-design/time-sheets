@@ -279,6 +279,9 @@ Ext.create('Ext.data.TreeStore', {
       root: 'program_steps'
     }
   },
+  root: {
+    expanded: true
+  },
   storeId: 'ProgramStepStore'
 });
 
@@ -1240,40 +1243,25 @@ stepTree = Ext.create('Ext.panel.Panel', {
         program_id: ProgramId
       },
       success: function (response) {
-        console.log(response);
         var programSteps = Ext.JSON.decode(response.responseText).program_steps,
-          rootNode = programStepStore.setRootNode({
-            expanded: true,
-            children: []
-          }),
+          rootNode = programStepStore.getRootNode(),
           i;
 
-        console.log('me: ', me);
-        console.log('rootNode: ', rootNode);
-
         for (i = 0, l = programSteps.length; i < l; i++) {
-          var rec = programSteps[i];
+          var rec = programSteps[i],
+            parent;
 
           if (!rec.type) {
             rootNode.appendChild(rec);
           } else {
-            console.log(rec);
-            rec.set({
-              leaf: true,
-              parentId: rec.get('parent_id')
-            });
+            parent = rootNode.findChild('id', rec.parent_id);
+            rec.parentId = rec.parent_id;
+            rec.leaf = true;
+            parent.appendChild(rec);
           }
         }
       }
     });
-
-    //programStepStore.load({
-      //params: {
-        //program_id: ProgramId
-      //},
-      //callback: function (recs, op, success) {
-      //}
-    //});
   },
   process: function () {
     var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
