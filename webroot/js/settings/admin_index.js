@@ -62,7 +62,7 @@ Ext.onReady(function(){
 			}
 			return true;
 		},
-		maxselectionsText: 'Only ' + field.maxSelections + ' custom fields allowed.'
+		maxselectionsText: 'Only 5 custom fields allowed.'
 	}); 
 	
 	var fieldsSelect = Ext.create('Ext.ux.form.field.BoxSelect', {
