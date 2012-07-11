@@ -900,7 +900,8 @@ registrationForm = Ext.create('Ext.form.Panel', {
 
     if (form.isValid()) {
       vals = form.getValues();
-      programStore.add(vals);
+      record = programStore.first();
+      record.set(vals);
     } else {
       return false;
     }
