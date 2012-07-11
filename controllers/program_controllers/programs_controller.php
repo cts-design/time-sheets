@@ -58,6 +58,7 @@ class ProgramsController extends AppController {
 						'name' => $program['Program']['name'],
 						'type' => $program['Program']['type'],
 						'disabled' => $program['Program']['disabled'],
+						'show_in_dash' => $program['Program']['show_in_dash'],
 						'in_test' => $program['Program']['in_test'],
 						'program_response_count' => $program['Program']['program_response_count']
 					);
@@ -80,7 +81,7 @@ class ProgramsController extends AppController {
 	}
 
 	public function admin_read() {
-		FireCake::log($this->params);
+		$this->Program->Behaviors->detach('Disableable');
 		$programId = $this->params['url']['program_id'];
 
 		$program = $this->Program->find('first', array(
@@ -101,6 +102,9 @@ class ProgramsController extends AppController {
 	}
 
 	public function admin_edit($programType, $id) {
+		$this->Program->Behaviors->detach('Disableable');
+		$this->Program->recursive = -1;
+
 		if (!$programType || !$id) {
 			$this->Session->setFlash(__('Invalid Program', true), 'flash_failure');
 			$this->redirect(array(
@@ -109,7 +113,6 @@ class ProgramsController extends AppController {
 			));
 		}
 
-		$this->Program->recursive = -1;
 		$program = $this->Program->find('first', array(
 			'conditions' => array(
 				'id'   => $id,
@@ -331,6 +334,26 @@ class ProgramsController extends AppController {
 				$data['programs'] = $program['Program'];
 				$data['programs']['id'] = $programId;
 
+				$data['success'] = true;
+			} else {
+				$data['success'] = false;
+			}
+
+			$this->set('data', $data);
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
+
+	public function admin_update_enrollment() {
+		if ($this->RequestHandler->isAjax()) {
+			$programData = json_decode($this->params['form']['programs'], true);
+
+			$this->Program->id = $programData['id'];
+			unset($programData['id']);
+
+			$this->Program->set($programData);
+
+			if ($this->Program->save()) {
 				$data['success'] = true;
 			} else {
 				$data['success'] = false;
