@@ -256,8 +256,6 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.TreeStore', {
-  autoLoad: true,
-  autoSync: true,
   model: 'ProgramStep',
   proxy: {
     type: 'ajax',
@@ -266,6 +264,9 @@ Ext.create('Ext.data.TreeStore', {
       read: '/admin/program_steps/read_tree',
       update: '/admin/program_steps/update',
       destroy: '/admin/program_steps/destroy'
+    },
+    extraParams: {
+      program_id: ProgramId
     },
     reader: {
       type: 'json',
@@ -277,9 +278,6 @@ Ext.create('Ext.data.TreeStore', {
       encode: true,
       root: 'program_steps'
     }
-  },
-  root: {
-    expanded: true
   },
   storeId: 'ProgramStepStore'
 });
@@ -965,8 +963,9 @@ stepTree = Ext.create('Ext.panel.Panel', {
       }]
     }],
     height: 350,
+    id: 'gridTreePanel',
     region: 'west',
-    rootVisible: false,
+    rootVisible: true,
     store: 'ProgramStepStore',
     width: 660,
     columns: [{
@@ -1232,17 +1231,49 @@ stepTree = Ext.create('Ext.panel.Panel', {
     }]
   }],
   preprocess: function () {
-    var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
-      programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
-      task = new Ext.util.DelayedTask(function () {
-        var program = programStore.first();
+    var programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
+      me = this;
 
-        programStepStore.getProxy().extraParams = {
-          program_id: program.data.id
-        };
-      });
+    Ext.Ajax.request({
+      url: '/admin/program_steps/read',
+      params: {
+        program_id: ProgramId
+      },
+      success: function (response) {
+        console.log(response);
+        var programSteps = Ext.JSON.decode(response.responseText).program_steps,
+          rootNode = programStepStore.setRootNode({
+            expanded: true,
+            children: []
+          }),
+          i;
 
-    task.delay(2500);
+        console.log('me: ', me);
+        console.log('rootNode: ', rootNode);
+
+        for (i = 0, l = programSteps.length; i < l; i++) {
+          var rec = programSteps[i];
+
+          if (!rec.type) {
+            rootNode.appendChild(rec);
+          } else {
+            console.log(rec);
+            rec.set({
+              leaf: true,
+              parentId: rec.get('parent_id')
+            });
+          }
+        }
+      }
+    });
+
+    //programStepStore.load({
+      //params: {
+        //program_id: ProgramId
+      //},
+      //callback: function (recs, op, success) {
+      //}
+    //});
   },
   process: function () {
     var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
