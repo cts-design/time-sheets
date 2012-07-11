@@ -993,7 +993,16 @@ stepTree = Ext.create('Ext.panel.Panel', {
               icon: '/img/icons/edit.png',
               text: 'Rename Module',
               handler: function () {
-                console.log('rename yo module foo');
+                Ext.Msg.prompt(
+                  'Rename Module',
+                  'What would you like to rename the module to',
+                  function (btn, value) {
+                    if (btn === 'ok') {
+                      rec.set({ name: value });
+                      rec.save();
+                    }
+                  }
+                );
               }
             }]
           }).showAt(e.getXY());
