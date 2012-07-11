@@ -982,6 +982,23 @@ stepTree = Ext.create('Ext.panel.Panel', {
       text: 'Type'
   }],
     listeners: {
+      itemcontextmenu: function (view, rec, item, index, e) {
+        var menu;
+
+        e.preventDefault();
+
+        if (!rec.isLeaf()) {
+          menu = Ext.create('Ext.menu.Menu', {
+            items: [{
+              icon: '/img/icons/edit.png',
+              text: 'Rename Module',
+              handler: function () {
+                console.log('rename yo module foo');
+              }
+            }]
+          }).showAt(e.getXY());
+        }
+      },
       select: function (rm, rec, index) {
         var deleteModuleBtn = Ext.getCmp('deleteModuleBtn'),
           addStepBtn = Ext.getCmp('addStepBtn'),
