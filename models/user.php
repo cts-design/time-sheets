@@ -252,6 +252,76 @@ class User extends AppModel {
     );
 	
 	var $validationSets = array(
+		'kioskRegistration' => array(
+			'firstname' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a first name.',
+					'required' => false
+				),
+				'maxlength' => array(
+					'rule' => array('maxlength', 50),
+					'message' => 'This field cannot excced 50 characters.',
+					'required' => false
+				)
+			),
+			'lastname' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a last name.',
+					'required' => false
+				),
+				'maxlength' => array(
+					'rule' => array('maxlength', 50),
+					'message' => 'This field cannot excced 50 characters.',
+					'required' => false
+				),
+			),
+			'ssn' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a SSN.',
+					'required' => false
+				),
+				'numeric' => array(
+					'rule' => 'numeric',
+					'message' => 'Please provide only numbers, no spaces or dashes.',
+					'required' => false
+				),
+				'unique' => array(
+					'rule' => 'isUnique',
+					'message' => 'The SSN entered already exists in the system.',
+					'required' => false
+				),
+				'minLength' => array(
+					'rule' => array('minLength', 9),
+					'message' => 'SSN must be full 9 digits.',
+					'required' => false
+				)
+			),
+			'ssn_confirm' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please confirm the SSN.',
+					'required' => false
+				),
+				'numeric' => array(
+					'rule' => 'numeric',
+					'message' => 'Please provide only numbers, no spaces or dashes.',
+					'required' => false
+				),
+				'verify' => array(
+					'rule' => array('verifies', 'ssn'),
+					'message' => 'SSNs do not match.',
+					'required' => false
+				),
+				'minLength' => array(
+					'rule' => array('minLength', 9),
+					'message' => 'SSN must be full 9 digits.',
+					'required' => false
+				)		    
+			)
+		),
 		'auditor' => array(
 			'ssn' => array(
 				'rule' => 'notEmpty',

@@ -36,21 +36,21 @@ Ext.onReady(function(){
 	var fields = Ext.create('Ext.data.Store', {
 	    fields: ['field', 'label'],
 	    data : [
-	    	{"field":"middle_initital", "label": "Middle Initial"},
-	    	{"field":"surname", "label": "Surname"},
-	    	{"field":"address_1", "label": "Address"},
-	    	{"field":"city", "label":"City"},
-	    	{"field":"county", "label":"County"},
-	    	{"field":"state", "label":"State"},	
-	        {"field":"zip", "label":"Zip Code"},
-	        {"field":"phone", "label":"Phone"},
-	        {"field":"gender", "label":"Gender"},
-	        {"field":"dob", "label": "Birth Date"},	
-	        {"field":"email", "label": "Email Address"},	        
-	        {"field":"language", "label":"Language"},
-	        {"field":"race", "label":"Race"},
-	        {"field":"ethnicity", "label":"Ethnicity"},
-	        {"field":"veteran", "label":"Veteran"}
+        {"field":"middle_initital", "label": "Middle Initial"},
+        {"field":"surname", "label": "Surname"},
+        {"field":"address_1", "label": "Address"},
+        {"field":"city", "label":"City"},
+        {"field":"county", "label":"County"},
+        {"field":"state", "label":"State"},	
+        {"field":"zip", "label":"Zip Code"},
+        {"field":"phone", "label":"Phone"},
+        {"field":"gender", "label":"Gender"},
+        {"field":"dob", "label": "Birth Date"},	
+        {"field":"email", "label": "Email Address"},	        
+        {"field":"language", "label":"Language"},
+        {"field":"race", "label":"Race"},
+        {"field":"ethnicity", "label":"Ethnicity"},
+        {"field":"veteran", "label":"Veteran"}
 	    ]
 	});	
 	
@@ -62,7 +62,7 @@ Ext.onReady(function(){
 			}
 			return true;
 		},
-		maxselectionsText: 'Only 4 custom fields allowed.'
+		maxselectionsText: 'Only ' + field.maxSelections + ' custom fields allowed.'
 	}); 
 	
 	var fieldsSelect = Ext.create('Ext.ux.form.field.BoxSelect', {
@@ -74,7 +74,7 @@ Ext.onReady(function(){
 	    valueField: 'field',
 	    multiSelect: true,
 	    submitValue: false,
-	    maxSelections: 4,
+	    maxSelections: 5,
 	    vtype: 'maxselections'
 	});	
 	
