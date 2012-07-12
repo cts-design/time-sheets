@@ -164,6 +164,12 @@ Ext.define('WatchedFilingCat', {
   fields: [
     { name: 'id', type: 'int' },
     { name: 'cat_id', type: 'int' },
+    { name: 'cat_1', type: 'int' },
+    { name: 'cat_1_name', type: 'int' },
+    { name: 'cat_2', type: 'int' },
+    { name: 'cat_2_name', type: 'int' },
+    { name: 'cat_3', type: 'int' },
+    { name: 'cat_3_name', type: 'int' },
     { name: 'program_id', type: 'int' },
     { name: 'program_email_id', type: 'int' },
     'name',
@@ -2087,11 +2093,19 @@ watchedFilingCats = Ext.create('Ext.panel.Panel', {
         return val.humanize();
       }
     }, {
-      header: 'Program Id',
-      dataIndex: 'program_id'
+      header: 'Category',
+      dataIndex: 'cat_3_name',
+      flex: 1
     }, {
       header: 'Program Email Id',
-      dataIndex: 'program_email_id'
+      dataIndex: 'program_email_id',
+      renderer: function (val) {
+        if (val) {
+          return val;
+        } else {
+          return 'N/A';
+        }
+      }
     }],
     listeners: {
       select: function (rm, rec, index) {

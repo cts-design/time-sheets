@@ -155,8 +155,25 @@ class ProgramDocumentsController extends AppController {
 
 		if ($watchedCats) {
 			$data['success'] = true;
+			$j = 0;
 			foreach ($watchedCats as $key => $value) {
-				$data['cats'][] = $value['WatchedFilingCat'];
+				$data['cats'][$j] = $value['WatchedFilingCat'];
+
+				$parents = $this->getWatchedCatPath($value['WatchedFilingCat']['cat_id']);
+
+				for ($i = 0; $i < count($parents); $i++) {
+					$id = $i + 1;
+					$catId = "cat_$id";
+					$catName = "{$catId}_name";
+
+					$this->log($catId, 'debug');
+					$this->log($catName, 'debug');
+
+					$data['cats'][$j][$catId] = $parents[$i]['DocumentFilingCategory']['id'];
+					$data['cats'][$j][$catName] = $parents[$i]['DocumentFilingCategory']['id'];
+				}
+
+				$j++;
 			}
 		} else {
 			$data['success'] = false;
@@ -174,5 +191,10 @@ class ProgramDocumentsController extends AppController {
 	public function admin_destroy_watched_cat() {
 		$this->loadModel('WatchedFilingCat');
 		$watchedCat = json_decode($this->params['form']['cats'], true);
+	}
+
+	private function getWatchedCatPath($id) {
+		$this->loadModel('WatchedFilingCat');
+		return $this->WatchedFilingCat->DocumentFilingCategory->getPath($id);
 	}
 }
