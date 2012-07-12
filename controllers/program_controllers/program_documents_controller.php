@@ -48,13 +48,19 @@ class ProgramDocumentsController extends AppController {
 	}
 
 	public function admin_read() {
-		$programStepId = $this->params['url']['program_step_id'];
+		if (isset($this->params['url']['program_step_id'])) {
+			$conditions = array(
+				'ProgramDocument.program_step_id' => $this->params['url']['program_step_id']
+			);
+		} else if (isset($this->params['url']['program_id'])) {
+			$conditions = array(
+				'ProgramDocument.program_id' => $this->params['url']['program_id']
+			);
+		}
 
 		$this->ProgramDocument->recursive = -1;
 		$documents = $this->ProgramDocument->find('all', array(
-			'conditions' => array(
-				'ProgramDocument.program_step_id' => $programStepId
-			)
+			'conditions' => $conditions
 		));
 
 		if ($documents) {
@@ -132,4 +138,41 @@ class ProgramDocumentsController extends AppController {
 		return $this->render(null, null, '/elements/ajaxreturn');
 	}
 
+	public function admin_create_watched_cat() {
+		$this->loadModel('WatchedFilingCat');
+		$watchedCat = json_decode($this->params['form']['cats'], true);
+	}
+
+	public function admin_read_watched_cat() {
+		$this->loadModel('WatchedFilingCat');
+		$programId = $this->params['url']['program_id'];
+
+		$watchedCats = $this->WatchedFilingCat->find('all', array(
+			'conditions' => array(
+				'WatchedFilingCat.program_id' => $programId
+			)
+		));
+
+		if ($watchedCats) {
+			$data['success'] = true;
+			foreach ($watchedCats as $key => $value) {
+				$data['cats'][] = $value['WatchedFilingCat'];
+			}
+		} else {
+			$data['success'] = false;
+		}
+
+		$this->set('data', $data);
+		$this->render(null, null, '/elements/ajaxreturn');
+	}
+
+	public function admin_update_watched_cat() {
+		$this->loadModel('WatchedFilingCat');
+		$watchedCat = json_decode($this->params['form']['cats'], true);
+	}
+
+	public function admin_destroy_watched_cat() {
+		$this->loadModel('WatchedFilingCat');
+		$watchedCat = json_decode($this->params['form']['cats'], true);
+	}
 }
