@@ -3,6 +3,15 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+	<h1>Release 3.3.4 (7-12-12)</h1>
+    <h2>Minor feature enhancements</h2>
+	<ol>
+		<li>Added the ability to add up to 5 fields to kiosk registration.</li>
+		<li>Added USDOL confidentiality statement to the kiosk registration page.</li>
+		<li>Kiosk registration registration fields are now optional other than first name, last name, and social security number.</li>
+		<li>Added secure category enhancement to the audits module. </li>
+	</ol>
+	<hr />
     <h1>Release 3.3.3 (4-26-12)</h1>
     <h2>Minor feature enhancements</h2>
     <ol>
