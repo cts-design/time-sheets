@@ -459,7 +459,7 @@ class UsersController extends AppController {
         }
         if (preg_match('/auditor/i', $this->Session->read('Auth.User.role_name'))) {
             $this->Session->destroy();
-            $this->redirect('/');
+            $this->redirect('/users/login/auditor');
         }
         if ($this->Auth->user('role_id') != 1) {
             $this->redirect(array('action' => 'login', 'admin' => true));

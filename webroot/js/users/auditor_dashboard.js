@@ -22,6 +22,9 @@ AuditDashboard = {
         name: 'id',
         type: 'int'
       }, 'name', {
+        name: 'show_date_column',
+        type: 'int'
+      }, {
         name: 'start_date',
         type: 'date',
         dateFormat: 'Y-m-d'
@@ -76,7 +79,7 @@ AuditDashboard = {
       fields: [{
         name: 'id',
         type: 'int'
-      }, 'cat_1', 'cat_2', 'cat_3', 'description', {
+      }, 'cat_1', 'cat_2', 'cat_3', 'secure', 'secure_viewable', 'description', {
         name: 'created',
         type: 'date',
         dateFormat: 'Y-m-d H:i:s'
@@ -145,12 +148,26 @@ AuditDashboard = {
           title: 'Customer Documents & Activities',
           items: [{
             xtype: 'gridpanel',
+            id: 'filedDocumentGrid',
             store: 'FiledDocumentStore',
             title: 'Documents',
             columns: [{
               dataIndex: 'id',
               hidden: true,
               text: 'Id'
+            }, {
+              dataIndex: 'secure',
+              text: '',
+              renderer: function (value, meta, rec) {
+                if (value && !rec.data.secure_viewable) {
+                  return '<img src="/img/icons/lock.png" />';
+                } else if (value && rec.data.secure_viewable) {
+                  return '<img src="/img/icons/lock_open.png" />';
+                }
+
+                return '';
+              },
+              width: 50
             }, {
               dataIndex: 'cat_1',
               flex: 1,
@@ -167,10 +184,6 @@ AuditDashboard = {
               dataIndex: 'description',
               flex: 1,
               text: 'Notes/Other'
-            }, {
-              xtype: 'datecolumn',
-              dataIndex: 'created',
-              text: 'Date'
             }],
             listeners: {
               itemclick: {
@@ -232,6 +245,12 @@ AuditDashboard = {
           id: 'auditPanel',
           store: 'AuditStore',
           title: 'Active Audits',
+          tools: [{
+            type: 'prev',
+            handler: function () {
+              window.location = '/users/logout/auditor';
+            }
+          }],
           columns: [{
             xtype: 'gridcolumn',
             dataIndex: 'id',
@@ -297,11 +316,54 @@ AuditDashboard = {
 
     this.selectedAudit = rec;
 
+    console.log(rec);
+
     this.userStore.load({
       params: {
         audit_id: rec.data.id
       }
     });
+
+    if (rec.data.show_date_column) {
+      Ext.getCmp('filedDocumentGrid').reconfigure(null, [{
+        dataIndex: 'id',
+        hidden: true,
+        text: 'Id'
+      }, {
+        dataIndex: 'secure',
+        text: '',
+        renderer: function (value, meta, rec) {
+          if (value && !rec.data.secure_viewable) {
+            return '<img src="/img/icons/lock.png" />';
+          } else if (value && rec.data.secure_viewable) {
+            return '<img src="/img/icons/lock_open.png" />';
+          }
+
+          return '';
+        },
+        width: 50
+      }, {
+        dataIndex: 'cat_1',
+        flex: 1,
+        text: 'Category 1'
+      }, {
+        dataIndex: 'cat_2',
+        flex: 1,
+        text: 'Category 2'
+      }, {
+        dataIndex: 'cat_3',
+        flex: 1,
+        text: 'Category 3'
+      }, {
+        dataIndex: 'description',
+        flex: 1,
+        text: 'Notes/Other'
+      }, {
+        xtype: 'datecolumn',
+        dataIndex: 'created',
+        text: 'Date'
+      }]);
+    }
 
     auditPanel.collapse();
   },
@@ -327,7 +389,57 @@ AuditDashboard = {
   documentGridItemClicked: function (view, rec) {
     "use strict";
 
-    this.embedDocument(rec.data.id);
+    var viewSize = Ext.getBody().getViewSize(),
+      x = ((viewSize.width - 150) - 70),
+      y = 15,
+      alertWindow;
+
+    if (rec.data.secure && !rec.data.secure_viewable) {
+      if (!alertWindow) {
+        alertWindow = Ext.create('Ext.window.Window', {
+          baseCls: 'x-alert-window',
+          floating: {
+            shadow: false
+          },
+          height: 10,
+          items: [{
+            html: '<div class="window-message">You do not have permissions to view this document</div>'
+          }],
+          layout: 'fit',
+          listeners: {
+            show: function (window) {
+              var windowEl = window.getEl(),
+                task;
+
+              task = new Ext.util.DelayedTask(function () {
+                windowEl.animate({
+                  duration: 500,
+                  to: {
+                    opacity: 0
+                  },
+                  listeners: {
+                    afteranimate: function () {
+                      window.hide();
+                    }
+                  }
+                });
+              });
+
+              task.delay(2500);
+            }
+          },
+          preventHeader: true,
+          resizable: false,
+          title: 'Secure Document',
+          width: 150
+        }).showAt(x, y);
+      }
+      return;
+    }
+
+    if ((rec.data.secure && rec.data.secure_viewable) || !rec.data.secure) {
+      this.embedDocument(rec.data.id);
+    }
   },
 
   embedDocument: function (id) {
@@ -360,12 +472,11 @@ AuditDashboard = {
         window.location = '/users/logout';
       });
 
-      this.timeout.delay(300000);
+      this.timeout.delay(7200000);
     }
 
     Ext.getBody().on('mousemove', function () {
-      console.log('mouse is moving!');
-      this.timeout.delay(300000);
+      this.timeout.delay(7200000);
     }, this);
   }
 };
