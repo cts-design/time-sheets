@@ -530,6 +530,7 @@ class UsersController extends AppController {
     function kiosk_mini_registration($lastname=null) {
         if (!empty($this->data)) {
             $this->User->Behaviors->disable('Disableable');
+			$this->User->setValidation('kioskRegistration');
             if(Configure::read('Registration.ssn') == 'last4') {
                 $this->User->editValidation('last4');
                 $this->data['User']['ssn'] =
