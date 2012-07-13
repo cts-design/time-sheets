@@ -166,11 +166,8 @@ class ProgramDocumentsController extends AppController {
 					$catId = "cat_$id";
 					$catName = "{$catId}_name";
 
-					$this->log($catId, 'debug');
-					$this->log($catName, 'debug');
-
 					$data['cats'][$j][$catId] = $parents[$i]['DocumentFilingCategory']['id'];
-					$data['cats'][$j][$catName] = $parents[$i]['DocumentFilingCategory']['id'];
+					$data['cats'][$j][$catName] = $parents[$i]['DocumentFilingCategory']['name'];
 				}
 
 				$j++;
