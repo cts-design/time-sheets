@@ -164,7 +164,14 @@ Ext.define('WatchedFilingCat', {
   fields: [
     { name: 'id', type: 'int' },
     { name: 'cat_id', type: 'int' },
+    { name: 'cat_1', type: 'int' },
+    'cat_1_name',
+    { name: 'cat_2', type: 'int' },
+    'cat_2_name',
+    { name: 'cat_3', type: 'int' },
+    'cat_3_name',
     { name: 'program_id', type: 'int' },
+    { name: 'program_email_id', type: 'int' },
     'name',
   ]
 });
@@ -198,6 +205,7 @@ Ext.create('Ext.data.Store', {
     load: function(store, records, successful, operation, eOpts) {
       if(records[0]) {
         Ext.getCmp('cat2Name').enable();
+        Ext.getCmp('watchedCat2Name').enable();
       }
     }
   }
@@ -211,6 +219,7 @@ Ext.create('Ext.data.Store', {
     load: function(store, records, successful, operation, eOpts) {
       if(records[0]) {
         Ext.getCmp('cat3Name').enable();
+        Ext.getCmp('watchedCat3Name').enable();
       }
     }
   }
@@ -256,6 +265,7 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.TreeStore', {
+  autoSync: true,
   model: 'ProgramStep',
   proxy: {
     type: 'ajax',
@@ -278,6 +288,9 @@ Ext.create('Ext.data.TreeStore', {
       encode: true,
       root: 'program_steps'
     }
+  },
+  root: {
+    expanded: true
   },
   storeId: 'ProgramStepStore'
 });
@@ -355,23 +368,14 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
-  data: [
-    { program_id: 0, text: 'Default text Main', type: 'main', created: null, modified: null },
-    { program_id: 0, text: 'Default text Expired', type: 'expired', created: null, modified: null },
-    { program_id: 0, text: 'Default text Complete', type: 'complete', created: null, modified: null },
-    { program_id: 0, text: 'Default text Esign', type: 'esign', created: null, modified: null },
-    { program_id: 0, text: 'Default text User Acceptance', type: 'acceptance', created: null, modified: null },
-    { program_id: 0, text: 'Default text Pending Document Review', type: 'pending_document_review', created: null, modified: null },
-    { program_id: 0, text: 'Default text Drop-off Documents', type: 'drop_off_documents', created: null, modified: null },
-    { program_id: 0, text: 'Default text Upload Documents', type: 'upload_documents', created: null, modified: null }
-  ],
+  autoSync: true,
   storeId: 'ProgramInstructionStore',
   model: 'ProgramInstruction',
   proxy: {
     api:{
       create: '/admin/program_instructions/create',
       read: '/admin/program_instructions/read',
-      update: '/admin/program_instructions/edit',
+      update: '/admin/program_instructions/update',
       destroy: '/admin/program_instructions/destroy'
     },
     type: 'ajax',
@@ -380,7 +384,6 @@ Ext.create('Ext.data.Store', {
       root: 'program_instructions'
     },
     writer: {
-      allowSingle: false,
       encode: true,
       root: 'program_instructions',
       writeAllFields: false
@@ -389,19 +392,14 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
-  data: [
-    { program_id: 0, name: 'Orientation Main', from: null, subject: 'Main email', body: 'Default text Main', type: 'main', created: null, modified: null },
-    { program_id: 0, name: 'Orientation Expiring Soon', from: null, subject: 'Expiring Soon', body: 'Default text Expiring Soon', type: 'expiring_soon', created: null, modified: null },
-    { program_id: 0, name: 'Orientation Expired', from: null, subject: 'Expired email', body: 'Default text Expired', type: 'expired', created: null, modified: null },
-    { program_id: 0, name: 'Orientation Complete', from: null, subject: 'Complete email', body: 'Default text Complete', type: 'complete', created: null, modified: null }
-  ],
+  autoSync: true,
   storeId: 'ProgramEmailStore',
   model: 'ProgramEmail',
   proxy: {
     api:{
       create: '/admin/program_emails/create',
       read: '/admin/program_emails/read',
-      update: '/admin/program_emails/edit',
+      update: '/admin/program_emails/update',
       destroy: '/admin/program_emails/destroy'
     },
     type: 'ajax',
@@ -410,7 +408,6 @@ Ext.create('Ext.data.Store', {
       root: 'program_emails'
     },
     writer: {
-      allowSingle: false,
       encode: true,
       root: 'program_emails',
       writeAllFields: false
@@ -419,14 +416,15 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
+  autoSync: true,
   storeId: 'WatchedFilingCatStore',
   model: 'WatchedFilingCat',
   proxy: {
     api:{
-      create: '/admin/watched_filing_cats/create',
-      read: '/admin/watched_filing_cats/read',
-      update: '/admin/watched_filing_cats/edit',
-      destroy: '/admin/watched_filing_cats/destroy'
+      create: '/admin/program_documents/create_watched_cat',
+      read: '/admin/program_documents/read_watched_cat',
+      update: '/admin/program_documents/update_watched_cat',
+      destroy: '/admin/program_documents/destroy_watched_cat'
     },
     type: 'ajax',
     reader: {
@@ -445,7 +443,7 @@ Ext.create('Ext.data.Store', {
 /**
  * Variable Declarations
  */
-var registrationForm, stepTree, formBuilderContainer, uploadStep, filingCategories, programDocumentation, instructions, emails, navigate, statusBar, states;
+var registrationForm, stepTree, formBuilderContainer, uploadStep, watchedFilingCats, filingCategories, programDocumentation, instructions, emails, navigate, statusBar, states;
 
 states = {
   AL: 'Alabama',
@@ -979,6 +977,42 @@ stepTree = Ext.create('Ext.panel.Panel', {
       text: 'Type'
   }],
     listeners: {
+      itemcontextmenu: function (view, rec, item, index, e) {
+        var programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
+          menu;
+
+        e.preventDefault();
+
+        if (!rec.isLeaf()) {
+          menu = Ext.create('Ext.menu.Menu', {
+            items: [{
+              icon: '/img/icons/edit.png',
+              text: 'Rename Module',
+              handler: function () {
+                Ext.Msg.prompt(
+                  'Rename Module',
+                  'What would you like to rename the module to',
+                  function (btn, value) {
+                    var root = programStepStore.getRootNode(),
+                      oldRec,
+                      newRec;
+
+                    oldRec = newRec = rec;
+
+                    newRec.name = value;
+
+                    if (btn === 'ok') {
+                      rec.set({ name: value });
+                      rec.save();
+                      //programStepStore.sync();
+                    }
+                  }
+                );
+              }
+            }]
+          }).showAt(e.getXY());
+        }
+      },
       select: function (rm, rec, index) {
         var deleteModuleBtn = Ext.getCmp('deleteModuleBtn'),
           addStepBtn = Ext.getCmp('addStepBtn'),
@@ -1240,40 +1274,25 @@ stepTree = Ext.create('Ext.panel.Panel', {
         program_id: ProgramId
       },
       success: function (response) {
-        console.log(response);
         var programSteps = Ext.JSON.decode(response.responseText).program_steps,
-          rootNode = programStepStore.setRootNode({
-            expanded: true,
-            children: []
-          }),
+          rootNode = programStepStore.getRootNode(),
           i;
 
-        console.log('me: ', me);
-        console.log('rootNode: ', rootNode);
-
         for (i = 0, l = programSteps.length; i < l; i++) {
-          var rec = programSteps[i];
+          var rec = programSteps[i],
+            parent;
 
           if (!rec.type) {
             rootNode.appendChild(rec);
           } else {
-            console.log(rec);
-            rec.set({
-              leaf: true,
-              parentId: rec.get('parent_id')
-            });
+            parent = rootNode.findChild('id', rec.parent_id);
+            rec.parentId = rec.parent_id;
+            rec.leaf = true;
+            parent.appendChild(rec);
           }
         }
       }
     });
-
-    //programStepStore.load({
-      //params: {
-        //program_id: ProgramId
-      //},
-      //callback: function (recs, op, success) {
-      //}
-    //});
   },
   process: function () {
     var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
@@ -2017,6 +2036,283 @@ uploadStep = Ext.create('Ext.panel.Panel', {
       }
     }]
   }],
+  preprocess: function () {
+    var storeMgr = Ext.data.StoreManager,
+      program = storeMgr.lookup('ProgramStore').first(),
+      programDocumentStore = storeMgr.lookup('ProgramDocumentStore');
+
+      programDocumentStore.load({
+        callback: function (recs, ops, success) {
+
+        },
+        params: {
+          program_id: program.data.id
+        }
+      });
+  },
+  process: function () {
+    return true;
+  }
+});
+
+/**
+ * watchedFilingCats step
+ */
+watchedFilingCats = Ext.create('Ext.panel.Panel', {
+  bodyPadding: 0,
+  height: 406,
+  layout: 'border',
+  items: [{
+    xtype: 'grid',
+    frame: false,
+    height: 350,
+    id: 'watchedFilingCatsGrid',
+    region: 'west',
+    store: 'WatchedFilingCatStore',
+    width: 660,
+    columns: [{
+      header: 'Name',
+      dataIndex: 'name',
+      flex: 1,
+      renderer: function (val) {
+        return val.humanize();
+      }
+    }, {
+      header: 'Category',
+      dataIndex: 'cat_3_name',
+      flex: 1,
+      renderer: function (val, tdStyle, rec) {
+        console.log(rec);
+        if (rec.data.cat_3) {
+          return rec.data.cat_3_name;
+        } else if (rec.data.cat_2) {
+          return rec.data.cat_2_name;
+        } else if (rec.data.cat_1) {
+          return rec.data.cat_1_name;
+        }
+      }
+    }, {
+      header: 'Program Email Id',
+      dataIndex: 'program_email_id',
+      renderer: function (val) {
+        if (val) {
+          return val;
+        } else {
+          return 'N/A';
+        }
+      }
+    }],
+    listeners: {
+      select: function (rm, rec, index) {
+        var form = Ext.getCmp('watchedFilingCatsForm'),
+          Cat1Store = Ext.data.StoreManager.lookup('Cat1Store'),
+          Cat2Store = Ext.data.StoreManager.lookup('Cat2Store'),
+          Cat3Store = Ext.data.StoreManager.lookup('Cat3Store'),
+          watchedCat1Name = Ext.getCmp('watchedCat1Name'),
+          watchedCat2Name = Ext.getCmp('watchedCat2Name'),
+          watchedCat3Name = Ext.getCmp('watchedCat3Name'),
+          deleteWatchedFilingCatBtn = Ext.getCmp('deleteWatchedFilingCatBtn');
+
+        form.getEl().mask('Loading...');
+
+        Cat2Store.load({
+          params: {
+            parentId: rec.data.cat_1
+          }
+        });
+
+        Cat3Store.load({
+          params: {
+            parentId: rec.data.cat_2
+          }
+        });
+
+        form.loadRecord(rec);
+        form.getEl().unmask();
+        deleteWatchedFilingCatBtn.enable();
+      }
+    },
+    selModel: {
+      allowDeselect: true,
+      mode: 'SINGLE'
+    },
+    viewConfig: {
+      emptyText: 'Please add your watched filing categories',
+    }
+  }, {
+    xtype: 'form',
+    bodyPadding: 10,
+    dockedItems: [{
+      xtype: 'toolbar',
+      dock: 'top',
+      items: [{
+        icon: '/img/icons/add.png',
+        id: 'addWatchedFilingCatBtn',
+        text: 'Add Watched Category',
+        handler: function () {
+          var grid = Ext.getCmp('watchedFilingCatsGrid'),
+            formPanel = Ext.getCmp('watchedFilingCatsForm'),
+            form = formPanel.getForm();
+
+          form.reset();
+          grid.getSelectionModel().deselectAll();
+        }
+      }, {
+        disabled: true,
+        icon: '/img/icons/delete.png',
+        id: 'deleteWatchedFilingCatBtn',
+        text: 'Delete Watched Category',
+        handler: function () {
+          var grid = Ext.getCmp('watchedFilingCatsGrid'),
+            selectedRecord = grid.getSelectionModel().getSelection()[0],
+            store = Ext.data.StoreManager.lookup('WatchedFilingCatStore');
+
+          Ext.Msg.show({
+            title: 'Are you sure?',
+            msg: 'Are you sure you want to delete this watched filing category?',
+            buttons: Ext.Msg.YESNO,
+            icon: Ext.Msg.QUESTION,
+            fn: function (btn) {
+              if (btn === 'yes') { store.remove(selectedRecord); }
+            }
+          });
+
+        }
+      }]
+    }],
+    id: 'watchedFilingCatsForm',
+    margin: '0 0 15',
+    region: 'center',
+    items: [{
+      xtype: 'textfield',
+      allowBlank: false,
+      fieldLabel: 'Name',
+      name: 'name'
+    }, {
+      xtype: 'combo',
+      allowBlank: false,
+      displayField: 'name',
+      fieldLabel: 'Filing Category 1',
+      id: 'watchedCat1Name',
+      listConfig: {
+          getInnerTpl: function() {
+              return '<div>{img}{name}</div>';
+          }
+      },
+      listeners: {
+        select: function(combo, records, Eopts) {
+          var store = Ext.data.StoreManager.lookup('Cat2Store');
+
+          if(records[0]) {
+            Ext.getCmp('watchedCat2Name').disable();
+            Ext.getCmp('watchedCat2Name').reset();
+            Ext.getCmp('watchedCat3Name').disable();
+            Ext.getCmp('watchedCat3Name').reset();
+            store.load({params: {parentId: records[0].data.id}});
+          }
+
+        }
+      },
+      name: 'cat_1',
+      queryMode: 'local',
+      store: 'Cat1Store',
+      valueField: 'id',
+      value: null
+    },{
+      xtype: 'combo',
+      fieldLabel: 'Filing Category 2',
+      name: 'cat_2',
+      id: 'watchedCat2Name',
+      disabled: true,
+      store: 'Cat2Store',
+      displayField: 'name',
+      valueField: 'id',
+      queryMode: 'local',
+      value: null,
+      listConfig: {
+          getInnerTpl: function() {
+              return '<div>{img}{name}</div>';
+          }
+      },
+      allowBlank: false,
+      listeners: {
+        select: function(combo, records, Eopts) {
+          var store = Ext.data.StoreManager.lookup('Cat3Store');
+
+          if(records[0]) {
+            Ext.getCmp('watchedCat3Name').disable();
+            Ext.getCmp('watchedCat3Name').reset();
+            store.load({params: {parentId: records[0].data.id}});
+          }
+        }
+      }
+    },{
+      fieldLabel: 'Filing Category 3',
+      name: 'cat_3',
+      id: 'watchedCat3Name',
+      xtype: 'combo',
+      store: 'Cat3Store',
+      disabled: true,
+      displayField: 'name',
+      valueField: 'id',
+      queryMode: 'local',
+      value: null,
+      listConfig: {
+          getInnerTpl: function() {
+              return '<div>{img}{name}</div>';
+          }
+      },
+      allowBlank: false
+    }],
+    buttons: [{
+        id: 'watchedFilingCatSaveBtn',
+        text: 'Save',
+        handler: function () {
+          var formPanel = Ext.getCmp('watchedFilingCatsForm'),
+            form = formPanel.getForm(),
+            watchedFilingCatStore = Ext.data.StoreManager.lookup('WatchedFilingCatStore');
+
+          if (form.isValid()) {
+            vals = form.getValues();
+            vals.program_id = ProgramId;
+
+            if (vals.cat_3) {
+              vals.cat_id = vals.cat_3;
+              delete(vals.cat_3);
+            } else if (vals.cat_2) {
+              vals.cat_id = vals.cat_2;
+            } else {
+              vals.cat_id = vals.cat_1;
+            }
+
+            form.reset();
+            watchedFilingCatStore.add(vals);
+          }
+      }
+    }, {
+      disabled: true,
+      formBind: true,
+      hidden: true,
+      id: 'documentUpdateBtn',
+      text: 'Update',
+      handler: function () {
+      }
+    }]
+  }],
+  preprocess: function () {
+    var storeMgr = Ext.data.StoreManager,
+      program = storeMgr.lookup('ProgramStore').first(),
+      watchedFilingCatStore = storeMgr.lookup('WatchedFilingCatStore');
+
+    watchedFilingCatStore.load({
+      callback: function (recs, ops, success) {
+
+      },
+      params: {
+        program_id: program.data.id
+      }
+    });
+  },
   process: function () {
     return true;
   }
@@ -2048,14 +2344,12 @@ instructions = Ext.create('Ext.panel.Panel', {
     listeners: {
       select: function (rm, rec, index) {
         var editor = Ext.getCmp('editor'),
-          saveBtn = Ext.getCmp('instructionSaveBtn');
+          instructionSaveBtn = Ext.getCmp('instructionSaveBtn');
 
-        if (!rec.data.text) {
-          rec.data.text = '';
-        }
+        if (!rec.data.text) { rec.data.text = ''; }
 
         editor.setValue(rec.data.text);
-        saveBtn.enable();
+        instructionSaveBtn.enable();
       }
     },
     plugins: [
@@ -2089,45 +2383,18 @@ instructions = Ext.create('Ext.panel.Panel', {
       id: 'editor'
     }]
   }],
-  preprocess: function () {
-    var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
-      programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
-      programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
-      program = programStore.first(),
-      rootNode = programStepStore.tree.root;
-
-    Ext.Ajax.request({
-      url: '/admin/program_steps/read',
-      params: {
-        program_id: program.data.id
-      },
-      success: function (response) {
-        var res = Ext.JSON.decode(response.responseText);
-        Ext.Object.each(res.program_steps, function (key, value, me) {
-          if (value.type) {
-            programInstructionStore.add({
-              program_id: program.data.id,
-              program_step_id: value.id,
-              text: 'Instructions for ' + value.name + ' step',
-              type: value.type.underscore() + '_step'
-            });
-          }
-        });
-      }
-    });
-
-    programInstructionStore.each(function (rec) {
-      rec.set({
-        program_id: program.data.id
+  listeners: {
+    activate: function () {
+      Ext.data.StoreManager.lookup('ProgramInstructionStore').load({
+        params: {
+          program_id: ProgramId
+        }
       });
-    });
+    }
   },
   process: function () {
-    var programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
-      editor = Ext.getCmp('editor');
-
-      programInstructionStore.sync();
-      return true;
+    Ext.data.StoreManager.lookup('ProgramInstructionStore').sync();
+    return true;
   }
 });
 
@@ -2162,6 +2429,18 @@ emails = Ext.create('Ext.panel.Panel', {
           subjectField = Ext.getCmp('subjectField'),
           form = Ext.getCmp('formPanel'),
           saveBtn = Ext.getCmp('emailSaveBtn');
+
+        if (!rec.data.body) {
+          rec.data.text = '';
+        }
+
+        if (!rec.data.from) {
+          rec.data.text = '';
+        }
+
+        if (!rec.data.subject) {
+          rec.data.subject = '';
+        }
 
         editor.setValue(rec.data.body);
         fromField.setValue(rec.data.from);
@@ -2238,23 +2517,15 @@ emails = Ext.create('Ext.panel.Panel', {
     }]
   }],
   preprocess: function () {
-    var program = Ext.data.StoreManager.lookup('ProgramStore').first(),
-      programEmailStore = Ext.data.StoreManager.lookup('ProgramEmailStore');
-
-    programEmailStore.each(function (rec) {
-      if (!rec.data.program_id) {
-        rec.set({
-          program_id: program.data.id
-        });
+    Ext.data.StoreManager.lookup('ProgramEmailStore').load({
+      params: {
+        program_id: ProgramId
       }
     });
   },
   process: function () {
-    var programEmailStore = Ext.data.StoreManager.lookup('ProgramEmailStore'),
-      editor = Ext.getCmp('emailEditor');
-
-      programEmailStore.sync();
-      return true;
+    Ext.data.StoreManager.lookup('ProgramEmailStore').sync();
+    return true;
   }
 });
 
@@ -2331,20 +2602,31 @@ statusBar = Ext.create('Ext.ux.statusbar.StatusBar', {
  * Ext.onReady
  */
 Ext.onReady(function () {
+  var items;
+
+  if (RoleId === '2') {
+    items = [
+      registrationForm,
+      stepTree,
+      formBuilderContainer,
+      uploadStep,
+      watchedFilingCats,
+      instructions,
+      emails
+    ];
+  } else {
+    items = [
+      instructions,
+      emails
+    ];
+  }
 
   Ext.create('Ext.panel.Panel', {
     defaults: {
       bodyPadding: 10
     },
     dockedItems: [ statusBar ],
-    items: [
-      registrationForm,
-      stepTree,
-      formBuilderContainer,
-      uploadStep,
-      instructions,
-      emails
-    ],
+    items: items,
     layout: 'card',
     renderTo: 'editPanel',
     title: 'New Program Enrollment'
