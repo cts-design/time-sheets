@@ -2109,7 +2109,30 @@ watchedFilingCats = Ext.create('Ext.panel.Panel', {
     }],
     listeners: {
       select: function (rm, rec, index) {
-        console.log('test');
+        var form = Ext.getCmp('watchedFilingCatsForm'),
+          Cat1Store = Ext.data.StoreManager.lookup('Cat1Store'),
+          Cat2Store = Ext.data.StoreManager.lookup('Cat2Store'),
+          Cat3Store = Ext.data.StoreManager.lookup('Cat3Store'),
+          watchedCat1Name = Ext.getCmp('watchedCat1Name'),
+          watchedCat2Name = Ext.getCmp('watchedCat2Name'),
+          watchedCat3Name = Ext.getCmp('watchedCat3Name');
+
+        form.getEl().mask('Loading...');
+
+        Cat2Store.load({
+          params: {
+            parentId: rec.data.cat_1
+          }
+        });
+
+        Cat3Store.load({
+          params: {
+            parentId: rec.data.cat_2
+          }
+        });
+
+        form.loadRecord(rec);
+        form.getEl().unmask();
       }
     },
     viewConfig: {
