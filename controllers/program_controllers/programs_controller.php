@@ -131,6 +131,8 @@ class ProgramsController extends AppController {
 		}
 
 		$title_for_layout = 'Edit Program';
+		$roleId = $this->Auth->user('role_id');
+		$this->set('roleId', $roleId);
 		$this->set(compact('title_for_layout', 'id', 'programName', 'programType'));
 	}
 

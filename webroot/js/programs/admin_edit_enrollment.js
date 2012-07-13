@@ -368,23 +368,14 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
-  data: [
-    { program_id: 0, text: 'Default text Main', type: 'main', created: null, modified: null },
-    { program_id: 0, text: 'Default text Expired', type: 'expired', created: null, modified: null },
-    { program_id: 0, text: 'Default text Complete', type: 'complete', created: null, modified: null },
-    { program_id: 0, text: 'Default text Esign', type: 'esign', created: null, modified: null },
-    { program_id: 0, text: 'Default text User Acceptance', type: 'acceptance', created: null, modified: null },
-    { program_id: 0, text: 'Default text Pending Document Review', type: 'pending_document_review', created: null, modified: null },
-    { program_id: 0, text: 'Default text Drop-off Documents', type: 'drop_off_documents', created: null, modified: null },
-    { program_id: 0, text: 'Default text Upload Documents', type: 'upload_documents', created: null, modified: null }
-  ],
+  autoSync: true,
   storeId: 'ProgramInstructionStore',
   model: 'ProgramInstruction',
   proxy: {
     api:{
       create: '/admin/program_instructions/create',
       read: '/admin/program_instructions/read',
-      update: '/admin/program_instructions/edit',
+      update: '/admin/program_instructions/update',
       destroy: '/admin/program_instructions/destroy'
     },
     type: 'ajax',
@@ -393,7 +384,6 @@ Ext.create('Ext.data.Store', {
       root: 'program_instructions'
     },
     writer: {
-      allowSingle: false,
       encode: true,
       root: 'program_instructions',
       writeAllFields: false
@@ -402,19 +392,14 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
-  data: [
-    { program_id: 0, name: 'Orientation Main', from: null, subject: 'Main email', body: 'Default text Main', type: 'main', created: null, modified: null },
-    { program_id: 0, name: 'Orientation Expiring Soon', from: null, subject: 'Expiring Soon', body: 'Default text Expiring Soon', type: 'expiring_soon', created: null, modified: null },
-    { program_id: 0, name: 'Orientation Expired', from: null, subject: 'Expired email', body: 'Default text Expired', type: 'expired', created: null, modified: null },
-    { program_id: 0, name: 'Orientation Complete', from: null, subject: 'Complete email', body: 'Default text Complete', type: 'complete', created: null, modified: null }
-  ],
+  autoSync: true,
   storeId: 'ProgramEmailStore',
   model: 'ProgramEmail',
   proxy: {
     api:{
       create: '/admin/program_emails/create',
       read: '/admin/program_emails/read',
-      update: '/admin/program_emails/edit',
+      update: '/admin/program_emails/update',
       destroy: '/admin/program_emails/destroy'
     },
     type: 'ajax',
@@ -423,7 +408,6 @@ Ext.create('Ext.data.Store', {
       root: 'program_emails'
     },
     writer: {
-      allowSingle: false,
       encode: true,
       root: 'program_emails',
       writeAllFields: false
@@ -2294,6 +2278,7 @@ watchedFilingCats = Ext.create('Ext.panel.Panel', {
 
             if (vals.cat_3) {
               vals.cat_id = vals.cat_3;
+              delete(vals.cat_3);
             } else if (vals.cat_2) {
               vals.cat_id = vals.cat_2;
             } else {
@@ -2359,14 +2344,12 @@ instructions = Ext.create('Ext.panel.Panel', {
     listeners: {
       select: function (rm, rec, index) {
         var editor = Ext.getCmp('editor'),
-          saveBtn = Ext.getCmp('instructionSaveBtn');
+          instructionSaveBtn = Ext.getCmp('instructionSaveBtn');
 
-        if (!rec.data.text) {
-          rec.data.text = '';
-        }
+        if (!rec.data.text) { rec.data.text = ''; }
 
         editor.setValue(rec.data.text);
-        saveBtn.enable();
+        instructionSaveBtn.enable();
       }
     },
     plugins: [
@@ -2400,45 +2383,18 @@ instructions = Ext.create('Ext.panel.Panel', {
       id: 'editor'
     }]
   }],
-  preprocess: function () {
-    var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
-      programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
-      programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
-      program = programStore.first(),
-      rootNode = programStepStore.tree.root;
-
-    Ext.Ajax.request({
-      url: '/admin/program_steps/read',
-      params: {
-        program_id: program.data.id
-      },
-      success: function (response) {
-        var res = Ext.JSON.decode(response.responseText);
-        Ext.Object.each(res.program_steps, function (key, value, me) {
-          if (value.type) {
-            programInstructionStore.add({
-              program_id: program.data.id,
-              program_step_id: value.id,
-              text: 'Instructions for ' + value.name + ' step',
-              type: value.type.underscore() + '_step'
-            });
-          }
-        });
-      }
-    });
-
-    programInstructionStore.each(function (rec) {
-      rec.set({
-        program_id: program.data.id
+  listeners: {
+    activate: function () {
+      Ext.data.StoreManager.lookup('ProgramInstructionStore').load({
+        params: {
+          program_id: ProgramId
+        }
       });
-    });
+    }
   },
   process: function () {
-    var programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
-      editor = Ext.getCmp('editor');
-
-      programInstructionStore.sync();
-      return true;
+    Ext.data.StoreManager.lookup('ProgramInstructionStore').sync();
+    return true;
   }
 });
 
@@ -2473,6 +2429,18 @@ emails = Ext.create('Ext.panel.Panel', {
           subjectField = Ext.getCmp('subjectField'),
           form = Ext.getCmp('formPanel'),
           saveBtn = Ext.getCmp('emailSaveBtn');
+
+        if (!rec.data.body) {
+          rec.data.text = '';
+        }
+
+        if (!rec.data.from) {
+          rec.data.text = '';
+        }
+
+        if (!rec.data.subject) {
+          rec.data.subject = '';
+        }
 
         editor.setValue(rec.data.body);
         fromField.setValue(rec.data.from);
@@ -2549,23 +2517,15 @@ emails = Ext.create('Ext.panel.Panel', {
     }]
   }],
   preprocess: function () {
-    var program = Ext.data.StoreManager.lookup('ProgramStore').first(),
-      programEmailStore = Ext.data.StoreManager.lookup('ProgramEmailStore');
-
-    programEmailStore.each(function (rec) {
-      if (!rec.data.program_id) {
-        rec.set({
-          program_id: program.data.id
-        });
+    Ext.data.StoreManager.lookup('ProgramEmailStore').load({
+      params: {
+        program_id: ProgramId
       }
     });
   },
   process: function () {
-    var programEmailStore = Ext.data.StoreManager.lookup('ProgramEmailStore'),
-      editor = Ext.getCmp('emailEditor');
-
-      programEmailStore.sync();
-      return true;
+    Ext.data.StoreManager.lookup('ProgramEmailStore').sync();
+    return true;
   }
 });
 
@@ -2642,21 +2602,31 @@ statusBar = Ext.create('Ext.ux.statusbar.StatusBar', {
  * Ext.onReady
  */
 Ext.onReady(function () {
+  var items;
+
+  if (RoleId === '2') {
+    items = [
+      registrationForm,
+      stepTree,
+      formBuilderContainer,
+      uploadStep,
+      watchedFilingCats,
+      instructions,
+      emails
+    ];
+  } else {
+    items = [
+      instructions,
+      emails
+    ];
+  }
 
   Ext.create('Ext.panel.Panel', {
     defaults: {
       bodyPadding: 10
     },
     dockedItems: [ statusBar ],
-    items: [
-      registrationForm,
-      //stepTree,
-      formBuilderContainer,
-      uploadStep,
-      watchedFilingCats,
-      instructions,
-      emails
-    ],
+    items: items,
     layout: 'card',
     renderTo: 'editPanel',
     title: 'New Program Enrollment'
