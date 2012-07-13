@@ -432,6 +432,7 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
+  autoSync: true,
   storeId: 'WatchedFilingCatStore',
   model: 'WatchedFilingCat',
   proxy: {
@@ -2125,7 +2126,8 @@ watchedFilingCats = Ext.create('Ext.panel.Panel', {
           Cat3Store = Ext.data.StoreManager.lookup('Cat3Store'),
           watchedCat1Name = Ext.getCmp('watchedCat1Name'),
           watchedCat2Name = Ext.getCmp('watchedCat2Name'),
-          watchedCat3Name = Ext.getCmp('watchedCat3Name');
+          watchedCat3Name = Ext.getCmp('watchedCat3Name'),
+          deleteWatchedFilingCatBtn = Ext.getCmp('deleteWatchedFilingCatBtn');
 
         form.getEl().mask('Loading...');
 
@@ -2143,7 +2145,12 @@ watchedFilingCats = Ext.create('Ext.panel.Panel', {
 
         form.loadRecord(rec);
         form.getEl().unmask();
+        deleteWatchedFilingCatBtn.enable();
       }
+    },
+    selModel: {
+      allowDeselect: true,
+      mode: 'SINGLE'
     },
     viewConfig: {
       emptyText: 'Please add your watched filing categories',
@@ -2157,15 +2164,35 @@ watchedFilingCats = Ext.create('Ext.panel.Panel', {
       items: [{
         icon: '/img/icons/add.png',
         id: 'addWatchedFilingCatBtn',
-        text: 'Add Watched Filing Category',
+        text: 'Add Watched Category',
         handler: function () {
+          var grid = Ext.getCmp('watchedFilingCatsGrid'),
+            formPanel = Ext.getCmp('watchedFilingCatsForm'),
+            form = formPanel.getForm();
+
+          form.reset();
+          grid.getSelectionModel().deselectAll();
         }
       }, {
         disabled: true,
         icon: '/img/icons/delete.png',
         id: 'deleteWatchedFilingCatBtn',
-        text: 'Delete Watched Filing Category',
+        text: 'Delete Watched Category',
         handler: function () {
+          var grid = Ext.getCmp('watchedFilingCatsGrid'),
+            selectedRecord = grid.getSelectionModel().getSelection()[0],
+            store = Ext.data.StoreManager.lookup('WatchedFilingCatStore');
+
+          Ext.Msg.show({
+            title: 'Are you sure?',
+            msg: 'Are you sure you want to delete this watched filing category?',
+            buttons: Ext.Msg.YESNO,
+            icon: Ext.Msg.QUESTION,
+            fn: function (btn) {
+              if (btn === 'yes') { store.remove(selectedRecord); }
+            }
+          });
+
         }
       }]
     }],
@@ -2254,56 +2281,27 @@ watchedFilingCats = Ext.create('Ext.panel.Panel', {
       allowBlank: false
     }],
     buttons: [{
-        id: 'documentSaveBtn',
+        id: 'watchedFilingCatSaveBtn',
         text: 'Save',
         handler: function () {
-          var formPanel = Ext.getCmp('uploadStepForm'),
+          var formPanel = Ext.getCmp('watchedFilingCatsForm'),
             form = formPanel.getForm(),
-            uploadField = formPanel.down('#documentUploadField'),
-            sm = Ext.data.StoreManager,
-            programDocumentStore = sm.lookup('ProgramDocumentStore'),
-            programEmailStore = sm.lookup('ProgramEmailStore'),
-            program = sm.lookup('ProgramStore').first();
+            watchedFilingCatStore = Ext.data.StoreManager.lookup('WatchedFilingCatStore');
 
           if (form.isValid()) {
             vals = form.getValues();
-            vals.program_id = program.data.id;
+            vals.program_id = ProgramId;
 
-            if (uploadField.getValue()) {
-              form.submit({
-                url: '/admin/program_documents/upload',
-                waitMsg: 'Uploading Document...',
-                success: function (form, action) {
-                  form.reset();
-                  vals.template = action.result.url;
-                  programDocumentStore.add(vals);
-                  programEmailStore.add({
-                    program_id: vals.program_id,
-                    to: null,
-                    from: null,
-                    subject: vals.name + ' Email',
-                    body: 'Email for ' + vals.name,
-                    type: 'document',
-                    name: vals.name + ' Document Email'
-                  });
-                },
-                failure: function (form, action) {
-                  Ext.Msg.alert('Could not upload file', action.result.msg);
-                }
-              });
+            if (vals.cat_3) {
+              vals.cat_id = vals.cat_3;
+            } else if (vals.cat_2) {
+              vals.cat_id = vals.cat_2;
             } else {
-              form.reset();
-              programDocumentStore.add(vals);
-              programEmailStore.add({
-                program_id: vals.program_id,
-                to: null,
-                from: null,
-                subject: vals.name + ' Email',
-                body: 'Email for ' + vals.name,
-                type: 'document',
-                name: vals.name + ' Document Email'
-              });
+              vals.cat_id = vals.cat_1;
             }
+
+            form.reset();
+            watchedFilingCatStore.add(vals);
           }
       }
     }, {

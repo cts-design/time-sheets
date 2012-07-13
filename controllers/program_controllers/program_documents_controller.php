@@ -141,6 +141,31 @@ class ProgramDocumentsController extends AppController {
 	public function admin_create_watched_cat() {
 		$this->loadModel('WatchedFilingCat');
 		$watchedCat = json_decode($this->params['form']['cats'], true);
+
+		$this->WatchedFilingCat->create();
+		$data['WatchedFilingCat'] = $watchedCat[0];
+
+		if ($this->WatchedFilingCat->save($data)) {
+			$data['success'] = true;
+			$data['cats'][] = $data['WatchedFilingCat'];
+			$data['cats'][0]['id'] = $this->WatchedFilingCat->id;
+
+			$parents = $this->getWatchedCatPath($data['WatchedFilingCat']['cat_id']);
+
+			for ($i = 0; $i < count($parents); $i++) {
+				$id = $i + 1;
+				$catId = "cat_$id";
+				$catName = "{$catId}_name";
+
+				$data['cats'][0][$catId] = $parents[$i]['DocumentFilingCategory']['id'];
+				$data['cats'][0][$catName] = $parents[$i]['DocumentFilingCategory']['name'];
+			}
+		} else {
+			$data['success'] = false;
+		}
+
+		$this->set('data', $data);
+		$this->render(null, null, '/elements/ajaxreturn');
 	}
 
 	public function admin_read_watched_cat() {
@@ -188,6 +213,15 @@ class ProgramDocumentsController extends AppController {
 	public function admin_destroy_watched_cat() {
 		$this->loadModel('WatchedFilingCat');
 		$watchedCat = json_decode($this->params['form']['cats'], true);
+
+		if ($this->WatchedFilingCat->delete($watchedCat[0]['id'])) {
+			$data['success'] = true;
+		} else {
+			$data['success'] = false;
+		}
+
+		$this->set('data', $data);
+		$this->render(null, null, '/elements/ajaxreturn');
 	}
 
 	private function getWatchedCatPath($id) {
