@@ -261,6 +261,12 @@
 	    echo $this->Form->hidden('mini_registration', array('value' => 'kiosk'));
 	    ?>
 	</fieldset>
+	<ul style="font-size: 11px; margin: 10px 0 0 250px">
+		<li>Providing the information is voluntary.</li>
+		<li>The information will be kept confidential as provided by law.</li>
+		<li>Refusal to provide the information will not subject you to any adverse treatment.</li>
+		<li>The information will be used only in accordance with the law.</li>	
+	</ul>
 	<?php echo $this->Form->end(array('label' => __('Submit', true), 'class' => 'self-sign-kiosk-button left')); ?>
 	<?php echo $this->Html->link(__('Cancel', true), array('controller' => 'users', 'action' => 'self_sign_login'),
 		 array('class' => 'self-sign-kiosk-link left'))?>
