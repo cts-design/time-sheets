@@ -2035,7 +2035,7 @@ instructions = Ext.create('Ext.panel.Panel', {
               program_id: program.data.id,
               program_step_id: value.id,
               text: 'Instructions for ' + value.name + ' step',
-              type: value.type.underscore() + '_step'
+              type: value.type + '_step'
             });
           }
         });
