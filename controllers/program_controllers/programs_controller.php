@@ -177,6 +177,12 @@ class ProgramsController extends AppController {
 			}
 		}
 		if($programResponse) {
+			if($program['Program']['rolling_registration']) {
+				$this->data['ProgramResponse']['id'] = $programResponse['ProgramResponse']['id'];
+				$this->data['ProgramResponse']['expires_on'] =
+					date('Y-m-d H:i:s', strtotime('+' . $program['Program']['response_expires_in'] . ' days'));
+				$this->Program->ProgramResponse->save($this->data);
+			}
 			$data['completedSteps'] = Set::extract('/ProgramResponseActivity[status=complete]/program_step_id', $programResponse);
 			if($programResponse['ProgramResponse']['status'] === 'incomplete') {
 				$instructions = Set::extract('/ProgramInstruction[type=main]/text', $program);
