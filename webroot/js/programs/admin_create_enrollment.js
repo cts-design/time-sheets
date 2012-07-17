@@ -1792,7 +1792,7 @@ uploadStep = Ext.create('Ext.panel.Panel', {
         }, {
           lcase: 'pdf', ucase: 'Enrollment Form'
         }, {
-          lcase: 'multisnapshot', ucase: 'Multi-Snapshot'
+          lcase: 'multi_snapshot', ucase: 'Multi-Snapshot'
         }]
       }),
       valueField: 'lcase',
