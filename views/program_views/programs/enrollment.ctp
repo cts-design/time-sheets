@@ -10,7 +10,7 @@
 				<div class="details">
 					<h3><?= $program['Program']['name'] ?> Enrollment</h3>
 				</div>
-				<span class="status">
+				<span class="status <?= $programResponse['ProgramResponse']['status'] ?>">
 					<?= Inflector::humanize($programResponse['ProgramResponse']['status']) ?>
 				</span>
 			</li>
@@ -36,7 +36,7 @@
 						<?php $k++ ?>
 				<?php else : ?>
 							<?php $class = (in_array($step['id'], $completedSteps)) ? 'complete' : 'incomplete' ?>
-							<li class="step <?= $class ?>">
+							<li class="step <?= $class . ' ' . $step['type'] ?>">
 								<div class="inner-container">
 									<?= $step['name'] ?>
 									<?php if($step['type'] === 'media') : ?>

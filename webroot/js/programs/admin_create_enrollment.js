@@ -362,6 +362,7 @@ Ext.create('Ext.data.Store', {
     { program_id: 0, text: 'Default text Complete', type: 'complete', created: null, modified: null },
     { program_id: 0, text: 'Default text Esign', type: 'esign', created: null, modified: null },
     { program_id: 0, text: 'Default text User Acceptance', type: 'acceptance', created: null, modified: null },
+    { program_id: 0, text: 'Default text Pending Approval', type: 'pending_approval', created: null, modified: null },
     { program_id: 0, text: 'Default text Pending Document Review', type: 'pending_document_review', created: null, modified: null },
     { program_id: 0, text: 'Default text Drop-off Documents', type: 'drop_off_documents', created: null, modified: null },
     { program_id: 0, text: 'Default text Upload Documents', type: 'upload_documents', created: null, modified: null }
@@ -1488,7 +1489,6 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                   }]
                 }, {
                   xtype: 'textfield',
-                  allowBlank: false,
                   fieldLabel: 'Correct Answer',
                   name: 'answer'
                 }, {
@@ -1793,7 +1793,7 @@ uploadStep = Ext.create('Ext.panel.Panel', {
         }, {
           lcase: 'pdf', ucase: 'Enrollment Form'
         }, {
-          lcase: 'multisnapshot', ucase: 'Multi-Snapshot'
+          lcase: 'multi_snapshot', ucase: 'Multi-Snapshot'
         }]
       }),
       valueField: 'lcase',
@@ -2035,7 +2035,7 @@ instructions = Ext.create('Ext.panel.Panel', {
               program_id: program.data.id,
               program_step_id: value.id,
               text: 'Instructions for ' + value.name + ' step',
-              type: value.type.underscore() + '_step'
+              type: value.type + '_step'
             });
           }
         });
