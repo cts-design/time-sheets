@@ -1904,15 +1904,6 @@ uploadStep = Ext.create('Ext.panel.Panel', {
                   form.reset();
                   vals.template = action.result.url;
                   programDocumentStore.add(vals);
-                  programEmailStore.add({
-                    program_id: vals.program_id,
-                    to: null,
-                    from: null,
-                    subject: vals.name + ' Email',
-                    body: 'Email for ' + vals.name,
-                    type: 'document',
-                    name: vals.name + ' Document Email'
-                  });
                 },
                 failure: function (form, action) {
                   Ext.Msg.alert('Could not upload file', action.result.msg);
@@ -1921,15 +1912,17 @@ uploadStep = Ext.create('Ext.panel.Panel', {
             } else {
               form.reset();
               programDocumentStore.add(vals);
-              programEmailStore.add({
-                program_id: vals.program_id,
-                to: null,
-                from: null,
-                subject: vals.name + ' Email',
-                body: 'Email for ' + vals.name,
-                type: 'document',
-                name: vals.name + ' Document Email'
-              });
+              if (vals.type === 'upload') {
+                programEmailStore.add({
+                  program_id: vals.program_id,
+                  to: null,
+                  from: null,
+                  subject: vals.name + ' Email',
+                  body: 'Email for ' + vals.name,
+                  type: 'document',
+                  name: vals.name + ' Document Email'
+                });
+              }
             }
           }
       }
