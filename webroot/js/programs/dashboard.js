@@ -7,6 +7,8 @@ Programs = {
   $completeSteps: null,
   $stepsContainer: null,
   $programHeader: null,
+  $programStatus: null,
+  $requiredDocs: null,
 
   init: function () {
     $firstIncompleteItem = $('li.step.incomplete:first');
@@ -15,6 +17,8 @@ Programs = {
     $incompleteSteps = $('li.step.incomplete');
     $stepsContainer = $('ol.steps');
     $programHeader = $('li.program');
+    $programStatus = $('li.program .status');
+    $requiredDocs = $('li.required_docs');
   },
 
   onReady: function () {
@@ -22,6 +26,12 @@ Programs = {
 
     $firstIncompleteItem.css('opacity', '1').addClass('current');
     $currentModule.addClass('current');
+
+    if (($programStatus.hasClass('pending_document_review') ||
+        $programStatus.hasClass('not_approved')) &&
+        $requiredDocs.hasClass('incomplete')) {
+      $requiredDocs.removeClass('incomplete').removeClass('current').addClass('complete');
+    }
 
     $('span.status').each(function () {
       if ($(this).hasClass('incomplete')) {
