@@ -667,72 +667,32 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           updateBtn = Ext.getCmp('updateBtn'),
           builderSaveBtn = Ext.getCmp('builderSaveBtn');
 
-        if (form.isDirty()) {
-          Ext.Msg.show({
-            title: 'Discard Changes?',
-            msg: 'You have an unsaved form field, discard changes?',
-            buttons: Ext.Msg.YESNO,
-            icon: Ext.Msg.QUESTION,
-            fn: function (btn) {
-              if (btn === 'yes') {
-                form.reset();
 
-                // check the appropriate checkboxes
-                if (rec.data.validation.match(/notEmpty/g)) {
-                  requiredCb.setValue(true);
-                }
-
-                if (rec.data.attributes.match(/readonly/g)) {
-                  readOnlyCb.setValue(true);
-                }
-
-                // if it's a state list we need to present it
-                // differently to the user
-                if (rec.data.options.match(/"AL":"Alabama"/g)
-                    && rec.data.options.match(/"WY":"Wyoming"/g)) {
-                  fieldType.setValue('states');
-                  fieldOptions.setValue('');
-                  fieldOptionsContainer.setVisible(false);
-                  rec.data.type = 'states';
-                  rec.data.options = '';
-                }
-
-                form.loadRecord(rec);
-                deleteFieldBtn.enable();
-                updateBtn.show();
-                builderSaveBtn.hide();
-              }
-            }
-          });
-        } else {
-
-          // check the appropriate checkboxes
-          if (rec.data.validation.match(/notEmpty/g)) {
-            requiredCb.setValue(true);
-          }
-
-          if (rec.data.attributes.match(/readonly/g)) {
-            readOnlyCb.setValue(true);
-          }
-
-          // if it's a state list we need to present it
-          // differently to the user
-          if (rec.data.options.match(/"AL":"Alabama"/g)
-              && rec.data.options.match(/"WY":"Wyoming"/g)) {
-            fieldType.setValue('states');
-            fieldOptions.setValue('');
-            fieldOptionsContainer.setVisible(false);
-            rec.data.type = 'states';
-            rec.data.options = '';
-          }
-
-          form.loadRecord(rec);
-
-          deleteFieldBtn.enable();
-          updateBtn.show();
-          builderSaveBtn.hide();
+        // check the appropriate checkboxes
+        if (rec.data.validation.match(/notEmpty/g)) {
+          requiredCb.setValue(true);
         }
 
+        if (rec.data.attributes.match(/readonly/g)) {
+          readOnlyCb.setValue(true);
+        }
+
+        // if it's a state list we need to present it
+        // differently to the user
+        if (rec.data.options.match(/"AL":"Alabama"/g)
+            && rec.data.options.match(/"WY":"Wyoming"/g)) {
+          fieldType.setValue('states');
+          fieldOptions.setValue('');
+          fieldOptionsContainer.setVisible(false);
+          rec.data.type = 'states';
+          rec.data.options = '';
+        }
+
+        form.loadRecord(rec);
+
+        deleteFieldBtn.enable();
+        updateBtn.show();
+        builderSaveBtn.hide();
       }
     },
     viewConfig: {
@@ -764,26 +724,9 @@ formBuilder = Ext.create('Ext.panel.Panel', {
             saveBtn = formPanel.down('#builderSaveBtn'),
             updateBtn = formPanel.down('#updateBtn');
 
-          if (form.isDirty()) {
-            Ext.Msg.show({
-              title: 'Discard Changes?',
-              msg: 'You have an unsaved form field, discard changes?',
-              buttons: Ext.Msg.YESNO,
-              icon: Ext.Msg.QUESTION,
-              fn: function (btn) {
-                if (btn === 'yes') {
-                  form.reset();
-                  saveBtn.enable().show();
-                  updateBtn.disable().hide();
-                }
-              }
-            });
-          } else {
-            form.reset();
-            saveBtn.enable().show();
-            updateBtn.disable().hide();
-          }
-
+          form.reset();
+          saveBtn.enable().show();
+          updateBtn.disable().hide();
         }
       }, {
         disabled: true,

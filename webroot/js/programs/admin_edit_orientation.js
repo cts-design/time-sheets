@@ -780,62 +780,26 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           fieldType = formPanel.down('#fieldType'),
           correctAnswer = formPanel.down('#correctAnswer');
 
-        if (form.isDirty()) {
-          Ext.Msg.show({
-            title: 'Discard Changes?',
-            msg: 'You have an unsaved form field, discard changes?',
-            buttons: Ext.Msg.YESNO,
-            icon: Ext.Msg.QUESTION,
-            fn: function (btn) {
-              if (btn === 'yes') {
-                form.reset();
-
-                if (rec.data.attributes.match(/readonly/g)) {
-                  readOnlyCb.setValue(true);
-                }
-
-                if (rec.data.options.match(/"True":"True"/g)
-                    && rec.data.options.match(/"False":"False"/g)) {
-                  fieldType.setValue('select');
-                  fieldOptions.setValue('truefalse');
-                  fieldOptionsContainer.setVisible(true);
-                  rec.data.type = 'select';
-                  rec.data.options = 'truefalse';
-                }
-
-                validation = Ext.JSON.decode(rec.data.validation);
-                correctAnswer.setValue(validation.rule[1]);
-
-                form.loadRecord(rec);
-                deleteFieldBtn.enable();
-                updateBtn.show();
-                builderSaveBtn.hide();
-              }
-            }
-          });
-        } else {
-          if (rec.data.attributes.match(/readonly/g)) {
-            readOnlyCb.setValue(true);
-          }
-
-          if (rec.data.options.match(/"True":"True"/g)
-              && rec.data.options.match(/"False":"False"/g)) {
-            fieldType.setValue('select');
-            fieldOptions.setValue('truefalse');
-            fieldOptionsContainer.setVisible(true);
-            rec.data.type = 'select';
-            rec.data.options = 'truefalse';
-          }
-
-          validation = Ext.JSON.decode(rec.data.validation);
-          correctAnswer.setValue(validation.rule[1]);
-
-          form.loadRecord(rec);
-          deleteFieldBtn.enable();
-          updateBtn.show();
-          builderSaveBtn.hide();
+        if (rec.data.attributes.match(/readonly/g)) {
+          readOnlyCb.setValue(true);
         }
 
+        if (rec.data.options.match(/"True":"True"/g)
+            && rec.data.options.match(/"False":"False"/g)) {
+          fieldType.setValue('select');
+          fieldOptions.setValue('truefalse');
+          fieldOptionsContainer.setVisible(true);
+          rec.data.type = 'select';
+          rec.data.options = 'truefalse';
+        }
+
+        validation = Ext.JSON.decode(rec.data.validation);
+        correctAnswer.setValue(validation.rule[1]);
+
+        form.loadRecord(rec);
+        deleteFieldBtn.enable();
+        updateBtn.show();
+        builderSaveBtn.hide();
       }
     },
     viewConfig: {
@@ -867,26 +831,9 @@ formBuilder = Ext.create('Ext.panel.Panel', {
             saveBtn = formPanel.down('#builderSaveBtn'),
             updateBtn = formPanel.down('#updateBtn');
 
-          if (form.isDirty()) {
-            Ext.Msg.show({
-              title: 'Discard Changes?',
-              msg: 'You have an unsaved form field, discard changes?',
-              buttons: Ext.Msg.YESNO,
-              icon: Ext.Msg.QUESTION,
-              fn: function (btn) {
-                if (btn === 'yes') {
-                  form.reset();
-                  saveBtn.enable().show();
-                  updateBtn.disable().hide();
-                }
-              }
-            });
-          } else {
-            form.reset();
-            saveBtn.enable().show();
-            updateBtn.disable().hide();
-          }
-
+          form.reset();
+          saveBtn.enable().show();
+          updateBtn.disable().hide();
         }
       }, {
         disabled: true,
