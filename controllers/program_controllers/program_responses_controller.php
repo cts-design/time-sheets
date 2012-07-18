@@ -115,6 +115,11 @@ class ProgramResponsesController extends AppController {
 		}
         $instructions = Set::extract('/ProgramInstruction[program_step_id='.$stepId.']/text', $program);
 		$data['formFields'] = $this->currentStep[0]['ProgramFormField'];
+		$data['element'] = 'form';
+		if($this->currentStep[0]['ProgramStep']['type'] === 'custom_form') {
+			$data['element'] = 'custom_form_' . $this->currentStep[0]['ProgramStep']['id'];
+		}
+		
 		// TODO: determine if esign will be on the program level or on the step level
 		$data['esignRequired'] = false;
 		if($program['Program']['form_esign_required']) {
@@ -189,6 +194,10 @@ class ProgramResponsesController extends AppController {
 					$this->redirect(array('controller' => 'programs', 'action' => $program['Program']['type'], $programId));
 				}
 			}
+		}
+		$data['element'] = 'form';
+		if($this->currentStep[0]['ProgramStep']['type'] === 'custom_form') {
+			$data['element'] = 'custom_form_' . $this->currentStep[0]['ProgramStep']['id'];
 		}
         $instructions = Set::extract('/ProgramInstruction[program_step_id='.$stepId.']/text', $program);
 		$data['formFields'] = $this->currentStep[0]['ProgramFormField'];
