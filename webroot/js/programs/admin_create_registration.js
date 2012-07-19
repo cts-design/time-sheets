@@ -57,6 +57,7 @@ Ext.define('ProgramFormField', {
     { name: 'program_step_id', type: 'int' },
     'label',
     'type',
+    { name: 'order', type: 'int' },
     'name',
     { name: 'attributes', type: 'string', useNull: true },
     { name: 'options', type: 'string', useNull: true },
@@ -691,6 +692,10 @@ formBuilder = Ext.create('Ext.panel.Panel', {
     store: 'ProgramFormFieldStore',
     width: 660,
     columns: [{
+      header: 'Order',
+      dataIndex: 'order',
+      width: 50
+    }, {
       header: 'Label',
       dataIndex: 'label',
       flex: 1
@@ -724,29 +729,10 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           updateBtn = Ext.getCmp('updateBtn'),
           builderSaveBtn = Ext.getCmp('builderSaveBtn');
 
-        if (form.isDirty()) {
-          Ext.Msg.show({
-            title: 'Discard Changes?',
-            msg: 'You have an unsaved form field, discard changes?',
-            buttons: Ext.Msg.YESNO,
-            icon: Ext.Msg.QUESTION,
-            fn: function (btn) {
-              if (btn === 'yes') {
-                form.reset();
-                form.loadRecord(rec);
-                deleteFieldBtn.enable();
-                updateBtn.show();
-                builderSaveBtn.hide();
-              }
-            }
-          });
-        } else {
-          form.loadRecord(rec);
-          deleteFieldBtn.enable();
-          updateBtn.show();
-          builderSaveBtn.hide();
-        }
-
+        form.loadRecord(rec);
+        deleteFieldBtn.enable();
+        updateBtn.show();
+        builderSaveBtn.hide();
       }
     },
     viewConfig: {
@@ -755,6 +741,46 @@ formBuilder = Ext.create('Ext.panel.Panel', {
         beforedrop: function (node, data, overModel, dropPos, dropFunc, eOpts) {
         },
         drop: function (node, data, overModel, dropPos, eOpts) {
+          var programFormFieldStore = Ext.data.StoreManager.lookup('ProgramFormFieldStore'),
+            grid = data.view.up('#formFieldGrid'),
+            gridEl = grid.getEl(),
+            selectedRec = data.records[0],
+            parseDrop,
+            i;
+
+          gridEl.mask('Reordering fields...');
+
+          // Reorder the selected field and it's overModel
+          // based on the drop position
+          parseDrop = (function () {
+            return {
+              before: function () {
+                var overModelOrder = overModel.get('order');
+
+                selectedRec.set('order', overModelOrder);
+                overModel.set('order', (overModelOrder + 1));
+              },
+              after: function () {
+                var overModelOrder = overModel.get('order');
+
+                selectedRec.set('order', (overModelOrder));
+                overModel.set('order', (overModelOrder - 1));
+              }
+            };
+          }());
+          parseDrop[dropPos] && parseDrop[dropPos]();
+
+          programFormFieldStore.sort('order', 'ASC');
+
+          i = 1;
+          programFormFieldStore.each(function (rec) {
+            if (rec.get('order') !== i) {
+              rec.set('order', i);
+            }
+            i++;
+          });
+
+          gridEl.unmask();
         }
       },
       plugins: {
@@ -940,14 +966,16 @@ formBuilder = Ext.create('Ext.panel.Panel', {
       id: 'builderSaveBtn',
       text: 'Save',
       handler: function () {
-        var formPanel = this.up('form'),
+        var sm = Ext.data.StoreMgr,
+          formPanel = this.up('form'),
           form = formPanel.getForm(),
           vals = form.getValues(),
           parseVals,
           attributes = {},
           options = {},
           validation = {},
-          programStep = Ext.data.StoreManager.lookup('ProgramStepStore'),
+          programFormFieldStore = sm.lookup('ProgramFormFieldStore'),
+          programStep = sm.lookup('ProgramStepStore'),
           programStepId = programStep.last().data.id,
           grid = Ext.getCmp('formFieldGrid');
 
@@ -974,6 +1002,7 @@ formBuilder = Ext.create('Ext.panel.Panel', {
             },
             states: function () {
               vals.type = 'select';
+              options = states;
             }
           };
         }());
@@ -993,6 +1022,7 @@ formBuilder = Ext.create('Ext.panel.Panel', {
         vals.validation      = encodeObject(validation);
         vals.program_step_id = programStepId;
         vals.name            = vals.label.underscore();
+        vals.order           = (programFormFieldStore.count() + 1);
 
         grid.store.add(vals);
         form.reset();
