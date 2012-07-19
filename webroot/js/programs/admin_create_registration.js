@@ -974,6 +974,7 @@ formBuilder = Ext.create('Ext.panel.Panel', {
             },
             states: function () {
               vals.type = 'select';
+              options = states;
             }
           };
         }());
