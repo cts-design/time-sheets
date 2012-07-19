@@ -745,7 +745,8 @@ formBuilder = Ext.create('Ext.panel.Panel', {
             grid = data.view.up('#formFieldGrid'),
             gridEl = grid.getEl(),
             selectedRec = data.records[0],
-            parseDrop;
+            parseDrop,
+            i;
 
           gridEl.mask('Reordering fields...');
 
@@ -770,6 +771,14 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           parseDrop[dropPos] && parseDrop[dropPos]();
 
           programFormFieldStore.sort('order', 'ASC');
+
+          i = 1;
+          programFormFieldStore.each(function (rec) {
+            if (rec.get('order') !== i) {
+              rec.set('order', i);
+            }
+            i++;
+          });
 
           gridEl.unmask();
         }
