@@ -997,6 +997,7 @@ formBuilder = Ext.create('Ext.panel.Panel', {
         vals.validation      = encodeObject(validation);
         vals.program_step_id = programStepId;
         vals.name            = vals.label.underscore();
+        vals.order           = (programFormFieldStore.count() + 1);
 
         grid.store.add(vals);
         form.reset();
