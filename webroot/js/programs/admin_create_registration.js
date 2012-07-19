@@ -941,14 +941,16 @@ formBuilder = Ext.create('Ext.panel.Panel', {
       id: 'builderSaveBtn',
       text: 'Save',
       handler: function () {
-        var formPanel = this.up('form'),
+        var sm = Ext.data.StoreMgr,
+          formPanel = this.up('form'),
           form = formPanel.getForm(),
           vals = form.getValues(),
           parseVals,
           attributes = {},
           options = {},
           validation = {},
-          programStep = Ext.data.StoreManager.lookup('ProgramStepStore'),
+          programFormFieldStore = sm.lookup('ProgramFormFieldStore'),
+          programStep = sm.lookup('ProgramStepStore'),
           programStepId = programStep.last().data.id,
           grid = Ext.getCmp('formFieldGrid');
 
