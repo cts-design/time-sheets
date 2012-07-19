@@ -769,6 +769,8 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           }());
           parseDrop[dropPos] && parseDrop[dropPos]();
 
+          programFormFieldStore.sort('order', 'ASC');
+
           gridEl.unmask();
         }
       },
