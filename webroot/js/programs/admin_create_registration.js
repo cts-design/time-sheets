@@ -756,7 +756,7 @@ formBuilder = Ext.create('Ext.panel.Panel', {
         beforedrop: function (node, data, overModel, dropPos, dropFunc, eOpts) {
         },
         drop: function (node, data, overModel, dropPos, eOpts) {
-          var grid = Ext.getCmp('formFieldGrid'),
+          var grid = data.view.up('#formFieldGrid'),
             gridEl = grid.getEl(),
 
           gridEl.mask('Reordering fields...');
