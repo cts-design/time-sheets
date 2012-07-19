@@ -692,6 +692,10 @@ formBuilder = Ext.create('Ext.panel.Panel', {
     store: 'ProgramFormFieldStore',
     width: 660,
     columns: [{
+      header: 'Order',
+      dataIndex: 'order',
+      width: 50
+    }, {
       header: 'Label',
       dataIndex: 'label',
       flex: 1
