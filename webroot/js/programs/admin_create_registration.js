@@ -57,6 +57,7 @@ Ext.define('ProgramFormField', {
     { name: 'program_step_id', type: 'int' },
     'label',
     'type',
+    { name: 'order', type: 'int' },
     'name',
     { name: 'attributes', type: 'string', useNull: true },
     { name: 'options', type: 'string', useNull: true },
