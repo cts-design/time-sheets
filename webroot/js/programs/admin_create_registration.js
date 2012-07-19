@@ -738,8 +738,6 @@ formBuilder = Ext.create('Ext.panel.Panel', {
     viewConfig: {
       emptyText: 'Please add your form fields',
       listeners: {
-        beforedrop: function (node, data, overModel, dropPos, dropFunc, eOpts) {
-        },
         drop: function (node, data, overModel, dropPos, eOpts) {
           var programFormFieldStore = Ext.data.StoreManager.lookup('ProgramFormFieldStore'),
             grid = data.view.up('#formFieldGrid'),
