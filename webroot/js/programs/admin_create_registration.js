@@ -760,10 +760,34 @@ formBuilder = Ext.create('Ext.panel.Panel', {
         beforedrop: function (node, data, overModel, dropPos, dropFunc, eOpts) {
         },
         drop: function (node, data, overModel, dropPos, eOpts) {
-          var grid = data.view.up('#formFieldGrid'),
+          var programFormFieldStore = Ext.data.StoreManager.lookup('ProgramFormFieldStore'),
+            grid = data.view.up('#formFieldGrid'),
             gridEl = grid.getEl(),
+            selectedRec = data.records[0],
+            parseDrop;
 
           gridEl.mask('Reordering fields...');
+
+          // Reorder the selected field and it's overModel
+          // based on the drop position
+          parseDrop = (function () {
+            return {
+              before: function () {
+                var overModelOrder = overModel.get('order');
+
+                selectedRec.set('order', overModelOrder);
+                overModel.set('order', (overModelOrder + 1));
+              },
+              after: function () {
+                var overModelOrder = overModel.get('order');
+
+                selectedRec.set('order', (overModelOrder));
+                overModel.set('order', (overModelOrder - 1));
+              }
+            };
+          }());
+          parseDrop[dropPos] && parseDrop[dropPos]();
+
           gridEl.unmask();
         }
       },
