@@ -54,6 +54,7 @@ Ext.define('ProgramFormField', {
     { name: 'program_step_id', type: 'int' },
     'label',
     'type',
+    { name: 'order', type: 'int' },
     'name',
     { name: 'attributes', type: 'string', useNull: true },
     { name: 'options', type: 'string', useNull: true },
@@ -743,6 +744,10 @@ formBuilder = Ext.create('Ext.panel.Panel', {
     store: 'ProgramFormFieldStore',
     width: 660,
     columns: [{
+      header: 'Order',
+      dataIndex: 'order',
+      width: 50
+    }, {
       header: 'Label',
       dataIndex: 'label',
       flex: 1
@@ -805,9 +810,47 @@ formBuilder = Ext.create('Ext.panel.Panel', {
     viewConfig: {
       emptyText: 'Please add your form fields',
       listeners: {
-        beforedrop: function (node, data, overModel, dropPos, dropFunc, eOpts) {
-        },
         drop: function (node, data, overModel, dropPos, eOpts) {
+          var programFormFieldStore = Ext.data.StoreManager.lookup('ProgramFormFieldStore'),
+            grid = data.view.up('#formFieldGrid'),
+            gridEl = grid.getEl(),
+            selectedRec = data.records[0],
+            parseDrop,
+            i;
+
+          gridEl.mask('Reordering fields...');
+
+          // Reorder the selected field and it's overModel
+          // based on the drop position
+          parseDrop = (function () {
+            return {
+              before: function () {
+                var overModelOrder = overModel.get('order');
+
+                selectedRec.set('order', overModelOrder);
+                overModel.set('order', (overModelOrder + 1));
+              },
+              after: function () {
+                var overModelOrder = overModel.get('order');
+
+                selectedRec.set('order', (overModelOrder));
+                overModel.set('order', (overModelOrder - 1));
+              }
+            };
+          }());
+          parseDrop[dropPos] && parseDrop[dropPos]();
+
+          programFormFieldStore.sort('order', 'ASC');
+
+          i = 1;
+          programFormFieldStore.each(function (rec) {
+            if (rec.get('order') !== i) {
+              rec.set('order', i);
+            }
+            i++;
+          });
+
+          gridEl.unmask();
         }
       },
       plugins: {
