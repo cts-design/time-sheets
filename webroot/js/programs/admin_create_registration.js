@@ -729,29 +729,10 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           updateBtn = Ext.getCmp('updateBtn'),
           builderSaveBtn = Ext.getCmp('builderSaveBtn');
 
-        if (form.isDirty()) {
-          Ext.Msg.show({
-            title: 'Discard Changes?',
-            msg: 'You have an unsaved form field, discard changes?',
-            buttons: Ext.Msg.YESNO,
-            icon: Ext.Msg.QUESTION,
-            fn: function (btn) {
-              if (btn === 'yes') {
-                form.reset();
-                form.loadRecord(rec);
-                deleteFieldBtn.enable();
-                updateBtn.show();
-                builderSaveBtn.hide();
-              }
-            }
-          });
-        } else {
-          form.loadRecord(rec);
-          deleteFieldBtn.enable();
-          updateBtn.show();
-          builderSaveBtn.hide();
-        }
-
+        form.loadRecord(rec);
+        deleteFieldBtn.enable();
+        updateBtn.show();
+        builderSaveBtn.hide();
       }
     },
     viewConfig: {
