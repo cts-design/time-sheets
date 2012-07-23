@@ -235,6 +235,41 @@ class ProgramsController extends AppController {
 		}
 	}
 
+	public function admin_duplicate() {
+		$transactionIds = array();
+		$programId = $this->params['form']['program_id'];
+
+		// retreive the program to be duplicated
+		$this->Program->id = $programId;
+		$this->Program->read();
+
+		$duplicate = $this->Program->data;
+
+		// remove the original id, created, and modified date
+		unset(
+			$duplicate['Program']['id'],
+			$duplicate['Program']['created'],
+			$duplicate['Program']['modified']
+		);
+
+		// append copy to the duplicates name
+		$duplicate['Program']['name'] = $duplicate['Program']['name'] . ' Copy';
+
+		// create a new record for our duplicate
+		$this->Program->create();
+
+		if ($this->Program->save($duplicate)) {
+			// add the program id to our transactionIds
+			// in case we have to rollback further into the duplication
+			$transactionIds['Program'][] = $this->Program->id;
+		}
+
+		$this->log($transactionIds, 'debug');
+
+		$this->set('data', $data);
+		$this->render(null, null, '/elements/ajaxreturn');
+	}
+
 	public function admin_purge_test_data() {
 		if ($this->RequestHandler->isAjax()) {
 			$programId = $this->params['form']['program_id'];
