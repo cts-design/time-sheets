@@ -927,7 +927,10 @@ Ext.onReady(function () {
     }],
     listeners: {
       tabchange: function (panel, newCard) {
-        var store = newCard.getStore();
+        var store = newCard.getStore(),
+          duplicateBtn = Ext.getCmp('duplicateProgramBtn');
+
+        duplicateBtn.disable();
         store.getProxy().extraParams.program_type = newCard.id;
         store.load();
       }
