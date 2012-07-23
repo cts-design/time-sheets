@@ -262,6 +262,7 @@ class ProgramsController extends AppController {
 			// add the program id to our transactionIds
 			// in case we have to rollback further into the duplication
 			$this->transactionIds['Program'][] = $this->Program->id;
+			$this->duplicateProgramStep($this->Program->id, $programId);
 		}
 
 		$this->log($transactionIds, 'debug');
@@ -608,6 +609,52 @@ class ProgramsController extends AppController {
 		}
 
 		return true;
+	}
+
+	private function duplicateProgramStep($newProgramId, $oldProgramId, $stepId = null, $parentId = null) {
+		$conditions = array();
+
+		if ($stepId) {
+			$conditions['ProgramStep.id'] = $stepId;
+		}
+
+		$conditions['ProgramStep.program_id'] = $oldProgramId;
+
+		$programStep = $this->Program->ProgramStep->find('first', array(
+			'conditions' => $conditions
+		));
+
+		if (!$programStep) return false; // base case
+
+		// duplicate program step
+		$this->Program->ProgramStep->create();
+		$newProgramStep = $programStep;
+
+		// set new program id and remove fields to be reset
+		$newProgramStep['ProgramStep']['program_id'] = $newProgramId;
+		$newProgramStep['ProgramStep']['parent_id'] = $parentId;
+
+		unset(
+			$newProgramStep['ProgramStep']['id'],
+			$newProgramStep['ProgramStep']['lft'],
+			$newProgramStep['ProgramStep']['rght'],
+			$newProgramStep['ProgramStep']['created'],
+			$newProgramStep['ProgramStep']['modified']
+		);
+
+		if ($this->Program->ProgramStep->save($newProgramStep)) {
+			$this->transactionIds['ProgramStep'][] = $newParent = $this->Program->ProgramStep->id;
+
+			// check for children
+			$children = $this->Program->ProgramStep->children($programStep['ProgramStep']['id']);
+			foreach ($children as $child) {
+				$this->duplicateProgramStep($newProgramId, $oldProgramId, $child['ProgramStep']['id'], $newParent);
+			}
+
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
 
