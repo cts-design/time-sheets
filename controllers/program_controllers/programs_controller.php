@@ -265,7 +265,6 @@ class ProgramsController extends AppController {
 			$this->duplicateProgramStep($this->Program->id, $programId);
 		}
 
-		$this->log($transactionIds, 'debug');
 
 		$this->set('data', $data);
 		$this->render(null, null, '/elements/ajaxreturn');
@@ -577,10 +576,7 @@ class ProgramsController extends AppController {
 		$this->Program->ProgramStep->create();
 		$download = $this->Program->ProgramStep->save($downloadStep);
 
-		$this->log($download, 'debug');
-
 		if ($download) {
-			$this->log('in download', 'debug');
 			if (isset($programDoc['cat_3'])) {
 				$watchedCat = $programDoc['cat_3'];
 			} else if (isset($programDoc['cat_2'])) {
@@ -625,9 +621,6 @@ class ProgramsController extends AppController {
 		$programStep = $this->Program->ProgramStep->find('all', array(
 			'conditions' => $conditions
 		));
-
-		$this->log('PROGRAM STEP====', 'debug');
-		$this->log($programStep, 'debug');
 
 		if (!$programStep) return false; // base case
 
