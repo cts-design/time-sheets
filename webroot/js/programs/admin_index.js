@@ -108,7 +108,32 @@ Ext.onReady(function () {
         id: 'duplicateProgramBtn',
         text: 'Duplicate Program',
         handler: function () {
-          Ext.Msg.alert('Not yet implemented', 'This feature is not yet implemented');
+          var tabPanel = this.up('tabpanel'),
+            gridPanel = tabPanel.activeTab,
+            selectedRecord = gridPanel.getSelectionModel().getSelection()[0],
+            programId = selectedRecord.get('id'),
+            programType = selectedRecord.get('type'),
+            progressMsg;
+
+          progressMsg = Ext.Msg.wait(
+            'Please wait while we duplicate the program',
+            'Duplicating Program', {
+              interval: 150
+            });
+          Ext.Ajax.request({
+            url: '/admin/programs/duplicate',
+            params: {
+              program_id: programId,
+              program_type: programType
+            },
+            success: function (res) {
+              var task = new Ext.util.DelayedTask(function () {
+                progressMsg.close();
+              });
+
+              task.delay(1240);
+            }
+          });
         }
       }]
     }],
