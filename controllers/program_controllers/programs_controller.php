@@ -229,6 +229,48 @@ class ProgramsController extends AppController {
 		}
 	}
 
+	public function admin_duplicate() {
+		$programId = $this->params['form']['program_id'];
+
+		// retreive the program to be duplicated
+		$this->Program->id = $programId;
+		$this->Program->read();
+
+		$duplicate = $this->Program->data;
+
+		// remove the original id, created, and modified date
+		unset(
+			$duplicate['Program']['id'],
+			$duplicate['Program']['program_response_count'],
+			$duplicate['Program']['created'],
+			$duplicate['Program']['modified']
+		);
+
+		// append copy to the duplicates name
+		$duplicate['Program']['name'] = $duplicate['Program']['name'] . ' Copy';
+		$duplicate['Program']['in_test'] = 1;
+		$duplicate['Program']['disabled'] = 1;
+
+		// create a new record for our duplicate
+		$this->Program->create();
+
+		if ($this->Program->save($duplicate)) {
+			// add the program id to our transactionIds
+			// in case we have to rollback further into the duplication
+			$this->transactionIds['Program'][] = $this->Program->id;
+			if ($this->duplicateProgramStep($this->Program->id, $programId)) {
+				// continue
+			} else {
+				$this->duplicateTransactionCleanup();
+			}
+		}
+
+		$this->log($this->transactionIds, 'debug');
+
+		$this->set('data', $data);
+		$this->render(null, null, '/elements/ajaxreturn');
+	}
+
 	public function admin_purge_test_data() {
 		if ($this->RequestHandler->isAjax()) {
 			$programId = $this->params['form']['program_id'];
@@ -567,6 +609,60 @@ class ProgramsController extends AppController {
 		}
 
 		return true;
+	}
+
+	private function duplicateProgramStep($newProgramId, $oldProgramId, $stepId = null, $oldParentId = null, $newParentId = null) {
+		$this->Program->ProgramStep->recursive = -1;
+		$conditions = array(
+			'ProgramStep.program_id' => $oldProgramId,
+			'ProgramStep.parent_id'  => $oldParentId
+		);
+
+		if ($stepId) {
+			$conditions['ProgramStep.id'] = $stepId;
+		}
+
+		$programStep = $this->Program->ProgramStep->find('all', array(
+			'conditions' => $conditions
+		));
+
+		if (!$programStep) return false; // base case
+
+		foreach ($programStep as $step) {
+			$oldParentId = $step['ProgramStep']['id'];
+
+			// duplicate program step
+			$this->Program->ProgramStep->create();
+			$newProgramStep = $step;
+
+			// set new program id and remove fields to be reset
+			$newProgramStep['ProgramStep']['program_id'] = $newProgramId;
+			$newProgramStep['ProgramStep']['parent_id'] = $newParentId;
+
+			unset(
+				$newProgramStep['ProgramStep']['id'],
+				$newProgramStep['ProgramStep']['lft'],
+				$newProgramStep['ProgramStep']['rght'],
+				$newProgramStep['ProgramStep']['created'],
+				$newProgramStep['ProgramStep']['modified']
+			);
+
+			if ($this->Program->ProgramStep->save($newProgramStep)) {
+				$this->transactionIds['ProgramStep'][] = $newParent = $this->Program->ProgramStep->id;
+
+				// check for children
+				$children = $this->Program->ProgramStep->children($step['ProgramStep']['id']);
+				foreach ($children as $child) {
+					$this->duplicateProgramStep($newProgramId, $oldProgramId, $child['ProgramStep']['id'], $oldParentId, $newParent);
+				}
+			}
+		}
+
+		return true;
+	}
+
+	private function duplicateTransactionCleanup() {
+		$this->log('CLEAN UP CLEAN UP CLEAN UP', 'debug');
 	}
 }
 
