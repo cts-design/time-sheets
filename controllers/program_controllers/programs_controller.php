@@ -248,12 +248,15 @@ class ProgramsController extends AppController {
 		// remove the original id, created, and modified date
 		unset(
 			$duplicate['Program']['id'],
+			$duplicate['Program']['program_response_count'],
 			$duplicate['Program']['created'],
 			$duplicate['Program']['modified']
 		);
 
 		// append copy to the duplicates name
 		$duplicate['Program']['name'] = $duplicate['Program']['name'] . ' Copy';
+		$duplicate['Program']['in_test'] = 1;
+		$duplicate['Program']['disabled'] = 1;
 
 		// create a new record for our duplicate
 		$this->Program->create();
