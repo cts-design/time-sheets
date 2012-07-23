@@ -6,6 +6,7 @@ class ProgramsController extends AppController {
 
 	public $name = 'Programs';
 	public $components = array('Email');
+	public $transactionIds = array();
 
 	public function beforeFilter() {
 		parent::beforeFilter();
@@ -236,7 +237,6 @@ class ProgramsController extends AppController {
 	}
 
 	public function admin_duplicate() {
-		$transactionIds = array();
 		$programId = $this->params['form']['program_id'];
 
 		// retreive the program to be duplicated
@@ -261,7 +261,7 @@ class ProgramsController extends AppController {
 		if ($this->Program->save($duplicate)) {
 			// add the program id to our transactionIds
 			// in case we have to rollback further into the duplication
-			$transactionIds['Program'][] = $this->Program->id;
+			$this->transactionIds['Program'][] = $this->Program->id;
 		}
 
 		$this->log($transactionIds, 'debug');
