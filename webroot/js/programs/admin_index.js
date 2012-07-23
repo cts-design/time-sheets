@@ -105,6 +105,7 @@ Ext.onReady(function () {
       }, {
         disabled: true,
         icon: '/img/icons/copy.png',
+        id: 'duplicateProgramBtn',
         text: 'Duplicate Program',
         handler: function () {
           Ext.Msg.alert('Not yet implemented', 'This feature is not yet implemented');
@@ -305,6 +306,10 @@ Ext.onReady(function () {
           });
 
           menu.showAt(e.getXY());
+        },
+        select: function (rm, rec) {
+          var duplicateBtn = Ext.getCmp('duplicateProgramBtn');
+          duplicateBtn.enable();
         }
       },
       viewConfig: {
@@ -501,6 +506,10 @@ Ext.onReady(function () {
           });
 
           menu.showAt(e.getXY());
+        },
+        select: function (rm, rec) {
+          var duplicateBtn = Ext.getCmp('duplicateProgramBtn');
+          duplicateBtn.enable();
         }
       },
       viewConfig: {
@@ -700,6 +709,10 @@ Ext.onReady(function () {
           });
 
           menu.showAt(e.getXY());
+        },
+        select: function (rm, rec) {
+          var duplicateBtn = Ext.getCmp('duplicateProgramBtn');
+          duplicateBtn.enable();
         }
       },
       viewConfig: {
@@ -897,6 +910,10 @@ Ext.onReady(function () {
           });
 
           menu.showAt(e.getXY());
+        },
+        select: function (rm, rec) {
+          var duplicateBtn = Ext.getCmp('duplicateProgramBtn');
+          duplicateBtn.enable();
         }
       },
       viewConfig: {
