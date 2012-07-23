@@ -611,50 +611,57 @@ class ProgramsController extends AppController {
 		return true;
 	}
 
-	private function duplicateProgramStep($newProgramId, $oldProgramId, $stepId = null, $parentId = null) {
-		$conditions = array();
+	private function duplicateProgramStep($newProgramId, $oldProgramId, $stepId = null, $oldParentId = null, $newParentId = null) {
+		$this->Program->ProgramStep->recursive = -1;
+		$conditions = array(
+			'ProgramStep.program_id' => $oldProgramId,
+			'ProgramStep.parent_id'  => $oldParentId
+		);
 
 		if ($stepId) {
 			$conditions['ProgramStep.id'] = $stepId;
 		}
 
-		$conditions['ProgramStep.program_id'] = $oldProgramId;
-
-		$programStep = $this->Program->ProgramStep->find('first', array(
+		$programStep = $this->Program->ProgramStep->find('all', array(
 			'conditions' => $conditions
 		));
 
+		$this->log('PROGRAM STEP====', 'debug');
+		$this->log($programStep, 'debug');
+
 		if (!$programStep) return false; // base case
 
-		// duplicate program step
-		$this->Program->ProgramStep->create();
-		$newProgramStep = $programStep;
+		foreach ($programStep as $step) {
+			$oldParentId = $step['ProgramStep']['id'];
 
-		// set new program id and remove fields to be reset
-		$newProgramStep['ProgramStep']['program_id'] = $newProgramId;
-		$newProgramStep['ProgramStep']['parent_id'] = $parentId;
+			// duplicate program step
+			$this->Program->ProgramStep->create();
+			$newProgramStep = $step;
 
-		unset(
-			$newProgramStep['ProgramStep']['id'],
-			$newProgramStep['ProgramStep']['lft'],
-			$newProgramStep['ProgramStep']['rght'],
-			$newProgramStep['ProgramStep']['created'],
-			$newProgramStep['ProgramStep']['modified']
-		);
+			// set new program id and remove fields to be reset
+			$newProgramStep['ProgramStep']['program_id'] = $newProgramId;
+			$newProgramStep['ProgramStep']['parent_id'] = $newParentId;
 
-		if ($this->Program->ProgramStep->save($newProgramStep)) {
-			$this->transactionIds['ProgramStep'][] = $newParent = $this->Program->ProgramStep->id;
+			unset(
+				$newProgramStep['ProgramStep']['id'],
+				$newProgramStep['ProgramStep']['lft'],
+				$newProgramStep['ProgramStep']['rght'],
+				$newProgramStep['ProgramStep']['created'],
+				$newProgramStep['ProgramStep']['modified']
+			);
 
-			// check for children
-			$children = $this->Program->ProgramStep->children($programStep['ProgramStep']['id']);
-			foreach ($children as $child) {
-				$this->duplicateProgramStep($newProgramId, $oldProgramId, $child['ProgramStep']['id'], $newParent);
+			if ($this->Program->ProgramStep->save($newProgramStep)) {
+				$this->transactionIds['ProgramStep'][] = $newParent = $this->Program->ProgramStep->id;
+
+				// check for children
+				$children = $this->Program->ProgramStep->children($step['ProgramStep']['id']);
+				foreach ($children as $child) {
+					$this->duplicateProgramStep($newProgramId, $oldProgramId, $child['ProgramStep']['id'], $oldParentId, $newParent);
+				}
 			}
-
-			return true;
-		} else {
-			return false;
 		}
+
+		return true;
 	}
 }
 
