@@ -65,7 +65,7 @@ task :chipola do
   set :deploy_to, "/var/www/vhosts/atlas.onestopahead.com/#{application}"
   set :server_name, 'chipola production'
   set :user, 'ola_chip0'
-  server "69.68.156.141", :app, :web, :db, :primary => true
+  server "184.6.253.33", :app, :web, :db, :primary => true
 end
 
 task :clm do
