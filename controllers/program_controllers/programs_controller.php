@@ -265,9 +265,14 @@ class ProgramsController extends AppController {
 			// add the program id to our transactionIds
 			// in case we have to rollback further into the duplication
 			$this->transactionIds['Program'][] = $this->Program->id;
-			$this->duplicateProgramStep($this->Program->id, $programId);
+			if ($this->duplicateProgramStep($this->Program->id, $programId)) {
+				// continue
+			} else {
+				$this->duplicateTransactionCleanup();
+			}
 		}
 
+		$this->log($this->transactionIds, 'debug');
 
 		$this->set('data', $data);
 		$this->render(null, null, '/elements/ajaxreturn');
@@ -658,6 +663,10 @@ class ProgramsController extends AppController {
 		}
 
 		return true;
+	}
+
+	private function duplicateTransactionCleanup() {
+		$this->log('CLEAN UP CLEAN UP CLEAN UP', 'debug');
 	}
 }
 

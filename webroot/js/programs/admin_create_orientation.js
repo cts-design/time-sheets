@@ -1121,6 +1121,7 @@ formBuilder = Ext.create('Ext.panel.Panel', {
         vals.program_step_id = programStepId;
         vals.name = vals.label.underscore();
 
+
         grid.store.add(vals);
         form.reset();
       }
@@ -1138,6 +1139,7 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           attributes = {},
           options = {},
           validation = {},
+          programFormFieldStore = Ext.data.StoreManager.lookup('ProgramFormFieldStore'),
           programStep = Ext.data.StoreManager.lookup('ProgramStepStore'),
           programStepId = programStep.last().data.id,
           grid = Ext.getCmp('formFieldGrid'),
