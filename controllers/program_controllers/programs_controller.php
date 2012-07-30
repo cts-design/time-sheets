@@ -895,7 +895,40 @@ class ProgramsController extends AppController {
 	}
 
 	private function duplicateTransactionCleanup() {
-		$this->log('CLEAN UP CLEAN UP CLEAN UP', 'debug');
+		foreach ($this->transactionIds as $key => $value) {
+			// $key is the model name itself, $value is the array of ids
+
+			switch ($key) {
+			case 'WatchedFilingCat':
+				$this->loadModel('WatchedFilingCat');
+				$Model =& $this->WatchedFilingCat;
+				break;
+			case 'Program':
+				$Model =& $this->Program;
+				break;
+			case 'ProgramStep':
+				$Model =& $this->Program->ProgramStep;
+				break;
+			case 'ProgramInstruction':
+				$Model =& $this->Program->ProgramInstruction;
+				break;
+			case 'ProgramFormField':
+				$Model =& $this->Program->ProgramStep->ProgramFormField;
+				break;
+			case 'ProgramEmail':
+				$Model =& $this->Program->ProgramEmail;
+				break;
+			case 'ProgramDocument':
+				$Model =& $this->Program->ProgramDocument;
+				break;
+			}
+
+			// $v will be the id of the record saved
+			foreach ($value as $k => $v) {
+				$Model->delete($v);
+			}
+		}
+	}
 
 	private function issetAndNotEmpty($key) {
 		return isset($key) && !empty($key);
