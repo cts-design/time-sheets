@@ -1143,6 +1143,7 @@ stepTree = Ext.create('Ext.panel.Panel', {
           if (selectedModule.isLeaf()) { selectedModule = selectedModule.parentNode; }
 
           switch (vals.type) {
+            case 'custom_form':
             case 'form':
               selectedModule.appendChild(vals);
               form.reset();
