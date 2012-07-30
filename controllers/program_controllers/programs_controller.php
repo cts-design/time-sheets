@@ -740,6 +740,39 @@ class ProgramsController extends AppController {
 		return true;
 	}
 
+	public function duplicateProgramInstruction($newProgramId, $oldProgramId) {
+		$this->Program->ProgramInstruction->recursive = -1;
+		$instructions = $this->Program->ProgramInstruction->find('all', array(
+			'conditions' => array(
+				'ProgramInstruction.program_id' => $oldProgramId,
+				'ProgramInstruction.program_step_id' => null
+			)
+		));
+
+		if ($instructions) {
+			foreach ($instructions as $instruction) {
+				$newRecord = $instruction;
+
+				unset(
+					$newRecord['ProgramInstruction']['id'],
+					$newRecord['ProgramInstruction']['created'],
+					$newRecord['ProgramInstruction']['modified']
+				);
+
+				$newRecord['ProgramInstruction']['program_id'] = $newProgramId;
+				$this->Program->ProgramInstruction->create();
+
+				if ($this->Program->ProgramInstruction->save($newRecord)) {
+					$this->transactionIds['ProgramInstruction'][] = $this->Program->ProgramInstruction->id;
+				} else {
+					return false;
+				}
+			}
+
+			return true;
+		}
+	}
+
 	private function duplicateTransactionCleanup() {
 		$this->log('CLEAN UP CLEAN UP CLEAN UP', 'debug');
 	}
