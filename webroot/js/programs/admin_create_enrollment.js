@@ -1029,6 +1029,8 @@ stepTree = Ext.create('Ext.panel.Panel', {
         store: Ext.create('Ext.data.Store', {
           fields: ['lcase', 'ucase'],
           data: [{
+            lcase: 'custom_form', ucase: 'Custom Form'
+          }, {
             lcase: 'form', ucase: 'Form'
           }, {
             lcase: 'media', ucase: 'Media'
