@@ -1479,6 +1479,8 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                     }, {
                       lcase: 'text', ucase: 'Textbox'
                     }, {
+                      lcase: 'textarea', ucase: 'Textarea'
+                    }, {
                       lcase: 'select', ucase: 'Select'
                     }]
                   }),
