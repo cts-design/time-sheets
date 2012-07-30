@@ -264,15 +264,37 @@ class ProgramsController extends AppController {
 		if ($this->Program->save($duplicate)) {
 			// add the program id to our transactionIds
 			// in case we have to rollback further into the duplication
-			$this->transactionIds['Program'][] = $this->Program->id;
-			if ($this->duplicateProgramStep($this->Program->id, $programId)) {
-				// continue
+			$this->transactionIds['Program'][] = $newId = $this->Program->id;
+			if ($this->duplicateProgramStep($newId, $programId)) {
+				if ($this->duplicateProgramInstruction($newId, $programId)) {
+					if ($this->duplicateProgramEmail($newId, $programId)) {
+						if ($this->duplicateProgramDocument($newId, $programId)) {
+							if ($this->duplicateWatchedFilingCat($newId, $programId)) {
+								$success = true;
+							} else {
+								$this->duplicateTransactionCleanup();
+								$success = false;
+							}
+						} else {
+							$this->duplicateTransactionCleanup();
+							$success = false;
+						}
+					} else {
+						$this->duplicateTransactionCleanup();
+						$success = false;
+					}
+				} else {
+					$this->duplicateTransactionCleanup();
+					$success = false;
+				}
 			} else {
 				$this->duplicateTransactionCleanup();
+				$success = false;
 			}
 		}
 
 		$this->log($this->transactionIds, 'debug');
+		$data['success'] = $success;
 
 		$this->set('data', $data);
 		$this->render(null, null, '/elements/ajaxreturn');
