@@ -839,6 +839,39 @@ class ProgramsController extends AppController {
 		}
 	}
 
+	public function duplicateWatchedFilingCat($newProgramId, $oldProgramId) {
+		$this->loadModel('WatchedFilingCat');
+		$this->WatchedFilingCat->recursive = -1;
+		$filingCats = $this->WatchedFilingCat->find('all', array(
+			'conditions' => array(
+				'WatchedFilingCat.program_id' => $oldProgramId
+			)
+		));
+
+		if ($filingCats) {
+			foreach ($filingCats as $cat) {
+				$newRecord = $cat;
+
+				unset(
+					$newRecord['WatchedFilingCat']['id'],
+					$newRecord['WatchedFilingCat']['created'],
+					$newRecord['WatchedFilingCat']['modified']
+				);
+
+				$newRecord['WatchedFilingCat']['program_id'] = $newProgramId;
+				$this->WatchedFilingCat->create();
+
+				if ($this->WatchedFilingCat->save($newRecord)) {
+					$this->transactionIds['WatchedFilingCat'][] = $this->WatchedFilingCat->id;
+				} else {
+					return false;
+				}
+			}
+
+			return true;
+		}
+	}
+
 	private function duplicateTransactionCleanup() {
 		$this->log('CLEAN UP CLEAN UP CLEAN UP', 'debug');
 
