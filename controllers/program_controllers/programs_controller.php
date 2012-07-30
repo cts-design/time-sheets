@@ -841,6 +841,9 @@ class ProgramsController extends AppController {
 
 	private function duplicateTransactionCleanup() {
 		$this->log('CLEAN UP CLEAN UP CLEAN UP', 'debug');
+
+	private function issetAndNotEmpty($key) {
+		return isset($key) && !empty($key);
 	}
 }
 
