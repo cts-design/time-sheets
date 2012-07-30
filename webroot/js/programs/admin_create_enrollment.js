@@ -458,7 +458,7 @@ Ext.create('Ext.data.Store', {
 /**
  * Variable Declarations
  */
-var registrationForm, stepTree, formBuilderContainer, uploadStep, filingCategories, programDocumentation, instructions, emails, navigate, statusBar, states;
+var registrationForm, stepTree, customForm, formBuilderContainer, uploadStep, filingCategories, programDocumentation, instructions, emails, navigate, statusBar, states;
 
 states = {
   AL: 'Alabama',
@@ -1231,6 +1231,32 @@ stepTree = Ext.create('Ext.panel.Panel', {
     }
 
     Ext.data.StoreManager.lookup('ProgramStepStore').sync();
+    return true;
+  }
+});
+
+/**
+ * customForm
+ */
+customForm = Ext.create('Ext.form.Panel', {
+  height: 406,
+  items: [{
+    border: 0,
+    html: '<h1>Please specify the options for your custom form</h1>',
+    margin: '0 0 10'
+  }],
+  preprocess: function () {
+    var programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
+      rootNode = programStepStore.tree.root,
+      customForm;
+
+    customForm = rootNode.findChild('type', 'custom_form', true);
+
+    if (!customForm) {
+      navigate(this.up('panel'), 'next');
+    }
+  },
+  process: function () {
     return true;
   }
 });
@@ -2298,6 +2324,7 @@ Ext.onReady(function () {
     items: [
       registrationForm,
       stepTree,
+      customForm,
       formBuilderContainer,
       uploadStep,
       instructions,
