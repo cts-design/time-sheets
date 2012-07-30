@@ -170,6 +170,11 @@ Ext.define('WatchedFilingCat', {
   ]
 });
 
+Ext.define('Fieldset', {
+  extend: 'Ext.data.Model',
+  fields: ['name']
+});
+
 /**
  * Data Stores
  */
@@ -443,6 +448,11 @@ Ext.create('Ext.data.Store', {
       writeAllFields: false
     }
   }
+});
+
+Ext.create('Ext.data.Store', {
+  storeId: 'FieldsetStore',
+  model: 'Fieldset'
 });
 
 /**

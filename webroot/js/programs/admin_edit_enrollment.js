@@ -177,6 +177,11 @@ Ext.define('WatchedFilingCat', {
   ]
 });
 
+Ext.define('Fieldset', {
+  extend: 'Ext.data.Model',
+  fields: ['name']
+});
+
 /**
  * Data Stores
  */
