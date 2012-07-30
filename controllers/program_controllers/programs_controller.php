@@ -773,6 +773,39 @@ class ProgramsController extends AppController {
 		}
 	}
 
+	public function duplicateProgramEmail($newProgramId, $oldProgramId) {
+		$this->Program->ProgramEmail->recursive = -1;
+		$emails = $this->Program->ProgramEmail->find('all', array(
+			'conditions' => array(
+				'ProgramEmail.program_id' => $oldProgramId,
+				'ProgramEmail.program_step_id' => null
+			)
+		));
+
+		if ($emails) {
+			foreach ($emails as $email) {
+				$newRecord = $email;
+
+				unset(
+					$newRecord['ProgramEmail']['id'],
+					$newRecord['ProgramEmail']['created'],
+					$newRecord['ProgramEmail']['modified']
+				);
+
+				$newRecord['ProgramEmail']['program_id'] = $newProgramId;
+				$this->Program->ProgramEmail->create();
+
+				if ($this->Program->ProgramEmail->save($newRecord)) {
+					$this->transactionIds['ProgramEmail'][] = $this->Program->ProgramEmail->id;
+				} else {
+					return false;
+				}
+			}
+
+			return true;
+		}
+	}
+
 	private function duplicateTransactionCleanup() {
 		$this->log('CLEAN UP CLEAN UP CLEAN UP', 'debug');
 	}
