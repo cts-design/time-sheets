@@ -616,7 +616,6 @@ class ProgramsController extends AppController {
 	}
 
 	private function duplicateProgramStep($newProgramId, $oldProgramId, $stepId = null, $oldParentId = null, $newParentId = null) {
-		$this->Program->ProgramStep->recursive = -1;
 		$conditions = array(
 			'ProgramStep.program_id' => $oldProgramId,
 			'ProgramStep.parent_id'  => $oldParentId
@@ -653,6 +652,82 @@ class ProgramsController extends AppController {
 
 			if ($this->Program->ProgramStep->save($newProgramStep)) {
 				$this->transactionIds['ProgramStep'][] = $newParent = $this->Program->ProgramStep->id;
+
+				// if there's a step type, that means it's not a module so let's look for associated
+				// records that we'll need to replace their program_id's and new program_step_id's
+				if ($this->issetAndNotEmpty($step['ProgramStep']['type'])) {
+					if (!empty($step['ProgramInstruction']) && $this->issetAndNotEmpty($step['ProgramInstruction']['id'])) {
+						$newRecord = $this->Program->ProgramInstruction->read(null, $step['ProgramInstruction']['id']);
+
+						unset(
+							$newRecord['ProgramInstruction']['id'],
+							$newRecord['ProgramInstruction']['modified'],
+							$newRecord['ProgramInstruction']['created']
+						);
+
+						$newRecord['ProgramInstruction']['program_id'] = $newProgramId;
+						$newRecord['ProgramInstruction']['program_step_id'] = $newParent;
+
+						$this->Program->ProgramInstruction->create();
+						if ($this->Program->ProgramInstruction->save($newRecord)) {
+							$this->transactionIds['ProgramInstruction'][] = $this->Program->ProgramInstruction->id;
+						}
+					}
+
+					if (!empty($step['ProgramEmail']) && $this->issetAndNotEmpty($step['ProgramEmail']['id'])) {
+						$newRecord = $this->Program->ProgramEmail->read(null, $step['ProgramEmail']['id']);
+
+						unset(
+							$newRecord['ProgramEmail']['id'],
+							$newRecord['ProgramEmail']['modified'],
+							$newRecord['ProgramEmail']['created']
+						);
+
+						$newRecord['ProgramEmail']['program_id'] = $newProgramId;
+						$newRecord['ProgramEmail']['program_step_id'] = $newParent;
+
+						$this->Program->ProgramEmail->create();
+						if ($this->Program->ProgramEmail->save($newRecord)) {
+							$this->transactionIds['ProgramEmail'][] = $this->Program->ProgramEmail->id;
+						}
+					}
+
+					if (!empty($step['ProgramDocument']) && $this->issetAndNotEmpty($step['ProgramDocument'][0]['id'])) {
+						$newRecord = $this->Program->ProgramDocument->read(null, $step['ProgramDocument'][0]['id']);
+
+						unset(
+							$newRecord['ProgramDocument']['id'],
+							$newRecord['ProgramDocument']['modified'],
+							$newRecord['ProgramDocument']['created']
+						);
+
+						$newRecord['ProgramDocument']['program_id'] = $newProgramId;
+						$newRecord['ProgramDocument']['program_step_id'] = $newParent;
+
+						$this->Program->ProgramDocument->create();
+						if ($this->Program->ProgramDocument->save($newRecord)) {
+							$this->transactionIds['ProgramDocument'][] = $this->Program->ProgramDocument->id;
+						}
+					}
+
+					if (!empty($step['ProgramFormField']) && $this->issetAndNotEmpty($step['ProgramFormField'][0]['id'])) {
+						$newRecord = $this->Program->ProgramStep->ProgramFormField->read(null, $step['ProgramFormField'][0]['id']);
+
+						unset(
+							$newRecord['ProgramFormField']['id'],
+							$newRecord['ProgramFormField']['modified'],
+							$newRecord['ProgramFormField']['created']
+						);
+
+						$newRecord['ProgramFormField']['program_id'] = $newProgramId;
+						$newRecord['ProgramFormField']['program_step_id'] = $newParent;
+
+						$this->Program->ProgramStep->ProgramFormField->create();
+						if ($this->Program->ProgramStep->ProgramFormField->save($newRecord)) {
+							$this->transactionIds['ProgramFormField'][] = $this->Program->ProgramStep->ProgramFormField->id;
+						}
+					}
+				}
 
 				// check for children
 				$children = $this->Program->ProgramStep->children($step['ProgramStep']['id']);
