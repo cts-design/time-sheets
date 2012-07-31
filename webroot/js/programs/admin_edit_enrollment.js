@@ -1408,7 +1408,24 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
     listeners: {
       itemdblclick: function (view, rec) {
         var window,
-          programFormFieldStore = Ext.data.StoreManager.lookup('ProgramFormFieldStore');
+          programFormFieldStore = Ext.data.StoreManager.lookup('ProgramFormFieldStore'),
+          decodedMeta = null,
+          fieldsets,
+          fsObj = [],
+          fieldsetStore;
+
+        if (rec.get('meta') !== "") {
+          fieldsetStore = Ext.create('Ext.data.ArrayStore', {
+            storeId: 'FIELDSETSTORE',
+            fields: ['name'],
+          });
+
+          decodedMeta = Ext.JSON.decode(rec.get('meta'));
+          fieldsets = decodedMeta.fieldsets.split(', ');
+          Ext.Array.each(fieldsets, function (value) {
+            fieldsetStore.add({name: value});
+          });
+        }
 
         programFormFieldStore.load({
           params: {
@@ -1457,6 +1474,10 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                 }, {
                   header: 'Type',
                   dataIndex: 'type'
+                }, {
+                  header: 'Fieldset',
+                  dataIndex: 'fieldset',
+                  hidden: (Ext.isEmpty(decodedMeta))
                 }, {
                   header: 'Name',
                   dataIndex: 'name'
@@ -1671,6 +1692,26 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                     }),
                     value: '',
                     valueField: 'lcase'
+                  }, {
+                    border: false,
+                    cls: 'x-text-light',
+                    html: '<em>Enter options as comma separated values, or choose from the list</em>',
+                    padding: 5
+                  }]
+                }, {
+                  xtype: 'fieldcontainer',
+                  hidden: (Ext.isEmpty(decodedMeta)),
+                  id: 'fieldsetsOptionsContainer',
+                  items: [{
+                    xtype: 'combo',
+                    displayField: 'name',
+                    fieldLabel: 'Fieldset',
+                    id: 'fieldstepOptions',
+                    name: 'fieldset',
+                    queryMode: 'local',
+                    store: fieldsetStore,
+                    value: '',
+                    valueField: 'name'
                   }, {
                     border: false,
                     cls: 'x-text-light',
