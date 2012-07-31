@@ -1203,6 +1203,16 @@ stepTree = Ext.create('Ext.panel.Panel', {
 
           switch (vals.type) {
             case 'custom_form':
+              obj = {
+                columns: vals.number_of_columns,
+                fieldsets: vals.fieldsets
+              };
+
+              vals.meta = Ext.JSON.encode(obj);
+              selectedModule.appendChild(vals);
+              form.reset();
+              break;
+
             case 'form':
               selectedModule.appendChild(vals);
               form.reset();
