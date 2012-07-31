@@ -68,6 +68,7 @@ Ext.define('ProgramFormField', {
     { name: 'options', type: 'string', useNull: true },
     { name: 'validation', type: 'string', useNull: true },
     { name: 'instructions', type: 'string', useNull: true },
+    'fieldset',
     { name: 'created',  type: 'date', dateFormat: 'Y-m-d H:i:s' },
     { name: 'modified', type: 'date', dateFormat: 'Y-m-d H:i:s' }
   ]
