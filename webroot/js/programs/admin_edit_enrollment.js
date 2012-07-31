@@ -46,6 +46,7 @@ Ext.define('ProgramStep', {
     { name: 'media_location', type: 'string', useNull: true },
     { name: 'media_type', type: 'string', useNull: true },
     { name: 'redoable', type: 'int' },
+    'meta',
     { name: 'lft', type: 'int' },
     { name: 'rght', type: 'int' },
     { name: 'created',  type: 'date', dateFormat: 'Y-m-d H:i:s' },
@@ -454,7 +455,7 @@ Ext.create('Ext.data.Store', {
 /**
  * Variable Declarations
  */
-var registrationForm, stepTree, customForm, formBuilderContainer, uploadStep, watchedFilingCats, filingCategories, programDocumentation, instructions, emails, navigate, statusBar, states;
+var registrationForm, stepTree, formBuilderContainer, uploadStep, watchedFilingCats, filingCategories, programDocumentation, instructions, emails, navigate, statusBar, states;
 
 states = {
   AL: 'Alabama',
@@ -1087,9 +1088,17 @@ stepTree = Ext.create('Ext.panel.Panel', {
                 uploadContainer = Ext.getCmp('mediaUploadContainer'),
                 uploadField = Ext.getCmp('mediaUploadField'),
                 urlContainer = Ext.getCmp('mediaUrlContainer'),
-                urlField = Ext.getCmp('mediaUrlField');
+                urlField = Ext.getCmp('mediaUrlField'),
+                fieldsets = Ext.getCmp('defineFieldsets'),
+                numOfColumns = Ext.getCmp('numberOfColumns'),
+                fieldsetContainer = Ext.getCmp('fieldsetContainer'),
+                numOfColumnsContainer = Ext.getCmp('numberOfColumnsContainer');
 
               if (newValue === 'media') {
+                fieldsetContainer.setVisible(false);
+                fieldsets.allowBlank = true;
+                numberOfColumnsContainer.setVisible(false);
+                numOfColumns.allowBlank = true;
                 container.setVisible(true);
                 uploadContainer.setVisible(true);
                 container.getEl().highlight('C9DFEE', { duration: 1000 });
@@ -1097,7 +1106,23 @@ stepTree = Ext.create('Ext.panel.Panel', {
                 typeField.allowBlank = false;
                 typeField.setValue('pdf');
                 uploadField.allowBlank = false;
+              } else if (newValue === 'custom_form') {
+                fieldsetContainer.setVisible(true);
+                fieldsets.allowBlank = false;
+                numOfColumnsContainer.setVisible(true);
+                numOfColumns.allowBlank = false;
+                container.setVisible(false);
+                typeField.allowBlank = true;
+                typeField.setValue('pdf');
+                uploadField.allowBlank = true;
+                uploadContainer.setVisible(false);
+                urlField.allowBlank = true;
+                urlContainer.setVisible(false);
               } else {
+                fieldsetContainer.setVisible(false);
+                fieldsets.allowBlank = true;
+                numberOfColumnsContainer.setVisible(false);
+                numOfColumns.allowBlank = true;
                 container.setVisible(false);
                 typeField.allowBlank = true;
                 typeField.setValue('pdf');
@@ -1125,6 +1150,30 @@ stepTree = Ext.create('Ext.panel.Panel', {
         }),
         value: '',
         valueField: 'lcase'
+      }]
+    }, {
+      xtype: 'fieldcontainer',
+      hidden: true,
+      id: 'numberOfColumnsContainer',
+      items: [{
+        xtype: 'numberfield',
+        fieldLabel: 'Number of Columns',
+        id: 'numberOfColumns',
+        name: 'number_of_columns',
+        minValue: 1,
+        maxValue: 3,
+        value: 2
+      }]
+    }, {
+      xtype: 'fieldcontainer',
+      hidden: true,
+      id: 'fieldsetContainer',
+      items: [{
+        xtype: 'textfield',
+        allowBlank: false,
+        fieldLabel: 'Define Fieldsets',
+        id: 'defineFieldsets',
+        name: 'fieldsets',
       }]
     }, {
       xtype: 'fieldcontainer',
@@ -1323,83 +1372,6 @@ stepTree = Ext.create('Ext.panel.Panel', {
     }
 
     Ext.data.StoreManager.lookup('ProgramStepStore').sync();
-    return true;
-  }
-});
-
-/**
- * customForm
- */
-customForm = Ext.create('Ext.form.Panel', {
-  height: 406,
-  items: [{
-    border: 0,
-    html: '<h1>Please specify the options for your custom form</h1>',
-    margin: '0 0 10'
-  }, {
-    xtype: 'fieldcontainer',
-    height: 22,
-    width: 350,
-    layout: {
-      defaultMargins: {
-        top: 0,
-        right: 5,
-        bottom: 0,
-        left: 0
-      },
-      type: 'hbox'
-    },
-    items: [{
-      xtype: 'numberfield',
-      fieldLabel: 'Number of Columns',
-      id: 'numberOfColumns',
-      labelWidth: 125,
-      name: 'number_of_columns',
-      minValue: 1,
-      maxValue: 3,
-      value: 2
-    }]
-  }, {
-    xtype: 'fieldcontainer',
-    height: 22,
-    width: 450,
-    layout: {
-      defaultMargins: {
-        top: 0,
-        right: 5,
-        bottom: 0,
-        left: 0
-      },
-      type: 'hbox'
-    },
-    items: [{
-      xtype: 'textfield',
-      allowBlank: false,
-      fieldLabel: 'Define Fieldsets',
-      id: 'defineFieldsets',
-      labelWidth: 125,
-      name: 'fieldsets',
-      width: 300
-    }, {
-      xtype: 'displayfield',
-      style: {
-        color: '#445566'
-      },
-      value: 'Comma separated'
-    }]
-  }],
-  preprocess: function () {
-    var programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
-      rootNode = programStepStore.tree.root,
-      customForm;
-
-    customForm = rootNode.findChild('type', 'custom_form', true);
-
-    if (!customForm) {
-      navigate(this.up('panel'), 'next');
-    }
-  },
-  process: function () {
     return true;
   }
 });
@@ -2724,7 +2696,6 @@ Ext.onReady(function () {
     items = [
       registrationForm,
       stepTree,
-      customForm,
       formBuilderContainer,
       uploadStep,
       watchedFilingCats,
