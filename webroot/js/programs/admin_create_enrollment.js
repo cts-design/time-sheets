@@ -1244,6 +1244,57 @@ customForm = Ext.create('Ext.form.Panel', {
     border: 0,
     html: '<h1>Please specify the options for your custom form</h1>',
     margin: '0 0 10'
+  }, {
+    xtype: 'fieldcontainer',
+    height: 22,
+    width: 350,
+    layout: {
+      defaultMargins: {
+        top: 0,
+        right: 5,
+        bottom: 0,
+        left: 0
+      },
+      type: 'hbox'
+    },
+    items: [{
+      xtype: 'numberfield',
+      fieldLabel: 'Number of Columns',
+      id: 'numberOfColumns',
+      labelWidth: 125,
+      name: 'number_of_columns',
+      minValue: 1,
+      maxValue: 3,
+      value: 2
+    }]
+  }, {
+    xtype: 'fieldcontainer',
+    height: 22,
+    width: 450,
+    layout: {
+      defaultMargins: {
+        top: 0,
+        right: 5,
+        bottom: 0,
+        left: 0
+      },
+      type: 'hbox'
+    },
+    items: [{
+      xtype: 'textfield',
+      allowBlank: false,
+      fieldLabel: 'Define Fieldsets',
+      id: 'defineFieldsets',
+      labelWidth: 125,
+      name: 'fieldsets',
+      width: 300
+    }, {
+      xtype: 'displayfield',
+      style: {
+        color: '#445566'
+      },
+      value: 'Comma separated'
+    }]
   }],
   preprocess: function () {
     var programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
