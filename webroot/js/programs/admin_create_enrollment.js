@@ -46,6 +46,7 @@ Ext.define('ProgramStep', {
     { name: 'media_location', type: 'string', useNull: true },
     { name: 'media_type', type: 'string', useNull: true },
     { name: 'redoable', type: 'int' },
+    'meta',
     { name: 'lft', type: 'int' },
     { name: 'rght', type: 'int' },
     { name: 'created',  type: 'date', dateFormat: 'Y-m-d H:i:s' },
@@ -61,11 +62,13 @@ Ext.define('ProgramFormField', {
     { name: 'program_step_id', type: 'int' },
     'label',
     'type',
+    { name: 'order', type: 'int' },
     'name',
     { name: 'attributes', type: 'string', useNull: true },
     { name: 'options', type: 'string', useNull: true },
     { name: 'validation', type: 'string', useNull: true },
     { name: 'instructions', type: 'string', useNull: true },
+    'fieldset',
     { name: 'created',  type: 'date', dateFormat: 'Y-m-d H:i:s' },
     { name: 'modified', type: 'date', dateFormat: 'Y-m-d H:i:s' }
   ]
@@ -167,6 +170,11 @@ Ext.define('WatchedFilingCat', {
     { name: 'program_id', type: 'int' },
     'name',
   ]
+});
+
+Ext.define('Fieldset', {
+  extend: 'Ext.data.Model',
+  fields: ['name']
 });
 
 /**
@@ -444,10 +452,15 @@ Ext.create('Ext.data.Store', {
   }
 });
 
+Ext.create('Ext.data.Store', {
+  storeId: 'FieldsetStore',
+  model: 'Fieldset'
+});
+
 /**
  * Variable Declarations
  */
-var registrationForm, stepTree, formBuilderContainer, uploadStep, filingCategories, programDocumentation, instructions, emails, navigate, statusBar, states;
+var registrationForm, stepTree, customForm, formBuilderContainer, uploadStep, filingCategories, programDocumentation, instructions, emails, navigate, statusBar, states;
 
 states = {
   AL: 'Alabama',
@@ -1001,9 +1014,17 @@ stepTree = Ext.create('Ext.panel.Panel', {
                 uploadContainer = Ext.getCmp('mediaUploadContainer'),
                 uploadField = Ext.getCmp('mediaUploadField'),
                 urlContainer = Ext.getCmp('mediaUrlContainer'),
-                urlField = Ext.getCmp('mediaUrlField');
+                urlField = Ext.getCmp('mediaUrlField'),
+                fieldsets = Ext.getCmp('defineFieldsets'),
+                numOfColumns = Ext.getCmp('numberOfColumns'),
+                fieldsetContainer = Ext.getCmp('fieldsetContainer'),
+                numOfColumnsContainer = Ext.getCmp('numberOfColumnsContainer');
 
               if (newValue === 'media') {
+                fieldsetContainer.setVisible(false);
+                fieldsets.allowBlank = true;
+                numberOfColumnsContainer.setVisible(false);
+                numOfColumns.allowBlank = true;
                 container.setVisible(true);
                 uploadContainer.setVisible(true);
                 container.getEl().highlight('C9DFEE', { duration: 1000 });
@@ -1011,7 +1032,23 @@ stepTree = Ext.create('Ext.panel.Panel', {
                 typeField.allowBlank = false;
                 typeField.setValue('pdf');
                 uploadField.allowBlank = false;
+              } else if (newValue === 'custom_form') {
+                fieldsetContainer.setVisible(true);
+                fieldsets.allowBlank = false;
+                numOfColumnsContainer.setVisible(true);
+                numOfColumns.allowBlank = false;
+                container.setVisible(false);
+                typeField.allowBlank = true;
+                typeField.setValue('pdf');
+                uploadField.allowBlank = true;
+                uploadContainer.setVisible(false);
+                urlField.allowBlank = true;
+                urlContainer.setVisible(false);
               } else {
+                fieldsetContainer.setVisible(false);
+                fieldsets.allowBlank = true;
+                numberOfColumnsContainer.setVisible(false);
+                numOfColumns.allowBlank = true;
                 container.setVisible(false);
                 typeField.allowBlank = true;
                 typeField.setValue('pdf');
@@ -1028,6 +1065,8 @@ stepTree = Ext.create('Ext.panel.Panel', {
         store: Ext.create('Ext.data.Store', {
           fields: ['lcase', 'ucase'],
           data: [{
+            lcase: 'custom_form', ucase: 'Custom Form'
+          }, {
             lcase: 'form', ucase: 'Form'
           }, {
             lcase: 'media', ucase: 'Media'
@@ -1037,6 +1076,30 @@ stepTree = Ext.create('Ext.panel.Panel', {
         }),
         value: '',
         valueField: 'lcase'
+      }]
+    }, {
+      xtype: 'fieldcontainer',
+      hidden: true,
+      id: 'numberOfColumnsContainer',
+      items: [{
+        xtype: 'numberfield',
+        fieldLabel: 'Number of Columns',
+        id: 'numberOfColumns',
+        name: 'number_of_columns',
+        minValue: 1,
+        maxValue: 3,
+        value: 2
+      }]
+    }, {
+      xtype: 'fieldcontainer',
+      hidden: true,
+      id: 'fieldsetContainer',
+      items: [{
+        xtype: 'textfield',
+        allowBlank: false,
+        fieldLabel: 'Define Fieldsets',
+        id: 'defineFieldsets',
+        name: 'fieldsets',
       }]
     }, {
       xtype: 'fieldcontainer',
@@ -1140,6 +1203,17 @@ stepTree = Ext.create('Ext.panel.Panel', {
           if (selectedModule.isLeaf()) { selectedModule = selectedModule.parentNode; }
 
           switch (vals.type) {
+            case 'custom_form':
+              obj = {
+                columns: vals.number_of_columns,
+                fieldsets: vals.fieldsets
+              };
+
+              vals.meta = Ext.JSON.encode(obj);
+              selectedModule.appendChild(vals);
+              form.reset();
+              break;
+
             case 'form':
               selectedModule.appendChild(vals);
               form.reset();
@@ -1243,7 +1317,24 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
     listeners: {
       itemdblclick: function (view, rec) {
         var window,
-          programFormFieldStore = Ext.data.StoreManager.lookup('ProgramFormFieldStore');
+          programFormFieldStore = Ext.data.StoreManager.lookup('ProgramFormFieldStore'),
+          decodedMeta = null,
+          fieldsets,
+          fsObj = [],
+          fieldsetStore;
+
+        if (rec.get('meta') !== "") {
+          fieldsetStore = Ext.create('Ext.data.ArrayStore', {
+            storeId: 'FIELDSETSTORE',
+            fields: ['name'],
+          });
+
+          decodedMeta = Ext.JSON.decode(rec.get('meta'));
+          fieldsets = decodedMeta.fieldsets.split(', ');
+          Ext.Array.each(fieldsets, function (value) {
+            fieldsetStore.add({name: value});
+          });
+        }
 
         programFormFieldStore.load({
           params: {
@@ -1282,12 +1373,20 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                 store: 'ProgramFormFieldStore',
                 width: 660,
                 columns: [{
+                  header: 'Order',
+                  dataIndex: 'order',
+                  width: 50
+                }, {
                   header: 'Label',
                   dataIndex: 'label',
                   flex: 1
                 }, {
                   header: 'Type',
                   dataIndex: 'type'
+                }, {
+                  header: 'Fieldset',
+                  dataIndex: 'fieldset',
+                  hidden: (Ext.isEmpty(decodedMeta))
                 }, {
                   header: 'Name',
                   dataIndex: 'name'
@@ -1315,37 +1414,56 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                       updateBtn = Ext.getCmp('updateBtn'),
                       builderSaveBtn = Ext.getCmp('builderSaveBtn');
 
-                    if (form.isDirty()) {
-                      Ext.Msg.show({
-                        title: 'Discard Changes?',
-                        msg: 'You have an unsaved form field, discard changes?',
-                        buttons: Ext.Msg.YESNO,
-                        icon: Ext.Msg.QUESTION,
-                        fn: function (btn) {
-                          if (btn === 'yes') {
-                            form.reset();
-                            form.loadRecord(rec);
-                            deleteFieldBtn.enable();
-                            updateBtn.show();
-                            builderSaveBtn.hide();
-                          }
-                        }
-                      });
-                    } else {
-                      form.loadRecord(rec);
-                      deleteFieldBtn.enable();
-                      updateBtn.show();
-                      builderSaveBtn.hide();
-                    }
-
+                    form.loadRecord(rec);
+                    deleteFieldBtn.enable();
+                    updateBtn.show();
+                    builderSaveBtn.hide();
                   }
                 },
                 viewConfig: {
                   emptyText: 'Please add your form fields',
                   listeners: {
-                    beforedrop: function (node, data, overModel, dropPos, dropFunc, eOpts) {
-                    },
                     drop: function (node, data, overModel, dropPos, eOpts) {
+                      var programFormFieldStore = Ext.data.StoreManager.lookup('ProgramFormFieldStore'),
+                        grid = data.view.up('#formFieldGrid'),
+                        gridEl = grid.getEl(),
+                        selectedRec = data.records[0],
+                        parseDrop,
+                        i;
+
+                      gridEl.mask('Reordering fields...');
+
+                      // Reorder the selected field and it's overModel
+                      // based on the drop position
+                      parseDrop = (function () {
+                        return {
+                          before: function () {
+                            var overModelOrder = overModel.get('order');
+
+                            selectedRec.set('order', overModelOrder);
+                            overModel.set('order', (overModelOrder + 1));
+                          },
+                          after: function () {
+                            var overModelOrder = overModel.get('order');
+
+                            selectedRec.set('order', (overModelOrder));
+                            overModel.set('order', (overModelOrder - 1));
+                          }
+                        };
+                      }());
+                      parseDrop[dropPos] && parseDrop[dropPos]();
+
+                      programFormFieldStore.sort('order', 'ASC');
+
+                      i = 1;
+                      programFormFieldStore.each(function (rec) {
+                        if (rec.get('order') !== i) {
+                          rec.set('order', i);
+                        }
+                        i++;
+                      });
+
+                      gridEl.unmask();
                     }
                   },
                   plugins: {
@@ -1455,6 +1573,8 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                     }, {
                       lcase: 'text', ucase: 'Textbox'
                     }, {
+                      lcase: 'textarea', ucase: 'Textarea'
+                    }, {
                       lcase: 'select', ucase: 'Select'
                     }]
                   }),
@@ -1481,6 +1601,26 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                     }),
                     value: '',
                     valueField: 'lcase'
+                  }, {
+                    border: false,
+                    cls: 'x-text-light',
+                    html: '<em>Enter options as comma separated values, or choose from the list</em>',
+                    padding: 5
+                  }]
+                }, {
+                  xtype: 'fieldcontainer',
+                  hidden: (Ext.isEmpty(decodedMeta)),
+                  id: 'fieldsetsOptionsContainer',
+                  items: [{
+                    xtype: 'combo',
+                    displayField: 'name',
+                    fieldLabel: 'Fieldset',
+                    id: 'fieldstepOptions',
+                    name: 'fieldset',
+                    queryMode: 'local',
+                    store: fieldsetStore,
+                    value: '',
+                    valueField: 'name'
                   }, {
                     border: false,
                     cls: 'x-text-light',

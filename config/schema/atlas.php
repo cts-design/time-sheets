@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2012-07-05 10:42:24 : 1341499344*/
+/* atlas schema generated on: 2012-07-31 11:46:02 : 1343749562*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -567,6 +567,7 @@ class atlasSchema extends CakeSchema {
 		'media_location' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'media_type' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'redoable' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'meta' => array('type' => 'text', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'lft' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'rght' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
@@ -579,7 +580,6 @@ class atlasSchema extends CakeSchema {
 		'name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'type' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'atlas_registration_type' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 10, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'disabled' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'queue_category_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'approval_required' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'form_esign_required' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
@@ -592,6 +592,7 @@ class atlasSchema extends CakeSchema {
 		'show_in_dash' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'in_test' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'bar_code_definition_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'disabled' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'expires' => array('type' => 'datetime', 'null' => false, 'default' => NULL),

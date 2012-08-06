@@ -45,7 +45,7 @@
 											'action' => 'media', 
 											$program['Program']['id'], 
 											$step['id'])) ?>
-									<?php elseif($step['type'] === 'form') : ?>
+									<?php elseif($step['type'] === 'form' || $step['type'] === 'custom_form') : ?>
 										<?php $link = $this->Html->link('Complete Form', array(
 											'controller' => 'program_responses',
 											'action' => 'form',
