@@ -12,7 +12,9 @@
                 <?php $attributes = Set::merge($attributes, json_decode($v['attributes'])); ?>
             <?php endif; ?>
             <?php echo $this->Form->input('ProgramResponseActivity.0.' . $v['name'], $attributes); ?>
-			<?php echo $this->Form->input('ProgramResponseActivity.id', array('type' => 'hidden')); ?>
+			<?php if($this->params['action'] === 'edit_form') : ?>
+				<?php echo $this->Form->input('ProgramResponseActivity.id', array('type' => 'hidden')); ?>
+			<?php endif ?> 
             <?php echo '<br />'; ?>
         <?php endforeach; ?>
 		 <?php if($acceptanceRequired) : ?>
