@@ -22,7 +22,7 @@
 		    echo $form->input('username', array('label' => 'Lastname'));
 		    echo '<br class="clear"/>';
 		    echo $form->input('password', array(
-		    	'label' => __('Last 4 SSN', true)
+		    	'label' => __('9 Digit SSN', true)
 		    ));
 			echo $form->hidden('User.login_type', array('value' => 'website'));
 		    echo '<br class="clear"/>';
