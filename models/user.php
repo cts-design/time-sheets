@@ -343,11 +343,11 @@ class User extends AppModel {
 			'password' => array(
 				'numeric' => array(
 					'rule' => 'numeric',
-					'message' => 'Last 4 SSN must only be numbers'
+					'message' => 'SSN must only be numbers'
 				),
 				'minLength' => array(
-					'rule' => array('minLength', 4),
-					'message' => 'Last 4 SSN must be 4 digits',
+					'rule' => array('minLength', 9),
+					'message' => 'SSN must be 9 digits',
 					'required' => true
 				)
 			)
@@ -393,7 +393,7 @@ class User extends AppModel {
 			    ),
 			    'maxlength' => array(
 					'rule' => array('maxlength', 25),
-					'message' => 'This username cannot excced 25 characters.'
+					'message' => 'This password cannot excced 25 characters.'
 			    )
 			),
 			'email' => array(
@@ -601,8 +601,7 @@ class User extends AppModel {
 	    $this->data['User']['password'] = Security::hash($this->data['User']['pass'], null, true);
 	}
 	if (!empty($this->data['User']['ssn'])) {
-	    $last4 = substr($this->data['User']['ssn'], -4);
-	    $this->data['User']['password'] = Security::hash($last4, null, true);
+	    $this->data['User']['password'] = Security::hash($this->data['User']['ssn'], null, true);
 	}
 	if(!empty($this->data['User']['firstname']) && !empty($this->data['User']['lastname'])) {
 	    if(!empty($this->data['User']['role_id']) && $this->data['User']['role_id'] > 1) {
