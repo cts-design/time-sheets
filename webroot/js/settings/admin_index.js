@@ -50,7 +50,8 @@ Ext.onReady(function(){
         {"field":"language", "label":"Language"},
         {"field":"race", "label":"Race"},
         {"field":"ethnicity", "label":"Ethnicity"},
-        {"field":"veteran", "label":"Veteran"}
+        {"field":"veteran", "label":"Veteran"},
+        {"field":"disability", "label":"Disability"}
 	    ]
 	});	
 	
@@ -62,7 +63,7 @@ Ext.onReady(function(){
 			}
 			return true;
 		},
-		maxselectionsText: 'Only 5 custom fields allowed.'
+		maxselectionsText: 'Only 7 custom fields allowed.'
 	}); 
 	
 	var fieldsSelect = Ext.create('Ext.ux.form.field.BoxSelect', {
@@ -74,7 +75,7 @@ Ext.onReady(function(){
 	    valueField: 'field',
 	    multiSelect: true,
 	    submitValue: false,
-	    maxSelections: 5,
+	    maxSelections: 7,
 	    vtype: 'maxselections'
 	});	
 	
