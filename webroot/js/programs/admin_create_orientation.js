@@ -702,6 +702,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
     handler: function () {
       var formPanel = this.up('form'),
         form = formPanel.getForm(),
+        vals = form.getValues(),
         mediaUploadField = formPanel.down('#uploadField'),
         mediaTypeField = formPanel.down('#mediaType'),
         uploadMediaButton = formPanel.down('#uploadMediaButton'),
@@ -739,10 +740,16 @@ registrationForm = Ext.create('Ext.form.Panel', {
           mediaTypeField.disable().allowBlank = true;
           uploadMediaButton.disable();
 
+          media = {
+            location: action.result.url,
+            type: vals.media_type
+          };
 
+          programStore.getProxy().extraParams = {
+            media: Ext.JSON.encode(media)
+          };
         },
         failure: function (form, action) {
-          //Ext.Msg.alert('Could not upload file', action.result.msg);
           switch (action.failureType) {
             case Ext.form.action.Action.CLIENT_INVALID:
               Ext.Msg.alert('Failure', 'Form fields may not be submitted with invalid values');
