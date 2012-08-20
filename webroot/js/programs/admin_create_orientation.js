@@ -706,6 +706,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
         mediaUploadField = formPanel.down('#uploadField'),
         mediaTypeField = formPanel.down('#mediaType'),
         uploadMediaButton = formPanel.down('#uploadMediaButton'),
+        programStore = Ext.data.StoreManager.lookup('ProgramStore'),
         allFormFields,
         // this will be an array to hold the index of the items in the mixed
         // collection to set them back to allowBlank: false
@@ -797,50 +798,15 @@ registrationForm = Ext.create('Ext.form.Panel', {
     if (form.isValid()) {
       vals = form.getValues();
 
-      if (uploadContainer.hidden) {
-        if (!vals.media_location.match(/[http|https]:\/\//)) {
+      if (uploadContainer.hidden && !vals.media_location.match(/[http|https]:\/\//)) {
           vals.media_location = 'http://' + vals.media_location;
-        }
-
-        media = {
-          location: vals.media_location,
-          type: vals.media_type
-        };
-
-        programStore.getProxy().extraParams = {
-          media: Ext.JSON.encode(media)
-        };
-
-        programStore.add(vals);
-        return true;
-      } else {
-        form.submit({
-          url: '/admin/programs/upload_media',
-          waitMsg: 'Uploading Media...',
-          scope: this,
-          success: function (form, action) {
-            form.reset();
-
-            media = {
-              location: action.result.url,
-              type: vals.media_type
-            };
-
-            programStore.getProxy().extraParams = {
-              media: Ext.JSON.encode(media)
-            };
-
-            programStore.add(vals);
-          },
-          failure: function (form, action) {
-            Ext.Msg.alert('Could not upload file', action.result.msg);
-          }
-        });
       }
-    }
 
-    statusBar.clearStatus();
-    return true;
+      programStore.add(vals);
+      return true;
+    } else {
+      return false;
+    }
   }
 });
 
