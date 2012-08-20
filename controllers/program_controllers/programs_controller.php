@@ -237,6 +237,7 @@ class ProgramsController extends AppController {
 	}
 
 	public function admin_duplicate() {
+		$this->Program->Behaviors->detach('Disableable');
 		$programId = $this->params['form']['program_id'];
 
 		// retreive the program to be duplicated
@@ -269,12 +270,7 @@ class ProgramsController extends AppController {
 				if ($this->duplicateProgramInstruction($newId, $programId)) {
 					if ($this->duplicateProgramEmail($newId, $programId)) {
 						if ($this->duplicateProgramDocument($newId, $programId)) {
-							if ($this->duplicateWatchedFilingCat($newId, $programId)) {
-								$success = true;
-							} else {
-								$this->duplicateTransactionCleanup();
-								$success = false;
-							}
+							$success = true;
 						} else {
 							$this->duplicateTransactionCleanup();
 							$success = false;
@@ -293,7 +289,13 @@ class ProgramsController extends AppController {
 			}
 		}
 
-		$this->log($this->transactionIds, 'debug');
+		if ($success && $duplicate['Program']['type'] === 'enrollment') {
+			if (! $this->duplicateWatchedFilingCat($newId, $programId)) {
+				$this->duplicateTransactionCleanup();
+				$success = false;
+			}
+		}
+
 		$data['success'] = $success;
 
 		$this->set('data', $data);
@@ -790,9 +792,9 @@ class ProgramsController extends AppController {
 					return false;
 				}
 			}
-
-			return true;
 		}
+
+		return true;
 	}
 
 	public function duplicateProgramEmail($newProgramId, $oldProgramId) {
@@ -823,9 +825,9 @@ class ProgramsController extends AppController {
 					return false;
 				}
 			}
-
-			return true;
 		}
+
+		return true;
 	}
 
 	public function duplicateProgramDocument($newProgramId, $oldProgramId) {
@@ -856,9 +858,9 @@ class ProgramsController extends AppController {
 					return false;
 				}
 			}
-
-			return true;
 		}
+
+		return true;
 	}
 
 	public function duplicateWatchedFilingCat($newProgramId, $oldProgramId) {
@@ -897,7 +899,6 @@ class ProgramsController extends AppController {
 	private function duplicateTransactionCleanup() {
 		foreach ($this->transactionIds as $key => $value) {
 			// $key is the model name itself, $value is the array of ids
-
 			switch ($key) {
 			case 'WatchedFilingCat':
 				$this->loadModel('WatchedFilingCat');
