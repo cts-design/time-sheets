@@ -180,7 +180,7 @@ class ProgramsController extends AppController {
 			}
 		}
 		if($programResponse) {
-			if($program['Program']['rolling_registration']) {
+			if($program['Program']['rolling_expiration']) {
 				$this->data['ProgramResponse']['id'] = $programResponse['ProgramResponse']['id'];
 				$this->data['ProgramResponse']['expires_on'] =
 					date('Y-m-d H:i:s', strtotime('+' . $program['Program']['response_expires_in'] . ' days'));

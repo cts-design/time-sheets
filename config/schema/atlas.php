@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2012-07-31 11:46:02 : 1343749562*/
+/* atlas schema generated on: 2012-08-20 13:15:07 : 1345482907*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -499,6 +499,7 @@ class atlasSchema extends CakeSchema {
 		'validation' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'instructions' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'answer' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'fieldset' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'program_id' => array('column' => 'program_step_id', 'unique' => 0)),
@@ -587,7 +588,7 @@ class atlasSchema extends CakeSchema {
 		'confirmation_id_length' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 2),
 		'response_expires_in' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'send_expiring_soon' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 1),
-		'rolling_registration' => array('type' => 'boolean', 'null' => true, 'default' => NULL),
+		'rolling_expiration' => array('type' => 'boolean', 'null' => true, 'default' => NULL),
 		'program_response_count' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'show_in_dash' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'in_test' => array('type' => 'boolean', 'null' => false, 'default' => '0'),

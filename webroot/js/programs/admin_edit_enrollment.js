@@ -22,7 +22,7 @@ Ext.define('Program', {
     { name: 'confirmation_id_length', type: 'int' },
     { name: 'response_expires_in', type: 'int' },
     { name: 'send_expiring_soon', type: 'int' },
-    { name: 'rolling_registration', type: 'int' },
+    { name: 'rolling_expiration', type: 'int' },
     { name: 'program_response_count', type: 'int' },
     { name: 'show_in_dash', type: 'int' },
     { name: 'paper_forms', type: 'int' },
@@ -684,12 +684,12 @@ registrationForm = Ext.create('Ext.form.Panel', {
       labelWidth: 190,
       items: [{
         boxLabel: 'Yes',
-        name: 'rolling_registration',
+        name: 'rolling_expiration',
         inputValue: '1',
         checked: true
       }, {
         boxLabel: 'No',
-        name: 'rolling_registration',
+        name: 'rolling_expiration',
         inputValue: '0'
       }]
     }]
