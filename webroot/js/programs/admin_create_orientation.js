@@ -595,6 +595,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       allowBlank: false,
       displayField: 'ucase',
       fieldLabel: 'Media Type',
+      id: 'mediaType',
       labelWidth: 175,
       listeners: {
         change: {
@@ -602,17 +603,20 @@ registrationForm = Ext.create('Ext.form.Panel', {
             var container = Ext.getCmp('uploadContainer'),
               uploadField = Ext.getCmp('uploadField'),
               urlContainer = Ext.getCmp('urlContainer'),
-              urlField = Ext.getCmp('urlField');
+              urlField = Ext.getCmp('urlField'),
+              uploadButton = Ext.getCmp('uploadMediaButton');
 
             if (newValue !== 'url') {
               container.setVisible(true);
               uploadField.allowBlank = false;
               urlContainer.setVisible(false);
               urlField.allowBlank = true;
+              uploadButton.setVisible(true);
               if (oldValue === 'url') {
                 container.getEl().highlight('C9DFEE', { duration: 1000 });
               }
             } else {
+              uploadButton.setVisible(false);
               container.setVisible(false);
               uploadField.allowBlank = true;
               urlContainer.setVisible(true);
@@ -655,7 +659,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
     items: [{
       xtype: 'filefield',
       allowBlank: false,
-      fieldLabel: 'Upload Media',
+      fieldLabel: 'Media',
       id: 'uploadField',
       labelWidth: 175,
       name: 'media',
@@ -691,6 +695,19 @@ registrationForm = Ext.create('Ext.form.Panel', {
       name: 'media_location',
       width: 400
     }]
+  }, {
+    xtype: 'button',
+    id: 'uploadMediaButton',
+    text: 'Upload Media',
+    handler: function () {
+      var formPanel = this.up('form'),
+        form = formPanel.getForm(),
+        mediaUploadField = formPanel.down('#uploadField'),
+        mediaTypeField = formPanel.down('#mediaType');
+
+      if (!mediaTypeField.isValid()) { return; }
+      if (!mediaUploadField.isValid()) { return; }
+    }
   }, {
     xtype: 'hiddenfield',
     name: 'confirmation_id_length',
