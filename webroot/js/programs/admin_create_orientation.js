@@ -703,10 +703,59 @@ registrationForm = Ext.create('Ext.form.Panel', {
       var formPanel = this.up('form'),
         form = formPanel.getForm(),
         mediaUploadField = formPanel.down('#uploadField'),
-        mediaTypeField = formPanel.down('#mediaType');
+        mediaTypeField = formPanel.down('#mediaType'),
+        uploadMediaButton = formPanel.down('#uploadMediaButton'),
+        allFormFields,
+        // this will be an array to hold the index of the items in the mixed
+        // collection to set them back to allowBlank: false
+        validatedFieldsCache = [];
 
       if (!mediaTypeField.isValid()) { return; }
       if (!mediaUploadField.isValid()) { return; }
+
+      formFields = form.getFields();
+
+      // enable allowBlank on each field so we can submit the form for upload
+      formFields.each(function (field, index, length) {
+        if (!field.allowBlank) {
+          validatedFieldsCache.push(index);
+          field.allowBlank = true;
+        }
+      });
+
+      form.submit({
+        url: '/admin/programs/upload_media',
+        waitMsg: 'Uploading Media...',
+        scope: this,
+        success: function (form, action) {
+          // set allowBlank true back on the proper fields in the mixed collection
+          var i = validatedFieldsCache.length - 1;
+          for (i;  i >= 0; i--){
+            var field = formFields.getAt(validatedFieldsCache[i]);
+            field.allowBlank = false;
+          }
+
+          mediaUploadField.disable().allowBlank = true;
+          mediaTypeField.disable().allowBlank = true;
+          uploadMediaButton.disable();
+
+
+        },
+        failure: function (form, action) {
+          //Ext.Msg.alert('Could not upload file', action.result.msg);
+          switch (action.failureType) {
+            case Ext.form.action.Action.CLIENT_INVALID:
+              Ext.Msg.alert('Failure', 'Form fields may not be submitted with invalid values');
+              break;
+            case Ext.form.action.Action.CONNECT_FAILURE:
+              Ext.Msg.alert('Failure', 'Ajax communication failed');
+              break;
+            case Ext.form.action.Action.SERVER_INVALID:
+              Ext.Msg.alert('Failure', action.result.msg);
+              break;
+          }
+        }
+      });
     }
   }, {
     xtype: 'hiddenfield',
