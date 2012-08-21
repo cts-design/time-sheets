@@ -343,10 +343,10 @@ Ext.create('Ext.data.Store', {
 
 Ext.create('Ext.data.Store', {
   data: [
-    { program_id: 0, name: 'Orientation Main', from: null, subject: 'Main email', body: 'Default text Main', type: 'main', created: null, modified: null },
-    { program_id: 0, name: 'Orientation Expiring Soon', from: null, subject: 'Expiring Soon', body: 'Default text Expiring Soon', type: 'expiring_soon', created: null, modified: null },
-    { program_id: 0, name: 'Orientation Expired', from: null, subject: 'Expired email', body: 'Default text Expired', type: 'expired', created: null, modified: null },
-    { program_id: 0, name: 'Orientation Complete', from: null, subject: 'Complete email', body: 'Default text Complete', type: 'complete', created: null, modified: null }
+    { program_id: 0, name: 'Orientation Main', from: ('noreply@' + window.location.hostname), subject: 'Main email', body: 'Default text Main', type: 'main', created: null, modified: null },
+    { program_id: 0, name: 'Orientation Expiring Soon', from: ('noreply@' + window.location.hostname), subject: 'Expiring Soon', body: 'Default text Expiring Soon', type: 'expiring_soon', created: null, modified: null },
+    { program_id: 0, name: 'Orientation Expired', from: ('noreply@' + window.location.hostname), subject: 'Expired email', body: 'Default text Expired', type: 'expired', created: null, modified: null },
+    { program_id: 0, name: 'Orientation Complete', from: ('noreply@' + window.location.hostname), subject: 'Complete email', body: 'Default text Complete', type: 'complete', created: null, modified: null }
   ],
   storeId: 'ProgramEmailStore',
   model: 'ProgramEmail',
@@ -1612,14 +1612,14 @@ emails = Ext.create('Ext.panel.Panel', {
       name: program.data.name + ' Orientation Media Step Email',
       type: 'step',
       body: 'Your Orientation media step email',
-      from: null
+      from: ('noreply@' + window.location.hostname)
     }, {
       program_id: programId,
       program_step_id: quizStep.data.id,
       name: program.data.name + ' Orientation Quiz Step Email',
       type: 'step',
       body: 'Your Orientation quiz step email',
-      from: null
+      from: ('noreply@' + window.location.hostname)
     });
   },
   process: function () {

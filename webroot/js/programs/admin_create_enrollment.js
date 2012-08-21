@@ -400,10 +400,10 @@ Ext.create('Ext.data.Store', {
 
 Ext.create('Ext.data.Store', {
   data: [
-    { program_id: 0, name: 'Orientation Main', from: null, subject: 'Main email', body: 'Default text Main', type: 'main', created: null, modified: null },
-    { program_id: 0, name: 'Orientation Expiring Soon', from: null, subject: 'Expiring Soon', body: 'Default text Expiring Soon', type: 'expiring_soon', created: null, modified: null },
-    { program_id: 0, name: 'Orientation Expired', from: null, subject: 'Expired email', body: 'Default text Expired', type: 'expired', created: null, modified: null },
-    { program_id: 0, name: 'Orientation Complete', from: null, subject: 'Complete email', body: 'Default text Complete', type: 'complete', created: null, modified: null }
+    { program_id: 0, name: 'Orientation Main', from: ('noreply@' + window.location.hostname), subject: 'Main email', body: 'Default text Main', type: 'main', created: null, modified: null },
+    { program_id: 0, name: 'Orientation Expiring Soon', from: ('noreply@' + window.location.hostname), subject: 'Expiring Soon', body: 'Default text Expiring Soon', type: 'expiring_soon', created: null, modified: null },
+    { program_id: 0, name: 'Orientation Expired', from: ('noreply@' + window.location.hostname), subject: 'Expired email', body: 'Default text Expired', type: 'expired', created: null, modified: null },
+    { program_id: 0, name: 'Orientation Complete', from: ('noreply@' + window.location.hostname), subject: 'Complete email', body: 'Default text Complete', type: 'complete', created: null, modified: null }
   ],
   storeId: 'ProgramEmailStore',
   model: 'ProgramEmail',
@@ -2056,7 +2056,7 @@ uploadStep = Ext.create('Ext.panel.Panel', {
                 programEmailStore.add({
                   program_id: vals.program_id,
                   to: null,
-                  from: null,
+                  from: ('noreply@' + window.location.hostname),
                   subject: vals.name + ' Email',
                   body: 'Email for ' + vals.name,
                   type: 'document',

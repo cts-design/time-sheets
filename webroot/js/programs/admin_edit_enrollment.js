@@ -2140,7 +2140,7 @@ uploadStep = Ext.create('Ext.panel.Panel', {
                   programEmailStore.add({
                     program_id: vals.program_id,
                     to: null,
-                    from: null,
+                    from: ('noreply@' + window.location.hostname),
                     subject: vals.name + ' Email',
                     body: 'Email for ' + vals.name,
                     type: 'document',
@@ -2157,7 +2157,7 @@ uploadStep = Ext.create('Ext.panel.Panel', {
               programEmailStore.add({
                 program_id: vals.program_id,
                 to: null,
-                from: null,
+                from: ('noreply@' + window.location.hostname),
                 subject: vals.name + ' Email',
                 body: 'Email for ' + vals.name,
                 type: 'document',
