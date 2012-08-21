@@ -2143,7 +2143,7 @@ uploadStep = Ext.create('Ext.panel.Panel', {
                     from: ('noreply@' + window.location.hostname),
                     subject: vals.name + ' Email',
                     body: 'Email for ' + vals.name,
-                    type: 'document',
+                    type: vals.name.underscore + '_document',
                     name: vals.name + ' Document Email'
                   });
                 },
@@ -2160,7 +2160,7 @@ uploadStep = Ext.create('Ext.panel.Panel', {
                 from: ('noreply@' + window.location.hostname),
                 subject: vals.name + ' Email',
                 body: 'Email for ' + vals.name,
-                type: 'document',
+                type: vals.name.underscore + '_document',
                 name: vals.name + ' Document Email'
               });
             }

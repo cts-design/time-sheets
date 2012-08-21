@@ -1610,14 +1610,14 @@ emails = Ext.create('Ext.panel.Panel', {
       program_id: programId,
       program_step_id: mediaStep.data.id,
       name: program.data.name + ' Orientation Media Step Email',
-      type: 'step',
+      type: 'orientation_media_step',
       body: 'Your Orientation media step email',
       from: ('noreply@' + window.location.hostname)
     }, {
       program_id: programId,
       program_step_id: quizStep.data.id,
       name: program.data.name + ' Orientation Quiz Step Email',
-      type: 'step',
+      type: 'orientation_quiz_step',
       body: 'Your Orientation quiz step email',
       from: ('noreply@' + window.location.hostname)
     });

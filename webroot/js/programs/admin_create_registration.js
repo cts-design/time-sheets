@@ -1485,7 +1485,7 @@ emails = Ext.create('Ext.panel.Panel', {
       program_id: programId,
       program_step_id: formStep.data.id,
       name: program.data.name + ' Registration Form Step Email',
-      type: 'step',
+      type: 'registration_form_step',
       body: 'Your registration form step email',
       subject: 'Registration Form Complete',
       from: ('noreply@' + window.location.hostname)
