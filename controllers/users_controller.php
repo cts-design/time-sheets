@@ -357,7 +357,6 @@ class UsersController extends AppController {
         $this->Kiosk->contain(array('KioskSurvey', 'Location'));
         $settings = Cache::read('settings');
         $fields = Set::extract('/field',  json_decode($settings['SelfSign']['KioskRegistration'], true));
-
         $kiosk = $this->Kiosk->find('first', array(
             'conditions' => array(
                 'Kiosk.location_recognition_name' => $oneStopLocation, 'Kiosk.deleted' => 0)));
@@ -380,7 +379,12 @@ class UsersController extends AppController {
                 }
                 $this->Transaction->createUserTransaction('Self Sign',
                     null, $this->User->SelfSignLog->Kiosk->getKioskLocationId(), 'Logged in at self sign kiosk' );
-                $this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_confirm'));
+				if($settings['SelfSign']['KioskConfirmation'] === 'on') {
+					$this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_confirm'));
+				}
+				else {
+					$this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_service_selection'));
+				}
             }
         }
         $this->set('kioskHasSurvey', (empty($kiosk['KioskSurvey'])) ? false : true);

@@ -96,26 +96,92 @@ Ext.onReady(function(){
 					form.submit({
 						waitMsg: 'Updating Settings',
 						params: {fields: vals},
-	                    success: function(form, action) {
-	                       Ext.Msg.alert('Success', action.result.message);
-	                    },
-	                    failure: function(form, action) {
-	                        Ext.Msg.alert('Failed', action.result.message);
-	                    }
+            success: function(form, action) {
+               Ext.Msg.alert('Success', action.result.message);
+            },
+            failure: function(form, action) {
+                Ext.Msg.alert('Failed', action.result.message);
+            }
 					});
 				}
 			}
 		}]
 	});
+
+  Ext.define('CustomerInfo', {
+		extend: 'Ext.data.Model',
+		fields: ['value']
+	});
 	
+	Ext.create('Ext.data.Store', {
+		model: 'CustomerInfo',
+    id: 'customerInfo',
+		proxy: {
+			type: 'ajax',
+			url: '/admin/settings/kiosk_confirmation',
+			reader: {
+				type: 'json',
+				root: 'confirmation'
+			},
+			pageParam: undefined,
+			limitParam: undefined,
+			startParam: undefined			
+		},
+		autoLoad: true,
+		listeners: {
+			load: function(store, records, successful, operation, eOpts) {
+        console.log(records[0].data.value);
+        if(records[0] !== undefined) {
+         var cb = kioskConfirmation.getComponent('cb1');
+         console.log(cb);
+         cb.setValue(records[0].data.value);
+        }
+			}
+		}
+
+	});
+
+	var kioskConfirmation = Ext.create('Ext.form.Panel', {
+		title: 'Kiosk Customer Info Confirmation',
+		url: '/admin/settings/kiosk_confirmation',
+		margin: 10,
+		frame: true,
+		width: 300,	
+		items: [{
+      xtype: 'checkboxfield',
+      fieldLabel: 'Customer Info Confirmation',
+      name: 'confirmation',
+      itemId: 'cb1',
+      uncheckedValue: 'off'
+    }],
+		buttons: [{
+			text: 'Update',
+			formBind: true,
+			handler: function() {
+				var form = this.up('form').getForm();
+				if(form.isValid()) {
+					form.submit({
+						waitMsg: 'Updating Settings',
+            success: function(form, action) {
+               Ext.Msg.alert('Success', action.result.message);
+            },
+            failure: function(form, action) {
+                Ext.Msg.alert('Failed', action.result.message);
+            }
+					});
+				}
+			}
+		}]
+	});
+
 	var settingsTabs = Ext.create('Ext.tab.Panel', {
-		height: 500,
+    items: [kioskRegistration],
 		width: 950,
 		frame: true,
 		renderTo: 'settingsTabs',
 		items: {
 			title: 'Self Sign',
-			items: [kioskRegistration]
+			items: [kioskRegistration, kioskConfirmation]
 		}
 	});
 });
