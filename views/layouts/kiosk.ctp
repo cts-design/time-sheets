@@ -35,13 +35,15 @@
 	    echo $scripts_for_layout;
 	   ?>
 	<?php
+		$settings = Cache::read('settings');
+		$timeOut = json_decode($settings['SelfSign']['KioskTimeOut'], true);
         $exclude = array('kiosk_self_sign_login', 'kiosk_self_scan_document', 'question');
 	    if (!in_array($this->params['action'], $exclude)) {
 		echo $this->Html->scriptBlock(
 			"$(document).ready(function(){
 		      $(document).idleTimeout({
-			  inactivity: 30000,
-			  noconfirm: 10000,
+			  inactivity: ".$timeOut[0]['value'].",
+			  noconfirm: ".$timeOut[1]['value'].",
 			  sessionAlive: false,
 			  logout_url: '/',
 			  redirect_url: '/kiosk/users/auto_logout'
