@@ -1021,9 +1021,10 @@ stepTree = Ext.create('Ext.panel.Panel', {
                 numOfColumnsContainer = Ext.getCmp('numberOfColumnsContainer');
 
               if (newValue === 'media') {
+                console.log('media!');
                 fieldsetContainer.setVisible(false);
                 fieldsets.allowBlank = true;
-                numberOfColumnsContainer.setVisible(false);
+                numOfColumnsContainer.setVisible(false);
                 numOfColumns.allowBlank = true;
                 container.setVisible(true);
                 uploadContainer.setVisible(true);
@@ -1033,6 +1034,7 @@ stepTree = Ext.create('Ext.panel.Panel', {
                 typeField.setValue('pdf');
                 uploadField.allowBlank = false;
               } else if (newValue === 'custom_form') {
+                console.log('custom_form!');
                 fieldsetContainer.setVisible(true);
                 fieldsets.allowBlank = false;
                 numOfColumnsContainer.setVisible(true);
@@ -1045,9 +1047,10 @@ stepTree = Ext.create('Ext.panel.Panel', {
                 urlField.allowBlank = true;
                 urlContainer.setVisible(false);
               } else {
+                console.log('other!!');
                 fieldsetContainer.setVisible(false);
                 fieldsets.allowBlank = true;
-                numberOfColumnsContainer.setVisible(false);
+                numOfColumnsContainer.setVisible(false);
                 numOfColumns.allowBlank = true;
                 container.setVisible(false);
                 typeField.allowBlank = true;

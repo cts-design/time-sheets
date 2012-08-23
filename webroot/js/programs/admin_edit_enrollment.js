@@ -1098,7 +1098,7 @@ stepTree = Ext.create('Ext.panel.Panel', {
               if (newValue === 'media') {
                 fieldsetContainer.setVisible(false);
                 fieldsets.allowBlank = true;
-                numberOfColumnsContainer.setVisible(false);
+                numOfColumnsContainer.setVisible(false);
                 numOfColumns.allowBlank = true;
                 container.setVisible(true);
                 uploadContainer.setVisible(true);
@@ -1122,7 +1122,7 @@ stepTree = Ext.create('Ext.panel.Panel', {
               } else {
                 fieldsetContainer.setVisible(false);
                 fieldsets.allowBlank = true;
-                numberOfColumnsContainer.setVisible(false);
+                numOfColumnsContainer.setVisible(false);
                 numOfColumns.allowBlank = true;
                 container.setVisible(false);
                 typeField.allowBlank = true;
