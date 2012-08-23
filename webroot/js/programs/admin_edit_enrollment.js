@@ -1764,14 +1764,16 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                   id: 'builderSaveBtn',
                   text: 'Save',
                   handler: function () {
-                    var formPanel = this.up('form'),
+                    var sm = Ext.data.StoreMgr,
+                      formPanel = this.up('form'),
                       form = formPanel.getForm(),
                       vals = form.getValues(),
                       parseVals,
                       attributes = {},
                       options = {},
                       validation = {},
-                      programStep = Ext.data.StoreManager.lookup('ProgramStepStore'),
+                      programFormFieldStore = sm.lookup('ProgramFormFieldStore'),
+                      programStep = sm.lookup('ProgramStepStore'),
                       programStepId,
                       grid = Ext.getCmp('formFieldGrid');
 
@@ -1813,6 +1815,7 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                     vals.validation      = encodeObject(validation);
                     vals.program_step_id = rec.get('id');
                     vals.name            = vals.label.underscore();
+                    vals.order           = (programFormFieldStore.count() + 1);
 
                     grid.store.add(vals);
                     form.reset();
