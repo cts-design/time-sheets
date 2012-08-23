@@ -993,25 +993,6 @@ formBuilder = Ext.create('Ext.panel.Panel', {
       id: 'correctAnswer',
       name: 'answer'
     }, {
-      xtype: 'checkbox',
-      fieldLabel: 'Read only',
-      name: 'read_only',
-      listeners: {
-        change: function (field, newVal, oldVal) {
-          var container = Ext.getCmp('defaultValueContainer'),
-            defaultValue = Ext.getCmp('defaultValue');
-
-          if (newVal) {
-            container.setVisible(newVal);
-            defaultValue.allowBlank = false;
-            container.getEl().highlight('C9DFEE', { duration: 1000 });
-          } else {
-            container.setVisible(false);
-            defaultValue.allowBlank = true;
-          }
-        }
-      }
-    }, {
       xtype: 'fieldcontainer',
       hidden: true,
       id: 'defaultValueContainer',
@@ -1148,10 +1129,6 @@ formBuilder = Ext.create('Ext.panel.Panel', {
 
         validation.rule = ['equalTo', vals.answer];
         validation.message = 'Incorrect';
-
-        if (vals.read_only === 'on') {
-          attributes.readonly = 'readonly';
-        }
 
         if (!Ext.isEmpty(attributes)) {
           vals.attributes = Ext.JSON.encode(attributes);
