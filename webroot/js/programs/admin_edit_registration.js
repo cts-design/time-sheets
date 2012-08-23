@@ -637,7 +637,6 @@ formBuilder = Ext.create('Ext.panel.Panel', {
       dataIndex: 'order',
       width: 50
     }, {
-    columns: [{
       header: 'Label',
       dataIndex: 'label',
       flex: 1
@@ -675,9 +674,6 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           deleteFieldBtn = Ext.getCmp('deleteFieldBtn'),
           updateBtn = Ext.getCmp('updateBtn'),
           builderSaveBtn = Ext.getCmp('builderSaveBtn');
-
-
-        console.log(rec);
 
         // check the appropriate checkboxes
         if (rec.data.validation && rec.data.validation.match(/notEmpty/g)) {
@@ -940,14 +936,16 @@ formBuilder = Ext.create('Ext.panel.Panel', {
       id: 'builderSaveBtn',
       text: 'Save',
       handler: function () {
-        var formPanel = this.up('form'),
+        var sm = Ext.data.StoreMgr,
+          formPanel = this.up('form'),
           form = formPanel.getForm(),
           vals = form.getValues(),
           parseVals,
           attributes = {},
           options = {},
           validation = {},
-          programStep = Ext.data.StoreManager.lookup('ProgramStepStore'),
+          programFormFieldStore = sm.lookup('ProgramFormFieldStore'),
+          programStep = sm.lookup('ProgramStepStore'),
           programStepId = programStep.last().data.id,
           grid = Ext.getCmp('formFieldGrid');
 
@@ -994,6 +992,7 @@ formBuilder = Ext.create('Ext.panel.Panel', {
         vals.validation      = encodeObject(validation);
         vals.program_step_id = programStepId;
         vals.name            = vals.label.underscore();
+        vals.order           = (programFormFieldStore.count() + 1);
 
         grid.store.add(vals);
         form.reset();
