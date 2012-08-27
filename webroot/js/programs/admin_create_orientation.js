@@ -1,5 +1,8 @@
-var isEmptyObject = function (obj) {
-  return Object.keys(obj).length === 0;
+var encodeObject = function (obj) {
+  if (Object.keys(obj).length) {
+    return Ext.JSON.encode(obj);
+  }
+  return null;
 };
 
 /**
@@ -1128,18 +1131,9 @@ formBuilder = Ext.create('Ext.panel.Panel', {
 
         parseVals[vals.type] && parseVals[vals.type]();
 
-        if (!isEmptyObject(attributes)) {
-          vals.attributes = Ext.JSON.encode(attributes);
-        }
-
-        if (!isEmptyObject(options)) {
-          vals.options = Ext.JSON.encode(options);
-        }
-
-        if (!isEmptyObject(validation)) {
-          vals.validation = Ext.JSON.encode(validation);
-        }
-
+        vals.attributes = encodeObject(attributes);
+        vals.options = encodeObject(options);
+        vals.validation = encodeObject(validation);
         vals.program_step_id = programStepId;
         vals.name = vals.label.underscore();
         vals.order = (programFormFieldStore.count() + 1);

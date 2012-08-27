@@ -1,5 +1,8 @@
-var isEmptyObject = function (obj) {
-  return Object.keys(obj).length === 0;
+var encodeObject = function (obj) {
+  if (Object.keys(obj).length) {
+    return Ext.JSON.encode(obj);
+  }
+  return null;
 };
 
 /**
@@ -790,33 +793,11 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           updateBtn = Ext.getCmp('updateBtn'),
           builderSaveBtn = Ext.getCmp('builderSaveBtn');
 
-        // check the appropriate checkboxes
-        if (rec.data.validation && rec.data.validation.match(/notEmpty/g)) {
-          requiredCb.setValue(true);
-        }
-
-        if (!rec.data.validation || !rec.data.validation.match(/notEmpty/g)) {
-          requiredCb.setValue(false);
-        }
-
         if (rec.data.attributes) {
-          if (rec.data.attributes.match(/readonly/g)) {
-            readOnlyCb.setValue(true);
-          }
-
           if (rec.data.attributes.match(/datepicker/g)) {
             fieldType.setValue('datepicker');
             rec.data.type = 'datepicker';
           }
-
-          if (rec.data.attributes.match(/value/g)) {
-            attrs = Ext.JSON.decode(rec.data.attributes);
-            rec.data.default_value = attrs.value;
-          }
-        }
-
-        if (!rec.data.attributes || !rec.data.attributes.match(/readonly/g)) {
-          readOnlyCb.setValue(false);
         }
 
         // if it's a state list we need to present it
@@ -1058,6 +1039,7 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           formPanel = this.up('form'),
           form = formPanel.getForm(),
           vals = form.getValues(),
+          parseVals,
           attributes = {},
           options = {},
           validation = {},
@@ -1068,32 +1050,35 @@ formBuilder = Ext.create('Ext.panel.Panel', {
 
         programStepId = programStep.findRecord('name', /quiz/i).data.id;
 
-        switch (vals.type) {
-          case 'datepicker':
-            attributes['class'] = 'datepicker';
-            vals.type = 'text';
-            break;
+        parseVals = (function () {
+          return {
+            datepicker: function () {
+              attributes['class'] = 'datepicker';
+              vals.type = 'text';
+            },
+            select: function () {
+              if (vals.options === 'truefalse') {
+                options.True = 'True';
+                options.False = 'False';
+              } else if (vals.options === 'yesno') {
+                options.Yes = 'Yes';
+                options.No = 'No';
+              } else {
+                Ext.Array.each(vals.options.split(','), function (item, index) {
+                  options[item] = item;
+                });
+              }
 
-          case 'select':
-            if (vals.options === 'truefalse') {
-              options.True = 'True';
-              options.False = 'False';
-            } else if (vals.options === 'yesno') {
-              options.Yes = 'Yes';
-              options.No = 'No';
-            } else {
-              Ext.Array.each(vals.options.split(','), function (item, index) {
-                options[item] = item;
-              });
+              attributes.empty = 'Please Select';
+            },
+            states: function () {
+              vals.type = 'select';
+              options = states;
             }
+          };
+        }());
 
-            attributes.empty = 'Please Select';
-            break;
-
-          case 'states':
-            vals.type = 'select';
-            break;
-        }
+        parseVals[vals.type] && parseVals[vals.type]();
 
         validation.rule = ['equalTo', vals.answer];
         validation.message = 'Incorrect';
@@ -1102,18 +1087,9 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           attributes.readonly = 'readonly';
         }
 
-        if (!Ext.isEmpty(attributes)) {
-          vals.attributes = Ext.JSON.encode(attributes);
-        }
-
-        if (!Ext.isEmpty(options)) {
-          vals.options = Ext.JSON.encode(options);
-        }
-
-        if (!Ext.isEmpty(validation)) {
-          vals.validation = Ext.JSON.encode(validation);
-        }
-
+        vals.attributes = encodeObject(attributes);
+        vals.options = encodeObject(options);
+        vals.validation = encodeObject(validation);
         vals.program_step_id = programStepId;
         vals.name = vals.label.underscore();
         vals.order = (programFormFieldStore.count() + 1);
@@ -1132,6 +1108,7 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           formPanel = this.up('form'),
           form = formPanel.getForm(),
           vals = form.getValues(),
+          parseVals,
           attributes = {},
           options = {},
           validation = {},
@@ -1141,48 +1118,41 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           grid = Ext.getCmp('formFieldGrid'),
           selectedRecord = grid.getSelectionModel().getSelection()[0];
 
-        switch (vals.type) {
-          case 'datepicker':
-            attributes['class'] = 'datepicker';
-            vals.type = 'text';
-            break;
+        parseVals = (function () {
+          return {
+            datepicker: function () {
+              attributes['class'] = 'datepicker';
+              vals.type = 'text';
+            },
+            select: function () {
+              if (vals.options === 'truefalse') {
+                options.True = 'True';
+                options.False = 'False';
+              } else if (vals.options === 'yesno') {
+                options.Yes = 'Yes';
+                options.No = 'No';
+              } else {
+                Ext.Array.each(vals.options.split(','), function (item, index) {
+                  options[item] = item;
+                });
+              }
 
-          case 'select':
-            if (vals.options === 'truefalse') {
-              options.True = 'True';
-              options.False = 'False';
-            } else if (vals.options === 'yesno') {
-              options.Yes = 'Yes';
-              options.No = 'No';
-            } else {
-              Ext.Array.each(vals.options.split(','), function (item, index) {
-                options[item] = item;
-              });
+              attributes.empty = 'Please Select';
+            },
+            states: function () {
+              vals.type = 'select';
             }
+          };
+        }());
 
-            attributes.empty = 'Please Select';
-            break;
-
-          case 'states':
-            vals.type = 'select';
-            break;
-        }
+        parseVals[vals.type] && parseVals[vals.type]();
 
         validation.rule = ['equalTo', vals.answer];
         validation.message = 'Incorrect';
 
-        if (!Ext.isEmpty(attributes)) {
-          vals.attributes = Ext.JSON.encode(attributes);
-        }
-
-        if (!Ext.isEmpty(options)) {
-          vals.options = Ext.JSON.encode(options);
-        }
-
-        if (!Ext.isEmpty(validation)) {
-          vals.validation = Ext.JSON.encode(validation);
-        }
-
+        vals.attributes = encodeObject(attributes);
+        vals.options = encodeObject(options);
+        vals.validation = encodeObject(validation);
         vals.program_step_id = programStep.data.id;
         vals.name = vals.label.underscore();
         vals.order = (programFormFieldStore.count() + 1);
