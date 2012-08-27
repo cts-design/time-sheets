@@ -866,11 +866,44 @@ formBuilder = Ext.create('Ext.panel.Panel', {
       select: function (rm, rec, index) {
         var formPanel = Ext.getCmp('formPanel'),
           form = formPanel.getForm(),
+          requiredCb = formPanel.down('#requiredCb'),
+          readOnlyCb = formPanel.down('#readOnlyCb'),
+          fieldType = Ext.getCmp('fieldType'),
+          fieldOptionsContainer = Ext.getCmp('fieldOptionsContainer'),
+          fieldOptions = Ext.getCmp('fieldOptions'),
           deleteFieldBtn = Ext.getCmp('deleteFieldBtn'),
           updateBtn = Ext.getCmp('updateBtn'),
           builderSaveBtn = Ext.getCmp('builderSaveBtn');
 
+        if (rec.data.attributes) {
+          if (rec.data.attributes.match(/datepicker/g)) {
+            fieldType.setValue('datepicker');
+            rec.data.type = 'datepicker';
+          }
+        }
+
+        // if it's a state list we need to present it
+        // differently to the user
+        if (rec.data.options) {
+          if (rec.data.options.match(/"AL":"Alabama"/gi)) {
+            fieldType.setValue('states');
+            fieldOptions.setValue('');
+            fieldOptionsContainer.setVisible(false);
+            rec.data.type = 'states';
+            rec.data.options = '';
+          } else if (rec.data.options.match(/"Yes":"Yes","No":"No"/gi)) {
+            fieldOptions.setValue('');
+            fieldOptionsContainer.setVisible(false);
+            rec.data.options = 'yesno';
+          } else if (rec.data.options.match(/"True":"True","False":"False"/gi)) {
+            fieldOptions.setValue('');
+            fieldOptionsContainer.setVisible(false);
+            rec.data.options = 'truefalse';
+          }
+        }
+
         form.loadRecord(rec);
+
         deleteFieldBtn.enable();
         updateBtn.show();
         builderSaveBtn.hide();
@@ -998,6 +1031,7 @@ formBuilder = Ext.create('Ext.panel.Panel', {
       displayField: 'ucase',
       editable: false,
       fieldLabel: 'Field Type',
+      id: 'fieldType',
       listeners: {
         change: {
           fn: function (field, newValue, oldValue) {
