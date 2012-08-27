@@ -17,7 +17,8 @@
         <?php foreach($program['ProgramStep'] as $step) : ?>
           <?php $class = (in_array($step['id'], $completedSteps)) ? 'complete' : 'incomplete' ?>
 		  <?php if($step['parent_id']) : ?>
-          <li class="step <?= $class ?>">
+			<?php $redoable = ($step['redoable']) ? 'redoable' : '' ?>
+			<li class="step <?= $class ?> <?= $redoable ?>">
             <div class="inner-container">
               <?= $step['name'] ?>
               <?php $link = ($step['type'] === 'media') ? 'View Media' : 'Take Quiz' ?>
