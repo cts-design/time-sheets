@@ -1,5 +1,8 @@
-var isEmptyObject = function (obj) {
-  return Object.keys(obj).length === 0;
+var encodeObject = function (obj) {
+  if (Object.keys(obj).length) {
+    return Ext.JSON.encode(obj);
+  }
+  return null;
 };
 
 /**
@@ -825,6 +828,10 @@ formBuilder = Ext.create('Ext.panel.Panel', {
     region: 'west',
     store: 'ProgramFormFieldStore',
     width: 660,
+    selModel: {
+      mode: 'SINGLE',
+      allowDeselect: true
+    },
     columns: [{
       header: 'Order',
       dataIndex: 'order',
@@ -859,11 +866,44 @@ formBuilder = Ext.create('Ext.panel.Panel', {
       select: function (rm, rec, index) {
         var formPanel = Ext.getCmp('formPanel'),
           form = formPanel.getForm(),
+          requiredCb = formPanel.down('#requiredCb'),
+          readOnlyCb = formPanel.down('#readOnlyCb'),
+          fieldType = Ext.getCmp('fieldType'),
+          fieldOptionsContainer = Ext.getCmp('fieldOptionsContainer'),
+          fieldOptions = Ext.getCmp('fieldOptions'),
           deleteFieldBtn = Ext.getCmp('deleteFieldBtn'),
           updateBtn = Ext.getCmp('updateBtn'),
           builderSaveBtn = Ext.getCmp('builderSaveBtn');
 
+        if (rec.data.attributes) {
+          if (rec.data.attributes.match(/datepicker/g)) {
+            fieldType.setValue('datepicker');
+            rec.data.type = 'datepicker';
+          }
+        }
+
+        // if it's a state list we need to present it
+        // differently to the user
+        if (rec.data.options) {
+          if (rec.data.options.match(/"AL":"Alabama"/gi)) {
+            fieldType.setValue('states');
+            fieldOptions.setValue('');
+            fieldOptionsContainer.setVisible(false);
+            rec.data.type = 'states';
+            rec.data.options = '';
+          } else if (rec.data.options.match(/"Yes":"Yes","No":"No"/gi)) {
+            fieldOptions.setValue('');
+            fieldOptionsContainer.setVisible(false);
+            rec.data.options = 'yesno';
+          } else if (rec.data.options.match(/"True":"True","False":"False"/gi)) {
+            fieldOptions.setValue('');
+            fieldOptionsContainer.setVisible(false);
+            rec.data.options = 'truefalse';
+          }
+        }
+
         form.loadRecord(rec);
+
         deleteFieldBtn.enable();
         updateBtn.show();
         builderSaveBtn.hide();
@@ -932,24 +972,15 @@ formBuilder = Ext.create('Ext.panel.Panel', {
         text: 'Add Field',
         handler: function () {
           var formPanel = Ext.getCmp('formPanel'),
-            form = formPanel.getForm();
+            form = formPanel.getForm(),
+            saveBtn = formPanel.down('#builderSaveBtn'),
+            updateBtn = formPanel.down('#updateBtn'),
+            grid = Ext.getCmp('formFieldGrid');
 
-          if (form.isDirty()) {
-            Ext.Msg.show({
-              title: 'Discard Changes?',
-              msg: 'You have an unsaved form field, discard changes?',
-              buttons: Ext.Msg.YESNO,
-              icon: Ext.Msg.QUESTION,
-              fn: function (btn) {
-                if (btn === 'yes') {
-                  form.reset();
-                }
-              }
-            });
-          } else {
-            form.reset();
-          }
-
+          form.reset();
+          saveBtn.enable().show();
+          updateBtn.disable().hide();
+          grid.getSelectionModel().deselectAll();
         }
       }, {
         disabled: true,
@@ -959,7 +990,11 @@ formBuilder = Ext.create('Ext.panel.Panel', {
         handler: function () {
           var store = Ext.data.StoreManager.lookup('ProgramFormFieldStore'),
             formPanel = Ext.getCmp('formPanel'),
-            form = formPanel.getForm();
+            form = formPanel.getForm(),
+            deleteFieldBtn = Ext.getCmp('deleteFieldBtn'),
+            updateBtn = Ext.getCmp('updateBtn'),
+            builderSaveBtn = Ext.getCmp('builderSaveBtn'),
+            grid = Ext.getCmp('formFieldGrid');
 
           Ext.Msg.show({
             title: 'Delete Field?',
@@ -969,8 +1004,12 @@ formBuilder = Ext.create('Ext.panel.Panel', {
             fn: function (btn) {
               if (btn === 'yes') {
                 store.remove(formPanel.getRecord());
+                deleteFieldBtn.disable();
+                updateBtn.disable().hide();
+                builderSaveBtn.enable().show();
                 form.reset();
                 this.disable();
+                grid.getSelectionModel().deselectAll();
               }
             },
             scope: this
@@ -992,6 +1031,7 @@ formBuilder = Ext.create('Ext.panel.Panel', {
       displayField: 'ucase',
       editable: false,
       fieldLabel: 'Field Type',
+      id: 'fieldType',
       listeners: {
         change: {
           fn: function (field, newValue, oldValue) {
@@ -1118,24 +1158,16 @@ formBuilder = Ext.create('Ext.panel.Panel', {
             },
             states: function () {
               vals.type = 'select';
+              options = states;
             }
           };
         }());
 
         parseVals[vals.type] && parseVals[vals.type]();
 
-        if (!isEmptyObject(attributes)) {
-          vals.attributes = Ext.JSON.encode(attributes);
-        }
-
-        if (!isEmptyObject(options)) {
-          vals.options = Ext.JSON.encode(options);
-        }
-
-        if (!isEmptyObject(validation)) {
-          vals.validation = Ext.JSON.encode(validation);
-        }
-
+        vals.attributes = encodeObject(attributes);
+        vals.options = encodeObject(options);
+        vals.validation = encodeObject(validation);
         vals.program_step_id = programStepId;
         vals.name = vals.label.underscore();
         vals.order = (programFormFieldStore.count() + 1);

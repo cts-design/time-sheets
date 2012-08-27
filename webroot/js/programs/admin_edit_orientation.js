@@ -1,5 +1,8 @@
-var isEmptyObject = function (obj) {
-  return Object.keys(obj).length === 0;
+var encodeObject = function (obj) {
+  if (Object.keys(obj).length) {
+    return Ext.JSON.encode(obj);
+  }
+  return null;
 };
 
 /**
@@ -743,6 +746,10 @@ formBuilder = Ext.create('Ext.panel.Panel', {
     region: 'west',
     store: 'ProgramFormFieldStore',
     width: 660,
+    selModel: {
+      mode: 'SINGLE',
+      allowDeselect: true
+    },
     columns: [{
       header: 'Order',
       dataIndex: 'order',
@@ -777,31 +784,44 @@ formBuilder = Ext.create('Ext.panel.Panel', {
       select: function (rm, rec, index) {
         var formPanel = Ext.getCmp('formPanel'),
           form = formPanel.getForm(),
-          deleteFieldBtn = formPanel.down('#deleteFieldBtn'),
-          updateBtn = formPanel.down('#updateBtn'),
-          builderSaveBtn = formPanel.down('#builderSaveBtn'),
-          fieldOptionsContainer = formPanel.down('#fieldOptionsContainer'),
-          fieldOptions = formPanel.down('#fieldOptions'),
-          fieldType = formPanel.down('#fieldType'),
-          correctAnswer = formPanel.down('#correctAnswer');
+          requiredCb = formPanel.down('#requiredCb'),
+          readOnlyCb = formPanel.down('#readOnlyCb'),
+          fieldType = Ext.getCmp('fieldType'),
+          fieldOptionsContainer = Ext.getCmp('fieldOptionsContainer'),
+          fieldOptions = Ext.getCmp('fieldOptions'),
+          deleteFieldBtn = Ext.getCmp('deleteFieldBtn'),
+          updateBtn = Ext.getCmp('updateBtn'),
+          builderSaveBtn = Ext.getCmp('builderSaveBtn');
 
-        if (rec.data.attributes.match(/readonly/g)) {
-          readOnlyCb.setValue(true);
+        if (rec.data.attributes) {
+          if (rec.data.attributes.match(/datepicker/g)) {
+            fieldType.setValue('datepicker');
+            rec.data.type = 'datepicker';
+          }
         }
 
-        if (rec.data.options.match(/"True":"True"/g)
-            && rec.data.options.match(/"False":"False"/g)) {
-          fieldType.setValue('select');
-          fieldOptions.setValue('truefalse');
-          fieldOptionsContainer.setVisible(true);
-          rec.data.type = 'select';
-          rec.data.options = 'truefalse';
+        // if it's a state list we need to present it
+        // differently to the user
+        if (rec.data.options) {
+          if (rec.data.options.match(/"AL":"Alabama"/gi)) {
+            fieldType.setValue('states');
+            fieldOptions.setValue('');
+            fieldOptionsContainer.setVisible(false);
+            rec.data.type = 'states';
+            rec.data.options = '';
+          } else if (rec.data.options.match(/"Yes":"Yes","No":"No"/gi)) {
+            fieldOptions.setValue('');
+            fieldOptionsContainer.setVisible(false);
+            rec.data.options = 'yesno';
+          } else if (rec.data.options.match(/"True":"True","False":"False"/gi)) {
+            fieldOptions.setValue('');
+            fieldOptionsContainer.setVisible(false);
+            rec.data.options = 'truefalse';
+          }
         }
-
-        validation = Ext.JSON.decode(rec.data.validation);
-        correctAnswer.setValue(validation.rule[1]);
 
         form.loadRecord(rec);
+
         deleteFieldBtn.enable();
         updateBtn.show();
         builderSaveBtn.hide();
@@ -872,11 +892,13 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           var formPanel = Ext.getCmp('formPanel'),
             form = formPanel.getForm(),
             saveBtn = formPanel.down('#builderSaveBtn'),
-            updateBtn = formPanel.down('#updateBtn');
+            updateBtn = formPanel.down('#updateBtn'),
+            grid = Ext.getCmp('formFieldGrid');
 
           form.reset();
           saveBtn.enable().show();
           updateBtn.disable().hide();
+          grid.getSelectionModel().deselectAll();
         }
       }, {
         disabled: true,
@@ -1017,6 +1039,7 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           formPanel = this.up('form'),
           form = formPanel.getForm(),
           vals = form.getValues(),
+          parseVals,
           attributes = {},
           options = {},
           validation = {},
@@ -1027,32 +1050,35 @@ formBuilder = Ext.create('Ext.panel.Panel', {
 
         programStepId = programStep.findRecord('name', /quiz/i).data.id;
 
-        switch (vals.type) {
-          case 'datepicker':
-            attributes['class'] = 'datepicker';
-            vals.type = 'text';
-            break;
+        parseVals = (function () {
+          return {
+            datepicker: function () {
+              attributes['class'] = 'datepicker';
+              vals.type = 'text';
+            },
+            select: function () {
+              if (vals.options === 'truefalse') {
+                options.True = 'True';
+                options.False = 'False';
+              } else if (vals.options === 'yesno') {
+                options.Yes = 'Yes';
+                options.No = 'No';
+              } else {
+                Ext.Array.each(vals.options.split(','), function (item, index) {
+                  options[item] = item;
+                });
+              }
 
-          case 'select':
-            if (vals.options === 'truefalse') {
-              options.True = 'True';
-              options.False = 'False';
-            } else if (vals.options === 'yesno') {
-              options.Yes = 'Yes';
-              options.No = 'No';
-            } else {
-              Ext.Array.each(vals.options.split(','), function (item, index) {
-                options[item] = item;
-              });
+              attributes.empty = 'Please Select';
+            },
+            states: function () {
+              vals.type = 'select';
+              options = states;
             }
+          };
+        }());
 
-            attributes.empty = 'Please Select';
-            break;
-
-          case 'states':
-            vals.type = 'select';
-            break;
-        }
+        parseVals[vals.type] && parseVals[vals.type]();
 
         validation.rule = ['equalTo', vals.answer];
         validation.message = 'Incorrect';
@@ -1061,18 +1087,9 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           attributes.readonly = 'readonly';
         }
 
-        if (!Ext.isEmpty(attributes)) {
-          vals.attributes = Ext.JSON.encode(attributes);
-        }
-
-        if (!Ext.isEmpty(options)) {
-          vals.options = Ext.JSON.encode(options);
-        }
-
-        if (!Ext.isEmpty(validation)) {
-          vals.validation = Ext.JSON.encode(validation);
-        }
-
+        vals.attributes = encodeObject(attributes);
+        vals.options = encodeObject(options);
+        vals.validation = encodeObject(validation);
         vals.program_step_id = programStepId;
         vals.name = vals.label.underscore();
         vals.order = (programFormFieldStore.count() + 1);
@@ -1091,6 +1108,7 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           formPanel = this.up('form'),
           form = formPanel.getForm(),
           vals = form.getValues(),
+          parseVals,
           attributes = {},
           options = {},
           validation = {},
@@ -1100,48 +1118,41 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           grid = Ext.getCmp('formFieldGrid'),
           selectedRecord = grid.getSelectionModel().getSelection()[0];
 
-        switch (vals.type) {
-          case 'datepicker':
-            attributes['class'] = 'datepicker';
-            vals.type = 'text';
-            break;
+        parseVals = (function () {
+          return {
+            datepicker: function () {
+              attributes['class'] = 'datepicker';
+              vals.type = 'text';
+            },
+            select: function () {
+              if (vals.options === 'truefalse') {
+                options.True = 'True';
+                options.False = 'False';
+              } else if (vals.options === 'yesno') {
+                options.Yes = 'Yes';
+                options.No = 'No';
+              } else {
+                Ext.Array.each(vals.options.split(','), function (item, index) {
+                  options[item] = item;
+                });
+              }
 
-          case 'select':
-            if (vals.options === 'truefalse') {
-              options.True = 'True';
-              options.False = 'False';
-            } else if (vals.options === 'yesno') {
-              options.Yes = 'Yes';
-              options.No = 'No';
-            } else {
-              Ext.Array.each(vals.options.split(','), function (item, index) {
-                options[item] = item;
-              });
+              attributes.empty = 'Please Select';
+            },
+            states: function () {
+              vals.type = 'select';
             }
+          };
+        }());
 
-            attributes.empty = 'Please Select';
-            break;
-
-          case 'states':
-            vals.type = 'select';
-            break;
-        }
+        parseVals[vals.type] && parseVals[vals.type]();
 
         validation.rule = ['equalTo', vals.answer];
         validation.message = 'Incorrect';
 
-        if (!Ext.isEmpty(attributes)) {
-          vals.attributes = Ext.JSON.encode(attributes);
-        }
-
-        if (!Ext.isEmpty(options)) {
-          vals.options = Ext.JSON.encode(options);
-        }
-
-        if (!Ext.isEmpty(validation)) {
-          vals.validation = Ext.JSON.encode(validation);
-        }
-
+        vals.attributes = encodeObject(attributes);
+        vals.options = encodeObject(options);
+        vals.validation = encodeObject(validation);
         vals.program_step_id = programStep.data.id;
         vals.name = vals.label.underscore();
         vals.order = (programFormFieldStore.count() + 1);

@@ -632,6 +632,10 @@ formBuilder = Ext.create('Ext.panel.Panel', {
     region: 'west',
     store: 'ProgramFormFieldStore',
     width: 660,
+    selModel: {
+      mode: 'SINGLE',
+      allowDeselect: true
+    },
     columns: [{
       header: 'Order',
       dataIndex: 'order',
@@ -680,8 +684,28 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           requiredCb.setValue(true);
         }
 
-        if (rec.data.attributes && rec.data.attributes.match(/readonly/g)) {
-          readOnlyCb.setValue(true);
+        if (!rec.data.validation || !rec.data.validation.match(/notEmpty/g)) {
+          requiredCb.setValue(false);
+        }
+
+        if (rec.data.attributes) {
+          if (rec.data.attributes.match(/readonly/g)) {
+            readOnlyCb.setValue(true);
+          }
+
+          if (rec.data.attributes.match(/datepicker/g)) {
+            fieldType.setValue('datepicker');
+            rec.data.type = 'datepicker';
+          }
+
+          if (rec.data.attributes.match(/value/g)) {
+            attrs = Ext.JSON.decode(rec.data.attributes);
+            rec.data.default_value = attrs.value;
+          }
+        }
+
+        if (!rec.data.attributes || !rec.data.attributes.match(/readonly/g)) {
+          readOnlyCb.setValue(false);
         }
 
         // if it's a state list we need to present it
@@ -776,11 +800,13 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           var formPanel = Ext.getCmp('formPanel'),
             form = formPanel.getForm(),
             saveBtn = formPanel.down('#builderSaveBtn'),
-            updateBtn = formPanel.down('#updateBtn');
+            updateBtn = formPanel.down('#updateBtn'),
+            grid = Ext.getCmp('formFieldGrid');
 
           form.reset();
           saveBtn.enable().show();
           updateBtn.disable().hide();
+          grid.getSelectionModel().deselectAll();
         }
       }, {
         disabled: true,
@@ -1014,7 +1040,10 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           programStep = Ext.data.StoreManager.lookup('ProgramStepStore'),
           programStepId = programStep.last().data.id,
           grid = Ext.getCmp('formFieldGrid'),
-          selectedRecord = grid.getSelectionModel().getSelection()[0];
+          selectedRecord = grid.getSelectionModel().getSelection()[0],
+          deleteFieldBtn = Ext.getCmp('deleteFieldBtn'),
+          updateBtn = Ext.getCmp('updateBtn'),
+          builderSaveBtn = Ext.getCmp('builderSaveBtn');
 
         parseVals = (function () {
           return {
@@ -1048,10 +1077,16 @@ formBuilder = Ext.create('Ext.panel.Panel', {
 
         if (vals.read_only === 'on') {
           attributes.readonly = 'readonly';
+        } else {
+          vals.readonly = 'off';
+          attributes = {};
         }
 
         if (vals.required === 'on') {
           validation.rule = 'notEmpty';
+        } else {
+          vals.required = 'off';
+          validation = {};
         }
 
         vals.attributes      = encodeObject(attributes);
@@ -1061,7 +1096,11 @@ formBuilder = Ext.create('Ext.panel.Panel', {
         vals.name            = vals.label.underscore();
 
         selectedRecord.set(vals);
+        updateBtn.disable().hide();
+        builderSaveBtn.enable().show();
+        deleteFieldBtn.disable();
         form.reset();
+        grid.getSelectionModel().deselectAll();
       }
     }]
   }],

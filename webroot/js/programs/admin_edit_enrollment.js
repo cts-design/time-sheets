@@ -517,7 +517,7 @@ states = {
  */
 registrationForm = Ext.create('Ext.form.Panel', {
   autoScroll: true,
-  height: 406,
+  height: 490,
   items: [{
     border: 0,
     html: '<h1>Program Details</h1>',
