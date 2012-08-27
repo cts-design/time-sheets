@@ -860,7 +860,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
   }, {
     xtype: 'hiddenfield',
     name: 'disabled',
-    value: 1
+    value: 0
   }],
   process: function () {
     var form = this.getForm(),
