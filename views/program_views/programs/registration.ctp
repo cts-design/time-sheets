@@ -15,8 +15,7 @@
 			<ol>
 			<?php if($programResponse['ProgramResponse']['status'] === 'incomplete') : ?>
 				<?php $redoable = ($step['redoable']) ? 'redoable' : '' ?>
-				<li class="step <?= $class ?> <?= $redoable ?>">
-				<li class="step incomplete">
+				<li class="step incomplete <?= $redoable ?>">
 					<div class="inner-container">
 						<?= $program['ProgramStep'][1]['name'] ?>
 						<span class="action">
