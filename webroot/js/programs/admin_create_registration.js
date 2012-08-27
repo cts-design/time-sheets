@@ -691,6 +691,10 @@ formBuilder = Ext.create('Ext.panel.Panel', {
     region: 'west',
     store: 'ProgramFormFieldStore',
     width: 660,
+    selModel: {
+      mode: 'SINGLE',
+      allowDeselect: true
+    },
     columns: [{
       header: 'Order',
       dataIndex: 'order',
