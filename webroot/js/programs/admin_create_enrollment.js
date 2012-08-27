@@ -1260,7 +1260,7 @@ stepTree = Ext.create('Ext.panel.Panel', {
       disabled: true,
       formBind: true,
       hidden: true,
-      id: 'updateBtn',
+      id: 'stepUpdateBtn',
       text: 'Update',
       handler: function () {
       }
@@ -1375,6 +1375,10 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                 region: 'west',
                 store: 'ProgramFormFieldStore',
                 width: 660,
+                selModel: {
+                  mode: 'SINGLE',
+                  allowDeselect: true
+                },
                 columns: [{
                   header: 'Order',
                   dataIndex: 'order',
@@ -1486,24 +1490,15 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                     text: 'Add Field',
                     handler: function () {
                       var formPanel = Ext.getCmp('formPanel'),
-                        form = formPanel.getForm();
+                        form = formPanel.getForm(),
+                        savebtn = formPanel.down('#builderSaveBtn'),
+                        updatebtn = formPanel.down('#updateBtn'),
+                        grid = Ext.getCmp('formFieldGrid');
 
-                      if (form.isDirty()) {
-                        Ext.Msg.show({
-                          title: 'Discard Changes?',
-                          msg: 'You have an unsaved form field, discard changes?',
-                          buttons: Ext.Msg.YESNO,
-                          icon: Ext.Msg.QUESTION,
-                          fn: function (btn) {
-                            if (btn === 'yes') {
-                              form.reset();
-                            }
-                          }
-                        });
-                      } else {
-                        form.reset();
-                      }
-
+                      form.reset();
+                      saveBtn.enable().show();
+                      updateBtn.disable().hide();
+                      grid.getSelectionModel().deselectAll();
                     }
                   }, {
                     disabled: true,
@@ -1513,7 +1508,11 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                     handler: function () {
                       var store = Ext.data.StoreManager.lookup('ProgramFormFieldStore'),
                         formPanel = Ext.getCmp('formPanel'),
-                        form = formPanel.getForm();
+                        form = formPanel.getForm(),
+                        deleteFieldBtn = Ext.getCmp('deleteFieldBtn'),
+                        updateBtn = Ext.getCmp('updateBtn'),
+                        builderSaveBtn = Ext.getCmp('builderSaveBtn'),
+                        grid = Ext.getCmp('formFieldGrid');
 
                       Ext.Msg.show({
                         title: 'Delete Field?',
@@ -1523,8 +1522,12 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                         fn: function (btn) {
                           if (btn === 'yes') {
                             store.remove(formPanel.getRecord());
+                            deleteFieldBtn.disable();
+                            updateBtn.disable().hide();
+                            builderSaveBtn.enable().show();
                             form.reset();
                             this.disable();
+                            grid.getSelectionModel().deselectAll();
                           }
                         },
                         scope: this
@@ -1718,6 +1721,14 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
 
                     if (vals.read_only === 'on') {
                       attributes.readonly = 'readonly';
+
+                      if (vals.default_value) {
+                        attributes.value = vals.default_value;
+                      }
+                    }
+
+                    if (vals.required === 'on') {
+                      validation.rule = 'notEmpty';
                     }
 
                     vals.attributes      = encodeObject(attributes);
@@ -1745,9 +1756,11 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                       options = {},
                       validation = {},
                       programStep = Ext.data.StoreManager.lookup('ProgramStepStore'),
-                      programStepId = programStep.last().data.id,
                       grid = Ext.getCmp('formFieldGrid'),
-                      selectedRecord = grid.getSelectionModel().getSelection()[0];
+                      selectedRecord = grid.getSelectionModel().getSelection()[0],
+                      deleteFieldBtn = Ext.getCmp('deleteFieldBtn'),
+                      updateBtn = Ext.getCmp('updateBtn'),
+                      builderSaveBtn = Ext.getCmp('builderSaveBtn');
 
                     parseVals = (function () {
                       return {
@@ -1780,16 +1793,30 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
 
                     if (vals.read_only === 'on') {
                       attributes.readonly = 'readonly';
+                    } else {
+                      vals.readonly = 'off';
+                      attributes = {};
+                    }
+
+                    if (vals.required === 'on') {
+                      validation.rule = 'notEmpty';
+                    } else {
+                      vals.required = 'off';
+                      validation = {};
                     }
 
                     vals.attributes      = encodeObject(attributes);
                     vals.options         = encodeObject(options);
                     vals.validation      = encodeObject(validation);
-                    vals.program_step_id = programStepId;
+                    vals.program_step_id = rec.get('id');
                     vals.name            = vals.label.underscore();
 
                     selectedRecord.set(vals);
+                    updateBtn.disable().hide();
+                    builderSaveBtn.enable().show();
+                    deleteFieldBtn.disable();
                     form.reset();
+                    grid.getSelectionModel().deselectAll();
                   }
                 }]
               }]
