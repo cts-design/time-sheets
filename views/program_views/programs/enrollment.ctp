@@ -31,7 +31,8 @@
 							}
 						?>
 						<?php $stepStatus = ($i === count($programSteps[$step['id']])) ? 'complete' : 'incomplete' ?>
-						<span class="steps status <?= $stepStatus ?>"><?= $i ?> of <?= count($programSteps[$step['id']]) ?> steps completed</span>
+						<?php $redoable = ($step['redoable']) ? 'redoable' :'' ?>
+						<span class="steps <?= $redoable ?> status <?= $stepStatus ?>"><?= $i ?> of <?= count($programSteps[$step['id']]) ?> steps completed</span>
 						<ol>
 						<?php $k++ ?>
 				<?php else : ?>
