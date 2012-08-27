@@ -320,9 +320,16 @@ class UsersController extends AppController {
 			array('ProgramResponse' => array(
 				'conditions' => array('user_id' => $this->Auth->user('id')),
 				'fields' => array('id', 'status'))));
-		$programs = $this->Program->find('all',
-			array('conditions' => array('Program.show_in_dash' => 1),
-				  'fields' => array('id', 'name', 'type')));
+		$programs = $this->Program->find(
+			'all',
+			array(
+				'conditions' => array(
+					'Program.show_in_dash' => 1,
+					'Program.in_test' => 0
+				),
+				'fields' => array('id', 'name', 'type')
+			)
+		);
 		if($programs) {
 			$orientations = array();
 			$registrations = array();
