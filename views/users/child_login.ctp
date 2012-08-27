@@ -18,8 +18,8 @@
 				'after' => '<br />'));
 		    echo '<br class="clear"/>';
 		    echo $form->input('password', array(
-		    	'label' => __('Child\'s Last 4 SSN', true),
-		    	'maxlength' => 4,
+		    	'label' => __('Child\'s 9 Digit SSN', true),
+		    	'maxlength' => 9,
 		    	'between' => '<br />',
 		    	'after' => '<br />'
 		    ));

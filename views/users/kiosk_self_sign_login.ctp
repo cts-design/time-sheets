@@ -27,11 +27,11 @@
 			'between' => '</p><p class="left">',
 			'after' => '</p><br class="clear"/>'));
 	    echo $form->input('User.password', array(
-			'label' => __('Last 4 Digits of Your SSN', true),
+			'label' => __('9 Digit SSN', true),
 			'before' => '<p class="left">',
 			'between' => '</p><p class="left">',
 			'after' => '</p><br class="clear"/>',
-			'maxlength' => 4));
+			'maxlength' => 9));
 	    echo $form->hidden('User.login_type', array('value' => 'kiosk'));
 	    echo $form->end(array('label' => __('Login', true), 'class' => 'self-sign-kiosk-button'));
     ?>

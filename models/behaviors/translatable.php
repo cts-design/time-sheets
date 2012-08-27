@@ -70,10 +70,8 @@ class TranslatableBehavior extends ModelBehavior {
 		
 		$response = json_decode($this->connection->get($translateUrl), true);
 		
-		if ($response['responseStatus'] !== 200) {
-			$this->log('An error occured while using the Google Translate API', 'error');
+		if ($response['responseStatus'] !== 200)
 			return false;
-		}
 		
 		return $response['responseData']['translatedText'];
 	}

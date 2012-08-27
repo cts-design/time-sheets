@@ -37,7 +37,13 @@
 		    'after' => '</p>'
 	    ));		
 	    echo '<br class="clear"/>' ;
-	    echo $this->Form->input('location_description', array(
+		echo $this->Form->input('assistance_message', array(
+		    'before' => '<p class="left">',
+		    'between' => '</p><p class="left">',
+		    'after' => '</p>'
+	    ));		
+	    echo '<br class="clear"/>' ;
+		echo $this->Form->input('location_description', array(
 		    'type' => 'textarea',
 		    'before' => '<p class="left">',
 		    'between' => '</p><p class="left">',

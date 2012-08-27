@@ -1197,3 +1197,13 @@ table.raw-data tr td {
 .x-action-col-cell img.not-editable {
   background-image: url(../img/icons/edit-grayed.png);
 }
+
+
+#helpDeskForm .error-message {
+	margin: 0;
+	float: none;
+}
+
+#helpDeskForm .input {
+	margin-bottom: 5px;
+}
