@@ -225,7 +225,7 @@ Ext.create('Ext.data.Store', {
     api: {
       create: '/admin/programs/create_orientation',
       read:   '/admin/programs/read',
-      update: '/admin/programs/update_orientation'
+      update: '/admin/programs/update'
     },
     reader: {
       type: 'json',
@@ -540,7 +540,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
 
             if (newValue !== 'url') {
               container.setVisible(true);
-              uploadField.allowBlank = false;
+              uploadField.allowBlank = true;
               urlContainer.setVisible(false);
               urlField.allowBlank = true;
               if (oldValue === 'url') {
@@ -761,7 +761,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       }
 
       record.set(vals);
-      record.save();
+      //record.save();
       return true;
     } else {
       return false;
