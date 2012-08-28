@@ -257,7 +257,7 @@ class ProgramsController extends AppController {
 		// append copy to the duplicates name
 		$duplicate['Program']['name'] = $duplicate['Program']['name'] . ' Copy';
 		$duplicate['Program']['in_test'] = 1;
-		$duplicate['Program']['disabled'] = 1;
+		$duplicate['Program']['disabled'] = 0;
 
 		// create a new record for our duplicate
 		$this->Program->create();
