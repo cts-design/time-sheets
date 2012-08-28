@@ -1332,7 +1332,7 @@ stepTree = Ext.create('Ext.panel.Panel', {
       disabled: true,
       formBind: true,
       hidden: true,
-      id: 'updateBtn',
+      id: 'stepUpdateBtn',
       text: 'Update',
       handler: function () {
       }
@@ -1354,12 +1354,14 @@ stepTree = Ext.create('Ext.panel.Panel', {
 
         for (i = 0, l = programSteps.length; i < l; i++) {
           var rec = programSteps[i],
-            parent;
+            parent,
+            parentId;
 
           if (!rec.type) {
             rootNode.appendChild(rec);
+            parentId = rec.id;
           } else {
-            parent = rootNode.findChild('id', rec.parent_id);
+            parent = rootNode.findChild('id', parentId);
             rec.parentId = rec.parent_id;
             rec.leaf = true;
             parent.appendChild(rec);
