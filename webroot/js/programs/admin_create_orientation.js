@@ -1229,18 +1229,9 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           attributes.readonly = 'readonly';
         }
 
-        if (!isEmptyObject(attributes)) {
-          vals.attributes = Ext.JSON.encode(attributes);
-        }
-
-        if (!isEmptyObject(options)) {
-          vals.options = Ext.JSON.encode(options);
-        }
-
-        if (!isEmptyObject(validation)) {
-          vals.validation = Ext.JSON.encode(validation);
-        }
-
+        vals.attributes      = encodeObject(attributes);
+        vals.options         = encodeObject(options);
+        vals.validation      = encodeObject(validation);
         vals.program_step_id = programStepId;
         vals.name = vals.label.underscore();
 
