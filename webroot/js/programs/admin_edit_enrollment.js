@@ -1723,7 +1723,6 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                   }]
                 }, {
                   xtype: 'textfield',
-                  allowBlank: false,
                   fieldLabel: 'Correct Answer',
                   name: 'answer'
                 }, {
