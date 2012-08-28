@@ -814,8 +814,10 @@ registrationForm = Ext.create('Ext.form.Panel', {
           } else {
             if (newVal.upload_docs === '1') {
               container.setVisible(true);
+              field.allowBlank = false;
               container.getEl().highlight('C9DFEE', { duration: 1000 });
             } else {
+              field.allowBlank = true;
               container.setVisible(false);
             }
           }
