@@ -628,6 +628,76 @@ registrationForm = Ext.create('Ext.form.Panel', {
       width: 400
     }]
   }, {
+    xtype: 'button',
+    id: 'uploadMediaButton',
+    text: 'Upload Media',
+    handler: function () {
+      var formPanel = this.up('form'),
+        form = formPanel.getForm(),
+        vals = form.getValues(),
+        mediaUploadField = formPanel.down('#uploadField'),
+        mediaTypeField = formPanel.down('#mediaType'),
+        uploadMediaButton = formPanel.down('#uploadMediaButton'),
+        programStore = Ext.data.StoreManager.lookup('ProgramStore'),
+        allFormFields,
+        // this will be an array to hold the index of the items in the mixed
+        // collection to set them back to allowBlank: false
+        validatedFieldsCache = [];
+
+      if (!mediaTypeField.isValid()) { return; }
+      if (!mediaUploadField.isValid()) { return; }
+
+      formFields = form.getFields();
+
+      // enable allowBlank on each field so we can submit the form for upload
+      formFields.each(function (field, index, length) {
+        if (!field.allowBlank) {
+          validatedFieldsCache.push(index);
+          field.allowBlank = true;
+        }
+      });
+
+      form.submit({
+        url: '/admin/programs/upload_media',
+        waitMsg: 'Uploading Media...',
+        scope: this,
+        success: function (form, action) {
+          // set allowBlank true back on the proper fields in the mixed collection
+          var i = validatedFieldsCache.length - 1;
+          for (i;  i >= 0; i--){
+            var field = formFields.getAt(validatedFieldsCache[i]);
+            field.allowBlank = false;
+          }
+
+          mediaUploadField.disable().allowBlank = true;
+          mediaTypeField.disable().allowBlank = true;
+          uploadMediaButton.disable();
+
+          media = {
+            location: action.result.url,
+            type: vals.media_type
+          };
+
+          programStore.getProxy().extraParams = {
+            media: Ext.JSON.encode(media)
+          };
+        },
+        failure: function (form, action) {
+          switch (action.failureType) {
+            case Ext.form.action.Action.CLIENT_INVALID:
+              Ext.Msg.alert('Failure', 'Form fields may not be submitted with invalid values');
+              break;
+            case Ext.form.action.Action.CONNECT_FAILURE:
+              Ext.Msg.alert('Failure', 'Ajax communication failed');
+              break;
+            case Ext.form.action.Action.SERVER_INVALID:
+              Ext.Msg.alert('Failure', action.result.msg);
+              break;
+          }
+        }
+      });
+    }
+  }, {
     xtype: 'hiddenfield',
     name: 'confirmation_id_length',
     value: '10'
@@ -681,53 +751,21 @@ registrationForm = Ext.create('Ext.form.Panel', {
 
     statusBar.showBusy();
 
+    record = programStore.first();
+
     if (form.isValid()) {
       vals = form.getValues();
 
-      if (uploadContainer.hidden) {
-        if (!vals.media_location.match(/[http|https]:\/\//)) {
+      if (uploadContainer.hidden && !vals.media_location.match(/[http|https]:\/\//)) {
           vals.media_location = 'http://' + vals.media_location;
-        }
-
-        media = {
-          location: vals.media_location,
-          type: vals.media_type
-        };
-
-        programStore.getProxy().extraParams = {
-          media: Ext.JSON.encode(media)
-        };
-
-        programStore.add(vals);
-        return true;
-      } else {
-        form.submit({
-          url: '/admin/programs/upload_media',
-          waitMsg: 'Uploading Media...',
-          scope: this,
-          success: function (form, action) {
-            form.reset();
-
-            media = {
-              location: action.result.url,
-              type: vals.media_type
-            };
-
-            programStore.getProxy().extraParams = {
-              media: Ext.JSON.encode(media)
-            };
-
-            programStore.add(vals);
-          },
-          failure: function (form, action) {
-            Ext.Msg.alert('Could not upload file', action.result.msg);
-          }
-        });
       }
-    }
 
-    statusBar.clearStatus();
-    return true;
+      record.set(vals);
+      record.save();
+      return true;
+    } else {
+      return false;
+    }
   }
 });
 
