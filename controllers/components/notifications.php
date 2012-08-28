@@ -5,6 +5,8 @@
  * @link http://ctsfla.com
  */
 
+App::import('Component', 'Email');
+
 class NotificationsComponent extends Object {
 	
 	var $components = array('Email', 'Auth');
@@ -29,5 +31,14 @@ class NotificationsComponent extends Object {
 			return $this->Email->send($programEmail['ProgramEmail']['body']);			
 		}
 		return false;
+	}
+
+	function sendAbsorptionEmail($mySubject,$myMessage) {
+		$this->Email = &new EmailComponent();
+		$this->Email->from = Configure::read('Admin.alert.email');
+		$this->Email->to = Configure::read('Admin.alert.email');
+		$this->Email->subject = Configure::read('domain').": $mySubject";
+		$this->Email->send($myMessage);
+		$this->Email->reset();
 	}
 }	
