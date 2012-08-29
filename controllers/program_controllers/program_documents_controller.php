@@ -75,6 +75,8 @@ class ProgramDocumentsController extends AppController {
 
 		$this->log($watchedCats, 'debug');
 
+		$data['success'] = true;
+
 		if ($watchedCats) {
 			foreach ($watchedCats as $key => $value) {
 				$parents = $this->getWatchedCatPath($value['WatchedFilingCat']['cat_id']);
@@ -99,8 +101,6 @@ class ProgramDocumentsController extends AppController {
 			foreach ($documents as $key => $value) {
 				$data['program_documents'][] = $value['ProgramDocument'];
 			}
-		} else {
-			$data['success'] = false;
 		}
 
 		$this->set('data', $data);
