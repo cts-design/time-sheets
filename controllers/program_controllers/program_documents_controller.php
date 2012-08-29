@@ -90,6 +90,8 @@ class ProgramDocumentsController extends AppController {
 				$value['WatchedFilingCat']['type'] = 'Upload';
 				$data['program_documents'][] = $value['WatchedFilingCat'];
 			}
+
+			if (!$data['success']) { $data['success'] = true; }
 		}
 
 		if ($documents) {
