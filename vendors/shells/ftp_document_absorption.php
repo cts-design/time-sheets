@@ -11,7 +11,7 @@ class FtpDocumentAbsorptionShell extends Shell {
 
 		// If locked, stop running
 		$locked = $this->AutoLock->find("first");
-		if ($locked["AutoLock"]["auto_lock_status"]) {
+		if ($locked["AutoLock"]["status"]) {
 			print "Locked\n\n";
 			exit ;
 		}
@@ -129,7 +129,7 @@ class FtpDocumentAbsorptionShell extends Shell {
 		}
 		// Unlock
 		$this->AutoLock->id = 1;
-		$this->AutoLock->set(array('auto_lock_status' => 0));
+		$this->AutoLock->set(array('status' => 0));
 		if (!$this->AutoLock->save()) {
 			$this->log('FTP ABSORB: Can\'t unlock the database, exiting.', 'error');
 		}
