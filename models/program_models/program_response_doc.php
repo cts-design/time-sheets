@@ -21,6 +21,7 @@ class ProgramResponseDoc extends AppModel {
 		$this->data = $data;
 		$watchedCat = null;
 		$return = false;
+
 		if(isset($this->data['FiledDocument']['cat_3'])) {
 			$watchedCat = $Program->WatchedFilingCat->findByCatId($this->data['FiledDocument']['cat_3']);
 			$return['cat_id'] = $this->data['FiledDocument']['cat_3'];			
@@ -42,7 +43,6 @@ class ProgramResponseDoc extends AppModel {
 			$this->data['ProgramResponseDoc']['id'] = $programResponseDocId;
 		}
 		if(!$watchedCat) {
-			$this->log($this->data, 'debug');
 			$programResponseDoc = $this->findByDocId($this->data['FiledDocument']['id']);
 			if($programResponseDoc) {
 				$programResponse = $this->ProgramResponse->getProgramResponse($programResponseDoc['ProgramResponse']['program_id'], $user['User']['id']);
@@ -51,7 +51,6 @@ class ProgramResponseDoc extends AppModel {
 			}
 		}		
 		if($watchedCat) {	
-			$this->log($watchedCat, 'debug');
 			$programResponse = $this->ProgramResponse->getProgramResponse($watchedCat['Program']['id'], $user['User']['id']);	
 			$return['program_id'] = $watchedCat['Program']['id'];
 			if($watchedCat['WatchedFilingCat']['name'] === 'esign') {
