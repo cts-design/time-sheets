@@ -5,6 +5,8 @@
  * @link http://ctsfla.com
  */
 
+App::import('Component', 'Email');
+
 class NotificationsComponent extends Object {
 	
 	var $components = array('Auth');
@@ -32,5 +34,14 @@ class NotificationsComponent extends Object {
 			return ClassRegistry::init('Queue.QueuedTask')->createJob('email', $data);
 		}
 		return false;
+	}
+
+	function sendAbsorptionEmail($mySubject,$myMessage) {
+		$this->Email = &new EmailComponent();
+		$this->Email->from = Configure::read('Admin.alert.email');
+		$this->Email->to = Configure::read('Admin.alert.email');
+		$this->Email->subject = Configure::read('domain').": $mySubject";
+		$this->Email->send($myMessage);
+		$this->Email->reset();
 	}
 }	
