@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2012-08-20 13:15:07 : 1345482907*/
+/* atlas schema generated on: 2012-08-29 10:43:56 : 1346251436*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -75,32 +75,31 @@ class atlasSchema extends CakeSchema {
 		'number_of_customers' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'start_date' => array('type' => 'date', 'null' => false, 'default' => NULL),
 		'end_date' => array('type' => 'date', 'null' => false, 'default' => NULL),
-		'show_date_column' => array('type' => 'boolean', 'null' => true, 'default' => '0'),
-		'disabled' => array('type' => 'boolean', 'null' => true, 'default' => '0'),
+		'disabled' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
-		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
+		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'InnoDB')
 	);
 	var $audits_auditors = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 		'audit_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'user_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
-		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
+		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'InnoDB')
 	);
 	var $audits_users = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 		'audit_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'user_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
-		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
+		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'InnoDB')
 	);
 	var $auto_locks = array(
-		'auto_lock_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 8, 'key' => 'primary'),
-		'auto_lock_title' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'auto_lock_status' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 3),
-		'indexes' => array('PRIMARY' => array('column' => 'auto_lock_id', 'unique' => 1)),
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 8, 'key' => 'primary'),
+		'title' => array('type' => 'string', 'null' => false, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'status' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 3),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
 	var $bar_code_definitions = array(
@@ -379,6 +378,9 @@ class atlasSchema extends CakeSchema {
 		'location_description' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'deleted' => array('type' => 'boolean', 'null' => false, 'default' => NULL),
 		'logout_message' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 50, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'assistance_message' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
@@ -537,8 +539,13 @@ class atlasSchema extends CakeSchema {
 		'doc_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'program_doc_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'type' => array('type' => 'string', 'null' => false, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'paper_form' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
-		'cert' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'deleted' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'deleted_reason' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'rejected_reason' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'cat_id' => array('column' => 'cat_id', 'unique' => 0)),
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
 	var $program_responses = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
@@ -577,6 +584,7 @@ class atlasSchema extends CakeSchema {
 		'name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'type' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'atlas_registration_type' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 10, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'disabled' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'queue_category_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'approval_required' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'form_esign_required' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
@@ -589,7 +597,6 @@ class atlasSchema extends CakeSchema {
 		'show_in_dash' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'in_test' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'bar_code_definition_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
-		'disabled' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'expires' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
