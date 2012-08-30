@@ -108,7 +108,7 @@ class FtpDocumentAbsorptionShell extends Shell {
 										'entry_method' => 'FTP Scanner', 
 										'queue_category_id' => $my_category, 
 										'scanned_location_id' => $my_location);
-									$barCode = $this->BarCodeDefinition->barDecode($path . $document);
+									$barCode = $this->BarCodeDefinition->barDecode($path . $docName);
 									if ($barCode) {
 										$this->data['bar_code_definition_id'] = $barCode['BarCodeDefinition']['id'];
 										$this->data['user_id'] = $barCode['User']['id'];	
