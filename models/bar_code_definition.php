@@ -31,11 +31,16 @@ class BarCodeDefinition extends AppModel {
 	);
 
 	public function barDecode($document) {
-		$jpg = str_replace('.pdf', '.jpg', $document);	
-		// here we use pdftk to make sure document is only one page.	
-		exec('pdftk ' . $document . ' dump_data | grep NumberOfPages', $output, $return);
-		$pages = (int) substr($output[0], 15);
-		unset($output, $return);
+		if(file_exists($document)) {
+			$jpg = str_replace('.pdf', '.jpg', $document);	
+			// here we use pdftk to make sure document is only one page.	
+			exec('/usr/bin/pdftk ' . $document . ' dump_data | grep NumberOfPages', $output, $return);
+			$pages = (int) substr($output[0], 15);
+			unset($output, $return);
+		}
+		else {
+			return false;
+		}
 		if($pages === 1) {
 			// convert pdf to jpg using imagemagick so jpg can be read by bar code binary
 			$command = '/usr/bin/convert -density 300 ' . $document . ' ' . $jpg;
