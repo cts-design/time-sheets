@@ -4,7 +4,7 @@ App::import('Component', 'Notifications');
 
 class FtpDocumentAbsorptionShell extends Shell {
 
-	public $uses = array('AutoLock', 'DocumentQueueCategory', 'FtpDocumentScanner', 'QueuedDocumenta', 'BarCodeDefinition');
+	public $uses = array('AutoLock', 'DocumentQueueCategory', 'FtpDocumentScanner', 'QueuedDocument', 'BarCodeDefinition');
 	function main() {
 
 	$this->Notifications = &new NotificationsComponent();
