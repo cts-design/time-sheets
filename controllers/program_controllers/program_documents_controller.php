@@ -56,6 +56,10 @@ class ProgramDocumentsController extends AppController {
 			$conditions = array(
 				'ProgramDocument.program_id' => $this->params['url']['program_id']
 			);
+
+			$catCondition = array(
+				'WatchedFilingCat.program_id' => $this->params['url']['program_id']
+			);
 		}
 
 		$this->ProgramDocument->recursive = -1;
@@ -63,13 +67,40 @@ class ProgramDocumentsController extends AppController {
 			'conditions' => $conditions
 		));
 
+		$this->loadModel('WatchedFilingCat');
+		$this->WatchedFilingCat->recursive = -1;
+		$watchedCats = $this->WatchedFilingCat->find('all', array(
+			'conditions' => $catCondition
+		));
+
+		$this->log($watchedCats, 'debug');
+
+		$data['success'] = true;
+
+		if ($watchedCats) {
+			foreach ($watchedCats as $key => $value) {
+				$parents = $this->getWatchedCatPath($value['WatchedFilingCat']['cat_id']);
+
+				for ($i = 0; $i < count($parents); $i++) {
+					$id = $i + 1;
+					$catId = "cat_$id";
+					$catName = "{$catId}_name";
+
+					$value['WatchedFilingCat'][$catId] = $parents[$i]['DocumentFilingCategory']['id'];
+					$parent['cats'][$catName] = $parents[$i]['DocumentFilingCategory']['name'];
+				}
+				$value['WatchedFilingCat']['type'] = 'Upload';
+				$data['program_documents'][] = $value['WatchedFilingCat'];
+			}
+
+			if (!$data['success']) { $data['success'] = true; }
+		}
+
 		if ($documents) {
 			$data['success'] = true;
 			foreach ($documents as $key => $value) {
 				$data['program_documents'][] = $value['ProgramDocument'];
 			}
-		} else {
-			$data['success'] = false;
 		}
 
 		$this->set('data', $data);

@@ -2079,6 +2079,15 @@ uploadStep = Ext.create('Ext.panel.Panel', {
                   form.reset();
                   vals.template = action.result.url;
                   programDocumentStore.add(vals);
+                  programEmailStore.add({
+                    program_id: vals.program_id,
+                    to: null,
+                    from: ('noreply@' + window.location.hostname),
+                    subject: vals.name + ' Email',
+                    body: 'Email for ' + vals.name,
+                    type: vals.name.underscore + '_document',
+                    name: vals.name + ' Document Email'
+                  });
                 },
                 failure: function (form, action) {
                   Ext.Msg.alert('Could not upload file', action.result.msg);
