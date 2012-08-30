@@ -22,7 +22,7 @@ class FtpDocumentAbsorptionShell extends Shell {
 			$scan_path = Configure::read('Document.scan.path');
 			// Read in existing FTP log
 			$ftp_log = file(Configure::read('FTP.log.path'));
-			$path = APP . substr(Configure::read('Document.storage.path', 1));
+			$path = APP . substr(Configure::read('Document.storage.path'), 1);
 			if ($folder_list = opendir($scan_path)) {
 				while (false != ($scan_folder = readdir($folder_list))) {
 					if (($scan_folder != '.') && ($scan_folder != '..')) {
