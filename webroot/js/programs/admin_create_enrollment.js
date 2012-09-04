@@ -552,6 +552,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
     items: [{
       xtype: 'radiogroup',
       fieldLabel: 'User Acknowledgement Required?',
+      id: 'userAcknowledgement',
       labelWidth: 190,
       items: [{
         boxLabel: 'Yes',
@@ -562,7 +563,27 @@ registrationForm = Ext.create('Ext.form.Panel', {
         name: 'user_acceptance_required',
         inputValue: '0',
         checked: true
-      }]
+      }],
+      listeners: {
+        change: function (cbgroup, newVal, oldVal) {
+          var esignRequiredCb = this.up('form').down('#esignRequired'),
+            esignRequiredValue = esignRequiredCb.getValue().form_esign_required;
+
+          if (typeof newVal.user_acceptance_required !== "string") {
+            return;
+          } else {
+            if (newVal.user_acceptance_required === '1') {
+              if (esignRequiredValue) {
+                esignRequiredCb.setValue({ form_esign_required: 0 });
+              }
+
+              esignRequiredCb.disable();
+            } else {
+              esignRequiredCb.enable();
+            }
+          }
+        }
+      }
     }]
   }, {
     xtype: 'fieldcontainer',
@@ -575,6 +596,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
     items: [{
       xtype: 'radiogroup',
       fieldLabel: 'Esign Required?',
+      id: 'esignRequired',
       labelWidth: 190,
       items: [{
         boxLabel: 'Yes',
@@ -585,7 +607,27 @@ registrationForm = Ext.create('Ext.form.Panel', {
         name: 'form_esign_required',
         inputValue: '0',
         checked: true
-      }]
+      }],
+      listeners: {
+        change: function (cbgroup, newVal, oldVal) {
+          var userAckCb = this.up('form').down('#userAcknowledgement'),
+            userAckValue = userAckCb.getValue().user_acceptance_required;
+
+          if (typeof newVal.form_esign_required !== "string") {
+            return;
+          } else {
+            if (newVal.form_esign_required === '1') {
+              if (userAckValue) {
+                userAckCb.setValue({ user_acceptance_required: 0 });
+              }
+
+              userAckCb.disable();
+            } else {
+              userAckCb.enable();
+            }
+          }
+        }
+      }
     }]
   }, {
     xtype: 'fieldcontainer',
