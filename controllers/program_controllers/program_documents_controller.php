@@ -11,6 +11,7 @@ class ProgramDocumentsController extends AppController {
 	public function admin_create() {
 		$this->loadModel('WatchedFilingCat');
 		$document = json_decode($this->params['form']['program_documents'], true);
+		$data['success'] = false;
 
 		if ($document['type'] === 'upload') {
 			if ($document['cat_3']) {
@@ -21,27 +22,38 @@ class ProgramDocumentsController extends AppController {
 				$watchedCatId = $document['cat_1'];
 			}
 
-			// get name of cat
-			$watchedFilingCat['WatchedFilingCat'] = $document;
-			$name = strtolower(Inflector::slug($watchedFilingCat['WatchedFilingCat']['name']));
-			$watchedFilingCat['WatchedFilingCat']['name'] = $name;
-			$watchedFilingCat['WatchedFilingCat']['cat_id'] = $watchedCatId;
+			$catExists = $this->WatchedFilingCat->find('first', array(
+				'conditions' => array(
+					'WatchedFilingCat.cat_id' => $watchedCatId
+				)
+			));
 
-			$saved = $this->WatchedFilingCat->save($watchedFilingCat);
-			$watchedFilingCat['WatchedFilingCat']['id'] = $this->WatchedFilingCat->id;
-			$programData = $watchedFilingCat['WatchedFilingCat'];
+			if ($catExists) {
+				$data['message'] = 'You can not associate watched filing categories with ' .
+					'more than one program. Please create another watched ' .
+					'filing category.';
+				$saved = false;
+			} else {
+				// get name of cat
+				$watchedFilingCat['WatchedFilingCat'] = $document;
+				$name = strtolower(Inflector::slug($watchedFilingCat['WatchedFilingCat']['name']));
+				$watchedFilingCat['WatchedFilingCat']['name'] = $name;
+				$watchedFilingCat['WatchedFilingCat']['cat_id'] = $watchedCatId;
+
+				$saved = $this->WatchedFilingCat->save($watchedFilingCat);
+				$watchedFilingCat['WatchedFilingCat']['id'] = $this->WatchedFilingCat->id;
+				$programData = $watchedFilingCat['WatchedFilingCat'];
+			}
 		} else {
 			$this->data['ProgramDocument'] = $document;
 			$saved  = $this->ProgramDocument->save($this->data);
 			$programData = $saved['ProgramDocument'];
 		}
 
-			if ($saved) {
-				$data['program_documents'] = $programData;
-				$data['success'] = true;
-			} else {
-				$data['success'] = false;
-			}
+		if ($saved) {
+			$data['program_documents'] = $programData;
+			$data['success'] = true;
+		}
 
 		$this->set('data', $data);
 		$this->render(null, null, '/elements/ajaxreturn');
@@ -72,8 +84,6 @@ class ProgramDocumentsController extends AppController {
 		$watchedCats = $this->WatchedFilingCat->find('all', array(
 			'conditions' => $catCondition
 		));
-
-		$this->log($watchedCats, 'debug');
 
 		$data['success'] = true;
 

@@ -338,7 +338,6 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
-  autoSync: true,
   storeId: 'ProgramDocumentStore',
   model: 'ProgramDocument',
   proxy: {
@@ -348,6 +347,11 @@ Ext.create('Ext.data.Store', {
       read: '/admin/program_documents/read',
       update: '/admin/program_documents/update',
       destroy: '/admin/program_documents/destroy'
+    },
+    listeners: {
+      exception: function (proxy, response, op, eOpts) {
+        Ext.Msg.alert('Error', op.error);
+      }
     },
     reader: {
       type: 'json',
@@ -2121,6 +2125,7 @@ uploadStep = Ext.create('Ext.panel.Panel', {
                   form.reset();
                   vals.template = action.result.url;
                   programDocumentStore.add(vals);
+                  programDocumentStore.sync();
                   programEmailStore.add({
                     program_id: vals.program_id,
                     to: null,
@@ -2138,6 +2143,7 @@ uploadStep = Ext.create('Ext.panel.Panel', {
             } else {
               form.reset();
               programDocumentStore.add(vals);
+              programDocumentStore.sync();
               if (vals.type === 'upload') {
                 programEmailStore.add({
                   program_id: vals.program_id,
