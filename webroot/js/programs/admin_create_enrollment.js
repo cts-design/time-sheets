@@ -350,6 +350,7 @@ Ext.create('Ext.data.Store', {
     },
     listeners: {
       exception: function (proxy, response, op, eOpts) {
+        op.records[0].store.remove(op.records);
         Ext.Msg.alert('Error', op.error);
       }
     },
