@@ -208,9 +208,11 @@ class QueuedDocumentsController extends AppController {
 
 	public function admin_lock_document() {
 		if($this->RequestHandler->isAjax()) {
-			$userId = $this->Auth->user('id');
-			$docId = $this->params['form']['doc_id'];
-			$data = $this->QueuedDocument->lockDocument($docId, $userId);
+			$docId = null;
+			if(isset($this->params['form']['doc_id'])) {
+				$docId = $this->params['form']['doc_id'];
+			}
+			$data = $this->QueuedDocument->lockDocument($docId, $this->Auth->user('id'));
 			if($data) {
 				$data['admin'] = 
 					$this->Auth->user('lastname') . ', ' . $this->Auth->user('firstname');		
