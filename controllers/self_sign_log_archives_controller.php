@@ -209,6 +209,7 @@ class SelfSignLogArchivesController extends AppController {
 			else {
 				$conditions = array('SelfSignLogArchive.level_1 !=' => null);
 			}
+			$buttons = null;
 			$buttonList = $this->SelfSignLogArchive->find('list', array(
 				'fields' => array('SelfSignLogArchive.id', 'SelfSignLogArchive.level_1'),
 				'conditions' => $conditions,
@@ -216,11 +217,13 @@ class SelfSignLogArchivesController extends AppController {
 			if(isset($buttonList)) {
 				foreach($buttonList as $k => $v) {
 					if($v) {
-						$button[$v] = $masterButtonList[$v];
+						$buttons[$v] = $masterButtonList[$v];
 					}			
 				}
-				asort($button);
-				$this->set('buttons', $button);
+				if($buttons) {
+					asort($buttons);
+					$this->set('buttons', $button);
+				}
 			}
 			$this->render('admin_get_buttons_ajax');
 		}
