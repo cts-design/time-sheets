@@ -159,20 +159,21 @@ class SelfSignLogArchivesController extends AppController {
 		
 		$averageTimeInSeconds = $this->_calculateAverageTimeInSeconds($closedInTimes);
 		$average = $this->SelfSignLogArchive->_time_duration($averageTimeInSeconds);
-		
-        $report[(count($report) + 3)] = array(
-            'Name' => '',
-            'Location' => '',
-            'Button 1' => '',
-            'Button 2' => '',
-            'Button 3' => '',
-            'Other' => '',
-            'Last Activity Admin' => '',
-            'Status' => '',
-            'Created' => '',
-            'Closed' => '',
-            'Closed In' => "Average close time: {$average}"
-        );
+		if(isset($report)) {
+			 $report[(count($report) + 3)] = array(
+				'Name' => '',
+				'Location' => '',
+				'Button 1' => '',
+				'Button 2' => '',
+				'Button 3' => '',
+				'Other' => '',
+				'Last Activity Admin' => '',
+				'Status' => '',
+				'Created' => '',
+				'Closed' => '',
+				'Closed In' => "Average close time: {$average}"
+			);
+		}
 		
 		if(empty($report[0])) {
 		    $this->Session->setFlash(__('There are no results to generate a report', true), 'flash_failure');
