@@ -312,6 +312,7 @@ class UsersController extends AppController {
         }
         if (!empty($this->data)) {
             if ($this->User->save($this->data)) {
+				$this->data = $this->User->read(null, $this->Auth->user('id'));
                 $this->Session->write('Auth.User.email', $this->data['User']['email']);
                 $this->Transaction->createUserTransaction('Customer',
                     null, null, 'Edited profile '. $this->data['User']['lastname'] .
