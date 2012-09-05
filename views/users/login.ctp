@@ -21,14 +21,16 @@
 	<fieldset>
 		<legend>Login</legend>
 		<?php
-			echo $form->create('User', array('action' => 'login'));
-		    echo $form->input('username', array(
-		    	'label' => 'Lastname', 
-		    	'between' => '<br />',
+		    echo $form->create('User');
+			echo $form->input('username', array(
+				'label' =>__('Lastname', true),
+				'between' => '<br />',
 				'after' => '<br />'));
 		    echo '<br class="clear"/>';
 		    echo $form->input('password', array(
-		    	'label' => __('9 Digit SSN', true)
+				'label' => __('9 Digit SSN', true),
+				'between' => '<br />',
+				'after' => '<br />'
 		    ));
 		   echo $form->hidden('User.login_type', array('value' => $loginType));
 			if(isset($this->params['pass'][0]) && $this->params['pass'][0] === 'program') {
