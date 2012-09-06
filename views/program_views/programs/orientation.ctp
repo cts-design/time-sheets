@@ -5,21 +5,24 @@
 <div class="steps-container">
   <ol class="steps">
     <?php if($programResponse['ProgramResponse']['status'] === 'incomplete') : ?>
-    <li class="module incomplete">
+    <li class="program incomplete">
       <div class="details">
         <h3><?= $program['Program']['name'] ?> Orientation</h3>
         <p><?= count($completedSteps) ?> of 2 steps completed</p>
       </div>
       <span class="status">
-        <?= Inflector::humanize($programResponse['ProgramResponse']['status']) ?>
+        Current Status: <?= Inflector::humanize($programResponse['ProgramResponse']['status']) ?>
       </span>
       <ol>
+		<?php $currentStep = 0 ?>
         <?php foreach($program['ProgramStep'] as $step) : ?>
           <?php $class = (in_array($step['id'], $completedSteps)) ? 'complete' : 'incomplete' ?>
 		  <?php if($step['parent_id']) : ?>
+			<? $currentStep++ ?>
 			<?php $redoable = ($step['redoable']) ? 'redoable' : '' ?>
 			<li class="step <?= $class ?> <?= $redoable ?>">
             <div class="inner-container">
+			<?= "Step $currentStep:" ?>
               <?= $step['name'] ?>
               <?php $link = ($step['type'] === 'media') ? 'View Media' : 'Take Quiz' ?>
               <span class="action">
