@@ -81,6 +81,12 @@
 										<?php if(isset($link2)) : ?>
 											<?= $link2?>
 										<?php endif ?>
+										<?php if ($class === 'complete'): ?>
+											<?php $completedDate = Set::extract('/ProgramResponseActivity[program_step_id=' . $step['id'] . ']/created', $programResponse) ?>
+											<span class="completed-date">
+												Completed: <?= date('m/d/Y', strtotime($completedDate[0])) ?>
+											</span>
+										<?php endif; ?>
 									</span>
 								</div>
 							</li>
