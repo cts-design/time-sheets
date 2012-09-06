@@ -25,6 +25,7 @@
 			<?= "Step $currentStep:" ?>
               <?= $step['name'] ?>
               <?php $link = ($step['type'] === 'media') ? 'View Media' : 'Take Quiz' ?>
+				<?php if ($class === 'complete') $link = 'Complete' ?>
               <span class="action">
                 <?= $this->Html->link($link, array(
                   'controller' => 'program_responses',
@@ -32,6 +33,12 @@
                   $program['Program']['id'],
                   $step['id']
                 )) ?>
+				<?php if ($class === 'complete'): ?>
+					<?php $completedDate = Set::extract('/ProgramResponseActivity[program_step_id=' . $step['id'] . ']/created', $programResponse) ?>
+					<span class="completed-date">
+						Completed: <?= date('m/d/Y', strtotime($completedDate[0])) ?>
+					</span>
+				<?php endif; ?>
               </span>
             </div>
           </li>
