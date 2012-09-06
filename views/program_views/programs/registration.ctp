@@ -4,17 +4,17 @@
 
 <div class="steps-container">
 	<ol class="steps">
-		<li class="module <?= $class = (count($completedSteps)) ? 'complete' : 'incomplete' ?>">
+		<li class="program <?= $class = (count($completedSteps)) ? 'complete' : 'incomplete' ?>">
 			<div class="details">
 				<h3><?= $program['Program']['name'] ?> Registration</h3>
 				<p><?= count($completedSteps) ?> of 1 steps completed</p>
 			</div>
 			<span class="status">
-				<?php echo Inflector::humanize($programResponse['ProgramResponse']['status']) ?>
+				Current Status: <?php echo Inflector::humanize($programResponse['ProgramResponse']['status']) ?>
 			</span>
 			<ol>
 			<?php if($programResponse['ProgramResponse']['status'] === 'incomplete') : ?>
-				<?php $redoable = ($step['redoable']) ? 'redoable' : '' ?>
+				<?php $redoable = ($program['ProgramStep'][1]['redoable']) ? 'redoable' : '' ?>
 				<li class="step incomplete <?= $redoable ?>">
 					<div class="inner-container">
 						<?= $program['ProgramStep'][1]['name'] ?>
