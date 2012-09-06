@@ -4,7 +4,7 @@ App::import('Component', 'Notifications');
 
 class FtpDocumentAbsorptionShell extends Shell {
 
-	public $uses = array('AutoLock', 'DocumentQueueCategory', 'FtpDocumentScanner', 'QueuedDocument');
+	public $uses = array('AutoLock', 'DocumentQueueCategory', 'FtpDocumentScanner', 'QueuedDocument', 'BarCodeDefinition');
 	function main() {
 
 	$this->Notifications = &new NotificationsComponent();
@@ -22,7 +22,7 @@ class FtpDocumentAbsorptionShell extends Shell {
 			$scan_path = Configure::read('Document.scan.path');
 			// Read in existing FTP log
 			$ftp_log = file(Configure::read('FTP.log.path'));
-			$path = Configure::read('Document.storage.path');
+			$path = APP . substr(Configure::read('Document.storage.path'), 1);
 			if ($folder_list = opendir($scan_path)) {
 				while (false != ($scan_folder = readdir($folder_list))) {
 					if (($scan_folder != '.') && ($scan_folder != '..')) {
@@ -103,8 +103,17 @@ class FtpDocumentAbsorptionShell extends Shell {
 										}
 									}
 									$this->QueuedDocument->create();
-									if ($this->QueuedDocument->save(array('filename' => $docName, 'entry_method' => 'FTP Scanner', 'queue_category_id' => $my_category, 'scanned_location_id' => $my_location))) {
-									} else {
+									$this->data = array(
+										'filename' => $docName, 
+										'entry_method' => 'FTP Scanner', 
+										'queue_category_id' => $my_category, 
+										'scanned_location_id' => $my_location);
+									$barCode = $this->BarCodeDefinition->barDecode($path . $docName);
+									if ($barCode) {
+										$this->data['bar_code_definition_id'] = $barCode['BarCodeDefinition']['id'];
+										$this->data['user_id'] = $barCode['User']['id'];	
+									}
+									if (!$this->QueuedDocument->save($this->data)) {
 										$this->log('FTP ABSORB: Can\'t write document record to QueuedDocument table in database', 'error');
 										continue;
 									}
