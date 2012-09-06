@@ -11,16 +11,17 @@
 					<h3><?= $program['Program']['name'] ?> Enrollment</h3>
 				</div>
 				<span class="status <?= $programResponse['ProgramResponse']['status'] ?>">
-					<?= Inflector::humanize($programResponse['ProgramResponse']['status']) ?>
+					Current Status: <?= Inflector::humanize($programResponse['ProgramResponse']['status']) ?>
 				</span>
 			</li>
 			<?php $k = 0; ?>
+			<?php $stepNumber = 0; ?>
 			<?php foreach($program['ProgramStep'] as $step) : ?>
 				<?php if(!$step['type']) : ?>
 				<?php if ($k): ?></ol><?php endif ?>
 					<li class="module">
 						<div class="details">
-							<h3><?php echo $step['name'] ?></h3>
+							<h3><?= $step['name'] ?></h3>
 						</div>
 						<?php
 							$i = 0;
@@ -36,18 +37,22 @@
 						<ol>
 						<?php $k++ ?>
 				<?php else : ?>
+							<?php $stepNumber++ ?>
 							<?php $class = (in_array($step['id'], $completedSteps)) ? 'complete' : 'incomplete' ?>
 							<li class="step <?= $class . ' ' . $step['type'] ?>">
 								<div class="inner-container">
+									<?= "Step $stepNumber:" ?>
 									<?= $step['name'] ?>
 									<?php if($step['type'] === 'media') : ?>
-										<?php $link = $this->Html->link('View Media', array(
+										<?php $actionName = ($class === 'complete') ? 'Complete' : 'View Media' ?>
+										<?php $link = $this->Html->link($actionName, array(
 											'controller' => 'program_responses',
 											'action' => 'media', 
 											$program['Program']['id'], 
 											$step['id'])) ?>
 									<?php elseif($step['type'] === 'form' || $step['type'] === 'custom_form') : ?>
-										<?php $link = $this->Html->link('Complete Form', array(
+										<?php $actionName = ($class === 'complete') ? 'Complete' : 'Complete Form' ?>
+										<?php $link = $this->Html->link($actionName, array(
 											'controller' => 'program_responses',
 											'action' => 'form',
 											$program['Program']['id'],
