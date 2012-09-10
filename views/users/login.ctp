@@ -11,7 +11,7 @@
 <div id="UserLoginForm">
 	<p>
         <?php printf(__("Welcome to the %s Online Services System. To begin, please log in with
-                         your last name and the last 4 digits of your social security
+                         your last name and your full social security
                          number", true), Configure::read('Company.name')) ?>
 	</p>
 	<?php if(isset($instructions)) : ?>
