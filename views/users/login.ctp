@@ -26,7 +26,6 @@
 				'label' =>__('Lastname', true),
 				'between' => '<br />',
 				'after' => '<br />'));
-		    echo '<br class="clear"/>';
 		    echo $form->input('password', array(
 				'label' => __('9 Digit SSN', true),
 				'between' => '<br />',
@@ -36,7 +35,6 @@
 			if(isset($this->params['pass'][0]) && $this->params['pass'][0] === 'program') {
 				echo $form->hidden('User.program_id', array('value' => $this->params['pass'][1]));
 			}
-			echo '<br class="clear" />';
 		    echo $form->end(__('Login', true));
 		  ?>
 	  </fieldset>
