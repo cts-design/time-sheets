@@ -12,5 +12,17 @@ class ProgramResponseActivity extends AppModel {
 			'order' => ''
 		)
 	);
+
+	public function looseEqualTo($input) {
+		$key   = array_pop(array_keys($input));
+		$input = array_pop(array_values($input));
+		$value = array_pop($this->validate[$key]['rule']);
+
+		if (strtolower($input) === strtolower($value)) {
+			return true;
+		}
+
+		return false;
+	}
 }
 ?>

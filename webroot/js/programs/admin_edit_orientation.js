@@ -1185,7 +1185,7 @@ formBuilder = Ext.create('Ext.panel.Panel', {
 
         parseVals[vals.type] && parseVals[vals.type]();
 
-        validation.rule = ['equalTo', vals.answer];
+        validation.rule = ['looseEqualTo', vals.answer];
         validation.message = 'Incorrect';
 
         vals.attributes = encodeObject(attributes);

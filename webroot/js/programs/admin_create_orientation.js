@@ -1165,12 +1165,17 @@ formBuilder = Ext.create('Ext.panel.Panel', {
 
         parseVals[vals.type] && parseVals[vals.type]();
 
+        validation.rule = ['looseEqualTo', vals.answer];
+        validation.message = 'Incorrect';
+
         vals.attributes = encodeObject(attributes);
         vals.options = encodeObject(options);
         vals.validation = encodeObject(validation);
         vals.program_step_id = programStepId;
         vals.name = vals.label.underscore();
         vals.order = (programFormFieldStore.count() + 1);
+
+        console.log(validation);
 
 
         grid.store.add(vals);
