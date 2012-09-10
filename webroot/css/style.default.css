@@ -603,6 +603,7 @@ div.required label:after {
   padding: 8px 15px;
 }
 
+.steps-container.enrollment li.program .details,
 .steps-container.enrollment li.module .details {
   line-height: 3em !important;
 }
