@@ -1,3 +1,16 @@
+var productionURL = function() {
+  var url;
+
+  if (Ext.isIE) {
+    url  = window.location.protocol;
+    url += '//' + window.location.host;
+  } else {
+    url = window.location.origin;
+  }
+
+  return url;
+};
+
 /**
  * Models
  */
@@ -255,7 +268,7 @@ Ext.onReady(function () {
                 var msg;
 
                 msg = 'Please copy the following url.<br /><br />';
-                msg += window.location.origin + '/programs/registration/' + rec.data.id;
+                msg += productionURL() + '/programs/registration/' + rec.data.id;
                 msg += '<br /><br />';
 
                 Ext.Msg.alert('Production Url', msg);
@@ -455,7 +468,7 @@ Ext.onReady(function () {
                 var msg;
 
                 msg = 'Please copy the following url.<br /><br />';
-                msg += window.location.origin + '/programs/orientation/' + rec.data.id;
+                msg += productionURL() + '/programs/orientation/' + rec.data.id;
                 msg += '<br /><br />';
 
                 Ext.Msg.alert('Production Url', msg);
@@ -655,7 +668,7 @@ Ext.onReady(function () {
                 var msg;
 
                 msg = 'Please copy the following url.<br /><br />';
-                msg += window.location.origin + '/programs/enrollment/' + rec.data.id;
+                msg += productionURL() + '/programs/enrollment/' + rec.data.id;
                 msg += '<br /><br />';
 
                 Ext.Msg.alert('Production Url', msg);
@@ -859,7 +872,7 @@ Ext.onReady(function () {
                 var msg;
 
                 msg = 'Please copy the following url.<br /><br />';
-                msg += window.location.origin + '/programs/esign/' + rec.data.id;
+                msg += productionURL() + '/programs/esign/' + rec.data.id;
                 msg += '<br /><br />';
 
                 Ext.Msg.alert('Production Url', msg);
