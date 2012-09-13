@@ -508,6 +508,10 @@ class UsersController extends AppController {
             }
             else {
                 $this->Session->setFlash(__('The information could not be saved. Please, try again.', true), 'flash_failure');
+				if(isset($this->data['User']['ssn']))
+					unset($this->data['User']['ssn']);
+				if(isset($this->data['User']['ssn_confirm']))
+					unset($this->data['User']['ssn_confirm']);
             }
         }
         if (empty($this->data)) {
@@ -560,6 +564,10 @@ class UsersController extends AppController {
             }
             else {
                 $this->Session->setFlash(__('The information could not be saved. Please, try again.', true), 'flash_failure');
+				if(isset($this->data['User']['ssn']))
+					unset($this->data['User']['ssn']);
+				if(isset($this->data['User']['ssn_confirm']))
+					unset($this->data['User']['ssn_confirm']);
             }
         }
         if (empty($this->data)) {
