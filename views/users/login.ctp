@@ -12,7 +12,7 @@
 	<p>
         <?php printf(__("Welcome to the %s Online Services System. To begin, please log in with
                          your last name and your full social security
-                         number", true), Configure::read('Company.name')) ?>
+                         number.", true), Configure::read('Company.name')) ?>
 	</p>
 	<?php if(isset($instructions)) : ?>
 		<p><?php echo __($instructions) ?></p>
