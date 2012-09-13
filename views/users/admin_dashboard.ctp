@@ -41,11 +41,10 @@
             <h3><?php echo $html->image('icons/help.png')?> <?php __('Help') ?></h3>
             <?php if($this->Session->read('Auth.User.role_id') <= 3) : ?>
 		    	<p>
-		    		<?php echo $html->image('icons/email.png')?> 
-		    		<a href="mailto:dev@ctsfla.com?subject=This subject line will be the title of your ticket
-		    			&body=Please be as descriptive as possible.
-		    			%0AInclude a screenshot of the error as an attachment if possible">
-		    			<?php __('Create a support ticket via email') ?></a> 
+					<a href="/admin/help_desk_tickets">
+						<?php echo $html->image('icons/email.png')?> 
+						<?php __('Create a support ticket') ?>
+					</a> 
 		    	</p>
 		    	<p><?php echo $html->image('icons/telephone.png')?> 352-666-0333</p>
 	    	<?php else : ?>

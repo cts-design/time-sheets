@@ -1141,3 +1141,13 @@ table.raw-data tr th,
 table.raw-data tr td {
 	padding: 2px 15px;
 }
+
+
+#helpDeskForm .error-message {
+	margin: 0;
+	float: none;
+}
+
+#helpDeskForm .input {
+	margin-bottom: 5px;
+}

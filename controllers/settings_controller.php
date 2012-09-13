@@ -44,5 +44,67 @@ class SettingsController extends AppController {
 			$this->render(null, null, '/elements/ajaxreturn');	
 		}
 	}
+
+	public function admin_kiosk_confirmation() {
+		if($this->RequestHandler->isAjax()) {
+			$settings = $this->Setting->findByName('KioskConfirmation', array('id','value'));
+			if(isset($this->params['form']['confirmation']) && $this->params['form']['confirmation'] != '') {
+				$this->data['Setting']['value'] = $this->params['form']['confirmation'];
+				if($settings) {
+					$this->data['Setting']['id'] = $settings['Setting']['id'];
+				}	
+				$this->data['Setting']['module'] = 'SelfSign';
+				$this->data['Setting']['name'] = 'KioskConfirmation';				
+				if($this->Setting->save($this->data)) {
+					Cache::delete('settings');
+					$data['success'] = true;
+					$data['message'] = 'Kiosk customer info confirmation settings updated successfully';
+					$settings = $this->Setting->findByName('KioskConfirmation', array('id','value'));
+				}
+				else {
+					$data['success'] = false;
+					$data['message'] = 'Kiosk customer info confirmation settings could not be updated';					
+				}				
+			}
+			else {
+				$data['confirmation'][0]['value'] = $settings['Setting']['value'];
+			}
+			$this->set(compact('data'));	
+			$this->render(null, null, '/elements/ajaxreturn');	
+		}
+	}
+	
+	public function admin_kiosk_time_out() {
+		if($this->RequestHandler->isAjax()) {
+			$settings = $this->Setting->findByName('KioskTimeOut', array('id','value'));
+			if(isset($this->params['form']['timeout']) && $this->params['form']['timeout'] != '') {
+				$values[0]['value'] = $this->params['form']['timeout'];
+				$values[1]['value'] = $this->params['form']['reminder'];
+				$this->data['Setting']['value'] = json_encode($values);
+				if($settings) {
+					$this->data['Setting']['id'] = $settings['Setting']['id'];
+				}	
+				$this->data['Setting']['module'] = 'SelfSign';
+				$this->data['Setting']['name'] = 'KioskTimeOut';				
+				if($this->Setting->save($this->data)) {
+					Cache::delete('settings');
+					$data['success'] = true;
+					$data['message'] = 'Kiosk time out settings updated successfully';
+					$settings = $this->Setting->findByName('KioskTimeOut', array('id','value'));
+				}
+				else {
+					$data['success'] = false;
+					$data['message'] = 'Kiosk time out settings could not be updated';					
+				}				
+			}
+			else {
+				$data['timeout'] = json_decode($settings['Setting']['value'], true);
+			}
+			$this->set(compact('data'));	
+			$this->render(null, null, '/elements/ajaxreturn');	
+		}
+	}
+
+
 }
 ?>

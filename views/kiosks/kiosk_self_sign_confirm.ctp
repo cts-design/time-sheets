@@ -169,7 +169,16 @@
 	    </p>
 	    <br class="clear"/>
     <?php endif ?>                       
-    <div class="actions">
+    <?php if(in_array('disability', $fields)) : ?>
+	    <p class="left align-right">
+		<strong><?php __('Do you have a substantial disability:') ?> </strong>
+	    </p>
+	    <p class="left">
+		<?php echo ($session->read('Auth.User.disability') ? 'Yes' : 'No'); ?>
+	    </p>
+	    <br class="clear"/>
+	<?php endif ?>     
+	<div class="actions">
 	<?php
 	echo $html->link(__('Correct', true), 'self_sign_service_selection', array('class' => 'self-sign-kiosk-link'));
 	echo '&nbsp;';

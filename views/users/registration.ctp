@@ -63,7 +63,8 @@ $(document).ready(function() {
 		if(Configure::read('Registration.ssn') == 'full') {
 		    echo $this->Form->input('ssn', array(
 				'label' => __('Social Security Number', true),
-				'between' => '<br />'));
+				'between' => '<br />',
+				'after' => '<br />'));
 		    echo $this->Form->input('ssn_confirm', array(
 				'label' => __('Please confirm your Social Security Number', true),
 				'maxlength' => 9,
@@ -180,6 +181,13 @@ $(document).ready(function() {
 			'after' => '<br />'));
 		echo $this->Form->input('veteran', array(
 			'label' => __('Are you a US veteran', true),
+			'type' => 'select',
+			'empty' => 'Please Select',
+			'options' => array('1' => 'Yes', '0' => 'No'), 
+			'between' => '<br />',
+			'after' => '<br />'));				
+		echo $this->Form->input('disability', array(
+			'label' => __('Do you have a substantial disability', true),
 			'type' => 'select',
 			'empty' => 'Please Select',
 			'options' => array('1' => 'Yes', '0' => 'No'), 

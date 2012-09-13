@@ -164,6 +164,30 @@
 		    'between' => '</p><p class="left">',
 		    'after' => '</p>'
 	    ));				
+		echo '<br class="clear" />' ;
+	    echo $this->Form->input('veteran', array(
+	    	'type' => 'select',
+	    	'empty' => 'Please Select',
+	    	'options' => array(
+	    		1 => 'Yes',
+				0 => 'No'
+				),
+		    'before' => '<p class="left">',
+		    'between' => '</p><p class="left">',
+		    'after' => '</p>'
+	    ));	
+		echo '<br class="clear" />' ;
+	    echo $this->Form->input('disability', array(
+	    	'type' => 'select',
+	    	'empty' => 'Please Select',
+	    	'options' => array(
+	    		1 => 'Yes',
+				0 => 'No'
+				),
+		    'before' => '<p class="left">',
+		    'between' => '</p><p class="left">',
+		    'after' => '</p>'
+	    ));	
 	    ?>
 	</fieldset>
 	<?php echo $this->Form->end(__('Submit', true)); ?>

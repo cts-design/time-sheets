@@ -24,6 +24,7 @@
 		<th width="20%" class="ui-state-default"><?php echo $this->Paginator->sort(__('Location Recognition Name', true), 'location_recognition_name'); ?></th>
 		<th width="30%" class="ui-state-default"><?php echo $this->Paginator->sort(__('Location Description', true), 'location_description'); ?></th>
 		<th width="30%" class="ui-state-default"><?php echo $this->Paginator->sort(__('Logout Message', true), 'logout_message'); ?></th>
+		<th width="30%" class="ui-state-default"><?php echo $this->Paginator->sort(__('Assistance Message', true), 'assistance_message'); ?></th>
 		<th width="10%" class="actions ui-state-default"><?php __('Actions'); ?></th>
 	    </tr>
 	</thead>
@@ -40,6 +41,7 @@
     	    <td><?php echo $kiosk['Kiosk']['location_recognition_name']; ?>&nbsp;</td>
     	    <td><?php echo $kiosk['Kiosk']['location_description']; ?>&nbsp;</td>
     	    <td><?php echo $kiosk['Kiosk']['logout_message']; ?>&nbsp;</td>
+    	    <td><?php echo $kiosk['Kiosk']['assistance_message']; ?>&nbsp;</td>
     	    <td class="actions">
 		    <?php echo $this->Html->link(__('Buttons', true), array('controller' => 'kiosk_buttons', 'action' => 'index', $kiosk['Kiosk']['id']), array('class' => 'buttons')); ?>
 		    <?php echo $this->Html->link(__('Edit', true), array('action' => 'edit', $kiosk['Kiosk']['id']), array('class' => 'edit')); ?>

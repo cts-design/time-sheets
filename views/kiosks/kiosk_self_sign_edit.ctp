@@ -172,7 +172,17 @@
 			'before' => '<p class="left">',
 			'between' => '</p><p class="left">',
 			'after' => '</p>'));
-	}	
+	}
+	if(in_array('disability', $fields)) {
+		echo $this->Form->input('User.disability', array(
+			'label' => __('Do you have a substantial disability', true),
+			'type' => 'select',
+			'empty' => 'Please Select',
+			'options' => array(1 => 'Yes', 0 => 'No'), 
+			'before' => '<p class="left">',
+			'between' => '</p><p class="left">',
+			'after' => '</p>'));
+	}		
 	echo $this->Form->input('User.id');
 	echo $this->Form->input('User.role_id', array('type' => 'hidden', 'value' => 1));
 	echo $this->Form->hidden('User.self_sign_edit', array('value' => 'edit'));
