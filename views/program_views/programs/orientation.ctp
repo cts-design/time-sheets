@@ -34,7 +34,7 @@
 					<?php endif; ?>
 				<?php endif; ?>
               <?php $link = ($step['type'] === 'media') ? 'View Media' : 'Take Quiz' ?>
-				<?php if ($class === 'complete') $link = 'Complete' ?>
+				<?php if ($class === 'complete') $link = 'Completed' ?>
               <span class="action">
                 <?= $this->Html->link($link, array(
                   'controller' => 'program_responses',

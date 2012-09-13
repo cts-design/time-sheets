@@ -49,7 +49,7 @@
 										<?php elseif ($step['media_type'] === 'flv'): ?>
 											<img class="ico" src="/img/icons/flv.png" />
 										<?php endif; ?>
-										<?php $actionName = ($class === 'complete') ? 'Complete' : 'View Media' ?>
+										<?php $actionName = ($class === 'complete') ? 'Completed' : 'View Media' ?>
 										<?php $link = $this->Html->link($actionName, array(
 											'controller' => 'program_responses',
 											'action' => 'media', 
@@ -57,7 +57,7 @@
 											$step['id'])) ?>
 									<?php elseif($step['type'] === 'form' || $step['type'] === 'custom_form') : ?>
 										<img class="ico" src="/img/icons/form.png" />
-										<?php $actionName = ($class === 'complete') ? 'Complete' : 'Complete Form' ?>
+										<?php $actionName = ($class === 'complete') ? 'Completed' : 'Complete Form' ?>
 										<?php $link = $this->Html->link($actionName, array(
 											'controller' => 'program_responses',
 											'action' => 'form',
