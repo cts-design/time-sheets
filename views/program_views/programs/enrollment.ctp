@@ -44,6 +44,11 @@
 									<?= "Step $stepNumber:" ?>
 									<?= $step['name'] ?>
 									<?php if($step['type'] === 'media') : ?>
+										<?php if ($step['media_type'] === 'pdf'): ?>
+											<img class="ico" src="/img/icons/pdf.png" />
+										<?php elseif ($step['media_type'] === 'flv'): ?>
+											<img class="ico" src="/img/icons/flv.png" />
+										<?php endif; ?>
 										<?php $actionName = ($class === 'complete') ? 'Complete' : 'View Media' ?>
 										<?php $link = $this->Html->link($actionName, array(
 											'controller' => 'program_responses',
@@ -51,6 +56,7 @@
 											$program['Program']['id'], 
 											$step['id'])) ?>
 									<?php elseif($step['type'] === 'form' || $step['type'] === 'custom_form') : ?>
+										<img class="ico" src="/img/icons/form.png" />
 										<?php $actionName = ($class === 'complete') ? 'Complete' : 'Complete Form' ?>
 										<?php $link = $this->Html->link($actionName, array(
 											'controller' => 'program_responses',
@@ -65,6 +71,7 @@
 												$step['id'])) ?>
 										<?php endif ?>
 									<?php elseif($step['type'] === 'required_docs') : ?>
+										<img class="ico" src="/img/icons/doc_upload.png" />
 										<?php $link = $this->Html->link('Upload Documents', array(
 											'controller' => 'program_responses',
 											'action' => 'upload_docs',

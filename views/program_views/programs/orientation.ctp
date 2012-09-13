@@ -24,6 +24,15 @@
             <div class="inner-container">
 			<?= "Step $currentStep:" ?>
               <?= $step['name'] ?>
+				<?php if ($step['type'] === 'form'): ?>
+					<img class="ico" src="/img/icons/form.png" />
+				<?php elseif ($step['type'] === 'media'): ?>
+					<?php if ($step['media_type'] === 'pdf'): ?>
+						<img class="ico" src="/img/icons/pdf.png" />
+					<?php elseif ($step['media_type'] === 'flv'): ?>
+						<img class="ico" src="/img/icons/flv.png" />
+					<?php endif; ?>
+				<?php endif; ?>
               <?php $link = ($step['type'] === 'media') ? 'View Media' : 'Take Quiz' ?>
 				<?php if ($class === 'complete') $link = 'Complete' ?>
               <span class="action">

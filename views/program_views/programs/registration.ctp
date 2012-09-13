@@ -18,6 +18,7 @@
 				<li class="step incomplete <?= $redoable ?>">
 					<div class="inner-container">
 						<?= $program['ProgramStep'][1]['name'] ?>
+						<img class="ico" src="/img/icons/form.png" />
 						<span class="action">
 							<?php echo $html->link(
 								'Complete Form',
