@@ -537,6 +537,10 @@ class UsersController extends AppController {
     }
 
     function kiosk_mini_registration($lastname=null) {
+		$this->loadModel('Kiosk');
+		$this->Kiosk->recursive = -1;
+		$this->User->recursive  = -1;
+
         if (!empty($this->data)) {
             $this->User->Behaviors->disable('Disableable');
 			$this->User->setValidation('kioskRegistration');
@@ -559,7 +563,7 @@ class UsersController extends AppController {
                 $this->data['User']['username'] = $this->data['User']['lastname'];
                 $this->Auth->login($this->data);
                 $this->Transaction->createUserTransaction('Self Sign',
-                    $userId, $this->User->SelfSignLog->Kiosk->getKioskLocationId(), 'User self registered using a kiosk.');
+                    $userId, $this->Kiosk->getKioskLocationId(), 'User self registered using a kiosk.');
                 $this->Session->setFlash(__('Your account has been created.', true), 'flash_success');
                 $this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_confirm'));
             }
