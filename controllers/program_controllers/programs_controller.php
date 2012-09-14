@@ -1,6 +1,4 @@
 <?php
-// TODO - Remove chromephp
-App::import('Vendor', 'chromephp/chromephp');
 
 class ProgramsController extends AppController {
 
@@ -16,8 +14,8 @@ class ProgramsController extends AppController {
 				$this->redirect(array('controller' => 'users', 'action' => 'edit', $this->Auth->user('id')));
 		}
 	}
-	
-	// TODO make these actions work with an index method and routes ?? 
+
+	// TODO make these actions work with an index method and routes ??
 	public function registration($id=null) {
 		$this->loadProgram($id);
 	}
@@ -202,7 +200,7 @@ class ProgramsController extends AppController {
 		$data['title_for_layout'] = $program['Program']['name'] . ' Dashboard';
 		$data['program'] = $program;
 		$data['programResponse'] = $programResponse;
-		
+
 		$programSteps = null;
 		$modules = Set::extract('/ProgramStep[type=/^$/i]/id', $program);
 		foreach ($modules as $key => $value) {
