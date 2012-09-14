@@ -493,8 +493,7 @@ class UsersController extends AppController {
             }
             if ($this->User->save($this->data)) {
                 $userId = $this->User->getInsertId();
-                $last4 = substr($this->data['User']['ssn'], -4);
-                $this->data['User']['password'] = Security::hash($last4, null, true);
+                $this->data['User']['password'] = Security::hash($this->data['User']['ssn'], null, true);
                 $this->data['User']['username'] = $this->data['User']['lastname'];
                 $this->Auth->login($this->data);
                 $this->Transaction->createUserTransaction('Web Site',
@@ -558,8 +557,7 @@ class UsersController extends AppController {
             $this->User->create();
             if ($this->User->save($this->data)) {
                 $userId = $this->User->getInsertId();
-                $last4 = substr($this->data['User']['ssn'], -4);
-                $this->data['User']['password'] = Security::hash($last4, null, true);
+                $this->data['User']['password'] = Security::hash($this->data['User']['ssn'], null, true);
                 $this->data['User']['username'] = $this->data['User']['lastname'];
                 $this->Auth->login($this->data);
                 $this->Transaction->createUserTransaction('Self Sign',
