@@ -22,7 +22,7 @@ $(document).ready(function() {
     <?php __('Please register your information using the following form.') ?>
 	<br />	
     <?php __('If you have already created a login, please') ?>
-    <?php echo $html->link(__('click here', true), array('controller' => 'users', 'action' => 'login', 'child')) ?> 
+    <?php echo $html->link(__('click here', true), array('controller' => 'users', 'action' => 'login')) ?> 
     <?php __('to return to the login page and try your login information again.') ?>
 </p>
 <br />
