@@ -571,7 +571,9 @@ class User extends AppModel {
 			),
 			'language' => array(),
 			'race' => array(),
-			'ethnicity' => array()		
+			'ethnicity' => array(),
+			'veteran' => array(),
+			'disability' => array()		
 		)
 	);
 	
