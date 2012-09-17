@@ -223,7 +223,7 @@ class SelfSignLogArchivesController extends AppController {
 				}
 				if($buttons) {
 					asort($buttons);
-					$this->set('buttons', $button);
+					$this->set('buttons', $buttons);
 				}
 			}
 			$this->render('admin_get_buttons_ajax');
