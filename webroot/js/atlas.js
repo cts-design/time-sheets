@@ -74,4 +74,7 @@ String.prototype.humanize = function () {
   return this.capitalize().replace(/_/g, ' ');
 };
 
-
+if (!Ext.isChrome) {
+  window.location.origin  = window.location.protocol;
+  window.location.origin += '//' + window.location.host;
+}
