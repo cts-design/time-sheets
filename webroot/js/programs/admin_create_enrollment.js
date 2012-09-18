@@ -2537,11 +2537,56 @@ emails = Ext.create('Ext.panel.Panel', {
       programEmailStore = Ext.data.StoreManager.lookup('ProgramEmailStore');
 
     programEmailStore.each(function (rec) {
-      if (!rec.data.program_id) {
-        rec.set({
-          program_id: program.data.id
-        });
+      var programEmail = {
+        program_id: program.get('id')
+      };
+
+      switch (rec.get('type')) {
+        case 'main':
+          programEmail.body = 'Welcome to the ' +
+          AtlasInstallationName +
+          ' Web Services system. You have begun the submission process for ' +
+          program.get('name').humanize() +
+          '. <br />' +
+          '<br />' +
+          '<a href="' +
+          window.location.origin +
+          '/programs/enrollment' +
+          rec.get('id') +
+          '">Click here to return to the ' +
+          program.get('name').humanize() +
+          ' enrollment</a>';
+          break;
+
+        case 'expiring_soon':
+          programEmail.body = 'This is an automated notification to inform you' +
+          ' that the program you began enrollment for will expire in ' +
+          program.get('send_expiring_soon') +
+          ' days. Please login to the ' +
+          AtlasInstallationName +
+          ' Web Services system to finish your enrollment. If you questions' +
+          ' please contact the ' +
+          AtlasInstallationName +
+          ' for assistance.';
+          break;
+
+        case 'expired':
+          programEmail.body = 'We\'re sorry but your submission has' +
+          ' expired. Please contact the ' +
+          AtlasInstallationName +
+          ' for further assistance.';
+          break;
+
+        case 'complete':
+          programEmail.body = 'We have reviewed your submission and it' +
+          ' has been marked as complete. Please visit the following link for' +
+          ' submitted is accurate.<br />' +
+          '<br />' +
+          '<a href="#">ADMIN. PLEASE ADD YOUR LINK</a>';
+          break;
       }
+
+      rec.set(programEmail);
     });
   },
   process: function () {
