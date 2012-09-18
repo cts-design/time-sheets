@@ -2326,14 +2326,14 @@ instructions = Ext.create('Ext.panel.Panel', {
     Ext.Ajax.request({
       url: '/admin/program_steps/read',
       params: {
-        program_id: program.data.id
+        program_id: program.get('id')
       },
       success: function (response) {
         var res = Ext.JSON.decode(response.responseText);
         Ext.Object.each(res.program_steps, function (key, value, me) {
           if (value.type) {
             programInstructionStore.add({
-              program_id: program.data.id,
+              program_id: program.get('id'),
               program_step_id: value.id,
               text: 'Instructions for ' + value.name + ' step',
               type: value.type + '_step'
@@ -2344,9 +2344,68 @@ instructions = Ext.create('Ext.panel.Panel', {
     });
 
     programInstructionStore.each(function (rec) {
-      rec.set({
-        program_id: program.data.id
-      });
+      var programInstruction = {
+        program_id: program.get('id')
+      };
+
+      switch (rec.get('type')) {
+        case 'main':
+          programInstruction.text = 'Welcome to the ' +
+          AtlasInstallationName +
+          ' Web Services system. Please proceed with the ' +
+          program.get('name').humanize() +
+          ' enrollment by completing the steps listed below.';
+          break;
+
+        case 'pending_approval':
+          programInstruction.text = 'Your submission is currently being' +
+          ' reviewed by our staff. You will be notified by email when the' +
+          ' status of the submission changes. You may also visit the link' +
+          ' provided below to check on the status of your submission.' +
+          ' Thank you for using the ' +
+          AtlasInstallationName +
+          ' Web Services system.<br />' +
+          '<br />' +
+          '<a href="' +
+          window.location.origin +
+          '/programs/enrollment' +
+          rec.get('id') +
+          '">' +
+          program.get('name').humanize() +
+          '</a>';
+          break;
+
+        case 'expired':
+          programInstruction.text = 'We\'re sorry but your submission has' +
+          ' expired. Please contact the ' +
+          AtlasInstallationName +
+          ' for further assistance.';
+          break;
+
+        case 'not_approved':
+          programInstruction.text = 'We\'re sorry but your submission has been' +
+          ' marked as "Not Approved." If you feel this is in error please' +
+          ' contact the ' +
+          AtlasInstallationName +
+          ' for further assistance.';
+          break;
+
+        case 'complete':
+          programInstruction.text = 'We have reviewed your submission and it' +
+          ' has been marked as complete. Please visit the following link for' +
+          ' submitted is accurate.<br />' +
+          '<br />' +
+          '<a href="#">ADMIN. PLEASE ADD YOUR LINK</a>';
+          break;
+
+        case 'acceptance':
+          programInstruction.text = 'By entering your first and last name in' +
+          ' the box below you are agreeing that all the information you have' +
+          ' submitted is accurate.';
+          break;
+      }
+
+      rec.set(programInstruction);
     });
   },
   process: function () {
