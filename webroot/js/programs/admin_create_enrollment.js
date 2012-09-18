@@ -2375,6 +2375,15 @@ instructions = Ext.create('Ext.panel.Panel', {
           '</a>';
           break;
 
+        case 'pending_document_review':
+          programInstruction.text = 'Your documents are currently being' +
+          ' reviewed by our staff. You will be notified by email when the' +
+          ' status of the documents changes.' +
+          ' Thank you for using the ' +
+          AtlasInstallationName +
+          ' Web Services system.';
+          break;
+
         case 'expired':
           programInstruction.text = 'We\'re sorry but your submission has' +
           ' expired. Please contact the ' +
