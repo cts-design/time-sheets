@@ -316,14 +316,43 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
-  data: [
-    { program_id: 0, text: 'Default text Main', type: 'main', created: null, modified: null },
-    { program_id: 0, text: 'Default text Pending Approval', type: 'pending_approval', created: null, modified: null },
-    { program_id: 0, text: 'Default text Expired', type: 'expired', created: null, modified: null },
-    { program_id: 0, text: 'Default text Not Approved', type: 'not_approved', created: null, modified: null },
-    { program_id: 0, text: 'Default text Complete', type: 'complete', created: null, modified: null },
-    { program_id: 0, text: 'Default text Acceptance', type: 'acceptance', created: null, modified: null }
-  ],
+  data: [{
+    program_id: 0,
+    text: 'Default text Main',
+    type: 'main',
+    created: null,
+    modified: null
+  }, {
+    program_id: 0,
+    text: 'Default text Pending Approval',
+    type: 'pending_approval',
+    created: null,
+    modified: null
+  }, {
+    program_id: 0,
+    text: 'Default text Expired',
+    type: 'expired',
+    created: null,
+    modified: null
+  }, {
+    program_id: 0,
+    text: 'Default text Not Approved',
+    type: 'not_approved',
+    created: null,
+    modified: null
+  }, {
+    program_id: 0,
+    text: 'Default text Complete',
+    type: 'complete',
+    created: null,
+    modified: null
+  }, {
+    program_id: 0,
+    text: 'Default text Acceptance',
+    type: 'acceptance',
+    created: null,
+    modified: null
+  }],
   storeId: 'ProgramInstructionStore',
   model: 'ProgramInstruction',
   proxy: {
@@ -348,14 +377,61 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
-  data: [
-    { program_id: 0, name: 'Registration Main', from: ('noreply@' + window.location.hostname), subject: 'Main', body: 'Default text Main', type: 'main', created: null, modified: null },
-    { program_id: 0, name: 'Registration Pending Approval', from: ('noreply@' + window.location.hostname), subject: 'Pending Approval', body: 'Default text Pending Approval', type: 'pending_approval', created: null, modified: null },
-    { program_id: 0, name: 'Registration Expiring Soon', from: ('noreply@' + window.location.hostname), subject: 'Expiring Soon', body: 'Default text Expiring Soon', type: 'expiring_soon', created: null, modified: null },
-    { program_id: 0, name: 'Registration Expired', from: ('noreply@' + window.location.hostname), subject: 'Expired', body: 'Default text Expired', type: 'expired', created: null, modified: null },
-    { program_id: 0, name: 'Registration Not Approved', from: ('noreply@' + window.location.hostname), subject: 'Not Approved', body: 'Default text Main', type: 'not_approved', created: null, modified: null },
-    { program_id: 0, name: 'Registration Complete', from: ('noreply@' + window.location.hostname), subject: 'Complete', body: 'Default text Complete', type: 'complete', created: null, modified: null }
-  ],
+  data: [{
+    program_id: 0,
+    name: 'Registration Main',
+    from: ('noreply@' + window.location.hostname),
+    subject: 'Main',
+    body: 'Default text Main',
+    type: 'main',
+    created: null,
+    modified: null
+  }, {
+    program_id: 0,
+    name: 'Registration Pending Approval',
+    from: ('noreply@' + window.location.hostname),
+    subject: 'Pending Approval',
+    body: 'Default text Pending Approval',
+    type: 'pending_approval',
+    created: null,
+    modified: null
+  }, {
+    program_id: 0,
+    name: 'Registration Expiring Soon',
+    from: ('noreply@' + window.location.hostname),
+    subject: 'Expiring Soon',
+    body: 'Default text Expiring Soon',
+    type: 'expiring_soon',
+    created: null,
+    modified: null
+  }, {
+    program_id: 0,
+    name: 'Registration Expired',
+    from: ('noreply@' + window.location.hostname),
+    subject: 'Expired',
+    body: 'Default text Expired',
+    type: 'expired',
+    created: null,
+    modified: null
+  }, {
+    program_id: 0,
+    name: 'Registration Not Approved',
+    from: ('noreply@' + window.location.hostname),
+    subject: 'Not Approved',
+    body: 'Default text Main',
+    type: 'not_approved',
+    created: null,
+    modified: null
+  }, {
+    program_id: 0,
+    name: 'Registration Complete',
+    from: ('noreply@' + window.location.hostname),
+    subject: 'Complete',
+    body: 'Default text Complete',
+    type: 'complete',
+    created: null,
+    modified: null
+  }],
   storeId: 'ProgramEmailStore',
   model: 'ProgramEmail',
   proxy: {
@@ -1277,9 +1353,9 @@ filingCategories = Ext.create('Ext.form.Panel', {
     value: null,
     labelWidth: 150,
     listConfig: {
-        getInnerTpl: function() {
-            return '<div>{img}{name}</div>';
-        }
+      getInnerTpl: function() {
+        return '<div>{img}{name}</div>';
+      }
     },
     allowBlank: false
   }],
@@ -1380,7 +1456,6 @@ instructions = Ext.create('Ext.panel.Panel', {
       programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
       programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
       program = programStore.first(),
-      programId = program.data.id,
       formStep;
 
     if (!program.data.approval_required) {
@@ -1402,14 +1477,74 @@ instructions = Ext.create('Ext.panel.Panel', {
     formStep = programStepStore.findRecord('type', /^form$/gi);
 
     programInstructionStore.each(function (rec) {
-      rec.set({
-        program_id: programId
-      });
+      var programInstruction = {
+        program_id: program.get('id')
+      };
+
+      switch (rec.get('type')) {
+        case 'main':
+          programInstruction.text = 'Welcome to the ' +
+          AtlasInstallationName +
+          ' Web Services system. Please proceed with the ' +
+          program.get('name').humanize() +
+          ' registration by completing the steps listed below.';
+          break;
+
+        case 'pending_approval':
+          programInstruction.text = 'Your submission is currently being' +
+          ' reviewed by our staff. You will be notified by email when the' +
+          ' status of the submission changes. You may also visit the link' +
+          ' provided below to check on the status of your submission.' +
+          ' Thank you for using the ' +
+          AtlasInstallationName +
+          ' Web Services system.<br />' +
+          '<br />' +
+          '<a href="' +
+          window.location.origin +
+          '/programs/registration' +
+          rec.get('id') +
+          '">' +
+          program.get('name').humanize() +
+          '</a>';
+          break;
+
+        case 'expired':
+          programInstruction.text = 'We\'re sorry but your submission has' +
+          ' expired. Please contact the ' +
+          AtlasInstallationName +
+          ' for further assistance.';
+          break;
+
+        case 'not_approved':
+          programInstruction.text = 'We\'re sorry but your submission has been' +
+          ' marked as "Not Approved." If you feel this is in error please' +
+          ' contact the ' +
+          AtlasInstallationName +
+          ' for further assistance.';
+          break;
+
+        case 'complete':
+          programInstruction.text = 'We have reviewed your submission and it' +
+          ' has been marked as complete. Please visit the following link for' +
+          ' submitted is accurate.<br />' +
+          '<br />' +
+          '<a href="#">ADMIN. PLEASE ADD YOUR LINK</a>';
+          break;
+
+        case 'acceptance':
+          programInstruction.text = 'By entering your first and last name in' +
+          ' the box below you are agreeing that all the information you have' +
+          ' submitted is accurate.';
+          break;
+      }
+
+      rec.set(programInstruction);
     });
+
     programInstructionStore.add({
-      program_id: programId,
+      program_id: program.get('id'),
       program_step_id: formStep.data.id,
-      text: program.data.name + ' Registration Form Step Instructions',
+      text: 'Please fill out the following form and choose submit when finished.',
       type: (program.data.name + ' Registration Form Step Instructions').underscore()
     });
   },
@@ -1532,7 +1667,6 @@ emails = Ext.create('Ext.panel.Panel', {
       programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
       programEmailStore = Ext.data.StoreManager.lookup('ProgramEmailStore'),
       program = programStore.first(),
-      programId = program.data.id,
       formStep;
 
     if (!program.data.approval_required) {
@@ -1554,15 +1688,94 @@ emails = Ext.create('Ext.panel.Panel', {
     formStep = programStepStore.findRecord('type', /^form$/gi);
 
     programEmailStore.each(function (rec) {
-      rec.set({
-        program_id: programId
-      });
+      var programEmail = {
+        program_id: program.get('id')
+      };
+
+      switch (rec.get('type')) {
+        case 'main':
+          programEmail.body = 'Welcome to the ' +
+          AtlasInstallationName +
+          ' Web Services system. You have begun the submission process for ' +
+          program.get('name').humanize() +
+          '. <br />' +
+          '<br />' +
+          '<a href="' +
+          window.location.origin +
+          '/programs/registration' +
+          rec.get('id') +
+          '">Click here to return to the ' +
+          program.get('name').humanize() +
+          ' registration</a>';
+          break;
+
+        case 'pending_approval':
+          programEmail.body = 'Your submission is currently being' +
+          ' reviewed by our staff. You will be notified by email when the' +
+          ' status of the submission changes. You may also visit the link' +
+          ' provided below to check on the status of your submission.' +
+          ' Thank you for using the ' +
+          AtlasInstallationName +
+          ' Web Services system.<br />' +
+          '<br />' +
+          '<a href="' +
+          window.location.origin +
+          '/programs/registration' +
+          rec.get('id') +
+          '">' +
+          program.get('name').humanize() +
+          '</a>';
+          break;
+
+        case 'expiring_soon':
+          programEmail.body = 'This is an automated notification to inform you' +
+          ' that the program you began enrollment for will expire in ' +
+          program.get('send_expiring_soon') +
+          ' days. Please login to the ' +
+          AtlasInstallationName +
+          ' Web Services system to finish your registration. If you questions' +
+          ' please contact the ' +
+          AtlasInstallationName +
+          ' for assistance.';
+          break;
+
+        case 'expired':
+          programEmail.body = 'We\'re sorry but your submission has' +
+          ' expired. Please contact the ' +
+          AtlasInstallationName +
+          ' for further assistance.';
+          break;
+
+        case 'not_approved':
+          programEmail.body = 'We\'re sorry but your submission has been' +
+          ' marked as "Not Approved." If you feel this is in error please' +
+          ' contact the ' +
+          AtlasInstallationName +
+          ' for further assistance.';
+          break;
+
+        case 'complete':
+          programEmail.body = 'We have reviewed your submission and it' +
+          ' has been marked as complete. Please visit the following link for' +
+          ' submitted is accurate.<br />' +
+          '<br />' +
+          '<a href="#">ADMIN. PLEASE ADD YOUR LINK</a>';
+          break;
+
+        case 'acceptance':
+          programEmail.body = 'By entering your first and last name in' +
+          ' the box below you are agreeing that all the information you have' +
+          ' submitted is accurate.';
+          break;
+      }
+
+      rec.set(programEmail);
     });
-    // add our step emails
+
     programEmailStore.add({
-      program_id: programId,
-      program_step_id: formStep.data.id,
-      name: program.data.name + ' Registration Form Step Email',
+      program_id: program.get('id'),
+      program_step_id: formStep.get('id'),
+      name: program.get('name') + ' Registration Form Step Email',
       type: 'registration_form_step',
       body: 'Your registration form step email',
       subject: 'Registration Form Complete',
