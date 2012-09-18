@@ -1,3 +1,6 @@
+<?php echo $this->Html->scriptStart(array('inline' => FALSE)) ?>
+	var AtlasInstallationName = '<?= Configure::read('Company.name') ?>';
+<?php echo $this->Html->scriptEnd() ?>
 <?php echo $this->Html->script('ext/ux/StatusBar', array('inline' => FALSE));?>
 <?php echo $this->Html->script('programs/admin_create_orientation', array('inline' => FALSE));?>
 
