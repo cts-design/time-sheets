@@ -2404,6 +2404,12 @@ instructions = Ext.create('Ext.panel.Panel', {
           ' submitted is accurate.';
           break;
 
+        case 'esign':
+          programInstruction.text = 'By signing your first and last name in' +
+          ' the box below you are agreeing that all the information you have' +
+          ' submitted is accurate.';
+          break;
+
         case 'upload_docs':
           programInstruction.text = 'Please upload one document at a time using' +
           ' the form below. For example, if you are uploading a driver\'s license' +
