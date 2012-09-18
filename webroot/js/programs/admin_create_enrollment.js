@@ -2403,6 +2403,15 @@ instructions = Ext.create('Ext.panel.Panel', {
           ' the box below you are agreeing that all the information you have' +
           ' submitted is accurate.';
           break;
+
+        case 'upload_docs':
+          programInstruction.text = 'Please upload one document at a time using' +
+          ' the form below. For example, if you are uploading a driver\'s license' +
+          ' and utility bill, you will upload the first document then you will' +
+          ' be redirected back to this page to upload the second document. ' +
+          ' Once finished uploading all documents, choose "I am finished uploading' +
+          ' documents."';
+          break;
       }
 
       rec.set(programInstruction);
