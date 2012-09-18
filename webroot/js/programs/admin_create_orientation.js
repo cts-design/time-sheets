@@ -1520,7 +1520,7 @@ instructions = Ext.create('Ext.panel.Panel', {
           AtlasInstallationName +
           ' Web Services system. Please proceed with the ' +
           program.get('name').humanize() +
-          ' registration by completing the steps listed below.';
+          ' orientation by completing the steps listed below.';
           break;
 
         case 'expired':
@@ -1554,8 +1554,8 @@ instructions = Ext.create('Ext.panel.Panel', {
       text: mediaText,
       type: 'Orientation Media Step Instructions'.underscore()
     }, {
-      program_id: programId,
-      program_step_id: quizStep.data.id,
+      program_id: program.get('id'),
+      program_step_id: quizStep.get('id'),
       text: 'Please fill out the following form and choose submit when finished.',
       type: 'Orientation Quiz Step Instructions'.underscore()
     });
@@ -1679,7 +1679,6 @@ emails = Ext.create('Ext.panel.Panel', {
       programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
       programEmailStore = Ext.data.StoreManager.lookup('ProgramEmailStore'),
       program = programStore.first(),
-      programId = program.data.id,
       mediaStep,
       quizStep;
 
@@ -1687,22 +1686,87 @@ emails = Ext.create('Ext.panel.Panel', {
     quizStep = programStepStore.findRecord('type', /^form$/gi);
 
     programEmailStore.each(function (rec) {
-      rec.set({
-        program_id: programId
-      });
+      var programEmail = {
+        program_id: program.get('id')
+      };
+
+      switch (rec.get('type')) {
+        case 'main':
+          programEmail.body = 'Welcome to the ' +
+          AtlasInstallationName +
+          ' Web Services system. You have begun the submission process for ' +
+          program.get('name').humanize() +
+          '. <br />' +
+          '<br />' +
+          '<a href="' +
+          window.location.origin +
+          '/programs/orientation' +
+          rec.get('id') +
+          '">Click here to return to the ' +
+          program.get('name').humanize() +
+          ' orientation</a>';
+          break;
+
+        case 'pending_approval':
+          programEmail.body = 'Your submission is currently being' +
+          ' reviewed by our staff. You will be notified by email when the' +
+          ' status of the submission changes. You may also visit the link' +
+          ' provided below to check on the status of your submission.' +
+          ' Thank you for using the ' +
+          AtlasInstallationName +
+          ' Web Services system.<br />' +
+          '<br />' +
+          '<a href="' +
+          window.location.origin +
+          '/programs/registration' +
+          rec.get('id') +
+          '">' +
+          program.get('name').humanize() +
+          '</a>';
+          break;
+
+        case 'expiring_soon':
+          programEmail.body = 'This is an automated notification to inform you' +
+          ' that the program you began enrollment for will expire in ' +
+          program.get('send_expiring_soon') +
+          ' days. Please login to the ' +
+          AtlasInstallationName +
+          ' Web Services system to finish your orientation. If you questions' +
+          ' please contact the ' +
+          AtlasInstallationName +
+          ' for assistance.';
+          break;
+
+        case 'expired':
+          programEmail.body = 'We\'re sorry but your submission has' +
+          ' expired. Please contact the ' +
+          AtlasInstallationName +
+          ' for further assistance.';
+          break;
+
+        case 'complete':
+          programEmail.body = 'We have reviewed your submission and it' +
+          ' has been marked as complete. Please visit the following link for' +
+          ' submitted is accurate.<br />' +
+          '<br />' +
+          '<a href="#">ADMIN. PLEASE ADD YOUR LINK</a>';
+          break;
+      }
+
+      rec.set(programEmail);
     });
-    // add our step emails
+
     programEmailStore.add({
-      program_id: programId,
-      program_step_id: mediaStep.data.id,
-      name: program.data.name + ' Orientation Media Step Email',
+      program_id: program.get('id'),
+      program_step_id: mediaStep.get('id'),
+      name: program.get('name') + ' Orientation Media Step Email',
       type: 'orientation_media_step',
       body: 'Your Orientation media step email',
       from: ('noreply@' + window.location.hostname)
     }, {
-      program_id: programId,
-      program_step_id: quizStep.data.id,
-      name: program.data.name + ' Orientation Quiz Step Email',
+      program_id: program.get('id'),
+      program_step_id: quizStep.get('id'),
+      name: program.get('name') + ' Orientation Quiz Step Email',
       type: 'orientation_quiz_step',
       body: 'Your Orientation quiz step email',
       from: ('noreply@' + window.location.hostname)
