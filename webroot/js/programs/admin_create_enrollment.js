@@ -369,17 +369,61 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
-  data: [
-    { program_id: 0, text: 'Default text Main', type: 'main', created: null, modified: null },
-    { program_id: 0, text: 'Default text Expired', type: 'expired', created: null, modified: null },
-    { program_id: 0, text: 'Default text Complete', type: 'complete', created: null, modified: null },
-    { program_id: 0, text: 'Default text Esign', type: 'esign', created: null, modified: null },
-    { program_id: 0, text: 'Default text User Acceptance', type: 'acceptance', created: null, modified: null },
-    { program_id: 0, text: 'Default text Pending Approval', type: 'pending_approval', created: null, modified: null },
-    { program_id: 0, text: 'Default text Pending Document Review', type: 'pending_document_review', created: null, modified: null },
-    { program_id: 0, text: 'Default text Drop-off Documents', type: 'drop_off_documents', created: null, modified: null },
-    { program_id: 0, text: 'Default text Upload Documents', type: 'upload_documents', created: null, modified: null }
-  ],
+  data: [{
+    program_id: 0,
+    text: 'Default text Main',
+    type: 'main',
+    created: null,
+    modified: null
+  }, {
+    program_id: 0,
+    text: 'Default text Expired',
+    type: 'expired',
+    created: null,
+    modified: null
+  }, {
+    program_id: 0,
+    text: 'Default text Complete',
+    type: 'complete',
+    created: null,
+    modified: null
+  }, {
+    program_id: 0,
+    text: 'Default text Esign',
+    type: 'esign',
+    created: null,
+    modified: null
+  }, {
+    program_id: 0,
+    text: 'Default text User Acceptance',
+    type: 'acceptance',
+    created: null,
+    modified: null
+  }, {
+    program_id: 0,
+    text: 'Default text Pending Approval',
+    type: 'pending_approval',
+    created: null,
+    modified: null
+  }, {
+    program_id: 0,
+    text: 'Default text Pending Document Review',
+    type: 'pending_document_review',
+    created: null,
+    modified: null
+  }, {
+    program_id: 0,
+    text: 'Default text Drop-off Documents',
+    type: 'drop_off_documents',
+    created: null,
+    modified: null
+  }, {
+    program_id: 0,
+    text: 'Default text Upload Documents',
+    type: 'upload_documents',
+    created: null,
+    modified: null
+  }],
   storeId: 'ProgramInstructionStore',
   model: 'ProgramInstruction',
   proxy: {
@@ -404,12 +448,43 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
-  data: [
-    { program_id: 0, name: 'Orientation Main', from: ('noreply@' + window.location.hostname), subject: 'Main email', body: 'Default text Main', type: 'main', created: null, modified: null },
-    { program_id: 0, name: 'Orientation Expiring Soon', from: ('noreply@' + window.location.hostname), subject: 'Expiring Soon', body: 'Default text Expiring Soon', type: 'expiring_soon', created: null, modified: null },
-    { program_id: 0, name: 'Orientation Expired', from: ('noreply@' + window.location.hostname), subject: 'Expired email', body: 'Default text Expired', type: 'expired', created: null, modified: null },
-    { program_id: 0, name: 'Orientation Complete', from: ('noreply@' + window.location.hostname), subject: 'Complete email', body: 'Default text Complete', type: 'complete', created: null, modified: null }
-  ],
+  data: [{
+    program_id: 0,
+    name: 'Orientation Main',
+    from: ('noreply@' + window.location.hostname),
+    subject: 'Main email',
+    body: 'Default text Main',
+    type: 'main',
+    created: null,
+    modified: null
+  }, {
+    program_id: 0,
+    name: 'Orientation Expiring Soon',
+    from: ('noreply@' + window.location.hostname),
+    subject: 'Expiring Soon',
+    body: 'Default text Expiring Soon',
+    type: 'expiring_soon',
+    created: null,
+    modified: null
+  }, {
+    program_id: 0,
+    name: 'Orientation Expired',
+    from: ('noreply@' + window.location.hostname),
+    subject: 'Expired email',
+    body: 'Default text Expired',
+    type: 'expired',
+    created: null,
+    modified: null
+  }, {
+    program_id: 0,
+    name: 'Orientation Complete',
+    from: ('noreply@' + window.location.hostname),
+    subject: 'Complete email',
+    body: 'Default text Complete',
+    type: 'complete',
+    created: null,
+    modified: null
+  }],
   storeId: 'ProgramEmailStore',
   model: 'ProgramEmail',
   proxy: {
