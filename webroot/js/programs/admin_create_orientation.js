@@ -316,11 +316,25 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
-  data: [
-    { program_id: 0, text: 'Default text Main', type: 'main', created: null, modified: null },
-    { program_id: 0, text: 'Default text Expired', type: 'expired', created: null, modified: null },
-    { program_id: 0, text: 'Default text Complete', type: 'complete', created: null, modified: null }
-  ],
+  data: [{
+    program_id: 0,
+    text: 'Default text Main',
+    type: 'main',
+    created: null,
+    modified: null
+  }, {
+    program_id: 0,
+    text: 'Default text Expired',
+    type: 'expired',
+    created: null,
+    modified: null
+  }, {
+    program_id: 0,
+    text: 'Default text Complete',
+    type: 'complete',
+    created: null,
+    modified: null
+  }],
   storeId: 'ProgramInstructionStore',
   model: 'ProgramInstruction',
   proxy: {
@@ -345,12 +359,43 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
-  data: [
-    { program_id: 0, name: 'Orientation Main', from: ('noreply@' + window.location.hostname), subject: 'Main email', body: 'Default text Main', type: 'main', created: null, modified: null },
-    { program_id: 0, name: 'Orientation Expiring Soon', from: ('noreply@' + window.location.hostname), subject: 'Expiring Soon', body: 'Default text Expiring Soon', type: 'expiring_soon', created: null, modified: null },
-    { program_id: 0, name: 'Orientation Expired', from: ('noreply@' + window.location.hostname), subject: 'Expired email', body: 'Default text Expired', type: 'expired', created: null, modified: null },
-    { program_id: 0, name: 'Orientation Complete', from: ('noreply@' + window.location.hostname), subject: 'Complete email', body: 'Default text Complete', type: 'complete', created: null, modified: null }
-  ],
+  data: [{
+    program_id: 0,
+    name: 'Orientation Main',
+    from: ('noreply@' + window.location.hostname),
+    subject: 'Main email',
+    body: 'Default text Main',
+    type: 'main',
+    created: null,
+    modified: null
+  }, {
+    program_id: 0,
+    name: 'Orientation Expiring Soon',
+    from: ('noreply@' + window.location.hostname),
+    subject: 'Expiring Soon',
+    body: 'Default text Expiring Soon',
+    type: 'expiring_soon',
+    created: null,
+    modified: null
+  }, {
+    program_id: 0,
+    name: 'Orientation Expired',
+    from: ('noreply@' + window.location.hostname),
+    subject: 'Expired email',
+    body: 'Default text Expired',
+    type: 'expired',
+    created: null,
+    modified: null
+  }, {
+    program_id: 0,
+    name: 'Orientation Complete',
+    from: ('noreply@' + window.location.hostname),
+    subject: 'Complete email',
+    body: 'Default text Complete',
+    type: 'complete',
+    created: null,
+    modified: null
+  }],
   storeId: 'ProgramEmailStore',
   model: 'ProgramEmail',
   proxy: {
@@ -1458,7 +1503,6 @@ instructions = Ext.create('Ext.panel.Panel', {
       programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
       programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
       program = programStore.first(),
-      programId = program.data.id,
       mediaStep,
       quizStep;
 
@@ -1466,19 +1510,53 @@ instructions = Ext.create('Ext.panel.Panel', {
     quizStep = programStepStore.findRecord('type', /^form$/gi);
 
     programInstructionStore.each(function (rec) {
-      rec.set({
-        program_id: programId
-      });
+      var programInstruction = {
+        program_id: program.get('id')
+      };
+
+      switch (rec.get('type')) {
+        case 'main':
+          programInstruction.text = 'Welcome to the ' +
+          AtlasInstallationName +
+          ' Web Services system. Please proceed with the ' +
+          program.get('name').humanize() +
+          ' registration by completing the steps listed below.';
+          break;
+
+        case 'expired':
+          programInstruction.text = 'We\'re sorry but your submission has' +
+          ' expired. Please contact the ' +
+          AtlasInstallationName +
+          ' for further assistance.';
+          break;
+
+        case 'complete':
+          programInstruction.text = 'We have reviewed your submission and it' +
+          ' has been marked as complete. Please visit the following link for' +
+          ' submitted is accurate.<br />' +
+          '<br />' +
+          '<a href="#">ADMIN. PLEASE ADD YOUR LINK</a>';
+          break;
+      }
+
+      rec.set(programInstruction);
     });
+
+    if (mediaStep.get('type') === 'pdf') {
+      mediaText = 'Please read the following media and choose submit when finished.';
+    } else {
+      mediaText = 'Please watch the following media and choose submit when finished.';
+    }
+
     programInstructionStore.add({
-      program_id: programId,
-      program_step_id: mediaStep.data.id,
-      text: program.data.name + ' Orientation Media Step Instructions',
+      program_id: program.get('id'),
+      program_step_id: mediaStep.get('id'),
+      text: mediaText,
       type: 'Orientation Media Step Instructions'.underscore()
     }, {
       program_id: programId,
       program_step_id: quizStep.data.id,
-      text: program.data.name + ' Orientation Quiz Step Instructions',
+      text: 'Please fill out the following form and choose submit when finished.',
       type: 'Orientation Quiz Step Instructions'.underscore()
     });
   },
