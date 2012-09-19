@@ -401,13 +401,15 @@ class QueuedDocumentsController extends AppController {
     }
 
     public function admin_desktop_scan_document() {
+		$locations = $this->QueuedDocument->Location->find('list');
+		$queueCats = $this->QueuedDocument->DocumentQueueCategory->find('list');
 		if(!empty($this->data)) {
 		    $id = $this->QueuedDocument->uploadDocument($this->data, 'Desktop Scan', $this->Auth->User('id'));
 		    if($id) {
 				$this->Transaction->createUserTransaction('Storage', null, null,
-					trim('Scanned document ID ' . $id . ' to ' . $user['User']['lastname'] .
-						', ' . $user['User']['firstname'] . ' - ' . substr($user['User']['ssn'], -4), ' -'));
-				$this->Session->setFlash(__('Scanned document was filed successfully.', true), 'flash_success');
+					trim('Scanned document ID ' . $id . ' to ' . 'document queue under category ' .
+				   	$queueCats[$this->data['QueuedDocument']['queue_cat_id']] . ' for location ' . $locations[$this->data['QueuedDocument']['location_id']]));
+				$this->Session->setFlash(__('Scanned document was queued successfully.', true), 'flash_success');
 				$this->autoRender = false;
 				exit;
 		    }
@@ -417,8 +419,6 @@ class QueuedDocumentsController extends AppController {
 				exit;
 		    }
 		}
-		$locations = $this->QueuedDocument->Location->find('list');
-		$queueCats = $this->QueuedDocument->DocumentQueueCategory->find('list');
 		$title_for_layout = 'Desktop Scan Document';
 		$this->set(compact('title_for_layout', 'queueCats', 'locations'));
     }
