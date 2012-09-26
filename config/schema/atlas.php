@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2012-09-17 16:44:17 : 1347914657*/
+/* atlas schema generated on: 2012-09-26 08:35:30 : 1348662930*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -741,6 +741,22 @@ class atlasSchema extends CakeSchema {
 		'cat_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
 		'program_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'cat_id' => array('column' => 'cat_id', 'unique' => 0)),
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
+	);
+	var $workshops = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+		'name' => array('type' => 'string', 'null' => false, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'description' => array('type' => 'text', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'location_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+		'when' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+		'seats_available' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 4),
+		'media' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'cat_1' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+		'cat_2' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'cat_3' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
 }
