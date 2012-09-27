@@ -729,9 +729,13 @@ registrationForm = Ext.create('Ext.form.Panel', {
     var form = this.getForm(),
       programStore = Ext.data.StoreManager.lookup('ProgramStore'),
       record,
-      vals;
+      vals,
+      clearStatusTask = new Ext.util.DelayedTask(function () {
+        statusBar.clearStatus();
+        statusBar.setText('Program Form Fields');
+      });
 
-    statusBar.showBusy();
+    statusBar.setText('Saving Registration Details...');
 
     if (form.isValid()) {
       vals = form.getValues();
@@ -744,15 +748,13 @@ registrationForm = Ext.create('Ext.form.Panel', {
         programStore.add(vals);
       }
 
-      statusBar.clearStatus();
       $(window).bind('beforeunload', function () {
         return 'By leaving this page the program will be unfinished and you will need edit it at a later time.';
       });
 
+      clearStatusTask.delay(500);
       return true;
     }
-
-    statusBar.clearStatus();
   }
 });
 
@@ -1256,6 +1258,8 @@ formBuilder = Ext.create('Ext.panel.Panel', {
       program = programStore.first(),
       programId;
 
+    Ext.getCmp('statusProgressBar').updateProgress(0.4, 'Step 2 of 5');
+
     task = new Ext.util.DelayedTask(function () {
       programId = programStore.first().data.id;
       programStepStore.load({
@@ -1267,7 +1271,14 @@ formBuilder = Ext.create('Ext.panel.Panel', {
     task.delay(1000);
   },
   process: function () {
-    var programFormFieldStore = Ext.data.StoreManager.lookup('ProgramFormFieldStore');
+    var programFormFieldStore = Ext.data.StoreManager.lookup('ProgramFormFieldStore'),
+      clearStatusTask = new Ext.util.DelayedTask(function () {
+        statusBar.clearStatus();
+        statusBar.setText('Program Filing Categories');
+      });
+
+    statusBar.setText('Saving Program Form Fields...');
+    clearStatusTask.delay(500);
 
     programFormFieldStore.sync();
     return true;
@@ -1363,6 +1374,9 @@ filingCategories = Ext.create('Ext.form.Panel', {
     },
     allowBlank: false
   }],
+  preprocess: function () {
+    Ext.getCmp('statusProgressBar').updateProgress(0.6, 'Step 3 of 5');
+  },
   process: function () {
     var form = this.getForm(),
       programDocumentStore = Ext.data.StoreManager.lookup('ProgramDocumentStore'),
@@ -1370,7 +1384,11 @@ filingCategories = Ext.create('Ext.form.Panel', {
       programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
       program,
       programStep,
-      vals;
+      vals,
+      clearStatusTask = new Ext.util.DelayedTask(function () {
+        statusBar.clearStatus();
+        statusBar.setText('Program Instructions');
+      });
 
     if (form.isValid()) {
       vals = form.getValues();
@@ -1382,6 +1400,10 @@ filingCategories = Ext.create('Ext.form.Panel', {
       vals.program_id = program.data.id;
       vals.program_step_id = programStep.data.id;
       programDocumentStore.add(vals);
+
+
+      statusBar.setText('Saving Program Filing Categories...');
+      clearStatusTask.delay(500);
 
       return true;
     }
@@ -1461,6 +1483,8 @@ instructions = Ext.create('Ext.panel.Panel', {
       programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
       program = programStore.first(),
       formStep;
+
+    Ext.getCmp('statusProgressBar').updateProgress(0.8, 'Step 4 of 5');
 
     if (!program.data.approval_required) {
       var notApproved,
@@ -1554,7 +1578,14 @@ instructions = Ext.create('Ext.panel.Panel', {
   },
   process: function () {
     var programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
-      editor = Ext.getCmp('editor');
+      editor = Ext.getCmp('editor'),
+      clearStatusTask = new Ext.util.DelayedTask(function () {
+        statusBar.clearStatus();
+        statusBar.setText('Program Emails');
+      });
+
+      statusBar.setText('Saving Program Instructions...');
+      clearStatusTask.delay(500);
 
       programInstructionStore.sync();
       return true;
@@ -1673,6 +1704,8 @@ emails = Ext.create('Ext.panel.Panel', {
       program = programStore.first(),
       formStep;
 
+    Ext.getCmp('statusProgressBar').updateProgress(1.0, 'Step 5 of 5');
+
     if (!program.data.approval_required) {
       var notApproved,
         pendingApproval;
@@ -1788,7 +1821,13 @@ emails = Ext.create('Ext.panel.Panel', {
   },
   process: function () {
     var programEmailStore = Ext.data.StoreManager.lookup('ProgramEmailStore'),
-      editor = Ext.getCmp('emailEditor');
+      editor = Ext.getCmp('emailEditor'),
+      clearStatusTask = new Ext.util.DelayedTask(function () {
+        statusBar.clearStatus();
+      });
+
+      statusBar.setText('Saving Program Emails...');
+      clearStatusTask.delay(500);
 
       programEmailStore.sync();
       return true;
@@ -1843,6 +1882,12 @@ statusBar = Ext.create('Ext.ux.statusbar.StatusBar', {
   dock: 'bottom',
   id: 'statusBar',
   items: [{
+    xtype: 'progressbar',
+    id: 'statusProgressBar',
+    text: 'Step 1 of 5',
+    value: 0.2,
+    width: 200
+  }, '->', {
     disabled: true,
     id: 'back',
     text: 'Back',
@@ -1869,6 +1914,8 @@ statusBar = Ext.create('Ext.ux.statusbar.StatusBar', {
  * Ext.onReady
  */
 Ext.onReady(function () {
+
+  statusBar.setText('Registration Details');
 
   Ext.create('Ext.panel.Panel', {
     defaults: {
