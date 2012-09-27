@@ -1787,6 +1787,11 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                     }
                   }
                 }, {
+                  xtype: 'checkbox',
+                  fieldLabel: 'Required',
+                  id: 'requiredCb',
+                  name: 'required'
+                }, {
                   xtype: 'fieldcontainer',
                   hidden: true,
                   id: 'defaultValueContainer',
