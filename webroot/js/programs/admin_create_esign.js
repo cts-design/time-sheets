@@ -741,6 +741,10 @@ registrationForm = Ext.create('Ext.form.Panel', {
     }
 
     statusBar.clearStatus();
+    $(window).bind('beforeunload', function () {
+      return 'By leaving this page the program will be unfinished and you will need edit it at a later time.';
+    });
+
     return true;
   }
 });

@@ -850,6 +850,10 @@ registrationForm = Ext.create('Ext.form.Panel', {
           vals.media_location = 'http://' + vals.media_location;
       }
 
+      $(window).bind('beforeunload', function () {
+        return 'By leaving this page the program will be unfinished and you will need edit it at a later time.';
+      });
+
       programStore.add(vals);
       return true;
     } else {
