@@ -1438,9 +1438,120 @@ instructions = Ext.create('Ext.panel.Panel', {
     }]
   }],
   preprocess: function () {
-    Ext.data.StoreManager.lookup('ProgramInstructionStore').load({
+    var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
+      program = programStore.first(),
+      programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
+      programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
+      formStep;
+
+    formStep = programStepStore.findRecord('type', /^form$/gi);
+
+    programInstructionStore.load({
       params: {
         program_id: ProgramId
+      },
+      callback: function (recs, op, success) {
+        var pendingApprovalInstructions,
+          notApprovedInstructions,
+          mainInstructions,
+          expiredInstructions,
+          completeInstructions,
+          acceptanceInstrutions;
+
+        if (!success) {
+          // if approval is required make sure we add the pending_approval and not_approved instructions
+          if (program.get('approval_required')) {
+            pendingApprovalInstructions = 'Your submission is currently being' +
+              ' reviewed by our staff. You will be notified by email when the' +
+              ' status of the submission changes. You may also visit the link' +
+              ' provided below to check on the status of your submission.' +
+              ' Thank you for using the ' +
+              AtlasInstallationName +
+              ' Web Services system.<br />' +
+              '<br />' +
+              '<a href="' +
+              window.location.origin +
+              '/programs/registration' +
+              rec.get('id') +
+              '">' +
+              program.get('name').humanize() +
+              '</a>';
+
+            notApprovedInstructions = 'We\'re sorry but your submission has been' +
+              ' marked as "Not Approved." If you feel this is in error please' +
+              ' contact the ' +
+              AtlasInstallationName +
+              ' for further assistance.';
+
+            programInstructionStore.add({
+              program_id: program.get('id'),
+              text: pendingApprovalInstructions,
+              type: 'pending_approval',
+              created: null,
+              modified: null
+            }, {
+              program_id: program.get('id'),
+              text: notApprovedInstructions,
+              type: 'not_approved',
+              created: null,
+              modified: null
+            });
+          }
+
+          mainInstructions = 'Welcome to the ' +
+            AtlasInstallationName +
+            ' Web Services system. Please proceed with the ' +
+            program.get('name').humanize() +
+            ' registration by completing the steps listed below.';
+
+          expiredInstructions = 'We\'re sorry but your submission has' +
+            ' expired. Please contact the ' +
+            AtlasInstallationName +
+            ' for further assistance.';
+
+          completeInstructions = 'We have reviewed your submission and it' +
+            ' has been marked as complete. Please visit the following link for' +
+            ' submitted is accurate.<br />' +
+            '<br />' +
+            '<a href="#">ADMIN. PLEASE ADD YOUR LINK</a>';
+
+          acceptanceInstrutions = 'By entering your first and last name in' +
+            ' the box below you are agreeing that all the information you have' +
+            ' submitted is accurate.';
+
+          programInstructionStore.add({
+            program_id: program.get('id'),
+            text: mainInstructions,
+            type: 'main',
+            created: null,
+            modified: null
+          },  {
+            program_id: program.get('id'),
+            text: expiredInstructions,
+            type: 'expired',
+            created: null,
+            modified: null
+          },  {
+            program_id: program.get('id'),
+            text: completeInstructions,
+            type: 'complete',
+            created: null,
+            modified: null
+          }, {
+            program_id: program.get('id'),
+            text: acceptanceInstrutions,
+            type: 'acceptance',
+            created: null,
+            modified: null
+          });
+
+          programInstructionStore.add({
+            program_id: program.get('id'),
+            program_step_id: formStep.data.id,
+            text: 'Please fill out the following form and choose submit when finished.',
+            type: (program.data.name + ' Registration Form Step Instructions').underscore()
+          });
+        }
       }
     });
   },
