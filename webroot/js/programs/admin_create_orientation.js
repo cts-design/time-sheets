@@ -316,6 +316,7 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
+  autoSync: true,
   data: [{
     program_id: 0,
     text: 'Default text Main',
@@ -341,7 +342,7 @@ Ext.create('Ext.data.Store', {
     api:{
       create: '/admin/program_instructions/create',
       read: '/admin/program_instructions/read',
-      update: '/admin/program_instructions/edit',
+      update: '/admin/program_instructions/update',
       destroy: '/admin/program_instructions/destroy'
     },
     type: 'ajax',
@@ -359,6 +360,7 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
+  autoSync: true,
   data: [{
     program_id: 0,
     name: 'Orientation Main',
