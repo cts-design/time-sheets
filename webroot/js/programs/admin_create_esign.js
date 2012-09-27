@@ -370,7 +370,7 @@ Ext.create('Ext.data.Store', {
     api:{
       create: '/admin/program_emails/create',
       read: '/admin/program_emails/read',
-      update: '/admin/program_emails/edit',
+      update: '/admin/program_emails/update',
       destroy: '/admin/program_emails/destroy'
     },
     type: 'ajax',
