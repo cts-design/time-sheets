@@ -926,7 +926,6 @@ registrationForm = Ext.create('Ext.form.Panel', {
             }
 
             if (!rec.data.in_test) {
-              form.down('#approvalRequired').disable();
               form.down('#esignRequired').disable();
               form.down('#registrationType').disable();
               form.down('#responsesExpireIn').disable();
