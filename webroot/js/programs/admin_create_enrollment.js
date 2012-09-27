@@ -5,6 +5,14 @@ var encodeObject = function (obj) {
   return null;
 };
 
+var productionURL = function () {
+  if (!Ext.isChrome) {
+    return window.location.protocol + '//' + window.location.host;
+  }
+
+  return window.location.origin;
+};
+
 /**
  * Data Models
  */
