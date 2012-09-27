@@ -208,7 +208,7 @@ class ProgramsController extends AppController {
 		}
 
 		$data['programSteps'] = $programSteps;
-		if(isset($instructions)) {
+		if(!empty($instructions)) {
 			$data['instructions'] = $instructions[0];
 		}
 		$this->set($data);
