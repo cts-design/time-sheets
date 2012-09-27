@@ -1462,9 +1462,81 @@ instructions = Ext.create('Ext.panel.Panel', {
     }]
   }],
   preprocess: function () {
-    Ext.data.StoreManager.lookup('ProgramInstructionStore').load({
+    var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
+      program = programStore.first(),
+      programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
+      programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
+      mediaStep,
+      quizStep;
+
+    mediaStep = programStepStore.findRecord('type', /^media$/gi);
+    quizStep = programStepStore.findRecord('type', /^form$/gi);
+
+    programInstructionStore.load({
       params: {
         program_id: ProgramId
+      },
+      callback: function (recs, op, success) {
+        var mainInstructions,
+          expiredInstructions,
+          completeInstructions;
+
+        if (!success) {
+          mainInstructions = 'Welcome to the ' +
+            AtlasInstallationName +
+            ' Web Services system. Please proceed with the ' +
+            program.get('name').humanize() +
+            ' orientation by completing the steps listed below.';
+
+          expiredInstructions = 'We\'re sorry but your submission has' +
+            ' expired. Please contact the ' +
+            AtlasInstallationName +
+            ' for further assistance.';
+
+          completeInstructions = 'We have reviewed your submission and it' +
+            ' has been marked as complete. Please visit the following link for' +
+            ' submitted is accurate.<br />' +
+            '<br />' +
+            '<a href="#">ADMIN. PLEASE ADD YOUR LINK</a>';
+
+          programInstructionStore.add({
+            program_id: program.get('id'),
+            text: mainInstructions,
+            type: 'main',
+            created: null,
+            modified: null
+          },  {
+            program_id: program.get('id'),
+            text: expiredInstructions,
+            type: 'expired',
+            created: null,
+            modified: null
+          },  {
+            program_id: program.get('id'),
+            text: completeInstructions,
+            type: 'complete',
+            created: null,
+            modified: null
+          });
+
+          if (mediaStep.get('type') === 'pdf') {
+            mediaText = 'Please read the following media and choose submit when finished.';
+          } else {
+            mediaText = 'Please watch the following media and choose submit when finished.';
+          }
+
+          programInstructionStore.add({
+            program_id: program.get('id'),
+            program_step_id: mediaStep.get('id'),
+            text: mediaText,
+            type: 'Orientation Media Step Instructions'.underscore()
+          }, {
+            program_id: program.get('id'),
+            program_step_id: quizStep.get('id'),
+            text: 'Please fill out the following form and choose submit when finished.',
+            type: 'Orientation Quiz Step Instructions'.underscore()
+          });
+        }
       }
     });
   },
@@ -1580,9 +1652,78 @@ emails = Ext.create('Ext.panel.Panel', {
     }]
   }],
   preprocess: function () {
-    Ext.data.StoreManager.lookup('ProgramEmailStore').load({
+    var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
+      program = programStore.first(),
+      programEmailStore = Ext.data.StoreManager.lookup('ProgramEmailStore'),
+      programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
+      formStep;
+
+    formStep = programStepStore.findRecord('type', /^form$/gi);
+
+    programEmailStore.load({
       params: {
         program_id: ProgramId
+      },
+      callback: function (recs, op, success) {
+        var mainEmail,
+          expiredEmail,
+          completeEmail;
+
+        if (!success) {
+          mainEmail = 'Welcome to the ' +
+            AtlasInstallationName +
+            ' Web Services system. You have begun the submission process for ' +
+            program.get('name').humanize() +
+            '. <br />' +
+            '<br />' +
+            '<a href="' +
+            window.location.origin +
+            '/programs/orientation' +
+            rec.get('id') +
+            '">Click here to return to the ' +
+            program.get('name').humanize() +
+            ' orientation</a>';
+
+          expiredEmail = 'We\'re sorry but your submission has' +
+            ' expired. Please contact the ' +
+            AtlasInstallationName +
+            ' for further assistance.';
+
+          completeEmail = 'We have reviewed your submission and it' +
+            ' has been marked as complete. Please visit the following link for' +
+            ' submitted is accurate.<br />' +
+            '<br />' +
+            '<a href="#">ADMIN. PLEASE ADD YOUR LINK</a>';
+
+          programEmailStore.add({
+            program_id: program.get('id'),
+            name: 'Registration Main',
+            from: ('noreply@' + window.location.hostname),
+            subject: 'Main',
+            body: mainEmail,
+            type: 'main',
+            created: null,
+            modified: null
+          }, {
+            program_id: program.get('id'),
+            name: 'Registration Expired',
+            from: ('noreply@' + window.location.hostname),
+            subject: 'Expired',
+            body: expiredEmail,
+            type: 'expired',
+            created: null,
+            modified: null
+          }, {
+            program_id: program.get('id'),
+            name: 'Registration Complete',
+            from: ('noreply@' + window.location.hostname),
+            subject: 'Complete',
+            body: completeEmail,
+            type: 'complete',
+            created: null,
+            modified: null
+          });
+        }
       }
     });
   },
