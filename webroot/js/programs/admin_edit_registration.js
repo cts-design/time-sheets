@@ -653,6 +653,8 @@ registrationForm = Ext.create('Ext.form.Panel', {
           if (success) {
             form.loadRecord(recs[0]);
 
+            form.down('#sendExpiringSoon').setValue(String(recs[0].get('send_expiring_soon')));
+
             if (!recs[0].data.in_test) {
               form.down('#approvalRequired').disable();
               form.down('#esignRequired').disable();
