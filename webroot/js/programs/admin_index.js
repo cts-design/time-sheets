@@ -110,6 +110,7 @@ Ext.onReady(function () {
         handler: function () {
           var tabPanel = this.up('tabpanel'),
             gridPanel = tabPanel.activeTab,
+            programStore = Ext.data.StoreManager.lookup('ProgramStore'),
             selectedRecord = gridPanel.getSelectionModel().getSelection()[0],
             programId = selectedRecord.get('id'),
             programType = selectedRecord.get('type'),
@@ -129,6 +130,7 @@ Ext.onReady(function () {
             success: function (res) {
               var task = new Ext.util.DelayedTask(function () {
                 progressMsg.close();
+                programStore.load();
               });
 
               task.delay(1240);
