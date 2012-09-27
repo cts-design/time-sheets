@@ -2625,6 +2625,8 @@ navigate = function (panel, direction) {
     activeItem = layout.activeItem;
 
   if (direction === 'finish' && activeItem.process()) {
+    $(window).unbind('beforeunload');
+
     Ext.Msg.alert('Success', 'Your program has been successfully saved.', function () {
       var task = new Ext.util.DelayedTask(function () {
         window.location = '/admin/programs';
