@@ -1,4 +1,5 @@
 <?php echo $this->Html->scriptStart(array('inline' => false)) ?>
+  var AtlasInstallationName = '<?= Configure::read('Company.name') ?>';
   var ProgramId = <?php echo $id ?>;
   var ProgramName = '<?php echo $programName ?>';
   var RoleId = '<?php echo $roleId ?>';
