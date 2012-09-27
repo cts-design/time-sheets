@@ -116,7 +116,7 @@ class ProgramResponsesController extends AppController {
         $instructions = Set::extract('/ProgramInstruction[program_step_id='.$stepId.']/text', $program);
 		$data['formFields'] = $this->currentStep[0]['ProgramFormField'];
 		$data['element'] = 'form';
-		if($this->currentStep[0]['ProgramStep']['type'] === 'custom_form') {
+		if($this->currentStep[0]['type'] === 'custom_form') {
 			$data['element'] = 'custom_form_' . $this->currentStep[0]['ProgramStep']['id'];
 		}
 		
