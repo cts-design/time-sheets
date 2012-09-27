@@ -446,7 +446,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       xtype: 'textfield',
       allowBlank: false,
       fieldLabel: 'Name',
-      labelWidth: 150,
+      labelWidth: 190,
       name: 'name'
     }]
   }, {
@@ -454,33 +454,13 @@ registrationForm = Ext.create('Ext.form.Panel', {
     name: 'type',
     value: 'registration'
   }, {
-    xtype: 'fieldcontainer',
-    height: 22,
-    width: 250,
-    layout: {
-      align: 'stretch',
-      type: 'vbox'
-    },
-    items: [{
-      xtype: 'radiogroup',
-      fieldLabel: 'Esign Required?',
-      id: 'esignRequired',
-      labelWidth: 150,
-      items: [{
-        boxLabel: 'Yes',
-        name: 'form_esign_required',
-        inputValue: '1'
-      }, {
-        boxLabel: 'No',
-        name: 'form_esign_required',
-        inputValue: '0',
-        checked: true
-      }]
-    }]
+    xtype: 'hiddenfield',
+    name: 'form_esign_required',
+    value: '0'
   }, {
     xtype: 'fieldcontainer',
     height: 22,
-    width: 250,
+    width: 300,
     layout: {
       align: 'stretch',
       type: 'vbox'
@@ -488,8 +468,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
     items: [{
       xtype: 'radiogroup',
       fieldLabel: 'Approval Required?',
-      id: 'approvalRequired',
-      labelWidth: 150,
+      labelWidth: 190,
       items: [{
         boxLabel: 'Yes',
         name: 'approval_required',
@@ -503,8 +482,54 @@ registrationForm = Ext.create('Ext.form.Panel', {
     }]
   }, {
     xtype: 'fieldcontainer',
+    height: 22,
+    width: 300,
+    layout: {
+      align: 'stretch',
+      type: 'vbox'
+    },
+    items: [{
+      xtype: 'radiogroup',
+      fieldLabel: 'User Acknowledgement Required?',
+      labelWidth: 190,
+      items: [{
+        boxLabel: 'Yes',
+        name: 'user_acceptance_required',
+        inputValue: '1'
+      }, {
+        boxLabel: 'No',
+        name: 'user_acceptance_required',
+        inputValue: '0',
+        checked: true
+      }]
+    }]
+  }, {
+    xtype: 'fieldcontainer',
+    height: 22,
+    width: 300,
+    layout: {
+      align: 'stretch',
+      type: 'vbox'
+    },
+    items: [{
+      xtype: 'radiogroup',
+      fieldLabel: 'Show in Customer Dashboard?',
+      labelWidth: 190,
+      items: [{
+        boxLabel: 'Yes',
+        name: 'show_in_dash',
+        inputValue: '1',
+        checked: true
+      }, {
+        boxLabel: 'No',
+        name: 'show_in_dash',
+        inputValue: '0'
+      }]
+    }]
+  }, {
+    xtype: 'fieldcontainer',
     height: 24,
-    width: 250,
+    width: 300,
     layout: {
       align: 'stretch',
       type: 'vbox'
@@ -514,8 +539,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       allowBlank: false,
       displayField: 'ucase',
       fieldLabel: 'Registration Type',
-      id: 'registrationType',
-      labelWidth: 150,
+      labelWidth: 190,
       name: 'atlas_registration_type',
       queryMode: 'local',
       store: Ext.create('Ext.data.Store', {
@@ -543,12 +567,13 @@ registrationForm = Ext.create('Ext.form.Panel', {
       type: 'hbox'
     },
     items: [{
-      xtype: 'textfield',
+      xtype: 'numberfield',
       allowBlank: false,
       fieldLabel: 'Responses Expire In',
-      id: 'responsesExpireIn',
-      labelWidth: 150,
+      labelWidth: 190,
+      minValue: 30,
       name: 'response_expires_in',
+      value: 30,
       width: 250
     }, {
       xtype: 'displayfield',
@@ -558,9 +583,63 @@ registrationForm = Ext.create('Ext.form.Panel', {
       value: 'days'
     }]
   }, {
+    xtype: 'fieldcontainer',
+    height: 24,
+    width: 400,
+    layout: {
+      defaultMargins: {
+        top: 0,
+        right: 5,
+        bottom: 0,
+        left: 0
+      },
+      type: 'hbox'
+    },
+    items: [{
+      xtype: 'combo',
+      allowBlank: false,
+      displayField: 'ucase',
+      fieldLabel: 'Send expiring soon emails',
+      // issue #52
+      // added sendExpiringSoon id to the send expiring soon field
+      // to make sure the right value is set when the program loads
+      // time: 4 minutes
+      id: 'sendExpiringSoon',
+      labelWidth: 190,
+      name: 'send_expiring_soon',
+      queryMode: 'local',
+      store: Ext.create('Ext.data.Store', {
+        fields: ['lcase', 'ucase'],
+        data: [{
+          lcase: '3', ucase: '3'
+        }, {
+          lcase: '5', ucase: '5'
+        }, {
+          lcase: '7', ucase: '7'
+        }]
+      }),
+      value: '3',
+      valueField: 'lcase',
+      width: 250
+    }, {
+      xtype: 'displayfield',
+      style: {
+        color: '#445566'
+      },
+      value: 'days prior to expiration'
+    }]
+  }, {
     xtype: 'hiddenfield',
     name: 'confirmation_id_length',
     value: '10'
+  }, {
+    xtype: 'hiddenfield',
+    name: 'in_test',
+    value: 1
+  }, {
+    xtype: 'hiddenfield',
+    name: 'disabled',
+    value: 0
   }],
   listeners: {
     activate: function () {
