@@ -990,7 +990,6 @@ registrationForm = Ext.create('Ext.form.Panel', {
     var form = this.getForm(),
       programStore = Ext.data.StoreManager.lookup('ProgramStore'),
       record,
-      vals;
       vals,
       clearStatusTask = new Ext.util.DelayedTask(function () {
         statusBar.clearStatus();
