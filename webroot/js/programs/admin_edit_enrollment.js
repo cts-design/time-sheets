@@ -702,7 +702,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       xtype: 'numberfield',
       allowBlank: false,
       fieldLabel: 'Responses Expire In',
-      id: 'responseExpiresIn',
+      id: 'responsesExpireIn',
       labelWidth: 190,
       minValue: 30,
       name: 'response_expires_in',
@@ -815,12 +815,10 @@ registrationForm = Ext.create('Ext.form.Panel', {
       items: [{
         boxLabel: 'Yes',
         name: 'paper_forms',
-        inputValue: '1',
         checked: true
       }, {
         boxLabel: 'No',
-        name: 'paper_forms',
-        inputValue: '0'
+        name: 'paper_forms'
       }]
     }]
   }, {
@@ -838,12 +836,10 @@ registrationForm = Ext.create('Ext.form.Panel', {
         boxLabel: 'Yes',
         id: 'uploadDocsYes',
         name: 'upload_docs',
-        inputValue: '1',
         checked: true
       }, {
         boxLabel: 'No',
-        name: 'upload_docs',
-        inputValue: '0'
+        name: 'upload_docs'
       }],
       labelAlign: 'top',
       labelWidth: 375,
@@ -858,7 +854,9 @@ registrationForm = Ext.create('Ext.form.Panel', {
             if (newVal.upload_docs === '1') {
               container.setVisible(true);
               container.getEl().highlight('C9DFEE', { duration: 1000 });
+              field.allowBlank = false;
             } else {
+              field.allowBlank = true;
               container.setVisible(false);
             }
           }
@@ -955,6 +953,8 @@ registrationForm = Ext.create('Ext.form.Panel', {
       vals = form.getValues();
       record = programStore.first();
       record.set(vals);
+
+
     } else {
       return false;
     }
