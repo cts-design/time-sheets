@@ -1711,7 +1711,9 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                     text: 'Add Field',
                     handler: function () {
                       var formPanel = Ext.getCmp('formPanel'),
-                        form = formPanel.getForm();
+                        form = formPanel.getForm(),
+                        grid = Ext.getCmp('formFieldGrid');
+
 
                       if (form.isDirty()) {
                         Ext.Msg.show({
@@ -1728,7 +1730,7 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                       } else {
                         form.reset();
                       }
-
+                      grid.getSelectionModel().deselectAll();
                     }
                   }, {
                     disabled: true,
