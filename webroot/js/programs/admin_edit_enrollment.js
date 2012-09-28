@@ -325,6 +325,7 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
+  autoSync: true,
   storeId: 'ProgramFormFieldStore',
   model: 'ProgramFormField',
   proxy: {
@@ -1945,9 +1946,13 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                       options = {},
                       validation = {},
                       programStep = Ext.data.StoreManager.lookup('ProgramStepStore'),
-                      programStepId = programStep.last().data.id,
                       grid = Ext.getCmp('formFieldGrid'),
-                      selectedRecord = grid.getSelectionModel().getSelection()[0];
+                      selectedRecord = grid.getSelectionModel().getSelection()[0],
+                      deleteFieldBtn = Ext.getCmp('deleteFieldBtn'),
+                      updateBtn = Ext.getCmp('updateBtn'),
+                      builderSaveBtn = Ext.getCmp('builderSaveBtn');
+
+                    console.log(selectedRecord);
 
                     parseVals = (function () {
                       return {
@@ -1985,12 +1990,12 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                     vals.attributes      = encodeObject(attributes);
                     vals.options         = encodeObject(options);
                     vals.validation      = encodeObject(validation);
-                    vals.program_step_id = programStepId;
+                    vals.program_step_id = selectedRecord.get('program_step_id');
                     vals.name            = vals.label.underscore();
 
                     selectedRecord.set(vals);
                     form.reset();
-                    saveBtn.enable().show();
+                    builderSaveBtn.enable().show();
                     updateBtn.disable().hide();
                     grid.getSelectionModel().deselectAll();
                   }
