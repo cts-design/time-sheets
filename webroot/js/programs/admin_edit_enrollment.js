@@ -1025,7 +1025,12 @@ stepTree = Ext.create('Ext.panel.Panel', {
             buttons: Ext.Msg.YESNO,
             icon: Ext.Msg.QUESTION,
             fn: function (btn) {
-              if (btn === 'yes') { selectedModule.remove(); }
+              if (btn === 'yes') {
+                selectedModule.eachChild(function (child) {
+                  selectedModule.removeChild(child);
+                });
+                selectedModule.remove();
+              }
             }
           });
         }
@@ -1945,6 +1950,14 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
 
                     if (vals.read_only === 'on') {
                       attributes.readonly = 'readonly';
+
+                      if (vals.default_value) {
+                        attributes.value = vals.default_value;
+                      }
+                    }
+
+                    if (vals.required === 'on') {
+                      validation.rule = 'notEmpty';
                     }
 
                     vals.attributes      = encodeObject(attributes);
@@ -2011,6 +2024,14 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
 
                     if (vals.read_only === 'on') {
                       attributes.readonly = 'readonly';
+
+                      if (vals.default_value) {
+                        attributes.value = vals.default_value;
+                      }
+                    }
+
+                    if (vals.required === 'on') {
+                      validation.rule = 'notEmpty';
                     }
 
                     vals.attributes      = encodeObject(attributes);
