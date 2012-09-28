@@ -432,6 +432,7 @@ Ext.create('Ext.data.Store', {
     created: null,
     modified: null
   }],
+  autoSync: true,
   storeId: 'ProgramInstructionStore',
   model: 'ProgramInstruction',
   proxy: {
@@ -493,6 +494,7 @@ Ext.create('Ext.data.Store', {
     created: null,
     modified: null
   }],
+  autoSync: true,
   storeId: 'ProgramEmailStore',
   model: 'ProgramEmail',
   proxy: {
@@ -1417,7 +1419,7 @@ stepTree = Ext.create('Ext.panel.Panel', {
         };
       });
 
-    Ext.getCmp('statusProgressBar').updateProgress(.33, 'Step 2 of 6');
+    Ext.getCmp('statusProgressBar').updateProgress(0.33, 'Step 2 of 6');
 
     task.delay(2500);
   },
@@ -2003,7 +2005,7 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
         });
       });
 
-    Ext.getCmp('statusProgressBar').updateProgress(.50, 'Step 3 of 6');
+    Ext.getCmp('statusProgressBar').updateProgress(0.50, 'Step 3 of 6');
 
     task.delay(1000);
   },
