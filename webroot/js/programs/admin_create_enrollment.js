@@ -1129,6 +1129,21 @@ stepTree = Ext.create('Ext.panel.Panel', {
         id: 'deleteStepBtn',
         text: 'Delete Step',
         handler: function () {
+          var grid = Ext.getCmp('gridTreePanel'),
+            selectedStep = grid.getSelectionModel().getSelection()[0];
+
+
+          Ext.Msg.show({
+            title: 'Are you sure?',
+            msg: 'Are you sure you want to delete this step?',
+            buttons: Ext.Msg.YESNO,
+            icon: Ext.Msg.QUESTION,
+            fn: function (btn) {
+              if (btn === 'yes') {
+                selectedStep.remove();
+              }
+            }
+          });
         }
       }]
     }],
