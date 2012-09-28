@@ -1,3 +1,4 @@
+var treeStoreLoaded = false;
 var encodeObject = function (obj) {
   if (Object.keys(obj).length) {
     return Ext.JSON.encode(obj);
@@ -1386,33 +1387,45 @@ stepTree = Ext.create('Ext.panel.Panel', {
     var programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
       me = this;
 
-    Ext.Ajax.request({
-      url: '/admin/program_steps/read',
-      params: {
-        program_id: ProgramId
-      },
-      success: function (response) {
-        var programSteps = Ext.JSON.decode(response.responseText).program_steps,
-          rootNode = programStepStore.getRootNode(),
-          i;
+    if (!treeStoreLoaded) {
+      Ext.Ajax.request({
+        url: '/admin/program_steps/read',
+        params: {
+          program_id: ProgramId
+        },
+        success: function (response) {
+          var programSteps = Ext.JSON.decode(response.responseText).program_steps,
+            rootNode = programStepStore.getRootNode(),
+            i;
 
-        for (i = 0, l = programSteps.length; i < l; i++) {
-          var rec = programSteps[i],
-            parent,
-            parentId;
+          treeStoreLoaded = true;
 
-          if (!rec.type) {
-            rootNode.appendChild(rec);
-            parentId = rec.id;
-          } else {
-            parent = rootNode.findChild('id', parentId);
-            rec.parentId = rec.parent_id;
-            rec.leaf = true;
-            parent.appendChild(rec);
+          console.log(programSteps);
+          console.log(programSteps.length);
+
+          for (i = 0, l = programSteps.length; i < l; i++) {
+            var rec = programSteps[i],
+              parent,
+              parentId;
+
+              console.log(rec);
+
+            if (!rec.type) {
+              rootNode.appendChild(rec);
+              parentId = rec.id;
+              console.log('is parent');
+              console.log(rec.id);
+            } else {
+              parent = rootNode.findChild('id', parentId);
+              console.log('parent:', parent);
+              rec.parentId = rec.parent_id;
+              rec.leaf = true;
+              parent.appendChild(rec);
+            }
           }
         }
-      }
-    });
+      });
+    }
   },
   process: function () {
     var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
