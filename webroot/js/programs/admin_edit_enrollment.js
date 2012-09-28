@@ -816,6 +816,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       items: [{
         boxLabel: 'Yes',
         id: 'paperFormsYes',
+        inputValue: '1',
         name: 'paper_forms',
         checked: true
       }, {
@@ -838,6 +839,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       items: [{
         boxLabel: 'Yes',
         id: 'uploadDocsYes',
+        inputValue: '1',
         name: 'upload_docs',
         checked: true
       }, {
