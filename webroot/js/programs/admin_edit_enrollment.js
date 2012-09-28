@@ -1018,7 +1018,9 @@ stepTree = Ext.create('Ext.panel.Panel', {
         id: 'deleteModuleBtn',
         text: 'Delete Module',
         handler: function () {
-          var selectedModule = this.up('panel').getSelectionModel().getSelection()[0];
+          var programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
+            selectedModule = this.up('panel').getSelectionModel().getSelection()[0];
+
           Ext.Msg.show({
             title: 'Are you sure?',
             msg: 'Are you sure you want to delete this module?',
@@ -1030,6 +1032,7 @@ stepTree = Ext.create('Ext.panel.Panel', {
                   selectedModule.removeChild(child);
                 });
                 selectedModule.remove();
+                programStepStore.sync();
               }
             }
           });
