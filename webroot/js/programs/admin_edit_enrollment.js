@@ -815,10 +815,12 @@ registrationForm = Ext.create('Ext.form.Panel', {
       labelWidth: 375,
       items: [{
         boxLabel: 'Yes',
+        id: 'paperFormsYes',
         name: 'paper_forms',
         checked: true
       }, {
         boxLabel: 'No',
+        id: 'paperFormsNo',
         name: 'paper_forms'
       }]
     }]
@@ -840,6 +842,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
         checked: true
       }, {
         boxLabel: 'No',
+        id: 'uploadDocsNo',
         name: 'upload_docs'
       }],
       labelAlign: 'top',
@@ -923,8 +926,16 @@ registrationForm = Ext.create('Ext.form.Panel', {
             form.loadRecord(rec);
             form.down('#sendExpiringSoon').setValue(expiringSoonString);
 
-            if (rec.data.queue_category_id) {
-              form.down('#uploadDocsYes').setValue(1);
+            if (rec.get('paper_forms')) {
+              form.down('#paperFormsYes').setValue(true);
+            } else {
+              form.down('#paperFormsNo').setValue(true);
+            }
+
+            if (rec.get('upload_docs')) {
+              form.down('#uploadDocsYes').setValue(true);
+            } else {
+              form.down('#uploadDocsNo').setValue(true);
             }
 
             if (!rec.data.in_test) {
