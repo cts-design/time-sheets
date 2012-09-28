@@ -221,6 +221,18 @@ class ProgramsController extends AppController {
 			$this->Program->id = $programData['id'];
 			unset($programData['id']);
 
+			if (array_key_exists('paper_forms', $programData)) {
+				if ($programData['paper_forms'] === null) {
+					$programData['paper_forms'] = 0;
+				}
+			}
+
+			if (array_key_exists('upload_docs', $programData)) {
+				if ($programData['upload_docs'] === null) {
+					$programData['upload_docs'] = 0;
+				}
+			}
+
 			$this->Program->set($programData);
 
 			if ($this->Program->save()) {
