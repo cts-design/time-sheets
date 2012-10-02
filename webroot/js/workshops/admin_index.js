@@ -12,7 +12,6 @@ Ext.define('Workshop', {
     {name: 'cat_1'},
     {name: 'cat_2'},
     {name: 'cat_3'},
-    {name: 'media'},
     {name: 'created', type: 'date', dateFormat: 'n/j h:ia'},
     {name: 'modified', type: 'date', dateFormat: 'n/j h:ia'}
   ]
