@@ -12,6 +12,7 @@ Ext.define('Workshop', {
     {name: 'cat_1'},
     {name: 'cat_2'},
     {name: 'cat_3'},
+    {name: 'media'},
     {name: 'created', type: 'date', dateFormat: 'n/j h:ia'},
     {name: 'modified', type: 'date', dateFormat: 'n/j h:ia'}
   ]
@@ -243,7 +244,6 @@ Ext.create('Ext.form.Panel', {
         Ext.getCmp('cat2Name').disable();
         Ext.getCmp('cat3Name').disable();
         if (records[0]) {
-          console.log(records[0]);
           var vals = {
             name: records[0].data.name,
             number: records[0].data.number
@@ -385,7 +385,6 @@ Ext.create('Ext.form.Panel', {
     handler: function() {
       var form = this.up('form').getForm();
       var vals = form.getValues();
-      console.log(vals);
       if(form.isValid()) {
         var workshop;
         var store = Ext.data.StoreManager.lookup('workshopsStore');
