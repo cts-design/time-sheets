@@ -428,6 +428,17 @@ Ext.onReady(function() {
 				});
 				programResponseTabs.getActiveTab().getStore().loadPage(1, {start: 0, limit: 10});
 			}
+		},{
+			text: 'Report',
+			icon:  '/img/icons/excel.png',
+			handler: function(){
+				var f = programResponseSearch.getForm();
+				var vals = f.getValues();
+        vals.status = programResponseProxy.extraParams.status;
+        vals.progId = progId;
+				vals = Ext.urlEncode(vals);
+				window.location = '/admin/program_responses/report?'+ vals;
+			}
 		}]
 	});
 	

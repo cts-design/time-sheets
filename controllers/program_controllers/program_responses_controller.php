@@ -3,9 +3,11 @@ App::import('Vendor', 'wkhtmltopdf/wkhtmltopdf');
 
 class ProgramResponsesController extends AppController {
 
-	var $name = 'ProgramResponses';
+	public $name = 'ProgramResponses';
 
-	var $components = array('Notifications');
+	public $components = array('Notifications');
+
+	public $helpers = array('Excel');
 
 	private $currentStep = null;
 	private $nextStep = null;
@@ -563,7 +565,85 @@ class ProgramResponsesController extends AppController {
 			$programName = $program['Program']['name'];
 			$this->set(compact('approvalPermission', 'programName', 'programType'));
 		}
+	
 	}
+
+	public function admin_report() {			
+		$id = $this->params['url']['progId']; 	
+		$title = 'Program Response Report ' . date('m/d/Y');
+		$this->ProgramResponse->Program->recursive = -1;
+			$program = $this->ProgramResponse->Program->findById($id);
+				$conditions = array('ProgramResponse.program_id' => $id);
+				if(!empty($this->params['url']['fromDate']) && !empty($this->params['url']['toDate'])) {
+					$from = date('Y-m-d H:i:m', strtotime($this->params['url']['fromDate'] . '12:00 AM'));
+					$to = date('Y-m-d H:i:m', strtotime($this->params['url']['toDate'] . '11:59 PM'));
+					$conditions['ProgramResponse.created BETWEEN ? AND ?'] = array($from, $to);
+					$title = 'Program Response Report from ' . $this->params['url']['fromDate'] . ' to ' . $this->params['url']['toDate'];
+				}
+				if(!empty($this->params['url']['id'])) {
+					$conditions['ProgramResponse.id'] = $this->params['url']['id'];
+				}
+				if(!empty($this->params['url']['searchType']) && !empty($this->params['url']['search'])) {
+					switch($this->params['url']['searchType']) {
+						case 'firstname' :
+							$conditions['User.firstname LIKE'] = '%' .
+								$this->params['url']['search'] . '%';
+							break;
+						case 'lastname' :
+							$conditions['User.lastname LIKE'] = '%' .
+								$this->params['url']['search'] . '%';
+							break;
+						case 'last4' :
+							$conditions['RIGHT (User.ssn , 4) LIKE'] = '%' .
+								$this->params['url']['search'] . '%';
+							break;
+						case 'fullssn' :
+							$conditions['User.ssn LIKE'] = '%' . $this->params['url']['search'] . '%';
+							break;
+					}
+				}
+				if(!empty($this->params['url']['status'])) {
+					if($this->params['url']['status'] === 'incomplete') {
+						$conditions['ProgramResponse.status'] = array('incomplete', 'pending_document_review');
+					}
+					else {
+						$conditions['ProgramResponse.status'] = $this->params['url']['status'];
+					}
+				}
+
+				$responses = $this->ProgramResponse->find('all', array('conditions' => $conditions));
+				$this->log($responses, 'debug');
+	
+		if(isset($responses)) {
+			foreach($responses as $k => $v) {
+				$report[$k]['id'] = $v['ProgramResponse']['id'];
+				$report[$k]['customer'] = $v['User']['name_last4'];
+				$report[$k]['status'] = $v['ProgramResponse']['status'];
+				$report[$k]['created'] = date('m/d/Y g:i a', strtotime($v['ProgramResponse']['created']));
+				$report[$k]['modified'] = date('m/d/Y g:i a', strtotime($v['ProgramResponse']['modified']));
+				$report[$k]['expires_on'] = date('m/d/Y g:i a', strtotime($v['ProgramResponse']['expires_on']));
+			}			
+		}
+		$this->Transaction->createUserTransaction('Programs', null, null, 'Created a program response Excel report');		
+		if(empty($report[0])) {
+		    $this->Session->setFlash(__('There are no results to generate a report', true), 'flash_failure');
+		    $this->redirect($this->referer());
+		}
+						
+		$data = array(
+		    'data' => $report,
+		    'title' => $title
+		);
+		$this->log($data, 'debug');
+		if (isset($this->params['requested'])) {
+		 	return $data;
+		} 		
+		Configure::write('debug', 0);
+		$this->layout = 'ajax';
+		$this->set($data);
+		$this->render('/elements/excelreport');		
+	}
+	
 
 	function admin_view($id, $type=null) {
 		$this->ProgramResponse->contain(array(
