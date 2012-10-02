@@ -39,7 +39,8 @@ class ProgramStepsController extends AppController {
 		$this->ProgramStep->recursive = -1;
 
 		$steps = $this->ProgramStep->find('all', array(
-			'conditions' => array('ProgramStep.program_id' => $this->params['url']['program_id'])
+			'conditions' => array('ProgramStep.program_id' => $this->params['url']['program_id']),
+			'order' => 'ProgramStep.id ASC'
 		));
 
 		if ($steps) {
@@ -67,7 +68,8 @@ class ProgramStepsController extends AppController {
 
 		if ($programId) {
 			$steps = $this->ProgramStep->find('all', array(
-				'conditions' => array('ProgramStep.program_id' => $programId)
+				'conditions' => array('ProgramStep.program_id' => $programId),
+				'order' => 'ProgramStep.id ASC'
 			));
 		} else {
 			$steps = $this->ProgramStep->find('all');
