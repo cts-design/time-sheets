@@ -5,7 +5,7 @@ Ext.define('Workshop', {
     {name: 'name'},
     {name: 'description'},
     {name: 'location', serverKey: 'location_id'},
-    {name: 'scheduled'},
+    {name: 'scheduled', type: 'date', dateFormat: 'Y-m-d H:i:s'},
     {name: 'registered'},
     {name: 'seats_available'},
     {name: 'attended'},
@@ -197,7 +197,9 @@ Ext.create('Ext.form.Panel', {
     },{
       text: 'Scheduled',
       dataIndex: 'scheduled',
-      flex: 1
+      flex: 1,
+			format: 'm/d/y g:i a',
+			xtype: 'datecolumn',
     },{
       text: 'Seats Available',
       dataIndex: 'seats_available',
@@ -297,7 +299,7 @@ Ext.create('Ext.form.Panel', {
     fieldLabel: 'Scheduled',
     xtype: 'xdatetime',
     name: 'scheduled',
-    timeFormat: 'h:i a',
+    timeFormat: 'g:i a',
     dateFormat: 'm/d/Y'
   },{
     fieldLabel: 'Cat 1',
