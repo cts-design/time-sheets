@@ -570,6 +570,7 @@ class ProgramResponsesController extends AppController {
 
 	public function admin_report() {			
 		$id = $this->params['url']['progId']; 	
+		$title = 'Program Response Report ' . date('m/d/Y');
 		$this->ProgramResponse->Program->recursive = -1;
 			$program = $this->ProgramResponse->Program->findById($id);
 				$conditions = array('ProgramResponse.program_id' => $id);
@@ -577,6 +578,7 @@ class ProgramResponsesController extends AppController {
 					$from = date('Y-m-d H:i:m', strtotime($this->params['url']['fromDate'] . '12:00 AM'));
 					$to = date('Y-m-d H:i:m', strtotime($this->params['url']['toDate'] . '11:59 PM'));
 					$conditions['ProgramResponse.created BETWEEN ? AND ?'] = array($from, $to);
+					$title = 'Program Response Report from ' . $this->params['url']['fromDate'] . ' to ' . $this->params['url']['toDate'];
 				}
 				if(!empty($this->params['url']['id'])) {
 					$conditions['ProgramResponse.id'] = $this->params['url']['id'];
@@ -611,16 +613,15 @@ class ProgramResponsesController extends AppController {
 
 				$responses = $this->ProgramResponse->find('all', array('conditions' => $conditions));
 				$this->log($responses, 'debug');
-
-		$title = 'Program Response Report ' . date('m/d/Y');
+	
 		if(isset($responses)) {
 			foreach($responses as $k => $v) {
 				$report[$k]['id'] = $v['ProgramResponse']['id'];
 				$report[$k]['customer'] = $v['User']['name_last4'];
 				$report[$k]['status'] = $v['ProgramResponse']['status'];
-				$report[$k]['created'] = $v['ProgramResponse']['created'];
-				$report[$k]['modified'] = $v['ProgramResponse']['modified'];
-				$report[$k]['expires_on'] = $v['ProgramResponse']['expires_on'];
+				$report[$k]['created'] = date('m/d/Y g:i a', strtotime($v['ProgramResponse']['created']));
+				$report[$k]['modified'] = date('m/d/Y g:i a', strtotime($v['ProgramResponse']['modified']));
+				$report[$k]['expires_on'] = date('m/d/Y g:i a', strtotime($v['ProgramResponse']['expires_on']));
 			}			
 		}
 		$this->Transaction->createUserTransaction('Programs', null, null, 'Created a program response Excel report');		
