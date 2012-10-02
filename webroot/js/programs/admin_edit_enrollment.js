@@ -1600,63 +1600,72 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                       fieldOptions = Ext.getCmp('fieldOptions'),
                       deleteFieldBtn = Ext.getCmp('deleteFieldBtn'),
                       updateBtn = Ext.getCmp('updateBtn'),
-                      builderSaveBtn = Ext.getCmp('builderSaveBtn');
+                      builderSaveBtn = Ext.getCmp('builderSaveBtn'),
+                      decodedValidation;
 
-                      // check the appropriate checkboxes
-                      if (rec.data.validation && rec.data.validation.match(/notEmpty/g)) {
-                        requiredCb.setValue(true);
-                      }
                     form.reset();
 
-                      if (!rec.data.validation || !rec.data.validation.match(/notEmpty/g)) {
-                        requiredCb.setValue(false);
+                    // check the appropriate checkboxes
+                    if (rec.data.validation) {
+                      if (rec.data.validation.match(/notEmpty/g)) {
+                        requiredCb.setValue(true);
+                      } else {
+                        requiredCb.setValue(true);
+
+                        decodedValidation = Ext.JSON.decode(rec.data.validation);
+                        rec.data.answer = decodedValidation.rule[1];
+                      }
+                    }
+
+                    if (!rec.data.validation || !rec.data.validation.match(/notEmpty/g)) {
+                      requiredCb.setValue(false);
+                    }
+
+                    if (rec.data.attributes) {
+                      if (rec.data.attributes.match(/readonly/g)) {
+                        readOnlyCb.setValue(true);
                       }
 
-                      if (rec.data.attributes) {
-                        if (rec.data.attributes.match(/readonly/g)) {
-                          readOnlyCb.setValue(true);
-                        }
-
-                        if (rec.data.attributes.match(/datepicker/g)) {
-                          fieldType.setValue('datepicker');
-                          rec.data.type = 'datepicker';
-                        }
-
-                        if (rec.data.attributes.match(/value/g)) {
-                          attrs = Ext.JSON.decode(rec.data.attributes);
-                          rec.data.default_value = attrs.value;
-                        }
+                      if (rec.data.attributes.match(/datepicker/g)) {
+                        fieldType.setValue('datepicker');
+                        rec.data.type = 'datepicker';
                       }
 
-                      if (!rec.data.attributes || !rec.data.attributes.match(/readonly/g)) {
-                        readOnlyCb.setValue(false);
+                      if (rec.data.attributes.match(/value/g)) {
+                        attrs = Ext.JSON.decode(rec.data.attributes);
+                        rec.data.default_value = attrs.value;
                       }
+                    }
 
-                      // if it's a state list we need to present it
-                      // differently to the user
-                      if (rec.data.options) {
-                        if (rec.data.options.match(/"AL":"Alabama"/gi)) {
-                          fieldType.setValue('states');
-                          fieldOptions.setValue('');
-                          fieldOptionsContainer.setVisible(false);
-                          rec.data.type = 'states';
-                          rec.data.options = '';
-                        } else if (rec.data.options.match(/"Yes":"Yes","No":"No"/gi)) {
-                          fieldOptions.setValue('');
-                          fieldOptionsContainer.setVisible(false);
-                          rec.data.options = 'yesno';
-                        } else if (rec.data.options.match(/"True":"True","False":"False"/gi)) {
-                          fieldOptions.setValue('');
-                          fieldOptionsContainer.setVisible(false);
-                          rec.data.options = 'truefalse';
-                        }
+                    if (!rec.data.attributes || !rec.data.attributes.match(/readonly/g)) {
+                      readOnlyCb.setValue(false);
+                    }
+
+                    // if it's a state list we need to present it
+                    // differently to the user
+                    if (rec.data.options) {
+                      if (rec.data.options.match(/"AL":"Alabama"/gi)) {
+                        fieldType.setValue('states');
+                        fieldOptions.setValue('');
+                        fieldOptionsContainer.setVisible(false);
+                        rec.data.type = 'states';
+                        rec.data.options = '';
+                      } else if (rec.data.options.match(/"Yes":"Yes","No":"No"/gi)) {
+                        fieldOptions.setValue('');
+                        fieldOptionsContainer.setVisible(false);
+                        rec.data.options = 'yesno';
+                      } else if (rec.data.options.match(/"True":"True","False":"False"/gi)) {
+                        fieldOptions.setValue('');
+                        fieldOptionsContainer.setVisible(false);
+                        rec.data.options = 'truefalse';
                       }
+                    }
 
-                      form.loadRecord(rec);
+                    form.loadRecord(rec);
 
-                    deleteFieldBtn.enable();
-                    updateBtn.show();
-                    builderSaveBtn.hide();
+                  deleteFieldBtn.enable();
+                  updateBtn.show();
+                  builderSaveBtn.hide();
                   }
                 },
                 viewConfig: {
@@ -1723,24 +1732,13 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                     handler: function () {
                       var formPanel = Ext.getCmp('formPanel'),
                         form = formPanel.getForm(),
+                        saveBtn = formPanel.down('#builderSaveBtn'),
+                        updateBtn = formPanel.down('#updateBtn'),
                         grid = Ext.getCmp('formFieldGrid');
 
-
-                      if (form.isDirty()) {
-                        Ext.Msg.show({
-                          title: 'Discard Changes?',
-                          msg: 'You have an unsaved form field, discard changes?',
-                          buttons: Ext.Msg.YESNO,
-                          icon: Ext.Msg.QUESTION,
-                          fn: function (btn) {
-                            if (btn === 'yes') {
-                              form.reset();
-                            }
-                          }
-                        });
-                      } else {
-                        form.reset();
-                      }
+                      form.reset();
+                      saveBtn.enable().show();
+                      updateBtn.disable().hide();
                       grid.getSelectionModel().deselectAll();
                     }
                   }, {
@@ -1973,6 +1971,11 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                       validation.rule = 'notEmpty';
                     }
 
+                    if (vals.answer) {
+                      validation.rule = ['looseEqualTo', vals.answer];
+                      validation.message = 'Incorrect';
+                    }
+
                     vals.attributes      = encodeObject(attributes);
                     vals.options         = encodeObject(options);
                     vals.validation      = encodeObject(validation);
@@ -2045,6 +2048,11 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
 
                     if (vals.required === 'on') {
                       validation.rule = 'notEmpty';
+                    }
+
+                    if (vals.answer) {
+                      validation.rule = ['looseEqualTo', vals.answer];
+                      validation.message = 'Incorrect';
                     }
 
                     vals.attributes      = encodeObject(attributes);
