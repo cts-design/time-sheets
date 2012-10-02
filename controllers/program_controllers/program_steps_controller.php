@@ -36,6 +36,8 @@ class ProgramStepsController extends AppController {
 	}
 
 	public function admin_read_tree() {
+		$this->ProgramStep->recursive = -1;
+
 		$steps = $this->ProgramStep->find('all', array(
 			'conditions' => array('ProgramStep.program_id' => $this->params['url']['program_id'])
 		));
@@ -54,6 +56,7 @@ class ProgramStepsController extends AppController {
 	}
 
 	public function admin_read() {
+		$this->ProgramStep->recursive = -1;
 		$programId = null;
 
 		if (isset($this->params['url']['program_id'])) {

@@ -1662,10 +1662,9 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                     }
 
                     form.loadRecord(rec);
-
-                  deleteFieldBtn.enable();
-                  updateBtn.show();
-                  builderSaveBtn.hide();
+                    deleteFieldBtn.enable();
+                    updateBtn.show();
+                    builderSaveBtn.hide();
                   }
                 },
                 viewConfig: {
