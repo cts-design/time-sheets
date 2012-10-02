@@ -2119,6 +2119,10 @@ uploadStep = Ext.create('Ext.panel.Panel', {
     region: 'west',
     store: 'ProgramDocumentStore',
     width: 660,
+    selModel: {
+      allowDeselect: true,
+      mode: 'SINGLE'
+    },
     columns: [{
       header: 'Program Step Id',
       dataIndex: 'program_step_id',
@@ -2156,7 +2160,9 @@ uploadStep = Ext.create('Ext.panel.Panel', {
     }],
     listeners: {
       select: function (rm, rec, index) {
-        console.log('test');
+        var deleteBtn = Ext.getCmp('deleteDocumentBtn');
+
+        deleteBtn.enable();
       }
     },
     viewConfig: {
@@ -2173,6 +2179,9 @@ uploadStep = Ext.create('Ext.panel.Panel', {
         id: 'addDocumentBtn',
         text: 'Add Document',
         handler: function () {
+          var grid = Ext.getCmp('documentGrid');
+
+          grid.getSelectionModel().deselectAll();
         }
       }, {
         disabled: true,
@@ -2180,6 +2189,24 @@ uploadStep = Ext.create('Ext.panel.Panel', {
         id: 'deleteDocumentBtn',
         text: 'Delete Document',
         handler: function () {
+          var programDocumentStore = Ext.data.StoreManager.lookup('ProgramDocumentStore'),
+            grid = Ext.getCmp('documentGrid'),
+            selectedRecord = grid.getSelectionModel().getSelection()[0],
+            deleteBtn = this;
+
+          Ext.Msg.show({
+            title: 'Are you sure?',
+            msg: 'Are you sure you want to delete this document?',
+            buttons: Ext.Msg.YESNO,
+            icon: Ext.Msg.QUESTION,
+            fn: function (btn) {
+              if (btn === 'yes') {
+                deleteBtn.disable();
+                grid.getSelectionModel().deselectAll();
+                programDocumentStore.remove(selectedRecord);
+              }
+            }
+          });
         }
       }]
     }],

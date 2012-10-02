@@ -134,6 +134,14 @@ class ProgramDocumentsController extends AppController {
 	}
 
 	public function admin_destroy() {
+		$document = json_decode($this->params['form']['program_documents'], true);
+
+		$this->ProgramDocument->id = $document['id'];
+
+		if ($this->ProgramDocument->delete()) {
+			$data['success'] = true;
+		}
+
 		$this->set('data', $data);
 		$this->render(null, null, '/elements/ajaxreturn');
 	}
