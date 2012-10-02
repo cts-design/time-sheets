@@ -42,13 +42,13 @@ Programs = {
     });
 
     $incompleteSteps.bind('click', function (e) {
-      if (!$(this).hasClass('current') && !$(this).hasClass('redoable')) {
+      if (!$(this).hasClass('current') && !$(this).hasClass('redoable') && !$(this).hasClass('required_docs')) {
         e.preventDefault();
       }
     });
 
     $completeSteps.bind('click', function (e) {
-      if (!$(this).hasClass('current') && !$(this).hasClass('redoable')) {
+      if (!$(this).hasClass('current') && !$(this).hasClass('redoable') && !$(this).hasClass('required_docs')) {
         e.preventDefault();
       }
     });
