@@ -134,12 +134,23 @@ class ProgramDocumentsController extends AppController {
 	}
 
 	public function admin_destroy() {
+		$this->loadModel('WatchedFilingCat');
 		$document = json_decode($this->params['form']['program_documents'], true);
 
-		$this->ProgramDocument->id = $document['id'];
+		$programDocument = $this->ProgramDocument->findById($document['id']);
 
-		if ($this->ProgramDocument->delete()) {
-			$data['success'] = true;
+		if ($programDocument) {
+			if ($this->ProgramDocument->delete()) {
+				$data['success'] = true;
+			}
+		} else {
+			$watchedCat = $this->WatchedFilingCat->findById($document['id']);
+
+			if ($watchedCat) {
+				if ($this->WatchedFilingCat->delete($document['id'])) {
+					$data['success'] = true;
+				}
+			}
 		}
 
 		$this->set('data', $data);

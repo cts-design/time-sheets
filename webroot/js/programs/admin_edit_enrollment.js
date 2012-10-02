@@ -2201,9 +2201,9 @@ uploadStep = Ext.create('Ext.panel.Panel', {
             icon: Ext.Msg.QUESTION,
             fn: function (btn) {
               if (btn === 'yes') {
+                programDocumentStore.remove(selectedRecord);
                 deleteBtn.disable();
                 grid.getSelectionModel().deselectAll();
-                programDocumentStore.remove(selectedRecord);
               }
             }
           });
