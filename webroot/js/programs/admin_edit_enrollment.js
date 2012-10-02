@@ -1606,6 +1606,7 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                       if (rec.data.validation && rec.data.validation.match(/notEmpty/g)) {
                         requiredCb.setValue(true);
                       }
+                    form.reset();
 
                       if (!rec.data.validation || !rec.data.validation.match(/notEmpty/g)) {
                         requiredCb.setValue(false);
