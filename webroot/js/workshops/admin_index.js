@@ -4,14 +4,14 @@ Ext.define('Workshop', {
     {name: 'id'},
     {name: 'name'},
     {name: 'description'},
-    {name: 'location'},
-    {name: 'scheduled', type: 'date', dateFormat: 'n/j h:ia'},
+    {name: 'location', serverKey: 'location_id'},
+    {name: 'scheduled'},
     {name: 'registered'},
     {name: 'seats_available'},
     {name: 'attended'},
-    {name: 'Cat1-name', serverKey: 'cat_1'},
-    {name: 'Cat2-name', serverKey: 'cat_2'},
-    {name: 'Cat3-name', serverKey: 'cat_3'},
+    {name: 'cat_1'},
+    {name: 'cat_2'},
+    {name: 'cat_3'},
     {name: 'created', type: 'date', dateFormat: 'n/j h:ia'},
     {name: 'modified', type: 'date', dateFormat: 'n/j h:ia'}
   ]
@@ -64,14 +64,15 @@ Ext.create('Ext.data.Store', {
       }
       if(responseTxt.success) {
         Ext.MessageBox.hide();
+        var formPanel = Ext.getCmp('workshopsForm');
         if(operation.action === 'create' || operation.action === 'update') {
-          gridForm.getForm().reset();
+          formPanel.getForm().reset();
           Ext.getCmp('cat2Name').disable();
           Ext.getCmp('cat3Name').disable();
           store.load();
         }
         if(operation.action === 'destroy') {
-          gridForm.getForm().reset();
+          formPanel.getForm().reset();
           Ext.getCmp('cat2Name').disable();
           Ext.getCmp('cat3Name').disable();
           store.load();
@@ -141,6 +142,28 @@ Ext.create('Ext.data.Store', {
       }
     }
   }
+});
+ 
+Ext.define('Location', {
+  extend: 'Ext.data.Model',
+  fields: ['id', 'name']
+});
+	
+Ext.create('Ext.data.Store', {
+  model: 'Location',
+  storeId: 'locationsStore',
+  proxy: {
+    type: 'ajax',
+    url: '/admin/locations/get_location_list',
+    reader: {
+      type: 'json',
+      root: 'locations'
+    },
+    limitParam: undefined,
+    pageParam: undefined,
+    startParam: undefined				
+  },
+  autoLoad: true
 });
 
 Ext.create('Ext.form.Panel', {
@@ -218,6 +241,7 @@ Ext.create('Ext.form.Panel', {
         Ext.getCmp('cat2Name').disable();
         Ext.getCmp('cat3Name').disable();
         if (records[0]) {
+          console.log(records[0]);
           var vals = {
             name: records[0].data.name,
             number: records[0].data.number
@@ -236,7 +260,7 @@ Ext.create('Ext.form.Panel', {
   title:'Add / Edit Form',
   defaults: {
     width: 245,
-    labelWidth: 50
+    labelWidth: 60
   },
   defaultType: 'textfield',
   items: [{
@@ -250,17 +274,34 @@ Ext.create('Ext.form.Panel', {
     enforceMaxLength: true,
   },{
     fieldLabel: 'Description',
-    xtype: 'textarea'
+    name: 'description',
+    xtype: 'textarea',
+    allowBlank: false
   },{
-    fieldLabel: 'Location'
+    fieldLabel: 'Location',
+    name: 'location',
+    xtype: 'combo',
+    displayField: 'name',
+    valueField: 'id',
+    store: Ext.data.StoreManager.lookup('locationsStore'),
+    queryMode: 'local',
+    allowBlank: false
   },{
-    fieldLabel: 'Seats'
+    fieldLabel: 'Seats',
+    name: 'seats_available',
+    xtype: 'numberfield',
+    width: 150,
+    minValue: 1,
+    maxValue: 100
   },{
     fieldLabel: 'Scheduled',
-    xtype: 'xdatetime'
+    xtype: 'xdatetime',
+    name: 'scheduled',
+    timeFormat: 'h:i a',
+    dateFormat: 'm/d/Y'
   },{
     fieldLabel: 'Cat 1',
-    name: 'Cat1-name',
+    name: 'cat_1',
     id: 'cat1Name',
     store: Ext.data.StoreManager.lookup('cat1Store'),
     displayField: 'name',
@@ -287,7 +328,7 @@ Ext.create('Ext.form.Panel', {
     }
   },{
     fieldLabel: 'Cat 2',
-    name: 'Cat2-name',
+    name: 'cat_2',
     id: 'cat2Name',
     xtype: 'combo',
     disabled: true,
@@ -313,7 +354,7 @@ Ext.create('Ext.form.Panel', {
     }
   },{
     fieldLabel: 'Cat 3',
-    name: 'Cat3-name',
+    name: 'cat_3',
     id: 'cat3Name',
     xtype: 'combo',
     store: Ext.data.StoreManager.lookup('cat3Store'),
@@ -342,10 +383,12 @@ Ext.create('Ext.form.Panel', {
     handler: function() {
       var form = this.up('form').getForm();
       var vals = form.getValues();
+      console.log(vals);
       if(form.isValid()) {
         var workshop;
+        var store = Ext.data.StoreManager.lookup('workshopsStore');
         if(vals.id !== '') {
-          workshop = store.getById(parseInt(vals.id, 10));
+          workshop = store.getById(vals.id);
           workshop.beginEdit();
           workshop.set(vals);
           workshop.endEdit();
