@@ -1436,24 +1436,16 @@ stepTree = Ext.create('Ext.panel.Panel', {
 
           treeStoreLoaded = true;
 
-          console.log(programSteps);
-          console.log(programSteps.length);
-
           for (i = 0, l = programSteps.length; i < l; i++) {
             var rec = programSteps[i],
               parent,
               parentId;
 
-              console.log(rec);
-
             if (!rec.type) {
               rootNode.appendChild(rec);
               parentId = rec.id;
-              console.log('is parent');
-              console.log(rec.id);
             } else {
               parent = rootNode.findChild('id', parentId);
-              console.log('parent:', parent);
               rec.parentId = rec.parent_id;
               rec.leaf = true;
               parent.appendChild(rec);

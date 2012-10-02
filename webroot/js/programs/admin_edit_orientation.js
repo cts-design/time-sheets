@@ -831,6 +831,8 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           updateBtn = Ext.getCmp('updateBtn'),
           builderSaveBtn = Ext.getCmp('builderSaveBtn');
 
+        form.reset();
+
         if (rec.data.attributes) {
           if (rec.data.attributes.match(/datepicker/g)) {
             fieldType.setValue('datepicker');
@@ -856,6 +858,11 @@ formBuilder = Ext.create('Ext.panel.Panel', {
             fieldOptionsContainer.setVisible(false);
             rec.data.options = 'truefalse';
           }
+        }
+
+        if (rec.data.validation) {
+          var decodedValidation = Ext.JSON.decode(rec.data.validation);
+          rec.data.correctAnswer = decodedValidation.rule[1];
         }
 
         form.loadRecord(rec);
