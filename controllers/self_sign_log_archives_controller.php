@@ -159,20 +159,21 @@ class SelfSignLogArchivesController extends AppController {
 		
 		$averageTimeInSeconds = $this->_calculateAverageTimeInSeconds($closedInTimes);
 		$average = $this->SelfSignLogArchive->_time_duration($averageTimeInSeconds);
-		
-        $report[(count($report) + 3)] = array(
-            'Name' => '',
-            'Location' => '',
-            'Button 1' => '',
-            'Button 2' => '',
-            'Button 3' => '',
-            'Other' => '',
-            'Last Activity Admin' => '',
-            'Status' => '',
-            'Created' => '',
-            'Closed' => '',
-            'Closed In' => "Average close time: {$average}"
-        );
+		if(isset($report)) {
+			 $report[(count($report) + 3)] = array(
+				'Name' => '',
+				'Location' => '',
+				'Button 1' => '',
+				'Button 2' => '',
+				'Button 3' => '',
+				'Other' => '',
+				'Last Activity Admin' => '',
+				'Status' => '',
+				'Created' => '',
+				'Closed' => '',
+				'Closed In' => "Average close time: {$average}"
+			);
+		}
 		
 		if(empty($report[0])) {
 		    $this->Session->setFlash(__('There are no results to generate a report', true), 'flash_failure');
@@ -209,6 +210,7 @@ class SelfSignLogArchivesController extends AppController {
 			else {
 				$conditions = array('SelfSignLogArchive.level_1 !=' => null);
 			}
+			$buttons = null;
 			$buttonList = $this->SelfSignLogArchive->find('list', array(
 				'fields' => array('SelfSignLogArchive.id', 'SelfSignLogArchive.level_1'),
 				'conditions' => $conditions,
@@ -216,11 +218,13 @@ class SelfSignLogArchivesController extends AppController {
 			if(isset($buttonList)) {
 				foreach($buttonList as $k => $v) {
 					if($v) {
-						$button[$v] = $masterButtonList[$v];
+						$buttons[$v] = $masterButtonList[$v];
 					}			
 				}
-				asort($button);
-				$this->set('buttons', $button);
+				if($buttons) {
+					asort($buttons);
+					$this->set('buttons', $buttons);
+				}
 			}
 			$this->render('admin_get_buttons_ajax');
 		}

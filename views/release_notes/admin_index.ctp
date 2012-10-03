@@ -3,6 +3,18 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+	<h1>Release 3.4 (9-13-12)</h1>
+	<h2>Major feature enhancements</h2>
+	<ol>
+		<li>Adjust the kiosk timeout and the “are you there” display window</li>
+		<li>Kiosk login will now be last name and full social</li>
+		<li>Option to add an “I need assistance” button with customizable message per kiosk</li>
+		<li>Added “Do you have a substantial disability” as a core registration question</li>
+		<li>Added the ability to have up to 7 additional registration fields on the kiosk registration page</li>
+		<li>Added the ability to hide/show the kiosk user info confirmation screen</li>
+		<li> Implemented a new help desk interface to allow for greater explanation of issues</li>
+	</ol>
+	<hr />
 	<h1>Release 3.3.4 (7-12-12)</h1>
     <h2>Minor feature enhancements</h2>
 	<ol>

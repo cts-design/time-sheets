@@ -70,7 +70,8 @@ $(document).ready(function() {
 		if(Configure::read('Registration.ssn') == 'full') {
 		    echo $this->Form->input('ssn', array(
 				'label' => __('Social Security Number', true),
-				'between' => '<br />'));
+				'between' => '<br />',
+				'after' => '<br />'));
 		    echo $this->Form->input('ssn_confirm', array(
 				'label' => __('Please confirm your Social Security Number', true),
 				'maxlength' => 9,

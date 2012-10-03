@@ -212,21 +212,21 @@ class AuditsController extends AppController {
 			$userId = $this->Auth->user('id');
 
 			foreach ($user['FiledDocument'] as $doc) {
-				if ($doc['Cat1']['secure']) {
+				if (isset($doc['Cat1']['secure']) && $doc['Cat1']['secure']) {
 					$doc['secure'] = 1;
 					if (in_array($userId, json_decode($doc['Cat1']['secure_admins']))) {
 						$doc['secure_viewable'] = 1;
 					} else {
 						$doc['secure_viewable'] = 0;
 					}
-				} else if ($doc['Cat2']['secure']) {
+				} else if (isset($doc['Cat2']['secure']) && $doc['Cat2']['secure']) {
 					$doc['secure'] = 1;
 					if (in_array($userId, json_decode($doc['Cat2']['secure_admins']))) {
 						$doc['secure_viewable'] = 1;
 					} else {
 						$doc['secure_viewable'] = 0;
 					}
-				} else if ($doc['Cat3']['secure']) {
+				} else if (isset($doc['Cat3']['secure']) && $doc['Cat3']['secure']) {
 					$doc['secure'] = 1;
 					if (in_array($userId, json_decode($doc['Cat3']['secure_admins']))) {
 						$doc['secure_viewable'] = 1;

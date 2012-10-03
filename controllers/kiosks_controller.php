@@ -65,6 +65,8 @@ class KiosksController extends AppController {
 	}
 
     function admin_edit($id =null) {
+		$this->Kiosk->recursive = 0;
+
 		if(!$id && empty($this->data)) {
 			$this->Session->setFlash(__('Invalid kiosk', true), 'flash_failure');
 			$this->redirect( array('action' => 'index'));
@@ -109,11 +111,16 @@ class KiosksController extends AppController {
 	}
 
     function kiosk_self_sign_edit($id =null) {
+		$this->Kiosk->recursive = 0;
+
 		if(!$id && empty($this->data)) {
 			$this->Session->setFlash(__('An error occured please try again.', true), 'flash_failure');
 			$this->redirect( array('action' => 'self_sign_confirm'));
 		}
+
 		$this->loadModel('User');
+		$this->User->recursive = 0;
+
 		if(!empty($this->data)) {
 			if($this->User->save($this->data)) {
 				$this->Transaction->createUserTransaction('Self Sign', $id, $this->Kiosk->getKioskLocationId(), 'Edited information');

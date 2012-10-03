@@ -365,6 +365,7 @@ class UsersController extends AppController {
         }
         if (!empty($this->data)) {
             if ($this->User->save($this->data)) {
+				$this->data = $this->User->read(null, $this->Auth->user('id'));
                 $this->Session->write('Auth.User.email', $this->data['User']['email']);
                 $this->Transaction->createUserTransaction('Customer',
                     null, null, 'Edited profile '. $this->data['User']['lastname'] .
@@ -574,8 +575,7 @@ class UsersController extends AppController {
             }
             if ($this->User->save($this->data)) {
                 $userId = $this->User->getInsertId();
-                $last4 = substr($this->data['User']['ssn'], -4);
-                $this->data['User']['password'] = Security::hash($last4, null, true);
+                $this->data['User']['password'] = Security::hash($this->data['User']['ssn'], null, true);
                 $this->data['User']['username'] = $this->data['User']['lastname'];
                 $this->Auth->login($this->data);
                 $this->Transaction->createUserTransaction('Web Site',
@@ -590,6 +590,10 @@ class UsersController extends AppController {
             }
             else {
                 $this->Session->setFlash(__('The information could not be saved. Please, try again.', true), 'flash_failure');
+				if(isset($this->data['User']['ssn']))
+					unset($this->data['User']['ssn']);
+				if(isset($this->data['User']['ssn_confirm']))
+					unset($this->data['User']['ssn_confirm']);
             }
         }
         if (empty($this->data)) {
@@ -615,6 +619,10 @@ class UsersController extends AppController {
     }
 
     function kiosk_mini_registration($lastname=null) {
+		$this->loadModel('Kiosk');
+		$this->Kiosk->recursive = -1;
+		$this->User->recursive  = -1;
+
         if (!empty($this->data)) {
             $this->User->Behaviors->disable('Disableable');
 			$this->User->setValidation('kioskRegistration');
@@ -632,17 +640,20 @@ class UsersController extends AppController {
             $this->User->create();
             if ($this->User->save($this->data)) {
                 $userId = $this->User->getInsertId();
-                $last4 = substr($this->data['User']['ssn'], -4);
-                $this->data['User']['password'] = Security::hash($last4, null, true);
+                $this->data['User']['password'] = Security::hash($this->data['User']['ssn'], null, true);
                 $this->data['User']['username'] = $this->data['User']['lastname'];
                 $this->Auth->login($this->data);
                 $this->Transaction->createUserTransaction('Self Sign',
-                    $userId, $this->User->SelfSignLog->Kiosk->getKioskLocationId(), 'User self registered using a kiosk.');
+                    $userId, $this->Kiosk->getKioskLocationId(), 'User self registered using a kiosk.');
                 $this->Session->setFlash(__('Your account has been created.', true), 'flash_success');
                 $this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_confirm'));
             }
             else {
                 $this->Session->setFlash(__('The information could not be saved. Please, try again.', true), 'flash_failure');
+				if(isset($this->data['User']['ssn']))
+					unset($this->data['User']['ssn']);
+				if(isset($this->data['User']['ssn_confirm']))
+					unset($this->data['User']['ssn_confirm']);
             }
         }
         if (empty($this->data)) {

@@ -81,7 +81,7 @@ class User extends AppModel {
 		    ),
 		    'unique' => array(
 				'rule' => 'isUnique',
-				'message' => 'The SSN entered already exists in the system.',
+				'message' => 'Sorry, we are unable to register you with the provided SSN.',
 				'required' => false
 		    ),
 		    'minLength' => array(
@@ -290,7 +290,7 @@ class User extends AppModel {
 				),
 				'unique' => array(
 					'rule' => 'isUnique',
-					'message' => 'The SSN entered already exists in the system.',
+					'message' => 'Sorry, we are unable to register you with the provided SSN.',
 					'required' => false
 				),
 				'minLength' => array(
@@ -571,7 +571,9 @@ class User extends AppModel {
 			),
 			'language' => array(),
 			'race' => array(),
-			'ethnicity' => array()		
+			'ethnicity' => array(),
+			'veteran' => array(),
+			'disability' => array()		
 		)
 	);
 	

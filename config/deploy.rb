@@ -91,6 +91,13 @@ task :tbwa do
   set :app_plugins, ['job_forms']
 end
 
+task :suncoast do
+  set :server_name, 'suncoast production'
+  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
+  set :user, 'deploy'
+  server "atlas.suncoastworkforce.org", :app, :web, :db, :primary => true
+end
+
 # --- Cake Settings
 set :cake_branch, "1.3"
 
