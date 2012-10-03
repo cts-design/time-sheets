@@ -27,7 +27,7 @@ class NotificationsComponent extends Object {
 			else {
 				$data['settings']['from'] = Configure::read('System.email');
 			}				
-			$data['settings']['sendAs'] = 'text';
+			$data['settings']['sendAs'] = 'both';
 			$data['settings']['template'] = 'programs';
 			$data['settings']['subject'] = $programEmail['subject'];
 			$data['vars']['text'] = $programEmail['body'];
