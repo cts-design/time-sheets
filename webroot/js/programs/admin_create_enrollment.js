@@ -2651,9 +2651,32 @@ emails = Ext.create('Ext.panel.Panel', {
   }],
   preprocess: function () {
     var program = Ext.data.StoreManager.lookup('ProgramStore').first(),
-      programEmailStore = Ext.data.StoreManager.lookup('ProgramEmailStore');
+      programEmailStore = Ext.data.StoreManager.lookup('ProgramEmailStore'),
+      programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore');
 
     Ext.getCmp('statusProgressBar').updateProgress(1.0, 'Step 6 of 6');
+
+    Ext.Ajax.request({
+      url: '/admin/program_steps/read',
+      params: {
+        program_id: program.get('id')
+      },
+      success: function (response) {
+        var res = Ext.JSON.decode(response.responseText);
+        Ext.Object.each(res.program_steps, function (key, value, me) {
+          if (value.type) {
+            programEmailStore.add({
+              program_id: program.get('id'),
+              program_step_id: value.id,
+              type: value.type + '_step',
+              from: ('noreply@' + window.location.hostname),
+              subject: 'Email for ' + value.name + ' step',
+              body: 'Email for ' + value.name + ' step'
+            });
+          }
+        });
+      }
+    });
 
     programEmailStore.each(function (rec) {
       var programEmail = {

@@ -303,13 +303,6 @@ class ProgramsController extends AppController {
 			}
 		}
 
-		if ($success && $duplicate['Program']['type'] === 'enrollment') {
-			if (! $this->duplicateWatchedFilingCat($newId, $programId)) {
-				$this->duplicateTransactionCleanup();
-				$success = false;
-			}
-		}
-
 		$data['success'] = $success;
 
 		$this->set('data', $data);
@@ -877,47 +870,10 @@ class ProgramsController extends AppController {
 		return true;
 	}
 
-	public function duplicateWatchedFilingCat($newProgramId, $oldProgramId) {
-		$this->loadModel('WatchedFilingCat');
-		$this->WatchedFilingCat->recursive = -1;
-		$filingCats = $this->WatchedFilingCat->find('all', array(
-			'conditions' => array(
-				'WatchedFilingCat.program_id' => $oldProgramId
-			)
-		));
-
-		if ($filingCats) {
-			foreach ($filingCats as $cat) {
-				$newRecord = $cat;
-
-				unset(
-					$newRecord['WatchedFilingCat']['id'],
-					$newRecord['WatchedFilingCat']['created'],
-					$newRecord['WatchedFilingCat']['modified']
-				);
-
-				$newRecord['WatchedFilingCat']['program_id'] = $newProgramId;
-				$this->WatchedFilingCat->create();
-
-				if ($this->WatchedFilingCat->save($newRecord)) {
-					$this->transactionIds['WatchedFilingCat'][] = $this->WatchedFilingCat->id;
-				} else {
-					return false;
-				}
-			}
-
-			return true;
-		}
-	}
-
 	private function duplicateTransactionCleanup() {
 		foreach ($this->transactionIds as $key => $value) {
 			// $key is the model name itself, $value is the array of ids
 			switch ($key) {
-			case 'WatchedFilingCat':
-				$this->loadModel('WatchedFilingCat');
-				$Model =& $this->WatchedFilingCat;
-				break;
 			case 'Program':
 				$Model =& $this->Program;
 				break;
