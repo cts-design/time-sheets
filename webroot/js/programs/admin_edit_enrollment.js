@@ -2189,7 +2189,8 @@ uploadStep = Ext.create('Ext.panel.Panel', {
         id: 'deleteDocumentBtn',
         text: 'Delete Document',
         handler: function () {
-          var programDocumentStore = Ext.data.StoreManager.lookup('ProgramDocumentStore'),
+          var program = Ext.data.StoreManager.lookup('ProgramStore').first(),
+            programDocumentStore = Ext.data.StoreManager.lookup('ProgramDocumentStore'),
             grid = Ext.getCmp('documentGrid'),
             selectedRecord = grid.getSelectionModel().getSelection()[0],
             deleteBtn = this;
@@ -2200,7 +2201,19 @@ uploadStep = Ext.create('Ext.panel.Panel', {
             buttons: Ext.Msg.YESNO,
             icon: Ext.Msg.QUESTION,
             fn: function (btn) {
+              var docType;
+
               if (btn === 'yes') {
+                if (selectedRecord.get('type').toLowerCase() === 'upload') {
+                  docType = 'upload';
+                } else {
+                  docType = 'document';
+                }
+
+                programDocumentStore.getProxy().extraParams = {
+                  type: docType
+                };
+
                 programDocumentStore.remove(selectedRecord);
                 deleteBtn.disable();
                 grid.getSelectionModel().deselectAll();
