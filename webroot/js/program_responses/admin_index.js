@@ -32,8 +32,8 @@ Ext.onReady(function() {
 		},
 		extraParams : {
 			status: 'incomplete',
-			dateFrom : '',
-			dateTo : '',
+			fromDate : '',
+			toDate : '',
 			id : '',
 			searchType : '',
 			search : ''
@@ -422,10 +422,10 @@ Ext.onReady(function() {
 			handler : function() {
 				var f = programResponseSearch.getForm();
 				f.reset();
-				var vals = f.getValues();
-				Ext.iterate(vals, function (key, value){
-					programResponseProxy.extraParams[key] = value;
-				});
+        programResponseProxy.extraParams.id = undefined;
+        programResponseProxy.extraParams.search = undefined;
+        programResponseProxy.extraParams.toDate = undefined;
+        programResponseProxy.extraParams.fromDate = undefined;
 				programResponseTabs.getActiveTab().getStore().loadPage(1, {start: 0, limit: 10});
 			}
 		},{
