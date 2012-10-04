@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2012-09-17 16:44:17 : 1347914657*/
+/* atlas schema generated on: 2012-09-28 14:11:00 : 1348855860*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -96,10 +96,10 @@ class atlasSchema extends CakeSchema {
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);
 	var $auto_locks = array(
-		'auto_lock_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 8, 'key' => 'primary'),
-		'auto_lock_title' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'auto_lock_status' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 3),
-		'indexes' => array('PRIMARY' => array('column' => 'auto_lock_id', 'unique' => 1)),
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 8, 'key' => 'primary'),
+		'title' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'status' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 3),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
 	var $bar_code_definitions = array(
@@ -459,10 +459,25 @@ class atlasSchema extends CakeSchema {
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'title' => array('column' => array('title', 'file'), 'unique' => 0)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
+	var $program_documents = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+		'program_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
+		'program_step_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'key' => 'index'),
+		'template' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'cat_1' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'cat_2' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'cat_3' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'type' => array('type' => 'string', 'null' => false, 'default' => 'snapshot', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'program_id' => array('column' => 'program_id', 'unique' => 0), 'program_step_id' => array('column' => 'program_step_id', 'unique' => 0)),
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
+	);
 	var $program_emails = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 		'program_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
-		'cat_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'program_step_id' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 11, 'key' => 'index', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'to' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'from' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'subject' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
@@ -472,47 +487,49 @@ class atlasSchema extends CakeSchema {
 		'disabled' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
-		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'program_id' => array('column' => 'program_id', 'unique' => 0)),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'program_id' => array('column' => 'program_id', 'unique' => 0), 'program_step_id' => array('column' => 'program_step_id', 'unique' => 0)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
-	var $program_fields = array(
+	var $program_form_fields = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
-		'program_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
+		'program_step_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
+		'order' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'label' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'type' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'name' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'attributes' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'options' => array('type' => 'text', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'options' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'validation' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'instructions' => array('type' => 'text', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'answer' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'instructions' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'answer' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'fieldset' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
-		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'program_id' => array('column' => 'program_id', 'unique' => 0)),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'program_id' => array('column' => 'program_step_id', 'unique' => 0)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
 	var $program_instructions = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
-		'program_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
+		'program_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'key' => 'index'),
+		'program_step_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'text' => array('type' => 'text', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'type' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'type' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'program_id' => array('column' => 'program_id', 'unique' => 0)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
-	var $program_paper_forms = array(
+	var $program_response_activities = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
-		'program_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
-		'template' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'cat_1' => array('type' => 'integer', 'null' => true, 'default' => NULL),
-		'cat_2' => array('type' => 'integer', 'null' => true, 'default' => NULL),
-		'cat_3' => array('type' => 'integer', 'null' => true, 'default' => NULL),
-		'cert' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
-		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
-		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
-		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
+		'program_response_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
+		'type' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'status' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'answers' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'percent_correct' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 3),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'program_step_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'program_response_id' => array('column' => 'program_response_id', 'unique' => 0), 'program_step_id' => array('column' => 'program_step_id', 'unique' => 0)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
 	var $program_response_docs = array(
@@ -520,8 +537,8 @@ class atlasSchema extends CakeSchema {
 		'cat_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'key' => 'index'),
 		'program_response_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'doc_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
-		'paper_form' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
-		'cert' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'program_doc_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'type' => array('type' => 'string', 'null' => false, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'deleted' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'deleted_reason' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'rejected_reason' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
@@ -533,41 +550,55 @@ class atlasSchema extends CakeSchema {
 	var $program_responses = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 		'program_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
-		'answers' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'user_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
-		'viewed_media' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
-		'form_esignature' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'complete' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
-		'needs_approval' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'status' => array('type' => 'string', 'null' => false, 'default' => 'incomplete', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'confirmation_id' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 12, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'uploaded_docs' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
-		'dropping_off_docs' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
-		'not_approved' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
-		'allow_new_response' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'notes' => array('type' => 'text', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'not_approved_comment' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'expires_on' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+		'time_spent' => array('type' => 'timestamp', 'null' => true, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'prog_id' => array('column' => 'program_id', 'unique' => 0), 'user_id' => array('column' => 'user_id', 'unique' => 0)),
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
+	);
+	var $program_steps = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+		'program_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
+		'parent_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'name' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'type' => array('type' => 'string', 'null' => true, 'default' => NULL, 'key' => 'index', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'media_location' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'media_type' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'redoable' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'meta' => array('type' => 'text', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'lft' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'rght' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'program_step_type_id' => array('column' => 'type', 'unique' => 0), 'program_id' => array('column' => 'program_id', 'unique' => 0)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
 	var $programs = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 		'name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'type' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'form_type' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 10, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'media' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'atlas_registration_type' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 10, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'media_expires' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 5),
-		'disabled' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'queue_category_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
-		'cert_type' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 15, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'approval_required' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'form_esign_required' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'user_acceptance_required' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'confirmation_id_length' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 2),
 		'response_expires_in' => array('type' => 'integer', 'null' => false, 'default' => NULL),
-		'auth_required' => array('type' => 'integer', 'null' => false, 'default' => '1', 'length' => 1),
-		'view_media_again' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'send_expiring_soon' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 1),
+		'rolling_expiration' => array('type' => 'boolean', 'null' => true, 'default' => NULL),
+		'program_response_count' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'show_in_dash' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'in_test' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'bar_code_definition_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'paper_forms' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'upload_docs' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'disabled' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'expires' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
@@ -723,8 +754,7 @@ class atlasSchema extends CakeSchema {
 		'language' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'ethnicity' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'race' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'veteran' => array('type' => 'boolean', 'null' => true, 'default' => '0'),
-		'disability' => array('type' => 'boolean', 'null' => true, 'default' => '0'),
+		'veteran' => array('type' => 'boolean', 'null' => true, 'default' => NULL),
 		'organization' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'disabled' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'signature' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 1),
@@ -740,6 +770,10 @@ class atlasSchema extends CakeSchema {
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 		'cat_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
 		'program_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+		'name' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'program_email_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'cat_id' => array('column' => 'cat_id', 'unique' => 0)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);

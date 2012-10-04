@@ -5,29 +5,43 @@
  * @link http://ctsfla.com
  */
 
+App::import('Component', 'Email');
+
 class NotificationsComponent extends Object {
 	
-	var $components = array('Email', 'Auth');
+	var $components = array('Auth');
 	
 	function sendProgramEmail($programEmail=null, $user=null) {
 		if($programEmail) {
 			if($user) {
-				$this->Email->to = $user['User']['firstname'] . ' ' . 
+				$data['settings']['to'] = $user['User']['firstname'] . ' ' . 
 				$user['User']['lastname'] .' <'. $user['User']['email']. '>';			
 			}
 			else {
-				$this->Email->to = $this->Auth->user('firstname') . ' ' . 
+				$data['settings']['to'] = $this->Auth->user('firstname') . ' ' . 
 				$this->Auth->user('lastname') .' <'. $this->Auth->user('email'). '>';		
 			}
-			if($programEmail['ProgramEmail']['from']) {
-				$this->Email->from = $programEmail['ProgramEmail']['from'];
+			if($programEmail['from']) {
+				$data['settings']['from'] = $programEmail['from'];
 			}
 			else {
-				$this->Email->from = Configure::read('System.email');
+				$data['settings']['from'] = Configure::read('System.email');
 			}				
-			$this->Email->subject = $programEmail['ProgramEmail']['subject'];
-			return $this->Email->send($programEmail['ProgramEmail']['body']);			
+			$data['settings']['sendAs'] = 'both';
+			$data['settings']['template'] = 'programs';
+			$data['settings']['subject'] = $programEmail['subject'];
+			$data['vars']['text'] = $programEmail['body'];
+			return ClassRegistry::init('Queue.QueuedTask')->createJob('email', $data);
 		}
 		return false;
+	}
+
+	function sendAbsorptionEmail($mySubject,$myMessage) {
+		$this->Email = &new EmailComponent();
+		$this->Email->from = Configure::read('Admin.alert.email');
+		$this->Email->to = Configure::read('Admin.alert.email');
+		$this->Email->subject = Configure::read('domain').": $mySubject";
+		$this->Email->send($myMessage);
+		$this->Email->reset();
 	}
 }	

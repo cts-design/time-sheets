@@ -1,10 +1,12 @@
 <div id="ProgramAnswers">
-	<table>
-	<?php foreach($answers as $k => $v) : ?>
-		<tr>
-			<td class="label" style="padding-right: 10px;"><?php echo Inflector::humanize($k)?>:</td>
-			<td><?php echo ucwords($v)?></td>
-		</tr>
+	<?php $i = 0 ?>
+	<?php foreach($answers as $answer) : ?>
+		<h2><?php echo $stepName[$i][0]?> </h2>
+		<?php foreach($answer as $k => $v) : ?>
+			<p class="label"><?php echo Inflector::humanize($k)?>:</p>
+			<p class="left"><?php echo ucwords($v)?></p>
+			<br class="clear" />
+		<?php endforeach ?>	
+		<?php $i++; ?>
 	<?php endforeach ?>	
-	</table>
 </div>

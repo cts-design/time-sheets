@@ -1,478 +1,489 @@
-/* 
-    Document   : admin.css
-    Created on : Oct 7, 2010, 3:06:41 PM
-    Author     : Daniel Nolan
-    Description: admin area style sheet
-    Copyright  : Complete Technology Solutions
+/*
+Document   : admin.css
+Created on : Oct 7, 2010, 3:06:41 PM
+Author     : Daniel Nolan
+Description: admin area style sheet
+Copyright  : Complete Technology Solutions
 
-*/
+ */
 
 /* HTML Elements */
 
 html {
-	background: #1875BB;
+  background: #1875BB;
 }
 
 body.admin-layout {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 13px;
-    overflow-y: scroll;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  overflow-y: scroll;
 }
 
 
 
 a {
-    color: #3B71A0;
-    text-decoration: none;
+  color: #3B71A0;
+  text-decoration: none;
 }
 
 a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 h1 {
-    color: orange;
-    font-size: 15px;
-    font-weight: bold;
+  color: orange;
+  font-size: 15px;
+  font-weight: bold;
 }
 
 h2 {
-    color: orange;
-    font-size: 12px;
-    font-weight: bold;
+  color: orange;
+  font-size: 12px;
+  font-weight: bold;
 }
 
 strong {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 
 /* Text */
 .small {
-    font-size: 11px;
+  font-size: 11px;
 }
 
 .normal {
-    font-weight: normal;
+  font-weight: normal;
 }
 
 /* Margin Classes */
 .bot-mar-10 {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .right-mar-10 {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 
 .left-mar-10 {
-    margin-left: 10px;
+  margin-left: 10px;
 }
 
 /* Structure Elements */
 
-#container { 
-    margin: 0 auto;
-    width: 970px;
+#container {
+  margin: 0 auto;
+  width: 970px;
 }
 
 #header {
-    width: 970px;
-    color: #333;
-    height: 90px;
-    margin: 0px 0 5px 0;
-    background: #FFF;
+  width: 970px;
+  color: #333;
+  height: 90px;
+  margin: 0px 0 5px 0;
+  background: #FFF;
 }
 
 #nav {
-    color: white;
-    background-color: #333;
-    height: 30px;
+  color: white;
+  background-color: #333;
+  height: 30px;
 
 }
 
 #nav li {
-    float: left;
-    margin: 8px 10px 0 ;
+  float: left;
+  margin: 8px 10px 0 ;
 
 }
 
 #nav a {
-    color: white;
+  color: white;
 
 }
 
-#content { 
-    width: 970px;
-    color: #333;
-    background: #fff;
-    margin: 0px 0px 5px 0px;
-    min-height: 400px;
-    overflow: hidden;
+#content {
+  width: 970px;
+  color: #333;
+  background: #fff;
+  margin: 0px 0px 5px 0px;
+  min-height: 400px;
+  overflow: hidden;
+  color: white;
+
+}
+
+#content {
+  width: 970px;
+  color: #333;
+  background: #fff;
+  margin: 0px 0px 5px 0px;
+  min-height: 400px;
+  overflow: hidden;
 }
 
 #content > div,
 #footer > div,
 #content #administration > div,
 #content #information > div {
-	padding: 10px;
+  padding: 10px;
 }
 
 #footer {
-    background-color: #fff;
-    font-size: 10px;
-    font-weight: normal;
-    color: #000;
-    width: 970px;
-    border: none;
-    margin: 0px 0px 10px 0px;
+  background-color: #fff;
+  font-size: 10px;
+  font-weight: normal;
+  color: #000;
+  width: 970px;
+  border: none;
+  margin: 0px 0px 10px 0px;
 }
 
 .left {
-    float: left;
+  float: left;
 }
 
 .right {
-    float: right;
+  float: right;
 }
 
 .clear {
-    clear: both;
+  clear: both;
 }
 
 
 /* Forms */
 
 fieldset {
-    padding: 10px;
-    border: 1px solid #000;
+  padding: 10px;
+  border: 1px solid #000;
 }
 
 legend {
-    margin-left: 10px;
+  margin-left: 10px;
 }
 
 .input label {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .input input  {
-    width: 200px;
+  width: 200px;
 }
 
 .input input[type=submit] {
-    width: 100px;
-    padding: 2px;
+  width: 100px;
+  padding: 2px;
 }
 
 .input input[type=submit]:hover {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .input select {
-    width: 150px;
-    padding: 0;
-    margin: 0
+  width: 150px;
+  padding: 0;
+  margin: 0
 }
 
 .scrollingCheckboxes {
-    height: 60px; 
-    width: 175px;
-    overflow: auto;
-    border: thin solid #999;
-    padding: 4px;
-    background-color: #fff;
-    color: #000;
-    font-size: 12px;
+  height: 60px;
+  width: 175px;
+  overflow: auto;
+  border: thin solid #999;
+  padding: 4px;
+  background-color: #fff;
+  color: #000;
+  font-size: 12px;
 }
 
 .checkbox input {
-    width: 25px;
+  width: 25px;
 }
 
 .checkbox label {
-    font-weight: normal;
+  font-weight: normal;
 }
 
 /* Tables */
 
 .admin table {
-    background: #fff;
-    border-right:0;
-    clear: both;
-    color: #333;
-    margin-bottom: 10px;
-    width: 100%;
-    font-size: 11px;
+  background: #fff;
+  border-right:0;
+  clear: both;
+  color: #333;
+  margin-bottom: 10px;
+  width: 100%;
+  font-size: 11px;
 }
 .admin th {
-    border:0;
-    border-bottom:2px solid #555;
-    text-align: left;
-    padding:4px;
-    color: #ffffff;
+  border:0;
+  border-bottom:2px solid #555;
+  text-align: left;
+  padding:4px;
+  color: #ffffff;
 }
 .admin th a {
-    display: block;
-    padding: 2px 4px;
-    text-decoration: none;
-    color: #ffffff;
+  display: block;
+  padding: 2px 4px;
+  text-decoration: none;
+  color: #ffffff;
 }
 
 .admin th a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 .admin th a.asc:after {
-    content: url(../img/icons/arrow_down.png);
-    vertical-align: middle;
+  content: url(../img/icons/arrow_down.png);
+  vertical-align: middle;
 
 }
 
 .admin th a.desc:after {
-    content: url(../img/icons/arrow_up.png);
-    vertical-align: middle;
+  content: url(../img/icons/arrow_up.png);
+  vertical-align: middle;
 }
 
 .admin table tr td {
-    padding: 6px;
-    text-align: left;
-    vertical-align: middle;
-    border-bottom:1px solid #ddd;
+  padding: 6px;
+  text-align: left;
+  vertical-align: middle;
+  border-bottom:1px solid #ddd;
 }
 
 .admin thead tr{
-    background-color: #333;
+  background-color: #333;
 }
 
 .admin td.actions {
-    white-space: nowrap;
+  white-space: nowrap;
 }
 
 .admin table td.actions a {
-    margin: 0;
-    padding: 0;
-    font-size: 10px;
+  margin: 0;
+  padding: 0;
+  font-size: 10px;
 }
 
 .admin table .actions .ui-button {
-    margin-left:0;
-    margin-right:-0.4em;
+  margin-left:0;
+  margin-right:-0.4em;
 }
 
 .altrow {
-    background-color: #f9f9f9;
+  background-color: #f9f9f9;
 }
 
 .open td {
-    font-weight: bold;
-    background-color: #BFFABE;
+  font-weight: bold;
+  background-color: #BFFABE;
 }
 
 .closed td {
-    background-color: #FCC5C5;
+  background-color: #FCC5C5;
 }
 
 .paging {
-    font-size: 11px;
+  font-size: 11px;
 }
 
 .paging-counter {
-   font-size: 11px;
+  font-size: 11px;
 }
 /*Specific Styles */
 .tree-wrapper {
-    width: 300px;
-    float: left;
-    margin-right: 25px;
+  width: 300px;
+  float: left;
+  margin-right: 25px;
 }
 
 #content h1 {
-    margin: 5px 10px 5px 0;
+  margin: 5px 10px 5px 0;
 }
 
 .error-message {
-    color: red;
-    font-size: 11px;
-    margin-left: 120px;
-    margin-top: 2px;
-    float: left;
+  color: red;
+  font-size: 11px;
+  margin-left: 120px;
+  margin-top: 2px;
+  float: left;
 }
 
 .message {
-    background-color: #fff;
-    margin: 0 0 0 0;
-    padding: 2px 5px 2px 5px;
-    font-size: 20px;
-    float: left;
+  background-color: #fff;
+  margin: 0 0 0 0;
+  padding: 2px 5px 2px 5px;
+  font-size: 20px;
+  float: left;
 }
 
 .flash-failure .ui-icon{
-    margin: 5px 10px 0 0;
+  margin: 5px 10px 0 0;
 }
 
 .flash-success .ui-icon{
-    margin: 5px 10px 0 0;
+  margin: 5px 10px 0 0;
 }
 
 #UserAdminLoginForm p {
-    width: 75px;
+  width: 75px;
 }
 
 .admin h1 {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 #logo{
-    font-size: 40px;
-    margin: 5px 0 0 10px;
+  font-size: 40px;
+  margin: 5px 0 0 10px;
 }
 
 #logoLogout {
-    text-align: right;
-    margin: 0 10px 10px 0;
+  text-align: right;
+  margin: 0 10px 10px 0;
 }
 
 #logoLogout img{
-    margin-top: 15px;
-    margin-bottom: 5px;
+  margin-top: 15px;
+  margin-bottom: 5px;
 }
 
 #logoLogout p{
-    height: 15px;
-    width: 300px;
+  height: 15px;
+  width: 450px;
 }
 
 #dashboardAdminTree {
-    background-color: #FFFFFF
+  background-color: #FFFFFF
 }
 
 #administration {
-    width: 350px;
-    margin: 10px 175px 0 25px;
-	border: 1px solid #B5D3DF; 
-	background-color:#F1F8FB    
+  width: 350px;
+  margin: 10px 175px 0 25px;
+  border: 1px solid #B5D3DF;
+  background-color:#F1F8FB
 }
 
 #administration h3 {
-	font-weight: bold;
-	margin-bottom: 10px;
+  font-weight: bold;
+  margin-bottom: 10px;
 }
 
 #information {
-	margin: 10px 25px 0 0; 
-	width: 350px;
+  margin: 10px 25px 0 0;
+  width: 350px;
 }
 
-#information #help {	
-	border: 1px solid #B5D3DF;  
-	height: 125px; 
-	padding: 10px; 
-	background-color:#F1F8FB
+#information #help {
+  border: 1px solid #B5D3DF;
+  height: 125px;
+  padding: 10px;
+  background-color:#F1F8FB
 }
 
 #help h3 {
-	margin-bottom: 10px; 
-	font-weight: bold;
+  margin-bottom: 10px;
+  font-weight: bold;
 }
 
 #help p {
-	margin-bottom: 5px;
+  margin-bottom: 5px;
 }
 
 #graph {
-    margin: 10px auto;
+  margin: 10px auto;
 }
 
 
 div.actions {
-    height: 35px;
-    width: 100%;
-    margin-bottom: 10px;
+  height: 35px;
+  width: 100%;
+  margin-bottom: 10px;
 }
 
 div.actions ul {
-    padding: 5px;
+  padding: 5px;
 }
 
 div.actions li {
-    float: left;
+  float: left;
 }
 
 div.actions .ui-button-text {
-    padding: 2px 15px 2px 15px;
-    margin: 0;
+  padding: 2px 15px 2px 15px;
+  margin: 0;
 }
 
 .admin dl{
-    margin-top: 25px;
-    width: 400px;
+  margin-top: 25px;
+  width: 400px;
 }
 
 .admin dt{
-    font-weight: bold;
-    float: left;
-    text-align: right;
-    width: 75px;
-    margin-right: 15px;
+  font-weight: bold;
+  float: left;
+  text-align: right;
+  width: 75px;
+  margin-right: 15px;
 }
 
 .admin dd{
-    float: left;
+  float: left;
 }
 
 .admin br {
-    line-height: 25px;
+  line-height: 25px;
 }
 
 .form fieldset {
-    display: inline;
-    min-width: 500px;
+  display: inline;
+  min-width: 500px;
 }
 
 .form legend {
-    margin-bottom: 5px;
+  margin-bottom: 5px;
 }
 
 .form p{
-    line-height: 25px;
-    margin-right: 10px;
-    text-align: right;
-    width: 100px;
+  line-height: 25px;
+  margin-right: 10px;
+  text-align: right;
+  width: 100px;
 }
 
 .mini-form fieldset {
-    display: inline;
+  display: inline;
 }
 
 .submit {
-    margin: 10px 0 0 10px;
+  margin: 10px 0 0 10px;
 }
 
 #SelfSignReassign {
-	margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 
 #manageButtons label {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 
 .kiosks p{
-    width: 200px;
+  width: 200px;
 }
 
 .kiosks .error-message {
-    margin-left: 0px;
+  margin-left: 0px;
 }
 
 #kioskButtonTree {
-    background-color: #ffffff;
+  background-color: #ffffff;
 }
 
 #MasterKioskButtonAddForm .error-message {
-    float: none;
-    margin-left: 50px;
+  float: none;
+  margin-left: 50px;
 }
 
 #masterKioskButtons   .input{ width: 400px;}
@@ -480,278 +491,278 @@ div.actions .ui-button-text {
 #masterKioskButtons   .tag{width: 300px;}
 
 .search li {
-    float: left;
-    margin: 10px 10px 10px 0;
+  float: left;
+  margin: 10px 10px 10px 0;
 }
 
 .search label {
-    margin-right: 3px;
+  margin-right: 3px;
 }
 
 #UserAdminPasswordResetForm label {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 
 #forgotPass {
-    font-size: 10px;
-    margin-left: 205px;
+  font-size: 10px;
+  margin-left: 205px;
 }
 
 #DocumentFilingCategoryAddForm label {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 
 #DocumentFilingCategoryAddForm .error-message {
-    float: none;
-    margin-left: 50px;
+  float: none;
+  margin-left: 50px;
 }
 
 #documentCategoryTree {
-    background: #ffffff;
+  background: #ffffff;
 }
 
 #DocumentFilingCategoryAdminEditForm label {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 
 .selfSignLogArchives .ui-accordion-content {
-    padding: 10px 0 10px 0;
+  padding: 10px 0 10px 0;
 }
 
 .selfSignLogArchives .form p{
-    width: 75px;
+  width: 75px;
 }
 
 .selfSignLogArchives .scrollingCheckboxes{
-    width: 255px;
+  width: 255px;
 }
 
 .selfSignLogArchives .scrollingCheckboxes checkbox {
- width: 245px;
- display: block;
+  width: 245px;
+  display: block;
 }
 
 
 #search .ui-accordion-content{
-    height: 145px;
-    overflow: hidden;
+  height: 145px;
+  overflow: hidden;
 }
 
 #search .ui-accordion-content {
-    font-size: 12px;
+  font-size: 12px;
 }
 
 #searchFieldset1 {
-    width: 275px;
+  width: 275px;
 }
 
 #searchFieldset2 {
-    width: 275px;
+  width: 275px;
 }
 
 #searchFieldset3 .submit {
-    margin-left: 190px;
+  margin-left: 190px;
 }
 
 .selfSignLogArchives table {
-    font-size: 10px;
+  font-size: 10px;
 }
 
 .selfSignLogArchives p {
-    margin-bottom: 5px;
+  margin-bottom: 5px;
 }
 
 #buttonWrapper {
-    width: 900px;
-    height: 50px;
+  width: 900px;
+  height: 50px;
 }
 
 #reset {
-    width: 75px;
+  width: 75px;
 }
 
 #reset .ui-button-text {
-    padding: 1px;
+  padding: 1px;
 }
 
 #searchButtons {
-    display: inline-block;
-    width: 182px;
-    margin-left: 555px;
-    margin-right: -2px;
-    margin-top: 5px;
+  display: inline-block;
+  width: 182px;
+  margin-left: 555px;
+  margin-right: -2px;
+  margin-top: 5px;
 }
 
 #reportForm {
-    display: inline-block;
-    width: 100px;
-    margin-top: 5px;
+  display: inline-block;
+  width: 100px;
+  margin-top: 5px;
 }
 
 .queuedDocuments hr {
-    margin-top: 10px;
-    margin-bottom: 10px; 
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .queuedDocuments label {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 
 .queuedDocuments select {
-    font-size: 12px;
+  font-size: 12px;
 }
 
 #queuedDocumentsNav #navButtons {
-    margin-left: 25px;
+  margin-left: 25px;
 }
 
 .cats {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .cats .input{
-    display: inline-block;
-    margin-right: 5px;
+  display: inline-block;
+  margin-right: 5px;
 }
 
 .cuInfo .input{
-    display: inline-block;
-    margin-right: 2px;
+  display: inline-block;
+  margin-right: 2px;
 }
 
 #queuedDocumentsPdf {
-    width: 950px;
-    margin: 0 auto;
+  width: 950px;
+  margin: 0 auto;
 }
 
 #queuedDocumentsFilters {
-    height: 100px;
+  height: 100px;
 }
 
 #queuedDocumentsFilters ul li {
-    float: left
+  float: left
 }
 
 #queuedDocumentsFilters .input {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 
 #QueuedDocumentReassignQueueForm {
-    float: left;
+  float: left;
 }
 
 #QueuedDocumentReassignQueueForm .input  {
-    display: inline-block;
+  display: inline-block;
 }
 
 #QueuedDocumentReassignQueueForm .submit {
-    display: inline-block;
+  display: inline-block;
 }
 
 #QueuedDocumentDeleteForm {
-    float: right;
+  float: right;
 }
 
 #QueuedDocumentDeleteForm .input {
-    display: inline-block;
+  display: inline-block;
 }
 
 #QueuedDocumentDeleteForm .submit {
-    display: inline-block;
+  display: inline-block;
 }
 
 #QueuedDocumentFileDocumentForm h2 {
-    margin-bottom: 5px;
+  margin-bottom: 5px;
 }
 
 #QueuedDocumentFileDocumentForm select.error {border: 2px red solid}
 #QueuedDocumentFileDocumentForm input.error {border: 2px red solid}
 
 #QueuedDocumentFileDocumentForm #FiledDocumentCat2{
-     display: none;
+  display: none;
 }
 #QueuedDocumentFileDocumentForm #FiledDocumentCat3 {
-    display: none;
+  display: none;
 }
 #QueuedDocumentFileDocumentForm input[type=text] {
-    width: 215px;
+  width: 215px;
 }
 .queuedDocuments .formErrors {
-    display: block;
-    margin-bottom: 10px;
-    color: red;
+  display: block;
+  margin-bottom: 10px;
+  color: red;
 }
 .queuedDocuments .reset .ui-button-text {padding: 1.5px 10px 1.5px 10px}
 .queuedDocuments .reset {margin-top: 10px;}
 
 #idletimeout {
-    background:none repeat scroll 0 0 #CC0000;
-    border:3px solid #000;
-    color:#FFFFFF;
-    display:none;
-    font-size:12px;
-    left:0;
-    padding:10px;
-    position:relative;
-    right:0;
-    text-align:center;
-    top:0;
-    z-index:100000;
+  background:none repeat scroll 0 0 #CC0000;
+  border:3px solid #000;
+  color:#FFFFFF;
+  display:none;
+  font-size:12px;
+  left:0;
+  padding:10px;
+  position:relative;
+  right:0;
+  text-align:center;
+  top:0;
+  z-index:100000;
 }
 
 #idletimeout a {
-    color:#FFFFFF;
-    font-weight:bold;
+  color:#FFFFFF;
+  font-weight:bold;
 }
 
 #idletimeout span {
-    font-weight:bold;
+  font-weight:bold;
 }
 
 
 
 #processing {
-    display: none;
+  display: none;
 }
 
 #active {
-    display: none;
+  display: none;
 }
 
 #crumbWrapper {
-    font-style: italic;
-    font-size: 12px;
-    margin-bottom: 5px;
+  font-style: italic;
+  font-size: 12px;
+  margin-bottom: 5px;
 }
 
 .deletedDocuments table {
-    font-size: 10px;
+  font-size: 10px;
 }
 
 .filedDocuments table {
-    font-size: 11px;
+  font-size: 11px;
 }
 
 #FiledDocumentDeleteForm label {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 
 #FiledDocumentDeleteForm .submit{
-    padding: 0;
-    margin: 10px 0 0 0;
+  padding: 0;
+  margin: 10px 0 0 0;
 }
 
 #FiledDocumentAdminEditForm fieldset {
-    width: 925px;
+  width: 925px;
 }
 
 #FiledDocumentAdminEditForm .input {
-    float: left;
-    margin-right: 10px;
+  float: left;
+  margin-right: 10px;
 }
 
 #FiledDocumentAdminEditForm label {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 
 #PermissionTabs fieldset{height: 150px; width: 200px; margin-bottom: 10px; margin-right: 10px;}
@@ -766,30 +777,30 @@ div.actions .ui-button-text {
 
 
 #FiledDocumentUploadDocumentForm .input{
-    float: left;
-    margin: 0 10px 10px 0;
+  float: left;
+  margin: 0 10px 10px 0;
 }
 #FiledDocumentUploadDocumentForm .input label {
-    margin-right: 10px
+  margin-right: 10px
 }
 #FiledDocumentUploadDocumentForm #FiledDocumentScanDocumentForm, .formErrors {
-    color: red;
-    margin-bottom: 10px;
+  color: red;
+  margin-bottom: 10px;
 }
 #FiledDocumentUploadDocumentForm #FiledDocumentScanDocumentForm #FiledDocumentAdminEditForm #QueuedDocumentDesktopScanDocumentForm, select.error {
-    border: 2px red solid
+  border: 2px red solid
 }
 #FiledDocumentUploadDocumentForm #FiledDocumentScanDocumentForm #FiledDocumentAdminEditForm, input.error {
-    border: 2px red solid
+  border: 2px red solid
 }
 #FiledDocumentUploadDocumentForm #FiledDocumentScanDocumentForm #FiledDocumentAdminEditForm, #FiledDocumentCat2{
-     display: none;
+  display: none;
 }
 #FiledDocumentUploadDocumentForm #FiledDocumentScanDocumentForm #FiledDocumentAdminEditForm,  #FiledDocumentCat3 {
-    display: none;
+  display: none;
 }
 #FiledDocumentUploadDocumentForm input[type=file] {
-    width: 400px;
+  width: 400px;
 }
 
 
@@ -801,83 +812,95 @@ div.actions .ui-button-text {
 #FiledDocumentScanDoument #scanForm, #QueuedDocumentScanDoument  #scanForm {margin-top: 10px;}
 #FiledDocumentScanDoument #scanWrapper, #QueuedDocumentScanDoument #scanWrapper{margin-top: 10px;}
 
- .selfScanCategories td {
-     font-weight: bold;
-     background-color: #eee;
+.selfScanCategories td {
+  font-weight: bold;
+  background-color: #eee;
 }
- .selfScanCategories .child-cat td{
-     font-weight: normal;
-     background-color: #fff;
+.selfScanCategories .child-cat td{
+  font-weight: normal;
+  background-color: #fff;
 }
 
 #SelfScanCategoryCat2, #SelfScanCategoryCat3 {
-    display: none;
+  display: none;
 }
 
 #SelfScanCategoryAdminAddForm input[type=text]{
-    width: 150px;
+  width: 150px;
 }
 
 /* Programs  */
-#ProgramResponseUserInfo {padding: 10px; width: 500px;}
+#ProgramResponseUserInfo {padding: 10px; width: 440px;}
 #ProgramResponseUserInfo p {margin-bottom: 5px;}
 #ProgramResponseUserInfo .label {width: 100px; text-align: right; margin-right: 10px;}
 
-#ProgramAnswers table {
-	margin: 10px 0 5px 5px
-}	
-
-#ProgramAnswers table tr {
-	width: 100%;
-	float: left;
-	margin-bottom: 5px;
+#ProgramAnswers {
+  padding: 10px;
 }
 
-#ProgramAnswers .label {width: 200px; text-align: right; font-weight: bold}
+#ProgramAnswers h2 {
+  margin-bottom: 10px;
+}
+
+#ProgramAnswers .label {
+  float: left;
+  width: 200px;
+  text-align: right;
+  font-weight: bold;
+  margin: 0 5px 0 5px;
+}
 
 #ProgramResponseDocs {
-	padding: 10px;
+  padding: 10px;
+}
+
+#ProgramResponseDocs h2 {
+  margin-bottom: 10px;
 }
 
 .response-doc {
-	border-bottom: 1px solid #666666;
-	margin-bottom: 10px;
+  border-bottom: 1px solid #666666;
+  margin-bottom: 10px;
 }
 
-#ProgramPaperForms {
-	padding: 10px;
+#SystemGeneratedDocs{
+  padding: 10px;
 }
 
-.paper-form {
-	border-bottom: 1px solid #666666;
-	margin-bottom: 10px;
+#SystemGeneratedDocs h2 {
+  margin-bottom: 10px;
+}
+
+.system-generated-doc{
+  border-bottom: 1px solid #666666;
+  margin-bottom: 10px;
 }
 
 /* Release Notes Page  */
 
 #ReleaseNotes {
-	width: 600px;
-	margin-top: 10px;
+  width: 600px;
+  margin-top: 10px;
 }
 #ReleaseNotes ol {
-	padding-left: 35px;
+  padding-left: 35px;
 }
 
 #ReleaseNotes li {
-	list-style: decimal;
-	margin-bottom: 5px;
+  list-style: decimal;
+  margin-bottom: 5px;
 }
 
 
 /* jQuery UI overrides */
 .ui-autocomplete {
-    max-height: 50px;
-    overflow-y: auto;
+  max-height: 50px;
+  overflow-y: auto;
 }
 
 .expand-wrap {
-    font-size: 11px;
-    margin-left: 7px;
+  font-size: 11px;
+  margin-left: 7px;
 }
 
 
@@ -885,218 +908,218 @@ div.actions .ui-button-text {
 
 
 .reassign-menu {
-	overflow: visible !important;
+  overflow: visible !important;
 }
 
 .new-sign-in-menu {
-	overflow: visible !important;
+  overflow: visible !important;
 }
 
 
 #modalDeleteForm .input select {
-	width: 300px;
+  width: 300px;
 }
 
 /** Debugging **/
 pre {
-    color: #000;
-    background: #f0f0f0;
-    padding: 1em;
+  color: #000;
+  background: #f0f0f0;
+  padding: 1em;
 }
 pre.cake-debug {
-    background: #ffcc00;
-    font-size: 120%;
-    line-height: 140%;
-    margin-top: 1em;
-    overflow: auto;
-    position: relative;
+  background: #ffcc00;
+  font-size: 120%;
+  line-height: 140%;
+  margin-top: 1em;
+  overflow: auto;
+  position: relative;
 }
 div.cake-stack-trace {
-    background: #fff;
-    color: #333;
-    margin: 0px;
-    padding: 6px;
-    font-size: 120%;
-    line-height: 140%;
-    overflow: auto;
-    position: relative;
+  background: #fff;
+  color: #333;
+  margin: 0px;
+  padding: 6px;
+  font-size: 120%;
+  line-height: 140%;
+  overflow: auto;
+  position: relative;
 }
 div.cake-code-dump pre {
-    position: relative;
-    overflow: auto;
+  position: relative;
+  overflow: auto;
 }
 div.cake-stack-trace pre, div.cake-code-dump pre {
-    color: #000;
-    background-color: #F0F0F0;
-    margin: 0px;
-    padding: 1em;
-    overflow: auto;
+  color: #000;
+  background-color: #F0F0F0;
+  margin: 0px;
+  padding: 1em;
+  overflow: auto;
 }
 div.cake-code-dump pre, div.cake-code-dump pre code {
-    clear: both;
-    font-size: 12px;
-    line-height: 15px;
-    margin: 4px 2px;
-    padding: 4px;
-    overflow: auto;
+  clear: both;
+  font-size: 12px;
+  line-height: 15px;
+  margin: 4px 2px;
+  padding: 4px;
+  overflow: auto;
 }
 div.cake-code-dump span.code-highlight {
-    background-color: #ff0;
-    padding: 4px;
+  background-color: #ff0;
+  padding: 4px;
 }
 div.code-coverage-results div.code-line {
-    padding-left:5px;
-    display:block;
-    margin-left:10px;
+  padding-left:5px;
+  display:block;
+  margin-left:10px;
 }
 div.code-coverage-results div.uncovered span.content {
-    background:#ecc;
+  background:#ecc;
 }
 div.code-coverage-results div.covered span.content {
-    background:#cec;
+  background:#cec;
 }
 div.code-coverage-results div.ignored span.content {
-    color:#aaa;
+  color:#aaa;
 }
 div.code-coverage-results span.line-num {
-    color:#666;
-    display:block;
-    float:left;
-    width:20px;
-    text-align:right;
-    margin-right:5px;
+  color:#666;
+  display:block;
+  float:left;
+  width:20px;
+  text-align:right;
+  margin-right:5px;
 }
 div.code-coverage-results span.line-num strong {
-    color:#666;
+  color:#666;
 }
 div.code-coverage-results div.start {
-    border:1px solid #aaa;
-    border-width:1px 1px 0px 1px;
-    margin-top:30px;
-    padding-top:5px;
+  border:1px solid #aaa;
+  border-width:1px 1px 0px 1px;
+  margin-top:30px;
+  padding-top:5px;
 }
 div.code-coverage-results div.end {
-    border:1px solid #aaa;
-    border-width:0px 1px 1px 1px;
-    margin-bottom:30px;
-    padding-bottom:5px;
+  border:1px solid #aaa;
+  border-width:0px 1px 1px 1px;
+  margin-bottom:30px;
+  padding-bottom:5px;
 }
 div.code-coverage-results div.realstart {
-    margin-top:0px;
+  margin-top:0px;
 }
 div.code-coverage-results p.note {
-    color:#bbb;
-    padding:5px;
-    margin:5px 0 10px;
-    font-size:10px;
+  color:#bbb;
+  padding:5px;
+  margin:5px 0 10px;
+  font-size:10px;
 }
 div.code-coverage-results span.result-bad {
-    color: #a00;
+  color: #a00;
 }
 div.code-coverage-results span.result-ok {
-    color: #fa0;
+  color: #fa0;
 }
 div.code-coverage-results span.result-good {
-    color: #0a0;
+  color: #0a0;
 }
 
 .url_label {
-    width:auto !important;
-    line-height: 17px !important;
+  width:auto !important;
+  line-height: 17px !important;
 }
 
 fieldset.wide {
-    width: 990px;
+  width: 990px;
 }
 p.wide {
-    width: 800px !important;
+  width: 800px !important;
 }
 p.short {
-    line-height: 11px !important;
-    margin-right: 1px !important;
-    width: 25px !important;
+  line-height: 11px !important;
+  margin-right: 1px !important;
+  width: 25px !important;
 }
 
 #not_specified_link {
-	cursor: pointer;
+  cursor: pointer;
 }
 
 p.time {
-	text-align: left;
-	width: 250px;
+  text-align: left;
+  width: 250px;
 }
 
 p.time select {
-	width: 50px;
+  width: 50px;
 }
 
 p.checkbox {
-	text-align: left;
-	width: 250px;
-	line-height: 12px;
+  text-align: left;
+  width: 250px;
+  line-height: 12px;
 }
 
 .accordionbtn {
-	margin: 0 0 4px !important;
-	width: 100% !important;
+  margin: 0 0 4px !important;
+  width: 100% !important;
 }
 
-.accordionbtn .x-btn-tl, 
-.accordionbtn .x-btn-tr, 
-.accordionbtn .x-btn-tc, 
-.accordionbtn .x-btn-ml, 
-.accordionbtn .x-btn-mr, 
-.accordionbtn .x-btn-mc, 
-.accordionbtn .x-btn-bl, 
-.accordionbtn .x-btn-br, 
+.accordionbtn .x-btn-tl,
+.accordionbtn .x-btn-tr,
+.accordionbtn .x-btn-tc,
+.accordionbtn .x-btn-ml,
+.accordionbtn .x-btn-mr,
+.accordionbtn .x-btn-mc,
+.accordionbtn .x-btn-bl,
+.accordionbtn .x-btn-br,
 .accordionbtn .x-btn-bc{
-	background-image:none;
+  background-image:none;
 }
 
-.x-btn-hover .x-btn-tl, 
-.x-btn-hover .x-btn-tr, 
-.x-btn-hover .x-btn-tc, 
-.x-btn-hover .x-btn-ml, 
-.x-btn-hover .x-btn-mr, 
-.x-btn-hover .x-btn-mc, 
-.x-btn-hover .x-btn-bl, 
-.x-btn-hover .x-btn-br, 
+.x-btn-hover .x-btn-tl,
+.x-btn-hover .x-btn-tr,
+.x-btn-hover .x-btn-tc,
+.x-btn-hover .x-btn-ml,
+.x-btn-hover .x-btn-mr,
+.x-btn-hover .x-btn-mc,
+.x-btn-hover .x-btn-bl,
+.x-btn-hover .x-btn-br,
 .x-btn-hover .x-btn-bc {
-	background-image: url(../../img/ext/default/button/btn.gif);
-	background-position: 0 -2168px;
+  background-image: url(../../img/ext/default/button/btn.gif);
+  background-position: 0 -2168px;
 }
 
 .accordionbtn .x-btn-text {
-	font-size: 13px;
-	padding-left: 30px !important;
+  font-size: 13px;
+  padding-left: 30px !important;
 }
 
 .accordionbtn .x-btn-mc {
-	text-align: left;
+  text-align: left;
 }
 
 .accordionbtn .x-btn-mc em {
-	margin-left: 8px;
+  margin-left: 8px;
 }
 
 .x-careerseeker-row {
-	padding: 4px 0;
+  padding: 4px 0;
 }
 
 .x-careerseeker-row p {
-	font-size: 12px;
-	width: 250px;
+  font-size: 12px;
+  width: 250px;
 }
 
 .x-careerseeker-row .label {
-	font-weight: bold;
-	margin: 0 15px 0 0;
-	text-align: right;
+  font-weight: bold;
+  margin: 0 15px 0 0;
+  text-align: right;
 }
 
 .x-careerseeker-row ul {
-	margin: 0 0 0 280px;
-	list-style-type: disc;
+  margin: 0 0 0 280px;
+  list-style-type: disc;
 }
 
 .x-careerseeker-row li {list-style-type: disc;}
@@ -1105,41 +1128,74 @@ p.checkbox {
 .inTheNews div.date select { width: 100px }
 
 .viewport-layout #logo {
-    background: #fff;
-    float: left;
-    height: 100px;
-    padding: 0; margin: 0;
-    width: 500px;
+  background: #fff;
+  float: left;
+  height: 100px;
+  padding: 0; margin: 0;
+  width: 500px;
 }
 
 .viewport-layout #logo a {
-    display: block;
-    margin: 10px 35px;
+  display: block;
+  margin: 10px 35px;
 }
 
 .viewport-layout #logoLogout {
-    background: #fff;
-    margin: 0;
-    padding: 0 40px 22px 184px;
-    float: right;
+  background: #fff;
+  margin: 0;
+  padding: 0 40px 22px 184px;
+  float: right;
 }
 
 
 table.raw-data tr {
-	border-bottom: 1px solid #cdcdcd;
+  border-bottom: 1px solid #cdcdcd;
 }
 
 table.raw-data tr th {
-	font-weight: bold;
+  font-weight: bold;
 }
 
 table.raw-data .total {
-	font-weight: bold;
+  font-weight: bold;
 }
 
 table.raw-data tr th,
 table.raw-data tr td {
-	padding: 2px 15px;
+  padding: 2px 15px;
+}
+
+.x-form-display-field {
+  color: #778899;
+}
+
+.x-text-light em {
+  background: transparent;
+  color: #778899;
+}
+
+.x-action-col-cell div img {
+  cursor: pointer !important;
+}
+
+.x-grid-row.row-disabled {
+  color: #999;
+}
+
+.x-action-col-cell img {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.x-action-col-cell img.editable {
+  background-image: url(../img/icons/edit.png);
+}
+
+.x-action-col-cell img.not-editable {
+  background-image: url(../img/icons/edit-grayed.png);
 }
 
 

@@ -6,7 +6,6 @@ Ext.onReady(function() {
     }));
 
 	var responseId = null, loaded = null, itemsPerPage = 10;
-
 	Ext.define('ProgramResponse', {
 		extend: 'Ext.data.Model',
 		fields : ['id', 'User-lastname', {
@@ -32,9 +31,9 @@ Ext.onReady(function() {
 			totalProperty: 'totalCount'
 		},
 		extraParams : {
-			tab : 'open',
-			dateFrom : '',
-			dateTo : '',
+			status: 'incomplete',
+			fromDate : '',
+			toDate : '',
 			id : '',
 			searchType : '',
 			search : ''
@@ -242,19 +241,19 @@ Ext.onReady(function() {
 				editor.reset();
 				switch (newCard.title) {
 					case 'Open':
-						programResponseProxy.extraParams.tab = 'open';
+						programResponseProxy.extraParams.status= 'incomplete';
 						break;
 					case 'Closed':
-						programResponseProxy.extraParams.tab = 'closed';
+						programResponseProxy.extraParams.status= 'complete';
 						break;
 					case 'Expired':
-						programResponseProxy.extraParams.tab = 'expired';
+						programResponseProxy.extraParams.status= 'expired';
 						break;
 					case 'Pending Approval':
-						programResponseProxy.extraParams.tab = 'pending_approval';
+						programResponseProxy.extraParams.status= 'pending_approval';
 						break;
 					case 'Not Approved':
-						programResponseProxy.extraParams.tab = 'not_approved';
+						programResponseProxy.extraParams.status= 'not_approved';
 						break;
 				}
 				if(loaded) {
@@ -266,7 +265,7 @@ Ext.onReady(function() {
 					return false;
 				}
 			},
-			beforeshow: function() {
+			beforerender: function() {
 				if(! approvalPermission) {
 					this.remove(notApprovedProgramResponsesGrid);
 					this.remove(pendingApprovalProgramResponsesGrid);
@@ -423,11 +422,22 @@ Ext.onReady(function() {
 			handler : function() {
 				var f = programResponseSearch.getForm();
 				f.reset();
-				var vals = f.getValues();
-				Ext.iterate(vals, function (key, value){
-					programResponseProxy.extraParams[key] = value;
-				});
+        programResponseProxy.extraParams.id = undefined;
+        programResponseProxy.extraParams.search = undefined;
+        programResponseProxy.extraParams.toDate = undefined;
+        programResponseProxy.extraParams.fromDate = undefined;
 				programResponseTabs.getActiveTab().getStore().loadPage(1, {start: 0, limit: 10});
+			}
+		},{
+			text: 'Report',
+			icon:  '/img/icons/excel.png',
+			handler: function(){
+				var f = programResponseSearch.getForm();
+				var vals = f.getValues();
+        vals.status = programResponseProxy.extraParams.status;
+        vals.progId = progId;
+				vals = Ext.urlEncode(vals);
+				window.location = '/admin/program_responses/report?'+ vals;
 			}
 		}]
 	});

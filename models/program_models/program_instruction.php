@@ -11,7 +11,11 @@ class ProgramInstruction extends AppModel {
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''
-		)
+        ),
+        'ProgramStep' => array(
+            'className' => 'Program',
+            'foreignKey' => 'program_step_id'
+        )
 	);
 	
 	function getInstructions($programId, $type) {
@@ -30,4 +34,3 @@ class ProgramInstruction extends AppModel {
 		else return false;		
 	}
 }
-?>

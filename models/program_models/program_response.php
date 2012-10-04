@@ -1,39 +1,51 @@
 <?php
 
 class ProgramResponse extends AppModel {
-	
-	var $name = 'ProgramResponse';
-	
-	var $hasMany = array('ProgramResponseDoc');
-	
-	var $belongsTo = array('Program', 'User');
-	
-	var $validate = array();
-	
-	function getProgramResponse($programId, $userId) {
-		$programResponses = $this->find('all', array(
+
+	public $name = 'ProgramResponse';
+	public $actsAs = array('Containable');
+	public $hasMany = array(
+		'ProgramResponseDoc' => array(
+			'dependent' => true
+		),
+		'ProgramResponseActivity' => array(
+			'dependent' => true
+		)
+	);
+	public $belongsTo = array(
+		'Program' => array(
+			'counterCache' => true
+		),
+		'User'
+	);
+	public $validate = array();
+
+
+	public function getProgramResponse($programId, $userId) {
+		$programResponse = $this->find('first', array(
 			'conditions' => array(
 				'ProgramResponse.user_id' => $userId,
 				'ProgramResponse.program_id' => $programId)));
-		foreach($programResponses as $programResponse) {
-			if($programResponse['ProgramResponse']['complete']) {
-				$return = $programResponse;
-				break;
+		if($programResponse['ProgramResponse']['expires_on'] <= date('Y-m-d H:i:s') &&
+			$programResponse['ProgramResponse']['status'] === 'incomplete') {
+				$expiredResponse = $this->expireResponse($programResponse['ProgramResponse']['id']);
+				if($expiredResponse) {
+					$programResponse = $expiredResponse;
+				}
 			}
-			elseif($programResponse['ProgramResponse']['not_approved'] && 
-				$programResponse['ProgramResponse']['allow_new_response'] == 0) {
-					$return = $programResponse;
-					break;				
-			}
-			elseif($programResponse['ProgramResponse']['expires_on'] > date('Y-m-d H:i:s') && 
-				$programResponse['ProgramResponse']['not_approved'] == 0) {
-					$return = $programResponse;
-					break;
-			}
+		return $programResponse;
+	}
+
+	public function expireResponse($responseId) {
+		$this->id = $responseId;
+		$this->saveField('status', 'expired');
+		$response = $this->findById($responseId);
+		if($response['ProgramResponse']['status'] === 'expired') {
+			return $response;
 		}
-		if(empty($return)) {
-			$return = null;
+		else {
+			return false;
 		}
-		return $return;		
+
 	}
 }

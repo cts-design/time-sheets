@@ -1,11 +1,6 @@
-<?php
-/**
- * @author Daniel Nolan
- * @copyright Complete Technology Solutions 2011
- * @link http://ctsfla.com
- * @package ATLAS V3
- */
-?>
+<?php echo $this->Html->scriptStart(array('inline' => false)) ?>
+  var roleId = <?php echo $roleId ?>;
+<?php echo $this->Html->scriptEnd() ?>
 <?php echo $this->Html->script('programs/admin_index', array('inline' => FALSE));?>
 
 <div id="crumbWrapper">
