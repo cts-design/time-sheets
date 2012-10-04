@@ -85,7 +85,6 @@
 		 */
 		protected function _fetch($url, $method = 'GET', $options = array()) {
 			$response = $this->_request($url, $method, $options);
-			debug($response);
 			if (substr($response, 0, 1) == '{') {
 				$response = json_decode($response);
 			} elseif (substr($response, 0, 1) == '<') {

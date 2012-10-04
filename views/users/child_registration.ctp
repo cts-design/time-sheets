@@ -24,7 +24,11 @@ $(document).ready(function() {
     <?php __('Please register your child\'s information using the following form.') ?>
 	<br />	
     <?php __('If you have already created a login, please') ?>
-    <?php echo $html->link(__('click here', true), array('controller' => 'users', 'action' => 'login', 'child')) ?>
+	<?php $options = array('controller' => 'users', 'action' => 'login')?>
+	<?php if(isset($this->params['pass'][2]) && $this->params['pass']['2'] === 'program') :?>
+		<?php array_push($options, $this->params['pass'][2], $this->params['pass'][3]); ?>
+	<?php endif ?>
+    <?php echo $html->link(__('click here', true), $options); ?>
     <?php __('to return to the login page and try your login information again.') ?>
 </p>
 <br />

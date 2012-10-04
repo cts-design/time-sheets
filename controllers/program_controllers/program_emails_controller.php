@@ -44,6 +44,79 @@ class ProgramEmailsController extends AppController {
 		$this->set(compact('title_for_layout'));
 	}
 
+	public function admin_create() {
+			$formData = json_decode($this->params['form']['program_emails'], true);
+			foreach ($formData as $key => $value) {
+				unset($formData[$key]['id'], $formData[$key]['created'], $formData[$key]['modified']);
+			}
+
+			$count = count($formData);
+
+			if ($count > 1) {
+				$this->data['ProgramEmail'] = $formData;
+				$formField = $this->ProgramEmail->saveAll($this->data['ProgramEmail']);
+			} else {
+				$this->data['ProgramEmail'] = $formData[0];
+				$formField = $this->ProgramEmail->save($this->data);
+			}
+
+			if ($formField) {
+				if ($count > 1) {
+					foreach ($this->data['ProgramEmail'] as $k => $v) {
+						$data['program_emails'][] = $v;
+					}
+				} else {
+					$data['program_emails'] = $formField['ProgramEmail'];
+				}
+
+				$data['success'] = true;
+			} else {
+				$data['success'] = false;
+			}
+
+			$this->set('data', $data);
+			$this->render(null, null, '/elements/ajaxreturn');
+	}
+
+	public function admin_read() {
+		$programId = $this->params['url']['program_id'];
+
+		$this->ProgramEmail->recursive = -1;
+		$emails = $this->ProgramEmail->find('all', array(
+			'conditions' => array(
+				'ProgramEmail.program_id' => $programId
+			)
+		));
+
+		if ($emails) {
+			$data['success'] = true;
+			foreach ($emails as $key => $value) {
+				$data['program_emails'][] = $value['ProgramEmail'];
+			}
+		} else {
+			$data['success'] = false;
+		}
+	
+		$this->set('data', $data);
+		$this->render(null, null, '/elements/ajaxreturn');
+	}
+
+	public function admin_update() {
+		$email = json_decode($this->params['form']['program_emails'], true);
+
+		$this->ProgramEmail->id = $email['id'];
+		$this->ProgramEmail->set($email);
+
+		if ($this->ProgramEmail->save()) {
+			$data['success'] = true;
+		} else {
+			$data['success'] = false;
+		}
+
+		$this->set('data', $data);
+		$this->render(null, null, '/elements/ajaxreturn');
+	}
+
 	function admin_edit() {
 		if($this->RequestHandler->isAjax()) {
 			if(!empty($this->data)) {

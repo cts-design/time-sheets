@@ -4,7 +4,7 @@ class ProgramEmail extends AppModel {
 	
 	var $displayField = 'name';
 	
-	var $actsAs = array('Disableable');
+	var $actsAs = array('Containable','Disableable');
 
 	var $belongsTo = array(
 		'Program' => array(
@@ -13,6 +13,10 @@ class ProgramEmail extends AppModel {
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''
+		),
+		'ProgramStep' => array(
+			'className' => 'Program',
+			'foreignKey' => 'program_step_id'
 		)
 	);
 }

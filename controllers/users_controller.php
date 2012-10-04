@@ -26,6 +26,7 @@ class UsersController extends AppController {
             }
         }
         if(isset($this->data['User']['username'])) {
+			// TODO add the other login types
             if($this->params['action'] == 'admin_login' || $this->params['action'] == 'kiosk_self_sign_login') {
                 $this->User->Behaviors->disable('Disableable');
                 $user = $this->User->find('first', array('conditions' => array(
@@ -68,20 +69,31 @@ class UsersController extends AppController {
                         'conditions' => array(
                             'User.username' => $this->data['User']['username'],
                             'and' => array(
-                                'User.password' => $this->Auth->password($this->data['User']['password'])))));
+                            'User.password' => $this->Auth->password($this->data['User']['password'])))));
                     if($count === 0 && isset($this->data['User']['login_type'])) {
-                        if($this->data['User']['login_type'] == 'kiosk') {
-                            $this->redirect(array('action' => 'mini_registration',
-                                $this->data['User']['username'], 'kiosk' => true));
-                        }
-                        elseif($this->data['User']['login_type'] == 'website') {
-                            $this->redirect(array('action' => 'registration', 'regular',
-                                $this->data['User']['username'], 'kiosk' => false));
-                        }
-                        elseif($this->data['User']['login_type'] == 'child_website') {
-                            $this->redirect(array('action' => 'registration', 'child',
-                                $this->data['User']['username'], 'kiosk' => false));
-                        }
+						switch($this->data['User']['login_type']) {
+							case 'kiosk':
+								$this->redirect(array('action' => 'mini_registration',
+									$this->data['User']['username'], 'kiosk' => true));
+								break;
+							case 'website':
+								$this->redirect(array('action' => 'registration', 'regular',
+									$this->data['User']['username'], 'kiosk' => false));
+								break;
+							case 'child_website':
+								$this->redirect(array('action' => 'registration', 'child',
+									$this->data['User']['username'], 'kiosk' => false));
+								break;
+							case 'program':
+								$this->redirect(array('action' => 'registration', 'regular',
+									$this->data['User']['username'], 'program',
+									$this->data['User']['program_id'], 'kiosk' => false));
+								break;
+							case 'child_program':
+								$this->redirect(array('action' => 'registration', 'child', 'program',
+									$this->data['User']['username'], 'kisok' => false));
+								break;
+						}
                     }
                 }
             }
@@ -201,9 +213,9 @@ class UsersController extends AppController {
             $this->set($submittedValues);
         } else {
             $this->paginate = array(
-                'conditions' => $conditions,
-                'limit' => $limit,
-                'order' => $order
+            'conditions' => $conditions,
+             'limit' => $limit,
+             'order' => $order
             );
         }
         $this->set(compact('canViewFullSsn'));
@@ -261,7 +273,7 @@ class UsersController extends AppController {
                 'states' => $this->states,
                 'genders' => $this->genders,
                 'statuses' => $this->statuses
-            );
+                );
             $this->set('title_for_layout', 'Add Customer');
             $this->set($data);
         }
@@ -298,15 +310,56 @@ class UsersController extends AppController {
             'states' => $this->states,
             'genders' => $this->genders,
             'statuses' => $this->statuses
-        );
+            );
         $this->set($data);
     }
 
+	function dashboard() {
+		$this->loadModel('Program');
+		$this->Program->contain(
+			array('ProgramResponse' => array(
+				'conditions' => array('user_id' => $this->Auth->user('id')),
+				'fields' => array('id', 'status'))));
+		$programs = $this->Program->find(
+			'all',
+			array(
+				'conditions' => array(
+					'Program.show_in_dash' => 1,
+					'Program.in_test' => 0
+				),
+				'fields' => array('id', 'name', 'type')
+			)
+		);
+		if($programs) {
+			$orientations = array();
+			$registrations = array();
+			$ecourses = array();
+			$enrollments = array();
+			foreach($programs as $program) {
+				switch($program['Program']['type']) {
+					case 'orientation':
+						$orientations[] = $program;
+						break;
+					case 'registration':
+						$registrations[] = $program;
+						break;
+					case 'enrollment':
+						$enrollments[] = $program;
+						break;
+					case 'ecourse':
+						$ecourses[] = $program;
+						break;
+				}
+			}
+		}
+		$title_for_layout = 'Customer Dashboard';
+		$this->set(compact('title_for_layout', 'orientations', 'registrations', 'enrollments'));
+	}
+
     function edit($id=null) {
-        $this->Auth->user('id');
         $this->User->Behaviors->disable('Disableable');
         $this->set('title_for_layout', 'Edit Profile');
-        if (!$id && empty($this->data) || $id != $this->Auth->user('id')) {
+        if ((!$id && empty($this->data)) || $id != $this->Auth->user('id')) {
             $this->Session->setFlash(__('Invalid profile', true), 'flash_failure');
             $this->redirect('/');
         }
@@ -339,7 +392,7 @@ class UsersController extends AppController {
         $data = array(
             'states' => $this->states,
             'genders' => $this->genders
-        );
+            );
         $this->set($data);
     }
 
@@ -396,8 +449,23 @@ class UsersController extends AppController {
 
     function login($type=null) {
         $this->User->setValidation('customerLogin');
-        if(isset($this->params['pass'][1], $this->params['pass'][2]) && $this->params['pass'][1] == 'programs') {
-            $this->Session->write('Auth.redirect', '/' . $this->params['pass'][1] . '/index/' . $this->params['pass'][2]);
+		$loginType = 'website';
+		$render = 'login';
+        if(isset($this->params['pass'][0], $this->params['pass'][1]) && $this->params['pass'][0] === 'program') {
+            $this->loadModel('Program');
+            $this->Program->contain(array('ProgramInstruction' => array('conditions' => array('ProgramInstruction.type' => 'login'))));
+            $program = $this->Program->findById($this->params['pass'][1]);
+            if($program) {
+                $this->Session->write('Auth.redirect', '/programs/' . $program['Program']['type'] . '/' . $this->params['pass'][1]);
+				$title_for_layout = $program['Program']['name'] . ' Login';
+				$loginType = 'program';
+				if(!empty($program['ProgramInstruction'][0])) {
+					$this->set('instructions', $program['ProgramInstruction'][0]['text']);
+				}
+                if($program['Program']['atlas_registration_type'] === 'child') {
+                    $type = 'child';
+                }
+            }
         }
         if($this->Auth->user()){
             if ($this->Auth->user('role_id') > 3) {
@@ -412,7 +480,8 @@ class UsersController extends AppController {
             if (preg_match('/auditor/i', $this->Auth->user('role_name'))) {
                 $this->Transaction->createUserTransaction('Auditor', null, null, 'Logged into auditor dashboard');
                 $this->redirect(array('action' => 'dashboard', 'auditor' => true));
-            } else {
+			}
+			else {
                 $this->Transaction->createUserTransaction('Website',
                     null, null, 'Logged in using website.' );
                 if($this->Auth->user('email') == null || preg_match('(none|nobody|noreply)', $this->Auth->user('email'))) {
@@ -423,20 +492,22 @@ class UsersController extends AppController {
                     $this->redirect($this->Session->read('Auth.redirect'));
                 }
                 else {
-                    $this->redirect('/');
+                    $this->redirect(array('action' => 'dashboard', 'admin' => false));
                 }
             }
         }
-        if(isset($type) && $type == 'child' ||
-            isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'child_website') {
-                $this->set('title_for_layout', 'Child Login');
-                $this->render('child_login');
-            }
+        if(isset($type) && $type === 'child' ||
+            isset($this->data['User']['login_type']) && $this->data['User']['login_type'] === 'child_website') {
+				$title_for_layout = 'Child Login';
+				$render = 'child_login';
+        }
         if(isset($type) && $type == 'auditor' ||
-            isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'auditor') {
-                $this->set('title_for_layout', 'Auditor Login');
-                $this->render('auditor_login');
-            }
+            isset($this->data['User']['login_type']) && $this->data['User']['login_type'] === 'auditor') {
+				$title_for_layout = 'Auditor Login';
+				$render = 'auditor_login';
+        }
+		$this->set(compact('loginType', 'title_for_layout'));
+		$this->render($render);
     }
 
     function logout($type=null, $logoutMsg=null) {
@@ -472,7 +543,18 @@ class UsersController extends AppController {
     }
 
     function registration($type=null, $lastname=null) {
-        if (!empty($this->data)) {
+		if(isset($this->params['pass'][2], $this->params['pass'][3]) &&
+			$this->params['pass'][2] === 'program') {
+				$this->loadModel('Program');
+				$this->Program->contain(array('ProgramInstruction' =>
+					array('conditions' => array('ProgramInstruction.type' => 'registration'))));
+				$program = $this->Program->findById($this->params['pass'][3]);
+				if($program) {
+					$this->set('instructions', $program['ProgramInstruction'][0]['text']);
+					$title_for_layout = $program['Program']['name'] . ' Registration';
+				}
+		}
+        if(!empty($this->data)) {
             $this->User->Behaviors->disable('Disableable');
             $this->User->create();
             if(Configure::read('Registration.ssn') == 'last4') {
@@ -519,14 +601,15 @@ class UsersController extends AppController {
                 $this->data['User']['lastname'] = $lastname;
             }
         }
-        $title_for_layout = 'Registration';
+		if(! isset($title_for_layout)) {
+			$title_for_layout = 'Registration';
+		}
         $states = $this->states;
         $this->set(compact('title_for_layout', 'states'));
         if(isset($type) && $type == 'child' ||
             isset($this->data['User']['registration']) && $this->data['User']['registration'] == 'child_website') {
-                $this->render('child_registration');
-            }
-
+            $this->render('child_registration');
+        }
     }
 
     function kiosk_auto_logout() {
@@ -685,18 +768,18 @@ class UsersController extends AppController {
                 $this->set(compact('userEmail'));
             }
             if ($this->User->save($this->data)) {
-                $message = 'Welcome to the Atlas system.' . "\r\n\r\n";
-                $message .= 'Your username is: ' . substr($this->data['User']['firstname'], 0, 1).$this->data['User']['lastname'] . "\r\n\r\n";
-                $message .= 'Your password is: ' . $this->data['User']['pass'] . "\r\n\r\n";
-                $message .= 'You can now login at ' . Router::url('/admin', true);
-                $this->Email->from = Configure::read('System.email');
-                $this->Email->to = $this->data['User']['firstname']." ".$this->data['User']['lastname']."<".$this->data['User']['email'].">";
-                $this->Email->subject = 'Welcome to Atlas.';
-                $this->Email->send($message);
-                $this->Transaction->createUserTransaction('Administrator',
-                    null, null, 'Added administrator '. $this->data['User']['lastname'] . ', ' . $this->data['User']['firstname'] );
-                $this->Session->setFlash(__('The admin has been saved', true), 'flash_success');
-                $this->redirect(array('action' => 'index_admin'));
+            $message = 'Welcome to the Atlas system.' . "\r\n\r\n";
+            $message .= 'Your username is: ' . substr($this->data['User']['firstname'], 0, 1).$this->data['User']['lastname'] . "\r\n\r\n";
+            $message .= 'Your password is: ' . $this->data['User']['pass'] . "\r\n\r\n";
+            $message .= 'You can now login at ' . Router::url('/admin', true);
+            $this->Email->from = Configure::read('System.email');
+            $this->Email->to = $this->data['User']['firstname']." ".$this->data['User']['lastname']."<".$this->data['User']['email'].">";
+            $this->Email->subject = 'Welcome to Atlas.';
+            $this->Email->send($message);
+            $this->Transaction->createUserTransaction('Administrator',
+                null, null, 'Added administrator '. $this->data['User']['lastname'] . ', ' . $this->data['User']['firstname'] );
+            $this->Session->setFlash(__('The admin has been saved', true), 'flash_success');
+            $this->redirect(array('action' => 'index_admin'));
             }
             else {
                 $this->Session->setFlash(__('The admin could not be saved. Please, try again.', true), 'flash_failure');
@@ -713,7 +796,7 @@ class UsersController extends AppController {
         $data = array(
             'roles' => $this->User->Role->find('list', array(
                 'conditions' => $conditions)),
-            'locations' => $this->User->Location->find('list')
+                'locations' => $this->User->Location->find('list')
         );
         $this->set($data);
     }
@@ -760,7 +843,7 @@ class UsersController extends AppController {
         else $conditions = array("NOT" => array(array('Role.id' => array(1,2,3))));
         $data = array(
             'roles' => $this->User->Role->find('list', array(
-                'conditions' => $conditions)),
+            'conditions' => $conditions)),
             'locations' => $this->User->Location->find('list')
         );
         $this->set($data);
@@ -781,35 +864,35 @@ class UsersController extends AppController {
             $this->data['User']['id'] = $user['User']['id'];
             $this->data['User']['role_id'] = $user['User']['role_id'];
             if ($user['User']['email'] != '') {
-                $tempPassword = rand(10000,100000);
-                $this->data['User']['password'] = Security::hash($tempPassword, null, true);
-                unset($this->data['User']['email']);
-                if ($this->User->save($this->data, array('validate' => false))) {
-                    // Fire off the E-Mail
-                    $message = Router::url('/admin', true) . "\n\n" . 'Temp Password: ' . $tempPassword ;
-                    $this->Email->from = Configure::read('System.email');
-                    $this->Email->to = $user['User']['firstname']." ".$user['User']['lastname']." <".$user['User']['email'].">";
-                    $this->Email->subject = 'Password Reset Request';
-                    if($this->Email->send($message)) {
-                        // Set flash message
-                        $this->Session->setFlash(__('Your password has been changed. Please check your E-Mail.', true), 'flash_success');
-                        // Redirect to login page
-                        $this->redirect(array('action' => 'login', 'admin' => true));
-                    }
-                    else {
-                        $this->Session->setFlash(__('Error occured sending E-Mail. Please retry.', true), 'flash_failure');
-                        $this->redirect(array('action' => 'password_reset'));
-                    }
+            $tempPassword = rand(10000,100000);
+            $this->data['User']['password'] = Security::hash($tempPassword, null, true);
+            unset($this->data['User']['email']);
+            if ($this->User->save($this->data, array('validate' => false))) {
+                // Fire off the E-Mail
+                $message = Router::url('/admin', true) . "\n\n" . 'Temp Password: ' . $tempPassword ;
+                $this->Email->from = Configure::read('System.email');
+                $this->Email->to = $user['User']['firstname']." ".$user['User']['lastname']." <".$user['User']['email'].">";
+                $this->Email->subject = 'Password Reset Request';
+                if($this->Email->send($message)) {
+                // Set flash message
+                $this->Session->setFlash(__('Your password has been changed. Please check your E-Mail.', true), 'flash_success');
+                // Redirect to login page
+                $this->redirect(array('action' => 'login', 'admin' => true));
                 }
                 else {
-                    $this->Session->setFlash(__('Error saving record. Please retry.', true), 'flash_failure');
-                    $this->redirect(array('action' => 'password_reset'));
+                $this->Session->setFlash(__('Error occured sending E-Mail. Please retry.', true), 'flash_failure');
+                $this->redirect(array('action' => 'password_reset'));
                 }
             }
             else {
-                // E-Mail address provided was not found in system.
-                $this->Session->setFlash(__('E-Mail address not found', true), 'flash_failure');
+                $this->Session->setFlash(__('Error saving record. Please retry.', true), 'flash_failure');
                 $this->redirect(array('action' => 'password_reset'));
+            }
+            }
+            else {
+            // E-Mail address provided was not found in system.
+            $this->Session->setFlash(__('E-Mail address not found', true), 'flash_failure');
+            $this->redirect(array('action' => 'password_reset'));
             }
         }
     }
@@ -826,7 +909,7 @@ class UsersController extends AppController {
                     $this->data = $this->User->read(null, $postData['id']);
                     $this->Transaction->createUserTransaction('Customer', null, null,
                         'Edited last name for customer '. $this->data['User']['lastname'] . ', ' .
-                        $this->data['User']['firstname'] . ' - '. substr($this->data['User']['ssn'], -4)
+                         $this->data['User']['firstname'] . ' - '. substr($this->data['User']['ssn'], -4)
                     );
                 }
                 else {
@@ -849,13 +932,13 @@ class UsersController extends AppController {
                             'RIGHT (User.ssn , 4) LIKE' => '%'.$this->params['url']['search'].'%',
                             'User.role_id' => 1,
                             'User.created BETWEEN ? AND ?' => array($from, $to)
-                        );
+                            );
                     }
                     else {
                         $conditions = array(
                             'User.ssn LIKE' => '%'.$this->params['url']['search'].'%',
                             'User.role_id' => 1
-                        );
+                            );
                     }
 
                 }
@@ -865,7 +948,7 @@ class UsersController extends AppController {
                             'User.lastname LIKE' => '%'.$this->params['url']['search'].'%',
                             'User.role_id' => 1,
                             'User.created BETWEEN ? AND ?' => array($from, $to)
-                        );
+                            );
                     }
                     else {
                         $conditions = array(
@@ -957,11 +1040,11 @@ class UsersController extends AppController {
                     Router::url('/admin/', true) . 'users/edit/' . $this->params['form']['userId']. "\r\n";
                 if($this->Email->send($message)){
                     $this->data = $this->User->read(null, $this->params['form']['userId']);
-                    $this->Transaction->createUserTransaction('Customer', null, null,
-                        'Requested SSN change for customer '. $this->data['User']['lastname'] . ', ' .
-                        $this->data['User']['firstname'] . ' - '. substr($this->data['User']['ssn'], -4)
-                    );
-                    $data['success'] = true;
+                        $this->Transaction->createUserTransaction('Customer', null, null,
+                            'Requested SSN change for customer '. $this->data['User']['lastname'] . ', ' .
+                             $this->data['User']['firstname'] . ' - '. substr($this->data['User']['ssn'], -4)
+                        );
+                        $data['success'] = true;
                 }
                 else {
                     $data['success'] = false;
@@ -1080,7 +1163,7 @@ class UsersController extends AppController {
         $this->User->Behaviors->enable('Disableable');
         if($userType == 'Customer') {
             $user = $user['User']['lastname'] . ', ' . $user['User']['firstname'] . ' - '.
-                substr($user['User']['ssn'], -4);
+            substr($user['User']['ssn'], -4);
         }
         else {
             $user = $user['User']['lastname'] . ', ' . $user['User']['firstname'];

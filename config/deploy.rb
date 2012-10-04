@@ -14,7 +14,7 @@ set :default_shell, '/bin/bash'
 set :design_branch, "master"
 
 # plugins, override in region namespace if region has plugins
-set :app_plugins, []
+set :app_plugins, ['queue']
 
 # --- Server Settings.
 
@@ -231,7 +231,6 @@ end
 def send_campfire_alert(body)
   run "cd #{current_release} && cake campfire '#{body}'"
 end
-
 
 namespace :mysql do
   desc "performs a backup (using mysqldump) in app shared dir"

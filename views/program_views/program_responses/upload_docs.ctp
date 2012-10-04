@@ -1,12 +1,19 @@
 <?php echo $html->script('program_responses/toggle_instructions', array('inline' => false)) ?>
-<a id="Toggle" class="small" style="display: none"><?php __('Hide Instructions') ?></a>
-<div id="Instructions"><?php echo $instructions ?></div>
-<noscript>
-	<div id="Instructions"><?php echo $instructions ?></div>
-</noscript>
-<div id="RequiredDocs">
+  <div class="show-instructions">
+    <a href="#" ><?php __('Show instructions') ?></a>
+  </div>
+  <div id="instructions">
+    <?php echo $instructions ?>
+    <div class="hide-instructions">
+      <a href="#"><?php __('Hide these instructions') ?></a>
+    </div>
+  </div>
+	<noscript>
+		<div id="instructions"><?php echo $instructions ?></div>
+	</noscript>
+<div id="UploadRequiredDocs">
 		
-	<?php echo $form->create('ProgramResponse', array('action' => 'required_docs/'.$this->params['pass'][0], 'type' => 'file')) ?>
+	<?php echo $form->create('ProgramResponse', array('action' => 'upload_docs/'.$this->params['pass'][0].'/'.$this->params['pass'][1], 'type' => 'file')) ?>
 	<fieldset>
         <legend><?php __('Upload Documents') ?></legend>
 	<?php echo $form->file('QueuedDocument.submittedfile', array('label' => 'Document')) ?>
@@ -24,7 +31,7 @@
 	<p>
 		<strong>
 			<?php echo $html->link(__('I am finished uploading my documents.', true), 
-			'/program_responses/provided_docs/' . $this->params['pass'][0] .'/uploaded_docs'); ?>
+			'/program_responses/provided_docs/' . $this->params['pass'][0] . '/' . $this->params['pass'][1] .'/uploaded_docs'); ?>
 		</strong>		
 	</p>
 	
