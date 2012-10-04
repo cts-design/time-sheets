@@ -3,6 +3,19 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+	<h1>Release 3.5 (10-4-12)</h1>
+	<h2>Major feature enhancements</h2>
+	<ol>
+		<li>Refactored programs module to allow admins to create registration and orientation type programs.</li>
+		<li>Added electronic signature enrollment for programs that require electronic signature.</li>
+		<li>Added ability for system to read barcoded electronic signature enrollment documents that are scanned into Atlas.</li>
+		<li>Added excel reporting feature to the admin propgram responses view.</li>
+		<li>Added background queue for prcessing program documents and program emails behind the scenes.</li>
+		<li>Refactored admin program response apporval view.</li>
+		<li>Added ability for admins to reset any step in the program to allow customer to redo that step.</li>
+		<li>Refactored customer program interface to make it more user friendly.</li>
+	</ol>
+	<hr />
 	<h1>Release 3.4 (9-13-12)</h1>
 	<h2>Major feature enhancements</h2>
 	<ol>
@@ -12,7 +25,7 @@
 		<li>Added “Do you have a substantial disability” as a core registration question</li>
 		<li>Added the ability to have up to 7 additional registration fields on the kiosk registration page</li>
 		<li>Added the ability to hide/show the kiosk user info confirmation screen</li>
-		<li> Implemented a new help desk interface to allow for greater explanation of issues</li>
+		<li>Implemented a new help desk interface to allow for greater explanation of issues</li>
 	</ol>
 	<hr />
 	<h1>Release 3.3.4 (7-12-12)</h1>
