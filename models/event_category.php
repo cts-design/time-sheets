@@ -22,4 +22,3 @@ class EventCategory extends AppModel {
 		return preg_match('|^[a-zA-Z ]*$|', $value);
 	}
 }
-?>
