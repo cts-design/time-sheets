@@ -316,7 +316,6 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
-  autoSync: true,
   data: [{
     program_id: 0,
     text: 'Default text Main',
@@ -360,7 +359,6 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
-  autoSync: true,
   data: [{
     program_id: 0,
     name: 'Orientation Main',
