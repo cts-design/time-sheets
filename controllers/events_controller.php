@@ -1,11 +1,21 @@
 <?php
+/**
+ * @author Daniel Nolan 
+ * @copyright Complete Technology Solutions 2012
+ * @link http://ctsfla.com
+ * @package ATLAS V3
+ */
+
 class EventsController extends AppController {
-
-	public function beforeFilter() {
+	var $name = 'Events';
+	var $paginate = array('order' => array('Event.start' => 'asc'), 'limit' => 5);
+	
+	function beforeFilter() {
 		parent::beforeFilter();
+		$this->Auth->allow('view', 'index');
 	}
-
-	public function index() {
+	
+	function index($month = null, $year = null) {
 		$events = $this->Event->find('all', array(
 			'conditions' => array(
 				'Event.scheduled >' => date('Y-m-d H:i:s'),
@@ -13,7 +23,50 @@ class EventsController extends AppController {
 			)
 		));
 		debug($events);
+		$title_for_layout = 'Calendar of Events';
+		$categories = $this->Event->EventCategory->find('list', 
+														array('fields' => array('EventCategory.id', 'EventCategory.name'),
+														'recursive' => -1));
+		array_unshift($categories, 'All Categories');
+		
+		if (isset($this->params['form']['event_categories_dropdown']) && !empty($this->params['form']['event_categories_dropdown'])) {
+			if ($this->params['form']['event_categories_dropdown'] == 0) {
+				$categories['selected'] = 0;
+				$categoryConditions = null;
+			} else {
+				$categoryConditions = array('Event.event_category_id' => $this->params['form']['event_categories_dropdown']);
+				$categories['selected'] = $this->params['form']['event_categories_dropdown'];	
+			}
+		} else {
+			$categoryConditions = null;
+		}
+
+		if ($month && !$year) {
+			$year = date('Y');
+		}
+		
+		if (!$month) {
+			$date = date('Y-m-d H:i:s');
+			$month = date('m', strtotime($date));	
+			$lastDayOfMonth = date('t', strtotime($date));
+			$year = date('Y', strtotime($date));
+			$endDate = date('Y-m-d H:i:s', strtotime("$month/$lastDayOfMonth/$year 23:59:59"));
+		} else {
+			$date = date('Y-m-d H:i:s', strtotime("$month/1/$year 00:00:01"));
+			$lastDayOfMonth = date('t', strtotime($date));
+			$endDate = date('Y-m-d H:i:s', strtotime("$month/$lastDayOfMonth/$year 23:59:59"));
+		}
+		
+		$events = $this->paginate('Event', array('Event.start BETWEEN ? AND ?' => array($date, $endDate), $categoryConditions));
+		
+		$curMonth = date('F Y', strtotime($date));
+		$prevMonth = date('m/Y', strtotime("-1 month", strtotime($date)));
+		$nextMonth = date('m/Y', strtotime("+1 month", strtotime($date)));
+		
+		$this->set(compact('title_for_layout', 'categories', 'prevMonth', 'nextMonth', 'curMonth', 'events'));
 	}
+	
+	public function view() {}
 
 	public function admin_index() {
 		if($this->RequestHandler->isAjax()) {
