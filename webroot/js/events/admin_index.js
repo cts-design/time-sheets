@@ -1,13 +1,18 @@
-Ext.define('Workshop', {
+Ext.define('Event', {
   extend: 'Ext.data.Model',
   fields: [
     {name: 'id'},
+    {name: 'event_category_id'},
     {name: 'name'},
     {name: 'description'},
     {name: 'location', serverKey: 'location_id'},
+    {name: 'other_location'},
+    {name: 'url'},
+    {name: 'address'},
     {name: 'scheduled', type: 'date', dateFormat: 'Y-m-d H:i:s'},
-    {name: 'registered'},
     {name: 'seats_available'},
+    {name: 'duration'},
+    {name: 'registered'},
     {name: 'attended'},
     {name: 'cat_1'},
     {name: 'cat_2'},
@@ -18,23 +23,23 @@ Ext.define('Workshop', {
 });
 
 Ext.create('Ext.data.Store', {
-  model: 'Workshop',
-  storeId: 'workshopsStore',
+  model: 'Event',
+  storeId: 'eventsStore',
   pageSize: 10,
   proxy: {
     type: 'ajax',
     api: {
-      create: '/admin/workshops/add/',
-      read: '/admin/workshops',
-      update: '/admin/workshops/edit/',
-      destroy: '/admin/workshops/delete/'
+      create: '/admin/events/add/',
+      read: '/admin/events',
+      update: '/admin/events/edit/',
+      destroy: '/admin/events/delete/'
     },
     reader: {
       type: 'json',
-      root: 'workshops'
+      root: 'events'
     },
     writer: {
-      root: 'data[Workshop]',
+      root: 'data[Event]',
       encode: true,
       writeAllFields: false,
       nameProperty: 'serverKey'
@@ -51,20 +56,20 @@ Ext.create('Ext.data.Store', {
         var msg = null;
         switch(operation.action) {
           case 'destroy' :
-            msg = 'Unable to delete workshop.';
+            msg = 'Unable to delete event.';
             break;
           case 'create' :
-            msg = 'Unable to create workshop.';
+            msg = 'Unable to create event.';
             break;
           case 'update' :
-            msg = 'Unable to update workshop.';
+            msg = 'Unable to update event.';
             break;
         }
         Ext.MessageBox.alert('Status', msg);
       }
       if(responseTxt.success) {
         Ext.MessageBox.hide();
-        var formPanel = Ext.getCmp('workshopsForm');
+        var formPanel = Ext.getCmp('eventsForm');
         if(operation.action === 'create' || operation.action === 'update') {
           formPanel.getForm().reset();
           Ext.getCmp('cat2Name').disable();
@@ -166,8 +171,30 @@ Ext.create('Ext.data.Store', {
   autoLoad: true
 });
 
+Ext.define('EventCategory', {
+  extend: 'Ext.data.Model',
+  fields: ['id', 'name']
+});
+	
+Ext.create('Ext.data.Store', {
+  model: 'EventCategory',
+  storeId: 'eventCategoriesStore',
+  proxy: {
+    type: 'ajax',
+    url: '/admin/event_categories/get_all_categories',
+    reader: {
+      type: 'json',
+      root: 'eventCategories'
+    },
+    limitParam: undefined,
+    pageParam: undefined,
+    startParam: undefined				
+  },
+  autoLoad: true
+});
+
 Ext.create('Ext.form.Panel', {
-  id: 'workshopsForm',
+  id: 'eventsForm',
   frame: true,
   bodyPadding: 5,
   width: 950,
@@ -179,10 +206,10 @@ Ext.create('Ext.form.Panel', {
   items: [{
     columnWidth: 0.7,
     xtype: 'gridpanel',
-    id: 'workshopsGrid',
-    store: Ext.data.StoreManager.lookup('workshopsStore'),
+    id: 'eventsGrid',
+    store: Ext.data.StoreManager.lookup('eventsStore'),
     height: 315,
-    title:'Workshops',
+    title:'Events',
     columns: [{
       text: 'id',
       dataIndex: 'id',
@@ -215,7 +242,7 @@ Ext.create('Ext.form.Panel', {
     }],
     tbar: [{xtype: 'tbfill'},{
       xtype: 'button',
-      text: 'New Workshop',
+      text: 'New Event',
       icon: '/img/icons/add.png',
       handler: function() {
         this.up('form').getForm().reset();
@@ -225,7 +252,7 @@ Ext.create('Ext.form.Panel', {
       }
     },{
       xtype: 'button',
-      text: 'Duplicate Workshop',
+      text: 'Duplicate Event',
       icon: '',
       handler: function() {
         Ext.MessageBox.confirm('Confirm', 'This does not work yet', function(id){
@@ -234,7 +261,7 @@ Ext.create('Ext.form.Panel', {
     }],
     dockedItems: [{
       xtype: 'pagingtoolbar',
-      store: Ext.data.StoreManager.lookup('workshopsStore'),
+      store: Ext.data.StoreManager.lookup('eventsStore'),
       dock: 'bottom',
       displayInfo: true
     }],
@@ -279,6 +306,15 @@ Ext.create('Ext.form.Panel', {
     xtype: 'textarea',
     allowBlank: false
   },{
+    fieldLabel: 'Category',
+    name: 'event_category_id',
+    xtype: 'combo',
+    displayField: 'name',
+    valueField: 'id',
+    store: Ext.data.StoreManager.lookup('eventCategoriesStore'),
+    queryMode: 'local',
+    allowBlank: false
+  },{
     fieldLabel: 'Location',
     name: 'location',
     xtype: 'combo',
@@ -287,6 +323,18 @@ Ext.create('Ext.form.Panel', {
     store: Ext.data.StoreManager.lookup('locationsStore'),
     queryMode: 'local',
     allowBlank: false
+  },{
+    fieldLabel: 'Other Location',
+    name: 'other_location',
+    disabled: true
+  },{
+    fieldLabel: 'Address',
+    name: 'address',
+    disabled: true
+  },{
+    fieldLabel: 'URL',
+    name: 'url',
+    vtype: 'url'
   },{
     fieldLabel: 'Seats',
     name: 'seats_available',
@@ -300,6 +348,13 @@ Ext.create('Ext.form.Panel', {
     name: 'scheduled',
     timeFormat: 'g:i a',
     dateFormat: 'm/d/Y'
+  },{
+    fieldLabel: 'Duration in hours',
+    xtype: 'numberfield',
+    name: 'duration',
+    minValue: 1,
+    maxValue: 8,
+    width: 100
   },{
     fieldLabel: 'Cat 1',
     name: 'cat_1',
@@ -370,12 +425,6 @@ Ext.create('Ext.form.Panel', {
       }
     },
     allowBlank: false
-    },{
-      xtype: 'filefield',
-      allowBlank: true,
-      fieldLabel: 'Media Upload',
-      id: 'mediaUploadField',
-      name: 'media'
     }]
   }],
   buttons: [{
@@ -385,17 +434,17 @@ Ext.create('Ext.form.Panel', {
       var form = this.up('form').getForm();
       var vals = form.getValues();
       if(form.isValid()) {
-        var workshop;
-        var store = Ext.data.StoreManager.lookup('workshopsStore');
+        var event;
+        var store = Ext.data.StoreManager.lookup('eventsStore');
         if(vals.id !== '') {
-          workshop = store.getById(vals.id);
-          workshop.beginEdit();
-          workshop.set(vals);
-          workshop.endEdit();
+          event = store.getById(vals.id);
+          event.beginEdit();
+          event.set(vals);
+          event.endEdit();
         }
         else {
-          workshop = Ext.create('Workshop', form.getValues());
-          store.add(workshop);
+          event = Ext.create('Event', form.getValues());
+          store.add(event);
         }
         store.sync();
       }
@@ -404,6 +453,6 @@ Ext.create('Ext.form.Panel', {
 });
 
 Ext.onReady(function(){
-  Ext.getCmp('workshopsForm').render('workshops');
+  Ext.getCmp('eventsForm').render('events');
 });
 
