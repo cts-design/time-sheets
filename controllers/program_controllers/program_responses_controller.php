@@ -103,8 +103,6 @@ class ProgramResponsesController extends AppController {
 				if(isset($status)) {
 					$statusEmail = Set::extract('/ProgramEmail[type='.$status.']', $program);
 
-					$this->log($statusEmail, 'debug');
-
 					if ($status === 'complete') {
 						$results = array();
 						$pattern = '/\{\{\s+(\w+)\s+\}\}/';
