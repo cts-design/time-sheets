@@ -3,16 +3,8 @@ class Event extends AppModel {
 
 	public $name = 'Event';
 	
-	public $displayField = 'title';
+	public $displayField = 'name';
 	
 	public $belongsTo = 'EventCategory';
 
-	public $actsAs = array(
-		'Translatable' => array(
-			'title', 'description'
-		),
-		'AtlasTranslate' => array(
-			'title', 'description'
-		)
-	);
 }
