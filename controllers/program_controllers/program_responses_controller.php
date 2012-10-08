@@ -105,9 +105,9 @@ class ProgramResponsesController extends AppController {
 
 					if ($status === 'complete') {
 						$results = array();
-						$pattern = '/\{\{\s+(\w+)\s+\}\}/';
+						$pattern = '/\{\{\s*(\w+)\s*\}\}/';
 
-						preg_match_all('/\{\{\s+(\w+)\s+\}\}/', $statusEmail[0]['ProgramEmail']['body'], $results);
+						preg_match_all('/\{\{\s*(\w+)\s*\}\}/', $statusEmail[0]['ProgramEmail']['body'], $results);
 
 						if (!empty($results[1])) {
 							$formFieldName = $results[1];

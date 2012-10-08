@@ -200,9 +200,9 @@ class ProgramsController extends AppController {
 						$programResponse['ProgramResponse']['not_approved_comment'] . '</div>';
 				} else if ($programResponse['ProgramResponse']['status'] === 'complete') {
 					$results = array();
-					$pattern = '/\{\{\s+(\w+)\s+\}\}/';
+					$pattern = '/\{\{\s*(\w+)\s*\}\}/';
 
-					preg_match_all('/\{\{\s+(\w+)\s+\}\}/', $instructions[0], $results);
+					preg_match_all('/\{\{\s*(\w+)\s*\}\}/', $instructions[0], $results);
 
 					if (!empty($results[1])) {
 						$formFieldName = $results[1];
