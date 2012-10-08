@@ -198,6 +198,19 @@ class ProgramsController extends AppController {
 					$instructions[0] .=
 						'<div class="not-approved-comment"><b>Admin Comment:&nbsp;</b>' .
 						$programResponse['ProgramResponse']['not_approved_comment'] . '</div>';
+				} else if ($programResponse['ProgramResponse']['status'] === 'complete') {
+					$results = array();
+					$pattern = '/\{\{\s+(\w+)\s+\}\}/';
+
+					preg_match_all('/\{\{\s+(\w+)\s+\}\}/', $instructions[0], $results);
+
+					if (!empty($results[1])) {
+						$formFieldName = $results[1];
+						$formFieldAnswers = json_decode($programResponse['ProgramResponseActivity'][0]['answers'], true);
+						$replacement = $formFieldAnswers[$formFieldName[0]];
+
+						$instructions[0] = preg_replace($pattern, $replacement, $instructions[0]);
+					}
 				}
 			}
 		}
