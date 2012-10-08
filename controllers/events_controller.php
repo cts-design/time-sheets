@@ -71,6 +71,7 @@ class EventsController extends AppController {
 	public function admin_index() {
 		if($this->RequestHandler->isAjax()) {
 			$events = $this->Event->find('all', array('order' => array('Event.scheduled DESC')));
+			// TODO add condition to the find statement to exclude the events that have been held already
 			$this->loadModel('Location');
 			$locations = $this->Location->find('list');	
 			$this->loadModel('DocumentFilingCategory');
@@ -78,14 +79,7 @@ class EventsController extends AppController {
 			if($events) {
 				$i = 0;
 				foreach($events as $event) {
-					$data['events'][$i]['id'] = $event['Event']['id'];
-					$data['events'][$i]['name'] = $event['Event']['name'];
-					$data['events'][$i]['description'] = $event['Event']['description'];
-					$data['events'][$i]['scheduled'] = $event['Event']['scheduled'];
-					$data['events'][$i]['seats_available'] = $event['Event']['seats_available'];
-					$data['events'][$i]['registered'] = $event['Event']['registered'];
-					$data['events'][$i]['attended'] = $event['Event']['attended'];
-					// TODO add if to make sure cats are set
+					$data['events'][$i] = $event['Event'];
 					$data['events'][$i]['cat_1'] = $cats[$event['Event']['cat_1']];
 					$data['events'][$i]['cat_2'] = $cats[$event['Event']['cat_2']];
 					$data['events'][$i]['cat_3'] = $cats[$event['Event']['cat_3']];
@@ -140,7 +134,6 @@ class EventsController extends AppController {
 			if(!empty($this->data)) {
 				$this->data['Event'] = json_decode($this->data['Event'], true);
 				$this->data['Event']['scheduled'] = date("Y-m-d H:i:s", strtotime('10/09/2012 12:30 am'));
-				$this->log($this->data, 'debug');
 				if($this->Event->save($this->data)) {
 					$data['success'] = true;
 					$data['message'] = 'The event was updated successfully.';
