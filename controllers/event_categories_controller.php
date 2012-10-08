@@ -30,15 +30,19 @@ class EventCategoriesController extends AppController {
 
 	function admin_get_all_categories() {
 		$allCategories = $this->EventCategory->find('all');
-
-		foreach ($allCategories as $key => $value) {
-			unset($value['Events']);
-			foreach ($value as $k => $v) {
-				$eventCategories['eventCategories'][] = $v;
+		if($allCategories) {
+			foreach ($allCategories as $key => $value) {
+				unset($value['Events']);
+				foreach ($value as $k => $v) {
+					$data['eventCategories'][] = $v;
+				}
 			}
 		}
-		
-		$this->set('data', $eventCategories);
+		else {
+			$data['eventCategories'] = array();
+		}
+		$data['success'] = true;		
+		$this->set(compact('data'));
 		return $this->render(null, null, '/elements/ajaxreturn');
 	}
 	
