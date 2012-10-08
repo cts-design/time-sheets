@@ -102,6 +102,24 @@ class ProgramResponsesController extends AppController {
 				}
 				if(isset($status)) {
 					$statusEmail = Set::extract('/ProgramEmail[type='.$status.']', $program);
+
+					$this->log($statusEmail, 'debug');
+
+					if ($status === 'complete') {
+						$results = array();
+						$pattern = '/\{\{\s+(\w+)\s+\}\}/';
+
+						preg_match_all('/\{\{\s+(\w+)\s+\}\}/', $statusEmail[0]['ProgramEmail']['body'], $results);
+
+						if (!empty($results[1])) {
+							$formFieldName = $results[1];
+							$formFieldAnswers = json_decode($program['ProgramResponse'][0]['ProgramResponseActivity'][0]['answers'], true);
+							$replacement = $formFieldAnswers[$formFieldName[0]];
+
+							$statusEmail[0]['ProgramEmail']['body'] = preg_replace($pattern, $replacement, $statusEmail[0]['ProgramEmail']['body']);
+						}
+					}
+
 					if(!empty($statusEmail)) {
 						$this->Notifications->sendProgramEmail($statusEmail[0]['ProgramEmail']);
 					}
