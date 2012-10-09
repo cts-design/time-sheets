@@ -111,6 +111,7 @@ class FtpDocumentAbsorptionShell extends Shell {
 									$barCode = $this->BarCodeDefinition->barDecode($path . $docName);
 									if ($barCode) {
 										$this->data['bar_code_definition_id'] = $barCode['BarCodeDefinition']['id'];
+										$this->data['queue_category_id'] = $barCode['BarCodeDefinition']['document_queue_category_id'];
 										$this->data['user_id'] = $barCode['User']['id'];	
 									}
 									if (!$this->QueuedDocument->save($this->data)) {
