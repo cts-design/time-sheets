@@ -9,7 +9,7 @@ Ext.define('Event', {
     {name: 'other_location'},
     {name: 'url'},
     {name: 'address'},
-    {name: 'scheduled', type: 'date', dateFormat: 'Y-m-d H:i:s'},
+    {name: 'scheduled', type: 'date'},
     {name: 'seats_available'},
     {name: 'duration'},
     {name: 'registered'},
@@ -25,7 +25,7 @@ Ext.define('Event', {
 Ext.create('Ext.data.Store', {
   model: 'Event',
   storeId: 'eventsStore',
-  pageSize: 10,
+  pageSize: 25,
   proxy: {
     type: 'ajax',
     api: {
@@ -208,7 +208,7 @@ Ext.create('Ext.form.Panel', {
     xtype: 'gridpanel',
     id: 'eventsGrid',
     store: Ext.data.StoreManager.lookup('eventsStore'),
-    height: 315,
+    height: 450,
     title:'Events',
     columns: [{
       text: 'id',
@@ -309,6 +309,7 @@ Ext.create('Ext.form.Panel', {
     fieldLabel: 'Category',
     name: 'event_category_id',
     xtype: 'combo',
+    emptyText: 'Please Select',
     displayField: 'name',
     valueField: 'id',
     store: Ext.data.StoreManager.lookup('eventCategoriesStore'),
@@ -318,6 +319,7 @@ Ext.create('Ext.form.Panel', {
     fieldLabel: 'Location',
     name: 'location',
     xtype: 'combo',
+    emptyText: 'Please Select',
     displayField: 'name',
     valueField: 'id',
     store: Ext.data.StoreManager.lookup('locationsStore'),
@@ -362,6 +364,7 @@ Ext.create('Ext.form.Panel', {
     store: Ext.data.StoreManager.lookup('cat1Store'),
     displayField: 'name',
     valueField: 'id',
+    emptyText: 'Please Select',
     listConfig: {
       getInnerTpl: function() {
         return '<div>{img}{name}</div>';
@@ -388,6 +391,7 @@ Ext.create('Ext.form.Panel', {
     id: 'cat2Name',
     xtype: 'combo',
     disabled: true,
+    emptyText: 'Please Select',
     store: Ext.data.StoreManager.lookup('cat2Store'),
     displayField: 'name',
     valueField: 'id',
@@ -414,6 +418,7 @@ Ext.create('Ext.form.Panel', {
     id: 'cat3Name',
     xtype: 'combo',
     store: Ext.data.StoreManager.lookup('cat3Store'),
+    emptyText: 'Please Select',
     disabled: true,
     displayField: 'name',
     valueField: 'id',
