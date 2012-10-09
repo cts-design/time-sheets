@@ -134,6 +134,12 @@ class EventsController extends AppController {
 			if(!empty($this->data)) {
 				$this->data['Event'] = json_decode($this->data['Event'], true);
 				$this->data['Event']['scheduled'] = date("Y-m-d H:i:s", strtotime('10/09/2012 12:30 am'));
+				if(!isset($this->data['Event']['cat_2'])) {
+					$this->data['Event']['cat_2'] = NULL;
+				}
+				if(!isset($this->data['Event']['cat_3'])) {
+					$this->data['Event']['cat_3'] = NULL;
+				}
 				if($this->Event->save($this->data)) {
 					$data['success'] = true;
 					$data['message'] = 'The event was updated successfully.';
