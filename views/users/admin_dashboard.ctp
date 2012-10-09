@@ -26,6 +26,7 @@
                 <?php echo $this->Nav->buildAdminNavigation('settings') ?>
 		    <?php }?>
             <?php echo $this->Nav->buildAdminNavigation('alerts') ?>
+            <?php echo $this->Nav->buildAdminNavigation('events') ?>
             <?php echo $this->Nav->buildAdminNavigation('users') ?>
             <?php echo $this->Nav->buildAdminNavigation('selfSign') ?>
             <?php echo $this->Nav->buildAdminNavigation('storage') ?>

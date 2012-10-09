@@ -56,11 +56,6 @@ $config['navigation.website'] = array(
 			)
 		),
 		array(
-			'link' => array('controller' => 'events', 'action' => 'index'),
-			'rel' => 'calendar',
-			'title' => 'Calendar of Events'
-		),
-		array(
 			'link' => array('controller' => 'hot_jobs', 'action' => 'index'),
 			'rel' => 'hotJobs',
 			'title' => 'Hot Jobs'
@@ -150,6 +145,12 @@ $config['navigation.alerts'] = array(
 	'link' => array('controller' => 'alerts', 'action' => 'index'),
 	'rel' => 'alerts',
 	'title' => 'Alerts'
+);
+
+$config['navigation.events'] = array(
+	'link' => array('controller' => 'events', 'action' => 'index'),
+	'rel' => 'calendar',
+	'title' => 'Events'
 );
 
 $config['navigation.users'] = array(
