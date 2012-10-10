@@ -53,10 +53,21 @@ class ProgramResponseDoc extends AppModel {
 		if($watchedCat) {
 			$programResponse = $this->ProgramResponse->getProgramResponse($watchedCat['Program']['id'], $user['User']['id']);
 			$return['program_id'] = $watchedCat['Program']['id'];
-			if($watchedCat['WatchedFilingCat']['name'] === 'esign') {
+			$DocumentFilingCat = ClassRegistry::init('DocumentFilingCategory');
+			$child = $DocumentFilingCat->find('first', array(
+				'conditions' => array('DocumentFilingCategory.id' => $watchedCat['WatchedFilingCat']['cat_id'])));
+			$parent = $DocumentFilingCat->find('first', array(
+				'conditions' => array('DocumentFilingCategory.parent_id' => $child['DocumentFilingCategory']['parent_id'])));
+			if(preg_match("/esign/i", $parent['DocumentFilingCategory']['name'])){
 				$this->ProgramResponse->User->id = $user['User']['id'];
-				$this->ProgramResponse->User->saveField('signature', 1);
-				$this->ProgramResponse->User->saveField('signature_created', date('Y-m-d H:i:s'));
+				if(preg_match("/rejected/i", $child['DocumentFilingCategory']['name'])){
+					$this->ProgramResponse->User->saveField('signature', 1);
+					$this->ProgramResponse->User->saveField('signature_created', date('Y-m-d H:i:s'));
+				}
+				else {
+					$this->ProgramResponse->User->saveField('signature', 0);
+					$this->ProgramResponse->User->saveField('signature_created', NULL);
+				}
 			}
 			$this->data['ProgramResponseDoc']['rejected_reason'] = $rejectedReason;
 			$this->data['ProgramResponseDoc']['cat_id'] = $return['cat_id'];
