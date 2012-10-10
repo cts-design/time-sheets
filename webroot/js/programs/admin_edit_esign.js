@@ -818,7 +818,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
                           program_id: ProgramId
                         },
                         callback: function (recs, op, succes) {
-                          rec = recs[0];
+                          rec = recs[1];
                           cat1Name.setValue(rec.data.cat_1);
 
                           Cat2Store.load({
@@ -838,8 +838,6 @@ registrationForm = Ext.create('Ext.form.Panel', {
                               cat3Name.setValue(rec.data.cat_3);
                             }
                           });
-
-                          console.log(rec);
                         }
                       });
                     }
@@ -862,8 +860,10 @@ registrationForm = Ext.create('Ext.form.Panel', {
     var form = this.getForm(),
       uploadField = Ext.getCmp('esignTemplateUpload'),
       programStore = Ext.data.StoreManager.lookup('ProgramStore'),
+      programDocumentStore = Ext.data.StoreManager.lookup('ProgramDocumentStore'),
       record = programStore.first(),
-      vals;
+      vals,
+      downloadStep;
 
     statusBar.showBusy();
 
@@ -872,6 +872,12 @@ registrationForm = Ext.create('Ext.form.Panel', {
 
       if (Ext.isEmpty(uploadField.value)) {
         record.set(vals);
+        downloadStep = programDocumentStore.findRecord('type', /^download$/gi);
+        downloadStep.set({
+          cat_1: Ext.getCmp('cat1Name').value,
+          cat_2: Ext.getCmp('cat2Name').value,
+          cat_3: Ext.getCmp('cat3Name').value
+        });
       } else {
         form.submit({
           url: '/admin/program_documents/upload',
