@@ -95,11 +95,28 @@ class LocationsController extends AppController {
 	    	$this->Location->recursive = -1;			
 			$locations = $this->Location->find('all',
 				array('fileds' => array('Location.id', 'Location.name')));
-			$i = 0;
 			foreach($locations as $location) {
-			    $data['locations'][$i]['id'] = $location['Location']['id'];
-			    $data['locations'][$i]['name'] = $location['Location']['name'];
-			    $i++;
+			    $data['locations'][] = $location['Location'];
+			}
+			if(!empty($data)){
+				$data['success'] = true;
+			}
+			else {
+				$data['success'] = false;
+			}
+			$this->set(compact('data'));
+			return $this->render(null, null, '/elements/ajaxreturn');			
+	    }
+	}
+
+	function admin_get_locations_with_address() {
+		if ($this->RequestHandler->isAjax()) {
+	    	$this->Location->recursive = -1;			
+			$locations = $this->Location->find('all',
+				array('fileds' => array('Location.id', 'Location.name'),
+					  'conditions' => array('Location.address_1 NOT' => '')));
+			foreach($locations as $location) {
+			    $data['locations'][] = $location['Location'];
 			}
 			if(!empty($data)){
 				$data['success'] = true;
