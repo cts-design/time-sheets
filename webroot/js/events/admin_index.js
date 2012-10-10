@@ -3,6 +3,7 @@ Ext.define('Event', {
   fields: [
     {name: 'id'},
     {name: 'event_category_id'},
+    {name: 'category'},
     {name: 'name'},
     {name: 'description'},
     {name: 'location', serverKey: 'location_id'},
@@ -220,11 +221,15 @@ Ext.create('Ext.form.Panel', {
       hidden: true
     },{
       text: 'Name',
-      dataIndex: 'name'
+      dataIndex: 'name',
+      flex: 1
     },{
       text: 'Location',
       dataIndex: 'location',
-      minLength: 5
+      flex: 1
+    },{
+      text: 'Category',
+      dataIndex: 'category',
     },{
       text: 'Scheduled',
       dataIndex: 'scheduled',
@@ -232,17 +237,13 @@ Ext.create('Ext.form.Panel', {
 			format: 'm/d/y g:i a',
 			xtype: 'datecolumn',
     },{
-      text: 'Seats Available',
-      dataIndex: 'seats_available',
-      flex: 1
-    },{
       text: 'Registered',
       dataIndex: 'registered',
-      flex: 1
+      width: 70
     },{
       text: 'Attended',
       dataIndex: 'attended',
-      flex: 1
+      width: 70
     }],
     tbar: [{xtype: 'tbfill'},{
       xtype: 'button',
