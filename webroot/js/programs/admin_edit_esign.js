@@ -819,32 +819,36 @@ registrationForm = Ext.create('Ext.form.Panel', {
                         },
                         callback: function (recs, op, succes) {
                           rec = recs[0];
+                          cat1Name.setValue(rec.data.cat_1);
 
                           Cat2Store.load({
                             params: {
                               parentId: rec.data.cat_1
+                            },
+                            callback: function (recs, op, succes) {
+                              cat2Name.setValue(rec.data.cat_2);
                             }
                           });
 
                           Cat3Store.load({
                             params: {
                               parentId: rec.data.cat_2
+                            },
+                            callback: function (recs, op, succes) {
+                              cat3Name.setValue(rec.data.cat_3);
                             }
                           });
 
-                          form.loadRecord(recs[0]);
-                          form.getEl().unmask();
+                          console.log(rec);
                         }
                       });
                     }
                   });
-
-                  //step = programStepStore.findRecord('name', /form/gi);
-
                 }
               }
             });
 
+            form.loadRecord(recs[0]);
             form.getEl().unmask();
           }
         },
@@ -858,7 +862,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
     var form = this.getForm(),
       uploadField = Ext.getCmp('esignTemplateUpload'),
       programStore = Ext.data.StoreManager.lookup('ProgramStore'),
-      record,
+      record = programStore.first(),
       vals;
 
     statusBar.showBusy();
@@ -867,10 +871,6 @@ registrationForm = Ext.create('Ext.form.Panel', {
       vals = form.getValues();
 
       if (Ext.isEmpty(uploadField.value)) {
-        console.log('empty');
-
-        record = programStore.first();
-        console.log(record);
         record.set(vals);
       } else {
         form.submit({
@@ -893,7 +893,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
               program_document: Ext.JSON.encode(programDoc)
             };
 
-            programStore.add(vals);
+            record.set(vals);
           },
           failure: function (form, action) {
             Ext.Msg.alert('Could not upload esign document', action.result.msg);
