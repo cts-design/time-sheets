@@ -114,7 +114,6 @@ class EventsController extends AppController {
 				unset($this->data['Event']['attended']);
 				unset($this->data['Event']['created']);
 				unset($this->data['Event']['modified']);
-				$this->data['Event']['scheduled'] = date("Y-m-d H:i:s", strtotime('10/09/2012 12:30 am'));
 				$this->Event->create();
 				if($this->Event->save($this->data)) {
 					$data['success'] = true;
