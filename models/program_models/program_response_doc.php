@@ -66,7 +66,7 @@ class ProgramResponseDoc extends AppModel {
 			if($this->save($this->data)) {					
 				$docFiledEmail = $this->ProgramResponse->Program->ProgramEmail->find('first', array(
 					'conditions' => array(
-						'ProgramEmail.program_email_id' => $watchedCat['WatchedFilingCat']['program_email_id'])));				
+						'ProgramEmail.id' => $watchedCat['WatchedFilingCat']['program_email_id'])));				
 				if($docFiledEmail['ProgramEmail']['type'] == 'rejected') {				
 					$docFiledEmail['ProgramEmail']['body'] = $docFiledEmail['ProgramEmail']['body'] . 
 					 "\r\n\r\n\r\n\r\n" . 'Comment: ' . $rejectedReason;
