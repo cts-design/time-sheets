@@ -259,21 +259,23 @@ Ext.create('Ext.form.Panel', {
       text: 'Duplicate Event',
       icon: '',
       handler: function() {
-        Ext.MessageBox.confirm('Confirm', 'This does not work yet', function(id){
-        });
+        var selected = this.up('grid').getSelectionModel().getLastSelected();
+        console.log(selected);
+        selected.data.id = undefined;
+        this.up('form').loadRecord(selected);
       }
     }],
     listeners: {
-      selectionchange: function(model, records) {
+      itemdblclick: function(grid, record, item, index, e, eOpts) {
         var formPanel = this.up('form');
         var form = formPanel.getForm();
         Ext.getCmp('cat2Name').disable();
         Ext.getCmp('cat3Name').disable();
-        if (records[0]) {
-          this.up('form').getForm().loadRecord(records[0]);
+        if (record) {
+          this.up('form').getForm().loadRecord(record);
           var otherLocation = formPanel.down('fieldset').getComponent('otherLocation'), 
           address = formPanel.down('fieldset').getComponent('address');
-          if(records[0].data.location === 'Other') {
+          if(record.data.location === 'Other') {
             otherLocation.enable();
             address.enable();
           }
