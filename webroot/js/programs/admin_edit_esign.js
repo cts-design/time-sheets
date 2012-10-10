@@ -199,19 +199,6 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
-  storeId: 'Cat3Store',
-  model: 'DocumentFilingCategory',
-  proxy: catProxy,
-  listeners: {
-    load: function(store, records, successful, operation, eOpts) {
-      if(records[0]) {
-        Ext.getCmp('cat3Name').enable();
-      }
-    }
-  }
-});
-
-Ext.create('Ext.data.Store', {
   storeId: 'DocumentQueueCategoryStore',
   model: 'DocumentQueueCategory',
   proxy: {
@@ -688,8 +675,6 @@ registrationForm = Ext.create('Ext.form.Panel', {
           if(records[0]) {
             Ext.getCmp('cat2Name').disable();
             Ext.getCmp('cat2Name').reset();
-            Ext.getCmp('cat3Name').disable();
-            Ext.getCmp('cat3Name').reset();
             store.load({params: {parentId: records[0].data.id}});
           }
 
@@ -726,44 +711,6 @@ registrationForm = Ext.create('Ext.form.Panel', {
               return '<div>{img}{name}</div>';
           }
       },
-      allowBlank: false,
-      listeners: {
-        select: function(combo, records, Eopts) {
-          var store = Ext.data.StoreManager.lookup('Cat3Store');
-
-          if(records[0]) {
-            Ext.getCmp('cat3Name').disable();
-            Ext.getCmp('cat3Name').reset();
-            store.load({params: {parentId: records[0].data.id}});
-          }
-        }
-      }
-    }]
-  }, {
-    xtype: 'fieldcontainer',
-    height: 24,
-    width: 400,
-    layout: {
-      align: 'stretch',
-      type: 'vbox'
-    },
-    items: [{
-      fieldLabel: 'Filing Category 3',
-      name: 'cat_3',
-      id: 'cat3Name',
-      xtype: 'combo',
-      store: 'Cat3Store',
-      disabled: true,
-      displayField: 'name',
-      valueField: 'id',
-      queryMode: 'local',
-      value: null,
-      labelWidth: 175,
-      listConfig: {
-          getInnerTpl: function() {
-              return '<div>{img}{name}</div>';
-          }
-      },
       allowBlank: false
     }]
   }],
@@ -780,10 +727,8 @@ registrationForm = Ext.create('Ext.form.Panel', {
         queueCategoryStore = Ext.data.StoreManager.lookup('DocumentQueueCategoryStore'),
         Cat1Store = Ext.data.StoreManager.lookup('Cat1Store'),
         Cat2Store = Ext.data.StoreManager.lookup('Cat2Store'),
-        Cat3Store = Ext.data.StoreManager.lookup('Cat3Store'),
         cat1Name = Ext.getCmp('cat1Name'),
         cat2Name = Ext.getCmp('cat2Name'),
-        cat3Name = Ext.getCmp('cat3Name'),
         form = this;
 
       form.getEl().mask('Loading...');
@@ -829,15 +774,6 @@ registrationForm = Ext.create('Ext.form.Panel', {
                               cat2Name.setValue(rec.data.cat_2);
                             }
                           });
-
-                          Cat3Store.load({
-                            params: {
-                              parentId: rec.data.cat_2
-                            },
-                            callback: function (recs, op, succes) {
-                              cat3Name.setValue(rec.data.cat_3);
-                            }
-                          });
                         }
                       });
                     }
@@ -875,8 +811,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
         downloadStep = programDocumentStore.findRecord('type', /^download$/gi);
         downloadStep.set({
           cat_1: Ext.getCmp('cat1Name').value,
-          cat_2: Ext.getCmp('cat2Name').value,
-          cat_3: Ext.getCmp('cat3Name').value
+          cat_2: Ext.getCmp('cat2Name').value
         });
       } else {
         form.submit({

@@ -199,19 +199,6 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
-  storeId: 'Cat3Store',
-  model: 'DocumentFilingCategory',
-  proxy: catProxy,
-  listeners: {
-    load: function(store, records, successful, operation, eOpts) {
-      if(records[0]) {
-        Ext.getCmp('cat3Name').enable();
-      }
-    }
-  }
-});
-
-Ext.create('Ext.data.Store', {
   storeId: 'DocumentQueueCategoryStore',
   model: 'DocumentQueueCategory',
   proxy: {
@@ -622,8 +609,6 @@ registrationForm = Ext.create('Ext.form.Panel', {
           if(records[0]) {
             Ext.getCmp('cat2Name').disable();
             Ext.getCmp('cat2Name').reset();
-            Ext.getCmp('cat3Name').disable();
-            Ext.getCmp('cat3Name').reset();
             store.load({params: {parentId: records[0].data.id}});
           }
 
@@ -650,44 +635,6 @@ registrationForm = Ext.create('Ext.form.Panel', {
       id: 'cat2Name',
       disabled: true,
       store: 'Cat2Store',
-      displayField: 'name',
-      valueField: 'id',
-      queryMode: 'local',
-      value: null,
-      labelWidth: 175,
-      listConfig: {
-          getInnerTpl: function() {
-              return '<div>{img}{name}</div>';
-          }
-      },
-      allowBlank: false,
-      listeners: {
-        select: function(combo, records, Eopts) {
-          var store = Ext.data.StoreManager.lookup('Cat3Store');
-
-          if(records[0]) {
-            Ext.getCmp('cat3Name').disable();
-            Ext.getCmp('cat3Name').reset();
-            store.load({params: {parentId: records[0].data.id}});
-          }
-        }
-      }
-    }]
-  }, {
-    xtype: 'fieldcontainer',
-    height: 24,
-    width: 400,
-    layout: {
-      align: 'stretch',
-      type: 'vbox'
-    },
-    items: [{
-      fieldLabel: 'Filing Category 3',
-      name: 'cat_3',
-      id: 'cat3Name',
-      xtype: 'combo',
-      store: 'Cat3Store',
-      disabled: true,
       displayField: 'name',
       valueField: 'id',
       queryMode: 'local',
@@ -728,8 +675,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
             template: action.result.url,
             type: 'download',
             cat_1: vals.cat_1,
-            cat_2: vals.cat_2,
-            cat_3: vals.cat_3
+            cat_2: vals.cat_2
           };
 
           programStore.getProxy().extraParams = {
