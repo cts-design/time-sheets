@@ -25,7 +25,6 @@ Ext.define('Event', {
 Ext.create('Ext.data.Store', {
   model: 'Event',
   storeId: 'eventsStore',
-  pageSize: 25,
   proxy: {
     type: 'ajax',
     api: {
@@ -47,7 +46,7 @@ Ext.create('Ext.data.Store', {
     directionParam: 'direction',
     simpleSortMode: true
   },
-  remoteSort: true,
+  remoteSort: false,
   autoLoad: true,
   listeners: {
     write: function(store, operation, eOpts) {
@@ -159,7 +158,7 @@ Ext.create('Ext.data.Store', {
   storeId: 'locationsStore',
   proxy: {
     type: 'ajax',
-    url: '/admin/locations/get_location_list',
+    url: '/admin/locations/get_locations_with_address',
     reader: {
       type: 'json',
       root: 'locations'
@@ -168,7 +167,12 @@ Ext.create('Ext.data.Store', {
     pageParam: undefined,
     startParam: undefined				
   },
-  autoLoad: true
+  autoLoad: true,
+  listeners: {
+    load: function(store, records, successful, operation, eOpts) {
+      store.add({id: 0, name: 'Other'});
+    }
+  }
 });
 
 Ext.define('EventCategory', {
@@ -259,22 +263,24 @@ Ext.create('Ext.form.Panel', {
         });
       }
     }],
-    dockedItems: [{
-      xtype: 'pagingtoolbar',
-      store: Ext.data.StoreManager.lookup('eventsStore'),
-      dock: 'bottom',
-      displayInfo: true
-    }],
     listeners: {
       selectionchange: function(model, records) {
+        var formPanel = this.up('form');
+        var form = formPanel.getForm();
         Ext.getCmp('cat2Name').disable();
         Ext.getCmp('cat3Name').disable();
         if (records[0]) {
-          var vals = {
-            name: records[0].data.name,
-            number: records[0].data.number
-          };
           this.up('form').getForm().loadRecord(records[0]);
+          var otherLocation = formPanel.down('fieldset').getComponent('otherLocation'), 
+          address = formPanel.down('fieldset').getComponent('address');
+          if(records[0].data.location === 'Other') {
+            otherLocation.enable();
+            address.enable();
+          }
+          else {
+            otherLocation.disable();
+            address.disable();
+          }
         }
         this.up('form').getForm().clearInvalid();
       }
@@ -324,13 +330,28 @@ Ext.create('Ext.form.Panel', {
     valueField: 'id',
     store: Ext.data.StoreManager.lookup('locationsStore'),
     queryMode: 'local',
-    allowBlank: false
+    allowBlank: false,
+    listeners: {
+      change: function(combo, newValue, oldValue, eOpts) {
+        var otherLocation = combo.nextSibling();
+        otherLocation.reset();
+        otherLocation.disable();
+        otherLocation.nextSibling().reset();
+        otherLocation.nextSibling().disable();
+        if(newValue === 0) {
+          otherLocation.enable();
+          otherLocation.nextSibling().enable();
+        }
+      }
+    }
   },{
     fieldLabel: 'Other Location',
+    itemId: 'otherLocation',
     name: 'other_location',
     disabled: true
   },{
     fieldLabel: 'Address',
+    itemId: 'address',
     name: 'address',
     disabled: true
   },{
