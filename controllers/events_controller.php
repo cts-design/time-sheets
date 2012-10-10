@@ -84,7 +84,12 @@ class EventsController extends AppController {
 					$data['events'][$i]['cat_2'] = $cats[$event['Event']['cat_2']];
 					$data['events'][$i]['cat_3'] = $cats[$event['Event']['cat_3']];
 					if($locations) {
-						$data['events'][$i]['location'] = $locations[$event['Event']['location_id']];
+						if($event['Event']['location_id'] == 0) {
+							$data['events'][$i]['location'] = 'Other';
+						}
+						else {
+							$data['events'][$i]['location'] = $locations[$event['Event']['location_id']];
+						}
 					}
 					else {
 						$data['events'][$i]['location'] = '';
@@ -139,6 +144,10 @@ class EventsController extends AppController {
 				if(!isset($this->data['Event']['cat_3'])) {
 					$this->data['Event']['cat_3'] = NULL;
 				}
+				if($this->data['Event']['location_id']) {
+					$this->data['Event']['other_location'] = NULL;
+					$this->data['Event']['address'] = NULL;
+				} 
 				if($this->Event->save($this->data)) {
 					$data['success'] = true;
 					$data['message'] = 'The event was updated successfully.';
