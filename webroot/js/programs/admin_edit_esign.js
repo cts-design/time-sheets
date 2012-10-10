@@ -633,8 +633,9 @@ registrationForm = Ext.create('Ext.form.Panel', {
     },
     items: [{
       xtype: 'filefield',
-      allowBlank: false,
+      allowBlank: true,
       fieldLabel: 'Esign Template',
+      id: 'esignTemplateUpload',
       labelWidth: 175,
       name: 'document',
       value: ''
@@ -855,6 +856,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
   },
   process: function () {
     var form = this.getForm(),
+      uploadField = Ext.getCmp('esignTemplateUpload'),
       programStore = Ext.data.StoreManager.lookup('ProgramStore'),
       record,
       vals;
@@ -864,32 +866,40 @@ registrationForm = Ext.create('Ext.form.Panel', {
     if (form.isValid()) {
       vals = form.getValues();
 
-      form.submit({
-        url: '/admin/program_documents/upload',
-        waitMsg: 'Uploading Document...',
-        scope: this,
-        success: function (form, action) {
-          form.reset();
+      if (Ext.isEmpty(uploadField.value)) {
+        console.log('empty');
 
-          programDoc = {
-            name: 'Esign Enrollment Form',
-            template: action.result.url,
-            type: 'download',
-            cat_1: vals.cat_1,
-            cat_2: vals.cat_2,
-            cat_3: vals.cat_3
-          };
+        record = programStore.first();
+        console.log(record);
+        record.set(vals);
+      } else {
+        form.submit({
+          url: '/admin/program_documents/upload',
+          waitMsg: 'Uploading Document...',
+          scope: this,
+          success: function (form, action) {
+            form.reset();
 
-          programStore.getProxy().extraParams = {
-            program_document: Ext.JSON.encode(programDoc)
-          };
+            programDoc = {
+              name: 'Esign Enrollment Form',
+              template: action.result.url,
+              type: 'download',
+              cat_1: vals.cat_1,
+              cat_2: vals.cat_2,
+              cat_3: vals.cat_3
+            };
 
-          programStore.add(vals);
-        },
-        failure: function (form, action) {
-          Ext.Msg.alert('Could not upload esign document', action.result.msg);
-        }
-      });
+            programStore.getProxy().extraParams = {
+              program_document: Ext.JSON.encode(programDoc)
+            };
+
+            programStore.add(vals);
+          },
+          failure: function (form, action) {
+            Ext.Msg.alert('Could not upload esign document', action.result.msg);
+          }
+        });
+      }
     }
 
     statusBar.clearStatus();

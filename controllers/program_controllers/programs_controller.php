@@ -488,6 +488,26 @@ class ProgramsController extends AppController {
 		}
 	}
 
+	public function admin_update_esign() {
+		if ($this->RequestHandler->isAjax()) {
+			$programData = json_decode($this->params['form']['programs'], true);
+
+			$this->Program->id = $programData['id'];
+			unset($programData['id']);
+
+			$this->Program->set($programData);
+
+			if ($this->Program->save()) {
+				$data['success'] = true;
+			} else {
+				$data['success'] = false;
+			}
+
+			$this->set('data', $data);
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
+
 	public function admin_upload_media() {
 		$this->layout = 'ajax';
 		$storagePath = substr(APP, 0, -1) . Configure::read('Program.media.path');
