@@ -333,12 +333,19 @@ Ext.create('Ext.form.Panel', {
     allowBlank: false,
     listeners: {
       change: function(combo, newValue, oldValue, eOpts) {
-        var otherLocation = combo.nextSibling();
+
+        var otherLocation = combo.nextSibling(),
+        form = combo.up('form'),
+        record = form.getRecord();
         otherLocation.reset();
         otherLocation.disable();
         otherLocation.nextSibling().reset();
         otherLocation.nextSibling().disable();
         if(newValue === 0) {
+          if(record !== undefined) {
+            otherLocation.setValue(record.data.other_location);
+            otherLocation.nextSibling().setValue(record.data.address);
+          }
           otherLocation.enable();
           otherLocation.nextSibling().enable();
         }
