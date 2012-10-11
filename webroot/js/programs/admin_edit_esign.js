@@ -347,14 +347,6 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
-  data: [
-    { program_id: 0, name: 'Registration Main', from: ('noreply@' + window.location.hostname), subject: 'Main', body: 'Default text Main', type: 'main', created: null, modified: null },
-    { program_id: 0, name: 'Registration Pending Approval', from: ('noreply@' + window.location.hostname), subject: 'Pending Approval', body: 'Default text Pending Approval', type: 'pending_approval', created: null, modified: null },
-    { program_id: 0, name: 'Registration Expiring Soon', from: ('noreply@' + window.location.hostname), subject: 'Expiring Soon', body: 'Default text Expiring Soon', type: 'expiring_soon', created: null, modified: null },
-    { program_id: 0, name: 'Registration Expired', from: ('noreply@' + window.location.hostname), subject: 'Expired', body: 'Default text Expired', type: 'expired', created: null, modified: null },
-    { program_id: 0, name: 'Registration Not Approved', from: ('noreply@' + window.location.hostname), subject: 'Not Approved', body: 'Default text Main', type: 'not_approved', created: null, modified: null },
-    { program_id: 0, name: 'Registration Complete', from: ('noreply@' + window.location.hostname), subject: 'Complete', body: 'Default text Complete', type: 'complete', created: null, modified: null }
-  ],
   storeId: 'ProgramEmailStore',
   model: 'ProgramEmail',
   proxy: {
@@ -1078,10 +1070,143 @@ emails = Ext.create('Ext.panel.Panel', {
       programId = program.data.id,
       formStep;
 
-    programEmailStore.each(function (rec) {
-      rec.set({
-        program_id: programId
-      });
+    programEmailStore.load({
+      params: {
+        program_id: ProgramId
+      },
+      callback: function (recs, op, success) {
+        var pendingApprovalEmail,
+          notApprovedEmail,
+          mainEmail,
+          expiringSoonEmail,
+          expiredEmail,
+          completeEmail,
+          acceptanceEmail;
+
+        if (!success) {
+          // if approval is required make sure we add the pending_approval and not_approved emails
+          if (program.get('approval_required')) {
+            pendingApprovalEmail = 'Your submission is currently being' +
+              ' reviewed by our staff. You will be notified by email when the' +
+              ' status of the submission changes. You may also visit the link' +
+              ' provided below to check on the status of your submission.' +
+              ' Thank you for using the ' +
+              AtlasInstallationName +
+              ' Web Services system.<br />' +
+              '<br />' +
+              '<a href="' +
+              window.location.origin +
+              '/programs/registration' +
+              rec.get('id') +
+              '">' +
+              program.get('name').humanize() +
+              '</a>';
+
+            notApprovedEmail = 'We\'re sorry but your submission has been' +
+              ' marked as "Not Approved." If you feel this is in error please' +
+              ' contact the ' +
+              AtlasInstallationName +
+              ' for further assistance.';
+
+            programEmailStore.add({
+              program_id: program.get('id'),
+              name: 'Registration Pending Approval',
+              from: ('noreply@' + window.location.hostname),
+              subject: 'Pending Approval',
+              body: pendingApprovalEmail,
+              type: 'pending_approval',
+              created: null,
+              modified: null
+            }, {
+              program_id: program.get('id'),
+              name: 'Registration Not Approved',
+              from: ('noreply@' + window.location.hostname),
+              subject: 'Not Approved',
+              body: notApprovedEmail,
+              type: 'not_approved',
+              created: null,
+              modified: null
+            });
+          }
+
+          mainEmail = 'Welcome to the ' +
+            AtlasInstallationName +
+            ' Web Services system. You have begun the submission process for ' +
+            program.get('name').humanize() +
+            '. <br />' +
+            '<br />' +
+            '<a href="' +
+            window.location.origin +
+            '/programs/registration' +
+            rec.get('id') +
+            '">Click here to return to the ' +
+            program.get('name').humanize() +
+            ' registration</a>';
+
+          expiringSoonEmail = 'This is an automated notification to inform you' +
+            ' that the program you began enrollment for will expire in ' +
+            program.get('send_expiring_soon') +
+            ' days. Please login to the ' +
+            AtlasInstallationName +
+            ' Web Services system to finish your registration. If you questions' +
+            ' please contact the ' +
+            AtlasInstallationName +
+            ' for assistance.';
+
+          expiredEmail = 'We\'re sorry but your submission has' +
+            ' expired. Please contact the ' +
+            AtlasInstallationName +
+            ' for further assistance.';
+
+          completeEmail = 'We have reviewed your submission and it' +
+            ' has been marked as complete. Please visit the following link for' +
+            ' submitted is accurate.<br />' +
+            '<br />' +
+            '<a href="#">ADMIN. PLEASE ADD YOUR LINK</a>';
+
+          acceptanceEmail = 'By entering your first and last name in' +
+            ' the box below you are agreeing that all the information you have' +
+            ' submitted is accurate.';
+
+          programEmailStore.add({
+            program_id: program.get('id'),
+            name: 'Registration Main',
+            from: ('noreply@' + window.location.hostname),
+            subject: 'Main',
+            body: mainEmail,
+            type: 'main',
+            created: null,
+            modified: null
+          }, {
+            program_id: program.get('id'),
+            name: 'Registration Expiring Soon',
+            from: ('noreply@' + window.location.hostname),
+            subject: 'Expiring Soon',
+            body: expiringSoonEmail,
+            type: 'expiring_soon',
+            created: null,
+            modified: null
+          }, {
+            program_id: program.get('id'),
+            name: 'Registration Expired',
+            from: ('noreply@' + window.location.hostname),
+            subject: 'Expired',
+            body: expiredEmail,
+            type: 'expired',
+            created: null,
+            modified: null
+          }, {
+            program_id: program.get('id'),
+            name: 'Registration Complete',
+            from: ('noreply@' + window.location.hostname),
+            subject: 'Complete',
+            body: completeEmail,
+            type: 'complete',
+            created: null,
+            modified: null
+          });
+        }
+      }
     });
   },
   process: function () {
