@@ -170,6 +170,7 @@ Ext.define('WatchedFilingCat', {
     { name: 'id', type: 'int' },
     { name: 'cat_id', type: 'int' },
     { name: 'program_id', type: 'int' },
+    { name: 'program_email_id', type: 'int' },
     'name',
   ]
 });
@@ -402,6 +403,7 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
+  autoSync: true,
   storeId: 'WatchedFilingCatStore',
   model: 'WatchedFilingCat',
   proxy: {
@@ -803,12 +805,15 @@ instructions = Ext.create('Ext.panel.Panel', {
     var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
       programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
       programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
+      programEmailStore = Ext.data.StoreManager.lookup('ProgramEmailStore'),
       grid = Ext.getCmp('instructionsGrid'),
       program,
       downloadStep,
       task;
 
     Ext.getCmp('statusProgressBar').updateProgress(0.66, 'Step 2 of 3');
+
+    programEmailStore.sync();
 
     grid.getEl().mask('Loading...');
 
@@ -967,17 +972,36 @@ emails = Ext.create('Ext.panel.Panel', {
     var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
       programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
       programEmailStore = Ext.data.StoreManager.lookup('ProgramEmailStore'),
+      watchedCatStore = Ext.data.StoreManager.lookup('WatchedFilingCatStore'),
       program = programStore.first(),
       programId = program.data.id,
-      formStep;
+      formStep,
+      rejectedWatchedFilingCat;
 
     Ext.getCmp('statusProgressBar').updateProgress(1.0, 'Step 3 of 3');
+
+    watchedCatStore.load({
+      params: {
+        program_id: program.get('id')
+      },
+      callback: function (recs, op, success) {
+        rejectedCatEmail = programEmailStore.findRecord('type', /^rejected$/gi);
+        rejectedWatchedFilingCat = watchedCatStore.findRecord('name', /^rejected$/gi);
+        rejectedWatchedFilingCat.set({
+          program_email_id: rejectedCatEmail.get('id')
+        });
+      }
+    });
+
+    watchedCatStore.sync();
 
     programEmailStore.each(function (rec) {
       rec.set({
         program_id: programId
       });
     });
+
+    programEmailStore.sync();
   },
   process: function () {
     var programEmailStore = Ext.data.StoreManager.lookup('ProgramEmailStore'),
