@@ -344,12 +344,13 @@ Ext.create('Ext.data.Store', {
 
 Ext.create('Ext.data.Store', {
   data: [
-    { program_id: 0, name: 'Registration Main', from: ('noreply@' + window.location.hostname), subject: 'Main', body: 'Default text Main', type: 'main', created: null, modified: null },
-    { program_id: 0, name: 'Registration Pending Approval', from: ('noreply@' + window.location.hostname), subject: 'Pending Approval', body: 'Default text Pending Approval', type: 'pending_approval', created: null, modified: null },
-    { program_id: 0, name: 'Registration Expiring Soon', from: ('noreply@' + window.location.hostname), subject: 'Expiring Soon', body: 'Default text Expiring Soon', type: 'expiring_soon', created: null, modified: null },
-    { program_id: 0, name: 'Registration Expired', from: ('noreply@' + window.location.hostname), subject: 'Expired', body: 'Default text Expired', type: 'expired', created: null, modified: null },
-    { program_id: 0, name: 'Registration Not Approved', from: ('noreply@' + window.location.hostname), subject: 'Not Approved', body: 'Default text Main', type: 'not_approved', created: null, modified: null },
-    { program_id: 0, name: 'Registration Complete', from: ('noreply@' + window.location.hostname), subject: 'Complete', body: 'Default text Complete', type: 'complete', created: null, modified: null }
+    { program_id: 0, name: 'Esign Main', from: ('noreply@' + window.location.hostname), subject: 'Main', body: 'Default text Main', type: 'main', created: null, modified: null },
+    { program_id: 0, name: 'Esign Pending Approval', from: ('noreply@' + window.location.hostname), subject: 'Pending Approval', body: 'Default text Pending Approval', type: 'pending_approval', created: null, modified: null },
+    { program_id: 0, name: 'Esign Expiring Soon', from: ('noreply@' + window.location.hostname), subject: 'Expiring Soon', body: 'Default text Expiring Soon', type: 'expiring_soon', created: null, modified: null },
+    { program_id: 0, name: 'Esign Expired', from: ('noreply@' + window.location.hostname), subject: 'Expired', body: 'Default text Expired', type: 'expired', created: null, modified: null },
+    { program_id: 0, name: 'Esign Not Approved', from: ('noreply@' + window.location.hostname), subject: 'Not Approved', body: 'Default text Main', type: 'not_approved', created: null, modified: null },
+    { program_id: 0, name: 'Esign Complete', from: ('noreply@' + window.location.hostname), subject: 'Complete', body: 'Default text Complete', type: 'complete', created: null, modified: null },
+    { program_id: 0, name: 'Esign Rejected', from: ('noreply@' + window.location.hostname), subject: 'Rejected', body: 'Default text Rejected', type: 'rejected', created: null, modified: null }
   ],
   storeId: 'ProgramEmailStore',
   model: 'ProgramEmail',
