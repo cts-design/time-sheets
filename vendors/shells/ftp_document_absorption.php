@@ -4,10 +4,17 @@ App::import('Component', 'Notifications');
 
 class FtpDocumentAbsorptionShell extends Shell {
 
-	public $uses = array('AutoLock', 'DocumentQueueCategory', 'FtpDocumentScanner', 'QueuedDocument', 'BarCodeDefinition');
-	function main() {
+	public $uses = array(
+		'AutoLock', 
+		'DocumentQueueCategory',
+		'FtpDocumentScanner', 
+		'QueuedDocument', 
+		'BarCodeDefinition', 
+		'User'
+	);
 
-	$this->Notifications = &new NotificationsComponent();
+	public function main() { 
+		$this->Notifications = &new NotificationsComponent();
 
 		// If locked, stop running
 		$locked = $this->AutoLock->find("first");
@@ -66,9 +73,6 @@ class FtpDocumentAbsorptionShell extends Shell {
 									// Needs to be run on Ubuntu, using ImageMagick/convert, pdftk, and bardecode
 									// Make sure path for writing file to filesystem exists; if not, create
 									
-
-
-
 									if (!file_exists($path . date('Y') . '/')) {
 										// If it can't create the year folder, something is wrong. Keep the db locked, E-Mail admin, and exit
 										if (!mkdir($path . date('Y'), 0777)) {
@@ -113,6 +117,12 @@ class FtpDocumentAbsorptionShell extends Shell {
 										$this->data['bar_code_definition_id'] = $barCode['BarCodeDefinition']['id'];
 										$this->data['queue_category_id'] = $barCode['BarCodeDefinition']['document_queue_category_id'];
 										$this->data['user_id'] = $barCode['User']['id'];	
+										if(preg_match('/esign/i', $barCode['BarCodeDefinition']['name'])) {
+											$this->User->id = $barCode['User']['id'];
+											$this->User->saveField('signature', 1);
+											$this->User->saveField('signature_created', date('Y-m-d H:i:s'));
+											$this->User->saveField('signature_modified', date('Y-m-d H:i:s'));
+										}
 									}
 									if (!$this->QueuedDocument->save($this->data)) {
 										$this->log('FTP ABSORB: Can\'t write document record to QueuedDocument table in database', 'error');
