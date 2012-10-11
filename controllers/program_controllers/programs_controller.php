@@ -626,6 +626,7 @@ class ProgramsController extends AppController {
 
 	private function createEsignProgramStep($programId, $programDoc) {
 		$this->loadModel('WatchedFilingCat');
+		$this->loadModel('DocumentFilingCategory');
 		$this->Program->ProgramStep->create();
 
 		$parentStep = array(
@@ -667,6 +668,24 @@ class ProgramsController extends AppController {
 
 			$this->WatchedFilingCat->create();
 			$this->WatchedFilingCat->save($watchedFilingCat);
+
+			$parentFilingCat = $this->DocumentFilingCategory->getparentnode($watchedCat);
+
+			$rejectedFilingCat = $this->DocumentFilingCategory->find('first', array(
+				'conditions' => array(
+					'DocumentFilingCategory.parent_id' => $parentFilingCat['DocumentFilingCategory']['id'],
+					'DocumentFilingCategory.name' => 'Rejected'
+				)
+			));
+
+			$rejectedWatchedFilingCat['WatchedFilingCat'] = array(
+				'program_id' => $programId,
+				'cat_id' => $rejectedFilingCat['DocumentFilingCategory']['id'],
+				'name' => 'rejected'
+			);
+
+			$this->WatchedFilingCat->create();
+			$this->WatchedFilingCat->save($rejectedWatchedFilingCat);
 
 			$programDocument['ProgramDocument'] = $programDoc;
 			$programDocument['ProgramDocument']['program_id'] = $programId;
