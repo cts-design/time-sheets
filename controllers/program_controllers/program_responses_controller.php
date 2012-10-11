@@ -827,6 +827,8 @@ class ProgramResponsesController extends AppController {
 				if($programResponse['Program']['type'] === 'esign') {
 					$this->ProgramResponse->User->id = $programResponse['ProgramResponse']['user_id'];
 					$this->ProgramResponse->User->saveField('signature', 0);
+					$this->ProgramResponse->User->saveField('signature_created', NULL);
+					$this->ProgramResponse->User->saveField('signature_modified', date('Y-m-d H:i:s'));
 				}
 				$this->data['ProgramResponse']['id'] = $this->params['form']['id'];
 				$this->data['ProgramResponse']['status'] = 'not_approved';
