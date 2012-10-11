@@ -60,10 +60,18 @@ class ProgramEmailsController extends AppController {
 				$formField = $this->ProgramEmail->save($this->data);
 			}
 
+			$this->log($formField, 'debug');
+
 			if ($formField) {
 				if ($count > 1) {
-					foreach ($this->data['ProgramEmail'] as $k => $v) {
-						$data['program_emails'][] = $v;
+					$this->ProgramEmail->recursive = -1;
+					$newEmails = $this->ProgramEmail->find('all', array(
+						'order' => 'ProgramEmail.id DESC',
+						'limit' => 7
+					));
+
+					foreach ($newEmails as $k => $v) {
+						$data['program_emails'][] = $v['ProgramEmail'];
 					}
 				} else {
 					$data['program_emails'] = $formField['ProgramEmail'];
