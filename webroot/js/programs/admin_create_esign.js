@@ -164,6 +164,16 @@ Ext.define('BarCodeDefinition', {
   ]
 });
 
+Ext.define('WatchedFilingCat', {
+  extend: 'Ext.data.Model',
+  fields: [
+    { name: 'id', type: 'int' },
+    { name: 'cat_id', type: 'int' },
+    { name: 'program_id', type: 'int' },
+    'name',
+  ]
+});
+
 /**
  * Data Stores
  */
@@ -389,6 +399,28 @@ Ext.create('Ext.data.Store', {
     }
   },
   storeId: 'BarCodeDefinitionStore',
+});
+
+Ext.create('Ext.data.Store', {
+  storeId: 'WatchedFilingCatStore',
+  model: 'WatchedFilingCat',
+  proxy: {
+    api:{
+      read: '/admin/program_documents/read_watched_cat',
+      update: '/admin/program_documents/update_watched_cat'
+    },
+    type: 'ajax',
+    reader: {
+      type: 'json',
+      root: 'cats'
+    },
+    writer: {
+      allowSingle: false,
+      encode: true,
+      root: 'cats',
+      writeAllFields: false
+    }
+  }
 });
 
 /**
