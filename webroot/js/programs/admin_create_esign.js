@@ -417,7 +417,6 @@ Ext.create('Ext.data.Store', {
       root: 'cats'
     },
     writer: {
-      allowSingle: false,
       encode: true,
       root: 'cats',
       writeAllFields: false
