@@ -60,10 +60,12 @@ class ProgramResponseDoc extends AppModel {
 				if(preg_match("/rejected/i", $watchedCat['WatchedFilingCat']['name'])){
 					$this->ProgramResponse->User->saveField('signature', 0);
 					$this->ProgramResponse->User->saveField('signature_created', NULL);
+					$this->ProgramResponse->User->saveField('signature_modified', date('Y-m-d H:i:s'));
 				}
 				else {
 					$this->ProgramResponse->User->saveField('signature', 1);
 					$this->ProgramResponse->User->saveField('signature_created', date('Y-m-d H:i:s'));
+					$this->ProgramResponse->User->saveField('signature_modified', date('Y-m-d H:i:s'));
 				}
 			}
 			$this->data['ProgramResponseDoc']['rejected_reason'] = $rejectedReason;
