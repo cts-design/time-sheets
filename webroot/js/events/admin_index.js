@@ -1,3 +1,5 @@
+var dt = new Date();
+
 Ext.define('Event', {
   extend: 'Ext.data.Model',
   fields: [
@@ -10,7 +12,7 @@ Ext.define('Event', {
     {name: 'other_location'},
     {name: 'url'},
     {name: 'address'},
-    {name: 'scheduled', type: 'date'},
+    {name: 'scheduled', type: 'date', dateFormat: 'Y-m-d H:i:s'},
     {name: 'seats_available'},
     {name: 'duration'},
     {name: 'registered'},
@@ -68,7 +70,7 @@ Ext.create('Ext.data.Store', {
         Ext.MessageBox.alert('Status', msg);
       }
       if(responseTxt.success) {
-        Ext.MessageBox.hide();
+        Ext.MessageBox.alert('Status', responseTxt.message);
         var formPanel = Ext.getCmp('eventsForm');
         if(operation.action === 'create' || operation.action === 'update') {
           formPanel.getForm().reset();
@@ -203,17 +205,17 @@ Ext.create('Ext.form.Panel', {
   frame: true,
   bodyPadding: 5,
   width: 950,
-  layout: 'column',
+  height: 550,
+  layout: 'hbox',
   fieldDefaults: {
     labelAlign: 'left',
     msgTarget: 'side'
   },
   items: [{
-    columnWidth: 0.7,
+    flex: 2,
     xtype: 'gridpanel',
     id: 'eventsGrid',
     store: Ext.data.StoreManager.lookup('eventsStore'),
-    height: 450,
     title:'Events',
     columns: [{
       text: 'id',
@@ -222,33 +224,28 @@ Ext.create('Ext.form.Panel', {
     },{
       text: 'Name',
       dataIndex: 'name',
-      flex: 1
     },{
       text: 'Location',
       dataIndex: 'location',
-      flex: 1
     },{
       text: 'Category',
       dataIndex: 'category',
     },{
       text: 'Scheduled',
       dataIndex: 'scheduled',
-      flex: 1,
 			format: 'm/d/y g:i a',
 			xtype: 'datecolumn',
     },{
       text: 'Registered',
       dataIndex: 'registered',
-      width: 70
     },{
       text: 'Attended',
       dataIndex: 'attended',
-      width: 70
     }],
     tbar: [{xtype: 'tbfill'},{
       xtype: 'button',
       text: 'New Event',
-      icon: '/img/icons/add.png',
+      icon: '/img/icons/date_add.png',
       handler: function() {
         this.up('form').getForm().reset();
         Ext.getCmp('cat2Name').disable();
@@ -258,12 +255,21 @@ Ext.create('Ext.form.Panel', {
     },{
       xtype: 'button',
       text: 'Duplicate Event',
-      icon: '',
+      icon: '/img/icons/date_copy.png',
       handler: function() {
         var selected = this.up('grid').getSelectionModel().getLastSelected();
-        console.log(selected);
         selected.data.id = undefined;
         this.up('form').loadRecord(selected);
+      }
+    },{
+      xtype: 'button',
+      text: 'Delete Event',
+      icon: '/img/icons/date_delete.png',
+      handler: function() {
+        var selected = this.up('grid').getSelectionModel().getLastSelected(),
+        store = Ext.data.StoreManager.lookup('eventsStore');
+        store.remove(selected);
+        store.sync();
       }
     }],
     listeners: {
@@ -289,15 +295,23 @@ Ext.create('Ext.form.Panel', {
       }
     }
   }, {
-  columnWidth: 0.3,
   margin: '0 0 0 10',
   padding: 10,
   xtype: 'fieldset',
-  frame: true,
+  frame: false,
+  listeners: {
+    beforeadd: function(fieldset, component, index, eOpts) {
+      if(component.allowBlank !== undefined) {
+        if(!component.allowBlank) {
+          component.labelSeparator += '<span style="color: red; padding-left: 2px;">*</span>';
+        }
+      }
+    }
+  },
   title:'Add / Edit Form',
   defaults: {
     width: 245,
-    labelWidth: 60
+    labelWidth: 70
   },
   defaultType: 'textfield',
   items: [{
@@ -319,6 +333,7 @@ Ext.create('Ext.form.Panel', {
     name: 'event_category_id',
     xtype: 'combo',
     emptyText: 'Please Select',
+    editable: false,
     displayField: 'name',
     valueField: 'id',
     store: Ext.data.StoreManager.lookup('eventCategoriesStore'),
@@ -328,6 +343,7 @@ Ext.create('Ext.form.Panel', {
     fieldLabel: 'Location',
     name: 'location',
     xtype: 'combo',
+    editable: false,
     emptyText: 'Please Select',
     displayField: 'name',
     valueField: 'id',
@@ -336,7 +352,6 @@ Ext.create('Ext.form.Panel', {
     allowBlank: false,
     listeners: {
       change: function(combo, newValue, oldValue, eOpts) {
-
         var otherLocation = combo.nextSibling(),
         form = combo.up('form'),
         record = form.getRecord();
@@ -345,7 +360,7 @@ Ext.create('Ext.form.Panel', {
         otherLocation.nextSibling().reset();
         otherLocation.nextSibling().disable();
         if(newValue === 0) {
-          if(record !== undefined) {
+          if(record.data.address !== undefined) {
             otherLocation.setValue(record.data.other_location);
             otherLocation.nextSibling().setValue(record.data.address);
           }
@@ -358,12 +373,15 @@ Ext.create('Ext.form.Panel', {
     fieldLabel: 'Other Location',
     itemId: 'otherLocation',
     name: 'other_location',
-    disabled: true
+    disabled: true,
+    allowBlank: false 
   },{
     fieldLabel: 'Address',
+    xtype: 'textarea',
     itemId: 'address',
     name: 'address',
-    disabled: true
+    disabled: true,
+    allowBlank: false
   },{
     fieldLabel: 'URL',
     name: 'url',
@@ -372,22 +390,34 @@ Ext.create('Ext.form.Panel', {
     fieldLabel: 'Seats',
     name: 'seats_available',
     xtype: 'numberfield',
-    width: 150,
+    width: 120,
     minValue: 1,
-    maxValue: 100
+    maxValue: 100,
+    allowBlank: false
   },{
     fieldLabel: 'Scheduled',
-    xtype: 'xdatetime',
+    xtype: 'datetimefield',
     name: 'scheduled',
+    allowBlank: false,
     timeFormat: 'g:i a',
-    dateFormat: 'm/d/Y'
+    dateFormat: 'm/d/Y',
+    dateConfig: {
+      minValue: dt,
+      submitFormat: 'Y-m-d'
+    },
+    timeConfig: {
+      minValue: '7:00 am',
+      maxValue: '10:00 pm',
+      submitFormat: 'H:i:s'
+    }
   },{
     fieldLabel: 'Duration in hours',
     xtype: 'numberfield',
     name: 'duration',
     minValue: 1,
+    allowBlank: false,
     maxValue: 8,
-    width: 100
+    width: 110
   },{
     fieldLabel: 'Cat 1',
     name: 'cat_1',
@@ -404,6 +434,7 @@ Ext.create('Ext.form.Panel', {
     queryMode: 'local',
     xtype: 'combo',
     value: null,
+    editable: false,
     allowBlank: false,
     listeners: {
       select: function(combo, records, Eopts) {
@@ -427,6 +458,7 @@ Ext.create('Ext.form.Panel', {
     displayField: 'name',
     valueField: 'id',
     queryMode: 'local',
+    editable: false,
     value: null,
     listConfig: {
       getInnerTpl: function() {
@@ -454,6 +486,7 @@ Ext.create('Ext.form.Panel', {
     displayField: 'name',
     valueField: 'id',
     queryMode: 'local',
+    editable: false,
     value: null,
     listConfig: {
       getInnerTpl: function() {
