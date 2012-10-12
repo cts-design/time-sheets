@@ -165,4 +165,34 @@ class EventsController extends AppController {
 			$this->render(null, null, '/elements/ajaxreturn');
 		}
 	}
+
+	public function admin_delete() {
+        if($this->RequestHandler->isAjax()) {
+            if(isset($this->data['Event'])) {
+				$this->data['Event'] = json_decode($this->data['Event'], true);
+                if($this->Event->delete($this->data['Event']['id'])){
+                    $data['success'] = true;
+                    $data['message'] = 'Event deleted successfully';
+					/*
+                    $this->Transaction->createUserTransaction(
+                        'Alerts',
+                        $this->Auth->user('id'),
+                        $this->Auth->user('location_id'),
+                        'Deleted Self Sign alert, id: ' . $this->params['form']['id']
+                    );
+					 */
+                }
+                else {
+                    $data['success'] = false;
+                    $data['message'] = 'Unable to delete event at this time.';
+                }
+            }
+            else {
+                $data['success'] = false;
+                $data['message'] = 'Invalid event id.';
+            }
+            $this->set(compact('data'));
+            $this->render(null, null, '/elements/ajaxreturn');
+        }
+    }
 }
