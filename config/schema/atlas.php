@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2012-09-28 14:11:00 : 1348855860*/
+/* atlas schema generated on: 2012-10-12 13:34:23 : 1350063263*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -219,19 +219,23 @@ class atlasSchema extends CakeSchema {
 	var $events = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
 		'event_category_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 9),
-		'title' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'key' => 'index', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'name' => array('type' => 'string', 'null' => false, 'length' => 100, 'key' => 'index', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'description' => array('type' => 'text', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'start' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
-		'end' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
-		'all_day' => array('type' => 'boolean', 'null' => false, 'default' => NULL),
-		'location' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'event_url' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'sponsor' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'sponsor_url' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
-		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
-		'address' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'title' => array('column' => 'title', 'unique' => 0)),
+		'location_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 9),
+		'other_location' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'url' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'address' => array('type' => 'text', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'scheduled' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'seats_available' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 4),
+		'duration' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 4),
+		'registered' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 4),
+		'attended' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 4),
+		'cat_1' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10),
+		'cat_2' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10),
+		'cat_3' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'title' => array('column' => 'name', 'unique' => 0)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
 	var $featured_employers = array(
@@ -584,6 +588,7 @@ class atlasSchema extends CakeSchema {
 		'name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'type' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'atlas_registration_type' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 10, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'disabled' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'queue_category_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'approval_required' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'form_esign_required' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
@@ -598,7 +603,6 @@ class atlasSchema extends CakeSchema {
 		'bar_code_definition_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'paper_forms' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'upload_docs' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
-		'disabled' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'expires' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
@@ -775,24 +779,6 @@ class atlasSchema extends CakeSchema {
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'cat_id' => array('column' => 'cat_id', 'unique' => 0)),
-		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
-	);
-	var $workshops = array(
-		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
-		'name' => array('type' => 'string', 'null' => false, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'description' => array('type' => 'text', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'location_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
-		'scheduled' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
-		'seats_available' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 4),
-		'registered' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 4),
-		'attended' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 4),
-		'media' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'cat_1' => array('type' => 'integer', 'null' => false, 'default' => NULL),
-		'cat_2' => array('type' => 'integer', 'null' => true, 'default' => NULL),
-		'cat_3' => array('type' => 'integer', 'null' => true, 'default' => NULL),
-		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
-		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
-		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
 }
