@@ -806,11 +806,13 @@ registrationForm = Ext.create('Ext.form.Panel', {
           cat_2: Ext.getCmp('cat2Name').value
         });
       } else {
+        console.log('not empty field');
         form.submit({
           url: '/admin/program_documents/upload',
           waitMsg: 'Uploading Document...',
           scope: this,
           success: function (form, action) {
+            var document = programDocumentStore.findRecord('type', /^download$/gi);
             form.reset();
 
             programDoc = {
@@ -818,14 +820,10 @@ registrationForm = Ext.create('Ext.form.Panel', {
               template: action.result.url,
               type: 'download',
               cat_1: vals.cat_1,
-              cat_2: vals.cat_2,
-              cat_3: vals.cat_3
+              cat_2: vals.cat_2
             };
 
-            programStore.getProxy().extraParams = {
-              program_document: Ext.JSON.encode(programDoc)
-            };
-
+            document.set(programDoc);
             record.set(vals);
           },
           failure: function (form, action) {
