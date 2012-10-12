@@ -455,9 +455,6 @@ registrationForm = Ext.create('Ext.form.Panel', {
       xtype: 'textfield',
       allowBlank: false,
       fieldLabel: 'Name',
-      // issue #34
-      // add name id to the name field
-      // time: 1 minutes
       id: 'name',
       labelWidth: 175,
       name: 'name',
@@ -476,10 +473,6 @@ registrationForm = Ext.create('Ext.form.Panel', {
       allowBlank: false,
       displayField: 'ucase',
       fieldLabel: 'Registration Type',
-      // issue #34
-      // add registrationType id to disable the field if the 
-      // program is not in test
-      // time: 3 minutes
       id: 'registrationType',
       labelWidth: 175,
       name: 'atlas_registration_type',
@@ -536,9 +529,6 @@ registrationForm = Ext.create('Ext.form.Panel', {
       xtype: 'numberfield',
       allowBlank: false,
       fieldLabel: 'Responses Expire In',
-      // issue #34
-      // add responseExpiresIn id to the expiring soon emails field
-      // time: 2 minutes
       id: 'responsesExpireIn',
       labelWidth: 175,
       minValue: 30,
@@ -570,10 +560,6 @@ registrationForm = Ext.create('Ext.form.Panel', {
       allowBlank: false,
       displayField: 'ucase',
       fieldLabel: 'Send expiring soon emails',
-      // issue #34
-      // add sendExpiringSoon id to the send expiring soon emails field
-      // to make sure the right value gets set
-      // time: 1 minutes
       id: 'sendExpiringSoon',
       labelWidth: 175,
       name: 'send_expiring_soon',
@@ -708,10 +694,6 @@ registrationForm = Ext.create('Ext.form.Panel', {
   }],
   listeners: {
     activate: function () {
-      // ticket #34
-      // add activate listener to load the program when
-      // the wizard is loaded
-      // time: 48 minutes
       var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
         programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
         programDocumentStore = Ext.data.StoreManager.lookup('ProgramDocumentStore'),
@@ -728,10 +710,6 @@ registrationForm = Ext.create('Ext.form.Panel', {
       programStore.load({
         callback: function (recs, op, success) {
           if (success) {
-            form.loadRecord(recs[0]);
-
-            form.down('#sendExpiringSoon').setValue(String(recs[0].get('send_expiring_soon')));
-
             if (!recs[0].data.in_test) {
               form.down('#name').disable();
               form.down('#registrationType').disable();
@@ -775,6 +753,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
             });
 
             form.loadRecord(recs[0]);
+            form.down('#sendExpiringSoon').setValue(String(recs[0].get('send_expiring_soon')));
             form.getEl().unmask();
           }
         },
