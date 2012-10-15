@@ -11,8 +11,8 @@ productionURL = function () {
 
   return window.location.origin;
 },
-instructionsSaved,
-emailsSaved;
+instructionsSaved = false,
+emailsSaved = false;
 
 /**
  * Data Models
