@@ -338,7 +338,7 @@ Ext.create('Ext.data.Store', {
     api:{
       create: '/admin/program_instructions/create',
       read: '/admin/program_instructions/read',
-      update: '/admin/program_instructions/edit',
+      update: '/admin/program_instructions/update',
       destroy: '/admin/program_instructions/destroy'
     },
     type: 'ajax',
