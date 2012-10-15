@@ -60,8 +60,6 @@ class ProgramEmailsController extends AppController {
 				$formField = $this->ProgramEmail->save($this->data);
 			}
 
-			$this->log($formField, 'debug');
-
 			if ($formField) {
 				if ($count > 1) {
 					$this->ProgramEmail->recursive = -1;
