@@ -3,7 +3,9 @@ var encodeObject = function (obj) {
     return Ext.JSON.encode(obj);
   }
   return null;
-};
+},
+instructionsSaved = false,
+emailsSaved = false;
 
 /**
  * Data Models
