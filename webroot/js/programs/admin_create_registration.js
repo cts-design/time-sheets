@@ -3,7 +3,9 @@ var encodeObject = function (obj) {
     return Ext.JSON.encode(obj);
   }
   return null;
-};
+},
+instructionsSaved = false,
+emailsSaved = false;
 
 /**
  * Data Models
@@ -885,6 +887,7 @@ formBuilder = Ext.create('Ext.panel.Panel', {
             gridEl = grid.getEl(),
             selectedRec = data.records[0],
             parseDrop,
+            batch = new Ext.data.Batch(),
             i;
 
           gridEl.mask('Reordering fields...');
@@ -902,7 +905,7 @@ formBuilder = Ext.create('Ext.panel.Panel', {
               after: function () {
                 var overModelOrder = overModel.get('order');
 
-                selectedRec.set('order', (overModelOrder));
+                selectedRec.set('order', overModelOrder);
                 overModel.set('order', (overModelOrder - 1));
               }
             };
@@ -1486,95 +1489,97 @@ instructions = Ext.create('Ext.panel.Panel', {
 
     Ext.getCmp('statusProgressBar').updateProgress(0.8, 'Step 4 of 5');
 
-    if (!program.data.approval_required) {
-      var notApproved,
-        pendingApproval;
+    if (!instructionsSaved) {
+      if (!program.data.approval_required) {
+        var notApproved,
+          pendingApproval;
 
-      notApproved = programInstructionStore.findExact('type', 'not_approved');
-      pendingApproval = programInstructionStore.findExact('type', 'pending_approval');
+        notApproved = programInstructionStore.findExact('type', 'not_approved');
+        pendingApproval = programInstructionStore.findExact('type', 'pending_approval');
 
-      if (notApproved !== -1) {
-        programInstructionStore.removeAt(notApproved);
+        if (notApproved !== -1) {
+          programInstructionStore.removeAt(notApproved);
+        }
+
+        if (pendingApproval !== -1) {
+          programInstructionStore.removeAt(pendingApproval);
+        }
       }
 
-      if (pendingApproval !== -1) {
-        programInstructionStore.removeAt(pendingApproval);
-      }
+      formStep = programStepStore.findRecord('type', /^form$/gi);
+
+      programInstructionStore.each(function (rec) {
+        var programInstruction = {
+          program_id: program.get('id')
+        };
+
+        switch (rec.get('type')) {
+          case 'main':
+            programInstruction.text = 'Welcome to the ' +
+            AtlasInstallationName +
+            ' Web Services system. Please proceed with the ' +
+            program.get('name').humanize() +
+            ' registration by completing the steps listed below.';
+            break;
+
+          case 'pending_approval':
+            programInstruction.text = 'Your submission is currently being' +
+            ' reviewed by our staff. You will be notified by email when the' +
+            ' status of the submission changes. You may also visit the link' +
+            ' provided below to check on the status of your submission.' +
+            ' Thank you for using the ' +
+            AtlasInstallationName +
+            ' Web Services system.<br />' +
+            '<br />' +
+            '<a href="' +
+            window.location.origin +
+            '/programs/registration' +
+            rec.get('id') +
+            '">' +
+            program.get('name').humanize() +
+            '</a>';
+            break;
+
+          case 'expired':
+            programInstruction.text = 'We\'re sorry but your submission has' +
+            ' expired. Please contact the ' +
+            AtlasInstallationName +
+            ' for further assistance.';
+            break;
+
+          case 'not_approved':
+            programInstruction.text = 'We\'re sorry but your submission has been' +
+            ' marked as "Not Approved." If you feel this is in error please' +
+            ' contact the ' +
+            AtlasInstallationName +
+            ' for further assistance.';
+            break;
+
+          case 'complete':
+            programInstruction.text = 'We have reviewed your submission and it' +
+            ' has been marked as complete. Please visit the following link for' +
+            ' submitted is accurate.<br />' +
+            '<br />' +
+            '<a href="#">ADMIN. PLEASE ADD YOUR LINK</a>';
+            break;
+
+          case 'acceptance':
+            programInstruction.text = 'By entering your first and last name in' +
+            ' the box below you are agreeing that all the information you have' +
+            ' submitted is accurate.';
+            break;
+        }
+
+        rec.set(programInstruction);
+      });
+
+      programInstructionStore.add({
+        program_id: program.get('id'),
+        program_step_id: formStep.data.id,
+        text: 'Please fill out the following form and choose submit when finished.',
+        type: (program.data.name + ' Registration Form Step Instructions').underscore()
+      });
     }
-
-    formStep = programStepStore.findRecord('type', /^form$/gi);
-
-    programInstructionStore.each(function (rec) {
-      var programInstruction = {
-        program_id: program.get('id')
-      };
-
-      switch (rec.get('type')) {
-        case 'main':
-          programInstruction.text = 'Welcome to the ' +
-          AtlasInstallationName +
-          ' Web Services system. Please proceed with the ' +
-          program.get('name').humanize() +
-          ' registration by completing the steps listed below.';
-          break;
-
-        case 'pending_approval':
-          programInstruction.text = 'Your submission is currently being' +
-          ' reviewed by our staff. You will be notified by email when the' +
-          ' status of the submission changes. You may also visit the link' +
-          ' provided below to check on the status of your submission.' +
-          ' Thank you for using the ' +
-          AtlasInstallationName +
-          ' Web Services system.<br />' +
-          '<br />' +
-          '<a href="' +
-          window.location.origin +
-          '/programs/registration' +
-          rec.get('id') +
-          '">' +
-          program.get('name').humanize() +
-          '</a>';
-          break;
-
-        case 'expired':
-          programInstruction.text = 'We\'re sorry but your submission has' +
-          ' expired. Please contact the ' +
-          AtlasInstallationName +
-          ' for further assistance.';
-          break;
-
-        case 'not_approved':
-          programInstruction.text = 'We\'re sorry but your submission has been' +
-          ' marked as "Not Approved." If you feel this is in error please' +
-          ' contact the ' +
-          AtlasInstallationName +
-          ' for further assistance.';
-          break;
-
-        case 'complete':
-          programInstruction.text = 'We have reviewed your submission and it' +
-          ' has been marked as complete. Please visit the following link for' +
-          ' submitted is accurate.<br />' +
-          '<br />' +
-          '<a href="#">ADMIN. PLEASE ADD YOUR LINK</a>';
-          break;
-
-        case 'acceptance':
-          programInstruction.text = 'By entering your first and last name in' +
-          ' the box below you are agreeing that all the information you have' +
-          ' submitted is accurate.';
-          break;
-      }
-
-      rec.set(programInstruction);
-    });
-
-    programInstructionStore.add({
-      program_id: program.get('id'),
-      program_step_id: formStep.data.id,
-      text: 'Please fill out the following form and choose submit when finished.',
-      type: (program.data.name + ' Registration Form Step Instructions').underscore()
-    });
   },
   process: function () {
     var programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
@@ -1588,6 +1593,7 @@ instructions = Ext.create('Ext.panel.Panel', {
       clearStatusTask.delay(500);
 
       programInstructionStore.sync();
+      instructionsSaved = true;
       return true;
   }
 });
@@ -1706,118 +1712,120 @@ emails = Ext.create('Ext.panel.Panel', {
 
     Ext.getCmp('statusProgressBar').updateProgress(1.0, 'Step 5 of 5');
 
-    if (!program.data.approval_required) {
-      var notApproved,
-        pendingApproval;
+    if (!emailsSaved) {
+      if (!program.data.approval_required) {
+        var notApproved,
+          pendingApproval;
 
-      notApproved = programEmailStore.findExact('type', 'not_approved');
-      pendingApproval = programEmailStore.findExact('type', 'pending_approval');
+        notApproved = programEmailStore.findExact('type', 'not_approved');
+        pendingApproval = programEmailStore.findExact('type', 'pending_approval');
 
-      if (notApproved !== -1) {
-        programEmailStore.removeAt(notApproved);
+        if (notApproved !== -1) {
+          programEmailStore.removeAt(notApproved);
+        }
+
+        if (pendingApproval !== -1) {
+          programEmailStore.removeAt(pendingApproval);
+        }
       }
 
-      if (pendingApproval !== -1) {
-        programEmailStore.removeAt(pendingApproval);
-      }
+      formStep = programStepStore.findRecord('type', /^form$/gi);
+
+      programEmailStore.each(function (rec) {
+        var programEmail = {
+          program_id: program.get('id')
+        };
+
+        switch (rec.get('type')) {
+          case 'main':
+            programEmail.body = 'Welcome to the ' +
+            AtlasInstallationName +
+            ' Web Services system. You have begun the submission process for ' +
+            program.get('name').humanize() +
+            '. <br />' +
+            '<br />' +
+            '<a href="' +
+            window.location.origin +
+            '/programs/registration' +
+            rec.get('id') +
+            '">Click here to return to the ' +
+            program.get('name').humanize() +
+            ' registration</a>';
+            break;
+
+          case 'pending_approval':
+            programEmail.body = 'Your submission is currently being' +
+            ' reviewed by our staff. You will be notified by email when the' +
+            ' status of the submission changes. You may also visit the link' +
+            ' provided below to check on the status of your submission.' +
+            ' Thank you for using the ' +
+            AtlasInstallationName +
+            ' Web Services system.<br />' +
+            '<br />' +
+            '<a href="' +
+            window.location.origin +
+            '/programs/registration' +
+            rec.get('id') +
+            '">' +
+            program.get('name').humanize() +
+            '</a>';
+            break;
+
+          case 'expiring_soon':
+            programEmail.body = 'This is an automated notification to inform you' +
+            ' that the program you began enrollment for will expire in ' +
+            program.get('send_expiring_soon') +
+            ' days. Please login to the ' +
+            AtlasInstallationName +
+            ' Web Services system to finish your registration. If you questions' +
+            ' please contact the ' +
+            AtlasInstallationName +
+            ' for assistance.';
+            break;
+
+          case 'expired':
+            programEmail.body = 'We\'re sorry but your submission has' +
+            ' expired. Please contact the ' +
+            AtlasInstallationName +
+            ' for further assistance.';
+            break;
+
+          case 'not_approved':
+            programEmail.body = 'We\'re sorry but your submission has been' +
+            ' marked as "Not Approved." If you feel this is in error please' +
+            ' contact the ' +
+            AtlasInstallationName +
+            ' for further assistance.';
+            break;
+
+          case 'complete':
+            programEmail.body = 'We have reviewed your submission and it' +
+            ' has been marked as complete. Please visit the following link for' +
+            ' submitted is accurate.<br />' +
+            '<br />' +
+            '<a href="#">ADMIN. PLEASE ADD YOUR LINK</a>';
+            break;
+
+          case 'acceptance':
+            programEmail.body = 'By entering your first and last name in' +
+            ' the box below you are agreeing that all the information you have' +
+            ' submitted is accurate.';
+            break;
+        }
+
+        rec.set(programEmail);
+      });
+
+      programEmailStore.add({
+        program_id: program.get('id'),
+        program_step_id: formStep.get('id'),
+        name: program.get('name') + ' Registration Form Step Email',
+        type: 'registration_form_step',
+        body: 'Your registration form step email',
+        subject: 'Registration Form Complete',
+        from: ('noreply@' + window.location.hostname)
+      });
     }
-
-    formStep = programStepStore.findRecord('type', /^form$/gi);
-
-    programEmailStore.each(function (rec) {
-      var programEmail = {
-        program_id: program.get('id')
-      };
-
-      switch (rec.get('type')) {
-        case 'main':
-          programEmail.body = 'Welcome to the ' +
-          AtlasInstallationName +
-          ' Web Services system. You have begun the submission process for ' +
-          program.get('name').humanize() +
-          '. <br />' +
-          '<br />' +
-          '<a href="' +
-          window.location.origin +
-          '/programs/registration' +
-          rec.get('id') +
-          '">Click here to return to the ' +
-          program.get('name').humanize() +
-          ' registration</a>';
-          break;
-
-        case 'pending_approval':
-          programEmail.body = 'Your submission is currently being' +
-          ' reviewed by our staff. You will be notified by email when the' +
-          ' status of the submission changes. You may also visit the link' +
-          ' provided below to check on the status of your submission.' +
-          ' Thank you for using the ' +
-          AtlasInstallationName +
-          ' Web Services system.<br />' +
-          '<br />' +
-          '<a href="' +
-          window.location.origin +
-          '/programs/registration' +
-          rec.get('id') +
-          '">' +
-          program.get('name').humanize() +
-          '</a>';
-          break;
-
-        case 'expiring_soon':
-          programEmail.body = 'This is an automated notification to inform you' +
-          ' that the program you began enrollment for will expire in ' +
-          program.get('send_expiring_soon') +
-          ' days. Please login to the ' +
-          AtlasInstallationName +
-          ' Web Services system to finish your registration. If you questions' +
-          ' please contact the ' +
-          AtlasInstallationName +
-          ' for assistance.';
-          break;
-
-        case 'expired':
-          programEmail.body = 'We\'re sorry but your submission has' +
-          ' expired. Please contact the ' +
-          AtlasInstallationName +
-          ' for further assistance.';
-          break;
-
-        case 'not_approved':
-          programEmail.body = 'We\'re sorry but your submission has been' +
-          ' marked as "Not Approved." If you feel this is in error please' +
-          ' contact the ' +
-          AtlasInstallationName +
-          ' for further assistance.';
-          break;
-
-        case 'complete':
-          programEmail.body = 'We have reviewed your submission and it' +
-          ' has been marked as complete. Please visit the following link for' +
-          ' submitted is accurate.<br />' +
-          '<br />' +
-          '<a href="#">ADMIN. PLEASE ADD YOUR LINK</a>';
-          break;
-
-        case 'acceptance':
-          programEmail.body = 'By entering your first and last name in' +
-          ' the box below you are agreeing that all the information you have' +
-          ' submitted is accurate.';
-          break;
-      }
-
-      rec.set(programEmail);
-    });
-
-    programEmailStore.add({
-      program_id: program.get('id'),
-      program_step_id: formStep.get('id'),
-      name: program.get('name') + ' Registration Form Step Email',
-      type: 'registration_form_step',
-      body: 'Your registration form step email',
-      subject: 'Registration Form Complete',
-      from: ('noreply@' + window.location.hostname)
-    });
   },
   process: function () {
     var programEmailStore = Ext.data.StoreManager.lookup('ProgramEmailStore'),
