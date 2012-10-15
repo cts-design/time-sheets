@@ -200,6 +200,43 @@ Ext.create('Ext.data.Store', {
   autoLoad: true
 });
 
+Ext.create('Ext.menu.Menu', {
+  id: 'contextMenu',
+  title: 'Event Actions',
+  bodyPadding: 10,
+  items:[{
+    xtype: 'button',
+    text: 'Event Details'
+  },{
+      xtype: 'button',
+      text: 'Duplicate Event',
+      icon: '/img/icons/date_copy.png',
+      handler: function() {
+        var selected = this.up('grid').getSelectionModel().getLastSelected();
+        selected.data.id = undefined;
+        this.up('form').loadRecord(selected);
+      }
+    },{
+      xtype: 'button',
+      text: 'Edit Event'
+    },{
+      xtype: 'button',
+      text: 'Delete Event',
+      icon: '/img/icons/date_delete.png',
+      handler: function() {
+        var selected = this.up('grid').getSelectionModel().getLastSelected(),
+        store = Ext.data.StoreManager.lookup('eventsStore');
+        if(selected.data.registered > 0) {
+          Ext.MessageBox.alert('Error', 'Cannot delete an event that already has registrants.');
+        }
+        else {
+          store.remove(selected);
+          store.sync();
+        }
+      }
+    }]
+});
+
 Ext.create('Ext.form.Panel', {
   id: 'eventsForm',
   frame: true,
@@ -222,6 +259,12 @@ Ext.create('Ext.form.Panel', {
       style: {
         overflow: 'auto',
         overflowX: 'hidden'
+      },
+      listeners: {
+        itemcontextmenu: function(view, rec, node, index, e){
+          e.stopEvent();
+          Ext.getCmp('contextMenu').showAt(e.getXY());
+        }
       }
     },
     title:'Events',
@@ -264,31 +307,7 @@ Ext.create('Ext.form.Panel', {
         Ext.getCmp('cat3Name').disable();
         this.up('grid').getSelectionModel().deselectAll();
       }
-    },{
-      xtype: 'button',
-      text: 'Duplicate Event',
-      icon: '/img/icons/date_copy.png',
-      handler: function() {
-        var selected = this.up('grid').getSelectionModel().getLastSelected();
-        selected.data.id = undefined;
-        this.up('form').loadRecord(selected);
-      }
-    },{
-      xtype: 'button',
-      text: 'Delete Event',
-      icon: '/img/icons/date_delete.png',
-      handler: function() {
-        var selected = this.up('grid').getSelectionModel().getLastSelected(),
-        store = Ext.data.StoreManager.lookup('eventsStore');
-        if(selected.data.registered > 0) {
-          Ext.MessageBox.alert('Error', 'Cannot delete an event that already has registrants.');
-        }
-        else {
-          store.remove(selected);
-          store.sync();
-        }
-      }
-    }],
+    },],
     listeners: {
       itemdblclick: function(grid, record, item, index, e, eOpts) {
         var formPanel = this.up('form');
