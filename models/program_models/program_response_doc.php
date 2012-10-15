@@ -82,7 +82,7 @@ class ProgramResponseDoc extends AppModel {
 					 "\r\n\r\n\r\n\r\n" . 'Comment: ' . $rejectedReason;
 				}
 				if($docFiledEmail) {
-					$return['docFiledEmail'] = $docFiledEmail;
+					$return['docFiledEmail'] = $docFiledEmail['ProgramEmail'];
 				}
 				$this->updateResponse($Program, $programResponse);
 			}
