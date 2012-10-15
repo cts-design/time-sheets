@@ -214,8 +214,16 @@ Ext.create('Ext.form.Panel', {
   items: [{
     flex: 2,
     xtype: 'gridpanel',
+    height: 400,
     id: 'eventsGrid',
     store: Ext.data.StoreManager.lookup('eventsStore'),
+    scroll: false,
+    viewConfig: {
+      style: {
+        overflow: 'auto',
+        overflowX: 'hidden'
+      }
+    },
     title:'Events',
     columns: [{
       text: 'id',
@@ -224,23 +232,27 @@ Ext.create('Ext.form.Panel', {
     },{
       text: 'Name',
       dataIndex: 'name',
+      flex: 1
     },{
       text: 'Location',
       dataIndex: 'location',
+      flex: 1
     },{
       text: 'Category',
-      dataIndex: 'category',
+      dataIndex: 'category'
     },{
       text: 'Scheduled',
       dataIndex: 'scheduled',
 			format: 'm/d/y g:i a',
-			xtype: 'datecolumn',
+			xtype: 'datecolumn'
     },{
       text: 'Registered',
       dataIndex: 'registered',
+      width: 70
     },{
       text: 'Attended',
       dataIndex: 'attended',
+      width: 70
     }],
     tbar: [{xtype: 'tbfill'},{
       xtype: 'button',
@@ -268,8 +280,13 @@ Ext.create('Ext.form.Panel', {
       handler: function() {
         var selected = this.up('grid').getSelectionModel().getLastSelected(),
         store = Ext.data.StoreManager.lookup('eventsStore');
-        store.remove(selected);
-        store.sync();
+        if(selected.data.registered > 0) {
+          Ext.MessageBox.alert('Error', 'Cannot delete an event that already has registrants.');
+        }
+        else {
+          store.remove(selected);
+          store.sync();
+        }
       }
     }],
     listeners: {
@@ -279,16 +296,22 @@ Ext.create('Ext.form.Panel', {
         Ext.getCmp('cat2Name').disable();
         Ext.getCmp('cat3Name').disable();
         if (record) {
-          this.up('form').getForm().loadRecord(record);
-          var otherLocation = formPanel.down('fieldset').getComponent('otherLocation'), 
-          address = formPanel.down('fieldset').getComponent('address');
-          if(record.data.location === 'Other') {
-            otherLocation.enable();
-            address.enable();
+          if(record.data.registered > 0) {
+            form.reset();
+            Ext.MessageBox.alert('Error', 'Cannot edit an even that already has registrants.');
           }
           else {
-            otherLocation.disable();
-            address.disable();
+            this.up('form').getForm().loadRecord(record);
+            var otherLocation = formPanel.down('fieldset').getComponent('otherLocation'), 
+            address = formPanel.down('fieldset').getComponent('address');
+            if(record.data.location === 'Other') {
+              otherLocation.enable();
+              address.enable();
+            }
+            else {
+              otherLocation.disable();
+              address.disable();
+            }
           }
         }
         this.up('form').getForm().clearInvalid();
