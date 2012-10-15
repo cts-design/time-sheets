@@ -2417,6 +2417,8 @@ instructions = Ext.create('Ext.panel.Panel', {
       program = programStore.first(),
       rootNode = programStepStore.tree.root;
 
+    console.log(program.get('id'));
+
     Ext.getCmp('statusProgressBar').updateProgress(0.83, 'Step 5 of 6');
 
     Ext.Ajax.request({
