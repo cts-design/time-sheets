@@ -113,6 +113,7 @@ Ext.define('ProgramEmail', {
     'body',
     'type',
     'name',
+    { name: 'disabled', type: 'int' },
     { name: 'created',  type: 'date', dateFormat: 'Y-m-d H:i:s' },
     { name: 'modified', type: 'date', dateFormat: 'Y-m-d H:i:s' }
   ]
@@ -357,13 +358,13 @@ Ext.create('Ext.data.Store', {
 
 Ext.create('Ext.data.Store', {
   data: [
-    { program_id: 0, name: 'Esign Main', from: ('noreply@' + window.location.hostname), subject: 'Main', body: 'Default text Main', type: 'main', created: null, modified: null },
-    { program_id: 0, name: 'Esign Pending Approval', from: ('noreply@' + window.location.hostname), subject: 'Pending Approval', body: 'Default text Pending Approval', type: 'pending_approval', created: null, modified: null },
-    { program_id: 0, name: 'Esign Expiring Soon', from: ('noreply@' + window.location.hostname), subject: 'Expiring Soon', body: 'Default text Expiring Soon', type: 'expiring_soon', created: null, modified: null },
-    { program_id: 0, name: 'Esign Expired', from: ('noreply@' + window.location.hostname), subject: 'Expired', body: 'Default text Expired', type: 'expired', created: null, modified: null },
-    { program_id: 0, name: 'Esign Not Approved', from: ('noreply@' + window.location.hostname), subject: 'Not Approved', body: 'Default text Main', type: 'not_approved', created: null, modified: null },
-    { program_id: 0, name: 'Esign Complete', from: ('noreply@' + window.location.hostname), subject: 'Complete', body: 'Default text Complete', type: 'complete', created: null, modified: null },
-    { program_id: 0, name: 'Esign Rejected', from: ('noreply@' + window.location.hostname), subject: 'Rejected', body: 'Default text Rejected', type: 'rejected', created: null, modified: null }
+    { program_id: 0, name: 'Esign Main', from: ('noreply@' + window.location.hostname), subject: 'Main', body: 'Default text Main', type: 'main', disabled: 0, created: null, modified: null },
+    { program_id: 0, name: 'Esign Pending Approval', from: ('noreply@' + window.location.hostname), subject: 'Pending Approval', body: 'Default text Pending Approval', type: 'pending_approval', disabled: 0, created: null, modified: null },
+    { program_id: 0, name: 'Esign Expiring Soon', from: ('noreply@' + window.location.hostname), subject: 'Expiring Soon', body: 'Default text Expiring Soon', type: 'expiring_soon', disabled: 0, created: null, modified: null },
+    { program_id: 0, name: 'Esign Expired', from: ('noreply@' + window.location.hostname), subject: 'Expired', body: 'Default text Expired', type: 'expired', disabled: 0, created: null, modified: null },
+    { program_id: 0, name: 'Esign Not Approved', from: ('noreply@' + window.location.hostname), subject: 'Not Approved', body: 'Default text Main', type: 'not_approved', disabled: 0, created: null, modified: null },
+    { program_id: 0, name: 'Esign Complete', from: ('noreply@' + window.location.hostname), subject: 'Complete', body: 'Default text Complete', type: 'complete', disabled: 0, created: null, modified: null },
+    { program_id: 0, name: 'Esign Rejected', from: ('noreply@' + window.location.hostname), subject: 'Rejected', body: 'Default text Rejected', type: 'rejected', disabled: 0, created: null, modified: null }
   ],
   storeId: 'ProgramEmailStore',
   model: 'ProgramEmail',
@@ -888,6 +889,36 @@ emails = Ext.create('Ext.panel.Panel', {
       }
     }],
     listeners: {
+      itemcontextmenu: function (view, rec, item, index, e) {
+        var menu,
+          items = [];
+
+        e.preventDefault();
+
+        if (rec.get('disabled')) {
+          items.push({
+              icon: '/img/icons/survey.png',
+              text: 'Enable',
+              handler: function () {
+                rec.set('disabled', 0);
+              }
+          });
+        } else {
+          items.push({
+              icon: '/img/icons/survey.png',
+              text: 'Disable',
+              handler: function () {
+                rec.set('disabled', 1);
+              }
+          });
+        }
+
+        menu = Ext.create('Ext.menu.Menu', {
+          items: items
+        });
+
+        menu.showAt(e.getXY());
+      },
       select: function (rm, rec, index) {
         var editor = Ext.getCmp('emailEditor'),
           fromField = Ext.getCmp('fromField'),
@@ -899,6 +930,11 @@ emails = Ext.create('Ext.panel.Panel', {
         fromField.setValue(rec.data.from);
         subjectField.setValue(rec.data.subject);
         saveBtn.enable();
+      }
+    },
+    viewConfig: {
+      getRowClass: function (rec) {
+        return rec.get('disabled') ? 'row-disabled' : 'row-active';
       }
     },
     plugins: [
