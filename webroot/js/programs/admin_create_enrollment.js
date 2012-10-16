@@ -11,8 +11,8 @@ productionURL = function () {
 
   return window.location.origin;
 },
-instructionsSaved,
-emailsSaved;
+instructionsSaved = false,
+emailsSaved = false;
 
 /**
  * Data Models
@@ -126,6 +126,7 @@ Ext.define('ProgramEmail', {
     'body',
     'type',
     'name',
+    { name: 'disabled', type: 'int' },
     { name: 'created',  type: 'date', dateFormat: 'Y-m-d H:i:s' },
     { name: 'modified', type: 'date', dateFormat: 'Y-m-d H:i:s' }
   ]
@@ -440,7 +441,7 @@ Ext.create('Ext.data.Store', {
     api:{
       create: '/admin/program_instructions/create',
       read: '/admin/program_instructions/read',
-      update: '/admin/program_instructions/edit',
+      update: '/admin/program_instructions/update',
       destroy: '/admin/program_instructions/destroy'
     },
     type: 'ajax',
@@ -465,6 +466,7 @@ Ext.create('Ext.data.Store', {
     subject: 'Main email',
     body: 'Default text Main',
     type: 'main',
+    disabled: 0,
     created: null,
     modified: null
   }, {
@@ -474,6 +476,7 @@ Ext.create('Ext.data.Store', {
     subject: 'Expiring Soon',
     body: 'Default text Expiring Soon',
     type: 'expiring_soon',
+    disabled: 0,
     created: null,
     modified: null
   }, {
@@ -483,6 +486,7 @@ Ext.create('Ext.data.Store', {
     subject: 'Expired email',
     body: 'Default text Expired',
     type: 'expired',
+    disabled: 0,
     created: null,
     modified: null
   }, {
@@ -492,6 +496,7 @@ Ext.create('Ext.data.Store', {
     subject: 'Complete email',
     body: 'Default text Complete',
     type: 'complete',
+    disabled: 0,
     created: null,
     modified: null
   }],
@@ -2572,6 +2577,36 @@ emails = Ext.create('Ext.panel.Panel', {
       }
     }],
     listeners: {
+      itemcontextmenu: function (view, rec, item, index, e) {
+        var menu,
+          items = [];
+
+        e.preventDefault();
+
+        if (rec.get('disabled')) {
+          items.push({
+              icon: '/img/icons/survey.png',
+              text: 'Enable',
+              handler: function () {
+                rec.set('disabled', 0);
+              }
+          });
+        } else {
+          items.push({
+              icon: '/img/icons/survey.png',
+              text: 'Disable',
+              handler: function () {
+                rec.set('disabled', 1);
+              }
+          });
+        }
+
+        menu = Ext.create('Ext.menu.Menu', {
+          items: items
+        });
+
+        menu.showAt(e.getXY());
+      },
       select: function (rm, rec, index) {
         var editor = Ext.getCmp('emailEditor'),
           fromField = Ext.getCmp('fromField'),
@@ -2583,6 +2618,11 @@ emails = Ext.create('Ext.panel.Panel', {
         fromField.setValue(rec.data.from);
         subjectField.setValue(rec.data.subject);
         saveBtn.enable();
+      }
+    },
+    viewConfig: {
+      getRowClass: function (rec) {
+        return rec.get('disabled') ? 'row-disabled' : 'row-active';
       }
     },
     plugins: [
