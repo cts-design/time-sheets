@@ -92,8 +92,14 @@ class ProgramInstructionsController extends AppController {
 
 			if ($formField) {
 				if ($count > 1) {
-					foreach ($this->data['ProgramInstruction'] as $k => $v) {
-						$data['program_instructions'][] = $v;
+					$this->ProgramInstruction->recursive = -1;
+					$newInstructions = $this->ProgramInstruction->find('all', array(
+						'order' => 'ProgramInstruction.id DESC',
+						'limit' => $count
+					));
+
+					foreach ($newInstructions as $k => $v) {
+						$data['program_instructions'][] = $v['ProgramInstruction'];
 					}
 				} else {
 					$data['program_instructions'] = $formField['ProgramInstruction'];
@@ -133,15 +139,26 @@ class ProgramInstructionsController extends AppController {
 
 	public function admin_update() {
 		$instruction = json_decode($this->params['form']['program_instructions'], true);
+		$count = count($instruction);
+		$success = false;
 
-		$this->ProgramInstruction->id = $instruction['id'];
-		$this->ProgramInstruction->set($instruction);
-
-		if ($this->ProgramInstruction->save()) {
-			$data['success'] = true;
+		if ($count > 1) {
+			foreach ($instruction as $k => $v) {
+				$this->ProgramInstruction->id = $v['id'];
+				$this->ProgramInstruction->set($v);
+				$this->ProgramInstruction->save();
+			}
+			$success = true;
 		} else {
-			$data['success'] = false;
+			$this->ProgramInstruction->id = $instruction['id'];
+			$this->ProgramInstruction->set($instruction);
+
+			if ($this->ProgramInstruction->save()) {
+				$success = true;
+			}
 		}
+
+		$data['success'] = $success;
 
 		$this->set('data', $data);
 		$this->render(null, null, '/elements/ajaxreturn');
