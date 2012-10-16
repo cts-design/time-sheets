@@ -316,6 +316,10 @@ class ProgramsController extends AppController {
 			}
 		}
 
+		if (!$success) {
+			$data['message'] = 'Unable to duplicate the program. Please try again.';
+		}
+
 		$data['success'] = $success;
 
 		$this->set('data', $data);
