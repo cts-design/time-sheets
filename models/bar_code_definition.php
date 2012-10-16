@@ -59,7 +59,7 @@ class BarCodeDefinition extends AppModel {
 				$this->recursive = -1;
 				$barCodeDef = $this->find('first', array(
 					'conditions' => array('BarCodeDefinition.number' => $decoded[0]),
-					'fields' => array('id')));
+					'fields' => array('id', 'document_queue_category_id', 'name')));
 				if($barCodeDef) {
 					$return = array(
 						'BarCodeDefinition' => $barCodeDef['BarCodeDefinition'], 

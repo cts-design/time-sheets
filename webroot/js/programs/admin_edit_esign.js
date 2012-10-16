@@ -199,19 +199,6 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
-  storeId: 'Cat3Store',
-  model: 'DocumentFilingCategory',
-  proxy: catProxy,
-  listeners: {
-    load: function(store, records, successful, operation, eOpts) {
-      if(records[0]) {
-        Ext.getCmp('cat3Name').enable();
-      }
-    }
-  }
-});
-
-Ext.create('Ext.data.Store', {
   storeId: 'DocumentQueueCategoryStore',
   model: 'DocumentQueueCategory',
   proxy: {
@@ -360,14 +347,6 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
-  data: [
-    { program_id: 0, name: 'Registration Main', from: ('noreply@' + window.location.hostname), subject: 'Main', body: 'Default text Main', type: 'main', created: null, modified: null },
-    { program_id: 0, name: 'Registration Pending Approval', from: ('noreply@' + window.location.hostname), subject: 'Pending Approval', body: 'Default text Pending Approval', type: 'pending_approval', created: null, modified: null },
-    { program_id: 0, name: 'Registration Expiring Soon', from: ('noreply@' + window.location.hostname), subject: 'Expiring Soon', body: 'Default text Expiring Soon', type: 'expiring_soon', created: null, modified: null },
-    { program_id: 0, name: 'Registration Expired', from: ('noreply@' + window.location.hostname), subject: 'Expired', body: 'Default text Expired', type: 'expired', created: null, modified: null },
-    { program_id: 0, name: 'Registration Not Approved', from: ('noreply@' + window.location.hostname), subject: 'Not Approved', body: 'Default text Main', type: 'not_approved', created: null, modified: null },
-    { program_id: 0, name: 'Registration Complete', from: ('noreply@' + window.location.hostname), subject: 'Complete', body: 'Default text Complete', type: 'complete', created: null, modified: null }
-  ],
   storeId: 'ProgramEmailStore',
   model: 'ProgramEmail',
   proxy: {
@@ -476,9 +455,6 @@ registrationForm = Ext.create('Ext.form.Panel', {
       xtype: 'textfield',
       allowBlank: false,
       fieldLabel: 'Name',
-      // issue #34
-      // add name id to the name field
-      // time: 1 minutes
       id: 'name',
       labelWidth: 175,
       name: 'name',
@@ -497,10 +473,6 @@ registrationForm = Ext.create('Ext.form.Panel', {
       allowBlank: false,
       displayField: 'ucase',
       fieldLabel: 'Registration Type',
-      // issue #34
-      // add registrationType id to disable the field if the 
-      // program is not in test
-      // time: 3 minutes
       id: 'registrationType',
       labelWidth: 175,
       name: 'atlas_registration_type',
@@ -557,9 +529,6 @@ registrationForm = Ext.create('Ext.form.Panel', {
       xtype: 'numberfield',
       allowBlank: false,
       fieldLabel: 'Responses Expire In',
-      // issue #34
-      // add responseExpiresIn id to the expiring soon emails field
-      // time: 2 minutes
       id: 'responsesExpireIn',
       labelWidth: 175,
       minValue: 30,
@@ -591,10 +560,6 @@ registrationForm = Ext.create('Ext.form.Panel', {
       allowBlank: false,
       displayField: 'ucase',
       fieldLabel: 'Send expiring soon emails',
-      // issue #34
-      // add sendExpiringSoon id to the send expiring soon emails field
-      // to make sure the right value gets set
-      // time: 1 minutes
       id: 'sendExpiringSoon',
       labelWidth: 175,
       name: 'send_expiring_soon',
@@ -633,8 +598,9 @@ registrationForm = Ext.create('Ext.form.Panel', {
     },
     items: [{
       xtype: 'filefield',
-      allowBlank: false,
+      allowBlank: true,
       fieldLabel: 'Esign Template',
+      id: 'esignTemplateUpload',
       labelWidth: 175,
       name: 'document',
       value: ''
@@ -687,8 +653,6 @@ registrationForm = Ext.create('Ext.form.Panel', {
           if(records[0]) {
             Ext.getCmp('cat2Name').disable();
             Ext.getCmp('cat2Name').reset();
-            Ext.getCmp('cat3Name').disable();
-            Ext.getCmp('cat3Name').reset();
             store.load({params: {parentId: records[0].data.id}});
           }
 
@@ -725,53 +689,11 @@ registrationForm = Ext.create('Ext.form.Panel', {
               return '<div>{img}{name}</div>';
           }
       },
-      allowBlank: false,
-      listeners: {
-        select: function(combo, records, Eopts) {
-          var store = Ext.data.StoreManager.lookup('Cat3Store');
-
-          if(records[0]) {
-            Ext.getCmp('cat3Name').disable();
-            Ext.getCmp('cat3Name').reset();
-            store.load({params: {parentId: records[0].data.id}});
-          }
-        }
-      }
-    }]
-  }, {
-    xtype: 'fieldcontainer',
-    height: 24,
-    width: 400,
-    layout: {
-      align: 'stretch',
-      type: 'vbox'
-    },
-    items: [{
-      fieldLabel: 'Filing Category 3',
-      name: 'cat_3',
-      id: 'cat3Name',
-      xtype: 'combo',
-      store: 'Cat3Store',
-      disabled: true,
-      displayField: 'name',
-      valueField: 'id',
-      queryMode: 'local',
-      value: null,
-      labelWidth: 175,
-      listConfig: {
-          getInnerTpl: function() {
-              return '<div>{img}{name}</div>';
-          }
-      },
       allowBlank: false
     }]
   }],
   listeners: {
     activate: function () {
-      // ticket #34
-      // add activate listener to load the program when
-      // the wizard is loaded
-      // time: 48 minutes
       var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
         programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
         programDocumentStore = Ext.data.StoreManager.lookup('ProgramDocumentStore'),
@@ -779,10 +701,8 @@ registrationForm = Ext.create('Ext.form.Panel', {
         queueCategoryStore = Ext.data.StoreManager.lookup('DocumentQueueCategoryStore'),
         Cat1Store = Ext.data.StoreManager.lookup('Cat1Store'),
         Cat2Store = Ext.data.StoreManager.lookup('Cat2Store'),
-        Cat3Store = Ext.data.StoreManager.lookup('Cat3Store'),
         cat1Name = Ext.getCmp('cat1Name'),
         cat2Name = Ext.getCmp('cat2Name'),
-        cat3Name = Ext.getCmp('cat3Name'),
         form = this;
 
       form.getEl().mask('Loading...');
@@ -790,10 +710,6 @@ registrationForm = Ext.create('Ext.form.Panel', {
       programStore.load({
         callback: function (recs, op, success) {
           if (success) {
-            form.loadRecord(recs[0]);
-
-            form.down('#sendExpiringSoon').setValue(String(recs[0].get('send_expiring_soon')));
-
             if (!recs[0].data.in_test) {
               form.down('#name').disable();
               form.down('#registrationType').disable();
@@ -817,33 +733,27 @@ registrationForm = Ext.create('Ext.form.Panel', {
                           program_id: ProgramId
                         },
                         callback: function (recs, op, succes) {
-                          rec = recs[0];
+                          rec = recs[1];
+                          cat1Name.setValue(rec.data.cat_1);
 
                           Cat2Store.load({
                             params: {
                               parentId: rec.data.cat_1
+                            },
+                            callback: function (recs, op, succes) {
+                              cat2Name.setValue(rec.data.cat_2);
                             }
                           });
-
-                          Cat3Store.load({
-                            params: {
-                              parentId: rec.data.cat_2
-                            }
-                          });
-
-                          form.loadRecord(recs[0]);
-                          form.getEl().unmask();
                         }
                       });
                     }
                   });
-
-                  //step = programStepStore.findRecord('name', /form/gi);
-
                 }
               }
             });
 
+            form.loadRecord(recs[0]);
+            form.down('#sendExpiringSoon').setValue(String(recs[0].get('send_expiring_soon')));
             form.getEl().unmask();
           }
         },
@@ -855,41 +765,51 @@ registrationForm = Ext.create('Ext.form.Panel', {
   },
   process: function () {
     var form = this.getForm(),
+      uploadField = Ext.getCmp('esignTemplateUpload'),
       programStore = Ext.data.StoreManager.lookup('ProgramStore'),
-      record,
-      vals;
+      programDocumentStore = Ext.data.StoreManager.lookup('ProgramDocumentStore'),
+      record = programStore.first(),
+      vals,
+      downloadStep;
 
     statusBar.showBusy();
 
     if (form.isValid()) {
       vals = form.getValues();
 
-      form.submit({
-        url: '/admin/program_documents/upload',
-        waitMsg: 'Uploading Document...',
-        scope: this,
-        success: function (form, action) {
-          form.reset();
+      if (Ext.isEmpty(uploadField.value)) {
+        record.set(vals);
+        downloadStep = programDocumentStore.findRecord('type', /^download$/gi);
+        downloadStep.set({
+          cat_1: Ext.getCmp('cat1Name').value,
+          cat_2: Ext.getCmp('cat2Name').value
+        });
+      } else {
+        console.log('not empty field');
+        form.submit({
+          url: '/admin/program_documents/upload',
+          waitMsg: 'Uploading Document...',
+          scope: this,
+          success: function (form, action) {
+            var document = programDocumentStore.findRecord('type', /^download$/gi);
+            form.reset();
 
-          programDoc = {
-            name: 'Esign Enrollment Form',
-            template: action.result.url,
-            type: 'download',
-            cat_1: vals.cat_1,
-            cat_2: vals.cat_2,
-            cat_3: vals.cat_3
-          };
+            programDoc = {
+              name: 'Esign Enrollment Form',
+              template: action.result.url,
+              type: 'download',
+              cat_1: vals.cat_1,
+              cat_2: vals.cat_2
+            };
 
-          programStore.getProxy().extraParams = {
-            program_document: Ext.JSON.encode(programDoc)
-          };
-
-          programStore.add(vals);
-        },
-        failure: function (form, action) {
-          Ext.Msg.alert('Could not upload esign document', action.result.msg);
-        }
-      });
+            document.set(programDoc);
+            record.set(vals);
+          },
+          failure: function (form, action) {
+            Ext.Msg.alert('Could not upload esign document', action.result.msg);
+          }
+        });
+      }
     }
 
     statusBar.clearStatus();
@@ -1127,10 +1047,143 @@ emails = Ext.create('Ext.panel.Panel', {
       programId = program.data.id,
       formStep;
 
-    programEmailStore.each(function (rec) {
-      rec.set({
-        program_id: programId
-      });
+    programEmailStore.load({
+      params: {
+        program_id: ProgramId
+      },
+      callback: function (recs, op, success) {
+        var pendingApprovalEmail,
+          notApprovedEmail,
+          mainEmail,
+          expiringSoonEmail,
+          expiredEmail,
+          completeEmail,
+          acceptanceEmail;
+
+        if (!success) {
+          // if approval is required make sure we add the pending_approval and not_approved emails
+          if (program.get('approval_required')) {
+            pendingApprovalEmail = 'Your submission is currently being' +
+              ' reviewed by our staff. You will be notified by email when the' +
+              ' status of the submission changes. You may also visit the link' +
+              ' provided below to check on the status of your submission.' +
+              ' Thank you for using the ' +
+              AtlasInstallationName +
+              ' Web Services system.<br />' +
+              '<br />' +
+              '<a href="' +
+              window.location.origin +
+              '/programs/registration' +
+              rec.get('id') +
+              '">' +
+              program.get('name').humanize() +
+              '</a>';
+
+            notApprovedEmail = 'We\'re sorry but your submission has been' +
+              ' marked as "Not Approved." If you feel this is in error please' +
+              ' contact the ' +
+              AtlasInstallationName +
+              ' for further assistance.';
+
+            programEmailStore.add({
+              program_id: program.get('id'),
+              name: 'Registration Pending Approval',
+              from: ('noreply@' + window.location.hostname),
+              subject: 'Pending Approval',
+              body: pendingApprovalEmail,
+              type: 'pending_approval',
+              created: null,
+              modified: null
+            }, {
+              program_id: program.get('id'),
+              name: 'Registration Not Approved',
+              from: ('noreply@' + window.location.hostname),
+              subject: 'Not Approved',
+              body: notApprovedEmail,
+              type: 'not_approved',
+              created: null,
+              modified: null
+            });
+          }
+
+          mainEmail = 'Welcome to the ' +
+            AtlasInstallationName +
+            ' Web Services system. You have begun the submission process for ' +
+            program.get('name').humanize() +
+            '. <br />' +
+            '<br />' +
+            '<a href="' +
+            window.location.origin +
+            '/programs/registration' +
+            rec.get('id') +
+            '">Click here to return to the ' +
+            program.get('name').humanize() +
+            ' registration</a>';
+
+          expiringSoonEmail = 'This is an automated notification to inform you' +
+            ' that the program you began enrollment for will expire in ' +
+            program.get('send_expiring_soon') +
+            ' days. Please login to the ' +
+            AtlasInstallationName +
+            ' Web Services system to finish your registration. If you questions' +
+            ' please contact the ' +
+            AtlasInstallationName +
+            ' for assistance.';
+
+          expiredEmail = 'We\'re sorry but your submission has' +
+            ' expired. Please contact the ' +
+            AtlasInstallationName +
+            ' for further assistance.';
+
+          completeEmail = 'We have reviewed your submission and it' +
+            ' has been marked as complete. Please visit the following link for' +
+            ' submitted is accurate.<br />' +
+            '<br />' +
+            '<a href="#">ADMIN. PLEASE ADD YOUR LINK</a>';
+
+          acceptanceEmail = 'By entering your first and last name in' +
+            ' the box below you are agreeing that all the information you have' +
+            ' submitted is accurate.';
+
+          programEmailStore.add({
+            program_id: program.get('id'),
+            name: 'Registration Main',
+            from: ('noreply@' + window.location.hostname),
+            subject: 'Main',
+            body: mainEmail,
+            type: 'main',
+            created: null,
+            modified: null
+          }, {
+            program_id: program.get('id'),
+            name: 'Registration Expiring Soon',
+            from: ('noreply@' + window.location.hostname),
+            subject: 'Expiring Soon',
+            body: expiringSoonEmail,
+            type: 'expiring_soon',
+            created: null,
+            modified: null
+          }, {
+            program_id: program.get('id'),
+            name: 'Registration Expired',
+            from: ('noreply@' + window.location.hostname),
+            subject: 'Expired',
+            body: expiredEmail,
+            type: 'expired',
+            created: null,
+            modified: null
+          }, {
+            program_id: program.get('id'),
+            name: 'Registration Complete',
+            from: ('noreply@' + window.location.hostname),
+            subject: 'Complete',
+            body: completeEmail,
+            type: 'complete',
+            created: null,
+            modified: null
+          });
+        }
+      }
     });
   },
   process: function () {

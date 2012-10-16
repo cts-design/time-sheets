@@ -102,6 +102,22 @@ class ProgramResponsesController extends AppController {
 				}
 				if(isset($status)) {
 					$statusEmail = Set::extract('/ProgramEmail[type='.$status.']', $program);
+
+					if ($status === 'complete') {
+						$results = array();
+						$pattern = '/\{\{\s*(\w+)\s*\}\}/';
+
+						preg_match_all('/\{\{\s*(\w+)\s*\}\}/', $statusEmail[0]['ProgramEmail']['body'], $results);
+
+						if (!empty($results[1])) {
+							$formFieldName = $results[1];
+							$formFieldAnswers = json_decode($program['ProgramResponse'][0]['ProgramResponseActivity'][0]['answers'], true);
+							$replacement = $formFieldAnswers[$formFieldName[0]];
+
+							$statusEmail[0]['ProgramEmail']['body'] = preg_replace($pattern, $replacement, $statusEmail[0]['ProgramEmail']['body']);
+						}
+					}
+
 					if(!empty($statusEmail)) {
 						$this->Notifications->sendProgramEmail($statusEmail[0]['ProgramEmail']);
 					}
@@ -811,6 +827,8 @@ class ProgramResponsesController extends AppController {
 				if($programResponse['Program']['type'] === 'esign') {
 					$this->ProgramResponse->User->id = $programResponse['ProgramResponse']['user_id'];
 					$this->ProgramResponse->User->saveField('signature', 0);
+					$this->ProgramResponse->User->saveField('signature_created', NULL);
+					$this->ProgramResponse->User->saveField('signature_modified', date('Y-m-d H:i:s'));
 				}
 				$this->data['ProgramResponse']['id'] = $this->params['form']['id'];
 				$this->data['ProgramResponse']['status'] = 'not_approved';

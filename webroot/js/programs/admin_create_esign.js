@@ -3,7 +3,9 @@ var encodeObject = function (obj) {
     return Ext.JSON.encode(obj);
   }
   return null;
-};
+},
+instructionsSaved = false,
+emailsSaved = false;
 
 /**
  * Data Models
@@ -164,6 +166,17 @@ Ext.define('BarCodeDefinition', {
   ]
 });
 
+Ext.define('WatchedFilingCat', {
+  extend: 'Ext.data.Model',
+  fields: [
+    { name: 'id', type: 'int' },
+    { name: 'cat_id', type: 'int' },
+    { name: 'program_id', type: 'int' },
+    { name: 'program_email_id', type: 'int' },
+    'name',
+  ]
+});
+
 /**
  * Data Stores
  */
@@ -193,19 +206,6 @@ Ext.create('Ext.data.Store', {
     load: function(store, records, successful, operation, eOpts) {
       if(records[0]) {
         Ext.getCmp('cat2Name').enable();
-      }
-    }
-  }
-});
-
-Ext.create('Ext.data.Store', {
-  storeId: 'Cat3Store',
-  model: 'DocumentFilingCategory',
-  proxy: catProxy,
-  listeners: {
-    load: function(store, records, successful, operation, eOpts) {
-      if(records[0]) {
-        Ext.getCmp('cat3Name').enable();
       }
     }
   }
@@ -338,7 +338,7 @@ Ext.create('Ext.data.Store', {
     api:{
       create: '/admin/program_instructions/create',
       read: '/admin/program_instructions/read',
-      update: '/admin/program_instructions/edit',
+      update: '/admin/program_instructions/update',
       destroy: '/admin/program_instructions/destroy'
     },
     type: 'ajax',
@@ -357,12 +357,13 @@ Ext.create('Ext.data.Store', {
 
 Ext.create('Ext.data.Store', {
   data: [
-    { program_id: 0, name: 'Registration Main', from: ('noreply@' + window.location.hostname), subject: 'Main', body: 'Default text Main', type: 'main', created: null, modified: null },
-    { program_id: 0, name: 'Registration Pending Approval', from: ('noreply@' + window.location.hostname), subject: 'Pending Approval', body: 'Default text Pending Approval', type: 'pending_approval', created: null, modified: null },
-    { program_id: 0, name: 'Registration Expiring Soon', from: ('noreply@' + window.location.hostname), subject: 'Expiring Soon', body: 'Default text Expiring Soon', type: 'expiring_soon', created: null, modified: null },
-    { program_id: 0, name: 'Registration Expired', from: ('noreply@' + window.location.hostname), subject: 'Expired', body: 'Default text Expired', type: 'expired', created: null, modified: null },
-    { program_id: 0, name: 'Registration Not Approved', from: ('noreply@' + window.location.hostname), subject: 'Not Approved', body: 'Default text Main', type: 'not_approved', created: null, modified: null },
-    { program_id: 0, name: 'Registration Complete', from: ('noreply@' + window.location.hostname), subject: 'Complete', body: 'Default text Complete', type: 'complete', created: null, modified: null }
+    { program_id: 0, name: 'Esign Main', from: ('noreply@' + window.location.hostname), subject: 'Main', body: 'Default text Main', type: 'main', created: null, modified: null },
+    { program_id: 0, name: 'Esign Pending Approval', from: ('noreply@' + window.location.hostname), subject: 'Pending Approval', body: 'Default text Pending Approval', type: 'pending_approval', created: null, modified: null },
+    { program_id: 0, name: 'Esign Expiring Soon', from: ('noreply@' + window.location.hostname), subject: 'Expiring Soon', body: 'Default text Expiring Soon', type: 'expiring_soon', created: null, modified: null },
+    { program_id: 0, name: 'Esign Expired', from: ('noreply@' + window.location.hostname), subject: 'Expired', body: 'Default text Expired', type: 'expired', created: null, modified: null },
+    { program_id: 0, name: 'Esign Not Approved', from: ('noreply@' + window.location.hostname), subject: 'Not Approved', body: 'Default text Main', type: 'not_approved', created: null, modified: null },
+    { program_id: 0, name: 'Esign Complete', from: ('noreply@' + window.location.hostname), subject: 'Complete', body: 'Default text Complete', type: 'complete', created: null, modified: null },
+    { program_id: 0, name: 'Esign Rejected', from: ('noreply@' + window.location.hostname), subject: 'Rejected', body: 'Default text Rejected', type: 'rejected', created: null, modified: null }
   ],
   storeId: 'ProgramEmailStore',
   model: 'ProgramEmail',
@@ -401,6 +402,28 @@ Ext.create('Ext.data.Store', {
     }
   },
   storeId: 'BarCodeDefinitionStore',
+});
+
+Ext.create('Ext.data.Store', {
+  autoSync: true,
+  storeId: 'WatchedFilingCatStore',
+  model: 'WatchedFilingCat',
+  proxy: {
+    api:{
+      read: '/admin/program_documents/read_watched_cat',
+      update: '/admin/program_documents/update_watched_cat'
+    },
+    type: 'ajax',
+    reader: {
+      type: 'json',
+      root: 'cats'
+    },
+    writer: {
+      encode: true,
+      root: 'cats',
+      writeAllFields: false
+    }
+  }
 });
 
 /**
@@ -622,8 +645,6 @@ registrationForm = Ext.create('Ext.form.Panel', {
           if(records[0]) {
             Ext.getCmp('cat2Name').disable();
             Ext.getCmp('cat2Name').reset();
-            Ext.getCmp('cat3Name').disable();
-            Ext.getCmp('cat3Name').reset();
             store.load({params: {parentId: records[0].data.id}});
           }
 
@@ -650,44 +671,6 @@ registrationForm = Ext.create('Ext.form.Panel', {
       id: 'cat2Name',
       disabled: true,
       store: 'Cat2Store',
-      displayField: 'name',
-      valueField: 'id',
-      queryMode: 'local',
-      value: null,
-      labelWidth: 175,
-      listConfig: {
-          getInnerTpl: function() {
-              return '<div>{img}{name}</div>';
-          }
-      },
-      allowBlank: false,
-      listeners: {
-        select: function(combo, records, Eopts) {
-          var store = Ext.data.StoreManager.lookup('Cat3Store');
-
-          if(records[0]) {
-            Ext.getCmp('cat3Name').disable();
-            Ext.getCmp('cat3Name').reset();
-            store.load({params: {parentId: records[0].data.id}});
-          }
-        }
-      }
-    }]
-  }, {
-    xtype: 'fieldcontainer',
-    height: 24,
-    width: 400,
-    layout: {
-      align: 'stretch',
-      type: 'vbox'
-    },
-    items: [{
-      fieldLabel: 'Filing Category 3',
-      name: 'cat_3',
-      id: 'cat3Name',
-      xtype: 'combo',
-      store: 'Cat3Store',
-      disabled: true,
       displayField: 'name',
       valueField: 'id',
       queryMode: 'local',
@@ -728,8 +711,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
             template: action.result.url,
             type: 'download',
             cat_1: vals.cat_1,
-            cat_2: vals.cat_2,
-            cat_3: vals.cat_3
+            cat_2: vals.cat_2
           };
 
           programStore.getProxy().extraParams = {
@@ -824,12 +806,15 @@ instructions = Ext.create('Ext.panel.Panel', {
     var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
       programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
       programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
+      programEmailStore = Ext.data.StoreManager.lookup('ProgramEmailStore'),
       grid = Ext.getCmp('instructionsGrid'),
       program,
       downloadStep,
       task;
 
     Ext.getCmp('statusProgressBar').updateProgress(0.66, 'Step 2 of 3');
+
+    programEmailStore.sync();
 
     grid.getEl().mask('Loading...');
 
@@ -988,17 +973,36 @@ emails = Ext.create('Ext.panel.Panel', {
     var programStore = Ext.data.StoreManager.lookup('ProgramStore'),
       programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
       programEmailStore = Ext.data.StoreManager.lookup('ProgramEmailStore'),
+      watchedCatStore = Ext.data.StoreManager.lookup('WatchedFilingCatStore'),
       program = programStore.first(),
       programId = program.data.id,
-      formStep;
+      formStep,
+      rejectedWatchedFilingCat;
 
     Ext.getCmp('statusProgressBar').updateProgress(1.0, 'Step 3 of 3');
+
+    watchedCatStore.load({
+      params: {
+        program_id: program.get('id')
+      },
+      callback: function (recs, op, success) {
+        rejectedCatEmail = programEmailStore.findRecord('type', /^rejected$/gi);
+        rejectedWatchedFilingCat = watchedCatStore.findRecord('name', /^rejected$/gi);
+        rejectedWatchedFilingCat.set({
+          program_email_id: rejectedCatEmail.get('id')
+        });
+      }
+    });
+
+    watchedCatStore.sync();
 
     programEmailStore.each(function (rec) {
       rec.set({
         program_id: programId
       });
     });
+
+    programEmailStore.sync();
   },
   process: function () {
     var programEmailStore = Ext.data.StoreManager.lookup('ProgramEmailStore'),
