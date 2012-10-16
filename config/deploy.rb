@@ -88,7 +88,7 @@ task :tbwa do
   set :deploy_to, "/var/www/vhosts/workforcetampa.com/#{application}"
   set :user, 'ftp_tbwa'
   server "workforcetampa.com", :app, :web, :db, :primary => true
-  set :app_plugins, ['job_forms']
+  set :app_plugins, ['job_forms', 'queue']
 end
 
 task :suncoast do
