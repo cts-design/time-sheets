@@ -128,10 +128,15 @@ Ext.onReady(function () {
               program_type: programType
             },
             success: function (res) {
-              var task = new Ext.util.DelayedTask(function () {
-                progressMsg.close();
-                programStore.load();
-              });
+              var success,
+                msg = Ext.JSON.decode(res.responseText),
+                task = new Ext.util.DelayedTask(function () {
+                  progressMsg.close();
+                  programStore.load();
+                  if (!msg.success) {
+                    Ext.Msg.alert('Error', msg.message);
+                  }
+                });
 
               task.delay(1240);
             }

@@ -316,6 +316,10 @@ class ProgramsController extends AppController {
 			}
 		}
 
+		if (!$success) {
+			$data['message'] = 'Unable to duplicate the program. Please try again.';
+		}
+
 		$data['success'] = $success;
 
 		$this->set('data', $data);
@@ -794,20 +798,22 @@ class ProgramsController extends AppController {
 					}
 
 					if (!empty($step['ProgramFormField']) && $this->issetAndNotEmpty($step['ProgramFormField'][0]['id'])) {
-						$newRecord = $this->Program->ProgramStep->ProgramFormField->read(null, $step['ProgramFormField'][0]['id']);
+						for ($i = 0; $i < count($step['ProgramFormField']); $i++) {
+							$newRecord = $this->Program->ProgramStep->ProgramFormField->read(null, $step['ProgramFormField'][$i]['id']);
 
-						unset(
-							$newRecord['ProgramFormField']['id'],
-							$newRecord['ProgramFormField']['modified'],
-							$newRecord['ProgramFormField']['created']
-						);
+							unset(
+								$newRecord['ProgramFormField']['id'],
+								$newRecord['ProgramFormField']['modified'],
+								$newRecord['ProgramFormField']['created']
+							);
 
-						$newRecord['ProgramFormField']['program_id'] = $newProgramId;
-						$newRecord['ProgramFormField']['program_step_id'] = $newParent;
+							$newRecord['ProgramFormField']['program_id'] = $newProgramId;
+							$newRecord['ProgramFormField']['program_step_id'] = $newParent;
 
-						$this->Program->ProgramStep->ProgramFormField->create();
-						if ($this->Program->ProgramStep->ProgramFormField->save($newRecord)) {
-							$this->transactionIds['ProgramFormField'][] = $this->Program->ProgramStep->ProgramFormField->id;
+							$this->Program->ProgramStep->ProgramFormField->create();
+							if ($this->Program->ProgramStep->ProgramFormField->save($newRecord)) {
+								$this->transactionIds['ProgramFormField'][] = $this->Program->ProgramStep->ProgramFormField->id;
+							}
 						}
 					}
 				}
