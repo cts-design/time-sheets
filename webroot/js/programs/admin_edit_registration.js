@@ -469,6 +469,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
     items: [{
       xtype: 'radiogroup',
       fieldLabel: 'Approval Required?',
+      id: 'approvalRequired',
       labelWidth: 190,
       items: [{
         boxLabel: 'Yes',
@@ -492,6 +493,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
     items: [{
       xtype: 'radiogroup',
       fieldLabel: 'User Acknowledgement Required?',
+      id: 'acknowledgementRequired',
       labelWidth: 190,
       items: [{
         boxLabel: 'Yes',
@@ -540,6 +542,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       allowBlank: false,
       displayField: 'ucase',
       fieldLabel: 'Registration Type',
+      id: 'registrationType',
       labelWidth: 190,
       name: 'atlas_registration_type',
       queryMode: 'local',
@@ -571,6 +574,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       xtype: 'numberfield',
       allowBlank: false,
       fieldLabel: 'Responses Expire In',
+      id: 'responsesExpireIn',
       labelWidth: 190,
       minValue: 30,
       name: 'response_expires_in',
@@ -601,10 +605,6 @@ registrationForm = Ext.create('Ext.form.Panel', {
       allowBlank: false,
       displayField: 'ucase',
       fieldLabel: 'Send expiring soon emails',
-      // issue #52
-      // added sendExpiringSoon id to the send expiring soon field
-      // to make sure the right value is set when the program loads
-      // time: 4 minutes
       id: 'sendExpiringSoon',
       labelWidth: 190,
       name: 'send_expiring_soon',
@@ -658,9 +658,10 @@ registrationForm = Ext.create('Ext.form.Panel', {
 
             if (!recs[0].data.in_test) {
               form.down('#approvalRequired').disable();
-              form.down('#esignRequired').disable();
               form.down('#registrationType').disable();
               form.down('#responsesExpireIn').disable();
+              form.down('#acknowledgementRequired').disable();
+              form.down('#sendExpiringSoon').disable();
             }
 
             form.getEl().unmask();
