@@ -109,23 +109,13 @@ class ProgramEmailsController extends AppController {
 
 	public function admin_update() {
 		$email = json_decode($this->params['form']['program_emails'], true);
-		$count = count($email);
 		$success = false;
 
-		if ($count > 1) {
-			foreach ($email as $k => $v) {
-				$this->ProgramEmail->id = $v['id'];
-				$this->ProgramEmail->set($v);
-				$this->ProgramEmail->save();
-			}
-			$success = true;
-		} else {
-			$this->ProgramEmail->id = $email['id'];
-			$this->ProgramEmail->set($email);
+		$this->ProgramEmail->id = $email['id'];
+		$this->ProgramEmail->set($email);
 
-			if ($this->ProgramEmail->save()) {
-				$success = true;
-			}
+		if ($this->ProgramEmail->save()) {
+			$success = true;
 		}
 
 		$data['success'] = $success;
