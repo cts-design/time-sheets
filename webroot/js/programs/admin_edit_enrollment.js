@@ -1029,11 +1029,15 @@ stepTree = Ext.create('Ext.panel.Panel', {
             icon: Ext.Msg.QUESTION,
             fn: function (btn) {
               if (btn === 'yes') {
-                selectedModule.eachChild(function (child) {
-                  selectedModule.removeChild(child);
+                Ext.Ajax.request({
+                  url: '/admin/program_steps/destroy',
+                  params: {
+                    program_step_id: selectedModule.data.id
+                  },
+                  success: function (response) {
+                    selectedModule.remove();
+                  }
                 });
-                selectedModule.remove();
-                programStepStore.sync();
               }
             }
           });
