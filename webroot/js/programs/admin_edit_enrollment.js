@@ -1029,11 +1029,15 @@ stepTree = Ext.create('Ext.panel.Panel', {
             icon: Ext.Msg.QUESTION,
             fn: function (btn) {
               if (btn === 'yes') {
-                selectedModule.eachChild(function (child) {
-                  selectedModule.removeChild(child);
+                Ext.Ajax.request({
+                  url: '/admin/program_steps/destroy',
+                  params: {
+                    program_step_id: selectedModule.data.id
+                  },
+                  success: function (response) {
+                    selectedModule.remove();
+                  }
                 });
-                selectedModule.remove();
-                programStepStore.sync();
               }
             }
           });
@@ -1130,6 +1134,7 @@ stepTree = Ext.create('Ext.panel.Panel', {
         text: 'Delete Step',
         handler: function () {
           var grid = Ext.getCmp('gridTreePanel'),
+            programStepStore = Ext.data.StoreMgr.lookup('ProgramStepStore'),
             selectedStep = grid.getSelectionModel().getSelection()[0];
 
 
@@ -1140,7 +1145,15 @@ stepTree = Ext.create('Ext.panel.Panel', {
             icon: Ext.Msg.QUESTION,
             fn: function (btn) {
               if (btn === 'yes') {
-                selectedStep.remove();
+                Ext.Ajax.request({
+                  url: '/admin/program_steps/destroy',
+                  params: {
+                    program_step_id: selectedStep.data.id
+                  },
+                  success: function (response) {
+                    selectedStep.remove();
+                  }
+                });
               }
             }
           });
