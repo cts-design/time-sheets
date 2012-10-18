@@ -102,6 +102,7 @@ class ProgramInstructionsController extends AppController {
 						$data['program_instructions'][] = $v['ProgramInstruction'];
 					}
 				} else {
+					$formField['ProgramInstruction']['id'] = $this->ProgramInstruction->id;
 					$data['program_instructions'] = $formField['ProgramInstruction'];
 				}
 
