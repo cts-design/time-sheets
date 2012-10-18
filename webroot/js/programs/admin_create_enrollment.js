@@ -434,7 +434,6 @@ Ext.create('Ext.data.Store', {
     created: null,
     modified: null
   }],
-  autoSync: true,
   storeId: 'ProgramInstructionStore',
   model: 'ProgramInstruction',
   proxy: {
@@ -500,7 +499,6 @@ Ext.create('Ext.data.Store', {
     created: null,
     modified: null
   }],
-  autoSync: true,
   storeId: 'ProgramEmailStore',
   model: 'ProgramEmail',
   proxy: {
@@ -2421,8 +2419,6 @@ instructions = Ext.create('Ext.panel.Panel', {
       programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
       program = programStore.first(),
       rootNode = programStepStore.tree.root;
-
-    console.log(program.get('id'));
 
     Ext.getCmp('statusProgressBar').updateProgress(0.83, 'Step 5 of 6');
 

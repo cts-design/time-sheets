@@ -102,6 +102,7 @@ class ProgramInstructionsController extends AppController {
 						$data['program_instructions'][] = $v['ProgramInstruction'];
 					}
 				} else {
+					$formField['ProgramInstruction']['id'] = $this->ProgramInstruction->id;
 					$data['program_instructions'] = $formField['ProgramInstruction'];
 				}
 
@@ -142,20 +143,11 @@ class ProgramInstructionsController extends AppController {
 		$count = count($instruction);
 		$success = false;
 
-		if ($count > 1) {
-			foreach ($instruction as $k => $v) {
-				$this->ProgramInstruction->id = $v['id'];
-				$this->ProgramInstruction->set($v);
-				$this->ProgramInstruction->save();
-			}
-			$success = true;
-		} else {
-			$this->ProgramInstruction->id = $instruction['id'];
-			$this->ProgramInstruction->set($instruction);
+		$this->ProgramInstruction->id = $instruction['id'];
+		$this->ProgramInstruction->set($instruction);
 
-			if ($this->ProgramInstruction->save()) {
-				$success = true;
-			}
+		if ($this->ProgramInstruction->save()) {
+			$success = true;
 		}
 
 		$data['success'] = $success;
