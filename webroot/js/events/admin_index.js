@@ -203,38 +203,73 @@ Ext.create('Ext.data.Store', {
 Ext.create('Ext.menu.Menu', {
   id: 'contextMenu',
   title: 'Event Actions',
-  bodyPadding: 10,
+  bodyPadding: 5,
   items:[{
     xtype: 'button',
-    text: 'Event Details'
+    text: 'Event Details',
+    icon: '/img/icons/date_go.png',
+    handler: function() {
+      Ext.MessageBox.alert('Status', 'This button has not been implemented yet');
+    }
   },{
-      xtype: 'button',
-      text: 'Duplicate Event',
-      icon: '/img/icons/date_copy.png',
-      handler: function() {
-        var selected = this.up('grid').getSelectionModel().getLastSelected();
-        selected.data.id = undefined;
-        this.up('form').loadRecord(selected);
-      }
-    },{
-      xtype: 'button',
-      text: 'Edit Event'
-    },{
-      xtype: 'button',
-      text: 'Delete Event',
-      icon: '/img/icons/date_delete.png',
-      handler: function() {
-        var selected = this.up('grid').getSelectionModel().getLastSelected(),
-        store = Ext.data.StoreManager.lookup('eventsStore');
-        if(selected.data.registered > 0) {
-          Ext.MessageBox.alert('Error', 'Cannot delete an event that already has registrants.');
+    xtype: 'button',
+    text: 'Duplicate Event',
+    icon: '/img/icons/date_copy.png',
+    handler: function() {
+      var formPanel = Ext.getCmp('eventsForm'),
+      record = formPanel.down('grid').getSelectionModel().getLastSelected();
+      record.data.id = undefined;
+      formPanel.loadRecord(record);
+    }
+  },{
+    xtype: 'button',
+    text: 'Edit Event',
+    icon: '/img/icons/date_edit.png',
+    handler: function() {
+      var formPanel = Ext.getCmp('eventsForm'),
+      grid = formPanel.down('grid'),
+      form = formPanel.getForm(),
+      record = grid.getSelectionModel().getLastSelected();
+      Ext.getCmp('cat2Name').disable();
+      Ext.getCmp('cat3Name').disable();
+      if (record) {
+        if(record.data.registered > 0) {
+          form.reset();
+          Ext.MessageBox.alert('Error', 'Cannot edit an even that already has registrants.');
         }
         else {
-          store.remove(selected);
-          store.sync();
+          form.loadRecord(record);
+          var otherLocation = formPanel.down('fieldset').getComponent('otherLocation'), 
+          address = formPanel.down('fieldset').getComponent('address');
+          if(record.data.location === 'Other') {
+            otherLocation.enable();
+            address.enable();
+          }
+          else {
+            otherLocation.disable();
+            address.disable();
+          }
         }
       }
-    }]
+      form.clearInvalid();
+   }
+  },{
+    xtype: 'button',
+    text: 'Delete Event',
+    icon: '/img/icons/date_delete.png',
+    handler: function() {
+      var formPanel = Ext.getCmp('eventsForm'),
+      record = formPanel.down('grid').getSelectionModel().getLastSelected();
+      store = Ext.data.StoreManager.lookup('eventsStore');
+      if(record.data.registered > 0) {
+        Ext.MessageBox.alert('Error', 'Cannot delete an event that already has registrants.');
+      }
+      else {
+        store.remove(record);
+        store.sync();
+      }
+    }
+  }]
 });
 
 Ext.create('Ext.form.Panel', {
@@ -309,6 +344,7 @@ Ext.create('Ext.form.Panel', {
       }
     },],
     listeners: {
+      //TODO decide if this should stay or not
       itemdblclick: function(grid, record, item, index, e, eOpts) {
         var formPanel = this.up('form');
         var form = formPanel.getForm();
