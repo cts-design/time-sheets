@@ -3,6 +3,13 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+	<h1>Release 3.5.3 (10-16-12)</h1>
+	<ol>
+		<li>Fixed persistence issues in the enrollment programs</li>
+		<li>Fixed editing issues in the enrollment programs</li>
+		<li>Fixed editing issues in the registration programs</li>
+	</ol>
+	<hr />
 	<h1>Release 3.5.2 (10-16-12)</h1>
 	<ol>
 		<li>Fixed various issues within the Programs Module</li>
