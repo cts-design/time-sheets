@@ -133,9 +133,13 @@ class ProgramStepsController extends AppController {
 	}
 
 	public function admin_destroy() {
-		$program_step = json_decode($this->params['form']['program_steps'], true);
+		if (isset($this->params['form']['program_step_id'])) {
+			$this->ProgramStep->id = $this->params['form']['program_step_id'];
+		} else if (isset($this->params['form']['program_steps'])) {
+			$program_step = json_decode($this->params['form']['program_steps'], true);
+			$this->ProgramStep->id = $program_step['id'];
+		}
 
-		$this->ProgramStep->id = $program_step['id'];
 		$this->ProgramStep->delete();
 
 		$data['success'] = true;
