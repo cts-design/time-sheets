@@ -60,6 +60,8 @@ class ProgramDocumentsController extends AppController {
 	}
 
 	public function admin_read() {
+		$watchedCats = $catCondition = null;
+
 		if (isset($this->params['url']['program_step_id'])) {
 			$conditions = array(
 				'ProgramDocument.program_step_id' => $this->params['url']['program_step_id']
@@ -79,11 +81,13 @@ class ProgramDocumentsController extends AppController {
 			'conditions' => $conditions
 		));
 
-		$this->loadModel('WatchedFilingCat');
-		$this->WatchedFilingCat->recursive = -1;
-		$watchedCats = $this->WatchedFilingCat->find('all', array(
-			'conditions' => $catCondition
-		));
+		if ($catCondition) {
+			$this->loadModel('WatchedFilingCat');
+			$this->WatchedFilingCat->recursive = -1;
+			$watchedCats = $this->WatchedFilingCat->find('all', array(
+				'conditions' => $catCondition
+			));
+		}
 
 		$data['success'] = true;
 
