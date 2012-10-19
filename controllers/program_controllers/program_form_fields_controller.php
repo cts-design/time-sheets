@@ -81,8 +81,8 @@ class ProgramFormFieldsController extends AppController {
 				$success = false;
 			}
 		} else {
-			$this->ProgramFormField->id = $formField['id'];
-			$this->ProgramFormField->set($formField);
+			$this->ProgramFormField->id = $formField[0]['id'];
+			$this->ProgramFormField->set($formField[0]);
 
 			if ($this->ProgramFormField->save()) {
 				$success = true;
