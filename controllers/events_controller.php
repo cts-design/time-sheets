@@ -138,23 +138,30 @@ class EventsController extends AppController {
 		if($this->RequestHandler->isAjax()) {
 			if(!empty($this->data)) {
 				$this->data['Event'] = json_decode($this->data['Event'], true);
-				if(!isset($this->data['Event']['cat_2'])) {
-					$this->data['Event']['cat_2'] = NULL;
-				}
-				if(!isset($this->data['Event']['cat_3'])) {
-					$this->data['Event']['cat_3'] = NULL;
-				}
-				if($this->data['Event']['location_id']) {
-					$this->data['Event']['other_location'] = NULL;
-					$this->data['Event']['address'] = NULL;
-				} 
-				if($this->Event->save($this->data)) {
-					$data['success'] = true;
-					$data['message'] = 'The event was updated successfully.';
+				$event = $this->Event->findById($this->data['Event']['id']);
+				if($event['Event']['registered']) {
+					$data['success'] = false;
+					$data['message'] = 'Cannot edit event that already has registrants.';
 				}
 				else {
-					$data['success'] = false;
-					$data['message'] = 'Unable to update event, please try again.';
+					if(!isset($this->data['Event']['cat_2'])) {
+						$this->data['Event']['cat_2'] = NULL;
+					}
+					if(!isset($this->data['Event']['cat_3'])) {
+						$this->data['Event']['cat_3'] = NULL;
+					}
+					if($this->data['Event']['location_id']) {
+						$this->data['Event']['other_location'] = NULL;
+						$this->data['Event']['address'] = NULL;
+					} 
+					if($this->Event->save($this->data)) {
+						$data['success'] = true;
+						$data['message'] = 'The event was updated successfully.';
+					}
+					else {
+						$data['success'] = false;
+						$data['message'] = 'Unable to update event, please try again.';
+					}
 				}
 			}
 			else {
