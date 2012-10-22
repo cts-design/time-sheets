@@ -593,10 +593,17 @@ Ext.create('Ext.form.Panel', {
           event = Ext.create('Event', form.getValues());
           store.add(event);
         }
-        store.sync();
+        store.sync({
+          success: function() {
+            console.log('success');
+          },
+          failure: function() {
+            console.log('failure');
+          }
+        });
       }
     }
-  }],
+  }]
 });
 
 Ext.onReady(function(){
