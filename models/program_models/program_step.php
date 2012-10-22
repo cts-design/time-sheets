@@ -32,7 +32,7 @@ class ProgramStep extends AppModel {
             'dependent' => false,
             'conditions' => '',
             'fields' => '',
-            'order' => '',
+            'order' => 'ProgramFormField.order ASC',
             'limit' => '',
             'offset' => '',
             'exclusive' => '',
