@@ -364,6 +364,12 @@ Ext.create('Ext.data.Store', {
       update: '/admin/program_documents/update',
       destroy: '/admin/program_documents/destroy'
     },
+    listeners: {
+      exception: function (proxy, response, op, eOpts) {
+        op.records[0].store.remove(op.records);
+        Ext.Msg.alert('Error', op.error);
+      }
+    },
     reader: {
       type: 'json',
       messageProperty: 'message',
