@@ -263,10 +263,19 @@ Ext.onReady(function(){
                 allowBlank: false,
                 validateOnChange: true,
                 validator: function(value) {
-                	var val = store.find('number', value);
-                	if(val === -1) {
-                		return true;
+                	var record = store.findRecord('number', value),
+                  loadedRecord = this.up('form').getRecord();
+                	if(record && loadedRecord) {
+                    if(loadedRecord.data.id === record.data.id) {
+                      return true;
+                    }
+                    else {
+                      return 'Bar code number must be unique.';
+                    }
                 	}
+                  if(record && !loadedRecord) {
+                    return true;
+                  }
                 	else {
                 		return 'Bar code number must be unique.';
                 	}
@@ -362,7 +371,9 @@ Ext.onReady(function(){
         }],
 		buttons: [{
 			text: 'Save',
+      id: 'save',
 			formBind: true,
+      disabled: true,
 			handler: function() {
 				var form = this.up('form').getForm();
 				var vals = form.getValues();
