@@ -111,12 +111,14 @@ class BarCodeDefinitionsController extends AppController {
 			elseif ($this->BarCodeDefinition->delete($this->data['BarCodeDefinition']['id'])) {
 				$data['definitions'] = $this->getDefinition($this->data['BarCodeDefinition']['id']);
 				$data['success'] = true;
+				$data['message'] = 'Bar code definition was deleted successfully.';
 				$this->Transaction->createUserTransaction('BarCodeDefinition', null, null,
 										'Deleted bar code definition ID ' . 
 										$this->data['BarCodeDefinition']['id']);				
 			}
 			else {
 				$data['success'] = false;
+				$data['message'] = 'Unable to delete bar code definition.';
 			}
 			$this->set(compact('data'));			
 			$this->render(null, null, '/elements/ajaxreturn');			
