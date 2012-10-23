@@ -289,15 +289,7 @@ Ext.onReady(function() {
         plain: true
       },
       listeners: {
-        show: function () {
-          console.log('show')
-        },
-        render: function () {
-          console.log('render')
-        },
         activate: function () {
-          console.log('activated!');
-
           if (selectedRecord) {
             editForm.loadRecord(selectedRecord);
             editForm.doLayout();
