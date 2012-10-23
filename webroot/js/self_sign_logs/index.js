@@ -529,7 +529,7 @@ Ext.onReady( function() {
 			format: 'm/d/y g:i a',
 			xtype: 'datecolumn',
 			sortable: true,
-			width: 100
+			width: 120
 		}]		
 	});
 			
