@@ -5,25 +5,6 @@
  * @package Atlas V3
  */
 
-// Kludge to fix not being able to type spaces in context menu text fields 
-Ext.override(Ext.menu.KeyNav, {
-    constructor: function(menu) {
-        var me = this;
-        me.menu = menu;
-        me.callParent([menu.el, {
-            down: me.down,
-            enter: me.enter,
-            esc: me.escape,
-            left: me.left,
-            right: me.right,
-            //space: me.enter,
-            tab: me.tab,
-            up: me.up
-        }]);
-    }
-});
-
-
 Ext.onReady( function() {
     Ext.state.Manager.setProvider(new Ext.state.CookieProvider({
         expires: new Date(new Date().getTime()+(1000*60*60*24*365)) // 1 year
@@ -457,6 +438,7 @@ Ext.onReady( function() {
 	  	icon:  '/img/icons/arrow_undo.png',
 		menu: {
 			cls: 'reassign-menu',
+      enableKeyNav: false,
 			width: 295,
 			items: [
 				reassign
@@ -477,6 +459,7 @@ Ext.onReady( function() {
 	  	icon:  '/img/icons/add.png',
 		menu: {
 			cls: 'new-sign-in-menu',
+      enableKeyNav: false,
 			width: 295,
 			items: [
 				newRecord
@@ -730,9 +713,12 @@ Ext.onReady( function() {
 					listeners: {
 						change: function() {
 							Ext.getCmp('servicesSelect').reset();
-							servicesStore.load({params: {
-								locations: Ext.util.Format.htmlEncode(this.getValue())
-							}});							
+              var val = this.getValue();
+              if(val.length > 0) {
+                servicesStore.load({params: {
+                  locations: Ext.util.Format.htmlEncode(val)
+                }});							
+              }
 						}
 					},
 					getState: function() {					
