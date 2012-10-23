@@ -3,17 +3,17 @@ Ext.onReady(function(){
 	Ext.define('BarCodeDefinition', {
 		extend: 'Ext.data.Model',
 	
-        fields: [
-            {name: 'id', type: 'int' },
-            {name: 'name'},
-            {name: 'number', type: 'int'},
-            {name: 'Cat1-name', serverKey: 'cat_1'},
-            {name: 'Cat2-name', serverKey: 'cat_2'},
-            {name: 'Cat3-name', serverKey: 'cat_3'},     
-            {name: 'DocumentQueueCategory-name', serverKey: 'document_queue_category_id'},        
-            {name: 'created', type: 'date', dateFormat: 'n/j h:ia'},
-            {name: 'modified', type: 'date', dateFormat: 'n/j h:ia'}
-        ]		
+    fields: [
+        {name: 'id', type: 'int' },
+        {name: 'name'},
+        {name: 'number', type: 'int'},
+        {name: 'Cat1-name', serverKey: 'cat_1'},
+        {name: 'Cat2-name', serverKey: 'cat_2'},
+        {name: 'Cat3-name', serverKey: 'cat_3'},     
+        {name: 'DocumentQueueCategory-name', serverKey: 'document_queue_category_id'},        
+        {name: 'created', type: 'date', dateFormat: 'n/j h:ia'},
+        {name: 'modified', type: 'date', dateFormat: 'n/j h:ia'}
+    ]		
 	});
 
     var store = Ext.create('Ext.data.Store', {
@@ -43,39 +43,6 @@ Ext.onReady(function(){
         remoteSort: true,      
 		autoLoad: true,
 		listeners: {
-			write: function(store, operation, eOpts) {
-				var responseTxt = Ext.JSON.decode(operation.response.responseText);
-				if(!responseTxt.success || !operation.success )	{
-					var msg = null;
-					switch(operation.action) {
-						case 'destroy' : 
-							msg = 'Unable to delete definition.';
-							break;
-						case 'create' :
-							msg = 'Unable to create definition.';
-							break;
-						case 'update' :
-							msg = 'Unable to update definition.';
-							break;	
-					}
-					Ext.MessageBox.alert('Status', msg);
-				}
-				if(responseTxt.success) {
-					Ext.MessageBox.hide();
-					if(operation.action === 'create' || operation.action === 'update') {
-						gridForm.getForm().reset();
-	        			Ext.getCmp('cat2Name').disable();
-	        			Ext.getCmp('cat3Name').disable();
-	        			store.load();							
-					}
-					if(operation.action === 'destroy') {
-	            		gridForm.getForm().reset();
-	            		Ext.getCmp('cat2Name').disable();
-	                	Ext.getCmp('cat3Name').disable(); 
-	                	store.load();						
-					}					
-				}	
-			},
 			beforesync: function(){
 				Ext.MessageBox.wait('Please Wait......');
 			}
@@ -230,7 +197,10 @@ Ext.onReady(function(){
             			if(id === 'yes') {	
 		            		var record = Ext.getCmp('barCodeDefGrid').getSelectionModel().getLastSelected();
 		            		store.remove(record);       		
-		            		store.sync();
+		            		store.sync({
+                      success: processResponse,
+                      failure: processResponse
+                    });
 	            		} 
 	            		else {
 	            			return false;
@@ -407,10 +377,25 @@ Ext.onReady(function(){
 						var barCodeDefinition = Ext.create('BarCodeDefinition', form.getValues());
 						store.add(barCodeDefinition);
 					}			
-					store.sync();				
+					store.sync({
+            success: processResponse, 
+            failure: processResponse
+          });				
 				}		
 			}      	
 		}],        
         renderTo: 'barCodeDefinitions'
-    });	
+    });
+    var processResponse = function(batch, options) {
+      var responseText = Ext.JSON.decode(batch.operations[0].response.responseText),
+      title = 'Success';
+      if(!responseText.success) {
+        title = 'Error';
+      }
+      Ext.MessageBox.alert(title, responseText.message);
+      gridForm.getForm().reset();
+      Ext.getCmp('cat2Name').disable();
+      Ext.getCmp('cat3Name').disable();
+      store.load();							
+    }
 });
