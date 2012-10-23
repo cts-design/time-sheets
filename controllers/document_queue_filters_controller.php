@@ -16,12 +16,12 @@ class DocumentQueueFiltersController extends AppController {
 		if($this->RequestHandler->isAjax()) {
 			$this->data['DocumentQueueFilter'] = $this->params['form'];
 			$this->data['DocumentQueueFilter']['user_id'] = $this->Auth->user('id');
-			if(isset($this->data['DocumentQueueFilter']['from_date'])) {
+			if(!empty($this->data['DocumentQueueFilter']['from_date'])) {
 				$this->data['DocumentQueueFilter']['from_date'] = 
 					date('Y-m-d', strtotime($this->data['DocumentQueueFilter']['from_date']));
 			}
 			else $this->data['DocumentQueueFilter']['from_date'] = null;
-			if(isset($this->data['DocumentQueueFilter']['to_date'])) {
+			if(!empty($this->data['DocumentQueueFilter']['to_date'])) {
 				$this->data['DocumentQueueFilter']['to_date'] = 
 					date('Y-m-d', strtotime($this->data['DocumentQueueFilter']['to_date']));
 			}
