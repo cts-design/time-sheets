@@ -65,7 +65,8 @@ Ext.onReady(function(){
     progress.hide();
   });
 
-  var approvalForm = Ext.create('Ext.form.Panel', {
+  Ext.create('Ext.form.Panel', {
+    id: 'approvalForm',
     fieldDefaults: {
       labelWidth: 90,
       labelAlign: 'top',
@@ -127,9 +128,8 @@ Ext.onReady(function(){
   });
 
   var menu = Ext.create('Ext.menu.Menu', {
-    layout: 'menu',
     items: [
-      approvalForm
+      'approvalForm'
     ]
   });
 
