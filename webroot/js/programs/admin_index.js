@@ -50,7 +50,6 @@ Ext.create('Ext.data.Store', {
 Ext.define('ProgramGridPanel', {
   alias: 'widget.programgridpanel',
   extend: 'Ext.grid.Panel',
-  forceFit: true,
   height: 300,
   store: 'ProgramStore',
 });
