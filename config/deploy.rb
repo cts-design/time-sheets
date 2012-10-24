@@ -38,6 +38,16 @@ namespace :cts do
     server "staging.atlasforworkforce.com", :app, :web, :db, :primary => true
   end
 
+  task :design do
+    set :deploy_to, "/var/www/vhosts/design.atlasforworkforce.com/#{application}"
+    set :server_name, 'atlas design'
+    set :user, 'design_deploy'
+    set :keep_releases, 1
+    set :branch, 'staging'
+    set :design_branch, "chipola"
+    server "192.168.200.74", :app, :web, :db, :primary => true
+  end
+
   task :tradeshow do
     set :deploy_to, "/var/www/vhosts/www.ctsdemo.local/#{application}"
     set :server_name, 'cts tradeshow'
@@ -180,7 +190,7 @@ task :design do
     stream "cd #{release_path}/design && git checkout #{git_flag_quiet}#{design_branch}"
     run "mv #{release_path}/design/img/default/ #{release_path}/webroot/img/"
     run "mv #{release_path}/design/js/default/ #{release_path}/webroot/js/"
-    run "mv #{release_path}/design/css/style.css #{release_path}/webroot/css/style.css"
+    run "mv #{release_path}/design/css/default #{release_path}/webroot/css/default"
     run "mv #{release_path}/design/views/layouts/default.ctp #{release_path}/views/layouts/default.ctp"
     run "mv #{release_path}/design/views/website_views/pages/home.ctp #{release_path}/views/website_views/pages/home.ctp"
   end
