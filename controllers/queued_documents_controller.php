@@ -90,10 +90,10 @@ class QueuedDocumentsController extends AppController {
 				if(isset($conditions)) {
 					if($this->checkAutoLoad()) {				
 						$conditions['QueuedDocument.locked_status'] = 0;
-						$conditions['QueuedDocument.queue_category_id'] = $allowedQueueCats;
 						$doc = $this->QueuedDocument->find('first', array(
 							'order' => array('QueuedDocument.id ASC'),
 							'conditions' => $conditions));
+
 						if($doc) {
 							$docs[0] = $this->QueuedDocument->lockDocument(
 									       $doc['QueuedDocument']['id'], $this->Auth->user('id'));
