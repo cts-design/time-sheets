@@ -84,15 +84,17 @@ class NavHelper extends AppHelper {
 		}
 
 		if (isset($config['links'])) {
-			$output .= "<li rel=\"{$config['rel']}\">";
+			$output .= "<li rel=\"{$config['rel']}\" id=\"{$config['id']}\">";
 			$output .= '<a>' . Inflector::humanize($config['title']) . '</a>';
 			$output .= '<ul>';
 
 			foreach ($config['links'] as $key => $value) {
+				if(!isset($value['id']))
+					$value['id'] = '';
 				if (isset($value['hasPermission']) && $this->Session->read('Auth.User.role_id') != $value['hasPermission'])
 					continue;
 
-				$output .= "<li rel=\"{$value['rel']}\">";
+				$output .= "<li rel=\"{$value['rel']}\" id=\"{$value['id']}\">";
 
 				if (isset($value['children']) && !empty($value['children'])) {
 					if ($sort)
