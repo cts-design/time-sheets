@@ -54,7 +54,7 @@ Ext.onReady(function(){
       fields: [{name: 'id', type: 'int'}, {name: 'name'}, {name: 'secure'}, {
             name : 'img',
             convert: function(value, record){
-                var img = null;
+                var img = '';
                 var secure = record.get('secure');
                 if(secure) {
                     img = '<img src="/img/icons/lock.png" />&nbsp';
@@ -107,16 +107,16 @@ Ext.onReady(function(){
 
     Ext.define('DocumentQueueCategory', {
       extend: 'Ext.data.Model',
-    fields: [{name: 'id', type: 'int'}, {name: 'name'}, {name: 'secure'}, {
-            name : 'img',
-            convert: function(value, record){
-                var img = null;
-                var secure = record.get('secure');
-                if(secure) {
-                    img = '<img src="/img/icons/lock.png" />&nbsp';
-                }
-                return img;
+      fields: [{name: 'id', type: 'int'}, {name: 'name'}, {name: 'secure'}, {
+        name : 'img',
+        convert: function(value, record){
+            var img = '';
+            var secure = record.get('secure');
+            if(secure) {
+                img = '<img src="/img/icons/lock.png" />&nbsp';
             }
+            return img;
+        }
         }]
     });
 
