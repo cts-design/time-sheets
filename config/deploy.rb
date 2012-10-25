@@ -14,7 +14,7 @@ set :default_shell, '/bin/bash'
 set :design_branch, "master"
 
 # plugins, override in region namespace if region has plugins
-set :app_plugins, ['queue']
+set :app_plugins, []
 
 # --- Server Settings.
 
@@ -88,7 +88,7 @@ task :tbwa do
   set :deploy_to, "/var/www/vhosts/workforcetampa.com/#{application}"
   set :user, 'ftp_tbwa'
   server "workforcetampa.com", :app, :web, :db, :primary => true
-  set :app_plugins, ['job_forms', 'queue']
+  set :app_plugins, ['job_forms']
 end
 
 task :suncoast do
