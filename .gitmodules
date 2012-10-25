@@ -4,3 +4,6 @@
 [submodule "plugins/acl_extras"]
 	path = plugins/acl_extras
 	url = git://github.com/markstory/acl_extras.git
+[submodule "plugins/queue"]
+	path = plugins/queue
+	url = git://github.com/MSeven/cakephp_queue.git
