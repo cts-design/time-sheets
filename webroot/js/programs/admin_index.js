@@ -161,7 +161,6 @@ Ext.onReady(function () {
         })
       ],
       columns: [{
-        id: 'id',
         dataIndex: 'id',
         hidden: true,
         text: 'Id',
@@ -361,7 +360,6 @@ Ext.onReady(function () {
         })
       ],
       columns: [{
-        id: 'id',
         dataIndex: 'id',
         hidden: true,
         text: 'Id',
@@ -561,7 +559,6 @@ Ext.onReady(function () {
         })
       ],
       columns: [{
-        id: 'id',
         dataIndex: 'id',
         hidden: true,
         text: 'Id',
@@ -764,7 +761,6 @@ Ext.onReady(function () {
         })
       ],
       columns: [{
-        id: 'id',
         dataIndex: 'id',
         hidden: true,
         text: 'Id',
