@@ -13,3 +13,6 @@
 [submodule "vendors/chromephp"]
 	path = vendors/chromephp
 	url = git://github.com/ccampbell/chromephp.git
+[submodule "vendors/simpletest"]
+	path = vendors/simpletest
+	url = git://github.com/99designs/simpletest.git
