@@ -10,3 +10,6 @@
 [submodule "vendors/PHPExcel"]
 	path = vendors/PHPExcel
 	url = git://github.com/PHPOffice/PHPExcel.git
+[submodule "vendors/chromephp"]
+	path = vendors/chromephp
+	url = git://github.com/ccampbell/chromephp.git
