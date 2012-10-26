@@ -1,6 +1,6 @@
 <?php
-App::import('Vendor','PHPExcel',array('file' => 'excel/PHPExcel.php'));
-App::import('Vendor','PHPExcelWriter',array('file' => 'excel/PHPExcel/Writer/Excel2007.php')); 
+App::import('Vendor','PHPExcel',array('file' => 'PHPExcel' . DS . 'Classes' . DS . 'PHPExcel.php'));
+App::import('Vendor','PHPExcelWriter',array('file' => 'PHPExcel' . DS . 'Classes' . DS . 'PHPExcel' . DS . 'Writer' . DS .'Excel2007.php')); 
 
 class ExcelHelper extends AppHelper {
 
