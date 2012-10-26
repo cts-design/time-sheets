@@ -229,7 +229,9 @@ namespace :notify_campfire do
 end
 
 def send_campfire_alert(body)
-  run "cd #{current_release} && cake campfire '#{body}'"
+  if current_release
+    run "cd #{current_release} && cake campfire '#{body}'"
+  end
 end
 
 namespace :mysql do
