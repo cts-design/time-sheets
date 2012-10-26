@@ -7,3 +7,6 @@
 [submodule "plugins/debug_kit"]
 	path = plugins/debug_kit
 	url = git://github.com/cakephp/debug_kit.git
+[submodule "vendors/PHPExcel"]
+	path = vendors/PHPExcel
+	url = git://github.com/PHPOffice/PHPExcel.git
