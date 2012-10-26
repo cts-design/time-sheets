@@ -7,3 +7,12 @@
 [submodule "plugins/debug_kit"]
 	path = plugins/debug_kit
 	url = git://github.com/cakephp/debug_kit.git
+[submodule "vendors/PHPExcel"]
+	path = vendors/PHPExcel
+	url = git://github.com/PHPOffice/PHPExcel.git
+[submodule "vendors/chromephp"]
+	path = vendors/chromephp
+	url = git://github.com/ccampbell/chromephp.git
+[submodule "vendors/simpletest"]
+	path = vendors/simpletest
+	url = git://github.com/99designs/simpletest.git
