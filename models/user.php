@@ -617,6 +617,9 @@ class User extends AppModel {
 	if (isset($this->data['User']['dob']) && !empty($this->data['User']['dob'])) {
 	    $this->data['User']['dob'] = date('Y-m-d', strtotime($this->data['User']['dob']));
 	}
+	else {
+		$this->data['User']['dob'] = null;
+	}
 
 	return true;
     }
