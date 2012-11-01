@@ -1,7 +1,11 @@
 <?php
+// When adding any leaves to the tree that will have children make sure to add an id config.
+// This is needed in order for the cookie that save the open tree nodes to work
+
 $config['navigation.website'] = array(
 	'rel' => 'website',
 	'title' => 'Website',
+	'id' => 'website',
 	'links' => array(
 		array(
 			'link' => array('controller' => 'pages', 'action' => 'index'),
@@ -16,6 +20,7 @@ $config['navigation.website'] = array(
 		array(
 			'rel' => 'inTheNews',
 			'title' => 'News',
+			'id' => 'news',
 			'children' => array(
 				array(
 					'link' => array('controller' => 'press_releases', 'action' => 'index'),
@@ -42,6 +47,7 @@ $config['navigation.website'] = array(
 		array(
 			'rel' => 'surveys',
 			'title' => 'Surveys',
+			'id' => 'surveys',
 			'children' => array(
 				array(
 					'link' => array('controller' => 'career_seekers_surveys', 'action' => 'index'),
@@ -81,6 +87,7 @@ $config['navigation.website'] = array(
 $config['navigation.settings'] = array(
 	'rel' => 'settings',
 	'title' => 'Settings',
+	'id' => 'settings',
 	'links' => array(
 		array(
 			'link' => array('controller' => 'settings', 'action' => 'index'),
@@ -155,6 +162,7 @@ $config['navigation.alerts'] = array(
 $config['navigation.users'] = array(
 	'rel' => 'group',
 	'title' => 'Users',
+	'id' => 'users',
 	'links' => array(
 		array(
 			'link' => array('controller' => 'users', 'action' => 'index_admin'),
@@ -172,6 +180,7 @@ $config['navigation.users'] = array(
 $config['navigation.selfSign'] = array(
 	'rel' => 'user',
 	'title' => 'Self Sign',
+	'id' => 'selfSign',
 	'links' => array(
 		array(
 			'link' => array('controller' => 'self_sign_logs', 'action' => 'index'),
@@ -194,6 +203,7 @@ $config['navigation.selfSign'] = array(
 $config['navigation.storage'] = array(
 	'rel' => 'storage',
 	'title' => 'Storage',
+	'id' => 'storage',
 	'links' => array(
 		array(
 			'link' => array('controller' => 'queued_documents', 'action' => 'index'),
@@ -238,6 +248,7 @@ $config['navigation.audits'] = array(
 $config['navigation.tools'] = array(
 	'rel' => 'tools',
 	'title' => 'Tools',
+	'id' => 'tools',
 	'links' => array(
 		array(
 			'link' => array('controller' => 'users', 'action' => 'resolve_login_issues'),

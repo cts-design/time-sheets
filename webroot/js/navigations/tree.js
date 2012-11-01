@@ -5,23 +5,6 @@
  * @package ATLAS V3
  */
 
-Ext.override(Ext.menu.KeyNav, {
-  constructor: function(menu) {
-    var me = this;
-    me.menu = menu;
-    me.callParent([menu.el, {
-      down: me.down,
-      enter: me.enter,
-      esc: me.escape,
-      left: me.left,
-      right: me.right,
-      //space: me.enter,
-      tab: me.tab,
-      up: me.up
-    }]);
-  }
-});
-
 Ext.onReady(function() {
   Ext.QuickTips.init();
   Ext.BLANK_IMAGE_URL = "/img/ext/default/s.gif";
@@ -291,8 +274,9 @@ Ext.onReady(function() {
       id: 'addLink',
       icon : '/img/icons/add.png',
       menu: {
-        plain: true,
-      items: [addForm]
+        enableKeyNav: false,
+        items: [addForm],
+        plain: true
       }
     },
       {
@@ -300,19 +284,12 @@ Ext.onReady(function() {
       id: 'editLink',
       icon : '/img/icons/application_form_edit.png',
       menu: {
-        plain: true,
-      items: [editForm]
+        enableKeyNav: false,
+        items: [editForm],
+        plain: true
       },
       listeners: {
-        show: function () {
-          console.log('show')
-        },
-        render: function () {
-          console.log('render')
-        },
         activate: function () {
-          console.log('activated!');
-
           if (selectedRecord) {
             editForm.loadRecord(selectedRecord);
             editForm.doLayout();

@@ -624,7 +624,10 @@ Ext.onReady(function(){
 			icon:  '/img/icons/find.png',
 			handler: function(){
 				var f = allDocsSearch.getForm();
-				var vals = f.getValues();
+				var vals = f.getValues(false, true);
+        if(vals.dateType === undefined) {
+          vals.dateType = 'filed';
+        }
 				vals = Ext.JSON.encode(vals);
 				allFiledDocsStore.proxy.extraParams = {filters : vals};
 				allFiledDocsStore.loadPage(1, {limit: 25, start: 0});
@@ -645,7 +648,10 @@ Ext.onReady(function(){
 			icon:  '/img/icons/excel.png',
 			handler: function(){
 				var f = allDocsSearch.getForm();
-				var vals = f.getValues();
+				var vals = f.getValues(false, true);
+        if(vals.dateType === undefined) {
+          vals.dateType = 'filed';
+        }
 				vals = Ext.JSON.encode(vals);
 				allFiledDocsStore.proxy.extraParams = {filters : vals};
 				window.location = '/admin/filed_documents/report?filters='+ vals;

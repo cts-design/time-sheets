@@ -50,7 +50,6 @@ Ext.create('Ext.data.Store', {
 Ext.define('ProgramGridPanel', {
   alias: 'widget.programgridpanel',
   extend: 'Ext.grid.Panel',
-  forceFit: true,
   height: 300,
   store: 'ProgramStore',
 });
@@ -162,7 +161,6 @@ Ext.onReady(function () {
         })
       ],
       columns: [{
-        id: 'id',
         dataIndex: 'id',
         hidden: true,
         text: 'Id',
@@ -362,7 +360,6 @@ Ext.onReady(function () {
         })
       ],
       columns: [{
-        id: 'id',
         dataIndex: 'id',
         hidden: true,
         text: 'Id',
@@ -562,7 +559,6 @@ Ext.onReady(function () {
         })
       ],
       columns: [{
-        id: 'id',
         dataIndex: 'id',
         hidden: true,
         text: 'Id',
@@ -765,7 +761,6 @@ Ext.onReady(function () {
         })
       ],
       columns: [{
-        id: 'id',
         dataIndex: 'id',
         hidden: true,
         text: 'Id',
