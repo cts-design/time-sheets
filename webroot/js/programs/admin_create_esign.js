@@ -128,7 +128,7 @@ Ext.define('DocumentQueueCategory', {
     {
       name : 'img',
       convert: function(value, record){
-        var img = null,
+        var img = '',
           secure = record.get('secure');
 
         if(secure) {
@@ -148,7 +148,7 @@ Ext.define('DocumentFilingCategory', {
     {
       name : 'img',
       convert: function(value, record){
-        var img = null,
+        var img = '',
           secure = record.get('secure');
 
         if(secure) {
