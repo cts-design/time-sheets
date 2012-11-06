@@ -178,7 +178,7 @@ Ext.define('WatchedFilingCat', {
     { name: 'id', type: 'int' },
     { name: 'cat_id', type: 'int' },
     { name: 'program_id', type: 'int' },
-    'name',
+    'name'
   ]
 });
 
@@ -1888,6 +1888,7 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                         },
                         states: function () {
                           vals.type = 'select';
+                          options = states;
                         }
                       };
                     }());
@@ -1960,6 +1961,7 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                         },
                         states: function () {
                           vals.type = 'select';
+                          options = states;
                         }
                       };
                     }());
@@ -2468,7 +2470,7 @@ instructions = Ext.create('Ext.panel.Panel', {
             '<br />' +
             '<a href="' +
             window.location.origin +
-            '/programs/enrollment' +
+            '/programs/enrollment/' +
             rec.get('id') +
             '">' +
             program.get('name').humanize() +
@@ -2714,7 +2716,7 @@ emails = Ext.create('Ext.panel.Panel', {
             '<br />' +
             '<a href="' +
             window.location.origin +
-            '/programs/enrollment' +
+            '/programs/enrollment/' +
             rec.get('id') +
             '">Click here to return to the ' +
             program.get('name').humanize() +
