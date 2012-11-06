@@ -177,7 +177,7 @@ Ext.define('WatchedFilingCat', {
     'cat_3_name',
     { name: 'program_id', type: 'int' },
     { name: 'program_email_id', type: 'int' },
-    'name',
+    'name'
   ]
 });
 
@@ -347,7 +347,8 @@ Ext.create('Ext.data.Store', {
       type: 'json',
       allowSingle: false,
       encode: true,
-      root: 'program_form_fields'
+      root: 'program_form_fields',
+      writeAllFields: false
     }
   }
 });
@@ -1972,6 +1973,7 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                         },
                         states: function () {
                           vals.type = 'select';
+                          options = states;
                         }
                       };
                     }());
@@ -2051,6 +2053,7 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                         },
                         states: function () {
                           vals.type = 'select';
+                          options = states;
                         }
                       };
                     }());

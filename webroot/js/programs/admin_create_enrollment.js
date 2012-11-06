@@ -342,7 +342,8 @@ Ext.create('Ext.data.Store', {
       type: 'json',
       allowSingle: false,
       encode: true,
-      root: 'program_form_fields'
+      root: 'program_form_fields',
+      writeAllFields: false
     }
   }
 });
