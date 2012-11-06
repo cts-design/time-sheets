@@ -453,7 +453,7 @@ Ext.define('QueueCategory', {
 	fields: ['id', 'name', 'secure', {
 		name : 'img',
 		convert: function(value, record){
-			var img = null;
+			var img = '';
 			var secure = record.get('secure');
 			if(secure) {
 				img = '<img src="/img/icons/lock.png" />&nbsp';
@@ -792,7 +792,7 @@ Ext.define('DocumentFilingCategory', {
 	fields: ['id', 'parent_id', 'name', 'secure', {
 		name : 'img',
 		convert: function(value, record){
-			var img = null;
+			var img = '';
 			var secure = record.get('secure');
 			if(secure) {
 				img = '<img src="/img/icons/lock.png" />&nbsp';
@@ -909,7 +909,7 @@ Ext.define('Atlas.form.FileDocumentPanel', {
     initComponent: function() {
       this.on('beforeadd', function(me, field){
         if (!field.allowBlank)
-          field.labelSeparator += '<span style="color: rgb(255, 0, 0); padding-left: 2px;">*</span>';
+          field.labelSeparator += '<span style="color: red; padding-left: 2px;">*</span>';
       });
       this.callParent(arguments);
     },
@@ -1096,7 +1096,7 @@ Ext.define('Atlas.form.ReassignQueuePanel', {
     initComponent: function() {
       this.on('beforeadd', function(me, field){
         if (!field.allowBlank)
-          field.labelSeparator += '<span style="color: rgb(255, 0, 0); padding-left: 2px;">*</span>';
+          field.labelSeparator += '<span style="color: red; padding-left: 2px;">*</span>';
       });
       this.callParent(arguments);
     },
@@ -1193,7 +1193,7 @@ Ext.define('Atlas.form.DeleteDocumentPanel', {
     initComponent: function() {
       this.on('beforeadd', function(me, field){
         if (!field.allowBlank)
-          field.labelSeparator += '<span style="color: rgb(255, 0, 0); padding-left: 2px;">*</span>';
+          field.labelSeparator += '<span style="color: red; padding-left: 2px;">*</span>';
       });
       this.callParent(arguments);
     },
@@ -1298,7 +1298,7 @@ Ext.define('Atlas.form.documentQueueSearchPanel', {
     initComponent: function() {
       this.on('beforeadd', function(me, field){
         if (!field.allowBlank)
-          field.labelSeparator += '<span style="color: rgb(255, 0, 0); padding-left: 2px;">*</span>';
+          field.labelSeparator += '<span style="color: red; padding-left: 2px;">*</span>';
       });
       this.callParent(arguments);
     },
@@ -1549,7 +1549,7 @@ Ext.define('Atlas.form.CustomerAddPanel', {
     initComponent: function() {
       this.on('beforeadd', function(me, field){
         if (!field.allowBlank)
-          field.labelSeparator += '<span style="color: rgb(255, 0, 0); padding-left: 2px;">*</span>';
+          field.labelSeparator += '<span style="color: red; padding-left: 2px;">*</span>';
       });
       this.callParent(arguments);
     },

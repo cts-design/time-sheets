@@ -6,9 +6,9 @@
  */
 
 Ext.onReady( function() {
-    Ext.state.Manager.setProvider(new Ext.state.CookieProvider({
-        expires: new Date(new Date().getTime()+(1000*60*60*24*365)) // 1 year
-    }));
+  Ext.state.Manager.setProvider(new Ext.state.CookieProvider({
+      expires: new Date(new Date().getTime()+(1000*60*60*24*365)) // 1 year
+  }));
     
 	var rowIndex = null,
 		recordId = null,
@@ -22,7 +22,7 @@ Ext.onReady( function() {
 	Ext.QuickTips.init();
 	
 	Ext.define('SelfSignLog', {
-		extend: 'Ext.data.Model',
+    extend: 'Ext.data.Model',
 		fields: [
 			'id', 'status', 'firstname', 'lastname', 'last4', 'admin', 
 			{name: 'created', type: 'date', dateFormat: 'Y-m-d H:i:s'}, 
@@ -31,22 +31,22 @@ Ext.onReady( function() {
 	});
 		
 	var selfSignProxy = Ext.create('Ext.data.proxy.Ajax', {
-			url: '/admin/self_sign_logs/',
-			simpleSortMode: true,
-			extraParams: {
-				locations: locations,
-				services: services,
-				status: 0			
-			},
-			reader: {
-				type: 'json',
-				idProperty: 'id',
-				root: 'logs',
-				totalProperty: 'results'		
-			},
-			limitParam: undefined,
-			pageParam: undefined,
-			startParam: undefined		
+    url: '/admin/self_sign_logs/',
+    simpleSortMode: true,
+    extraParams: {
+      locations: locations,
+      services: services,
+      status: 0			
+    },
+    reader: {
+      type: 'json',
+      idProperty: 'id',
+      root: 'logs',
+      totalProperty: 'results'		
+    },
+    limitParam: undefined,
+    pageParam: undefined,
+    startParam: undefined		
 	});
 	
 	Ext.define('Atlas.data.SelfSignLogStore', {
@@ -122,7 +122,7 @@ Ext.onReady( function() {
 				this.getProxy().url = '/admin/self_sign_logs/get_kiosk_buttons/'+kioskId+'/'+buttonParentId;
 			},
 			load: function(store, records, options) {		
-				if(records[0] && records[0].data != undefined) {
+				if(records[0] && records[0].data !== undefined) {
 					level2Buttons.enable();
 					level2Buttons2.enable();
 				}
@@ -137,7 +137,7 @@ Ext.onReady( function() {
 				this.getProxy().url = '/admin/self_sign_logs/get_kiosk_buttons/'+kioskId+'/'+buttonParentId;
 			},
 			load: function(store, records, options) {		
-				if(records[0] && records[0].data != undefined) {
+				if(records[0] && records[0].data !== undefined) {
 					level3Buttons.enable();
 					level3Buttons2.enable();
 				}
@@ -154,24 +154,24 @@ Ext.onReady( function() {
 		editable: false,
 		hideLabel: true,
 		valueField: 'id',
-	    displayField: 'name',
-	    QueryMode: 'remote',
-	    emptyText: 'Select 1st Button',
-	    width: 270,
-	    getListParent: function() {
-	       return this.el.up('.x-menu');
-	    },
-	    listeners: {
-	    	select: function(combo, records, index) {
-	    		buttonParentId = records[0].data.id;
-	    		level2ButtonsStore.load();
-	    		level2Buttons.reset();
-	    		level2Buttons.disable();
-	    		level3Buttons.reset();
-	    		level3Buttons.disable();
-	    		other.disable();    		
-	    	}
-	    }
+    displayField: 'name',
+    QueryMode: 'remote',
+    emptyText: 'Select 1st Button',
+    width: 270,
+    getListParent: function() {
+       return this.el.up('.x-menu');
+    },
+    listeners: {
+      select: function(combo, records, index) {
+        buttonParentId = records[0].data.id;
+        level2ButtonsStore.load();
+        level2Buttons.reset();
+        level2Buttons.disable();
+        level3Buttons.reset();
+        level3Buttons.disable();
+        other.disable();
+      }
+    }
 	});
 	
 	var level2Buttons = Ext.create('Ext.form.field.ComboBox', {
@@ -184,27 +184,27 @@ Ext.onReady( function() {
 		disabled: true,
 		allowBlank: false,
 		valueField: 'id',
-	    displayField: 'name',
-	    queryMode: 'local',
-	    emptyText: 'Select 2nd Button',
-	    selectOnFocus: true,
-	    width: 270,
-	    getListParent: function() {
-	        return this.el.up('.x-menu');
-	    },
-	    iconCls: 'no-icon',
-	    listeners: {
-	    	select: function(combo, records, index) {
-	    		buttonParentId = records[0].data.id;
-	    		other.disable();
-	    		if(records[0].data.name  == 'Other' || records[0].data.name  == 'other') {
-	    			other.enable();
-	    		}
-	    		level3ButtonsStore.load();
-	    		level3Buttons.reset();
-	    		level3Buttons.disable();   		
-	    	}
-	    }
+    displayField: 'name',
+    queryMode: 'local',
+    emptyText: 'Select 2nd Button',
+    selectOnFocus: true,
+    width: 270,
+    getListParent: function() {
+      return this.el.up('.x-menu');
+    },
+    iconCls: 'no-icon',
+    listeners: {
+      select: function(combo, records, index) {
+        buttonParentId = records[0].data.id;
+        other.disable();
+        if(records[0].data.name  === 'Other' || records[0].data.name  === 'other') {
+          other.enable();
+        }
+        level3ButtonsStore.load();
+        level3Buttons.reset();
+        level3Buttons.disable();
+      }
+    }
 	}); 
 	   
 	var level3Buttons = Ext.create('Ext.form.field.ComboBox', {
@@ -223,16 +223,16 @@ Ext.onReady( function() {
 	    selectOnFocus: true,
 	    width: 270,
 	    getListParent: function() {
-	        return this.el.up('.x-menu');
+        return this.el.up('.x-menu');
 	    },
 	    iconCls: 'no-icon',
 	    listeners: {
-	    	select: function(combo, records, index) {
-	    		if(records[0].data.name  == 'Other' || records[0].data.name  == 'other') {
-	    			other.enable();
-	    		}
-	    	}	    	
-	    }
+      select: function(combo, records, index) {
+        if(records[0].data.name  === 'Other' || records[0].data.name  === 'other') {
+          other.enable();
+        }
+      }
+    }
 	}); 
 	
 	var other = Ext.create('Ext.form.field.Text', {
@@ -265,37 +265,37 @@ Ext.onReady( function() {
 					var form = reassign.getForm();
 					if(form.isValid()) {
 						var values = form.getValues();
-					    form.reset();
+            form.reset();
 						level2Buttons.disable();
 						level3Buttons.disable();
-					    other.disable();
-					    if(contextMenu.isVisible()){
-					        contextMenu.hide(); 
-					    }  					
-					    Ext.Ajax.request({
-					        url: '/admin/self_sign_logs/reassign/',
-					        params: {
-					        	'data[SelfSignLog][id]':  recordId,
-					        	'data[SelfSignLog][level_1]': values.level1,
-					        	'data[SelfSignLog][level_2]': values.level2,
-					        	'data[SelfSignLog][level_3]': values.level3,
-					        	'data[SelfSignLog][other]': values.other
-					        },
-					        success: function(response, opts){			        	
-					        	var obj = Ext.decode(response.responseText);
-					        	if(obj.success) {
-									selfSignTabs.getActiveTab().getStore().load();
-									Ext.Msg.alert('Success', obj.message);					        		
-					        	}
-					        	else {
-					        		opts.failure();
-					        	}		            
-					        },
-					        failure: function(response, opts){
-					        	var obj = Ext.decode(response.responseText);
-					            Ext.Msg.alert('Error', obj.message);
-					        }
-					    });				
+            other.disable();
+            if(contextMenu.isVisible()){
+              contextMenu.hide(); 
+            }
+            Ext.Ajax.request({
+              url: '/admin/self_sign_logs/reassign/',
+              params: {
+                'data[SelfSignLog][id]':  recordId,
+                'data[SelfSignLog][level_1]': values.level1,
+                'data[SelfSignLog][level_2]': values.level2,
+                'data[SelfSignLog][level_3]': values.level3,
+                'data[SelfSignLog][other]': values.other
+              },
+              success: function(response, opts){
+                var obj = Ext.decode(response.responseText);
+                if(obj.success) {
+                  selfSignTabs.getActiveTab().getStore().load();
+                  Ext.Msg.alert('Success', obj.message);
+                }
+                else {
+                  opts.failure();
+                }		            
+              },
+              failure: function(response, opts){
+                var obj = Ext.decode(response.responseText);
+                Ext.Msg.alert('Error', obj.message);
+              }
+            });				
 					}				
 				}
 			}
@@ -305,41 +305,43 @@ Ext.onReady( function() {
 	var level1Buttons2 = level1Buttons.cloneConfig({
 		id: 'level1Buttons2',
 		listeners: {
-	    	select: function(combo, records, index) {
-	    		buttonParentId = records[0].data.id;
-	    		level2ButtonsStore.load();
-	    		level2Buttons2.reset();
-	    		level2Buttons2.disable();
-	    		level3Buttons2.reset();
-	    		level3Buttons2.disable();
-	    		other2.disable();    		
-	    	}		
+      select: function(combo, records, index) {
+        buttonParentId = records[0].data.id;
+        level2ButtonsStore.load();
+        level2Buttons2.reset();
+        level2Buttons2.disable();
+        level3Buttons2.reset();
+        level3Buttons2.disable();
+        other2.disable();
+      }		
 		}
 	});
+
 	var level2Buttons2 = level2Buttons.cloneConfig({
 		id: 'level2Buttons2',
-	    listeners: {
-	    	select: function(combo, records, index) {
-	    		buttonParentId = records[0].data.id;
-	    		other2.disable();
-	    		if(records[0].data.name  == 'Other' || records[0].data.name  == 'other') {
-	    			other2.enable();
-	    		}
-	    		level3ButtonsStore.load();
-	    		level3Buttons2.reset();
-	    		level3Buttons2.disable();   		
-	    	}
-	    }	
+    listeners: {
+      select: function(combo, records, index) {
+        buttonParentId = records[0].data.id;
+        other2.disable();
+        if(records[0].data.name  === 'Other' || records[0].data.name  === 'other') {
+          other2.enable();
+        }
+        level3ButtonsStore.load();
+        level3Buttons2.reset();
+        level3Buttons2.disable();
+      }
+    }	
 	});
+
 	var level3Buttons2 = level3Buttons.cloneConfig({
 		id: 'level3Buttons2',
-	    listeners: {
-	    	select: function(combo, records, index) {
-	    		if(records[0].data.name  == 'Other' || records[0].data.name  == 'other') {
-	    			other2.enable();
-	    		}
-	    	}	    	
-	    }	
+    listeners: {
+      select: function(combo, records, index) {
+        if(records[0].data.name  === 'Other' || records[0].data.name  === 'other') {
+          other2.enable();
+        }
+      }
+    }	
 	});
 	
 	var other2 = other.cloneConfig({id: 'other2', name: 'other'});
@@ -364,41 +366,39 @@ Ext.onReady( function() {
 					var form = newRecord.getForm();
 					if(form.isValid()) {
 						var values = form.getValues();
-						console.log(values);
-					    form.reset();
+            form.reset();
 						level2Buttons2.disable();
 						level3Buttons2.disable();
-					    other2.disable();
-					    if(contextMenu.isVisible()){
-					        contextMenu.hide(); 
-					    }  					
-					    Ext.Ajax.request({
-					        url: '/admin/self_sign_logs/new_record/',
-					        params: {
-					        	'data[SelfSignLog][user_id]':  userId,
-					        	'data[SelfSignLog][location_id]':  locationId,
-					        	'data[SelfSignLog][kiosk_id]':  kioskId,
-					        	'data[SelfSignLog][level_1]': values.level1,
-					        	'data[SelfSignLog][level_2]': values.level2,
-					        	'data[SelfSignLog][level_3]': values.level3,
-					        	'data[SelfSignLog][other]': values.other
-					        },
-					        success: function(response, opts){			        	
-					        	var obj = Ext.decode(response.responseText);
-					        	
-					        	if(obj.success) { 	
-									selfSignTabs.getActiveTab().getStore().load();
-									Ext.Msg.alert('Success', obj.message);					        		
-					        	}
-					        	else {
-					        		opts.failure();
-					        	}		            
-					        },
-					        failure: function(response, opts){
-					        	var obj = Ext.decode(response.responseText);
-					            Ext.Msg.alert('Error', obj.message);
-					        }
-					    });				
+            other2.disable();
+            if(contextMenu.isVisible()){
+              contextMenu.hide(); 
+            }
+            Ext.Ajax.request({
+              url: '/admin/self_sign_logs/new_record/',
+              params: {
+                'data[SelfSignLog][user_id]':  userId,
+                'data[SelfSignLog][location_id]':  locationId,
+                'data[SelfSignLog][kiosk_id]':  kioskId,
+                'data[SelfSignLog][level_1]': values.level1,
+                'data[SelfSignLog][level_2]': values.level2,
+                'data[SelfSignLog][level_3]': values.level3,
+                'data[SelfSignLog][other]': values.other
+              },
+              success: function(response, opts){
+                var obj = Ext.decode(response.responseText);
+                if(obj.success){
+                  selfSignTabs.getActiveTab().getStore().load();
+                  Ext.Msg.alert('Success', obj.message);
+                }
+                else {
+                  opts.failure();
+                }		            
+              },
+              failure: function(response, opts){
+                var obj = Ext.decode(response.responseText);
+                Ext.Msg.alert('Error', obj.message);
+              }
+            });				
 					}				
 				}
 			}
@@ -406,73 +406,73 @@ Ext.onReady( function() {
 	});
 	
 	var contextMenu = Ext.create('Ext.menu.Menu', {
-	  items: [{
-	    text: 'Open',
+    items: [{
+      text: 'Open',
 	    id: 'cmOpen',
 	    icon:  '/img/icons/note_add.png',
 	    iconCls: 'edit',
 	    handler: function() {
-	    	var record = selfSignTabs.getActiveTab().getStore().getAt(rowIndex);
-	    	updateStatus(record.data.id, 0);	
+        var record = selfSignTabs.getActiveTab().getStore().getAt(rowIndex);
+        updateStatus(record.data.id, 0);	
 	    }
 	  },{
-	  	text: 'Close',
-	  	id: 'cmClose',
-	  	icon:  '/img/icons/note_delete.png',
+      text: 'Close',
+      id: 'cmClose',
+      icon:  '/img/icons/note_delete.png',
 	    handler: function() {
-	    	var record = selfSignTabs.getActiveTab().getStore().getAt(rowIndex);
-	    	updateStatus(record.data.id, 1);	
-	    }  	
+        var record = selfSignTabs.getActiveTab().getStore().getAt(rowIndex);
+        updateStatus(record.data.id, 1);	
+	    }
 	  },{
-	  	text: 'Not Helped',
-	  	id: 'cmNotHelped',
-	  	icon:  '/img/icons/note_error.png',
+      text: 'Not Helped',
+      id: 'cmNotHelped',
+      icon:  '/img/icons/note_error.png',
 	    handler: function() {
-	    	var record = selfSignTabs.getActiveTab().getStore().getAt(rowIndex);
-	    	updateStatus(record.data.id, 2);	
-	    }   	
+        var record = selfSignTabs.getActiveTab().getStore().getAt(rowIndex);
+        updateStatus(record.data.id, 2);	
+	    }
 	  },{
-	  	text: 'Reassign',
-	  	hidden: true,
-	  	id: 'cmReassign',
-	  	icon:  '/img/icons/arrow_undo.png',
-		menu: {
-			cls: 'reassign-menu',
-      enableKeyNav: false,
-			width: 295,
-			items: [
-				reassign
-			],
-		    listeners: {
-			  	beforehide: function() {
-			  		reassign.getForm().reset();	  		
-			  		level2Buttons.disable();
-			  		level3Buttons.disable();
-				    other.disable();			    
-			  	}
-		   }			
-		}
+      text: 'Reassign',
+      hidden: true,
+      id: 'cmReassign',
+      icon:  '/img/icons/arrow_undo.png',
+      menu: {
+        cls: 'reassign-menu',
+        enableKeyNav: false,
+        width: 295,
+        items: [
+          reassign
+        ],
+        listeners: {
+          beforehide: function() {
+            reassign.getForm().reset();
+            level2Buttons.disable();
+            level3Buttons.disable();
+            other.disable();			    
+          }
+        }
+      }
 	  },{
-	  	text: 'New Sign In',
-	  	id: 'cmNewRecord',
-	  	hidden: true,
-	  	icon:  '/img/icons/add.png',
-		menu: {
-			cls: 'new-sign-in-menu',
-      enableKeyNav: false,
-			width: 295,
-			items: [
-				newRecord
-			],
-		    listeners: {
-			  	beforehide: function() {
-			  		newRecord.getForm().reset();	  		
-			  		level2Buttons2.disable();
-			  		level3Buttons2.disable();
-				    other2.disable();			    
-			  	}
-		   }			
-		}  	
+      text: 'New Sign In',
+      id: 'cmNewRecord',
+      hidden: true,
+      icon:  '/img/icons/add.png',
+      menu: {
+        cls: 'new-sign-in-menu',
+        enableKeyNav: false,
+        width: 295,
+        items: [
+          newRecord
+        ],
+        listeners: {
+          beforehide: function() {
+            newRecord.getForm().reset();
+            level2Buttons2.disable();
+            level3Buttons2.disable();
+            other2.disable();			    
+          }
+        }			
+      }
 	  }]
 	});
 	
@@ -529,12 +529,12 @@ Ext.onReady( function() {
 			format: 'm/d/y g:i a',
 			xtype: 'datecolumn',
 			sortable: true,
-			width: 100
+			width: 120
 		}]		
 	});
 			
 	var openSelfSignLogsGrid = Ext.create('Atlas.grid.SelfSignLogsPanel', {
-		title: 'Open',
+    title: 'Open',
 		store: openSelfSignLogsStore,
 		id: 'selfSignGrid',
 		tbar: [{
@@ -543,27 +543,27 @@ Ext.onReady( function() {
 			text: 'Open: ' + openSelfSignLogsStore.getCount()	
 		}],
 		viewConfig: {
-			loadMask: false,
-			singleSelect: true,
-			emptyText: 'No records at this time.',
-	        listeners: {
-	            itemcontextmenu: function(view, rec, node, index, e) {
-	                e.stopEvent();
-	                contextMenu.showAt(e.getXY());
-	    			Ext.getCmp('cmOpen').hide();
-	    			Ext.getCmp('cmNotHelped').show();
-	    			Ext.getCmp('cmClose').show();
-	    			Ext.getCmp('cmReassign').show();
-	    			Ext.getCmp('cmNewRecord').hide();		
-		     		rowIndex = index;
-		     		recordId = rec.data.id;
-		     		kioskId = rec.data.kioskId; 
-		     		userId = rec.data.userId;
-		     		locationId = rec.data.locationId;                
-		            return false;
-	            }
-	        }		
-		}
+      loadMask: false,
+      singleSelect: true,
+      emptyText: 'No records at this time.',
+      listeners: {
+        itemcontextmenu: function(view, rec, node, index, e) {
+          e.stopEvent();
+          contextMenu.showAt(e.getXY());
+          Ext.getCmp('cmOpen').hide();
+          Ext.getCmp('cmNotHelped').show();
+          Ext.getCmp('cmClose').show();
+          Ext.getCmp('cmReassign').show();
+          Ext.getCmp('cmNewRecord').hide();		
+          rowIndex = index;
+          recordId = rec.data.id;
+          kioskId = rec.data.kioskId; 
+          userId = rec.data.userId;
+          locationId = rec.data.locationId;                
+          return false;
+        }
+      }		
+    }
 	});
 		
 	var closedSelfSignLogsGrid = Ext.create('Atlas.grid.SelfSignLogsPanel', {
@@ -579,23 +579,23 @@ Ext.onReady( function() {
 			loadMask: true,
 			singleSelect: true,
 			emptyText: 'No records at this time.',
-	        listeners: {
-	            itemcontextmenu: function(view, rec, node, index, e) {
-	                e.stopEvent();
-	                contextMenu.showAt(e.getXY());
-	    			Ext.getCmp('cmClose').hide();
-	    			Ext.getCmp('cmOpen').show();
-	    			Ext.getCmp('cmNotHelped').show();
-	    			Ext.getCmp('cmReassign').hide();
-	    			Ext.getCmp('cmNewRecord').show();		
-		     		rowIndex = index;
-		     		recordId = rec.data.id;
-		     		kioskId = rec.data.kioskId; 
-		     		userId = rec.data.userId;
-		     		locationId = rec.data.locationId;                
-		            return false;
-	            }
-	        }		
+      listeners: {
+        itemcontextmenu: function(view, rec, node, index, e) {
+          e.stopEvent();
+          contextMenu.showAt(e.getXY());
+          Ext.getCmp('cmClose').hide();
+          Ext.getCmp('cmOpen').show();
+          Ext.getCmp('cmNotHelped').show();
+          Ext.getCmp('cmReassign').hide();
+          Ext.getCmp('cmNewRecord').show();		
+          rowIndex = index;
+          recordId = rec.data.id;
+          kioskId = rec.data.kioskId; 
+          userId = rec.data.userId;
+          locationId = rec.data.locationId;                
+          return false;
+        }
+      }		
 		}				
 	});	
 	
@@ -612,23 +612,23 @@ Ext.onReady( function() {
 			loadMask: true,
 			singleSelect: true,
 			emptyText: 'No records at this time.',
-	        listeners: {
-	            itemcontextmenu: function(view, rec, node, index, e) {
-	                e.stopEvent();
-	                contextMenu.showAt(e.getXY());
-	    			Ext.getCmp('cmNotHelped').hide();
-	    			Ext.getCmp('cmClose').show();
-	    			Ext.getCmp('cmOpen').show();
-	    			Ext.getCmp('cmReassign').hide();
-	    			Ext.getCmp('cmNewRecord').show();	    			    			
-		     		rowIndex = index;
-		     		recordId = rec.data.id;
-		     		kioskId = rec.data.kioskId; 
-		     		userId = rec.data.userId;
-		     		locationId = rec.data.locationId;                
-		            return false;
-		        }
-	    	}
+      listeners: {
+        itemcontextmenu: function(view, rec, node, index, e) {
+          e.stopEvent();
+          contextMenu.showAt(e.getXY());
+          Ext.getCmp('cmNotHelped').hide();
+          Ext.getCmp('cmClose').show();
+          Ext.getCmp('cmOpen').show();
+          Ext.getCmp('cmReassign').hide();
+          Ext.getCmp('cmNewRecord').show();
+          rowIndex = index;
+          recordId = rec.data.id;
+          kioskId = rec.data.kioskId; 
+          userId = rec.data.userId;
+          locationId = rec.data.locationId;                
+          return false;
+        }
+      }
 		}
 	});	
 	
@@ -724,11 +724,11 @@ Ext.onReady( function() {
 					getState: function() {					
 			            return this.getValue();					
 					},
-			        applyState: function(state) {
-			        	if(state[0] != undefined) {
-			        		// have to manually remove empty text, most likely a bug
-			        		Ext.apply(this, {emptyText: ''});
-							this.getStore().on('load', function(){
+          applyState: function(state) {
+            if(state[0] !== undefined) {
+              // have to manually remove empty text, most likely a bug
+              Ext.apply(this, {emptyText: ''});
+              this.getStore().on('load', function(){
 								var selected = '';
 								for(var i in state) {
 									selected += state[i] += ', ';
@@ -736,10 +736,9 @@ Ext.onReady( function() {
 								if(selected !== '') {
 									this.select(selected);																		
 								}
-				
 							}, this);
 						}
-			        }				
+          }				
 				}]
 			},{
 				layout: 'anchor',
@@ -771,12 +770,12 @@ Ext.onReady( function() {
 						}
 					},
 					getState: function() {
-			            return this.getValue();					
+            return this.getValue();					
 					},
-			        applyState: function(state) {
-			        	if(state[0] != undefined) {
-			  				// have to manually remove empty text, most likely a bug
-			        		Ext.apply(this, {emptyText: ''});        	
+          applyState: function(state) {
+            if(state[0] != undefined) {
+            // have to manually remove empty text, most likely a bug
+              Ext.apply(this, {emptyText: ''});        	
 							this.getStore().on('load', function(){
 								var selected = '';
 								for(var i in state) {
@@ -788,11 +787,10 @@ Ext.onReady( function() {
 								Ext.getCmp('filter').fireEvent('click');				
 							}, this, {single: true});
 						}
-			        }					
+          }			
 				}]
 			}]
 		}],
-		
 		fbar: [{
 			text: 'Filter',
 			id: 'filter',
@@ -870,15 +868,15 @@ Ext.onReady( function() {
 	});
 	
 	function updateStatus(id, status) {
-	    Ext.Ajax.request({
-	        url: '/admin/self_sign_logs/update_status/' + id + '/' + status,
-	        success: function(response){ 
-				selfSignTabs.getActiveTab().getStore().load();
-	        },
-	        failure: function(response){
-	            Ext.Msg.alert('Error', 'An error has occured, please try again.');
-	        }
-	    });	
+    Ext.Ajax.request({
+        url: '/admin/self_sign_logs/update_status/' + id + '/' + status,
+        success: function(response){ 
+          selfSignTabs.getActiveTab().getStore().load();
+        },
+        failure: function(response){
+            Ext.Msg.alert('Error', 'An error has occured, please try again.');
+        }
+    });	
 	}
 	
 	var loadLogs = {

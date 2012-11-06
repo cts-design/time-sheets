@@ -8,8 +8,8 @@
  * @author Brandon Cordell
  * @copyright 2012 Complete Technology Solutions
  */
-App::import('Vendor', 'PHPExcel', array('file' => 'excel' . DS . 'PHPExcel.php'));
-App::import('Vendor', 'PHPExcelWriter', array('file' => 'excel' . DS . 'PHPExcel' . DS . 'Writer' . DS . 'Excel2007.php'));
+App::import('Vendor', 'PHPExcel', array('file' => 'PHPExcel' . DS . 'Classes' .  DS . 'PHPExcel.php'));
+App::import('Vendor', 'PHPExcelWriter', array('file' => 'PHPExcel' . DS . 'Classes' . DS . 'PHPExcel' . DS . 'Writer' . DS . 'Excel2007.php'));
 
 class ExcelComponent extends Object {
     protected $activeSheetIndex = 0;
