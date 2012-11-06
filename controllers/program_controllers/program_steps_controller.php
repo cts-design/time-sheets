@@ -116,15 +116,13 @@ class ProgramStepsController extends AppController {
 
 		foreach ($program_steps as $step) {
 			unset($step['checked'], $step['created'], $step['modified'], $step['expires'],
-				$step['parentId'], $step['lft'], $step['rght']);
+				$step['lft'], $step['rght']);
 
-			if (intval($step['depth']) === 1) {
-				$this->ProgramStep->save($step);
-				$currentParent = $this->ProgramStep->id;
-			} else {
-				$step['parent_id'] = $currentParent;
-				$this->ProgramStep->save($step);
+			if (isset($step['parentId'])) {
+				$step['parent_id'] = $step['parentId'];
 			}
+
+			$this->ProgramStep->save($step);
 		}
 
 		$data['success'] = true;
