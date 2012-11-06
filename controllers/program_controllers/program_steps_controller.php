@@ -10,21 +10,21 @@ class ProgramStepsController extends AppController {
 
 	public function admin_create() {
 		if ($this->RequestHandler->isAjax()) {
-			$programData = json_decode($this->params['form']['programs'], true);
-			unset($programData['id'], $programData['created'], $programData['modified']);
+			$programStepData = json_decode($this->params['form']['program_steps'], true);
 
-			$this->data['Program'] = $programData;
+			if (isset($programStepData['parentId'])) {
+				$programStepData['parent_id'] = $programStepData['parentId'];
+			}
 
-			$this->Program->create();
-			$program = $this->Program->save($this->data);
+			$this->data['ProgramStep'] = $programStepData;
 
-			if ($this->Program->save($program)) {
-				$programId = $this->Program->id;
-				$data['programs'] = $program['Program'];
-				$data['programs']['id'] = $programId;
+			$this->ProgramStep->create();
+			$programStep = $this->ProgramStep->save($this->data);
 
-				$this->createRegistrationProgramSteps($programId, $program['Program']['name']);
-
+			if ($this->ProgramStep->save($programStep)) {
+				$programId = $this->ProgramStep->id;
+				$data['program_steps'] = $programStep['ProgramStep'];
+				$data['program_steps']['id'] = $programId;
 				$data['success'] = true;
 			} else {
 				$data['success'] = false;
