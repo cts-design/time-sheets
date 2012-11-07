@@ -1446,13 +1446,15 @@ stepTree = Ext.create('Ext.panel.Panel', {
 
     if (!treeStoreLoaded) {
       Ext.Ajax.request({
-        url: '/admin/program_steps/read',
+        url: '/admin/program_steps/read_tree',
         params: {
           program_id: ProgramId
         },
         success: function (response) {
           var programSteps = Ext.JSON.decode(response.responseText).program_steps,
             rootNode = programStepStore.getRootNode(),
+            parents = [],
+            children = [],
             i;
 
           treeStoreLoaded = true;
@@ -1463,14 +1465,20 @@ stepTree = Ext.create('Ext.panel.Panel', {
               parentId;
 
             if (!rec.type) {
-              rootNode.appendChild(rec);
-              parentId = rec.id;
+              parents.push(rec);
             } else {
-              parent = rootNode.findChild('id', parentId);
-              rec.parentId = rec.parent_id;
               rec.leaf = true;
-              parent.appendChild(rec);
+              children.push(rec);
             }
+          }
+
+          for (i = 0, l = parents.length; i < l; i++) {
+            rootNode.appendChild(parents[i]);
+          }
+
+          for (i = 0, l = children.length; i < l; i++) {
+            var childsParent = rootNode.findChild('id', children[i].parent_id);
+            childsParent.appendChild(children[i]);
           }
         }
       });

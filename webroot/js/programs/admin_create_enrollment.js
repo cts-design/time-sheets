@@ -1726,8 +1726,8 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                     handler: function () {
                       var formPanel = Ext.getCmp('formPanel'),
                         form = formPanel.getForm(),
-                        savebtn = formPanel.down('#builderSaveBtn'),
-                        updatebtn = formPanel.down('#updateBtn'),
+                        saveBtn = formPanel.down('#builderSaveBtn'),
+                        updateBtn = formPanel.down('#updateBtn'),
                         grid = Ext.getCmp('formFieldGrid');
 
                       form.reset();

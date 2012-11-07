@@ -39,14 +39,14 @@ class ProgramStepsController extends AppController {
 		$this->ProgramStep->recursive = -1;
 
 		$steps = $this->ProgramStep->find('all', array(
-			'conditions' => array('ProgramStep.program_id' => $this->params['url']['program_id']),
+			'conditions' => array('ProgramStep.program_id' => $this->params['form']['program_id']),
 			'order' => 'ProgramStep.id ASC'
 		));
 
 		if ($steps) {
 			$data['success'] = true;
 			foreach ($steps as $key => $value) {
-				$data[] = $value['ProgramStep'];
+				$data['program_steps'][] = $value['ProgramStep'];
 			}
 		} else {
 			$data['success'] = false;
