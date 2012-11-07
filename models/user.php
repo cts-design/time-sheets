@@ -252,7 +252,7 @@ class User extends AppModel {
     );
 	
 	var $validationSets = array(
-		'kioskRegistration' => array(
+		'customerMinimum' => array(
 			'firstname' => array(
 				'notEmpty' => array(
 					'rule' => 'notEmpty',
@@ -275,7 +275,7 @@ class User extends AppModel {
 					'rule' => array('maxlength', 50),
 					'message' => 'This field cannot excced 50 characters.',
 					'required' => false
-				),
+				)
 			),
 			'ssn' => array(
 				'notEmpty' => array(
