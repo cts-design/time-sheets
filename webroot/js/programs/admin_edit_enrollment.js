@@ -1362,8 +1362,10 @@ stepTree = Ext.create('Ext.panel.Panel', {
           selectedModule = treePanel.getSelectionModel().getSelection()[0],
           sm = Ext.data.StoreManager,
           programStepStore = sm.lookup('ProgramStepStore'),
+          programInstructionStore = sm.lookup('ProgramInstructionStore'),
           program = sm.lookup('ProgramStore').first(),
           vals,
+          newNode,
           processStepType;
 
         if (form.isValid()) {
@@ -2786,7 +2788,42 @@ instructions = Ext.create('Ext.panel.Panel', {
   }],
   listeners: {
     activate: function () {
-      Ext.data.StoreManager.lookup('ProgramInstructionStore').load({
+      var sm = Ext.data.StoreMgr,
+        programInstructionStore = sm.lookup('ProgramInstructionStore'),
+        programStepStore = sm.lookup('ProgramStepStore'),
+        panelEl = this.getEl();
+
+      panelEl.mask('Loading...');
+
+      programStepStore.getRootNode().eachChild(function (module) {
+        module.eachChild(function (step) {
+          var instruction = programInstructionStore.findRecord('program_step_id', step.data.id);
+
+          if (!instruction) {
+            Ext.Ajax.request({
+              url: '/admin/program_instructions/create_single',
+              params: {
+                program_id: ProgramId,
+                program_step_id: step.data.id,
+                text: 'Instructions for ' + step.data.name + ' step',
+                type: step.data.type + '_step'
+              },
+              callback: function (response) {
+                programInstructionStore.load({
+                  params: {
+                    program_id: ProgramId
+                  }
+                });
+              }
+            });
+          }
+        });
+      });
+
+      programInstructionStore.load({
+        callback: function (recs, op, success) {
+          panelEl.unmask();
+        },
         params: {
           program_id: ProgramId
         }
