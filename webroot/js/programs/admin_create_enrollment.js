@@ -1464,7 +1464,6 @@ stepTree = Ext.create('Ext.panel.Panel', {
     statusBar.setText('Saving Program Steps...');
     clearStatusTask.delay(500);
 
-    Ext.data.StoreManager.lookup('ProgramStepStore').sync();
     return true;
   }
 });
