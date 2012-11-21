@@ -669,7 +669,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       allowBlank: false,
       fieldLabel: 'Responses Expire In',
       labelWidth: 190,
-      minValue: 30,
+      minValue: 10,
       name: 'response_expires_in',
       value: 30,
       width: 250
