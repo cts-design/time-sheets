@@ -231,7 +231,7 @@ class UsersController extends AppController {
         }
         if (!empty($this->data)) {
             $this->User->create();
-            $this->User->editValidation('customer');
+			$this->User->setValidation('customerMinimum');
             if ($this->User->save($this->data)) {
                 $this->Transaction->createUserTransaction('Customer',
                     null, null, 'Added customer '. $this->data['User']['lastname'] .
@@ -287,7 +287,7 @@ class UsersController extends AppController {
             $this->redirect(array('action' => 'index'));
         }
         if (!empty($this->data)) {
-            $this->User->editValidation('customer');
+			$this->User->setValidation('customerMinimum');
             if ($this->User->save($this->data)) {
                 $this->Transaction->createUserTransaction('Customer',
                     null, null, 'Edited customer '. $this->data['User']['lastname'] .
@@ -625,7 +625,7 @@ class UsersController extends AppController {
 
         if (!empty($this->data)) {
             $this->User->Behaviors->disable('Disableable');
-			$this->User->setValidation('kioskRegistration');
+			$this->User->setValidation('customerMinimum');
             if(Configure::read('Registration.ssn') == 'last4') {
                 $this->User->editValidation('last4');
                 $this->data['User']['ssn'] =
