@@ -33,6 +33,7 @@ Ext.onReady(function(){
 				idProperty: 'id',
 				totalProperty: 'totalCount'
 			},
+      timeout: 60000,
 			simpleSortMode: true,
 			directionParam: 'direction'
 		}
