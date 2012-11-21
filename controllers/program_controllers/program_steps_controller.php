@@ -10,21 +10,21 @@ class ProgramStepsController extends AppController {
 
 	public function admin_create() {
 		if ($this->RequestHandler->isAjax()) {
-			$programData = json_decode($this->params['form']['programs'], true);
-			unset($programData['id'], $programData['created'], $programData['modified']);
+			$programStepData = json_decode($this->params['form']['program_steps'], true);
 
-			$this->data['Program'] = $programData;
+			if (isset($programStepData['parentId'])) {
+				$programStepData['parent_id'] = $programStepData['parentId'];
+			}
 
-			$this->Program->create();
-			$program = $this->Program->save($this->data);
+			$this->data['ProgramStep'] = $programStepData;
 
-			if ($this->Program->save($program)) {
-				$programId = $this->Program->id;
-				$data['programs'] = $program['Program'];
-				$data['programs']['id'] = $programId;
+			$this->ProgramStep->create();
+			$programStep = $this->ProgramStep->save($this->data);
 
-				$this->createRegistrationProgramSteps($programId, $program['Program']['name']);
-
+			if ($this->ProgramStep->save($programStep)) {
+				$programId = $this->ProgramStep->id;
+				$data['program_steps'] = $programStep['ProgramStep'];
+				$data['program_steps']['id'] = $programId;
 				$data['success'] = true;
 			} else {
 				$data['success'] = false;
@@ -39,14 +39,14 @@ class ProgramStepsController extends AppController {
 		$this->ProgramStep->recursive = -1;
 
 		$steps = $this->ProgramStep->find('all', array(
-			'conditions' => array('ProgramStep.program_id' => $this->params['url']['program_id']),
+			'conditions' => array('ProgramStep.program_id' => $this->params['form']['program_id']),
 			'order' => 'ProgramStep.id ASC'
 		));
 
 		if ($steps) {
 			$data['success'] = true;
 			foreach ($steps as $key => $value) {
-				$data[] = $value['ProgramStep'];
+				$data['program_steps'][] = $value['ProgramStep'];
 			}
 		} else {
 			$data['success'] = false;
@@ -116,15 +116,13 @@ class ProgramStepsController extends AppController {
 
 		foreach ($program_steps as $step) {
 			unset($step['checked'], $step['created'], $step['modified'], $step['expires'],
-				$step['parentId'], $step['lft'], $step['rght']);
+				$step['lft'], $step['rght']);
 
-			if (intval($step['depth']) === 1) {
-				$this->ProgramStep->save($step);
-				$currentParent = $this->ProgramStep->id;
-			} else {
-				$step['parent_id'] = $currentParent;
-				$this->ProgramStep->save($step);
+			if (isset($step['parentId'])) {
+				$step['parent_id'] = $step['parentId'];
 			}
+
+			$this->ProgramStep->save($step);
 		}
 
 		$data['success'] = true;

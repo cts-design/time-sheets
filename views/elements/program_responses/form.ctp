@@ -1,5 +1,4 @@
 <?php if(!empty($formFields)) : ?>
-        <?php asort($formFields)?>
         <?php foreach($formFields as $k => $v) : ?>
             <?php $options = json_decode($v['options'], true); ?>
             <?php $attributes = array(

@@ -177,7 +177,7 @@ Ext.define('WatchedFilingCat', {
     'cat_3_name',
     { name: 'program_id', type: 'int' },
     { name: 'program_email_id', type: 'int' },
-    'name',
+    'name'
   ]
 });
 
@@ -347,7 +347,8 @@ Ext.create('Ext.data.Store', {
       type: 'json',
       allowSingle: false,
       encode: true,
-      root: 'program_form_fields'
+      root: 'program_form_fields',
+      writeAllFields: false
     }
   }
 });
@@ -363,6 +364,12 @@ Ext.create('Ext.data.Store', {
       read: '/admin/program_documents/read',
       update: '/admin/program_documents/update',
       destroy: '/admin/program_documents/destroy'
+    },
+    listeners: {
+      exception: function (proxy, response, op, eOpts) {
+        op.records[0].store.remove(op.records);
+        Ext.Msg.alert('Error', op.error);
+      }
     },
     reader: {
       type: 'json',
@@ -1355,8 +1362,10 @@ stepTree = Ext.create('Ext.panel.Panel', {
           selectedModule = treePanel.getSelectionModel().getSelection()[0],
           sm = Ext.data.StoreManager,
           programStepStore = sm.lookup('ProgramStepStore'),
+          programInstructionStore = sm.lookup('ProgramInstructionStore'),
           program = sm.lookup('ProgramStore').first(),
           vals,
+          newNode,
           processStepType;
 
         if (form.isValid()) {
@@ -1439,13 +1448,15 @@ stepTree = Ext.create('Ext.panel.Panel', {
 
     if (!treeStoreLoaded) {
       Ext.Ajax.request({
-        url: '/admin/program_steps/read',
+        url: '/admin/program_steps/read_tree',
         params: {
           program_id: ProgramId
         },
         success: function (response) {
           var programSteps = Ext.JSON.decode(response.responseText).program_steps,
             rootNode = programStepStore.getRootNode(),
+            parents = [],
+            children = [],
             i;
 
           treeStoreLoaded = true;
@@ -1456,14 +1467,20 @@ stepTree = Ext.create('Ext.panel.Panel', {
               parentId;
 
             if (!rec.type) {
-              rootNode.appendChild(rec);
-              parentId = rec.id;
+              parents.push(rec);
             } else {
-              parent = rootNode.findChild('id', parentId);
-              rec.parentId = rec.parent_id;
               rec.leaf = true;
-              parent.appendChild(rec);
+              children.push(rec);
             }
+          }
+
+          for (i = 0, l = parents.length; i < l; i++) {
+            rootNode.appendChild(parents[i]);
+          }
+
+          for (i = 0, l = children.length; i < l; i++) {
+            var childsParent = rootNode.findChild('id', children[i].parent_id);
+            childsParent.appendChild(children[i]);
           }
         }
       });
@@ -1966,6 +1983,7 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                         },
                         states: function () {
                           vals.type = 'select';
+                          options = states;
                         }
                       };
                     }());
@@ -2045,6 +2063,7 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                         },
                         states: function () {
                           vals.type = 'select';
+                          options = states;
                         }
                       };
                     }());
@@ -2769,7 +2788,42 @@ instructions = Ext.create('Ext.panel.Panel', {
   }],
   listeners: {
     activate: function () {
-      Ext.data.StoreManager.lookup('ProgramInstructionStore').load({
+      var sm = Ext.data.StoreMgr,
+        programInstructionStore = sm.lookup('ProgramInstructionStore'),
+        programStepStore = sm.lookup('ProgramStepStore'),
+        panelEl = this.getEl();
+
+      panelEl.mask('Loading...');
+
+      programStepStore.getRootNode().eachChild(function (module) {
+        module.eachChild(function (step) {
+          var instruction = programInstructionStore.findRecord('program_step_id', step.data.id);
+
+          if (!instruction) {
+            Ext.Ajax.request({
+              url: '/admin/program_instructions/create_single',
+              params: {
+                program_id: ProgramId,
+                program_step_id: step.data.id,
+                text: 'Instructions for ' + step.data.name + ' step',
+                type: step.data.type + '_step'
+              },
+              callback: function (response) {
+                programInstructionStore.load({
+                  params: {
+                    program_id: ProgramId
+                  }
+                });
+              }
+            });
+          }
+        });
+      });
+
+      programInstructionStore.load({
+        callback: function (recs, op, success) {
+          panelEl.unmask();
+        },
         params: {
           program_id: ProgramId
         }

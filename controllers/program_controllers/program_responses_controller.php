@@ -646,7 +646,6 @@ class ProgramResponsesController extends AppController {
 		    'data' => $report,
 		    'title' => $title
 		);
-		$this->log($data, 'debug');
 		if (isset($this->params['requested'])) {
 		 	return $data;
 		} 		

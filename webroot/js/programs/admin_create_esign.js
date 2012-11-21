@@ -695,9 +695,9 @@ registrationForm = Ext.create('Ext.form.Panel', {
         statusBar.setText('Program Instructions');
       });
 
-    statusBar.setText('Saving Esign Details...');
 
     if (form.isValid()) {
+      statusBar.setText('Saving Esign Details...');
       vals = form.getValues();
 
       form.submit({
@@ -725,13 +725,16 @@ registrationForm = Ext.create('Ext.form.Panel', {
           Ext.Msg.alert('Could not upload esign document', action.result.msg);
         }
       });
+
+      $(window).bind('beforeunload', function () {
+        return 'By leaving this page the program will be unfinished and you will need edit it at a later time.';
+      });
+
+      clearStatusTask.delay(500);
+    } else {
+      return false;
     }
 
-    $(window).bind('beforeunload', function () {
-      return 'By leaving this page the program will be unfinished and you will need edit it at a later time.';
-    });
-
-    clearStatusTask.delay(500);
     return true;
   }
 });
@@ -847,7 +850,7 @@ instructions = Ext.create('Ext.panel.Panel', {
       });
     });
 
-    task.delay(1000);
+    task.delay(4000);
   },
   process: function () {
     var programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),

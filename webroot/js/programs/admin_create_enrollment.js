@@ -178,7 +178,7 @@ Ext.define('WatchedFilingCat', {
     { name: 'id', type: 'int' },
     { name: 'cat_id', type: 'int' },
     { name: 'program_id', type: 'int' },
-    'name',
+    'name'
   ]
 });
 
@@ -342,7 +342,8 @@ Ext.create('Ext.data.Store', {
       type: 'json',
       allowSingle: false,
       encode: true,
-      root: 'program_form_fields'
+      root: 'program_form_fields',
+      writeAllFields: false
     }
   }
 });
@@ -1463,7 +1464,6 @@ stepTree = Ext.create('Ext.panel.Panel', {
     statusBar.setText('Saving Program Steps...');
     clearStatusTask.delay(500);
 
-    Ext.data.StoreManager.lookup('ProgramStepStore').sync();
     return true;
   }
 });
@@ -1587,9 +1587,73 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                   select: function (rm, rec, index) {
                     var formPanel = Ext.getCmp('formPanel'),
                       form = formPanel.getForm(),
+                      requiredCb = formPanel.down('#requiredCb'),
+                      readOnlyCb = formPanel.down('#readOnlyCb'),
+                      fieldType = Ext.getCmp('fieldType'),
+                      fieldOptionsContainer = Ext.getCmp('fieldOptionsContainer'),
+                      fieldOptions = Ext.getCmp('fieldOptions'),
                       deleteFieldBtn = Ext.getCmp('deleteFieldBtn'),
                       updateBtn = Ext.getCmp('updateBtn'),
-                      builderSaveBtn = Ext.getCmp('builderSaveBtn');
+                      builderSaveBtn = Ext.getCmp('builderSaveBtn'),
+                      decodedValidation;
+
+                    form.reset();
+
+                    // check the appropriate checkboxes
+                    if (rec.data.validation) {
+                      if (rec.data.validation.match(/notEmpty/g)) {
+                        requiredCb.setValue(true);
+                      } else {
+                        requiredCb.setValue(true);
+
+                        decodedValidation = Ext.JSON.decode(rec.data.validation);
+                        rec.data.answer = decodedValidation.rule[1];
+                      }
+                    }
+
+                    if (!rec.data.validation || !rec.data.validation.match(/notEmpty/g)) {
+                      requiredCb.setValue(false);
+                    }
+
+                    if (rec.data.attributes) {
+                      if (rec.data.attributes.match(/readonly/g)) {
+                        readOnlyCb.setValue(true);
+                      }
+
+                      if (rec.data.attributes.match(/datepicker/g)) {
+                        fieldType.setValue('datepicker');
+                        rec.data.type = 'datepicker';
+                      }
+
+                      if (rec.data.attributes.match(/value/g)) {
+                        attrs = Ext.JSON.decode(rec.data.attributes);
+                        rec.data.default_value = attrs.value;
+                      }
+                    }
+
+                    if (!rec.data.attributes || !rec.data.attributes.match(/readonly/g)) {
+                      readOnlyCb.setValue(false);
+                    }
+
+                    // if it's a state list we need to present it
+                    // differently to the user
+                    if (rec.data.options) {
+                      if (rec.data.options.match(/"AL":"Alabama"/gi)) {
+                        fieldType.setValue('states');
+                        fieldOptions.setValue('');
+                        fieldOptionsContainer.setVisible(false);
+                        rec.data.type = 'states';
+                        rec.data.options = '';
+                      } else if (rec.data.options.match(/"Yes":"Yes","No":"No"/gi)) {
+                        fieldOptions.setValue('');
+                        fieldOptionsContainer.setVisible(false);
+                        rec.data.options = 'yesno';
+                      } else if (rec.data.options.match(/"True":"True","False":"False"/gi)) {
+                        fieldOptions.setValue('');
+                        fieldOptionsContainer.setVisible(false);
+                        rec.data.options = 'truefalse';
+                      }
+                    }
 
                     form.loadRecord(rec);
                     deleteFieldBtn.enable();
@@ -1661,8 +1725,8 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                     handler: function () {
                       var formPanel = Ext.getCmp('formPanel'),
                         form = formPanel.getForm(),
-                        savebtn = formPanel.down('#builderSaveBtn'),
-                        updatebtn = formPanel.down('#updateBtn'),
+                        saveBtn = formPanel.down('#builderSaveBtn'),
+                        updateBtn = formPanel.down('#updateBtn'),
                         grid = Ext.getCmp('formFieldGrid');
 
                       form.reset();
@@ -1719,6 +1783,7 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                   displayField: 'ucase',
                   editable: false,
                   fieldLabel: 'Field Type',
+                  id: 'fieldType',
                   listeners: {
                     change: {
                       fn: function (field, newValue, oldValue) {
@@ -1810,6 +1875,7 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                 }, {
                   xtype: 'checkbox',
                   fieldLabel: 'Read only',
+                  id: 'readOnlyCb',
                   name: 'read_only',
                   listeners: {
                     change: function (field, newVal, oldVal) {
@@ -1888,6 +1954,7 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                         },
                         states: function () {
                           vals.type = 'select';
+                          options = states;
                         }
                       };
                     }());
@@ -1960,6 +2027,7 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                         },
                         states: function () {
                           vals.type = 'select';
+                          options = states;
                         }
                       };
                     }());
@@ -2468,7 +2536,7 @@ instructions = Ext.create('Ext.panel.Panel', {
             '<br />' +
             '<a href="' +
             window.location.origin +
-            '/programs/enrollment' +
+            '/programs/enrollment/' +
             rec.get('id') +
             '">' +
             program.get('name').humanize() +
@@ -2714,7 +2782,7 @@ emails = Ext.create('Ext.panel.Panel', {
             '<br />' +
             '<a href="' +
             window.location.origin +
-            '/programs/enrollment' +
+            '/programs/enrollment/' +
             rec.get('id') +
             '">Click here to return to the ' +
             program.get('name').humanize() +
