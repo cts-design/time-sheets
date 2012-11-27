@@ -3,6 +3,12 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+	<h1>Release 3.5.6 (11-27-12)</h1>
+	<ol>
+		<li>Lowered the Program responses expire in minimum value to 10.</li>
+		<li>Added decoding of custom select options to the program form builder on edit.</li>
+	</ol>
+	<hr />
 	<h1>Release 3.5.5 (11-21-12)</h1>
 	<ol>
 		<li>Updated registration expiration to allow for 10,30,60,90.</li>
