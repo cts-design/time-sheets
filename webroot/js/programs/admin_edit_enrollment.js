@@ -713,7 +713,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       fieldLabel: 'Responses Expire In',
       id: 'responsesExpireIn',
       labelWidth: 190,
-      minValue: 30,
+      minValue: 10,
       name: 'response_expires_in',
       value: 30,
       width: 250
@@ -1635,6 +1635,7 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                       decodedValidation;
 
                     form.reset();
+                    form.loadRecord(rec);
 
                     // check the appropriate checkboxes
                     if (rec.data.validation) {
@@ -1681,18 +1682,34 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                         fieldOptionsContainer.setVisible(false);
                         rec.data.type = 'states';
                         rec.data.options = '';
+                        form.loadRecord(rec);
                       } else if (rec.data.options.match(/"Yes":"Yes","No":"No"/gi)) {
                         fieldOptions.setValue('');
                         fieldOptionsContainer.setVisible(false);
                         rec.data.options = 'yesno';
+                        form.loadRecord(rec);
                       } else if (rec.data.options.match(/"True":"True","False":"False"/gi)) {
                         fieldOptions.setValue('');
                         fieldOptionsContainer.setVisible(false);
                         rec.data.options = 'truefalse';
+                        form.loadRecord(rec);
+                      } else {
+                        var opts = Ext.JSON.decode(rec.data.options),
+                          vals = '',
+                          key;
+
+                        for (key in opts) {
+                          vals += opts[key] + ",";
+                        }
+
+                        vals = vals.replace(/(,$)/g, '');
+
+                        fieldOptions.setValue(vals);
+                        fieldOptionsContainer.setVisible(true);
+                        rec.data.options = vals;
                       }
                     }
 
-                    form.loadRecord(rec);
                     deleteFieldBtn.enable();
                     updateBtn.show();
                     builderSaveBtn.hide();
