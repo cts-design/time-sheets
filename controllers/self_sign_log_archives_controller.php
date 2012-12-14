@@ -95,11 +95,11 @@ class SelfSignLogArchivesController extends AppController {
 
 			$count = $this->SelfSignLogArchive->find('count', array('conditions' => $conditions));
 
-			if($count <= 5000) {
+			if($count <= 20000) {
 				$data = $this->SelfSignLogArchive->find('all', array('conditions' => $conditions));
 			}
 			else {
-				$this->Session->setFlash(__('Your results exceed 5000 records, please filter results further.', true), 'flash_failure');
+				$this->Session->setFlash(__('Your results exceed 20000 records, please filter results further.', true), 'flash_failure');
 				$this->redirect( array('action' => 'index'));
 			}
 		}
