@@ -544,7 +544,7 @@ div.actions .ui-button-text {
 
 
 #search .ui-accordion-content{
-  height: 145px;
+  height: 175px;
   overflow: hidden;
 }
 
@@ -582,7 +582,7 @@ div.actions .ui-button-text {
 }
 
 #reset .ui-button-text {
-  padding: 1px;
+  padding: 4px 0 4px 0;
 }
 
 #searchButtons {
@@ -595,7 +595,7 @@ div.actions .ui-button-text {
 
 #reportForm {
   display: inline-block;
-  width: 100px;
+  width: 150px;
   margin-top: 5px;
 }
 
