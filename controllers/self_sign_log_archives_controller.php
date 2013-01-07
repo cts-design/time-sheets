@@ -116,7 +116,8 @@ class SelfSignLogArchivesController extends AppController {
 		$closedInTimes = array();
 
 		foreach($data as $k => $v) {
-			$report[$k]['Name'] = $v['User']['firstname'] . ' ' . $v['User']['lastname'];
+			$report[$k]['First Name'] = $v['User']['firstname'];
+			$report[$k]['Last Name'] = $v['User']['lastname'];
 			$report[$k]['Location'] = $v['Location']['name'];
 			if(!empty($v['SelfSignLogArchive']['level_1'])) {
 				$report[$k]['Button 1'] = $buttons[$v['SelfSignLogArchive']['level_1']];
