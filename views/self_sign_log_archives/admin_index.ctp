@@ -87,6 +87,7 @@
 		</div>
 		<div id="reportForm">
 		    <?php echo $this->Form->create(array('action' => 'report')) ?>
+			<?php echo $this->Form->input('include_user_info', array('type' => 'checkbox')) ?>
 		    <?php echo $this->Form->hidden('search', array('value' => '1')) ?>
 		    <?php echo $this->Form->hidden('locations', array('value' => '', 'id' => 'searchLocations')) ?>
 		    <?php echo $this->Form->hidden('button_1', array('value' => '', 'id' => 'searchButton1')) ?>
