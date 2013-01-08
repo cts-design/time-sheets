@@ -71,7 +71,7 @@ class PagesController extends AppController {
 			// requested is only set if this page was retreived
 			// using requestAction. In our case this means that
 			// the request originated from the homepage element
-			return $this->Page->findPublishedBySlug('homepage');
+			return $this->Page->findPublishedBySlug($this->params['pass'][0]);
 		} else {
 			// can't explode $this->params['url'] because its an array
 			$request = explode('/', $this->params['url']['url']);
