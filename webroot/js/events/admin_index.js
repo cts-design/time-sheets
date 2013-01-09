@@ -420,7 +420,8 @@ Ext.create('Ext.form.Panel', {
     allowBlank: false,
     listeners: {
       change: function(combo, newValue, oldValue, eOpts) {
-        if(combo.rawValue === 'Workshop') {
+        var re = /workshop/i;
+        if(re.test(combo.rawValue)) {
           Ext.getCmp('cat1Name').enable();
         }
         else { 
@@ -607,6 +608,7 @@ Ext.create('Ext.form.Panel', {
         }
         store.sync({
           success: function() {
+            // TODO: add success and failure logic
             console.log('success');
           },
           failure: function() {
