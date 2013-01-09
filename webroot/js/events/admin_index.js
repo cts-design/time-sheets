@@ -1,5 +1,6 @@
 var dt = new Date();
 
+Ext.onReady(function(){
 Ext.define('Event', {
   extend: 'Ext.data.Model',
   fields: [
@@ -276,15 +277,16 @@ Ext.create('Ext.form.Panel', {
   id: 'eventsForm',
   frame: true,
   bodyPadding: 5,
+  renderTo: 'events',
   width: 950,
   height: 550,
-  layout: 'hbox',
+  layout: 'column',
   fieldDefaults: {
     labelAlign: 'left',
     msgTarget: 'side'
   },
   items: [{
-    flex: 2,
+    columnWidth: 0.7,
     xtype: 'gridpanel',
     height: 400,
     id: 'eventsGrid',
@@ -310,11 +312,9 @@ Ext.create('Ext.form.Panel', {
     },{
       text: 'Name',
       dataIndex: 'name',
-      flex: 1
     },{
       text: 'Location',
       dataIndex: 'location',
-      flex: 1
     },{
       text: 'Category',
       dataIndex: 'category'
@@ -373,6 +373,7 @@ Ext.create('Ext.form.Panel', {
       }
     }
   }, {
+  columnWidth: 0.3,
   margin: '0 0 0 10',
   padding: 10,
   xtype: 'fieldset',
@@ -474,7 +475,7 @@ Ext.create('Ext.form.Panel', {
     allowBlank: false
   },{
     fieldLabel: 'Scheduled',
-    xtype: 'datetimefield',
+    xtype: 'xdatetime',
     name: 'scheduled',
     allowBlank: false,
     timeFormat: 'g:i a',
@@ -606,7 +607,5 @@ Ext.create('Ext.form.Panel', {
   }]
 });
 
-Ext.onReady(function(){
-  Ext.getCmp('eventsForm').render('events');
 });
 

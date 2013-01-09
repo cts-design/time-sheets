@@ -1,41 +1,46 @@
 /**
-* @auther Elvis Hsu
-* @class Ext.ux.form.field.DateTime
-* @extends Ext.form.FieldContainer  
-* 
-* inspired by http://www.sencha.com/forum/showthread.php?134345-Ext.ux.form.field.DateTime
-* This class is used for user input 
-*/
+ * @class Ext.ux.form.field.DateTime
+ * @extends Ext.form.FieldContainer
+ * @version 0.4 (November 5th, 2012)
+ * @author Ext Example Class: Ext.calendar.form.field.DateRange
+ * @author [atian25](http://www.sencha.com/forum/member.php?51682-atian25)
+ * @author [ontho](http://www.sencha.com/forum/member.php?285806-ontho)
+ * @author [jakob.ketterl](http://www.sencha.com/forum/member.php?25102-jakob.ketterl)
+ * [Forum Thread](http://www.sencha.com/forum/showthread.php?134345-Ext.ux.form.field.DateTime)
+ */
 Ext.define('Ext.ux.form.field.DateTime', {
     extend:'Ext.form.FieldContainer',
-    mixins: {
-        field: 'Ext.form.field.Field'
+    alias: 'widget.xdatetime',
+    requires: [
+        'Ext.form.field.Date',
+        'Ext.form.field.Time'
+    ],
+    mixins:{    
+        field:'Ext.form.field.Field'
     },
-    alias: 'widget.datetimefield',
-    height: 22,
-    /**
-    * set combine errors to true for showing errorr
-    */
+        
+    //configurables
+    
     combineErrors: true,
-    /**
-    * set msg taeget to side
-    */
-    msgTarget :'side',  
-    /**
-    * we want hbox layout
-    */
+    msgTarget: 'under',    
     layout: 'hbox',
+    readOnly: false,
+    
     /**
-    * set readonly to false
-    */
-    readOnly: false,    
-    /**
-    * @cfg {String} dateFormat
-    * Convenience config for specifying the format of the date portion.
-    * This value is overridden if format is specified in the dateConfig.
-    * The default is 'Y-m-d'
-    */
+     * @cfg {String} dateFormat
+     * Convenience config for specifying the format of the date portion.
+     * This value is overridden if format is specified in the dateConfig.
+     * The default is 'Y-m-d'
+     */
     dateFormat: 'Y-m-d',
+    
+    /**
+     * @cfg {String} dateTimeFormat
+     * An optional format used in place of {@link #dateFormat} and {@link timeFormat} to 
+     * allow support for combined formatting, such as enoch, when calling 
+     * {@link #getSubmitValue} and {@link setValue}.
+     */
+    
     /**
      * @cfg {String} timeFormat
      * Convenience config for specifying the format of the time portion.
@@ -44,17 +49,20 @@ Ext.define('Ext.ux.form.field.DateTime', {
      */
     timeFormat: 'H:i:s',
     /**
-    * the datefield configurations
-    */
+     * @cfg {Object} dateConfig
+     * Additional config options for the date field.
+     */
     dateConfig:{},
     /**
-    * the time field configurations
-    */
+     * @cfg {Object} timeConfig
+     * Additional config options for the time field.
+     */
     timeConfig:{},
-    /**
-    * The actual date value
-    */
-    dateValue: null,
+
+    
+    // properties
+    
+    dateValue: null, // Holds the actual date
     /**
      * @property dateField
      * @type Ext.form.field.Date
@@ -64,195 +72,153 @@ Ext.define('Ext.ux.form.field.DateTime', {
      * @property timeField
      * @type Ext.form.field.Time
      */
-    timeField: null,    
-    /**
-    * initialising the components
-    */
-    initComponent: function() {
+    timeField: null,
+
+    initComponent: function(){
         var me = this,
+            i = 0,
             key,
             tab;
-        // set default to no items
-        me.items = me.items || [];
-        
-        me.dateField = Ext.create('Ext.form.field.Date', Ext.apply({
-            format:me.dateFormat,
-            flex:1,
-            isFormField:false, //exclude from field query's
-            submitValue:false
-        }, me.dateConfig));
-        me.items.push(me.dateField);
-        
-        me.timeField = Ext.create('Ext.form.field.Time', Ext.apply({
-            format:me.timeFormat,
-            flex:1,
-            isFormField:false, //exclude from field query's
-            submitValue:false
-        }, me.timeConfig));
-        me.items.push(me.timeField);
-        
-        for (var i = 0; i < me.items.length; i++) {
-            me.items[i].on('focus', Ext.bind(me.onItemFocus, me));
-            me.items[i].on('blur', Ext.bind(me.onItemBlur, me));
-            me.items[i].on('specialkey', function(field, event){
-                key = event.getKey();
-                tab = (key == event.TAB);
+            
+        Ext.apply(me,{
+            isFormField: true, //so it will be included in form field query's
+            items: [
+                Ext.apply({
+                    format:me.dateFormat,
+                    flex:1,
+                    isFormField:false, //exclude from field query's
+                    listeners: {
+                        'blur': function(){
+                            me.onFieldChange();
+                        },
+                        scope: me
+                    },
+                    submitValue:false,
+                    validateOnChange: false,
+                    xtype: 'datefield'
+                },me.dateConfig),
                 
-                if (tab && me.focussedItem == me.dateField) {
-                    event.stopEvent();
-                    me.timeField.focus();
-                    return;
-                }
-                
-                me.fireEvent('specialkey', field, event);
-            });
-        }
+                Ext.apply({
+                    format:me.timeFormat,
+                    flex:1,
+                    isFormField:false, //exclude from field query's
+                    listeners: {
+                        'select': function(){
+                            me.onFieldChange();
+                        },
+                        scope: me
+                    },
+                    submitValue:false,
+                    xtype: 'timefield'
+                },me.timeConfig)
+            ]
+        });
 
         me.callParent();
         
-        // this dummy is necessary because Ext.Editor will not check whether an inputEl is present or not
-        me.inputEl = {
-            dom:{},
-            swallowEvent:function(){}
-        };
+        me.dateField = me.down('datefield');
+        me.timeField = me.down('timefield');
         
         me.initField();
     },
-    /**
-     * Try to focus this component.
-     * @param {Boolean} [selectText] If applicable, true to also select the text in this component
-     * @param {Boolean/Number} [delay] Delay the focus this number of milliseconds (true for 10 milliseconds).
-     * @return {Ext.Component} this
-     */
-    focus:function(){
-        this.callParent();
-        this.dateField.focus();
-    },
-
-    onItemFocus:function(item){
-        if (this.blurTask){
-            this.blurTask.cancel();
-        }
-        this.focussedItem = item;
+    
+    // private
+    beforeDestroy: function(){
+        Ext.destroy(this.fieldCt);
+        this.callParent(arguments);
     },
     
-    onItemBlur:function(item){
-        var me = this;
-        if (item != me.focussedItem){ return; }
-        // 100ms to focus a new item that belongs to us, otherwise we will assume the user left the field
-        me.blurTask = new Ext.util.DelayedTask(function(){
-            me.fireEvent('blur', me);
+    // private
+    delegateFn: function(fn){
+        this.items.each(function(item){
+            if (item[fn]) {
+                item[fn]();
+            }
         });
-        me.blurTask.delay(100);
-    },    
+    },
+    
+    // inherited docs
+    getErrors: function(){
+        return [].concat(this.dateField.getErrors()).concat(this.timeField.getErrors());
+    },
+    
+    getFormat: function(){
+        var df = this.dateField,
+            tf = this.timeField;
+        return ((df.submitFormat || df.format) + " " + (tf.submitFormat || tf.format));
+    },
+    
     /**
-     * Returns the current data value of the field. The type of value returned is particular to the type of the
-     * particular field (e.g. a Date object for {@link Ext.form.field.Date}).
-     * @return {Object} value The field value
+     * @return {Date}
      */
-    getValue: function() {
+    getValue: function(){
         var me = this,
             value = null,
             date = me.dateField.getSubmitValue(),
-            time = me.timeField.getSubmitValue();
-        if(date){
-            if(time){
-                var format = me.getFormat()
-                value = Ext.Date.parse(date + ' ' + time,format)
-            }else{
-                value = me.dateField.getValue()
+            time = me.timeField.getSubmitValue(),
+            format;
+
+        if (date){
+            if (time){
+                format = me.getFormat();
+                value = Ext.Date.parse(date + ' ' + time, format);
+            } else {   
+                value = me.dateField.getValue();
             }
         }
-        return value
+        return value;
     },
-    /**
-     * Sets a data value into the field and runs the change detection and validation.
-     * @param {Object} value The value to set
-     * @return {Ext.form.field.Field} this
-     */
+    
+    // inherited docs
+    isDirty: function(){
+        var dirty = false;
+        if(this.rendered && !this.disabled) {
+            this.items.each(function(item){
+                if (item.isDirty()) {
+                    dirty = true;
+                    return false;
+                }
+            });
+        }
+        return dirty;
+    },
+    
+    // private
+    onDisable : function(){
+        this.delegateFn('disable');
+    },
+    
+    // private
+    onEnable : function(){
+        this.delegateFn('enable');
+    },
+    
+    // private
+    onFieldChange: function(){
+        this.fireEvent('change', this, this.getValue());
+    },
+    
+    // inherited docs
+    reset : function(){
+        this.delegateFn('reset');
+    },
+    
+    //@inheritdoc
+    resetOriginalValue: function(){
+        this.dateField.resetOriginalValue();
+        this.timeField.resetOriginalValue();
+    },
+    
     setValue: function(value){
+        var format;
+        
         if (Ext.isString(value)){
-            value = Ext.Date.parse(value, this.getFormat()); //this.dateTimeFormat
+            format = this.dateTimeFormat || this.getFormat();
+            value = Ext.Date.parse(value, format); //this.dateTimeFormat
         }
         this.dateField.setValue(value);
         this.timeField.setValue(value);
-    },
-    /**
-     * Resets the field's {@link #originalValue} property so it matches the current {@link #getValue value}. This is
-     * called by {@link Ext.form.Basic}.{@link Ext.form.Basic#setValues setValues} if the form's
-     * {@link Ext.form.Basic#trackResetOnLoad trackResetOnLoad} property is set to true.
-     */
-    resetOriginalValue: function() {
-        var me = this;
-        me.originalValue = me.getValue();
-        me.dateField.resetOriginalValue();
-        me.timeField.resetOriginalValue();
-        me.checkDirty();
-    },
-    /**
-     * Returns the value that would be included in a standard form submit for this field. This will be combined with the
-     * field's name to form a name=value pair in the {@link #getSubmitData submitted parameters}. If an empty string is
-     * returned then just the name= will be submitted; if null is returned then nothing will be submitted.
-     *
-     * Note that the value returned will have been {@link #processRawValue processed} but may or may not have been
-     * successfully {@link #validate validated}.
-     *
-     * @return {String} The value to be submitted, or null.
-     */
-    getSubmitValue: function(){   
-        var me = this,
-            format = me.getFormat(),
-            value = me.getValue();
-            
-        return value ? Ext.Date.format(value, format) : null;        
-    },         
-    /**
-     * Returns the parameter(s) that would be included in a standard form submit for this field. Typically this will be
-     * an object with a single name-value pair, the name being this field's {@link #getName name} and the value being
-     * its current stringified value. More advanced field implementations may return more than one name-value pair.
-     *
-     * Note that the values returned from this method are not guaranteed to have been successfully {@link #validate
-     * validated}.
-     *
-     * @return {Object} A mapping of submit parameter names to values; each value should be a string, or an array of
-     * strings if that particular name has multiple values. It can also return null if there are no parameters to be
-     * submitted.
-     */
-    getSubmitData: function(){
-        var me = this,
-            data = null;
-            
-        if (!me.disabled && me.submitValue && !me.isFileUpload()) {
-            data = {};
-            data[me.getName()] = '' + me.getSubmitValue();
-        }
-        return data;
-    },
-    /**
-    * Gets the current date time field format
-    */
-    getFormat: function(){
-        var me = this;
-        return (me.dateField.submitFormat || me.dateField.format) + " " + (me.timeField.submitFormat || me.timeField.format)
-    },
-    /**
-     * Replaces any existing {@link #minValue} with the new value and refreshes the Date picker.
-     * @param {Date} value The minimum date that can be selected
-     */    
-    setMinValue: function(date){
-        var me = this;
-        me.dateField.setMinValue(date);
-    },
-    /**
-     * Replaces any existing {@link #maxValue} with the new value and refreshes the Date picker.
-     * @param {Date} value The maximum date that can be selected
-     */    
-    setMaxValue: function(date){
-        var me = this;
-        me.dateField.setMaxValue(date);
-    },
-    validate: function(){
-        var me = this;
-        return me.dateField.validate();
     }
-}); 
+});
+
+//eo file
