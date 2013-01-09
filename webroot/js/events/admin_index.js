@@ -1,6 +1,5 @@
 var dt = new Date();
 
-Ext.onReady(function(){
 Ext.define('Event', {
   extend: 'Ext.data.Model',
   fields: [
@@ -13,7 +12,7 @@ Ext.define('Event', {
     {name: 'other_location'},
     {name: 'url'},
     {name: 'address'},
-    {name: 'scheduled', type: 'date', dateFormat: 'Y-m-d H:i:s'},
+    {name: 'scheduled', type: 'date'},
     {name: 'seats_available'},
     {name: 'duration'},
     {name: 'registered'},
@@ -277,7 +276,6 @@ Ext.create('Ext.form.Panel', {
   id: 'eventsForm',
   frame: true,
   bodyPadding: 5,
-  renderTo: 'events',
   width: 950,
   height: 550,
   layout: 'column',
@@ -288,7 +286,7 @@ Ext.create('Ext.form.Panel', {
   items: [{
     columnWidth: 0.7,
     xtype: 'gridpanel',
-    height: 400,
+    height: 500,
     id: 'eventsGrid',
     store: Ext.data.StoreManager.lookup('eventsStore'),
     scroll: false,
@@ -609,5 +607,7 @@ Ext.create('Ext.form.Panel', {
   }]
 });
 
+Ext.onReady(function(){
+  Ext.getCmp('eventsForm').render('events')
 });
 
