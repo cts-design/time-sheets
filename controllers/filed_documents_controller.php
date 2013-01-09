@@ -291,15 +291,8 @@ class FiledDocumentsController extends AppController {
 				}
 			}				
 			$query = $this->Paginate('FiledDocument');
+			$data['totalCount'] = $this->params['paging']['FiledDocument']['count'];
 			$data['docs'] = array();
-			if(!empty($conditions)) {
-				$data['totalCount'] = $this->FiledDocument->find('count', array(
-					'conditions' => $conditions,
-					'recursive' => 0));	
-			}
-			else{
-				$data['totalCount'] = $this->FiledDocument->find('count', array('recursive' => -1));	
-			}
 			if(!empty($query)) {
 				foreach($query as $k => $v) {
 					$data['docs'][$k]['id'] = $v['FiledDocument']['id'];

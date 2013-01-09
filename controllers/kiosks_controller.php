@@ -122,6 +122,7 @@ class KiosksController extends AppController {
 		$this->User->recursive = 0;
 
 		if(!empty($this->data)) {
+			$this->User->setValidation('customerMinimum');
 			if($this->User->save($this->data)) {
 				$this->Transaction->createUserTransaction('Self Sign', $id, $this->Kiosk->getKioskLocationId(), 'Edited information');
 				$this->Session->setFlash(__('The information has been saved', true), 'flash_success');

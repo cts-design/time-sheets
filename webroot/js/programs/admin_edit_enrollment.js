@@ -118,6 +118,7 @@ Ext.define('ProgramEmail', {
     'body',
     'type',
     'name',
+    { name: 'disabled', type: 'int' },
     { name: 'created',  type: 'date', dateFormat: 'Y-m-d H:i:s' },
     { name: 'modified', type: 'date', dateFormat: 'Y-m-d H:i:s' }
   ]
@@ -132,7 +133,7 @@ Ext.define('DocumentQueueCategory', {
     {
       name : 'img',
       convert: function(value, record){
-        var img = null,
+        var img = '',
           secure = record.get('secure');
 
         if(secure) {
@@ -152,7 +153,7 @@ Ext.define('DocumentFilingCategory', {
     {
       name : 'img',
       convert: function(value, record){
-        var img = null,
+        var img = '',
           secure = record.get('secure');
 
         if(secure) {
@@ -176,7 +177,7 @@ Ext.define('WatchedFilingCat', {
     'cat_3_name',
     { name: 'program_id', type: 'int' },
     { name: 'program_email_id', type: 'int' },
-    'name',
+    'name'
   ]
 });
 
@@ -346,7 +347,8 @@ Ext.create('Ext.data.Store', {
       type: 'json',
       allowSingle: false,
       encode: true,
-      root: 'program_form_fields'
+      root: 'program_form_fields',
+      writeAllFields: false
     }
   }
 });
@@ -362,6 +364,12 @@ Ext.create('Ext.data.Store', {
       read: '/admin/program_documents/read',
       update: '/admin/program_documents/update',
       destroy: '/admin/program_documents/destroy'
+    },
+    listeners: {
+      exception: function (proxy, response, op, eOpts) {
+        op.records[0].store.remove(op.records);
+        Ext.Msg.alert('Error', op.error);
+      }
     },
     reader: {
       type: 'json',
@@ -705,7 +713,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       fieldLabel: 'Responses Expire In',
       id: 'responsesExpireIn',
       labelWidth: 190,
-      minValue: 30,
+      minValue: 10,
       name: 'response_expires_in',
       value: 30,
       width: 250
@@ -1028,11 +1036,15 @@ stepTree = Ext.create('Ext.panel.Panel', {
             icon: Ext.Msg.QUESTION,
             fn: function (btn) {
               if (btn === 'yes') {
-                selectedModule.eachChild(function (child) {
-                  selectedModule.removeChild(child);
+                Ext.Ajax.request({
+                  url: '/admin/program_steps/destroy',
+                  params: {
+                    program_step_id: selectedModule.data.id
+                  },
+                  success: function (response) {
+                    selectedModule.remove();
+                  }
                 });
-                selectedModule.remove();
-                programStepStore.sync();
               }
             }
           });
@@ -1129,6 +1141,7 @@ stepTree = Ext.create('Ext.panel.Panel', {
         text: 'Delete Step',
         handler: function () {
           var grid = Ext.getCmp('gridTreePanel'),
+            programStepStore = Ext.data.StoreMgr.lookup('ProgramStepStore'),
             selectedStep = grid.getSelectionModel().getSelection()[0];
 
 
@@ -1139,7 +1152,15 @@ stepTree = Ext.create('Ext.panel.Panel', {
             icon: Ext.Msg.QUESTION,
             fn: function (btn) {
               if (btn === 'yes') {
-                selectedStep.remove();
+                Ext.Ajax.request({
+                  url: '/admin/program_steps/destroy',
+                  params: {
+                    program_step_id: selectedStep.data.id
+                  },
+                  success: function (response) {
+                    selectedStep.remove();
+                  }
+                });
               }
             }
           });
@@ -1341,8 +1362,10 @@ stepTree = Ext.create('Ext.panel.Panel', {
           selectedModule = treePanel.getSelectionModel().getSelection()[0],
           sm = Ext.data.StoreManager,
           programStepStore = sm.lookup('ProgramStepStore'),
+          programInstructionStore = sm.lookup('ProgramInstructionStore'),
           program = sm.lookup('ProgramStore').first(),
           vals,
+          newNode,
           processStepType;
 
         if (form.isValid()) {
@@ -1425,13 +1448,15 @@ stepTree = Ext.create('Ext.panel.Panel', {
 
     if (!treeStoreLoaded) {
       Ext.Ajax.request({
-        url: '/admin/program_steps/read',
+        url: '/admin/program_steps/read_tree',
         params: {
           program_id: ProgramId
         },
         success: function (response) {
           var programSteps = Ext.JSON.decode(response.responseText).program_steps,
             rootNode = programStepStore.getRootNode(),
+            parents = [],
+            children = [],
             i;
 
           treeStoreLoaded = true;
@@ -1442,14 +1467,20 @@ stepTree = Ext.create('Ext.panel.Panel', {
               parentId;
 
             if (!rec.type) {
-              rootNode.appendChild(rec);
-              parentId = rec.id;
+              parents.push(rec);
             } else {
-              parent = rootNode.findChild('id', parentId);
-              rec.parentId = rec.parent_id;
               rec.leaf = true;
-              parent.appendChild(rec);
+              children.push(rec);
             }
+          }
+
+          for (i = 0, l = parents.length; i < l; i++) {
+            rootNode.appendChild(parents[i]);
+          }
+
+          for (i = 0, l = children.length; i < l; i++) {
+            var childsParent = rootNode.findChild('id', children[i].parent_id);
+            childsParent.appendChild(children[i]);
           }
         }
       });
@@ -1604,6 +1635,7 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                       decodedValidation;
 
                     form.reset();
+                    form.loadRecord(rec);
 
                     // check the appropriate checkboxes
                     if (rec.data.validation) {
@@ -1650,18 +1682,34 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                         fieldOptionsContainer.setVisible(false);
                         rec.data.type = 'states';
                         rec.data.options = '';
+                        form.loadRecord(rec);
                       } else if (rec.data.options.match(/"Yes":"Yes","No":"No"/gi)) {
                         fieldOptions.setValue('');
                         fieldOptionsContainer.setVisible(false);
                         rec.data.options = 'yesno';
+                        form.loadRecord(rec);
                       } else if (rec.data.options.match(/"True":"True","False":"False"/gi)) {
                         fieldOptions.setValue('');
                         fieldOptionsContainer.setVisible(false);
                         rec.data.options = 'truefalse';
+                        form.loadRecord(rec);
+                      } else {
+                        var opts = Ext.JSON.decode(rec.data.options),
+                          vals = '',
+                          key;
+
+                        for (key in opts) {
+                          vals += opts[key] + ",";
+                        }
+
+                        vals = vals.replace(/(,$)/g, '');
+
+                        fieldOptions.setValue(vals);
+                        fieldOptionsContainer.setVisible(true);
+                        rec.data.options = vals;
                       }
                     }
 
-                    form.loadRecord(rec);
                     deleteFieldBtn.enable();
                     updateBtn.show();
                     builderSaveBtn.hide();
@@ -1952,6 +2000,7 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                         },
                         states: function () {
                           vals.type = 'select';
+                          options = states;
                         }
                       };
                     }());
@@ -2031,6 +2080,7 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                         },
                         states: function () {
                           vals.type = 'select';
+                          options = states;
                         }
                       };
                     }());
@@ -2755,7 +2805,42 @@ instructions = Ext.create('Ext.panel.Panel', {
   }],
   listeners: {
     activate: function () {
-      Ext.data.StoreManager.lookup('ProgramInstructionStore').load({
+      var sm = Ext.data.StoreMgr,
+        programInstructionStore = sm.lookup('ProgramInstructionStore'),
+        programStepStore = sm.lookup('ProgramStepStore'),
+        panelEl = this.getEl();
+
+      panelEl.mask('Loading...');
+
+      programStepStore.getRootNode().eachChild(function (module) {
+        module.eachChild(function (step) {
+          var instruction = programInstructionStore.findRecord('program_step_id', step.data.id);
+
+          if (!instruction) {
+            Ext.Ajax.request({
+              url: '/admin/program_instructions/create_single',
+              params: {
+                program_id: ProgramId,
+                program_step_id: step.data.id,
+                text: 'Instructions for ' + step.data.name + ' step',
+                type: step.data.type + '_step'
+              },
+              callback: function (response) {
+                programInstructionStore.load({
+                  params: {
+                    program_id: ProgramId
+                  }
+                });
+              }
+            });
+          }
+        });
+      });
+
+      programInstructionStore.load({
+        callback: function (recs, op, success) {
+          panelEl.unmask();
+        },
         params: {
           program_id: ProgramId
         }
@@ -2793,6 +2878,36 @@ emails = Ext.create('Ext.panel.Panel', {
       }
     }],
     listeners: {
+      itemcontextmenu: function (view, rec, item, index, e) {
+        var menu,
+          items = [];
+
+        e.preventDefault();
+
+        if (rec.get('disabled')) {
+          items.push({
+              icon: '/img/icons/survey.png',
+              text: 'Enable',
+              handler: function () {
+                rec.set('disabled', 0);
+              }
+          });
+        } else {
+          items.push({
+              icon: '/img/icons/survey.png',
+              text: 'Disable',
+              handler: function () {
+                rec.set('disabled', 1);
+              }
+          });
+        }
+
+        menu = Ext.create('Ext.menu.Menu', {
+          items: items
+        });
+
+        menu.showAt(e.getXY());
+      },
       select: function (rm, rec, index) {
         var editor = Ext.getCmp('emailEditor'),
           fromField = Ext.getCmp('fromField'),
@@ -2816,6 +2931,11 @@ emails = Ext.create('Ext.panel.Panel', {
         fromField.setValue(rec.data.from);
         subjectField.setValue(rec.data.subject);
         saveBtn.enable();
+      }
+    },
+    viewConfig: {
+      getRowClass: function (rec) {
+        return rec.get('disabled') ? 'row-disabled' : 'row-active';
       }
     },
     plugins: [

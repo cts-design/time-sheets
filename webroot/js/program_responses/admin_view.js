@@ -2,25 +2,6 @@
  * @author dnolan
  */
 
-
-// Kludge to fix not being able to type spaces in context menu text fields
-Ext.override(Ext.menu.KeyNav, {
-  constructor: function(menu) {
-    var me = this;
-    me.menu = menu;
-    me.callParent([menu.el, {
-      down: me.down,
-      enter: me.enter,
-      esc: me.escape,
-      left: me.left,
-      right: me.right,
-      //space: me.enter,
-      tab: me.tab,
-      up: me.up
-    }]);
-  }
-});
-
 Ext.define('ProgramFormActivity', {
   extend: 'Ext.data.Model',
   fields: ['id', 'name']
@@ -65,7 +46,8 @@ Ext.onReady(function(){
     progress.hide();
   });
 
-  var approvalForm = Ext.create('Ext.form.Panel', {
+ var approvalForm = Ext.create('Ext.form.Panel', {
+    id: 'approvalForm',
     fieldDefaults: {
       labelWidth: 90,
       labelAlign: 'top',
@@ -127,7 +109,8 @@ Ext.onReady(function(){
   });
 
   var menu = Ext.create('Ext.menu.Menu', {
-    layout: 'menu',
+    id: 'notApprovedMenu',
+    enableKeyNav: false,
     items: [
       approvalForm
     ]
@@ -180,7 +163,7 @@ Ext.onReady(function(){
         id: 'notApproved',
         hidden: true,
         icon: '/img/icons/delete.png',
-        menu: menu
+        menu: 'notApprovedMenu' 
       },{
         text: 'Next Response',
         id: 'nextResponse',

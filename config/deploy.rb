@@ -14,7 +14,7 @@ set :default_shell, '/bin/bash'
 set :design_branch, "master"
 
 # plugins, override in region namespace if region has plugins
-set :app_plugins, ['queue']
+set :app_plugins, []
 
 # --- Server Settings.
 
@@ -36,6 +36,16 @@ namespace :cts do
     set :branch, 'staging'
     set :design_branch, ENV['DESIGN'] if ENV.has_key?('DESIGN')
     server "staging.atlasforworkforce.com", :app, :web, :db, :primary => true
+  end
+
+  task :design do
+    set :deploy_to, "/var/www/vhosts/design.atlasforworkforce.com/#{application}"
+    set :server_name, 'atlas design'
+    set :user, 'design_deploy'
+    set :keep_releases, 1
+    set :branch, 'staging'
+    set :design_branch, "chipola"
+    server "192.168.200.74", :app, :web, :db, :primary => true
   end
 
   task :tradeshow do
@@ -65,7 +75,7 @@ task :chipola do
   set :deploy_to, "/var/www/vhosts/atlas.onestopahead.com/#{application}"
   set :server_name, 'chipola production'
   set :user, 'ola_chip0'
-  server "184.6.253.33", :app, :web, :db, :primary => true
+  server "23.25.183.162", :app, :web, :db, :primary => true
 end
 
 task :clm do
@@ -229,7 +239,9 @@ namespace :notify_campfire do
 end
 
 def send_campfire_alert(body)
-  run "cd #{current_release} && cake campfire '#{body}'"
+  if current_release
+    run "cd #{current_release} && cake campfire '#{body}'"
+  end
 end
 
 namespace :mysql do

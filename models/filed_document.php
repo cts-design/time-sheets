@@ -47,29 +47,11 @@ class FiledDocument extends AppModel {
 		)
 	);
 
-	var $hasOne = array(
-		'ProgramResponseDoc' => array(
-			'className' => 'ProgramResponseDoc',
-			'foreignKey' => 'doc_id'
-		));
-
 	var $validate = array(
 	    'filename' => array(
 			'notEmpty' => array(
 			    'rule' => 'notEmpty',
 			    'message' => 'Filename is required'
-			)
-	    ),
-	    'admin_id' => array(
-			'notEmpty' => array(
-			    'rule' => 'notEmpty',
-			    'message' => 'Admin Id required'
-			)
-	    ),
-	    'filed_location_id' => array(
-			'notEmpty' => array(
-			    'rule' => 'notEmpty',
-			    'message' => 'Filed location is required'
 			)
 	    ),
 	    'id' => array(
@@ -115,4 +97,19 @@ class FiledDocument extends AppModel {
 	}
 	return false;
     }
+
+
+	/**
+	 * Overridden paginateCount method
+	 */
+	function paginateCount($conditions = null, $recursive = -1, $extra = array()) {
+		if($conditions) {
+			$this->recursive = $recursive;
+		}
+		else {
+			$this->recursive = -1;
+		}
+		$results = $this->find('count', array('conditions' => $conditions));
+		return $results;
+	}
 }

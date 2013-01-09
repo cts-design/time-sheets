@@ -36,6 +36,7 @@ design
 plugins/*
 !plugins/acl_extras
 !plugins/debug_kit
+!plugins/queue
 *.taskpaper
 tags
 docs

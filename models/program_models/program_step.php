@@ -32,7 +32,7 @@ class ProgramStep extends AppModel {
             'dependent' => false,
             'conditions' => '',
             'fields' => '',
-            'order' => '',
+            'order' => 'ProgramFormField.order ASC',
             'limit' => '',
             'offset' => '',
             'exclusive' => '',
@@ -63,9 +63,9 @@ class ProgramStep extends AppModel {
 			$return['previous'] = $previousStep;
 			return $return;
 		}
-		$nextStep = Set::extract('/ProgramStep[lft=' . ($currentStep[0]['rght'] + 1) .']/.[:first]', $program);
+		$nextStep = Set::extract('/ProgramStep[lft=' . ($currentStep[0]['rght'] + 1) . ']/.[:first]', $program);
 		if(empty($nextStep)) {
-			$nextStep = Set::extract('/ProgramStep[lft=' . ($currentStep[0]['rght'] + 2) .']/.[:first]', $program);
+			$nextStep = Set::extract('/ProgramStep[lft>' . $currentStep[0]['rght'] . ']/.[:first]', $program);
 		}
 		while(isset($nextStep[0]) && in_array($nextStep['0']['id'], $completedStepIds)) {
 			$nextStep = Set::extract('/ProgramStep[lft=' . ($nextStep[0]['rght'] + 1) .']/.[:first]', $program);

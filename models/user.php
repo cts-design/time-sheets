@@ -252,7 +252,7 @@ class User extends AppModel {
     );
 	
 	var $validationSets = array(
-		'kioskRegistration' => array(
+		'customerMinimum' => array(
 			'firstname' => array(
 				'notEmpty' => array(
 					'rule' => 'notEmpty',
@@ -275,7 +275,7 @@ class User extends AppModel {
 					'rule' => array('maxlength', 50),
 					'message' => 'This field cannot excced 50 characters.',
 					'required' => false
-				),
+				)
 			),
 			'ssn' => array(
 				'notEmpty' => array(
@@ -614,8 +614,11 @@ class User extends AppModel {
 	    }
 	    
 	}
-	if (isset($this->data['User']['dob'])) {
+	if (isset($this->data['User']['dob']) && !empty($this->data['User']['dob'])) {
 	    $this->data['User']['dob'] = date('Y-m-d', strtotime($this->data['User']['dob']));
+	}
+	else {
+		$this->data['User']['dob'] = null;
 	}
 
 	return true;

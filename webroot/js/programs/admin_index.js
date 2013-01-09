@@ -50,7 +50,6 @@ Ext.create('Ext.data.Store', {
 Ext.define('ProgramGridPanel', {
   alias: 'widget.programgridpanel',
   extend: 'Ext.grid.Panel',
-  forceFit: true,
   height: 300,
   store: 'ProgramStore',
 });
@@ -128,10 +127,15 @@ Ext.onReady(function () {
               program_type: programType
             },
             success: function (res) {
-              var task = new Ext.util.DelayedTask(function () {
-                progressMsg.close();
-                programStore.load();
-              });
+              var success,
+                msg = Ext.JSON.decode(res.responseText),
+                task = new Ext.util.DelayedTask(function () {
+                  progressMsg.close();
+                  programStore.load();
+                  if (!msg.success) {
+                    Ext.Msg.alert('Error', msg.message);
+                  }
+                });
 
               task.delay(1240);
             }
@@ -157,7 +161,6 @@ Ext.onReady(function () {
         })
       ],
       columns: [{
-        id: 'id',
         dataIndex: 'id',
         hidden: true,
         text: 'Id',
@@ -357,7 +360,6 @@ Ext.onReady(function () {
         })
       ],
       columns: [{
-        id: 'id',
         dataIndex: 'id',
         hidden: true,
         text: 'Id',
@@ -557,7 +559,6 @@ Ext.onReady(function () {
         })
       ],
       columns: [{
-        id: 'id',
         dataIndex: 'id',
         hidden: true,
         text: 'Id',
@@ -760,7 +761,6 @@ Ext.onReady(function () {
         })
       ],
       columns: [{
-        id: 'id',
         dataIndex: 'id',
         hidden: true,
         text: 'Id',

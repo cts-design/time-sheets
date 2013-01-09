@@ -111,6 +111,7 @@ Ext.define('ProgramEmail', {
     'body',
     'type',
     'name',
+    { name: 'disabled', type: 'int' },
     { name: 'created',  type: 'date', dateFormat: 'Y-m-d H:i:s' },
     { name: 'modified', type: 'date', dateFormat: 'Y-m-d H:i:s' }
   ]
@@ -125,7 +126,7 @@ Ext.define('DocumentQueueCategory', {
     {
       name : 'img',
       convert: function(value, record){
-        var img = null,
+        var img = '',
           secure = record.get('secure');
 
         if(secure) {
@@ -145,7 +146,7 @@ Ext.define('DocumentFilingCategory', {
     {
       name : 'img',
       convert: function(value, record){
-        var img = null,
+        var img = '',
           secure = record.get('secure');
 
         if(secure) {
@@ -468,6 +469,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
     items: [{
       xtype: 'radiogroup',
       fieldLabel: 'Approval Required?',
+      id: 'approvalRequired',
       labelWidth: 190,
       items: [{
         boxLabel: 'Yes',
@@ -491,6 +493,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
     items: [{
       xtype: 'radiogroup',
       fieldLabel: 'User Acknowledgement Required?',
+      id: 'acknowledgementRequired',
       labelWidth: 190,
       items: [{
         boxLabel: 'Yes',
@@ -539,6 +542,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       allowBlank: false,
       displayField: 'ucase',
       fieldLabel: 'Registration Type',
+      id: 'registrationType',
       labelWidth: 190,
       name: 'atlas_registration_type',
       queryMode: 'local',
@@ -570,8 +574,9 @@ registrationForm = Ext.create('Ext.form.Panel', {
       xtype: 'numberfield',
       allowBlank: false,
       fieldLabel: 'Responses Expire In',
+      id: 'responsesExpireIn',
       labelWidth: 190,
-      minValue: 30,
+      minValue: 10,
       name: 'response_expires_in',
       value: 30,
       width: 250
@@ -600,10 +605,6 @@ registrationForm = Ext.create('Ext.form.Panel', {
       allowBlank: false,
       displayField: 'ucase',
       fieldLabel: 'Send expiring soon emails',
-      // issue #52
-      // added sendExpiringSoon id to the send expiring soon field
-      // to make sure the right value is set when the program loads
-      // time: 4 minutes
       id: 'sendExpiringSoon',
       labelWidth: 190,
       name: 'send_expiring_soon',
@@ -657,9 +658,10 @@ registrationForm = Ext.create('Ext.form.Panel', {
 
             if (!recs[0].data.in_test) {
               form.down('#approvalRequired').disable();
-              form.down('#esignRequired').disable();
               form.down('#registrationType').disable();
               form.down('#responsesExpireIn').disable();
+              form.down('#acknowledgementRequired').disable();
+              form.down('#sendExpiringSoon').disable();
             }
 
             form.getEl().unmask();
@@ -789,6 +791,8 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           readOnlyCb.setValue(false);
         }
 
+        form.loadRecord(rec);
+
         // if it's a state list we need to present it
         // differently to the user
         if (rec.data.options) {
@@ -798,18 +802,32 @@ formBuilder = Ext.create('Ext.panel.Panel', {
             fieldOptionsContainer.setVisible(false);
             rec.data.type = 'states';
             rec.data.options = '';
+            form.loadRecord(rec);
           } else if (rec.data.options.match(/"Yes":"Yes","No":"No"/gi)) {
             fieldOptions.setValue('');
             fieldOptionsContainer.setVisible(false);
             rec.data.options = 'yesno';
+            form.loadRecord(rec);
           } else if (rec.data.options.match(/"True":"True","False":"False"/gi)) {
             fieldOptions.setValue('');
             fieldOptionsContainer.setVisible(false);
             rec.data.options = 'truefalse';
+            form.loadRecord(rec);
+          } else {
+            var opts = Ext.JSON.decode(rec.data.options),
+              vals = '',
+              key;
+
+            for (key in opts) {
+              vals += opts[key] + ",";
+            }
+
+            vals = vals.replace(/(,$)/g, '');
+
+            fieldOptions.setValue(vals);
+            fieldOptionsContainer.setVisible(true);
           }
         }
-
-        form.loadRecord(rec);
 
         deleteFieldBtn.enable();
         updateBtn.show();
@@ -1585,6 +1603,36 @@ emails = Ext.create('Ext.panel.Panel', {
       }
     }],
     listeners: {
+      itemcontextmenu: function (view, rec, item, index, e) {
+        var menu,
+          items = [];
+
+        e.preventDefault();
+
+        if (rec.get('disabled')) {
+          items.push({
+              icon: '/img/icons/survey.png',
+              text: 'Enable',
+              handler: function () {
+                rec.set('disabled', 0);
+              }
+          });
+        } else {
+          items.push({
+              icon: '/img/icons/survey.png',
+              text: 'Disable',
+              handler: function () {
+                rec.set('disabled', 1);
+              }
+          });
+        }
+
+        menu = Ext.create('Ext.menu.Menu', {
+          items: items
+        });
+
+        menu.showAt(e.getXY());
+      },
       select: function (rm, rec, index) {
         var editor = Ext.getCmp('emailEditor'),
           fromField = Ext.getCmp('fromField'),
@@ -1608,6 +1656,11 @@ emails = Ext.create('Ext.panel.Panel', {
         fromField.setValue(rec.data.from);
         subjectField.setValue(rec.data.subject);
         saveBtn.enable();
+      }
+    },
+    viewConfig: {
+      getRowClass: function (rec) {
+        return rec.get('disabled') ? 'row-disabled' : 'row-active';
       }
     },
     plugins: [

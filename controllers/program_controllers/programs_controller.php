@@ -198,6 +198,19 @@ class ProgramsController extends AppController {
 					$instructions[0] .=
 						'<div class="not-approved-comment"><b>Admin Comment:&nbsp;</b>' .
 						$programResponse['ProgramResponse']['not_approved_comment'] . '</div>';
+				} else if ($programResponse['ProgramResponse']['status'] === 'complete') {
+					$results = array();
+					$pattern = '/\{\{\s*(\w+)\s*\}\}/';
+
+					preg_match_all('/\{\{\s*(\w+)\s*\}\}/', $instructions[0], $results);
+
+					if (!empty($results[1])) {
+						$formFieldName = $results[1];
+						$formFieldAnswers = json_decode($programResponse['ProgramResponseActivity'][0]['answers'], true);
+						$replacement = $formFieldAnswers[$formFieldName[0]];
+
+						$instructions[0] = preg_replace($pattern, $replacement, $instructions[0]);
+					}
 				}
 			}
 		}
@@ -301,6 +314,10 @@ class ProgramsController extends AppController {
 				$this->duplicateTransactionCleanup();
 				$success = false;
 			}
+		}
+
+		if (!$success) {
+			$data['message'] = 'Unable to duplicate the program. Please try again.';
 		}
 
 		$data['success'] = $success;
@@ -475,6 +492,26 @@ class ProgramsController extends AppController {
 		}
 	}
 
+	public function admin_update_esign() {
+		if ($this->RequestHandler->isAjax()) {
+			$programData = json_decode($this->params['form']['programs'], true);
+
+			$this->Program->id = $programData['id'];
+			unset($programData['id']);
+
+			$this->Program->set($programData);
+
+			if ($this->Program->save()) {
+				$data['success'] = true;
+			} else {
+				$data['success'] = false;
+			}
+
+			$this->set('data', $data);
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
+
 	public function admin_upload_media() {
 		$this->layout = 'ajax';
 		$storagePath = substr(APP, 0, -1) . Configure::read('Program.media.path');
@@ -593,6 +630,7 @@ class ProgramsController extends AppController {
 
 	private function createEsignProgramStep($programId, $programDoc) {
 		$this->loadModel('WatchedFilingCat');
+		$this->loadModel('DocumentFilingCategory');
 		$this->Program->ProgramStep->create();
 
 		$parentStep = array(
@@ -634,6 +672,24 @@ class ProgramsController extends AppController {
 
 			$this->WatchedFilingCat->create();
 			$this->WatchedFilingCat->save($watchedFilingCat);
+
+			$parentFilingCat = $this->DocumentFilingCategory->getparentnode($watchedCat);
+
+			$rejectedFilingCat = $this->DocumentFilingCategory->find('first', array(
+				'conditions' => array(
+					'DocumentFilingCategory.parent_id' => $parentFilingCat['DocumentFilingCategory']['id'],
+					'DocumentFilingCategory.name' => 'Rejected'
+				)
+			));
+
+			$rejectedWatchedFilingCat['WatchedFilingCat'] = array(
+				'program_id' => $programId,
+				'cat_id' => $rejectedFilingCat['DocumentFilingCategory']['id'],
+				'name' => 'rejected'
+			);
+
+			$this->WatchedFilingCat->create();
+			$this->WatchedFilingCat->save($rejectedWatchedFilingCat);
 
 			$programDocument['ProgramDocument'] = $programDoc;
 			$programDocument['ProgramDocument']['program_id'] = $programId;
@@ -742,20 +798,22 @@ class ProgramsController extends AppController {
 					}
 
 					if (!empty($step['ProgramFormField']) && $this->issetAndNotEmpty($step['ProgramFormField'][0]['id'])) {
-						$newRecord = $this->Program->ProgramStep->ProgramFormField->read(null, $step['ProgramFormField'][0]['id']);
+						for ($i = 0; $i < count($step['ProgramFormField']); $i++) {
+							$newRecord = $this->Program->ProgramStep->ProgramFormField->read(null, $step['ProgramFormField'][$i]['id']);
 
-						unset(
-							$newRecord['ProgramFormField']['id'],
-							$newRecord['ProgramFormField']['modified'],
-							$newRecord['ProgramFormField']['created']
-						);
+							unset(
+								$newRecord['ProgramFormField']['id'],
+								$newRecord['ProgramFormField']['modified'],
+								$newRecord['ProgramFormField']['created']
+							);
 
-						$newRecord['ProgramFormField']['program_id'] = $newProgramId;
-						$newRecord['ProgramFormField']['program_step_id'] = $newParent;
+							$newRecord['ProgramFormField']['program_id'] = $newProgramId;
+							$newRecord['ProgramFormField']['program_step_id'] = $newParent;
 
-						$this->Program->ProgramStep->ProgramFormField->create();
-						if ($this->Program->ProgramStep->ProgramFormField->save($newRecord)) {
-							$this->transactionIds['ProgramFormField'][] = $this->Program->ProgramStep->ProgramFormField->id;
+							$this->Program->ProgramStep->ProgramFormField->create();
+							if ($this->Program->ProgramStep->ProgramFormField->save($newRecord)) {
+								$this->transactionIds['ProgramFormField'][] = $this->Program->ProgramStep->ProgramFormField->id;
+							}
 						}
 					}
 				}

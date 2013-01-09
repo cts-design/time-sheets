@@ -62,8 +62,14 @@ class ProgramEmailsController extends AppController {
 
 			if ($formField) {
 				if ($count > 1) {
-					foreach ($this->data['ProgramEmail'] as $k => $v) {
-						$data['program_emails'][] = $v;
+					$this->ProgramEmail->recursive = -1;
+					$newEmails = $this->ProgramEmail->find('all', array(
+						'order' => 'ProgramEmail.id DESC',
+						'limit' => 7
+					));
+
+					foreach ($newEmails as $k => $v) {
+						$data['program_emails'][] = $v['ProgramEmail'];
 					}
 				} else {
 					$data['program_emails'] = $formField['ProgramEmail'];
@@ -103,15 +109,16 @@ class ProgramEmailsController extends AppController {
 
 	public function admin_update() {
 		$email = json_decode($this->params['form']['program_emails'], true);
+		$success = false;
 
 		$this->ProgramEmail->id = $email['id'];
 		$this->ProgramEmail->set($email);
 
 		if ($this->ProgramEmail->save()) {
-			$data['success'] = true;
-		} else {
-			$data['success'] = false;
+			$success = true;
 		}
+
+		$data['success'] = $success;
 
 		$this->set('data', $data);
 		$this->render(null, null, '/elements/ajaxreturn');

@@ -3,7 +3,9 @@ var encodeObject = function (obj) {
     return Ext.JSON.encode(obj);
   }
   return null;
-};
+},
+instructionsSaved = false,
+emailsSaved = false;
 
 /**
  * Data Models
@@ -111,6 +113,7 @@ Ext.define('ProgramEmail', {
     'body',
     'type',
     'name',
+    { name: 'disabled', type: 'int' },
     { name: 'created',  type: 'date', dateFormat: 'Y-m-d H:i:s' },
     { name: 'modified', type: 'date', dateFormat: 'Y-m-d H:i:s' }
   ]
@@ -125,7 +128,7 @@ Ext.define('DocumentQueueCategory', {
     {
       name : 'img',
       convert: function(value, record){
-        var img = null,
+        var img = '',
           secure = record.get('secure');
 
         if(secure) {
@@ -145,7 +148,7 @@ Ext.define('DocumentFilingCategory', {
     {
       name : 'img',
       convert: function(value, record){
-        var img = null,
+        var img = '',
           secure = record.get('secure');
 
         if(secure) {
@@ -316,7 +319,6 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
-  autoSync: true,
   data: [{
     program_id: 0,
     text: 'Default text Main',
@@ -360,7 +362,6 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
-  autoSync: true,
   data: [{
     program_id: 0,
     name: 'Orientation Main',
@@ -368,6 +369,7 @@ Ext.create('Ext.data.Store', {
     subject: 'Main email',
     body: 'Default text Main',
     type: 'main',
+    disabled: 0,
     created: null,
     modified: null
   }, {
@@ -377,6 +379,7 @@ Ext.create('Ext.data.Store', {
     subject: 'Expiring Soon',
     body: 'Default text Expiring Soon',
     type: 'expiring_soon',
+    disabled: 0,
     created: null,
     modified: null
   }, {
@@ -386,6 +389,7 @@ Ext.create('Ext.data.Store', {
     subject: 'Expired email',
     body: 'Default text Expired',
     type: 'expired',
+    disabled: 0,
     created: null,
     modified: null
   }, {
@@ -395,6 +399,7 @@ Ext.create('Ext.data.Store', {
     subject: 'Complete email',
     body: 'Default text Complete',
     type: 'complete',
+    disabled: 0,
     created: null,
     modified: null
   }],
@@ -576,7 +581,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       allowBlank: false,
       fieldLabel: 'Responses Expire In',
       labelWidth: 175,
-      minValue: 30,
+      minValue: 10,
       name: 'response_expires_in',
       value: 30,
       width: 250
@@ -939,6 +944,8 @@ formBuilder = Ext.create('Ext.panel.Panel', {
           }
         }
 
+        form.loadRecord(rec);
+
         // if it's a state list we need to present it
         // differently to the user
         if (rec.data.options) {
@@ -948,18 +955,33 @@ formBuilder = Ext.create('Ext.panel.Panel', {
             fieldOptionsContainer.setVisible(false);
             rec.data.type = 'states';
             rec.data.options = '';
+            form.loadRecord(rec);
           } else if (rec.data.options.match(/"Yes":"Yes","No":"No"/gi)) {
             fieldOptions.setValue('');
             fieldOptionsContainer.setVisible(false);
             rec.data.options = 'yesno';
+            form.loadRecord(rec);
           } else if (rec.data.options.match(/"True":"True","False":"False"/gi)) {
             fieldOptions.setValue('');
             fieldOptionsContainer.setVisible(false);
             rec.data.options = 'truefalse';
+            form.loadRecord(rec);
+          } else {
+            var opts = Ext.JSON.decode(rec.data.options),
+              vals = '',
+              key;
+
+            for (key in opts) {
+              vals += opts[key] + ",";
+            }
+
+            vals = vals.replace(/(,$)/g, '');
+
+            fieldOptions.setValue(vals);
+            fieldOptionsContainer.setVisible(true);
+            rec.data.options = vals;
           }
         }
-
-        form.loadRecord(rec);
 
         deleteFieldBtn.enable();
         updateBtn.show();
@@ -1539,56 +1561,58 @@ instructions = Ext.create('Ext.panel.Panel', {
     mediaStep = programStepStore.findRecord('type', /^media$/gi);
     quizStep = programStepStore.findRecord('type', /^form$/gi);
 
-    programInstructionStore.each(function (rec) {
-      var programInstruction = {
-        program_id: program.get('id')
-      };
+    if (!instructionsSaved) {
+      programInstructionStore.each(function (rec) {
+        var programInstruction = {
+          program_id: program.get('id')
+        };
 
-      switch (rec.get('type')) {
-        case 'main':
-          programInstruction.text = 'Welcome to the ' +
-          AtlasInstallationName +
-          ' Web Services system. Please proceed with the ' +
-          program.get('name').humanize() +
-          ' orientation by completing the steps listed below.';
-          break;
+        switch (rec.get('type')) {
+          case 'main':
+            programInstruction.text = 'Welcome to the ' +
+            AtlasInstallationName +
+            ' Web Services system. Please proceed with the ' +
+            program.get('name').humanize() +
+            ' orientation by completing the steps listed below.';
+            break;
 
-        case 'expired':
-          programInstruction.text = 'We\'re sorry but your submission has' +
-          ' expired. Please contact the ' +
-          AtlasInstallationName +
-          ' for further assistance.';
-          break;
+          case 'expired':
+            programInstruction.text = 'We\'re sorry but your submission has' +
+            ' expired. Please contact the ' +
+            AtlasInstallationName +
+            ' for further assistance.';
+            break;
 
-        case 'complete':
-          programInstruction.text = 'We have reviewed your submission and it' +
-          ' has been marked as complete. Please visit the following link for' +
-          ' submitted is accurate.<br />' +
-          '<br />' +
-          '<a href="#">ADMIN. PLEASE ADD YOUR LINK</a>';
-          break;
+          case 'complete':
+            programInstruction.text = 'We have reviewed your submission and it' +
+            ' has been marked as complete. Please visit the following link for' +
+            ' submitted is accurate.<br />' +
+            '<br />' +
+            '<a href="#">ADMIN. PLEASE ADD YOUR LINK</a>';
+            break;
+        }
+
+        rec.set(programInstruction);
+      });
+
+      if (mediaStep.get('type') === 'pdf') {
+        mediaText = 'Please read the following media and choose submit when finished.';
+      } else {
+        mediaText = 'Please watch the following media and choose submit when finished.';
       }
 
-      rec.set(programInstruction);
-    });
-
-    if (mediaStep.get('type') === 'pdf') {
-      mediaText = 'Please read the following media and choose submit when finished.';
-    } else {
-      mediaText = 'Please watch the following media and choose submit when finished.';
+      programInstructionStore.add({
+        program_id: program.get('id'),
+        program_step_id: mediaStep.get('id'),
+        text: mediaText,
+        type: 'Orientation Media Step Instructions'.underscore()
+      }, {
+        program_id: program.get('id'),
+        program_step_id: quizStep.get('id'),
+        text: 'Please fill out the following form and choose submit when finished.',
+        type: 'Orientation Quiz Step Instructions'.underscore()
+      });
     }
-
-    programInstructionStore.add({
-      program_id: program.get('id'),
-      program_step_id: mediaStep.get('id'),
-      text: mediaText,
-      type: 'Orientation Media Step Instructions'.underscore()
-    }, {
-      program_id: program.get('id'),
-      program_step_id: quizStep.get('id'),
-      text: 'Please fill out the following form and choose submit when finished.',
-      type: 'Orientation Quiz Step Instructions'.underscore()
-    });
   },
   process: function () {
     var programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
@@ -1602,6 +1626,7 @@ instructions = Ext.create('Ext.panel.Panel', {
       clearStatusTask.delay(500);
 
       programInstructionStore.sync();
+      instructionsSaved = true;
       return true;
   }
 });
@@ -1630,6 +1655,36 @@ emails = Ext.create('Ext.panel.Panel', {
       }
     }],
     listeners: {
+      itemcontextmenu: function (view, rec, item, index, e) {
+        var menu,
+          items = [];
+
+        e.preventDefault();
+
+        if (rec.get('disabled')) {
+          items.push({
+              icon: '/img/icons/survey.png',
+              text: 'Enable',
+              handler: function () {
+                rec.set('disabled', 0);
+              }
+          });
+        } else {
+          items.push({
+              icon: '/img/icons/survey.png',
+              text: 'Disable',
+              handler: function () {
+                rec.set('disabled', 1);
+              }
+          });
+        }
+
+        menu = Ext.create('Ext.menu.Menu', {
+          items: items
+        });
+
+        menu.showAt(e.getXY());
+      },
       select: function (rm, rec, index) {
         var editor = Ext.getCmp('emailEditor'),
           fromField = Ext.getCmp('fromField'),
@@ -1641,6 +1696,11 @@ emails = Ext.create('Ext.panel.Panel', {
         fromField.setValue(rec.data.from);
         subjectField.setValue(rec.data.subject);
         saveBtn.enable();
+      }
+    },
+    viewConfig: {
+      getRowClass: function (rec) {
+        return rec.get('disabled') ? 'row-disabled' : 'row-active';
       }
     },
     plugins: [
@@ -1724,92 +1784,94 @@ emails = Ext.create('Ext.panel.Panel', {
     mediaStep = programStepStore.findRecord('type', /^media$/gi);
     quizStep = programStepStore.findRecord('type', /^form$/gi);
 
-    programEmailStore.each(function (rec) {
-      var programEmail = {
-        program_id: program.get('id')
-      };
+    if (!emailsSaved) {
+      programEmailStore.each(function (rec) {
+        var programEmail = {
+          program_id: program.get('id')
+        };
 
-      switch (rec.get('type')) {
-        case 'main':
-          programEmail.body = 'Welcome to the ' +
-          AtlasInstallationName +
-          ' Web Services system. You have begun the submission process for ' +
-          program.get('name').humanize() +
-          '. <br />' +
-          '<br />' +
-          '<a href="' +
-          window.location.origin +
-          '/programs/orientation' +
-          rec.get('id') +
-          '">Click here to return to the ' +
-          program.get('name').humanize() +
-          ' orientation</a>';
-          break;
+        switch (rec.get('type')) {
+          case 'main':
+            programEmail.body = 'Welcome to the ' +
+            AtlasInstallationName +
+            ' Web Services system. You have begun the submission process for ' +
+            program.get('name').humanize() +
+            '. <br />' +
+            '<br />' +
+            '<a href="' +
+            window.location.origin +
+            '/programs/orientation' +
+            rec.get('id') +
+            '">Click here to return to the ' +
+            program.get('name').humanize() +
+            ' orientation</a>';
+            break;
 
-        case 'pending_approval':
-          programEmail.body = 'Your submission is currently being' +
-          ' reviewed by our staff. You will be notified by email when the' +
-          ' status of the submission changes. You may also visit the link' +
-          ' provided below to check on the status of your submission.' +
-          ' Thank you for using the ' +
-          AtlasInstallationName +
-          ' Web Services system.<br />' +
-          '<br />' +
-          '<a href="' +
-          window.location.origin +
-          '/programs/registration' +
-          rec.get('id') +
-          '">' +
-          program.get('name').humanize() +
-          '</a>';
-          break;
+          case 'pending_approval':
+            programEmail.body = 'Your submission is currently being' +
+            ' reviewed by our staff. You will be notified by email when the' +
+            ' status of the submission changes. You may also visit the link' +
+            ' provided below to check on the status of your submission.' +
+            ' Thank you for using the ' +
+            AtlasInstallationName +
+            ' Web Services system.<br />' +
+            '<br />' +
+            '<a href="' +
+            window.location.origin +
+            '/programs/registration' +
+            rec.get('id') +
+            '">' +
+            program.get('name').humanize() +
+            '</a>';
+            break;
 
-        case 'expiring_soon':
-          programEmail.body = 'This is an automated notification to inform you' +
-          ' that the program you began enrollment for will expire in ' +
-          program.get('send_expiring_soon') +
-          ' days. Please login to the ' +
-          AtlasInstallationName +
-          ' Web Services system to finish your orientation. If you questions' +
-          ' please contact the ' +
-          AtlasInstallationName +
-          ' for assistance.';
-          break;
+          case 'expiring_soon':
+            programEmail.body = 'This is an automated notification to inform you' +
+            ' that the program you began enrollment for will expire in ' +
+            program.get('send_expiring_soon') +
+            ' days. Please login to the ' +
+            AtlasInstallationName +
+            ' Web Services system to finish your orientation. If you questions' +
+            ' please contact the ' +
+            AtlasInstallationName +
+            ' for assistance.';
+            break;
 
-        case 'expired':
-          programEmail.body = 'We\'re sorry but your submission has' +
-          ' expired. Please contact the ' +
-          AtlasInstallationName +
-          ' for further assistance.';
-          break;
+          case 'expired':
+            programEmail.body = 'We\'re sorry but your submission has' +
+            ' expired. Please contact the ' +
+            AtlasInstallationName +
+            ' for further assistance.';
+            break;
 
-        case 'complete':
-          programEmail.body = 'We have reviewed your submission and it' +
-          ' has been marked as complete. Please visit the following link for' +
-          ' submitted is accurate.<br />' +
-          '<br />' +
-          '<a href="#">ADMIN. PLEASE ADD YOUR LINK</a>';
-          break;
-      }
+          case 'complete':
+            programEmail.body = 'We have reviewed your submission and it' +
+            ' has been marked as complete. Please visit the following link for' +
+            ' submitted is accurate.<br />' +
+            '<br />' +
+            '<a href="#">ADMIN. PLEASE ADD YOUR LINK</a>';
+            break;
+        }
 
-      rec.set(programEmail);
-    });
+        rec.set(programEmail);
+      });
 
-    programEmailStore.add({
-      program_id: program.get('id'),
-      program_step_id: mediaStep.get('id'),
-      name: program.get('name') + ' Orientation Media Step Email',
-      type: 'orientation_media_step',
-      body: 'Your Orientation media step email',
-      from: ('noreply@' + window.location.hostname)
-    }, {
-      program_id: program.get('id'),
-      program_step_id: quizStep.get('id'),
-      name: program.get('name') + ' Orientation Quiz Step Email',
-      type: 'orientation_quiz_step',
-      body: 'Your Orientation quiz step email',
-      from: ('noreply@' + window.location.hostname)
-    });
+      programEmailStore.add({
+        program_id: program.get('id'),
+        program_step_id: mediaStep.get('id'),
+        name: program.get('name') + ' Orientation Media Step Email',
+        type: 'orientation_media_step',
+        body: 'Your Orientation media step email',
+        from: ('noreply@' + window.location.hostname)
+      }, {
+        program_id: program.get('id'),
+        program_step_id: quizStep.get('id'),
+        name: program.get('name') + ' Orientation Quiz Step Email',
+        type: 'orientation_quiz_step',
+        body: 'Your Orientation quiz step email',
+        from: ('noreply@' + window.location.hostname)
+      });
+    }
   },
   process: function () {
     var programEmailStore = Ext.data.StoreManager.lookup('ProgramEmailStore'),
@@ -1822,6 +1884,7 @@ emails = Ext.create('Ext.panel.Panel', {
       clearStatusTask.delay(500);
 
       programEmailStore.sync();
+      emailsSaved = true;
       return true;
   }
 });

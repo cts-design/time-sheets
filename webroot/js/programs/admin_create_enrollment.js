@@ -3,15 +3,16 @@ var encodeObject = function (obj) {
     return Ext.JSON.encode(obj);
   }
   return null;
-};
-
-var productionURL = function () {
+},
+productionURL = function () {
   if (!Ext.isChrome) {
     return window.location.protocol + '//' + window.location.host;
   }
 
   return window.location.origin;
-};
+},
+instructionsSaved = false,
+emailsSaved = false;
 
 /**
  * Data Models
@@ -125,6 +126,7 @@ Ext.define('ProgramEmail', {
     'body',
     'type',
     'name',
+    { name: 'disabled', type: 'int' },
     { name: 'created',  type: 'date', dateFormat: 'Y-m-d H:i:s' },
     { name: 'modified', type: 'date', dateFormat: 'Y-m-d H:i:s' }
   ]
@@ -139,7 +141,7 @@ Ext.define('DocumentQueueCategory', {
     {
       name : 'img',
       convert: function(value, record){
-        var img = null,
+        var img = '',
           secure = record.get('secure');
 
         if(secure) {
@@ -159,7 +161,7 @@ Ext.define('DocumentFilingCategory', {
     {
       name : 'img',
       convert: function(value, record){
-        var img = null,
+        var img = '',
           secure = record.get('secure');
 
         if(secure) {
@@ -176,7 +178,7 @@ Ext.define('WatchedFilingCat', {
     { name: 'id', type: 'int' },
     { name: 'cat_id', type: 'int' },
     { name: 'program_id', type: 'int' },
-    'name',
+    'name'
   ]
 });
 
@@ -340,7 +342,8 @@ Ext.create('Ext.data.Store', {
       type: 'json',
       allowSingle: false,
       encode: true,
-      root: 'program_form_fields'
+      root: 'program_form_fields',
+      writeAllFields: false
     }
   }
 });
@@ -432,14 +435,13 @@ Ext.create('Ext.data.Store', {
     created: null,
     modified: null
   }],
-  autoSync: true,
   storeId: 'ProgramInstructionStore',
   model: 'ProgramInstruction',
   proxy: {
     api:{
       create: '/admin/program_instructions/create',
       read: '/admin/program_instructions/read',
-      update: '/admin/program_instructions/edit',
+      update: '/admin/program_instructions/update',
       destroy: '/admin/program_instructions/destroy'
     },
     type: 'ajax',
@@ -464,6 +466,7 @@ Ext.create('Ext.data.Store', {
     subject: 'Main email',
     body: 'Default text Main',
     type: 'main',
+    disabled: 0,
     created: null,
     modified: null
   }, {
@@ -473,6 +476,7 @@ Ext.create('Ext.data.Store', {
     subject: 'Expiring Soon',
     body: 'Default text Expiring Soon',
     type: 'expiring_soon',
+    disabled: 0,
     created: null,
     modified: null
   }, {
@@ -482,6 +486,7 @@ Ext.create('Ext.data.Store', {
     subject: 'Expired email',
     body: 'Default text Expired',
     type: 'expired',
+    disabled: 0,
     created: null,
     modified: null
   }, {
@@ -491,10 +496,10 @@ Ext.create('Ext.data.Store', {
     subject: 'Complete email',
     body: 'Default text Complete',
     type: 'complete',
+    disabled: 0,
     created: null,
     modified: null
   }],
-  autoSync: true,
   storeId: 'ProgramEmailStore',
   model: 'ProgramEmail',
   proxy: {
@@ -795,7 +800,7 @@ registrationForm = Ext.create('Ext.form.Panel', {
       allowBlank: false,
       fieldLabel: 'Responses Expire In',
       labelWidth: 190,
-      minValue: 30,
+      minValue: 10,
       name: 'response_expires_in',
       value: 30,
       width: 250
@@ -1459,7 +1464,6 @@ stepTree = Ext.create('Ext.panel.Panel', {
     statusBar.setText('Saving Program Steps...');
     clearStatusTask.delay(500);
 
-    Ext.data.StoreManager.lookup('ProgramStepStore').sync();
     return true;
   }
 });
@@ -1583,11 +1587,92 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                   select: function (rm, rec, index) {
                     var formPanel = Ext.getCmp('formPanel'),
                       form = formPanel.getForm(),
+                      requiredCb = formPanel.down('#requiredCb'),
+                      readOnlyCb = formPanel.down('#readOnlyCb'),
+                      fieldType = Ext.getCmp('fieldType'),
+                      fieldOptionsContainer = Ext.getCmp('fieldOptionsContainer'),
+                      fieldOptions = Ext.getCmp('fieldOptions'),
                       deleteFieldBtn = Ext.getCmp('deleteFieldBtn'),
                       updateBtn = Ext.getCmp('updateBtn'),
-                      builderSaveBtn = Ext.getCmp('builderSaveBtn');
+                      builderSaveBtn = Ext.getCmp('builderSaveBtn'),
+                      decodedValidation;
 
+                    form.reset();
                     form.loadRecord(rec);
+
+                    // check the appropriate checkboxes
+                    if (rec.data.validation) {
+                      if (rec.data.validation.match(/notEmpty/g)) {
+                        requiredCb.setValue(true);
+                      } else {
+                        requiredCb.setValue(true);
+
+                        decodedValidation = Ext.JSON.decode(rec.data.validation);
+                        rec.data.answer = decodedValidation.rule[1];
+                      }
+                    }
+
+                    if (!rec.data.validation || !rec.data.validation.match(/notEmpty/g)) {
+                      requiredCb.setValue(false);
+                    }
+
+                    if (rec.data.attributes) {
+                      if (rec.data.attributes.match(/readonly/g)) {
+                        readOnlyCb.setValue(true);
+                      }
+
+                      if (rec.data.attributes.match(/datepicker/g)) {
+                        fieldType.setValue('datepicker');
+                        rec.data.type = 'datepicker';
+                      }
+
+                      if (rec.data.attributes.match(/value/g)) {
+                        attrs = Ext.JSON.decode(rec.data.attributes);
+                        rec.data.default_value = attrs.value;
+                      }
+                    }
+
+                    if (!rec.data.attributes || !rec.data.attributes.match(/readonly/g)) {
+                      readOnlyCb.setValue(false);
+                    }
+
+                    // if it's a state list we need to present it
+                    // differently to the user
+                    if (rec.data.options) {
+                      if (rec.data.options.match(/"AL":"Alabama"/gi)) {
+                        fieldType.setValue('states');
+                        fieldOptions.setValue('');
+                        fieldOptionsContainer.setVisible(false);
+                        rec.data.type = 'states';
+                        rec.data.options = '';
+                        form.loadRecord(rec);
+                      } else if (rec.data.options.match(/"Yes":"Yes","No":"No"/gi)) {
+                        fieldOptions.setValue('');
+                        fieldOptionsContainer.setVisible(false);
+                        rec.data.options = 'yesno';
+                        form.loadRecord(rec);
+                      } else if (rec.data.options.match(/"True":"True","False":"False"/gi)) {
+                        fieldOptions.setValue('');
+                        fieldOptionsContainer.setVisible(false);
+                        rec.data.options = 'truefalse';
+                        form.loadRecord(rec);
+                      } else {
+                        var opts = Ext.JSON.decode(rec.data.options),
+                          vals = '',
+                          key;
+
+                        for (key in opts) {
+                          vals += opts[key] + ",";
+                        }
+
+                        vals = vals.replace(/(,$)/g, '');
+
+                        fieldOptions.setValue(vals);
+                        fieldOptionsContainer.setVisible(true);
+                        rec.data.options = vals;
+                      }
+                    }
+
                     deleteFieldBtn.enable();
                     updateBtn.show();
                     builderSaveBtn.hide();
@@ -1657,8 +1742,8 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                     handler: function () {
                       var formPanel = Ext.getCmp('formPanel'),
                         form = formPanel.getForm(),
-                        savebtn = formPanel.down('#builderSaveBtn'),
-                        updatebtn = formPanel.down('#updateBtn'),
+                        saveBtn = formPanel.down('#builderSaveBtn'),
+                        updateBtn = formPanel.down('#updateBtn'),
                         grid = Ext.getCmp('formFieldGrid');
 
                       form.reset();
@@ -1715,6 +1800,7 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                   displayField: 'ucase',
                   editable: false,
                   fieldLabel: 'Field Type',
+                  id: 'fieldType',
                   listeners: {
                     change: {
                       fn: function (field, newValue, oldValue) {
@@ -1806,6 +1892,7 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                 }, {
                   xtype: 'checkbox',
                   fieldLabel: 'Read only',
+                  id: 'readOnlyCb',
                   name: 'read_only',
                   listeners: {
                     change: function (field, newVal, oldVal) {
@@ -1884,6 +1971,7 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                         },
                         states: function () {
                           vals.type = 'select';
+                          options = states;
                         }
                       };
                     }());
@@ -1956,6 +2044,7 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                         },
                         states: function () {
                           vals.type = 'select';
+                          options = states;
                         }
                       };
                     }());
@@ -2438,94 +2527,96 @@ instructions = Ext.create('Ext.panel.Panel', {
       }
     });
 
-    programInstructionStore.each(function (rec) {
-      var programInstruction = {
-        program_id: program.get('id')
-      };
+    if (!instructionsSaved) {
+      programInstructionStore.each(function (rec) {
+        var programInstruction = {
+          program_id: program.get('id')
+        };
 
-      switch (rec.get('type')) {
-        case 'main':
-          programInstruction.text = 'Welcome to the ' +
-          AtlasInstallationName +
-          ' Web Services system. Please proceed with the ' +
-          program.get('name').humanize() +
-          ' enrollment by completing the steps listed below.';
-          break;
+        switch (rec.get('type')) {
+          case 'main':
+            programInstruction.text = 'Welcome to the ' +
+            AtlasInstallationName +
+            ' Web Services system. Please proceed with the ' +
+            program.get('name').humanize() +
+            ' enrollment by completing the steps listed below.';
+            break;
 
-        case 'pending_approval':
-          programInstruction.text = 'Your submission is currently being' +
-          ' reviewed by our staff. You will be notified by email when the' +
-          ' status of the submission changes. You may also visit the link' +
-          ' provided below to check on the status of your submission.' +
-          ' Thank you for using the ' +
-          AtlasInstallationName +
-          ' Web Services system.<br />' +
-          '<br />' +
-          '<a href="' +
-          window.location.origin +
-          '/programs/enrollment' +
-          rec.get('id') +
-          '">' +
-          program.get('name').humanize() +
-          '</a>';
-          break;
+          case 'pending_approval':
+            programInstruction.text = 'Your submission is currently being' +
+            ' reviewed by our staff. You will be notified by email when the' +
+            ' status of the submission changes. You may also visit the link' +
+            ' provided below to check on the status of your submission.' +
+            ' Thank you for using the ' +
+            AtlasInstallationName +
+            ' Web Services system.<br />' +
+            '<br />' +
+            '<a href="' +
+            window.location.origin +
+            '/programs/enrollment/' +
+            rec.get('id') +
+            '">' +
+            program.get('name').humanize() +
+            '</a>';
+            break;
 
-        case 'pending_document_review':
-          programInstruction.text = 'Your documents are currently being' +
-          ' reviewed by our staff. You will be notified by email when the' +
-          ' status of the documents changes.' +
-          ' Thank you for using the ' +
-          AtlasInstallationName +
-          ' Web Services system.';
-          break;
+          case 'pending_document_review':
+            programInstruction.text = 'Your documents are currently being' +
+            ' reviewed by our staff. You will be notified by email when the' +
+            ' status of the documents changes.' +
+            ' Thank you for using the ' +
+            AtlasInstallationName +
+            ' Web Services system.';
+            break;
 
-        case 'expired':
-          programInstruction.text = 'We\'re sorry but your submission has' +
-          ' expired. Please contact the ' +
-          AtlasInstallationName +
-          ' for further assistance.';
-          break;
+          case 'expired':
+            programInstruction.text = 'We\'re sorry but your submission has' +
+            ' expired. Please contact the ' +
+            AtlasInstallationName +
+            ' for further assistance.';
+            break;
 
-        case 'not_approved':
-          programInstruction.text = 'We\'re sorry but your submission has been' +
-          ' marked as "Not Approved." If you feel this is in error please' +
-          ' contact the ' +
-          AtlasInstallationName +
-          ' for further assistance.';
-          break;
+          case 'not_approved':
+            programInstruction.text = 'We\'re sorry but your submission has been' +
+            ' marked as "Not Approved." If you feel this is in error please' +
+            ' contact the ' +
+            AtlasInstallationName +
+            ' for further assistance.';
+            break;
 
-        case 'complete':
-          programInstruction.text = 'We have reviewed your submission and it' +
-          ' has been marked as complete. Please visit the following link for' +
-          ' submitted is accurate.<br />' +
-          '<br />' +
-          '<a href="#">ADMIN. PLEASE ADD YOUR LINK</a>';
-          break;
+          case 'complete':
+            programInstruction.text = 'We have reviewed your submission and it' +
+            ' has been marked as complete. Please visit the following link for' +
+            ' submitted is accurate.<br />' +
+            '<br />' +
+            '<a href="#">ADMIN. PLEASE ADD YOUR LINK</a>';
+            break;
 
-        case 'acceptance':
-          programInstruction.text = 'By entering your first and last name in' +
-          ' the box below you are agreeing that all the information you have' +
-          ' submitted is accurate.';
-          break;
+          case 'acceptance':
+            programInstruction.text = 'By entering your first and last name in' +
+            ' the box below you are agreeing that all the information you have' +
+            ' submitted is accurate.';
+            break;
 
-        case 'esign':
-          programInstruction.text = 'By signing your first and last name in' +
-          ' the box below you are agreeing that all the information you have' +
-          ' submitted is accurate.';
-          break;
+          case 'esign':
+            programInstruction.text = 'By signing your first and last name in' +
+            ' the box below you are agreeing that all the information you have' +
+            ' submitted is accurate.';
+            break;
 
-        case 'upload_docs':
-          programInstruction.text = 'Please upload one document at a time using' +
-          ' the form below. For example, if you are uploading a driver\'s license' +
-          ' and utility bill, you will upload the first document then you will' +
-          ' be redirected back to this page to upload the second document. ' +
-          ' Once finished uploading all documents, choose "I am finished uploading' +
-          ' documents."';
-          break;
-      }
+          case 'upload_docs':
+            programInstruction.text = 'Please upload one document at a time using' +
+            ' the form below. For example, if you are uploading a driver\'s license' +
+            ' and utility bill, you will upload the first document then you will' +
+            ' be redirected back to this page to upload the second document. ' +
+            ' Once finished uploading all documents, choose "I am finished uploading' +
+            ' documents."';
+            break;
+        }
 
-      rec.set(programInstruction);
-    });
+        rec.set(programInstruction);
+      });
+    }
   },
   process: function () {
     var programInstructionStore = Ext.data.StoreManager.lookup('ProgramInstructionStore'),
@@ -2539,6 +2630,7 @@ instructions = Ext.create('Ext.panel.Panel', {
       clearStatusTask.delay(500);
 
       programInstructionStore.sync();
+      instructionsSaved = true;
       return true;
   }
 });
@@ -2568,6 +2660,36 @@ emails = Ext.create('Ext.panel.Panel', {
       }
     }],
     listeners: {
+      itemcontextmenu: function (view, rec, item, index, e) {
+        var menu,
+          items = [];
+
+        e.preventDefault();
+
+        if (rec.get('disabled')) {
+          items.push({
+              icon: '/img/icons/survey.png',
+              text: 'Enable',
+              handler: function () {
+                rec.set('disabled', 0);
+              }
+          });
+        } else {
+          items.push({
+              icon: '/img/icons/survey.png',
+              text: 'Disable',
+              handler: function () {
+                rec.set('disabled', 1);
+              }
+          });
+        }
+
+        menu = Ext.create('Ext.menu.Menu', {
+          items: items
+        });
+
+        menu.showAt(e.getXY());
+      },
       select: function (rm, rec, index) {
         var editor = Ext.getCmp('emailEditor'),
           fromField = Ext.getCmp('fromField'),
@@ -2579,6 +2701,11 @@ emails = Ext.create('Ext.panel.Panel', {
         fromField.setValue(rec.data.from);
         subjectField.setValue(rec.data.subject);
         saveBtn.enable();
+      }
+    },
+    viewConfig: {
+      getRowClass: function (rec) {
+        return rec.get('disabled') ? 'row-disabled' : 'row-active';
       }
     },
     plugins: [
@@ -2656,58 +2783,60 @@ emails = Ext.create('Ext.panel.Panel', {
 
     Ext.getCmp('statusProgressBar').updateProgress(1.0, 'Step 6 of 6');
 
-    programEmailStore.each(function (rec) {
-      var programEmail = {
-        program_id: program.get('id')
-      };
+    if (!emailsSaved) {
+      programEmailStore.each(function (rec) {
+        var programEmail = {
+          program_id: program.get('id')
+        };
 
-      switch (rec.get('type')) {
-        case 'main':
-          programEmail.body = 'Welcome to the ' +
-          AtlasInstallationName +
-          ' Web Services system. You have begun the submission process for ' +
-          program.get('name').humanize() +
-          '. <br />' +
-          '<br />' +
-          '<a href="' +
-          window.location.origin +
-          '/programs/enrollment' +
-          rec.get('id') +
-          '">Click here to return to the ' +
-          program.get('name').humanize() +
-          ' enrollment</a>';
-          break;
+        switch (rec.get('type')) {
+          case 'main':
+            programEmail.body = 'Welcome to the ' +
+            AtlasInstallationName +
+            ' Web Services system. You have begun the submission process for ' +
+            program.get('name').humanize() +
+            '. <br />' +
+            '<br />' +
+            '<a href="' +
+            window.location.origin +
+            '/programs/enrollment/' +
+            rec.get('id') +
+            '">Click here to return to the ' +
+            program.get('name').humanize() +
+            ' enrollment</a>';
+            break;
 
-        case 'expiring_soon':
-          programEmail.body = 'This is an automated notification to inform you' +
-          ' that the program you began enrollment for will expire in ' +
-          program.get('send_expiring_soon') +
-          ' days. Please login to the ' +
-          AtlasInstallationName +
-          ' Web Services system to finish your enrollment. If you questions' +
-          ' please contact the ' +
-          AtlasInstallationName +
-          ' for assistance.';
-          break;
+          case 'expiring_soon':
+            programEmail.body = 'This is an automated notification to inform you' +
+            ' that the program you began enrollment for will expire in ' +
+            program.get('send_expiring_soon') +
+            ' days. Please login to the ' +
+            AtlasInstallationName +
+            ' Web Services system to finish your enrollment. If you questions' +
+            ' please contact the ' +
+            AtlasInstallationName +
+            ' for assistance.';
+            break;
 
-        case 'expired':
-          programEmail.body = 'We\'re sorry but your submission has' +
-          ' expired. Please contact the ' +
-          AtlasInstallationName +
-          ' for further assistance.';
-          break;
+          case 'expired':
+            programEmail.body = 'We\'re sorry but your submission has' +
+            ' expired. Please contact the ' +
+            AtlasInstallationName +
+            ' for further assistance.';
+            break;
 
-        case 'complete':
-          programEmail.body = 'We have reviewed your submission and it' +
-          ' has been marked as complete. Please visit the following link for' +
-          ' submitted is accurate.<br />' +
-          '<br />' +
-          '<a href="#">ADMIN. PLEASE ADD YOUR LINK</a>';
-          break;
-      }
+          case 'complete':
+            programEmail.body = 'We have reviewed your submission and it' +
+            ' has been marked as complete. Please visit the following link for' +
+            ' submitted is accurate.<br />' +
+            '<br />' +
+            '<a href="#">ADMIN. PLEASE ADD YOUR LINK</a>';
+            break;
+        }
 
-      rec.set(programEmail);
-    });
+        rec.set(programEmail);
+      });
+    }
   },
   process: function () {
     var programEmailStore = Ext.data.StoreManager.lookup('ProgramEmailStore'),
@@ -2720,6 +2849,7 @@ emails = Ext.create('Ext.panel.Panel', {
       clearStatusTask.delay(500);
 
       programEmailStore.sync();
+      emailsSaved = true;
       return true;
   }
 });
