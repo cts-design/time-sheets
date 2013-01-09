@@ -312,9 +312,11 @@ Ext.create('Ext.form.Panel', {
     },{
       text: 'Name',
       dataIndex: 'name',
+      flex: 1
     },{
       text: 'Location',
       dataIndex: 'location',
+      flex: 1
     },{
       text: 'Category',
       dataIndex: 'category'
