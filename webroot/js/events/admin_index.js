@@ -417,7 +417,17 @@ Ext.create('Ext.form.Panel', {
     valueField: 'id',
     store: Ext.data.StoreManager.lookup('eventCategoriesStore'),
     queryMode: 'local',
-    allowBlank: false
+    allowBlank: false,
+    listeners: {
+      change: function(combo, newValue, oldValue, eOpts) {
+        if(combo.rawValue === 'Workshop') {
+          Ext.getCmp('cat1Name').enable();
+        }
+        else { 
+          Ext.getCmp('cat1Name').disable();
+        }
+      }
+    }
   },{
     fieldLabel: 'Location',
     name: 'location',
@@ -499,6 +509,7 @@ Ext.create('Ext.form.Panel', {
     width: 110
   },{
     fieldLabel: 'Cat 1',
+    disabled: true,
     name: 'cat_1',
     id: 'cat1Name',
     store: Ext.data.StoreManager.lookup('cat1Store'),
@@ -608,6 +619,6 @@ Ext.create('Ext.form.Panel', {
 });
 
 Ext.onReady(function(){
-  Ext.getCmp('eventsForm').render('events')
+  Ext.getCmp('eventsForm').render('events');
 });
 
