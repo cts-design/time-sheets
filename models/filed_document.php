@@ -9,6 +9,13 @@ class FiledDocument extends AppModel {
 	var $name = 'FiledDocument';
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
 
+	var $hasOne = array(
+		'ProgramResponseDoc' => array(
+			'className' => 'ProgramResponseDoc',
+			'foreignKey' => 'doc_id'	
+		)	
+	);
+
 	var $belongsTo = array(
 		'User' => array(
 			'className' => 'User',

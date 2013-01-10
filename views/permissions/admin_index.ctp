@@ -489,14 +489,14 @@
                 'type' => 'checkbox',
                 'label' => 'Index',
                 'checked' => (isset($controllers['Reports']['admin_index'])) ? $controllers['Reports']['admin_index'] : '' ));?>
-               <?php echo $this->Form->input('Reports.admin_self_sign_logs', array(
+               <?php echo $this->Form->input('Reports.admin_total_unduplicated_individuals', array(
                 'type' => 'checkbox',
                 'label' => 'Total Unduplicated Individuals Report',
-                'checked' => (isset($controllers['Reports']['admin_total_unduplicated_individuals'])) ? $controllers['Reports']['admin_self_sign_logs'] : '' ));?>
-                <?php echo $this->Form->input('Reports.admin_self_sign_logs', array(
+                'checked' => (isset($controllers['Reports']['admin_total_unduplicated_individuals'])) ? $controllers['Reports']['admin_total_unduplicated_individuals'] : '' ));?>
+                <?php echo $this->Form->input('Reports.admin_total_services', array(
                 'type' => 'checkbox',
                 'label' => 'Total Services Report',
-                'checked' => (isset($controllers['Reports']['admin_total_services'])) ? $controllers['Reports']['admin_self_sign_logs'] : '' ));?>
+                'checked' => (isset($controllers['Reports']['admin_total_services'])) ? $controllers['Reports']['admin_total_services'] : '' ));?>
             </fieldset>
             <?php echo $this->PluginPermissions->buildFieldset('reports') ?>
             <br class="clear" />
