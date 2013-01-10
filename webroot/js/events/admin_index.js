@@ -53,6 +53,7 @@ Ext.create('Ext.data.Store', {
   autoLoad: true,
   listeners: {
     write: function(store, operation, eOpts) {
+      var sb = Ext.getCmp('status-bar');
       var responseTxt = Ext.JSON.decode(operation.response.responseText);
       if(!responseTxt.success || !operation.success ) {
         var msg = null;
@@ -67,10 +68,11 @@ Ext.create('Ext.data.Store', {
             msg = 'Unable to update event.';
             break;
         }
-        Ext.MessageBox.alert('Status', msg);
+        sb.setStatus({text: msg, iconCls: 'x-status-error'});
       }
       if(responseTxt.success) {
-        Ext.MessageBox.alert('Status', responseTxt.message);
+        sb.clearStatus();
+        sb.setStatus({text: responseTxt.message, iconCls: 'x-status-success'});
         var formPanel = Ext.getCmp('eventsForm');
         if(operation.action === 'create' || operation.action === 'update') {
           formPanel.getForm().reset();
@@ -87,7 +89,8 @@ Ext.create('Ext.data.Store', {
       }
     },
     beforesync: function(){
-      Ext.MessageBox.wait('Please Wait......');
+      var sb = Ext.getCmp('status-bar');
+      sb.showBusy();
     }
   }
 });
@@ -302,6 +305,10 @@ Ext.create('Ext.form.Panel', {
         }
       }
     },
+    bbar: Ext.create('Ext.ux.StatusBar', {
+      id: 'status-bar',
+      text: 'Ready'
+    }),
     title:'Events',
     columns: [{
       text: 'id',
@@ -610,6 +617,8 @@ Ext.create('Ext.form.Panel', {
           success: function() {
             // TODO: add success and failure logic
             console.log('success');
+            var sb = Ext.getCmp('status-bar');
+            
           },
           failure: function() {
             console.log('failure');
