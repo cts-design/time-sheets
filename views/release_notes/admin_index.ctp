@@ -3,6 +3,18 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+	<h1>Release 3.5.7 (1-10-13)</h1>
+	<h2>Minor feature enhancements</h2>
+	<ol>
+		<li>Add last 4 ssn and user details to the excel report in self sign log archives.</li>
+		<li>Increased the max records self sign log excel report to 20,000 records </li>
+	</ol>
+	<h2>Bug Fixes</h2>
+	
+	<ol>
+		<li>Fixing permissions bug in reports module</li>
+	</ol>
+	<hr />
 	<h1>Release 3.5.6 (11-27-12)</h1>
 	<ol>
 		<li>Lowered the Program responses expire in minimum value to 10.</li>
