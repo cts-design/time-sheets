@@ -126,18 +126,17 @@ class UsersController extends AppController {
 		}
 		$this->User->recursive = -1;
 
-		$named = $this->params['named'];
 		if (!empty($this->params['form'])) {
-			$submittedValues = $this->params['form'];
+			$formParams = $this->params['form'];
 		}
 
-		if (empty($submittedValues)) {
-			$submittedValues['search_by1'] = (isset($named['search_by1'])) ? $named['search_by1'] : '';
-			$submittedValues['search_scope1'] = (isset($named['search_scope1'])) ? $named['search_scope1'] : '';
-			$submittedValues['search_term1'] = (isset($named['search_term1'])) ? $named['search_term1'] : '';
-			$submittedValues['search_by2'] = (isset($named['search_by2'])) ? $named['search_by2'] : '';
-			$submittedValues['search_scope2'] = (isset($named['search_scope2'])) ? $named['search_scope2'] : '';
-			$submittedValues['search_term2'] = (isset($named['search_term2'])) ? $named['search_term2'] : '';
+		if (!empty($formParams)) {
+			$formParams['search_by1'] = (isset($formParams['search_by1'])) ? $formParams['search_by1'] : '';
+			$formParams['search_scope1'] = (isset($formParams['search_scope1'])) ? $formParams['search_scope1'] : '';
+			$formParams['search_term1'] = (isset($formParams['search_term1'])) ? $formParams['search_term1'] : '';
+			$formParams['search_by2'] = (isset($formParams['search_by2'])) ? $formParams['search_by2'] : '';
+			$formParams['search_scope2'] = (isset($formParams['search_scope2'])) ? $formParams['search_scope2'] : '';
+			$formParams['search_term2'] = (isset($formParams['search_term2'])) ? $formParams['search_term2'] : '';
 		}
 
 		// set up the default paginate options
@@ -145,72 +144,16 @@ class UsersController extends AppController {
 		$limit = Configure::read('Pagination.customer.limit');
 		$order = array('User.lastname' => 'ASC');
 
-		if (!empty($submittedValues) && $submittedValues['search_term1'] !== '') {
-			switch ($submittedValues['search_scope1']) {
-			case 'containing':
-				if ($submittedValues['search_by1'] === 'last4') {
-					$conditionScope = 'RIGHT (User.ssn , 4) LIKE';
-				} else if ($submittedValues['search_by1'] === 'fullssn') {
-					$conditionScope = 'User.ssn LIKE';
-				} else {
-					$conditionScope = $submittedValues['search_by1'] . ' LIKE';
-				}
-
-				$conditionValue = '%' . $submittedValues['search_term1'] . '%';
-				break;
-			case 'matching exactly':
-				if ($submittedValues['search_by1'] === 'last4') {
-					$conditionScope = 'RIGHT (User.ssn , 4)';
-				} else if ($submittedValues['search_by1'] === 'fullssn') {
-					$conditionScope = 'User.ssn';
-				} else {
-					$conditionScope = $submittedValues['search_by1'];
-				}
-
-				$conditionValue = $submittedValues['search_term1'];
-				break;
-			}
-
-			$conditions1 = array($conditionScope => $conditionValue);
-			$conditions = array_merge($conditions, $conditions1);
-
-			if (isset($submittedValues['search_by2']) && $submittedValues['search_by2'] !== '' && $submittedValues['search_term2'] !== '') {
-				switch ($submittedValues['search_scope2']) {
-				case 'containing':
-					if ($submittedValues['search_by2'] === 'last4') {
-						$conditionScope2 = 'RIGHT (User.ssn , 4) LIKE';
-					} else if ($submittedValues['search_by2'] === 'fullssn') {
-						$conditionScope2 = 'User.ssn LIKE';
-					} else {
-						$conditionScope2 = $submittedValues['search_by2'] . ' LIKE';
-					}
-
-					$conditionValue2 = '%' . $submittedValues['search_term2'] . '%';
+		if (!empty($formParams)) {
+			switch ($formParams['search_type']) {
+				case 'basic':
+					$this->basicSearch($formParams, $conditions, $limit, $order);
 					break;
-				case 'matching exactly':
-					if ($submittedValues['search_by2'] === 'last4') {
-						$conditionScope2 = 'RIGHT (User.ssn , 4)';
-					} else if ($submittedValues['search_by2'] === 'fullssn') {
-						$conditionScope2 = 'User.ssn';
-					} else {
-						$conditionScope2 = $submittedValues['search_by2'];
-					}
 
-					$conditionValue2 = $submittedValues['search_term2'];
+				case 'advanced':
+					$this->advancedSearch($formParams, $conditions, $limit, $order);
 					break;
-				}
-
-				$conditions2 = array($conditionScope2 => $conditionValue2);
-				$conditions = array_merge($conditions, $conditions2);
 			}
-
-			$this->paginate = array(
-				'conditions' => $conditions,
-				'limit'      => $limit,
-				'order'      => $order
-			);
-
-			$this->set($submittedValues);
 		} else {
 			$this->paginate = array(
 				'conditions' => $conditions,
@@ -218,6 +161,7 @@ class UsersController extends AppController {
 				'order' => $order
 			);
 		}
+
 		$this->set(compact('canViewFullSsn'));
 		$this->set('users', $this->paginate('User'));
 	}
@@ -1263,4 +1207,75 @@ class UsersController extends AppController {
 		return true;
 	}
 
+	private function basicSearch($formParams) {
+
+	}
+
+	private function advancedSearch($formParams, $conditions, $limit, $order) {
+		switch ($formParams['search_scope1']) {
+		case 'containing':
+			if ($formParams['search_by1'] === 'last4') {
+				$conditionScope = 'RIGHT (User.ssn , 4) LIKE';
+			} else if ($formParams['search_by1'] === 'fullssn') {
+				$conditionScope = 'User.ssn LIKE';
+			} else {
+				$conditionScope = $formParams['search_by1'] . ' LIKE';
+			}
+
+			$conditionValue = '%' . $formParams['search_term1'] . '%';
+			break;
+		case 'matching exactly':
+			if ($formParams['search_by1'] === 'last4') {
+				$conditionScope = 'RIGHT (User.ssn , 4)';
+			} else if ($formParams['search_by1'] === 'fullssn') {
+				$conditionScope = 'User.ssn';
+			} else {
+				$conditionScope = $formParams['search_by1'];
+			}
+
+			$conditionValue = $formParams['search_term1'];
+			break;
+		}
+
+		$conditions1 = array($conditionScope => $conditionValue);
+		$conditions = array_merge($conditions, $conditions1);
+
+		if (isset($formParams['search_by2']) && $formParams['search_by2'] !== '' && $formParams['search_term2'] !== '') {
+			switch ($formParams['search_scope2']) {
+			case 'containing':
+				if ($formParams['search_by2'] === 'last4') {
+					$conditionScope2 = 'RIGHT (User.ssn , 4) LIKE';
+				} else if ($formParams['search_by2'] === 'fullssn') {
+					$conditionScope2 = 'User.ssn LIKE';
+				} else {
+					$conditionScope2 = $formParams['search_by2'] . ' LIKE';
+				}
+
+				$conditionValue2 = '%' . $formParams['search_term2'] . '%';
+				break;
+			case 'matching exactly':
+				if ($formParams['search_by2'] === 'last4') {
+					$conditionScope2 = 'RIGHT (User.ssn , 4)';
+				} else if ($formParams['search_by2'] === 'fullssn') {
+					$conditionScope2 = 'User.ssn';
+				} else {
+					$conditionScope2 = $formParams['search_by2'];
+				}
+
+				$conditionValue2 = $formParams['search_term2'];
+				break;
+			}
+
+			$conditions2 = array($conditionScope2 => $conditionValue2);
+			$conditions = array_merge($conditions, $conditions2);
+		}
+
+		$this->paginate = array(
+			'conditions' => $conditions,
+			'limit'      => $limit,
+			'order'      => $order
+		);
+
+		$this->set($formParams);
+	}
 }
