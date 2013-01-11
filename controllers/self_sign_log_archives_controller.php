@@ -95,11 +95,11 @@ class SelfSignLogArchivesController extends AppController {
 
 			$count = $this->SelfSignLogArchive->find('count', array('conditions' => $conditions));
 
-			if($count <= 5000) {
+			if($count <= 20000) {
 				$data = $this->SelfSignLogArchive->find('all', array('conditions' => $conditions));
 			}
 			else {
-				$this->Session->setFlash(__('Your results exceed 5000 records, please filter results further.', true), 'flash_failure');
+				$this->Session->setFlash(__('Your results exceed 20000 records, please filter results further.', true), 'flash_failure');
 				$this->redirect( array('action' => 'index'));
 			}
 		}
@@ -116,7 +116,26 @@ class SelfSignLogArchivesController extends AppController {
 		$closedInTimes = array();
 
 		foreach($data as $k => $v) {
-			$report[$k]['Name'] = $v['User']['firstname'] . ' ' . $v['User']['lastname'];
+			$report[$k]['Last 4 SSN'] = substr($v['User']['ssn'], -4);
+			$report[$k]['First Name'] = $v['User']['firstname'];
+			$report[$k]['Last Name'] = $v['User']['lastname'];
+			if($this->data['SelfSignLogArchive']['include_user_info']) {
+				$report[$k]['Middle Initial'] = $v['User']['middle_initial'];
+				$report[$k]['Surname'] = $v['User']['surname'];
+				$report[$k]['Address'] = $v['User']['address_1'];
+				$report[$k]['City'] = $v['User']['city'];
+				$report[$k]['County'] = $v['User']['county'];
+				$report[$k]['State'] = $v['User']['state'];
+				$report[$k]['Zip'] = $v['User']['zip'];
+				$report[$k]['Phone'] = $v['User']['phone'];
+				$report[$k]['Gender'] = $v['User']['gender'];
+				$report[$k]['DOB'] = $v['User']['dob'];
+				$report[$k]['Language'] = $v['User']['language'];
+				$report[$k]['Ethnicity'] = $v['User']['ethnicity'];
+				$report[$k]['Race'] = $v['User']['race'];
+				$report[$k]['Veteran'] = ($v['User']['veteran']) ? 'Yes' : 'No';
+				$report[$k]['Email'] = $v['User']['email'];
+			}
 			$report[$k]['Location'] = $v['Location']['name'];
 			if(!empty($v['SelfSignLogArchive']['level_1'])) {
 				$report[$k]['Button 1'] = $buttons[$v['SelfSignLogArchive']['level_1']];
