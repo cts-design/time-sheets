@@ -47,11 +47,15 @@ var searchPanel = {
       renderTo: 'searchForm',
       items: [{
         xtype: 'tabpanel',
+        activeTab: (search_type === 'advanced') ? 1 : 0,
         id: 'tabPanel',
         layout: 'fit',
         items: [{
           xtype: 'form',
+          id: 'basicForm',
           title: 'Basic',
+          standardSubmit: true,
+          url: windowUrl,
           bodyStyle: 'padding: 10px; background-color: #DFE9F6; border: 0',
           defaults: {
             bodyStyle: 'padding: 0 10px; background-color: #DFE9F6; border: 0',
@@ -76,7 +80,7 @@ var searchPanel = {
             emptyText: 'SSN or Last Name Containing...',
             id: 'BasicSearchTerm1',
             margin: '10',
-            name: 'basic_search_term1',
+            name: 'basic_search_term',
             submitEmptyText: false,
             width: '98%'
           }],
@@ -85,8 +89,7 @@ var searchPanel = {
             icon:  '/img/icons/find.png',
             text: 'Search',
             handler: function() {
-              var fp = Ext.getCmp('searchFormPanel'),
-              form = fp.getForm();
+              var form = this.up('form').getForm();
 
               if (form.isValid()) {
                 form.submit();
@@ -109,12 +112,7 @@ var searchPanel = {
                 var form = panel.getForm();
 
                 form.setValues({
-                  SearchBy1: search_by1,
-                  SearchBy2: search_by2,
-                  SearchScope1: search_scope1,
-                  SearchScope2: search_scope2,
-                  SearchTerm1: search_term1,
-                  SearchTerm2: search_term2
+                  BasicSearchTerm1: basic_search_term
                 });
 
                 form.clearInvalid();
@@ -123,7 +121,7 @@ var searchPanel = {
         }, {
           xtype: 'form',
           title: 'Advanced',
-          id: 'searchFormPanel',
+          id: 'advancedForm',
           standardSubmit: true,
           url: windowUrl,
           bodyStyle: 'padding: 10px; background-color: #DFE9F6; border: 0',
@@ -404,16 +402,25 @@ var searchPanel = {
     });
   },
 
-  //setDefaultsAndFocus: function () {
-    //this.form.down('#SearchBy1').select('lastname');
-    //this.form.down('#SearchScope1').select('containing');
-    //this.form.down('#SearchTerm1').focus('', 10);
-    //this.form.getForm().clearInvalid();
-  //}
+  setDefaultsAndFocus: function () {
+    var form;
+
+    if (search_type === 'advanced') {
+      form = this.container.down('#advancedForm');
+      form.down('#SearchBy1').select('lastname');
+      form.down('#SearchScope1').select('containing');
+      form.down('#SearchTerm1').focus('', 10);
+    } else {
+      form = this.container.down('#basicForm');
+      form.down('#BasicSearchTerm1').focus('', 10);
+    }
+
+    form.getForm().clearInvalid();
+  }
 };
 
 Ext.onReady(function() {
   //Ext.QuickTips.init();
   searchPanel.init();
-  //searchPanel.setDefaultsAndFocus();
+  searchPanel.setDefaultsAndFocus();
 });
