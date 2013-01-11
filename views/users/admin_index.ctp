@@ -13,6 +13,7 @@
 	var search_by2 = '<?php echo (isset($search_by2)) ? $search_by2 : null ?>';
 	var search_scope2 = '<?php echo (isset($search_scope2)) ? $search_scope2 : null ?>';
 	var search_term2 = '<?php echo (isset($search_term2)) ? $search_term2 : null ?>';
+	var search_type = '<?php echo (isset($search_type)) ? $search_type : null ?>';
 	var basic_search_term = '<?php echo (isset($basic_search_term)) ? $basic_search_term : null ?>';
 <?php echo $this->Html->scriptEnd() ?>
 <?php echo $this->Html->script('users/search.js', array('inline' => false)) ?>
