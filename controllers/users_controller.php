@@ -1207,8 +1207,21 @@ class UsersController extends AppController {
 		return true;
 	}
 
-	private function basicSearch($formParams) {
+	private function basicSearch($formParams, $conditions, $limit, $order) {
+		$conditions = array(
+			'OR' => array(
+				'User.ssn LIKE' => '%' . $formParams['basic_search_term'] . '%',
+				'User.lastname LIKE' => '%' . $formParams['basic_search_term'] . '%'
+			)
+		);
 
+		$this->paginate = array(
+			'conditions' => $conditions,
+			'limit'      => $limit,
+			'order'      => $order
+		);
+
+		$this->set($formParams);
 	}
 
 	private function advancedSearch($formParams, $conditions, $limit, $order) {
