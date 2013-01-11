@@ -68,11 +68,22 @@ Ext.create('Ext.data.Store', {
             msg = 'Unable to update event.';
             break;
         }
-        sb.setStatus({text: msg, iconCls: 'x-status-error'});
+        sb.setStatus({
+          text: msg,
+          iconCls: 'x-status-error',
+          clear: {
+            anim: false
+          }
+        });
       }
       if(responseTxt.success) {
-        sb.clearStatus();
-        sb.setStatus({text: responseTxt.message, iconCls: 'x-status-success'});
+        sb.setStatus({
+          text: responseTxt.message,
+          iconCls: 'x-status-valid',
+          clear: {
+            anim: false
+          }
+        });
         var formPanel = Ext.getCmp('eventsForm');
         if(operation.action === 'create' || operation.action === 'update') {
           formPanel.getForm().reset();
@@ -90,7 +101,7 @@ Ext.create('Ext.data.Store', {
     },
     beforesync: function(){
       var sb = Ext.getCmp('status-bar');
-      sb.showBusy();
+      sb.showBusy({text: 'Saving.....'});
     }
   }
 });
@@ -307,6 +318,8 @@ Ext.create('Ext.form.Panel', {
     },
     bbar: Ext.create('Ext.ux.StatusBar', {
       id: 'status-bar',
+      defaultText: 'Ready',
+      defaultIconCls: 'default-icon',
       text: 'Ready'
     }),
     title:'Events',
@@ -613,17 +626,7 @@ Ext.create('Ext.form.Panel', {
           event = Ext.create('Event', form.getValues());
           store.add(event);
         }
-        store.sync({
-          success: function() {
-            // TODO: add success and failure logic
-            console.log('success');
-            var sb = Ext.getCmp('status-bar');
-            
-          },
-          failure: function() {
-            console.log('failure');
-          }
-        });
+        store.sync();
       }
     }
   }]
