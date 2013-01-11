@@ -70,8 +70,10 @@ class EventsController extends AppController {
 
 	public function admin_index() {
 		if($this->RequestHandler->isAjax()) {
-			$events = $this->Event->find('all', array('order' => array('Event.scheduled DESC')));
-			// TODO add condition to the find statement to exclude the events that have been held already
+			$date = date('Y-m-d H:i:s', strtotime('today'));
+			$events = $this->Event->find('all', array(
+				'order' => array('Event.scheduled DESC'),
+				'conditions' => array('Event.scheduled >= ' => $date)));
 			$this->loadModel('Location');
 			$locations = $this->Location->find('list');	
 			$this->loadModel('DocumentFilingCategory');
@@ -117,6 +119,12 @@ class EventsController extends AppController {
 				unset($this->data['Event']['modified']);
 				$this->Event->create();
 				if($this->Event->save($this->data)) {
+                    $this->Transaction->createUserTransaction(
+                        'Events',
+                        $this->Auth->user('id'),
+                        $this->Auth->user('location_id'),
+                        'Added event, id: ' . $this->data['Event']['id']
+                    );
 					$data['success'] = true;
 					$data['message'] = 'The event was saved successfully.';
 				}
@@ -155,6 +163,12 @@ class EventsController extends AppController {
 						$this->data['Event']['address'] = NULL;
 					} 
 					if($this->Event->save($this->data)) {
+						$this->Transaction->createUserTransaction(
+							'Events',
+							$this->Auth->user('id'),
+							$this->Auth->user('location_id'),
+							'Edited event, id: ' . $this->data['Event']['id']
+						);
 						$data['success'] = true;
 						$data['message'] = 'The event was updated successfully.';
 					}
@@ -180,14 +194,12 @@ class EventsController extends AppController {
                 if($this->Event->delete($this->data['Event']['id'])){
                     $data['success'] = true;
                     $data['message'] = 'Event deleted successfully';
-					/*
                     $this->Transaction->createUserTransaction(
-                        'Alerts',
+                        'Events',
                         $this->Auth->user('id'),
                         $this->Auth->user('location_id'),
-                        'Deleted Self Sign alert, id: ' . $this->params['form']['id']
+                        'Deleted event, id: ' . $this->data['Event']['id']
                     );
-					 */
                 }
                 else {
                     $data['success'] = false;
