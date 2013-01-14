@@ -257,7 +257,6 @@ class EventsController extends AppController {
 			}
 			$this->set(compact('data'));
 			$this->render(null, null, '/elements/ajaxreturn');
-			$this->log($this->data, 'debug');
 		}
 	}
 }
