@@ -85,7 +85,7 @@ class EventsController extends AppController {
 
 		debug($events);
 
-		$title_for_layout = 'Calendar of Events';
+		$title_for_layout = 'Upcoming Workshops';
 
 		if ($month && !$year) {
 			$year = date('Y');
