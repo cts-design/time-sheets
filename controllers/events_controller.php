@@ -66,6 +66,52 @@ class EventsController extends AppController {
 		$this->set(compact('title_for_layout', 'categories', 'prevMonth', 'nextMonth', 'curMonth', 'events'));
 	}
 
+	function workshop($month = null, $year = null) {
+		$this->Event->Behaviors->attach('Containable');
+		$this->Event->EventCategory->recursive = -1;
+
+		$workshopCategory = $this->Event->EventCategory->findByName('Workshop', array('fields' => 'EventCategory.id'));
+
+		$events = $this->Event->find('all', array(
+			'conditions' => array(
+				'Event.scheduled >' => date('Y-m-d H:i:s'),
+				'Event.registered < Event.seats_available',
+				'Event.event_category_id' => $workshopCategory['EventCategory']['id']
+			),
+			'contain' => array(
+				'Location'
+			)
+		));
+
+		debug($events);
+
+		$title_for_layout = 'Calendar of Events';
+
+		if ($month && !$year) {
+			$year = date('Y');
+		}
+
+		if (!$month) {
+			$date = date('Y-m-d H:i:s');
+			$month = date('m', strtotime($date));
+			$lastDayOfMonth = date('t', strtotime($date));
+			$year = date('Y', strtotime($date));
+			$endDate = date('Y-m-d H:i:s', strtotime("$month/$lastDayOfMonth/$year 23:59:59"));
+		} else {
+			$date = date('Y-m-d H:i:s', strtotime("$month/1/$year 00:00:01"));
+			$lastDayOfMonth = date('t', strtotime($date));
+			$endDate = date('Y-m-d H:i:s', strtotime("$month/$lastDayOfMonth/$year 23:59:59"));
+		}
+
+		$events = $this->paginate('Event', array('Event.scheduled BETWEEN ? AND ?' => array($date, $endDate)));
+
+		$curMonth = date('F Y', strtotime($date));
+		$prevMonth = date('m/Y', strtotime("-1 month", strtotime($date)));
+		$nextMonth = date('m/Y', strtotime("+1 month", strtotime($date)));
+
+		$this->set(compact('title_for_layout', 'categories', 'prevMonth', 'nextMonth', 'curMonth', 'events'));
+	}
+
 	public function view() {}
 
 	public function admin_index() {
