@@ -7,4 +7,8 @@ class Event extends AppModel {
 	
 	public $belongsTo = 'EventCategory';
 
+	public $hasMany = 'EventRegistration';
+
+	
+
 }
