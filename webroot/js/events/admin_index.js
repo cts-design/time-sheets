@@ -470,7 +470,7 @@ Ext.create('Ext.form.Panel', {
         otherLocation.nextSibling().reset();
         otherLocation.nextSibling().disable();
         if(newValue === 0) {
-          if(record.data.address !== undefined) {
+          if(record !== undefined) {
             otherLocation.setValue(record.data.other_location);
             otherLocation.nextSibling().setValue(record.data.address);
           }
