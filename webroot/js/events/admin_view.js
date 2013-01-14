@@ -76,6 +76,7 @@ Ext.onReady(function() {
                 record.set('present', 1);
               });
               store.sync();
+              sm.deselectAll();
             }
           },{
             text: 'Mark Absent',
@@ -86,6 +87,7 @@ Ext.onReady(function() {
                 record.set('present', 0);
               });
               store.sync();
+              sm.deselectAll();
             }
           }]       
       
