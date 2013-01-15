@@ -132,6 +132,8 @@ class EventsController extends AppController {
 		$this->User->recursive = -1;
 		$this->User->Behaviors->attach('Containable');
 		$this->User->contain('EventRegistration.event_id = ' . $eventId);
+		$this->Event->recursive = -1;
+		$event = $this->Event->findById($eventId);
 
 		$failureRedirectAction = ($eventType === 'workshop') ? 'workshop' : 'index';
 
@@ -139,6 +141,9 @@ class EventsController extends AppController {
 
 		if (isset($user['EventRegistration']) && !empty($user['EventRegistration'])) {
 			$this->Session->setFlash(__('You are already registered for this event', true), 'flash_failure');
+			$this->redirect(array('action' => $failureRedirectAction));
+		} else if ($event['Event']['event_registration_count'] >= $event['Event']['seats_available']){
+			$this->Session->setFlash(__('We\'re sorry, but this event is full', true), 'flash_failure');
 			$this->redirect(array('action' => $failureRedirectAction));
 		} else {
 			$data = array(
