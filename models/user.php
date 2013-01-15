@@ -30,6 +30,11 @@ class User extends AppModel {
 		'QueuedDocument' => array(
 		    'className' => 'QueuedDocument',
 		    'foreignKey' => 'user_id'
+		),
+		'EventRegistration' => array(
+			'className' => 'EventRegistration',
+			'foreignKey' => 'user_id'
+			
 		)		
     );
 	
