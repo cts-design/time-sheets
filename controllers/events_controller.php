@@ -110,28 +110,25 @@ class EventsController extends AppController {
 		$this->set(compact('title_for_layout', 'categories', 'prevMonth', 'nextMonth', 'curMonth', 'events'));
 	}
 
-	public function attend($eventId) {
 		$data = array(
 			'user_id' => $this->Auth->user('id'),
 			'event_id' => $eventId,
 			'present' => 0
 		);
+	public function attend($eventId, $eventType = null) {
 
 		if ($this->Event->EventRegistration->save($data)) {
 			// TODO - send user email
 			$this->Session->setFlash(__('You\'ve successfully registered for this event', true), 'flash_success');
 			$this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
+		$failureRedirectAction = ($eventType === 'workshop') ? 'workshop' : 'index';
 		} else {
-			$this->Event->recursive = -1;
-			$this->Event->EventCategory->recursive = -1;
-			$event = $this->Event->findById($eventId, array('fields' => 'Event.event_category_id'));
-			$workshopCategory = $this->Event->EventCategory->findByName('Workshop', array('fields' => 'EventCategory.id'));
 
 			$this->Session->setFlash(__('Something went wrong while registering you for this event. Please try again', true), 'flash_failure');
 			if ($event['Event']['event_category_id'] == $workshopCategory['EventCategory']['id']) {
 				$this->redirect(array('action' => 'workshop'));
 			} else {
-				$this->redirect(array('action' => 'index'));
+				$this->redirect(array('action' => $failureRedirectAction));
 			}
 		}
 	}

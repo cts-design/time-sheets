@@ -21,7 +21,7 @@
 			<div class="event">
 				<div class="details">
 					<div class="attend">
-						<a href="/events/attend/<?= $event['Event']['id'] ?>" class="button green">Attend This Workshop</a>
+						<a href="/events/attend/<?= $event['Event']['id'] ?>/workshop" class="button green">Attend This Workshop</a>
 						<p class="availibility">
 							<i class="icon-group icon-large"></i>
 							10 seats still available
