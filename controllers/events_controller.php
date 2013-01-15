@@ -75,13 +75,15 @@ class EventsController extends AppController {
 		$events = $this->Event->find('all', array(
 			'conditions' => array(
 				'Event.scheduled >' => date('Y-m-d H:i:s'),
-				'Event.registered < Event.seats_available',
+				'Event.event_registration_count < Event.seats_available',
 				'Event.event_category_id' => $workshopCategory['EventCategory']['id']
 			),
 			'contain' => array(
 				'Location'
 			)
 		));
+
+		debug($events);
 
 		$title_for_layout = 'Upcoming Workshops';
 
