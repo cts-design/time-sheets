@@ -15,7 +15,7 @@ class EventsController extends AppController {
 		$this->Auth->allow('view', 'index', 'workshop');
 	}
 
-	function index($month = null, $year = null) {
+	public function index($month = null, $year = null) {
 		$events = $this->Event->find('all', array(
 			'conditions' => array(
 				'Event.scheduled >' => date('Y-m-d H:i:s'),
@@ -66,7 +66,7 @@ class EventsController extends AppController {
 		$this->set(compact('title_for_layout', 'categories', 'prevMonth', 'nextMonth', 'curMonth', 'events'));
 	}
 
-	function workshop($month = null, $year = null) {
+	public function workshop($month = null, $year = null) {
 		$this->Event->Behaviors->attach('Containable');
 		$this->Event->EventCategory->recursive = -1;
 
