@@ -15,10 +15,10 @@ $(function() {
 		
 		eventCategory =	$(this).attr('value');
 		$.post(currentUrl, { event_categories_dropdown: eventCategory }, function(data) {
-			$(".allEvents").empty().html('<img src="/img/ajaxLoader.gif" height="16" width="16" />');
+			$("#events").empty().html('<img src="/img/ajaxLoader.gif" height="16" width="16" />');
 
-			var content = $(data).find('.allEvents');
-			$('.allEvents').html(content);
+			var content = $(data).find('#events');
+			$('#events').html(content);
 		});
 	});
 	
@@ -27,10 +27,10 @@ $(function() {
 
 		var target = $(this).attr('href');
 		$.post(target, {}, function(data) {
-			$(".allEvents").empty().html('<img src="/img/ajaxLoader.gif" height="16" width="16" />');
+			$("#events").empty().html('<img src="/img/ajaxLoader.gif" height="16" width="16" />');
 
-			var content = $(data).find('.allEvents');
-			$('.allEvents').html(content);
+			var content = $(data).find('#events');
+			$('#events').html(content);
 		});
 		currentUrl = target;
 	});

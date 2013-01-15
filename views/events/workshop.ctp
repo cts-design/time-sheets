@@ -1,34 +1,53 @@
 <?php echo $this->Html->script('events/category.js', array('inline' => false)) ?>
-<div class="events">
-	<div class="allEvents">
-		<p class="calnav">
-			<span>
-				<a class="previousMonth" href="/events/index/<?php echo $prevMonth ?>"> < </a>
-			</span>
-			<span>
-				<a class="currentMonth" href=""><?php echo $curMonth ?></a>
-			</span>
-			<span>
-				<a class="nextMonth" href="/events/index/<?php echo $nextMonth ?>"> > </a>
-			</span>
-		</p>
-		<?php if (!empty($events)): ?>
-			<?php foreach ($events as $event): ?>
-				<div class="event">
-					<h3><?php echo $event['Event']['name'] ?></h3>
-					<span class="category">Workshop</span>
-					<?php $startTime = strtotime($event['Event']['scheduled']) ?>
-					<?php $endTime = strtotime("+{$event['Event']['duration']} hours", $startTime) ?>
-					<span class="datetime"><?php echo date('F d, Y h:iA', $startTime) ?>&mdash;<?php echo date('h:iA', $endTime) ?></span>
-					<p class="location">
-						<span class="label">Location:</span>
-						<?php echo $event['Location']['name'] ?>
-					</p>
-					<p class="address">
-						<span class="label">Address: <?php echo $event['Event']['address'] ?></span>
-					</p>
+<div id="events">
+	<p class="calnav">
+		<span>
+			<a class="previousMonth" href="/events/workshop/<?php echo $prevMonth ?>"> < </a>
+		</span>
+		<span>
+			<a class="currentMonth" href=""><?php echo $curMonth ?></a>
+		</span>
+		<span>
+			<a class="nextMonth" href="/events/workshop/<?php echo $nextMonth ?>"> > </a>
+		</span>
+	</p>
+	<?php if (!empty($events)): ?>
+		<?php foreach ($events as $event): ?>
+			<?php $day = date('l, F dS', strtotime($event['Event']['scheduled'])) ?>
+			<?php $month = date('M', strtotime($event['Event']['scheduled'])) ?>
+			<?php $startTime = strtotime($event['Event']['scheduled']) ?>
+			<?php $endTime = strtotime("+{$event['Event']['duration']} hours", $startTime) ?>
 
-					<p class="description"><?php echo $event['Event']['description'] ?></p>
+			<div class="event">
+				<div class="details">
+					<div class="attend">
+						<a href="#" class="button green">Attend This Workshop</a>
+					</div>
+
+					<h2><?php echo $event['Event']['name'] ?></h2>
+
+					<ul>
+						<li>
+							<i class="icon-calendar icon-large"></i>
+							<span class="datetime">
+								<?= $day ?>
+							</span>
+						</li>
+						<li>
+							<i class="icon-time icon-large"></i>
+							<span class="datetime">
+								<?= date('h:iA', $startTime) ?> &ndash;
+								<?= date('h:iA', $endTime) ?>
+							</span>
+						</li>
+						<li>
+							<i class="icon-map-marker icon-large"></i>
+							<?= $event['Event']['address'] ?>
+							(<a href="http://maps.google.com/maps?q=<?php echo urlencode($event['Event']['address']) ?>"><?php __('Map It') ?></a>)
+						</li>
+					</ul>
+
+					<p class="description"><?= $event['Event']['description'] ?></p>
 
 					<?php if (!empty($event['Event']['sponsor'])): ?>
 					<p class="sponsor">
@@ -46,16 +65,17 @@
 						<a href="<?php echo $event['Event']['event_url'] ?>"><?php __('Visit Website') ?></a>
 						<?php endif; ?>
 						<?php if (!empty($event['Event']['address'])): ?>
-							<a href="http://maps.google.com/maps?q=<?php echo urlencode($event['Event']['address']) ?>"><?php __('Map It') ?></a>
 						<?php endif; ?>
 					</p>
 				</div>
-			<?php endforeach; ?>
-		<?php else: ?>
-				<div class="no-events">
-				<p><?php __('No events to display') ?></p>
-				</div>
-		<?php endif; ?>
+			</div>
+			<div class="clear"></div>
+		<?php endforeach; ?>
+	<?php else: ?>
+			<div class="no-events">
+			<p><?php __('No events to display') ?></p>
+			</div>
+	<?php endif; ?>
 
 	<p>
 	<?php
@@ -70,5 +90,4 @@
  |
 		<?php echo $this->Paginator->next(__('next', true) . ' >>', array(), null, array('class' => 'disabled'));?>
 	</div>
-	</div> <!-- end .allEvents -->
 </div>
