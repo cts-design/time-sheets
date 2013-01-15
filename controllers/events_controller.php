@@ -134,11 +134,11 @@ class EventsController extends AppController {
 		$this->User->Behaviors->attach('Containable');
 		$this->User->contain('EventRegistration.event_id = ' . $eventId);
 		$this->Event->recursive = -1;
+
 		$event = $this->Event->findById($eventId);
+		$user = $this->User->findById($this->Auth->user('id'));
 
 		$failureRedirectAction = ($eventType === 'workshop') ? 'workshop' : 'index';
-
-		$user = $this->User->findById($this->Auth->user('id'));
 
 		if (isset($user['EventRegistration']) && !empty($user['EventRegistration'])) {
 			$this->Session->setFlash(__('You are already registered for this event', true), 'flash_failure');
@@ -155,6 +155,12 @@ class EventsController extends AppController {
 
 			if ($this->Event->EventRegistration->save($data)) {
 				// TODO - send user email
+				$this->Transaction->createUserTransaction(
+					'EventRegistrations',
+					null,
+					null,
+					'Registered for event ID ' . $event['Event']['id']
+				);
 				$this->Session->setFlash(__('You\'ve successfully registered for this event', true), 'flash_success');
 				$this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
 			} else {
@@ -175,6 +181,12 @@ class EventsController extends AppController {
 		$user = $this->User->findById($this->Auth->user('id'));
 
 		if (isset($user['EventRegistration']) && !empty($user['EventRegistration'])) {
+			$this->Transaction->createUserTransaction(
+				'EventRegistrations',
+				null,
+				null,
+				'Cancelled registration for event ID ' . $event['Event']['id']
+			);
 			$this->Event->EventRegistration->delete($user['EventRegistration'][0]['id']);
 			$this->Session->setFlash(__('You\'ve successfully un-registered for this event', true), 'flash_success');
 		}
