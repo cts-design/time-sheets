@@ -154,7 +154,7 @@ class EventsController extends AppController {
 			);
 
 			if ($this->Event->EventRegistration->save($data)) {
-				// TODO - send user email
+				$this->Notifications->sendEventRegistrationEmail($event, $user);
 				$this->Transaction->createUserTransaction(
 					'EventRegistrations',
 					null,
