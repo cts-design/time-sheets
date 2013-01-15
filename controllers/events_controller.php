@@ -155,6 +155,32 @@ class EventsController extends AppController {
 		}
 	}
 
+	public function admin_view() {
+		$eventRegistrations = $this->Event->EventRegistration->findAllByEventId($this->params['pass'][0]);
+		if($this->RequestHandler->isAjax()) {
+			$data['registrations'] = array();
+			if($eventRegistrations) {
+				$i = 0;
+				foreach($eventRegistrations as $registration) {
+					$data['registrations'][$i]['id'] = $registration['EventRegistration']['id'];
+					$data['registrations'][$i]['firstname'] = $registration['User']['firstname'];
+					$data['registrations'][$i]['lastname'] = $registration['User']['lastname'];
+					$data['registrations'][$i]['last4'] = substr($registration['User']['ssn'], -4);
+					$data['registrations'][$i]['registered'] = $registration['EventRegistration']['created'];
+					$data['registrations'][$i]['present'] = $registration['EventRegistration']['present'];
+					$i++;
+				}
+			}
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+		$title_for_layout = 'Event';
+		if($eventRegistrations) {
+			$title_for_layout = 'Event - ' . $eventRegistrations[0]['Event']['name']; 
+		}
+		$this->set(compact('title_for_layout'));	
+	}
+
 	public function admin_add()	{
 		if($this->RequestHandler->isAjax()) {
 			if(!empty($this->data)) {
@@ -260,4 +286,23 @@ class EventsController extends AppController {
             $this->render(null, null, '/elements/ajaxreturn');
         }
     }
+
+	public function admin_toggle_present() {
+		if($this->RequestHandler->isAjax()) {
+            if(isset($this->data['EventRegistration'])) {
+				$this->data['EventRegistration'] = json_decode($this->data['EventRegistration'], true);
+				$this->loadModel('EventRegistration');
+				if($this->EventRegistration->saveAll($this->data['EventRegistration'])) {
+					$data['success'] = true;
+					$data['message'] = 'Attendance was updated.';
+				}
+				else {
+					$data['success'] = false;
+					$data['message'] = 'Unable to update attendance at this time.';
+				}
+			}
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
 }

@@ -223,7 +223,10 @@ Ext.create('Ext.menu.Menu', {
     text: 'Event Details',
     icon: '/img/icons/date_go.png',
     handler: function() {
-      Ext.MessageBox.alert('Status', 'This button has not been implemented yet');
+      var formPanel = Ext.getCmp('eventsForm'),
+      grid = formPanel.down('grid'),
+      record = grid.getSelectionModel().getLastSelected();
+      window.location.replace('/admin/events/view/'+record.data.id); 
     }
   },{
     xtype: 'button',
