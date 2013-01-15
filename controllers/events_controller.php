@@ -110,24 +110,32 @@ class EventsController extends AppController {
 		$this->set(compact('title_for_layout', 'categories', 'prevMonth', 'nextMonth', 'curMonth', 'events'));
 	}
 
-		$data = array(
-			'user_id' => $this->Auth->user('id'),
-			'event_id' => $eventId,
-			'present' => 0
-		);
 	public function attend($eventId, $eventType = null) {
+		$this->loadModel('User');
+		$this->User->recursive = -1;
+		$this->User->Behaviors->attach('Containable');
+		$this->User->contain('EventRegistration.event_id = ' . $eventId);
 
-		if ($this->Event->EventRegistration->save($data)) {
-			// TODO - send user email
-			$this->Session->setFlash(__('You\'ve successfully registered for this event', true), 'flash_success');
-			$this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
 		$failureRedirectAction = ($eventType === 'workshop') ? 'workshop' : 'index';
-		} else {
 
-			$this->Session->setFlash(__('Something went wrong while registering you for this event. Please try again', true), 'flash_failure');
-			if ($event['Event']['event_category_id'] == $workshopCategory['EventCategory']['id']) {
-				$this->redirect(array('action' => 'workshop'));
+		$user = $this->User->findById($this->Auth->user('id'));
+
+		if (isset($user['EventRegistration']) && !empty($user['EventRegistration'])) {
+			$this->Session->setFlash(__('You are already registered for this event', true), 'flash_failure');
+			$this->redirect(array('action' => $failureRedirectAction));
+		} else {
+			$data = array(
+				'user_id' => $this->Auth->user('id'),
+				'event_id' => $eventId,
+				'present' => 0
+			);
+
+			if ($this->Event->EventRegistration->save($data)) {
+				// TODO - send user email
+				$this->Session->setFlash(__('You\'ve successfully registered for this event', true), 'flash_success');
+				$this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
 			} else {
+				$this->Session->setFlash(__('Something went wrong while registering you for this event. Please try again', true), 'flash_failure');
 				$this->redirect(array('action' => $failureRedirectAction));
 			}
 		}
