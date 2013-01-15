@@ -21,7 +21,11 @@
 			<div class="event">
 				<div class="details">
 					<div class="attend">
-						<a href="/events/attend/<?= $event['Event']['id'] ?>/workshop" class="button green">Attend This Workshop</a>
+						<?php if (in_array($event['Event']['id'], $userEventRegistrations)): ?>
+							<a href="/events/cancel/<?= $event['Event']['id'] ?>/workshop" class="button green">Cancel Your Registration</a>
+						<?php else: ?>
+							<a href="/events/attend/<?= $event['Event']['id'] ?>/workshop" class="button green">Attend This Workshop</a>
+						<?php endif ?>
 						<p class="availibility">
 							<i class="icon-group icon-large"></i>
 							10 seats still available
