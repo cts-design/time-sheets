@@ -83,8 +83,6 @@ class EventsController extends AppController {
 			)
 		));
 
-		debug($events);
-
 		$title_for_layout = 'Upcoming Workshops';
 
 		if ($month && !$year) {
