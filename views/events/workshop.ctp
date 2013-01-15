@@ -42,8 +42,22 @@
 						</li>
 						<li>
 							<i class="icon-map-marker icon-large"></i>
-							<?= $event['Event']['address'] ?>
-							(<a href="http://maps.google.com/maps?q=<?php echo urlencode($event['Event']['address']) ?>"><?php __('Map It') ?></a>)
+							<?php if (isset($event['Location']['id']) && !empty($event['Location']['id'])): ?>
+								<?php
+									$address_parts = array();
+									array_push($address_parts, $event['Location']['address_1']);
+									if (isset($event['Location']['address_2']) && !empty($event['Location']['address_2']))
+										array_push($address_parts, $event['Location']['address_2']);
+									array_push($address_parts, $event['Location']['city']);
+									array_push($address_parts, "{$event['Location']['state']} {$event['Location']['zip']}");
+									$address = join($address_parts, ', ');
+								?>
+								<?= $address ?>
+								(<a href="http://maps.google.com/maps?q=<?php echo urlencode($address) ?>"><?php __('Map It') ?></a>)
+							<?php else: ?>
+								<?= $event['Event']['address'] ?>
+								(<a href="http://maps.google.com/maps?q=<?php echo urlencode($event['Event']['address']) ?>"><?php __('Map It') ?></a>)
+							<?php endif ?>
 						</li>
 					</ul>
 
