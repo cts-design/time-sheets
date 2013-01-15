@@ -107,7 +107,22 @@ class EventsController extends AppController {
 		$prevMonth = date('m/Y', strtotime("-1 month", strtotime($date)));
 		$nextMonth = date('m/Y', strtotime("+1 month", strtotime($date)));
 
-		$this->set(compact('title_for_layout', 'categories', 'prevMonth', 'nextMonth', 'curMonth', 'events'));
+		$userEventRegistrations = array();
+		if ($this->Auth->user()) {
+			$this->loadModel('User');
+			$this->User->recursive = -1;
+			$this->User->Behaviors->attach('Containable');
+			$this->User->contain('EventRegistration');
+			$user = $this->User->findById($this->Auth->user('id'));
+
+			if (isset($user['EventRegistration']) && !empty($user['EventRegistration'])) {
+				foreach ($user['EventRegistration'] as $key => $value) {
+					array_push($userEventRegistrations, $value['event_id']);
+				}
+			}
+		}
+
+		$this->set(compact('title_for_layout', 'categories', 'prevMonth', 'nextMonth', 'curMonth', 'events', 'userEventRegistrations'));
 	}
 
 	public function attend($eventId, $eventType = null) {
