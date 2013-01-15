@@ -28,7 +28,11 @@
 						<?php endif ?>
 						<p class="availibility">
 							<i class="icon-group icon-large"></i>
-							10 seats still available
+							<?php $seatsTaken = $event['Event']['seats_available'] - $event['Event']['event_registration_count'] ?>
+							<?= $seatsTaken ?>
+							of
+							<?= $event['Event']['seats_available'] ?>
+							seats still available
 						</p>
 					</div>
 
