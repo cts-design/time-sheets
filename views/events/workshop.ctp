@@ -65,6 +65,17 @@
 						</li>
 					</ul>
 
+					<?php if (isset($event['Event']['url']) && !empty($event['Event']['url'])): ?>
+					<ul>
+						<li>
+							<i class="icon-globe icon-large"></i>
+							<a href="<?= $event['Event']['url'] ?>">
+								<?= $event['Event']['url'] ?>
+							</a>
+						</li>
+					</ul>
+					<?php endif ?>
+
 					<p class="description"><?= $event['Event']['description'] ?></p>
 
 					<?php if (!empty($event['Event']['sponsor'])): ?>
