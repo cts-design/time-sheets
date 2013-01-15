@@ -12,7 +12,7 @@ class EventsController extends AppController {
 
 	function beforeFilter() {
 		parent::beforeFilter();
-		$this->Auth->allow('view', 'index');
+		$this->Auth->allow('view', 'index', 'workshop');
 	}
 
 	function index($month = null, $year = null) {
