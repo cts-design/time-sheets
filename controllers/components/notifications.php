@@ -50,7 +50,7 @@ class NotificationsComponent extends Object {
 			$data['settings']['from'] = Configure::read('System.email');
 			$data['settings']['sendAs'] = 'both';
 			$data['settings']['template'] = 'event_registration';
-			$data['settings']['subject'] = $programEmail['subject'];
+			$data['settings']['subject'] = 'You\'ve successfully registered for ' . $event['Event']['name'];
 			$data['vars']['event'] = $event;
 			$data['vars']['user'] = $user;
 			return ClassRegistry::init('Queue.QueuedTask')->createJob('email', $data);
