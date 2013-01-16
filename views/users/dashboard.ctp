@@ -3,6 +3,21 @@
     <?php echo $crumb->getHtml(__('Dashboard', true), 'reset', 'unique') ; ?>
 </div>
 
+<div id="event-registrations" style="border: 1px solid; width: 400px; margin-top: 10px"> 
+	<h1>Event Registrations</h1>
+	<ul>
+	<?php if(!empty($eventRegistrations)) : ?>	
+		<?php foreach($eventRegistrations as $key => $value) : ?>
+		<li>
+			<?= $value['Event']['name'] ?>
+			<a href="/events/cancel/<?= $value['Event']['id']?>" class="button green">Cancel Your Registration</a>
+		</li>
+		<?php endforeach ?>
+	<?php endif ?>
+	</ul>
+</div>
+
+
 <div id="Registrations" style="border: 1px solid; width: 400px; margin-top: 10px"> 
 	<h1>Registrations</h1>
 	<?php if(!empty($registrations)) : ?>	

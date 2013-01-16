@@ -296,8 +296,10 @@ class UsersController extends AppController {
 				}
 			}
 		}
+
+		$eventRegistrations = $this->User->EventRegistration->find('all');
 		$title_for_layout = 'Customer Dashboard';
-		$this->set(compact('title_for_layout', 'orientations', 'registrations', 'enrollments'));
+		$this->set(compact('title_for_layout', 'orientations', 'registrations', 'enrollments', 'eventRegistrations'));
 	}
 
 	function edit($id=null) {
