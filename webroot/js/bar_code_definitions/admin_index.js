@@ -264,7 +264,7 @@ Ext.onReady(function(){
                       return 'Bar code number must be unique.';
                     }
                   }
-                  if(record) {
+                  else if(record) {
                       return 'Bar code number must be unique.';
                   }
                   return true;
