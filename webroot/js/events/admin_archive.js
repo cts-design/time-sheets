@@ -23,15 +23,19 @@ Ext.define('Event', {
   ]
 });
 
+var itmesPerPage = 5;
+
 Ext.create('Ext.data.Store', {
   model: 'Event',
   storeId: 'eventsStore',
+  pageSize: itmesPerPage,
   proxy: {
     type: 'ajax',
     url: '/admin/events/archive',
     reader: {
       type: 'json',
-      root: 'events'
+      root: 'events',
+      totalProperty: 'totalCount' 
     },
     directionParam: 'direction',
     simpleSortMode: true
@@ -47,7 +51,17 @@ Ext.onReady(function(){
     title: 'Archive',
     height: 400,
     renderTo: 'events',
+    dockedItems: [{
+      xtype: 'pagingtoolbar',
+      store: Ext.data.StoreManager.lookup('eventsStore'),
+      dock: 'bottom',
+      displayInfo: true
+    }],
     columns: [{
+      text: 'id',
+      dataIndex: 'id',
+      hidden: true
+    },{
       text: 'Name',
       dataIndex: 'name',
       flex: 1
