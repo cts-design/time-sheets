@@ -353,8 +353,8 @@ class EventsController extends AppController {
 		if($this->RequestHandler->isAjax()) {
             if(isset($this->data['EventRegistration'])) {
 				$this->data['EventRegistration'] = json_decode($this->data['EventRegistration'], true);
-				$this->loadModel('EventRegistration');
-				if($this->EventRegistration->saveAll($this->data['EventRegistration'])) {
+				if($this->Event->EventRegistration->saveAll($this->data['EventRegistration'])) {
+					// TODO: add transactions;
 					$data['success'] = true;
 					$data['message'] = 'Attendance was updated.';
 				}
@@ -368,9 +368,18 @@ class EventsController extends AppController {
 		}
 	}
 
+	public function admin_delete_registration() {
+		// TODO: add ability for admins to delete registrations
+	}
+
+	public function admin_attended_users_report() {
+		// TODO: add ability for a report to be run for attended users for an event
+	}
+
 	public function admin_archive() {
 		if($this->RequestHandler->isAjax()) {
-			$events = $this->Event->find('all');
+			$this->paginate = array('order' => array('Event.scheduled' => 'Desc'));
+			$events = $this->Paginate('Event');
 			$data['events'] = array();
 			if($events) {
 				$i = 0;
@@ -379,11 +388,13 @@ class EventsController extends AppController {
 					$data['events'][$i]['category'] = $event['EventCategory']['name'];
 					$data['events'][$i]['location'] = $event['Location']['name'];
 					$data['events'][$i]['scheduled'] = $event['Event']['scheduled'];
-					$data['events'][$i]['registered'] = $event['Event']['registered'];
-					$data['events'][$i]['attended'] = $event['Event']['attended'];
+					$data['events'][$i]['registered'] = $event['Event']['event_registration_count'];
+					$data['events'][$i]['attended'] = $this->Event->EventRegistration->countAttended($event['Event']['id']);
 					$i++;
 				}	
 			}
+			$data['totalCount'] = $this->params['paging']['Event']['count'];
+			$data['success'] = true;
 			$this->set(compact('data'));	
 			$this->render(null, null, '/elements/ajaxreturn');
 		}		
