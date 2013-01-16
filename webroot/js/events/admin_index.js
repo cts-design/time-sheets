@@ -15,7 +15,7 @@ Ext.define('Event', {
     {name: 'scheduled', type: 'date'},
     {name: 'seats_available'},
     {name: 'duration'},
-    {name: 'registered'},
+    {name: 'event_registration_count'},
     {name: 'attended'},
     {name: 'cat_1'},
     {name: 'cat_2'},
@@ -345,14 +345,11 @@ Ext.create('Ext.form.Panel', {
       text: 'Scheduled',
       dataIndex: 'scheduled',
 			format: 'm/d/y g:i a',
-			xtype: 'datecolumn'
+			xtype: 'datecolumn',
+      width: 120
     },{
       text: 'Registered',
-      dataIndex: 'registered',
-      width: 70
-    },{
-      text: 'Attended',
-      dataIndex: 'attended',
+      dataIndex: 'event_registration_count',
       width: 70
     }],
     tbar: [{xtype: 'tbfill'},{
