@@ -50,7 +50,29 @@ class NotificationsComponent extends Object {
 			$data['settings']['from'] = Configure::read('System.email');
 			$data['settings']['sendAs'] = 'both';
 			$data['settings']['template'] = 'event_registration';
-			$data['settings']['subject'] = 'You\'ve successfully registered for ' . $event['Event']['name'];
+			$data['settings']['subject'] = 'You\'ve registered for ' . $event['Event']['name'];
+			$data['vars']['event'] = $event;
+			$data['vars']['user'] = $user;
+			return ClassRegistry::init('Queue.QueuedTask')->createJob('email', $data);
+		}
+		return false;
+	}
+
+	function sendEventCancellationEmail($event=null, $user=null) {
+		if($event) {
+			if($user) {
+				$data['settings']['to'] = $user['User']['firstname'] . ' ' .
+				$user['User']['lastname'] .' <'. $user['User']['email']. '>';
+			}
+			else {
+				$data['settings']['to'] = $this->Auth->user('firstname') . ' ' .
+				$this->Auth->user('lastname') .' <'. $this->Auth->user('email'). '>';
+			}
+
+			$data['settings']['from'] = Configure::read('System.email');
+			$data['settings']['sendAs'] = 'both';
+			$data['settings']['template'] = 'event_cancellation';
+			$data['settings']['subject'] = 'You\'ve cancelled your registration for ' . $event['Event']['name'];
 			$data['vars']['event'] = $event;
 			$data['vars']['user'] = $user;
 			return ClassRegistry::init('Queue.QueuedTask')->createJob('email', $data);
