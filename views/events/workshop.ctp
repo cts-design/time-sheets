@@ -64,7 +64,7 @@
 									array_push($address_parts, "{$event['Location']['state']} {$event['Location']['zip']}");
 									$address = join($address_parts, ', ');
 								?>
-								<?= $address ?>
+								<?= "{$event['Location']['name']} - {$address}" ?>
 								(<a href="http://maps.google.com/maps?q=<?php echo urlencode($address) ?>"><?php __('Map It') ?></a>)
 							<?php else: ?>
 								<?= $event['Event']['address'] ?>
