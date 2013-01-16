@@ -175,9 +175,9 @@ class EventsController extends AppController {
 		$this->User->recursive = -1;
 		$this->User->Behaviors->attach('Containable');
 		$this->User->contain('EventRegistration.event_id = ' . $eventId);
+		$this->Event->recursive = -1;
 
-		$redirectAction = ($eventType === 'workshop') ? 'workshop' : 'index';
-
+		$event = $this->Event->findById($eventId);
 		$user = $this->User->findById($this->Auth->user('id'));
 
 		if (isset($user['EventRegistration']) && !empty($user['EventRegistration'])) {
@@ -187,11 +187,12 @@ class EventsController extends AppController {
 				null,
 				'Cancelled registration for event ID ' . $event['Event']['id']
 			);
+			$this->Notifications->sendEventCancellationEmail($event, $user);
 			$this->Event->EventRegistration->delete($user['EventRegistration'][0]['id']);
 			$this->Session->setFlash(__('You\'ve successfully un-registered for this event', true), 'flash_success');
 		}
 
-		$this->redirect(array('action' => $redirectAction));
+		$this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
 	}
 
 	public function view() {}
