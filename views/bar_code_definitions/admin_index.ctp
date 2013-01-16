@@ -1,6 +1,3 @@
-<script type="text/javascript">
-	var itemsPerPage = 10;
-</script>
 <?php echo $this->Html->script('bar_code_definitions/admin_index', array('inline' => false)) ?>
 <div id="crumbWrapper">
     <span>You are here > </span>
