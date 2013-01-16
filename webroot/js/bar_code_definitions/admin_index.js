@@ -18,7 +18,6 @@ Ext.onReady(function(){
 
     var store = Ext.create('Ext.data.Store', {
         model: 'BarCodeDefinition',
-        pageSize: itemsPerPage,
         proxy: {
           type: 'ajax',
           api: {
@@ -208,12 +207,6 @@ Ext.onReady(function(){
                 });
               }
             }],
-        dockedItems: [{
-            xtype: 'pagingtoolbar',
-            store: store,
-            dock: 'bottom',
-            displayInfo: true
-        }],
             listeners: {
                 selectionchange: function(model, records) {
                   Ext.getCmp('cat2Name').disable();
@@ -262,22 +255,19 @@ Ext.onReady(function(){
                 name: 'number',
                 allowBlank: false,
                 validator: function(value) {
-                  var record = store.findRecord('number', value),
+                  if(value.length > 4) {
+                    var record = store.findRecord('number', value, false, false, true);
+                  }
                   loadedRecord = this.up('form').getRecord();
                   if(record && loadedRecord) {
-                    if(loadedRecord.data.id === record.data.id) {
-                      return true;
-                    }
-                    else {
+                    if(loadedRecord.data.id !== record.data.id) {
                       return 'Bar code number must be unique.';
                     }
                   }
-                  else if(!record && loadedRecord) {
-                    return true;
+                  if(record) {
+                      return 'Bar code number must be unique.';
                   }
-                  else {
-                    return 'Bar code number must be unique.';
-                  }
+                  return true;
                 }
             },{
                 fieldLabel: 'Queue Cat',
