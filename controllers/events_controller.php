@@ -305,4 +305,25 @@ class EventsController extends AppController {
 			$this->render(null, null, '/elements/ajaxreturn');
 		}
 	}
+
+	public function admin_archive() {
+		if($this->RequestHandler->isAjax()) {
+			$events = $this->Event->find('all');
+			$data['events'] = array();
+			if($events) {
+				$i = 0;
+				foreach($events as $event) {
+					$data['events'][$i]['name'] = $event['Event']['name'];
+					$data['events'][$i]['category'] = $event['EventCategory']['name'];
+					$data['events'][$i]['location'] = $event['Location']['name'];
+					$data['events'][$i]['scheduled'] = $event['Event']['scheduled'];
+					$data['events'][$i]['registered'] = $event['Event']['registered'];
+					$data['events'][$i]['attended'] = $event['Event']['attended'];
+					$i++;
+				}	
+			}
+			$this->set(compact('data'));	
+			$this->render(null, null, '/elements/ajaxreturn');
+		}		
+	}
 }
