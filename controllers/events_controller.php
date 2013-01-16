@@ -12,10 +12,10 @@ class EventsController extends AppController {
 
 	function beforeFilter() {
 		parent::beforeFilter();
-		$this->Auth->allow('view', 'index');
+		$this->Auth->allow('view', 'index', 'workshop');
 	}
 
-	function index($month = null, $year = null) {
+	public function index($month = null, $year = null) {
 		$events = $this->Event->find('all', array(
 			'conditions' => array(
 				'Event.scheduled >' => date('Y-m-d H:i:s'),
@@ -66,7 +66,7 @@ class EventsController extends AppController {
 		$this->set(compact('title_for_layout', 'categories', 'prevMonth', 'nextMonth', 'curMonth', 'events'));
 	}
 
-	function workshop($month = null, $year = null) {
+	public function workshop($month = null, $year = null) {
 		$this->Event->Behaviors->attach('Containable');
 		$this->Event->EventCategory->recursive = -1;
 
@@ -83,9 +83,7 @@ class EventsController extends AppController {
 			)
 		));
 
-		debug($events);
-
-		$title_for_layout = 'Calendar of Events';
+		$title_for_layout = 'Upcoming Workshops';
 
 		if ($month && !$year) {
 			$year = date('Y');
@@ -109,7 +107,71 @@ class EventsController extends AppController {
 		$prevMonth = date('m/Y', strtotime("-1 month", strtotime($date)));
 		$nextMonth = date('m/Y', strtotime("+1 month", strtotime($date)));
 
-		$this->set(compact('title_for_layout', 'categories', 'prevMonth', 'nextMonth', 'curMonth', 'events'));
+		$userEventRegistrations = array();
+		if ($this->Auth->user()) {
+			$this->loadModel('User');
+			$this->User->recursive = -1;
+			$this->User->Behaviors->attach('Containable');
+			$this->User->contain('EventRegistration');
+			$user = $this->User->findById($this->Auth->user('id'));
+
+			if (isset($user['EventRegistration']) && !empty($user['EventRegistration'])) {
+				foreach ($user['EventRegistration'] as $key => $value) {
+					array_push($userEventRegistrations, $value['event_id']);
+				}
+			}
+		}
+
+		$this->set(compact('title_for_layout', 'categories', 'prevMonth', 'nextMonth', 'curMonth', 'events', 'userEventRegistrations'));
+	}
+
+	public function attend($eventId, $eventType = null) {
+		$this->loadModel('User');
+		$this->User->recursive = -1;
+		$this->User->Behaviors->attach('Containable');
+		$this->User->contain('EventRegistration.event_id = ' . $eventId);
+
+		$failureRedirectAction = ($eventType === 'workshop') ? 'workshop' : 'index';
+
+		$user = $this->User->findById($this->Auth->user('id'));
+
+		if (isset($user['EventRegistration']) && !empty($user['EventRegistration'])) {
+			$this->Session->setFlash(__('You are already registered for this event', true), 'flash_failure');
+			$this->redirect(array('action' => $failureRedirectAction));
+		} else {
+			$data = array(
+				'user_id' => $this->Auth->user('id'),
+				'event_id' => $eventId,
+				'present' => 0
+			);
+
+			if ($this->Event->EventRegistration->save($data)) {
+				// TODO - send user email
+				$this->Session->setFlash(__('You\'ve successfully registered for this event', true), 'flash_success');
+				$this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
+			} else {
+				$this->Session->setFlash(__('Something went wrong while registering you for this event. Please try again', true), 'flash_failure');
+				$this->redirect(array('action' => $failureRedirectAction));
+			}
+		}
+	}
+
+	public function cancel($eventId, $eventType = null) {
+		$this->loadModel('User');
+		$this->User->recursive = -1;
+		$this->User->Behaviors->attach('Containable');
+		$this->User->contain('EventRegistration.event_id = ' . $eventId);
+
+		$redirectAction = ($eventType === 'workshop') ? 'workshop' : 'index';
+
+		$user = $this->User->findById($this->Auth->user('id'));
+
+		if (isset($user['EventRegistration']) && !empty($user['EventRegistration'])) {
+			$this->Event->EventRegistration->delete($user['EventRegistration'][0]['id']);
+			$this->Session->setFlash(__('You\'ve successfully un-registered for this event', true), 'flash_success');
+		}
+
+		$this->redirect(array('action' => $redirectAction));
 	}
 
 	public function view() {}
