@@ -256,7 +256,7 @@ class EventsController extends AppController {
 			if(!empty($this->data)) {
 				$this->data['Event'] = json_decode($this->data['Event'], true);
 				unset($this->data['Event']['registered']);
-				unset($this->data['Event']['attended']);
+				unset($this->data['Event']['event_registration_count']);
 				unset($this->data['Event']['created']);
 				unset($this->data['Event']['modified']);
 				$this->Event->create();
