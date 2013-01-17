@@ -3,6 +3,15 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+	<h1>Release 3.5.8 (1-17-13)</h1>
+	<h2>Minor feature enhancements</h2>
+	<ol>
+		<li>Added "Basic" search parameter to the User-Customers view. Previous search was moved to "Advanced" search tab.</li>
+	</ol>
+	<h2>Bug Fixes</h2>
+	<ol>
+		<li>Fixed bug that was causing bar code definitions to trip "unique" value validation</li>
+	</ol>
 	<h1>Release 3.5.7 (1-10-13)</h1>
 	<h2>Minor feature enhancements</h2>
 	<ol>
@@ -10,7 +19,6 @@
 		<li>Increased the max records self sign log excel report to 20,000 records </li>
 	</ol>
 	<h2>Bug Fixes</h2>
-	
 	<ol>
 		<li>Fixing permissions bug in reports module</li>
 	</ol>
