@@ -8,7 +8,8 @@ Ext.define('Event', {
     {name: 'category'},
     {name: 'name'},
     {name: 'description'},
-    {name: 'location', serverKey: 'location_id'},
+    {name: 'location'},
+    {name: 'location_id'},
     {name: 'other_location'},
     {name: 'url'},
     {name: 'address'},
@@ -186,7 +187,8 @@ Ext.create('Ext.data.Store', {
   autoLoad: true,
   listeners: {
     load: function(store, records, successful, operation, eOpts) {
-      store.add({id: 0, name: 'Other'});
+      store.add({id: "0", name: 'Other'});
+      console.log(store);
     }
   }
 });
@@ -236,6 +238,7 @@ Ext.create('Ext.menu.Menu', {
       record = formPanel.down('grid').getSelectionModel().getLastSelected();
       record.data.id = undefined;
       formPanel.loadRecord(record);
+      console.log(record);
     }
   },{
     xtype: 'button',
@@ -450,7 +453,7 @@ Ext.create('Ext.form.Panel', {
     }
   },{
     fieldLabel: 'Location',
-    name: 'location',
+    name: 'location_id',
     xtype: 'combo',
     editable: false,
     emptyText: 'Please Select',
