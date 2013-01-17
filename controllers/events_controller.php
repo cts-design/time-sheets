@@ -133,9 +133,17 @@ class EventsController extends AppController {
 		$this->User->recursive = -1;
 		$this->User->Behaviors->attach('Containable');
 		$this->User->contain('EventRegistration.event_id = ' . $eventId);
+		$this->Event->Behaviors->attach('Containable');
 		$this->Event->recursive = -1;
 
-		$event = $this->Event->findById($eventId);
+		$event = $this->Event->find('first', array(
+			'conditions' => array(
+				'Event.id' => $eventId
+			),
+			'contain' => array(
+				'Location'
+			)
+		));
 		$user = $this->User->findById($this->Auth->user('id'));
 
 		$redirectAction = ($eventType === 'workshop') ? 'workshop' : 'index';
