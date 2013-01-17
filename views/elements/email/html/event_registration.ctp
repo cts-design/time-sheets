@@ -23,8 +23,8 @@
 
 <p>
 	You can cancel at anytime by visiting
-	<a href="http://<?= Configure::read('domain')?>/events/cancel/<?= $event['Event']['id'] ?>">
-		http://<?= Configure::read('domain')?>/events/cancel/<?= $event['Event']['id'] ?>
+	<a href="http://<?= Configure::read('domain')?>/users/dashboard">
+		http://<?= Configure::read('domain')?>/users/dashboard
 	</a>
 </p>
 

@@ -18,7 +18,7 @@ You've registered to attend <?= $event['Event']['name'] ?> on
 <?= date('l, F dS h:iA', strtotime($event['Event']['scheduled'])) ?> at <?= $location ?>
 (<a href="http://maps.google.com/maps?q=<?php echo urlencode($location) ?>"><?php __('Map It') ?></a>)\r\n
 \r\n
-You can cancel at anytime by visiting http://<?= Configure::read('domain')?>/events/cancel/<?= $event['Event']['id'] ?>\r\n
+You can cancel at anytime by visiting http://<?= Configure::read('domain')?>/users/dashboard
 \r\n
 <?= Configure::read('Company.name') ?>\r\n
 http://<?= Configure::read('domain') ?>
