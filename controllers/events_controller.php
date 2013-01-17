@@ -190,9 +190,15 @@ class EventsController extends AppController {
 				$i = 0;
 				foreach($events as $event) {
 					$data['events'][$i] = $event['Event'];
-					$data['events'][$i]['cat_1'] = $cats[$event['Event']['cat_1']];
-					$data['events'][$i]['cat_2'] = $cats[$event['Event']['cat_2']];
-					$data['events'][$i]['cat_3'] = $cats[$event['Event']['cat_3']];
+					if($event['Event']['cat_1']) {
+						$data['events'][$i]['cat_1'] = $cats[$event['Event']['cat_1']];
+					}
+					if($event['Event']['cat_2']) {
+						$data['events'][$i]['cat_2'] = $cats[$event['Event']['cat_2']];
+					}
+					if($event['Event']['cat_3']) {
+						$data['events'][$i]['cat_3'] = $cats[$event['Event']['cat_3']];
+					}
 					$data['events'][$i]['category'] = $event['EventCategory']['name'];
 					if($locations) {
 						if($event['Event']['location_id'] == 0) {
