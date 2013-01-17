@@ -8,7 +8,10 @@
 	<?php if(!empty($eventRegistrations)) : ?>
 	<div id="event-registrations" class="widget">
 		<div class="widget-header">
-			<h2>Event Registrations</h2>
+			<h2>
+				<i class="icon-file-alt"></i>
+				Event Registrations
+			</h2>
 		</div>
 		<div class="widget-content">
 			<ul>
@@ -55,7 +58,10 @@
 	<?php if(!empty($registrations)) : ?>
 	<div id="online-registrations" class="widget">
 		<div class="widget-header">
-			<h2>Online Registrations</h2>
+			<h2>
+				<i class="icon-file-alt"></i>
+				Online Registrations
+			</h2>
 		</div>
 
 		<div class="widget-content">
@@ -82,7 +88,10 @@
 	<?php if(!empty($orientations)) : ?>
 	<div id="online-orientations" class="widget">
 		<div class="widget-header">
-			<h2>Online Orientations</h2>
+			<h2>
+				<i class="icon-facetime-video"></i>
+				Online Orientations
+			</h2>
 		</div>
 
 		<div class="widget-content">
@@ -109,7 +118,10 @@
 	<?php if(!empty($enrollments)) : ?>
 	<div id="online-enrollments" class="widget">
 		<div class="widget-header">
-			<h2>Online Enrollments</h2>
+			<h2>
+				<i class="icon-inbox"></i>
+				Online Enrollments
+			</h2>
 		</div>
 
 		<div class="widget-content">
