@@ -23,7 +23,7 @@ Ext.define('Event', {
   ]
 });
 
-var itmesPerPage = 5;
+var itmesPerPage = 20;
 
 Ext.create('Ext.data.Store', {
   model: 'Event',
@@ -41,11 +41,79 @@ Ext.create('Ext.data.Store', {
     simpleSortMode: true
   },
   remoteSort: true,
-  autoLoad: true
+  autoLoad: true,
+  listeners: {
+  beforeload: function (store, options) {
+    if(store.sorters.items[0]){
+      var oldSortParam = store.sorters.items[0].property;
+      var i = null;
+      for(i=0; i < gridColumns.length; i++) {
+        var currentCol = gridColumns[i];
+        if(currentCol.sortable && currentCol.customSort && 
+           currentCol.dataIndex === oldSortParam) {
+             store.sorters.items[0].property = 
+             currentCol.customSort;
+             break;
+        }
+     }
+    }
+  }
+}
+});
+
+var gridColumns = [{
+  text: 'id',
+  dataIndex: 'id',
+  hidden: true
+},{
+  text: 'Name',
+  dataIndex: 'name',
+  flex: 1
+},{
+  text: 'Category',
+  dataIndex: 'category',
+  flex: 1,
+  customSort: 'EventCategory.name'
+},{
+  text: 'Location',
+  dataIndex: 'location',
+  flex: 1,
+  customSort: 'Location.name'
+},{
+  text: 'Scheduled',
+  dataIndex: 'scheduled',
+  xtype: 'datecolumn',
+  format: 'm/d/y h:i a',
+  width: 120
+},{
+  text: 'Registered',
+  dataIndex: 'registered',
+  width: 75,
+  sortable: false
+},{
+  text: 'Attended',
+  dataIndex: 'registered',
+  width: 75,
+  sortable: false
+}];
+
+Ext.create('Ext.menu.Menu', {
+  id: 'contextMenu',
+  title: 'Event Actions',
+  bodyPadding: 5,
+  items:[{
+    xtype: 'button',
+    text: 'Attendance Report',
+    icon: '/img/icons/excel.png',
+    handler: function() {
+
+    }
+  }]
 });
 
 Ext.onReady(function(){
   Ext.QuickTips.init();
+  
   Ext.create('Ext.grid.Panel', {
     store: Ext.data.StoreManager.lookup('eventsStore'),
     title: 'Archive',
@@ -57,36 +125,12 @@ Ext.onReady(function(){
       dock: 'bottom',
       displayInfo: true
     }],
-    columns: [{
-      text: 'id',
-      dataIndex: 'id',
-      hidden: true
-    },{
-      text: 'Name',
-      dataIndex: 'name',
-      flex: 1
-    },{
-      text: 'Category',
-      dataIndex: 'category',
-      flex: 1
-    },{
-      text: 'Loaction',
-      dataIndex: 'location',
-      flex: 1
-    },{
-      text: 'Scheduled',
-      dataIndex: 'scheduled',
-      xtype: 'datecolumn',
-      format: 'm/d/y h:i a',
-      width: 120
-    },{
-      text: 'Registered',
-      dataIndex: 'registered',
-      width: 75
-    },{
-      text: 'Attended',
-      dataIndex: 'registered',
-      width: 75
-    }]
+    columns: gridColumns,
+    listeners: {
+      itemcontextmenu: function(view, rec, node, index, e){
+        e.stopEvent();
+        Ext.getCmp('contextMenu').showAt(e.getXY());
+      }
+    }
   });
 });
