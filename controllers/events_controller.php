@@ -380,9 +380,11 @@ class EventsController extends AppController {
 		// TODO: add ability for admins to delete registrations
 	}
 
-	public function admin_attendance_report($id=null) {
+	public function admin_attendance_report() {
 		$this->Event->recursive = 2;
-		$event = $this->Event->findById($id);	
+		if(isset($this->params['url']['id'])) {
+			$event = $this->Event->findById($this->params['url']['id']);	
+		}
 		$report = array();
 		$title = 'Event Attendance Report ';
 		if($event) {
@@ -415,6 +417,7 @@ class EventsController extends AppController {
 			if($events) {
 				$i = 0;
 				foreach($events as $event) {
+					$data['events'][$i]['id'] = intval($event['Event']['id']);
 					$data['events'][$i]['name'] = $event['Event']['name'];
 					$data['events'][$i]['category'] = $event['EventCategory']['name'];
 					$data['events'][$i]['location'] = $event['Location']['name'];
