@@ -11,7 +11,7 @@ class EventsController extends AppController {
 
 	public $components = array('Notifications');
 
-	public $paginate = array('order' => array('Event.scheduled' => 'asc'), 'limit' => 1);
+	public $paginate = array('order' => array('Event.scheduled' => 'asc'), 'limit' => 5);
 
 	function beforeFilter() {
 		parent::beforeFilter();
