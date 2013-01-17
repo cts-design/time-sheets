@@ -7,9 +7,11 @@
  */
 
 class EventsController extends AppController {
-	var $name = 'Events';
-	var $paginate = array('order' => array('Event.scheduled' => 'asc'), 'limit' => 5);
 
+	public $name = 'Events';
+	public $paginate = array('order' => array('Event.scheduled' => 'asc'), 'limit' => 5);
+	public $helpers = array('Excel');
+	
 	function beforeFilter() {
 		parent::beforeFilter();
 		$this->Auth->allow('view', 'index', 'workshop');
@@ -378,8 +380,31 @@ class EventsController extends AppController {
 		// TODO: add ability for admins to delete registrations
 	}
 
-	public function admin_attended_users_report() {
-		// TODO: add ability for a report to be run for attended users for an event
+	public function admin_attendance_report($id=null) {
+		$this->Event->recursive = 2;
+		$event = $this->Event->findById($id);	
+		$report = array();
+		$title = 'Event Attendance Report ';
+		if($event) {
+			$title .= 'for ' . $event['Event']['name'] . ' held on ' .
+				date('m/d/y h:i a', strtotime($event['Event']['scheduled'])) . ' at ' . $event['Location']['name']; 
+
+			if(!empty($event['EventRegistration'])) {
+				foreach($event['EventRegistration'] as $k => $v) {
+					if($v['present']) {
+						$report[$k]['First Name'] = $v['User']['firstname'];
+						$report[$k]['Last Name'] = $v['User']['lastname'];
+						$report[$k]['Last 4 SSN'] = substr($v['User']['ssn'], -4);
+						$report[$k]['Registered'] = date('m/d/y', strtotime($v['created']));
+					}
+				}
+			}
+		}
+		$data = array('data' => $report,
+			'title' => $title);
+		Configure::write('debug', 0);
+		$this->layout = 'ajax';
+		$this->set($data);
 	}
 
 	public function admin_archive() {
