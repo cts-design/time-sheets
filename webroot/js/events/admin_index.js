@@ -16,7 +16,6 @@ Ext.define('Event', {
     {name: 'seats_available'},
     {name: 'duration'},
     {name: 'event_registration_count'},
-    {name: 'attended'},
     {name: 'cat_1'},
     {name: 'cat_2'},
     {name: 'cat_3'},
