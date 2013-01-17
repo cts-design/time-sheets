@@ -6,6 +6,6 @@
 <?php echo $this->Html->script('events/admin_view', array('inline' => FALSE));?>
 	<div id="crumbWrapper">
 		<span><?php __('You are here') ?> > </span>
-		<?php echo $crumb->getHtml(__('Events', true), null, 'unique') ; ?>
+		<?php echo $crumb->getHtml(__('Event Details', true), null, 'unique') ; ?>
 	</div>
 <div id="event"></div>

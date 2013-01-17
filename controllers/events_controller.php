@@ -13,6 +13,10 @@ class EventsController extends AppController {
 
 	public $paginate = array('order' => array('Event.scheduled' => 'asc'), 'limit' => 5);
 
+	public $name = 'Events';
+	public $paginate = array('order' => array('Event.scheduled' => 'asc'), 'limit' => 5);
+	public $helpers = array('Excel');
+	
 	function beforeFilter() {
 		parent::beforeFilter();
 		$this->Auth->allow('view', 'index', 'workshop');
@@ -219,9 +223,15 @@ class EventsController extends AppController {
 				$i = 0;
 				foreach($events as $event) {
 					$data['events'][$i] = $event['Event'];
-					$data['events'][$i]['cat_1'] = $cats[$event['Event']['cat_1']];
-					$data['events'][$i]['cat_2'] = $cats[$event['Event']['cat_2']];
-					$data['events'][$i]['cat_3'] = $cats[$event['Event']['cat_3']];
+					if($event['Event']['cat_1']) {
+						$data['events'][$i]['cat_1'] = $cats[$event['Event']['cat_1']];
+					}
+					if($event['Event']['cat_2']) {
+						$data['events'][$i]['cat_2'] = $cats[$event['Event']['cat_2']];
+					}
+					if($event['Event']['cat_3']) {
+						$data['events'][$i]['cat_3'] = $cats[$event['Event']['cat_3']];
+					}
 					$data['events'][$i]['category'] = $event['EventCategory']['name'];
 					if($locations) {
 						if($event['Event']['location_id'] == 0) {
@@ -277,7 +287,7 @@ class EventsController extends AppController {
 			if(!empty($this->data)) {
 				$this->data['Event'] = json_decode($this->data['Event'], true);
 				unset($this->data['Event']['registered']);
-				unset($this->data['Event']['attended']);
+				unset($this->data['Event']['event_registration_count']);
 				unset($this->data['Event']['created']);
 				unset($this->data['Event']['modified']);
 				$this->Event->create();
@@ -382,8 +392,8 @@ class EventsController extends AppController {
 		if($this->RequestHandler->isAjax()) {
             if(isset($this->data['EventRegistration'])) {
 				$this->data['EventRegistration'] = json_decode($this->data['EventRegistration'], true);
-				$this->loadModel('EventRegistration');
-				if($this->EventRegistration->saveAll($this->data['EventRegistration'])) {
+				if($this->Event->EventRegistration->saveAll($this->data['EventRegistration'])) {
+					// TODO: add transactions;
 					$data['success'] = true;
 					$data['message'] = 'Attendance was updated.';
 				}
@@ -395,5 +405,63 @@ class EventsController extends AppController {
 			$this->set(compact('data'));
 			$this->render(null, null, '/elements/ajaxreturn');
 		}
+	}
+
+	public function admin_delete_registration() {
+		// TODO: add ability for admins to delete registrations
+	}
+
+	public function admin_attendance_report() {
+		$this->Event->recursive = 2;
+		if(isset($this->params['url']['id'])) {
+			$event = $this->Event->findById($this->params['url']['id']);	
+		}
+		$report = array();
+		$title = 'Event Attendance Report ';
+		if($event) {
+			$title .= 'for ' . $event['Event']['name'] . ' held on ' .
+				date('m/d/y h:i a', strtotime($event['Event']['scheduled'])) . ' at ' . $event['Location']['name']; 
+
+			if(!empty($event['EventRegistration'])) {
+				foreach($event['EventRegistration'] as $k => $v) {
+					if($v['present']) {
+						$report[$k]['First Name'] = $v['User']['firstname'];
+						$report[$k]['Last Name'] = $v['User']['lastname'];
+						$report[$k]['Last 4 SSN'] = substr($v['User']['ssn'], -4);
+						$report[$k]['Registered'] = date('m/d/y', strtotime($v['created']));
+					}
+				}
+			}
+		}
+		$data = array('data' => $report,
+			'title' => $title);
+		Configure::write('debug', 0);
+		$this->layout = 'ajax';
+		$this->set($data);
+	}
+
+	public function admin_archive() {
+		if($this->RequestHandler->isAjax()) {
+			$this->paginate = array('order' => array('Event.scheduled' => 'Desc'));
+			$events = $this->Paginate('Event');
+			$data['events'] = array();
+			if($events) {
+				$i = 0;
+				foreach($events as $event) {
+					$data['events'][$i]['id'] = intval($event['Event']['id']);
+					$data['events'][$i]['name'] = $event['Event']['name'];
+					$data['events'][$i]['category'] = $event['EventCategory']['name'];
+					$data['events'][$i]['location'] = $event['Location']['name'];
+					$data['events'][$i]['scheduled'] = $event['Event']['scheduled'];
+					$data['events'][$i]['registered'] = $event['Event']['event_registration_count'];
+					$data['events'][$i]['attended'] = $this->Event->EventRegistration->countAttended($event['Event']['id']);
+					$i++;
+				}	
+			}
+			$data['totalCount'] = $this->params['paging']['Event']['count'];
+			$data['success'] = true;
+			$this->set(compact('data'));	
+			$this->render(null, null, '/elements/ajaxreturn');
+		}		
 	}
 }

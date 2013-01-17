@@ -10,4 +10,8 @@ class EventRegistration extends AppModel {
 		'User'
 	);
 
+	public function countAttended($id) {
+		return $this->find('count', array('conditions' => array('EventRegistration.event_id' => $id, 'EventRegistration.present' => 1)));
+	}
+
 }
