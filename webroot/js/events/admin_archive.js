@@ -35,7 +35,7 @@ Ext.create('Ext.data.Store', {
     reader: {
       type: 'json',
       root: 'events',
-      totalProperty: 'totalCount' 
+      totalProperty: 'totalCount'
     },
     directionParam: 'direction',
     simpleSortMode: true
@@ -49,9 +49,9 @@ Ext.create('Ext.data.Store', {
       var i = null;
       for(i=0; i < gridColumns.length; i++) {
         var currentCol = gridColumns[i];
-        if(currentCol.sortable && currentCol.customSort && 
+        if(currentCol.sortable && currentCol.customSort &&
            currentCol.dataIndex === oldSortParam) {
-             store.sorters.items[0].property = 
+             store.sorters.items[0].property =
              currentCol.customSort;
              break;
         }
@@ -112,7 +112,7 @@ Ext.create('Ext.menu.Menu', {
 
 Ext.onReady(function(){
   Ext.QuickTips.init();
-  
+
   Ext.create('Ext.grid.Panel', {
     store: Ext.data.StoreManager.lookup('eventsStore'),
     title: 'Archive',
@@ -134,3 +134,4 @@ Ext.onReady(function(){
     }
   });
 });
+
