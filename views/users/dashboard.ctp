@@ -1,52 +1,135 @@
-<div id="crumbWrapper">
-    <span><?php __('You are here') ?> > </span>
-    <?php echo $crumb->getHtml(__('Dashboard', true), 'reset', 'unique') ; ?>
-</div>
+<!--[if gte IE 9]>
+	<style type="text/css" media="screen">
+		.widget .header { filter: none; }
+	</style>
+<![endif]-->
 
-<div id="event-registrations" style="border: 1px solid; width: 400px; margin-top: 10px"> 
-	<h1>Event Registrations</h1>
-	<ul>
-	<?php if(!empty($eventRegistrations)) : ?>	
-		<?php foreach($eventRegistrations as $key => $value) : ?>
-		<li>
-			<?= $value['Event']['name'] ?>
-			<a href="/events/cancel/<?= $value['Event']['id']?>" class="button green">Cancel Your Registration</a>
-		</li>
-		<?php endforeach ?>
+<div id="dashboard">
+	<?php if(!empty($eventRegistrations)) : ?>
+	<div id="event-registrations" class="widget">
+		<div class="widget-header">
+			<h2>Event Registrations</h2>
+		</div>
+		<div class="widget-content">
+			<ul>
+				<?php foreach($eventRegistrations as $key => $value) : ?>
+				<li>
+					<div class="title">
+						<?= $value['Event']['name'] ?>
+					</div>
+					<div class="details">
+						<i class="icon-calendar"></i>
+						<?= date('l, F dS', strtotime($value['Event']['scheduled'])) ?>
+						<i class="icon-time"></i>
+						<?= date('h:iA', strtotime($value['Event']['scheduled'])) ?>
+						<i class="icon-map-marker"></i>
+						<?php if (isset($value['Location']['id']) && !empty($value['Location']['id'])): ?>
+							<?php
+								$address_parts = array();
+								array_push($address_parts, $value['Location']['address_1']);
+								if (isset($value['Location']['address_2']) && !empty($value['Location']['address_2']))
+									array_push($address_parts, $value['Location']['address_2']);
+								array_push($address_parts, $value['Location']['city']);
+								array_push($address_parts, "{$value['Location']['state']} {$value['Location']['zip']}");
+								$address = join($address_parts, ', ');
+							?>
+							<?= "{$value['Location']['name']} - {$address}" ?>
+							(<a href="http://maps.google.com/maps?q=<?php echo urlencode($address) ?>"><?php __('Map It') ?></a>)
+						<?php else: ?>
+							<?= $value['Event']['address'] ?>
+							(<a href="http://maps.google.com/maps?q=<?php echo urlencode($value['Event']['address']) ?>"><?php __('Map It') ?></a>)
+						<?php endif ?>
+					</div>
+
+					<span class="action">
+						<a href="/events/cancel/<?= $value['Event']['id']?>" class="button gray">Cancel Your Registration</a>
+					</span>
+				</li>
+				<?php endforeach ?>
+			</ul>
+		</div>
+	</div>
 	<?php endif ?>
-	</ul>
-</div>
 
 
-<div id="Registrations" style="border: 1px solid; width: 400px; margin-top: 10px"> 
-	<h1>Registrations</h1>
-	<?php if(!empty($registrations)) : ?>	
-		<?php foreach($registrations as $key => $value) : ?>
-			<?php echo $this->Html->link($value['Program']['name'], array('controller' => 'programs', 'action' => 'registration', $value['Program']['id'])) ?>
-			<span class="response-status"><?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Get Started')?></span>
-			<br />
-		<?php endforeach ?>
+	<?php if(!empty($registrations)) : ?>
+	<div id="online-registrations" class="widget">
+		<div class="widget-header">
+			<h2>Online Registrations</h2>
+		</div>
+
+		<div class="widget-content">
+			<ul>
+			<?php foreach($registrations as $key => $value) : ?>
+				<li>
+					<div class="title">
+						<a href="/programs/registration/<?= $value['Program']['id'] ?>"><?= Inflector::humanize($value['Program']['name']) ?></a>
+					</div>
+					<div class="details"></div>
+
+					<span class="action">
+						<a href="/programs/registration/<?= $value['Program']['id'] ?>" class="button gray">
+							<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Get Started') ?>
+						</a>
+					</span>
+				</li>
+			<?php endforeach ?>
+			</ul>
+		</div>
+	</div>
 	<?php endif ?>
-</div>
 
-<div id="Orientations" style="border: 1px solid; width: 400px; margin-top: 10px"> 
-	<h1>Orientations</h1>
-	<?php if(!empty($orientations)) : ?>	
-		<?php foreach($orientations as $key => $value) : ?>
-			<?php echo $this->Html->link($value['Program']['name'], array('controller' => 'programs', 'action' => 'orientation', $value['Program']['id'])) ?>
-			<span class="response-status"><?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Get Started')?></span>
-			<br />
-		<?php endforeach ?>
+	<?php if(!empty($orientations)) : ?>
+	<div id="online-orientations" class="widget">
+		<div class="widget-header">
+			<h2>Online Orientations</h2>
+		</div>
+
+		<div class="widget-content">
+			<ul>
+			<?php foreach($orientations as $key => $value) : ?>
+				<li>
+					<div class="title">
+						<a href="/programs/orientation/<?= $value['Program']['id'] ?>"><?= Inflector::humanize($value['Program']['name']) ?></a>
+					</div>
+					<div class="details"></div>
+
+					<span class="action">
+						<a href="/programs/orientation/<?= $value['Program']['id'] ?>" class="button gray">
+							<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Get Started') ?>
+						</a>
+					</span>
+				</li>
+			<?php endforeach ?>
+			</ul>
+		</div>
+	</div>
 	<?php endif ?>
-</div>
 
-<div id="Enrollments" style="border: 1px solid; width: 400px; margin-top: 10px"> 
-	<h1>Enrollments</h1>
-	<?php if(!empty($enrollments)) : ?>	
-		<?php foreach($enrollments as $key => $value) : ?>
-			<?php echo $this->Html->link($value['Program']['name'], array('controller' => 'programs', 'action' => 'enrollment', $value['Program']['id'])) ?>
-			<span class="response-status"><?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Enroll Now')?></span>
-			<br />
-		<?php endforeach ?>
+	<?php if(!empty($enrollments)) : ?>
+	<div id="online-enrollments" class="widget">
+		<div class="widget-header">
+			<h2>Online Enrollments</h2>
+		</div>
+
+		<div class="widget-content">
+			<ul>
+			<?php foreach($enrollments as $key => $value) : ?>
+				<li>
+					<div class="title">
+						<a href="/programs/enrollment/<?= $value['Program']['id'] ?>"><?= Inflector::humanize($value['Program']['name']) ?></a>
+					</div>
+					<div class="details"></div>
+
+					<span class="action">
+						<a href="/programs/enrollment/<?= $value['Program']['id'] ?>" class="button gray">
+							<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Get Started') ?>
+						</a>
+					</span>
+				</li>
+			<?php endforeach ?>
+			</ul>
+		</div>
+	</div>
 	<?php endif ?>
 </div>
