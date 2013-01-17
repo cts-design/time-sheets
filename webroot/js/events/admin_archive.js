@@ -102,12 +102,11 @@ Ext.create('Ext.menu.Menu', {
   title: 'Event Actions',
   bodyPadding: 5,
   items:[{
+    id: 'reportButton',
     xtype: 'button',
     text: 'Attendance Report',
     icon: '/img/icons/excel.png',
-    handler: function() {
-
-    }
+    href: '/admin/events/attendance_report/'
   }]
 });
 
@@ -130,6 +129,7 @@ Ext.onReady(function(){
       itemcontextmenu: function(view, rec, node, index, e){
         e.stopEvent();
         Ext.getCmp('contextMenu').showAt(e.getXY());
+        Ext.getCmp('reportButton').setParams({id: eventId});
       }
     }
   });
