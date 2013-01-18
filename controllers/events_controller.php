@@ -393,12 +393,11 @@ class EventsController extends AppController {
 
 			if(!empty($event['EventRegistration'])) {
 				foreach($event['EventRegistration'] as $k => $v) {
-					if($v['present']) {
-						$report[$k]['First Name'] = $v['User']['firstname'];
-						$report[$k]['Last Name'] = $v['User']['lastname'];
-						$report[$k]['Last 4 SSN'] = substr($v['User']['ssn'], -4);
-						$report[$k]['Registered'] = date('m/d/y', strtotime($v['created']));
-					}
+					$report[$k]['First Name'] = $v['User']['firstname'];
+					$report[$k]['Last Name'] = $v['User']['lastname'];
+					$report[$k]['Last 4 SSN'] = substr($v['User']['ssn'], -4);
+					$report[$k]['Registered'] = date('m/d/y', strtotime($v['created']));
+					$report[$k]['Attended'] = ($v['present']) ? 'Yes' : 'No';
 				}
 			}
 		}
