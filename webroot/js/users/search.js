@@ -106,7 +106,6 @@ var searchPanel = {
           },{
             text: 'Reset',
             icon:  '/img/icons/arrow_redo.png',
-            scope: this,
             handler: function() {
               var form = this.up('form').getForm();
 
@@ -378,7 +377,6 @@ var searchPanel = {
           },{
             text: 'Reset',
             icon:  '/img/icons/arrow_redo.png',
-            scope: this,
             handler: function() {
               var form = this.up('form').getForm();
 
