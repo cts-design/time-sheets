@@ -424,12 +424,11 @@ class EventsController extends AppController {
 
 			if(!empty($event['EventRegistration'])) {
 				foreach($event['EventRegistration'] as $k => $v) {
-					if($v['present']) {
-						$report[$k]['First Name'] = $v['User']['firstname'];
-						$report[$k]['Last Name'] = $v['User']['lastname'];
-						$report[$k]['Last 4 SSN'] = substr($v['User']['ssn'], -4);
-						$report[$k]['Registered'] = date('m/d/y', strtotime($v['created']));
-					}
+					$report[$k]['First Name'] = $v['User']['firstname'];
+					$report[$k]['Last Name'] = $v['User']['lastname'];
+					$report[$k]['Last 4 SSN'] = substr($v['User']['ssn'], -4);
+					$report[$k]['Registered'] = date('m/d/y', strtotime($v['created']));
+					$report[$k]['Attended'] = ($v['present']) ? 'Yes' : 'No';
 				}
 			}
 		}
@@ -443,6 +442,21 @@ class EventsController extends AppController {
 	public function admin_archive() {
 		if($this->RequestHandler->isAjax()) {
 			$this->paginate = array('order' => array('Event.scheduled' => 'Desc'));
+			if(isset($this->params['url']['search'])) {
+				$params = json_decode($this->params['url']['search'], true);
+				if(isset($params['fromDate'], $params['toDate'])){
+					$from = date('Y-m-d H:i:m', strtotime($params['fromDate'] . '12:00 AM'));
+					$to = date('Y-m-d H:i:m', strtotime($params['toDate'] . '11:59 PM'));
+					$conditions['Event.scheduled BETWEEN ? AND ?'] = array($from, $to);
+				}
+				if(isset($params['location_id'])){
+					$conditions['Event.location_id'] = $params['location_id'];
+				}	
+				if(isset($params['event_category_id'])){
+					$conditions['Event.event_category_id'] = $params['event_category_id'];
+				}	
+				$this->paginate['conditions'] = $conditions;
+			}
 			$events = $this->Paginate('Event');
 			$data['events'] = array();
 			if($events) {
@@ -451,7 +465,12 @@ class EventsController extends AppController {
 					$data['events'][$i]['id'] = intval($event['Event']['id']);
 					$data['events'][$i]['name'] = $event['Event']['name'];
 					$data['events'][$i]['category'] = $event['EventCategory']['name'];
-					$data['events'][$i]['location'] = $event['Location']['name'];
+					if(!$event['Event']['location_id']) {
+						$data['events'][$i]['location'] = 'Other';
+					}
+					else {
+						$data['events'][$i]['location'] = $event['Location']['name'];
+					}
 					$data['events'][$i]['scheduled'] = $event['Event']['scheduled'];
 					$data['events'][$i]['registered'] = $event['Event']['event_registration_count'];
 					$data['events'][$i]['attended'] = $this->Event->EventRegistration->countAttended($event['Event']['id']);
@@ -463,5 +482,24 @@ class EventsController extends AppController {
 			$this->set(compact('data'));	
 			$this->render(null, null, '/elements/ajaxreturn');
 		}		
+	}
+
+	public function admin_get_event_category_list() {
+	    if ($this->RequestHandler->isAjax()) {
+	    	$this->Event->EventCategory->recursive = -1;			
+			$categories = $this->Event->EventCategory->find('all',
+				array('fileds' => array('EventCategory.id', 'EventCategory.name')));
+			foreach($categories as $category) {
+			    $data['categories'][] = $category['EventCategory'];
+			}
+			if(!empty($data)){
+				$data['success'] = true;
+			}
+			else {
+				$data['success'] = false;
+			}
+			$this->set(compact('data'));
+			return $this->render(null, null, '/elements/ajaxreturn');			
+	    }
 	}
 }

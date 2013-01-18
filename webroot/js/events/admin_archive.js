@@ -6,7 +6,8 @@ Ext.define('Event', {
     {name: 'category'},
     {name: 'name'},
     {name: 'description'},
-    {name: 'location', serverKey: 'location_id'},
+    {name: 'location'},
+    {name: 'location_id'},
     {name: 'other_location'},
     {name: 'url'},
     {name: 'address'},
@@ -60,173 +61,185 @@ Ext.create('Ext.data.Store', {
   }
 }
 });
-	var dateSearchTb = Ext.create('Ext.Toolbar', {
-		width: 275,
-		items: [{
-			text: 'Today',
-			handler: function() {
-				var dt = new Date();
-				Ext.getCmp('fromDate').setValue(Ext.Date.format(dt, 'm/d/Y'));
-				Ext.getCmp('toDate').setValue(Ext.Date.format(dt, 'm/d/Y'));
-			}
-		}, {
-			xtype: 'tbseparator'
-		}, {
-			text: 'Yesterday',
-			handler: function() {
-				var dt = new Date();
-				dt.setDate(dt.getDate() - 1);
-				Ext.getCmp('fromDate').setValue(Ext.Date.format(dt, 'm/d/Y'));
-				Ext.getCmp('toDate').setValue(Ext.Date.format(dt, 'm/d/Y'));
-			}
-		}, {
-			xtype: 'tbseparator'
-		}, {
-			text: 'Last Week',
-			handler: function() {
-				var dt = new Date();
-				dt.setDate(dt.getDate() - (parseInt(Ext.Date.format(dt, 'N'), 10) + 6));
-				Ext.getCmp('fromDate').setValue(Ext.Date.format(dt, 'm/d/Y'));
-				dt.setDate(dt.getDate() + 6);
-				Ext.getCmp('toDate').setValue(Ext.Date.format(dt, 'm/d/Y'));
-			}
-		}, {
-			xtype: 'tbseparator'
-		}, {
-			text: 'Last Month',
-			handler: function() {
-				var now = new Date(),
-					firstDayPrevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1),
-					lastDayPrevMonth = Ext.Date.getLastDateOfMonth(firstDayPrevMonth);
-				Ext.getCmp('fromDate').setValue(Ext.Date.format(firstDayPrevMonth, 'm/d/Y'));
-				Ext.getCmp('toDate').setValue(Ext.Date.format(lastDayPrevMonth, 'm/d/Y'));
-			}
-		}]
-	});
-	
-	Ext.define('SearchType', {
-		extend: 'Ext.data.Model',
-		fields : ['type', 'label']
-	});
-		
-	var searchTypeStore = Ext.create('Ext.data.Store', {
-		model: 'SearchType',
-		data : [
-			{type: 'firstname', label: 'First Name'},
-			{type: 'lastname', label : 'Last Name'},
-			{type: 'last4', label: 'Last 4 SSN'},
-			{type: 'fullssn', label: 'Full SSN'}
-		]
-	});
-	
-	var programResponseSearch = Ext.create('Ext.form.Panel', {
-		frame : true,
-		fieldDefaults:{
-			labelWidth: 50
-		},
-		collapsible : true,
-		height : 190,
-		region : 'north',
-		title : 'Filters',
-		id : 'programResponseSearch',
-		items : [{
-			layout : 'column',
-			xtype: 'container',
-			bodyStyle: 'margin: 0 0 0 7px',
-			items : [{
-				layout : 'anchor',
-				columnWidth : 0.333,
-				height : 120,
-				frame : true,
-				bodyStyle : 'padding: 0 10px',
-				title : 'Dates',
-				items: [{
-					xtype: 'datefield',
-					id: 'fromDate',
-					fieldLabel: 'From',
-					name: 'fromDate',
-					width: 200
-				}, {
-					xtype: 'datefield',
-					fieldLabel: 'To',
-					name: 'toDate',
-					id: 'toDate',
-					width: 200
-				}, dateSearchTb]
-			}, {
-				layout : 'anchor',
-				columnWidth : 0.333,
-				height : 120,
-				frame : true,
-				bodyStyle : 'padding: 0 10px',
-				title : 'Response',
-				items : [{
-					xtype : 'textfield',
-					fieldLabel : 'Id',
-					name: 'id',
-					width : 200
-				}]
-			},{
-				layout : 'anchor',
-				columnWidth : 0.333,
-				height : 120,
-				frame : true,
-				bodyStyle : 'padding: 0 10px',
-				title : 'Customer',
-				items : [{
-					xtype : 'combo',
-					fieldLabel : 'Search Type',
-					name : 'searchType',
-					store : searchTypeStore,
-					queryMode: 'local',
-					valueField: 'type',
-					displayField: 'label',
-					width: 250
-				},
-				{
-					xtype : 'textfield',
-					fieldLabel : 'Search',
-					name : 'search',
-					width : 250
-				}]
-			}]
-		}],
-		fbar : [{
-			text : 'Search',
-			id : 'docSearch',
-			icon : '/img/icons/find.png',
-			handler : function() {
-				var f = programResponseSearch.getForm(), vals = f.getValues();
-				Ext.iterate(vals, function (key, value){
-					programResponseProxy.extraParams[key] = value;
-				});
-				programResponseTabs.getActiveTab().getStore().loadPage(1, {start: 0, limit: 10});
-			}
-		}, {
-			text : 'Reset',
-			icon : '/img/icons/arrow_redo.png',
-			handler : function() {
-				var f = programResponseSearch.getForm();
-				f.reset();
-        programResponseProxy.extraParams.id = undefined;
-        programResponseProxy.extraParams.search = undefined;
-        programResponseProxy.extraParams.toDate = undefined;
-        programResponseProxy.extraParams.fromDate = undefined;
-				programResponseTabs.getActiveTab().getStore().loadPage(1, {start: 0, limit: 10});
-			}
-		},{
-			text: 'Report',
-			icon:  '/img/icons/excel.png',
-			handler: function(){
-				var f = programResponseSearch.getForm();
-				var vals = f.getValues();
-        vals.status = programResponseProxy.extraParams.status;
-        vals.progId = progId;
-				vals = Ext.urlEncode(vals);
-				window.location = '/admin/program_responses/report?'+ vals;
-			}
-		}]
-	});
+
+var dateSearchTb = Ext.create('Ext.Toolbar', {
+  width: 275,
+  items: [{
+    text: 'Today',
+    handler: function() {
+      var dt = new Date();
+      Ext.getCmp('fromDate').setValue(Ext.Date.format(dt, 'm/d/Y'));
+      Ext.getCmp('toDate').setValue(Ext.Date.format(dt, 'm/d/Y'));
+    }
+  }, {
+    xtype: 'tbseparator'
+  }, {
+    text: 'Yesterday',
+    handler: function() {
+      var dt = new Date();
+      dt.setDate(dt.getDate() - 1);
+      Ext.getCmp('fromDate').setValue(Ext.Date.format(dt, 'm/d/Y'));
+      Ext.getCmp('toDate').setValue(Ext.Date.format(dt, 'm/d/Y'));
+    }
+  }, {
+    xtype: 'tbseparator'
+  }, {
+    text: 'Last Week',
+    handler: function() {
+      var dt = new Date();
+      dt.setDate(dt.getDate() - (parseInt(Ext.Date.format(dt, 'N'), 10) + 6));
+      Ext.getCmp('fromDate').setValue(Ext.Date.format(dt, 'm/d/Y'));
+      dt.setDate(dt.getDate() + 6);
+      Ext.getCmp('toDate').setValue(Ext.Date.format(dt, 'm/d/Y'));
+    }
+  }, {
+    xtype: 'tbseparator'
+  }, {
+    text: 'Last Month',
+    handler: function() {
+      var now = new Date(),
+        firstDayPrevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1),
+        lastDayPrevMonth = Ext.Date.getLastDateOfMonth(firstDayPrevMonth);
+      Ext.getCmp('fromDate').setValue(Ext.Date.format(firstDayPrevMonth, 'm/d/Y'));
+      Ext.getCmp('toDate').setValue(Ext.Date.format(lastDayPrevMonth, 'm/d/Y'));
+    }
+  }]
+});
+
+Ext.define('Location', {
+  extend: 'Ext.data.Model',
+  fields: ['id', 'name']
+});
+
+Ext.create('Ext.data.Store', {
+  model: 'Location',
+  proxy: {
+    type: 'ajax',
+    url: '/admin/locations/get_location_list',
+    reader: {
+      type: 'json',
+      root: 'locations'
+    }
+  },
+  storeId: 'locationStore',
+  listeners: {
+    load: function(store) {
+      store.add({id: 0, name: 'Other'});
+    }
+  }
+});	
+
+Ext.define('EventCategory', {
+  extend: 'Ext.data.Model',
+  fields: ['id', 'name']
+});
+
+Ext.create('Ext.data.Store', {
+  model: 'EventCategory',
+  proxy: {
+    type: 'ajax',
+    url: '/admin/events/get_event_category_list',
+    reader: {
+      type: 'json',
+      root: 'categories'
+    }
+  },
+  storeId: 'eventCategoriesStore'
+});	
+
+Ext.create('Ext.form.Panel', {
+  frame : true,
+  fieldDefaults:{
+    labelWidth: 50
+  },
+  collapsible : true,
+  height : 190,
+  region : 'north',
+  title : 'Advanced Search',
+  id : 'eventsSearch',
+  items : [{
+    layout : 'column',
+    xtype: 'container',
+    bodyStyle: 'margin: 0 0 0 7px',
+    items : [{
+      layout : 'anchor',
+      columnWidth : 0.333,
+      height : 120,
+      frame : true,
+      bodyStyle : 'padding: 0 10px',
+      title : 'Scheduled Date',
+      items: [{
+        xtype: 'datefield',
+        id: 'fromDate',
+        fieldLabel: 'From',
+        name: 'fromDate',
+        width: 200
+      }, {
+        xtype: 'datefield',
+        fieldLabel: 'To',
+        name: 'toDate',
+        id: 'toDate',
+        width: 200
+      }, dateSearchTb]
+    },{
+      layout: 'anchor',
+      columnWidth: 0.333,
+      height: 120,
+      frame: true,
+      bodyStyle: 'padding: 0 10px',
+      title: 'Location',
+      items: [{
+        xtype: 'combo',
+        id: 'location',
+        name: 'location_id',
+        queryMode: 'remote',
+        fieldLabel: 'Location',
+        store: 'locationStore',
+        valueField: 'id',
+        displayField: 'name'
+      }]
+    },{
+      layout: 'anchor',
+      columnWidth: 0.333,
+      height: 120,
+      frame: true,
+      bodyStyle: 'padding: 0 10px',
+      title: 'Event Category',
+      items: [{
+        xtype: 'combo',
+        id: 'eventCategory',
+        name: 'event_category_id',
+        queryMode: 'remote',
+        fieldLabel: 'Event Category',
+        store: 'eventCategoriesStore',
+        valueField: 'id',
+        displayField: 'name'
+      }]
+    }]
+  }],
+  fbar: [{
+    text: 'Search',
+    id: 'searchButton',
+    icon: '/img/icons/find.png',
+    handler: function() {
+        var f = Ext.getCmp('eventsSearch').getForm();
+				var vals = f.getValues(false, true);
+				vals = Ext.JSON.encode(vals);
+        var store = Ext.data.StoreManager.lookup('eventsStore');
+				store.proxy.extraParams = {search : vals};
+				store.loadPage(1, {limit: 20, start: 0});
+    }
+  }, {
+    text: 'Reset',
+    icon: '/img/icons/arrow_redo.png',
+    handler: function() {
+      Ext.getCmp('eventsSearch').getForm().reset();
+      var store = Ext.data.StoreManager.lookup('eventsStore');
+      store.proxy.extraParams = {filters : ''};
+      store.loadPage(1, {limit: 25, start: 0});
+    }
+  }]
+});
 
 var gridColumns = [{
   text: 'id',
@@ -277,28 +290,34 @@ Ext.create('Ext.menu.Menu', {
   }]
 });
 
+Ext.create('Ext.grid.Panel', {
+  store: Ext.data.StoreManager.lookup('eventsStore'),
+  title: 'Archive',
+  height: 400,
+  id: 'eventsGrid',
+  dockedItems: [{
+    xtype: 'pagingtoolbar',
+    store: Ext.data.StoreManager.lookup('eventsStore'),
+    dock: 'bottom',
+    displayInfo: true
+  }],
+  columns: gridColumns,
+  listeners: {
+    itemcontextmenu: function(view, rec, node, index, e){
+      e.stopEvent();
+      Ext.getCmp('contextMenu').showAt(e.getXY());
+      Ext.getCmp('reportButton').setParams({id: rec.data.id});
+    }
+  }
+});
+
 Ext.onReady(function(){
   Ext.QuickTips.init();
-
-  Ext.create('Ext.grid.Panel', {
-    store: Ext.data.StoreManager.lookup('eventsStore'),
-    title: 'Archive',
-    height: 400,
-    renderTo: 'events',
-    dockedItems: [{
-      xtype: 'pagingtoolbar',
-      store: Ext.data.StoreManager.lookup('eventsStore'),
-      dock: 'bottom',
-      displayInfo: true
-    }],
-    columns: gridColumns,
-    listeners: {
-      itemcontextmenu: function(view, rec, node, index, e){
-        e.stopEvent();
-        Ext.getCmp('contextMenu').showAt(e.getXY());
-        Ext.getCmp('reportButton').setParams({id: eventId});
-      }
-    }
+  
+  Ext.create('Ext.panel.Panel', {
+    items: ['eventsSearch', 'eventsGrid'],
+    border: 0,
+    renderTo: 'events'
   });
 });
 
