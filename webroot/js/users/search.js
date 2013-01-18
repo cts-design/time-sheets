@@ -421,7 +421,6 @@ var searchPanel = {
 };
 
 Ext.onReady(function() {
-  //Ext.QuickTips.init();
   searchPanel.init();
   searchPanel.setDefaultsAndFocus();
 });

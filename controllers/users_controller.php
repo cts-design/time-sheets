@@ -1289,6 +1289,7 @@ class UsersController extends AppController {
 				$conditions2 = array($conditionScope2 => $conditionValue2);
 				$conditions = array_merge($conditions, $conditions2);
 			}
+			$this->set($formParams);
 		}
 
 		$this->paginate = array(
@@ -1297,6 +1298,5 @@ class UsersController extends AppController {
 			'order'      => $order
 		);
 
-		$this->set($formParams);
 	}
 }
