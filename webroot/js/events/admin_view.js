@@ -14,6 +14,9 @@ Ext.create('Ext.data.Store', {
   storeId: 'eventRegistrations',
   proxy: {
     type: 'ajax',
+    extraParams: {
+      'data[Event][id]': eventId
+    },
     api: {
       update: '/admin/events/toggle_present',
       read: '/admin/events/view/'+eventId
