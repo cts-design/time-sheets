@@ -155,10 +155,22 @@ $config['navigation.alerts'] = array(
 );
 
 $config['navigation.events'] = array(
-	'link' => array('controller' => 'events', 'action' => 'index'),
 	'rel' => 'calendar',
-	'title' => 'Events'
+	'title' => 'Events',
+	'links' => array(
+		array(
+			'link' => array('controller' => 'events', 'action' => 'index'),
+			'rel' => 'calendar',
+			'title' => 'Event Management'
+		),
+		array(
+			'link' => array('controller' => 'events', 'action' => 'archive'),
+			'rel' => 'calendar',
+			'title' => 'Event Archive'
+		)
+	)
 );
+
 
 $config['navigation.users'] = array(
 	'rel' => 'group',
