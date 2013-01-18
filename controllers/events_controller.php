@@ -11,12 +11,10 @@ class EventsController extends AppController {
 
 	public $components = array('Notifications');
 
+	public $helpers = array('Excel');
+
 	public $paginate = array('order' => array('Event.scheduled' => 'asc'), 'limit' => 5);
 
-	public $name = 'Events';
-	public $paginate = array('order' => array('Event.scheduled' => 'asc'), 'limit' => 5);
-	public $helpers = array('Excel');
-	
 	function beforeFilter() {
 		parent::beforeFilter();
 		$this->Auth->allow('view', 'index', 'workshop');
@@ -73,15 +71,20 @@ class EventsController extends AppController {
 		$this->set(compact('title_for_layout', 'categories', 'prevMonth', 'nextMonth', 'curMonth', 'events'));
 	}
 
-	public function workshop($month = null, $year = null) {
+	public function workshop($date = null) {
 		$this->Event->Behaviors->attach('Containable');
 		$this->Event->EventCategory->recursive = -1;
 
 		$workshopCategory = $this->Event->EventCategory->findByName('Workshop', array('fields' => 'EventCategory.id'));
 
+		if (!$date) {
+			$date = date('Y-m-d');
+		}
+
 		$events = $this->Event->find('all', array(
 			'conditions' => array(
 				'Event.scheduled >' => date('Y-m-d H:i:s'),
+				'Event.scheduled <' => $this->get_last_day_of_the_week(strtotime($date)),
 				'Event.event_registration_count < Event.seats_available',
 				'Event.event_category_id' => $workshopCategory['EventCategory']['id']
 			),
@@ -89,6 +92,8 @@ class EventsController extends AppController {
 				'Location'
 			)
 		));
+
+		debug($events);
 
 		$title_for_layout = 'Upcoming Workshops';
 
@@ -99,8 +104,9 @@ class EventsController extends AppController {
 		if (!$month) {
 			$date = date('Y-m-d H:i:s');
 			$month = date('m', strtotime($date));
-			$lastDayOfMonth = date('t', strtotime($date));
 			$year = date('Y', strtotime($date));
+			$firstDayOfMonth = date('d', mktime(0, 0, 0, $month, 01, $year));
+			$lastDayOfMonth = date('t', strtotime($date));
 			$endDate = date('Y-m-d H:i:s', strtotime("$month/$lastDayOfMonth/$year 23:59:59"));
 		} else {
 			$date = date('Y-m-d H:i:s', strtotime("$month/1/$year 00:00:01"));
@@ -501,5 +507,15 @@ class EventsController extends AppController {
 			$this->set(compact('data'));
 			return $this->render(null, null, '/elements/ajaxreturn');			
 	    }
+	}
+
+	private function get_last_day_of_the_week($date_in_week) {
+		if (date('w', strtotime($date_in_week)) !== 6) {
+			$date = date('Y-m-d H:i:s', strtotime('next saturday', $date_in_week));
+		} else {
+			$date = $date_in_week;
+		}
+
+		return date('Y-m-d H:i:s', strtotime($date . ' +23 hours 59 minutes 59 seconds'));
 	}
 }
