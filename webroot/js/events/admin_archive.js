@@ -6,7 +6,8 @@ Ext.define('Event', {
     {name: 'category'},
     {name: 'name'},
     {name: 'description'},
-    {name: 'location', serverKey: 'location_id'},
+    {name: 'location'},
+    {name: 'location_id'},
     {name: 'other_location'},
     {name: 'url'},
     {name: 'address'},
@@ -104,8 +105,49 @@ var dateSearchTb = Ext.create('Ext.Toolbar', {
     }
   }]
 });
-		
-var EventSearch = Ext.create('Ext.form.Panel', {
+
+Ext.define('Location', {
+  extend: 'Ext.data.Model',
+  fields: ['id', 'name']
+});
+
+Ext.create('Ext.data.Store', {
+  model: 'Location',
+  proxy: {
+    type: 'ajax',
+    url: '/admin/locations/get_location_list',
+    reader: {
+      type: 'json',
+      root: 'locations'
+    }
+  },
+  storeId: 'locationStore',
+  listeners: {
+    load: function(store) {
+      store.add({id: 0, name: 'Other'});
+    }
+  }
+});	
+
+Ext.define('EventCategory', {
+  extend: 'Ext.data.Model',
+  fields: ['id', 'name']
+});
+
+Ext.create('Ext.data.Store', {
+  model: 'EventCategory',
+  proxy: {
+    type: 'ajax',
+    url: '/admin/events/get_event_category_list',
+    reader: {
+      type: 'json',
+      root: 'categories'
+    }
+  },
+  storeId: 'eventCategoriesStore'
+});	
+
+Ext.create('Ext.form.Panel', {
   frame : true,
   fieldDefaults:{
     labelWidth: 50
@@ -125,7 +167,7 @@ var EventSearch = Ext.create('Ext.form.Panel', {
       height : 120,
       frame : true,
       bodyStyle : 'padding: 0 10px',
-      title : 'Dates',
+      title : 'Scheduled Date',
       items: [{
         xtype: 'datefield',
         id: 'fromDate',
@@ -139,19 +181,62 @@ var EventSearch = Ext.create('Ext.form.Panel', {
         id: 'toDate',
         width: 200
       }, dateSearchTb]
+    },{
+      layout: 'anchor',
+      columnWidth: 0.333,
+      height: 120,
+      frame: true,
+      bodyStyle: 'padding: 0 10px',
+      title: 'Location',
+      items: [{
+        xtype: 'combo',
+        id: 'location',
+        name: 'location_id',
+        queryMode: 'remote',
+        fieldLabel: 'Location',
+        store: 'locationStore',
+        valueField: 'id',
+        displayField: 'name'
+      }]
+    },{
+      layout: 'anchor',
+      columnWidth: 0.333,
+      height: 120,
+      frame: true,
+      bodyStyle: 'padding: 0 10px',
+      title: 'Event Category',
+      items: [{
+        xtype: 'combo',
+        id: 'eventCategory',
+        name: 'event_category_id',
+        queryMode: 'remote',
+        fieldLabel: 'Event Category',
+        store: 'eventCategoriesStore',
+        valueField: 'id',
+        displayField: 'name'
+      }]
     }]
   }],
-  fbar : [{
-    text : 'Search',
-    id : 'searchButton',
-    icon : '/img/icons/find.png',
-    handler : function() {
-
+  fbar: [{
+    text: 'Search',
+    id: 'searchButton',
+    icon: '/img/icons/find.png',
+    handler: function() {
+        var f = Ext.getCmp('eventsSearch').getForm();
+				var vals = f.getValues(false, true);
+				vals = Ext.JSON.encode(vals);
+        var store = Ext.data.StoreManager.lookup('eventsStore');
+				store.proxy.extraParams = {search : vals};
+				store.loadPage(1, {limit: 20, start: 0});
     }
   }, {
-    text : 'Reset',
-    icon : '/img/icons/arrow_redo.png',
-    handler : function() {
+    text: 'Reset',
+    icon: '/img/icons/arrow_redo.png',
+    handler: function() {
+      Ext.getCmp('eventsSearch').getForm().reset();
+      var store = Ext.data.StoreManager.lookup('eventsStore');
+      store.proxy.extraParams = {filters : ''};
+      store.loadPage(1, {limit: 25, start: 0});
     }
   }]
 });
