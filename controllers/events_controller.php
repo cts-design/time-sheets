@@ -13,8 +13,6 @@ class EventsController extends AppController {
 
 	public $paginate = array('order' => array('Event.scheduled' => 'asc'), 'limit' => 5);
 
-	public $name = 'Events';
-	public $paginate = array('order' => array('Event.scheduled' => 'asc'), 'limit' => 5);
 	public $helpers = array('Excel');
 	
 	function beforeFilter() {
@@ -393,7 +391,12 @@ class EventsController extends AppController {
             if(isset($this->data['EventRegistration'])) {
 				$this->data['EventRegistration'] = json_decode($this->data['EventRegistration'], true);
 				if($this->Event->EventRegistration->saveAll($this->data['EventRegistration'])) {
-					// TODO: add transactions;
+                    $this->Transaction->createUserTransaction(
+                        'Events',
+                        $this->Auth->user('id'),
+                        $this->Auth->user('location_id'),
+                        'Performed attendance for' . $this->data['Event']['id']
+                    );
 					$data['success'] = true;
 					$data['message'] = 'Attendance was updated.';
 				}
