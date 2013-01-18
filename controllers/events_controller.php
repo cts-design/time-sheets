@@ -395,7 +395,7 @@ class EventsController extends AppController {
                         'Events',
                         $this->Auth->user('id'),
                         $this->Auth->user('location_id'),
-                        'Performed attendance for' . $this->data['Event']['id']
+                        'Performed attendance for event, id: ' . $this->data['Event']['id']
                     );
 					$data['success'] = true;
 					$data['message'] = 'Attendance was updated.';
@@ -435,6 +435,13 @@ class EventsController extends AppController {
 				}
 			}
 		}
+
+		$this->Transaction->createUserTransaction(
+			'Events',
+			$this->Auth->user('id'),
+			$this->Auth->user('location_id'),
+			'Ran attendance report for event, id: ' . $event['Event']['id']
+		);
 		$data = array('data' => $report,
 			'title' => $title);
 		Configure::write('debug', 0);
