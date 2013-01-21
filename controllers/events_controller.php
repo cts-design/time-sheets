@@ -21,26 +21,28 @@ class EventsController extends AppController {
 	}
 
 	public function index($month = null, $year = null) {
-		$events = $this->Event->find('all', array(
-			'conditions' => array(
-				'Event.scheduled >' => date('Y-m-d H:i:s'),
-				'Event.registered < Event.seats_available'
-			)
+		$this->Event->Behaviors->attach('Containable');
+		$this->Event->EventCategory->recursive = -1;
+
+		$title_for_layout = 'Upcoming Events';
+		$selectedCategory = 0;
+
+		$categories = $this->Event->EventCategory->find('list', array(
+			'fields' => array(
+				'EventCategory.id',
+				'EventCategory.name'
+			),
+			'recursive' => -1
 		));
-		debug($events);
-		$title_for_layout = 'Calendar of Events';
-		$categories = $this->Event->EventCategory->find('list',
-														array('fields' => array('EventCategory.id', 'EventCategory.name'),
-														'recursive' => -1));
 		array_unshift($categories, 'All Categories');
 
 		if (isset($this->params['form']['event_categories_dropdown']) && !empty($this->params['form']['event_categories_dropdown'])) {
 			if ($this->params['form']['event_categories_dropdown'] == 0) {
-				$categories['selected'] = 0;
+				$selectedCategory = 0;
 				$categoryConditions = null;
 			} else {
 				$categoryConditions = array('Event.event_category_id' => $this->params['form']['event_categories_dropdown']);
-				$categories['selected'] = $this->params['form']['event_categories_dropdown'];
+				$selectedCategory = $this->params['form']['event_categories_dropdown'];
 			}
 		} else {
 			$categoryConditions = null;
@@ -53,8 +55,8 @@ class EventsController extends AppController {
 		if (!$month) {
 			$date = date('Y-m-d H:i:s');
 			$month = date('m', strtotime($date));
-			$lastDayOfMonth = date('t', strtotime($date));
 			$year = date('Y', strtotime($date));
+			$lastDayOfMonth = date('t', strtotime($date));
 			$endDate = date('Y-m-d H:i:s', strtotime("$month/$lastDayOfMonth/$year 23:59:59"));
 		} else {
 			$date = date('Y-m-d H:i:s', strtotime("$month/1/$year 00:00:01"));
@@ -62,38 +64,54 @@ class EventsController extends AppController {
 			$endDate = date('Y-m-d H:i:s', strtotime("$month/$lastDayOfMonth/$year 23:59:59"));
 		}
 
-		$events = $this->paginate('Event', array('Event.scheduled BETWEEN ? AND ?' => array($date, $endDate), $categoryConditions));
+		$conditions = array(
+			'Event.scheduled >' => date('Y-m-d H:i:s'),
+			'Event.event_registration_count < Event.seats_available',
+		);
+
+		$conditions = array_merge(
+			$conditions,
+			array(
+				'Event.scheduled BETWEEN ? AND ?' => array($date, $endDate)
+			)
+		);
+
+		if ($categoryConditions) {
+			$conditions = array_merge($conditions, $categoryConditions);
+		}
+
+		$events = $this->paginate(
+			'Event',
+			$conditions
+		);
 
 		$curMonth = date('F Y', strtotime($date));
 		$prevMonth = date('m/Y', strtotime("-1 month", strtotime($date)));
 		$nextMonth = date('m/Y', strtotime("+1 month", strtotime($date)));
 
-		$this->set(compact('title_for_layout', 'categories', 'prevMonth', 'nextMonth', 'curMonth', 'events'));
+		$userEventRegistrations = array();
+		if ($this->Auth->user()) {
+			$this->loadModel('User');
+			$this->User->recursive = -1;
+			$this->User->Behaviors->attach('Containable');
+			$this->User->contain('EventRegistration');
+			$user = $this->User->findById($this->Auth->user('id'));
+
+			if (isset($user['EventRegistration']) && !empty($user['EventRegistration'])) {
+				foreach ($user['EventRegistration'] as $key => $value) {
+					array_push($userEventRegistrations, $value['event_id']);
+				}
+			}
+		}
+
+		$this->set(compact('title_for_layout', 'selectedCategory', 'categories', 'prevMonth', 'nextMonth', 'curMonth', 'events', 'userEventRegistrations'));
 	}
 
-	public function workshop($date = null) {
+	public function workshop($month = null, $year = null) {
 		$this->Event->Behaviors->attach('Containable');
 		$this->Event->EventCategory->recursive = -1;
 
 		$workshopCategory = $this->Event->EventCategory->findByName('Workshop', array('fields' => 'EventCategory.id'));
-
-		if (!$date) {
-			$date = date('Y-m-d');
-		}
-
-		$events = $this->Event->find('all', array(
-			'conditions' => array(
-				'Event.scheduled >' => date('Y-m-d H:i:s'),
-				'Event.scheduled <' => $this->get_last_day_of_the_week(strtotime($date)),
-				'Event.event_registration_count < Event.seats_available',
-				'Event.event_category_id' => $workshopCategory['EventCategory']['id']
-			),
-			'contain' => array(
-				'Location'
-			)
-		));
-
-		debug($events);
 
 		$title_for_layout = 'Upcoming Workshops';
 
@@ -105,7 +123,6 @@ class EventsController extends AppController {
 			$date = date('Y-m-d H:i:s');
 			$month = date('m', strtotime($date));
 			$year = date('Y', strtotime($date));
-			$firstDayOfMonth = date('d', mktime(0, 0, 0, $month, 01, $year));
 			$lastDayOfMonth = date('t', strtotime($date));
 			$endDate = date('Y-m-d H:i:s', strtotime("$month/$lastDayOfMonth/$year 23:59:59"));
 		} else {
@@ -114,7 +131,22 @@ class EventsController extends AppController {
 			$endDate = date('Y-m-d H:i:s', strtotime("$month/$lastDayOfMonth/$year 23:59:59"));
 		}
 
-		$events = $this->paginate('Event', array('Event.scheduled BETWEEN ? AND ?' => array($date, $endDate)));
+		$conditions = array(
+			'Event.scheduled >' => date('Y-m-d H:i:s'),
+			'Event.event_registration_count < Event.seats_available',
+		);
+
+		$conditions = array_merge(
+			$conditions,
+			array(
+				'Event.scheduled BETWEEN ? AND ?' => array($date, $endDate)
+			)
+		);
+
+		$events = $this->paginate(
+			'Event',
+			$conditions
+		);
 
 		$curMonth = date('F Y', strtotime($date));
 		$prevMonth = date('m/Y', strtotime("-1 month", strtotime($date)));
@@ -507,15 +539,5 @@ class EventsController extends AppController {
 			$this->set(compact('data'));
 			return $this->render(null, null, '/elements/ajaxreturn');			
 	    }
-	}
-
-	private function get_last_day_of_the_week($date_in_week) {
-		if (date('w', strtotime($date_in_week)) !== 6) {
-			$date = date('Y-m-d H:i:s', strtotime('next saturday', $date_in_week));
-		} else {
-			$date = $date_in_week;
-		}
-
-		return date('Y-m-d H:i:s', strtotime($date . ' +23 hours 59 minutes 59 seconds'));
 	}
 }

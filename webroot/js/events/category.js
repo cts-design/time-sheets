@@ -4,24 +4,24 @@
  * @link http://ctsfla.com
  * @package ATLAS V3
  */
+
+var currentPath = function () {
+  return window.location.pathname;
+}
+
 $(function() {
   var eventCategory = 0,
-    currentUrl    = '/events/';
-
-console.log(window);
+    currentUrl = currentPath();
 
   $('body').attr('class', 'js');
 
   $('#event_categories_dropdown').live('change', function(e) {
     e.preventDefault();
 
-    eventCategory = $(this).attr('value');
+    $("#events").empty().html('<img src="/img/ajaxLoader.gif" height="16" width="16" />');
 
-    $.post(currentUrl, { event_categories_dropdown: eventCategory }, function(data) {
-      $("#events").empty().html('<img src="/img/ajaxLoader.gif" height="16" width="16" />');
-
-      var content = $(data).find('#events');
-      $('#events').html(content);
+    $.post(currentUrl, { event_categories_dropdown: $(this).attr('value') }, function(data) {
+      $('#events').replaceWith(data);
     });
   });
 
