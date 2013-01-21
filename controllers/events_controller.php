@@ -431,7 +431,12 @@ class EventsController extends AppController {
             if(isset($this->data['EventRegistration'])) {
 				$this->data['EventRegistration'] = json_decode($this->data['EventRegistration'], true);
 				if($this->Event->EventRegistration->saveAll($this->data['EventRegistration'])) {
-					// TODO: add transactions;
+                    $this->Transaction->createUserTransaction(
+                        'Events',
+                        $this->Auth->user('id'),
+                        $this->Auth->user('location_id'),
+                        'Performed attendance for event, id: ' . $this->data['Event']['id']
+                    );
 					$data['success'] = true;
 					$data['message'] = 'Attendance was updated.';
 				}
@@ -470,6 +475,13 @@ class EventsController extends AppController {
 				}
 			}
 		}
+
+		$this->Transaction->createUserTransaction(
+			'Events',
+			$this->Auth->user('id'),
+			$this->Auth->user('location_id'),
+			'Ran attendance report for event, id: ' . $event['Event']['id']
+		);
 		$data = array('data' => $report,
 			'title' => $title);
 		Configure::write('debug', 0);
