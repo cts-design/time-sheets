@@ -70,7 +70,9 @@ var searchPanel = {
             listeners: {
               specialkey: function (field, event) {
                 if (event.getKey() === event.ENTER) {
-                  field.up('form').getForm().submit();
+                  field.up('form').getForm().submit({
+                    method: 'get'
+                  });
                 }
               }
             }
@@ -100,7 +102,9 @@ var searchPanel = {
               var form = this.up('form').getForm();
 
               if (form.isValid()) {
-                form.submit();
+                form.submit({
+                  method: 'get'
+                });
               }
             }
           },{
@@ -150,7 +154,9 @@ var searchPanel = {
                 listeners: {
                   specialkey: function (field, event) {
                     if (event.getKey() === event.ENTER) {
-                      field.up('form').getForm().submit();
+                      field.up('form').getForm().submit({
+                        method: 'get'
+                      });
                     }
                   }
                 }
@@ -252,7 +258,9 @@ var searchPanel = {
                 listeners: {
                   specialkey: function (field, event) {
                     if (event.getKey() === event.ENTER) {
-                      field.up('form').getForm().submit();
+                      field.up('form').getForm().submit({
+                        method: 'get'
+                      });
                     }
                   }
                 }
@@ -315,7 +323,9 @@ var searchPanel = {
                 listeners: {
                   specialkey: function (field, event) {
                     if (event.getKey() === event.ENTER) {
-                      field.up('form').getForm().submit();
+                      field.up('form').getForm().submit({
+                        method: 'get'
+                      });
                     }
                   }
                 }
@@ -371,7 +381,9 @@ var searchPanel = {
               var form = this.up('form').getForm();
 
               if (form.isValid()) {
-                form.submit();
+                form.submit({
+                  method: 'get'
+                });
               }
             }
           },{
