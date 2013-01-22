@@ -188,7 +188,9 @@ class AuditsController extends AppController {
 		$this->Audit->User->Behaviors->attach('Containable');
 		$user = $this->Audit->User->find('first', array(
 			'fields' => array('User.id'),
-			'conditions' => array('User.id' => $customerId),
+			'conditions' => array(
+				'User.id' => $customerId,
+			),
 			'contain' => array(
 				'FiledDocument' => array(
 					'fields' => array(
@@ -211,7 +213,7 @@ class AuditsController extends AppController {
 			$data['success'] = true;
 			$userId = $this->Auth->user('id');
 
-			foreach ($user['FiledDocument'] as $doc) {
+			foreach ($user['FiledDocument'] as $key => $doc) {
 				if (isset($doc['Cat1']['secure']) && $doc['Cat1']['secure']) {
 					$doc['secure'] = 1;
 					if (in_array($userId, json_decode($doc['Cat1']['secure_admins']))) {
@@ -236,6 +238,12 @@ class AuditsController extends AppController {
 				} else {
 					$doc['secure'] = 0;
 				}
+
+				if ($doc['secure'] == 1) {
+					unset($user['FiledDocument'][$key]);
+					continue;
+				}
+
 				$doc['cat_1'] = ($doc['cat_1'] != 0) ? $doc['Cat1']['name'] : null;
 				$doc['cat_2'] = ($doc['cat_2'] != 0) ? $doc['Cat2']['name'] : null;
 				$doc['cat_3'] = ($doc['cat_3'] != 0) ? $doc['Cat3']['name'] : null;
