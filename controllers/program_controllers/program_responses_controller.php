@@ -629,12 +629,14 @@ class ProgramResponsesController extends AppController {
 		$responses = $this->ProgramResponse->find('all', array('conditions' => $conditions));
 		if(isset($responses)) {
 			foreach($responses as $k => $v) {
-				$report[$k]['id'] = $v['ProgramResponse']['id'];
-				$report[$k]['customer'] = $v['User']['name_last4'];
-				$report[$k]['status'] = $v['ProgramResponse']['status'];
-				$report[$k]['created'] = date('m/d/Y g:i a', strtotime($v['ProgramResponse']['created']));
-				$report[$k]['modified'] = date('m/d/Y g:i a', strtotime($v['ProgramResponse']['modified']));
-				$report[$k]['expires_on'] = date('m/d/Y g:i a', strtotime($v['ProgramResponse']['expires_on']));
+				$report[$k]['Id'] = $v['ProgramResponse']['id'];
+				$report[$k]['First Name'] = $v['User']['firstname'];
+				$report[$k]['Last Name'] = $v['User']['lastname'];
+				$report[$k]['Last 4 SSN'] = substr($v['User']['ssn'], -4);
+				$report[$k]['Status'] = ucfirst($v['ProgramResponse']['status']);
+				$report[$k]['Created'] = date('m/d/Y g:i a', strtotime($v['ProgramResponse']['created']));
+				$report[$k]['Modified'] = date('m/d/Y g:i a', strtotime($v['ProgramResponse']['modified']));
+				$report[$k]['Expires On'] = date('m/d/Y g:i a', strtotime($v['ProgramResponse']['expires_on']));
 			}			
 		}
 		$this->Transaction->createUserTransaction('Programs', null, null, 'Created a program response Excel report');		
