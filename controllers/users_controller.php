@@ -126,8 +126,8 @@ class UsersController extends AppController {
 		}
 		$this->User->recursive = -1;
 
-		if (!empty($this->params['form'])) {
-			$formParams = $this->params['form'];
+		if (!empty($this->params['url'])) {
+			$formParams = $this->params['url'];
 		}
 
 		if (empty($formParams)) {
