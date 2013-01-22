@@ -130,6 +130,8 @@ class UsersController extends AppController {
 			$formParams = $this->params['url'];
 		}
 
+		unset($formParams['url']);
+
 		if (empty($formParams)) {
 			if (isset($this->params['named']['basic_search_term'])) {
 				$formParams['basic_search_term'] = $this->params['named']['basic_search_term'];
