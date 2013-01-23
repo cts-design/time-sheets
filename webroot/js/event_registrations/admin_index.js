@@ -18,8 +18,8 @@ Ext.create('Ext.data.Store', {
       'data[Event][id]': eventId
     },
     api: {
-      update: '/admin/events/toggle_present',
-      read: '/admin/events/view/'+eventId
+      update: '/admin/event_registrations/toggle_present',
+      read: '/admin/event_registrations/index/'+eventId
     },
     reader: {
       type: 'json',
