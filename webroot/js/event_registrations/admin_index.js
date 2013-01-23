@@ -1,6 +1,8 @@
 Ext.define('EventRegistration', {
     extend: 'Ext.data.Model',
     fields: [
+        {name: 'id'},
+        {name: 'user_id'},
         {name: 'firstname'},
         {name: 'lastname'},
         {name: 'last4'},
@@ -29,8 +31,7 @@ Ext.create('Ext.data.Store', {
     writer: {
       root: 'data[EventRegistration]',
       encode: true,
-      writeAllFields: false,
-      nameProperty: 'serverKey'
+      writeAllFields: true
     }
   },
   autoLoad: true,
