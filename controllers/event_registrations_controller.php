@@ -14,7 +14,16 @@ class EventRegistrationsController extends AppController {
 
 	public function admin_index() {
 		$eventRegistrations = $this->EventRegistration->findAllByEventId($this->params['pass'][0]);
-		// TODO: add logic to filter events that have been held already
+		if($eventRegistrations) {
+			if(date('Y-m-d', strtotime($eventRegistrations[0]['Event']['scheduled'])) < date('Y-m-d')) {
+				$this->Session->setFlash('Event has already been held', 'flash_failure');
+				$this->redirect('/admin/events');
+			}
+		}
+		else {
+			$this->Session->setFlash('No registrations for that event', 'flash_failure');
+			$this->redirect('/admin/events');
+		}
 		if($this->RequestHandler->isAjax()) {
 			$data['registrations'] = array();
 			if($eventRegistrations) {
