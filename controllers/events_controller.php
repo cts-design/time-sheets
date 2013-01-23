@@ -294,32 +294,6 @@ class EventsController extends AppController {
 		}
 	}
 
-	public function admin_view() {
-		$eventRegistrations = $this->Event->EventRegistration->findAllByEventId($this->params['pass'][0]);
-		if($this->RequestHandler->isAjax()) {
-			$data['registrations'] = array();
-			if($eventRegistrations) {
-				$i = 0;
-				foreach($eventRegistrations as $registration) {
-					$data['registrations'][$i]['id'] = $registration['EventRegistration']['id'];
-					$data['registrations'][$i]['firstname'] = $registration['User']['firstname'];
-					$data['registrations'][$i]['lastname'] = $registration['User']['lastname'];
-					$data['registrations'][$i]['last4'] = substr($registration['User']['ssn'], -4);
-					$data['registrations'][$i]['registered'] = $registration['EventRegistration']['created'];
-					$data['registrations'][$i]['present'] = $registration['EventRegistration']['present'];
-					$i++;
-				}
-			}
-			$this->set(compact('data'));
-			$this->render(null, null, '/elements/ajaxreturn');
-		}
-		$title_for_layout = 'Event';
-		if($eventRegistrations) {
-			$title_for_layout = 'Event - ' . $eventRegistrations[0]['Event']['name']; 
-		}
-		$this->set(compact('title_for_layout'));	
-	}
-
 	public function admin_add()	{
 		if($this->RequestHandler->isAjax()) {
 			if(!empty($this->data)) {
@@ -426,69 +400,6 @@ class EventsController extends AppController {
         }
     }
 
-	public function admin_toggle_present() {
-		if($this->RequestHandler->isAjax()) {
-            if(isset($this->data['EventRegistration'])) {
-				$this->data['EventRegistration'] = json_decode($this->data['EventRegistration'], true);
-				if($this->Event->EventRegistration->saveAll($this->data['EventRegistration'])) {
-                    $this->Transaction->createUserTransaction(
-                        'Events',
-                        $this->Auth->user('id'),
-                        $this->Auth->user('location_id'),
-                        'Performed attendance for event, id: ' . $this->data['Event']['id']
-                    );
-					$data['success'] = true;
-					$data['message'] = 'Attendance was updated.';
-				}
-				else {
-					$data['success'] = false;
-					$data['message'] = 'Unable to update attendance at this time.';
-				}
-			}
-			$this->set(compact('data'));
-			$this->render(null, null, '/elements/ajaxreturn');
-		}
-	}
-
-	public function admin_delete_registration() {
-		// TODO: add ability for admins to delete registrations
-	}
-
-	public function admin_attendance_report() {
-		$this->Event->recursive = 2;
-		if(isset($this->params['url']['id'])) {
-			$event = $this->Event->findById($this->params['url']['id']);	
-		}
-		$report = array();
-		$title = 'Event Attendance Report ';
-		if($event) {
-			$title .= 'for ' . $event['Event']['name'] . ' held on ' .
-				date('m/d/y h:i a', strtotime($event['Event']['scheduled'])) . ' at ' . $event['Location']['name']; 
-
-			if(!empty($event['EventRegistration'])) {
-				foreach($event['EventRegistration'] as $k => $v) {
-					$report[$k]['First Name'] = $v['User']['firstname'];
-					$report[$k]['Last Name'] = $v['User']['lastname'];
-					$report[$k]['Last 4 SSN'] = substr($v['User']['ssn'], -4);
-					$report[$k]['Registered'] = date('m/d/y', strtotime($v['created']));
-					$report[$k]['Attended'] = ($v['present']) ? 'Yes' : 'No';
-				}
-			}
-		}
-
-		$this->Transaction->createUserTransaction(
-			'Events',
-			$this->Auth->user('id'),
-			$this->Auth->user('location_id'),
-			'Ran attendance report for event, id: ' . $event['Event']['id']
-		);
-		$data = array('data' => $report,
-			'title' => $title);
-		Configure::write('debug', 0);
-		$this->layout = 'ajax';
-		$this->set($data);
-	}
-
 	public function admin_archive() {
 		if($this->RequestHandler->isAjax()) {
 			$this->paginate = array('order' => array('Event.scheduled' => 'Desc'));
@@ -534,22 +445,4 @@ class EventsController extends AppController {
 		}		
 	}
 
-	public function admin_get_event_category_list() {
-	    if ($this->RequestHandler->isAjax()) {
-	    	$this->Event->EventCategory->recursive = -1;			
-			$categories = $this->Event->EventCategory->find('all',
-				array('fileds' => array('EventCategory.id', 'EventCategory.name')));
-			foreach($categories as $category) {
-			    $data['categories'][] = $category['EventCategory'];
-			}
-			if(!empty($data)){
-				$data['success'] = true;
-			}
-			else {
-				$data['success'] = false;
-			}
-			$this->set(compact('data'));
-			return $this->render(null, null, '/elements/ajaxreturn');			
-	    }
-	}
 }
