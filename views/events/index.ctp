@@ -16,17 +16,23 @@
 			</li>
 		</ol>
 	</form>
-	<p class="calnav">
-		<span>
-			<a class="previousMonth" href="/events/index/<?php echo $prevMonth ?>"> < </a>
-		</span>
-		<span>
-			<a class="currentMonth" href=""><?php echo $curMonth ?></a>
-		</span>
-		<span>
-			<a class="nextMonth" href="/events/index/<?php echo $nextMonth ?>"> > </a>
-		</span>
-	</p>
+	<div class="calnav">
+		<h2>
+			Events for the week of
+			<?= date('m/d/Y', strtotime($bow)) ?>
+			&mdash;
+			<?= date('m/d/Y', strtotime($eow)) ?>
+		</h2>
+		<a href="/events/index?date=<?= $prevMonday ?>" class="button gray">
+			<i class="icon-chevron-left"></i>
+			Previous Week
+		</a>
+
+		<a href="/events/index?date=<?= $nextMonday ?>" class="button gray">
+			<i class="icon-chevron-right"></i>
+			Next Week
+		</a>
+	</div>
 	<?php if (!empty($events)): ?>
 		<?php foreach ($events as $event): ?>
 			<?php $day = date('l, F dS', strtotime($event['Event']['scheduled'])) ?>
