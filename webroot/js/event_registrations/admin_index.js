@@ -51,9 +51,14 @@ Ext.create('Ext.data.Store', {
         }
       });
     },
-    beforesync: function() {
+    beforesync: function(options, eOpts) {
       var sb = Ext.getCmp('status-bar');
-      sb.showBusy({text: 'Updating attendance....'});
+      if(options.destroy !== undefined) {
+        sb.showBusy({text: 'Deleting records....'});
+      }
+      else {
+        sb.showBusy({text: 'Updating attendance....'});
+      }
     }
   }
 });
@@ -98,10 +103,12 @@ Ext.onReady(function() {
             text: 'Delete',
             iconCls: 'icon_delete',
             handler: function() {
-              var store = Ext.data.StoreManager.lookup('eventRegistrations');
-              store.remove(sm.selected.items);
-              store.sync();
-              sm.deselectAll();
+              Ext.MessageBox.confirm('Confim delete', 'Are you sure you want to delete these registrations?', function() {
+                var store = Ext.data.StoreManager.lookup('eventRegistrations');
+                store.remove(sm.selected.items);
+                store.sync();
+                sm.deselectAll();
+              });
             }
           }]       
       
