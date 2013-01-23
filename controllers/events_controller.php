@@ -106,7 +106,7 @@ class EventsController extends AppController {
 		);
 	}
 
-	public function workshop($month = null, $year = null) {
+	public function workshop() {
 		$this->Event->Behaviors->attach('Containable');
 		$this->Event->EventCategory->recursive = -1;
 
@@ -114,42 +114,29 @@ class EventsController extends AppController {
 
 		$title_for_layout = 'Upcoming Workshops';
 
-		if ($month && !$year) {
-			$year = date('Y');
-		}
+		// setup date stuffs
+		$date = $this->parse_date();
+		$bow = $this->get_beginning_of_week($date);
+		$eow = $this->get_end_of_week($date);
+		$time_conditions = $this->get_schedule_time_conditions($date, $bow, $eow);
 
-		if (!$month) {
-			$date = date('Y-m-d H:i:s');
-			$month = date('m', strtotime($date));
-			$year = date('Y', strtotime($date));
-			$lastDayOfMonth = date('t', strtotime($date));
-			$endDate = date('Y-m-d H:i:s', strtotime("$month/$lastDayOfMonth/$year 23:59:59"));
+		// setup for the next/previous buttons
+		$nextMonday = date('Y-m-d', strtotime('next monday', strtotime($eow)));
+		if (date('w', strtotime($date)) != 1) {
+			$thisMonday = date('Y-m-d', strtotime('last monday', strtotime($date)));
+			$prevMonday = date('Y-m-d', strtotime('last monday', strtotime($thisMonday)));
 		} else {
-			$date = date('Y-m-d H:i:s', strtotime("$month/1/$year 00:00:01"));
-			$lastDayOfMonth = date('t', strtotime($date));
-			$endDate = date('Y-m-d H:i:s', strtotime("$month/$lastDayOfMonth/$year 23:59:59"));
+			$prevMonday = date('Y-m-d', strtotime('last monday', strtotime($date)));
 		}
 
-		$conditions = array(
-			'Event.scheduled >' => date('Y-m-d H:i:s'),
-			'Event.event_registration_count < Event.seats_available',
-		);
-
-		$conditions = array_merge(
-			$conditions,
-			array(
-				'Event.scheduled BETWEEN ? AND ?' => array($date, $endDate)
-			)
-		);
+		$conditions = array_merge($time_conditions, array(
+			'Event.event_registration_count < Event.seats_available'
+		));
 
 		$events = $this->paginate(
 			'Event',
 			$conditions
 		);
-
-		$curMonth = date('F Y', strtotime($date));
-		$prevMonth = date('m/Y', strtotime("-1 month", strtotime($date)));
-		$nextMonth = date('m/Y', strtotime("+1 month", strtotime($date)));
 
 		$userEventRegistrations = array();
 		if ($this->Auth->user()) {
@@ -166,7 +153,19 @@ class EventsController extends AppController {
 			}
 		}
 
-		$this->set(compact('title_for_layout', 'categories', 'prevMonth', 'nextMonth', 'curMonth', 'events', 'userEventRegistrations'));
+		$this->set(
+			compact(
+				'title_for_layout',
+				'selectedCategory',
+				'categories',
+				'bow',
+				'eow',
+				'nextMonday',
+				'prevMonday',
+				'events',
+				'userEventRegistrations'
+			)
+		);
 	}
 
 	public function attend($eventId, $eventType = null) {
