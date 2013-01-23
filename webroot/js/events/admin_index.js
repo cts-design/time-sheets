@@ -221,13 +221,13 @@ Ext.create('Ext.menu.Menu', {
   bodyPadding: 5,
   items:[{
     xtype: 'button',
-    text: 'Event Details',
+    text: 'Event Registrations',
     icon: '/img/icons/date_go.png',
     handler: function() {
       var formPanel = Ext.getCmp('eventsForm'),
       grid = formPanel.down('grid'),
       record = grid.getSelectionModel().getLastSelected();
-      window.location.replace('/admin/events/view/'+record.data.id); 
+      window.location.replace('/admin/event_registrations/index/'+record.data.id); 
     }
   },{
     xtype: 'button',
@@ -238,7 +238,6 @@ Ext.create('Ext.menu.Menu', {
       record = formPanel.down('grid').getSelectionModel().getLastSelected();
       record.data.id = undefined;
       formPanel.loadRecord(record);
-      console.log(record);
     }
   },{
     xtype: 'button',
