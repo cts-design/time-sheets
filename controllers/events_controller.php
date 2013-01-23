@@ -20,7 +20,7 @@ class EventsController extends AppController {
 		$this->Auth->allow('view', 'index', 'workshop');
 	}
 
-	public function index($month = null, $year = null) {
+	public function index() {
 		$this->Event->Behaviors->attach('Containable');
 		$this->Event->EventCategory->recursive = -1;
 
@@ -48,33 +48,24 @@ class EventsController extends AppController {
 			$categoryConditions = null;
 		}
 
-		if ($month && !$year) {
-			$year = date('Y');
-		}
+		// setup date stuffs
+		$date = $this->parse_date();
+		$bow = $this->get_beginning_of_week($date);
+		$eow = $this->get_end_of_week($date);
+		$time_conditions = $this->get_schedule_time_conditions($date, $bow, $eow);
 
-		if (!$month) {
-			$date = date('Y-m-d H:i:s');
-			$month = date('m', strtotime($date));
-			$year = date('Y', strtotime($date));
-			$lastDayOfMonth = date('t', strtotime($date));
-			$endDate = date('Y-m-d H:i:s', strtotime("$month/$lastDayOfMonth/$year 23:59:59"));
+		// setup for the next/previous buttons
+		$nextMonday = date('Y-m-d', strtotime('next monday', strtotime($eow)));
+		if (date('w', strtotime($date)) != 1) {
+			$thisMonday = date('Y-m-d', strtotime('last monday', strtotime($date)));
+			$prevMonday = date('Y-m-d', strtotime('last monday', strtotime($thisMonday)));
 		} else {
-			$date = date('Y-m-d H:i:s', strtotime("$month/1/$year 00:00:01"));
-			$lastDayOfMonth = date('t', strtotime($date));
-			$endDate = date('Y-m-d H:i:s', strtotime("$month/$lastDayOfMonth/$year 23:59:59"));
+			$prevMonday = date('Y-m-d', strtotime('last monday', strtotime($date)));
 		}
 
-		$conditions = array(
-			'Event.scheduled >' => date('Y-m-d H:i:s'),
-			'Event.event_registration_count < Event.seats_available',
-		);
-
-		$conditions = array_merge(
-			$conditions,
-			array(
-				'Event.scheduled BETWEEN ? AND ?' => array($date, $endDate)
-			)
-		);
+		$conditions = array_merge($time_conditions, array(
+			'Event.event_registration_count < Event.seats_available'
+		));
 
 		if ($categoryConditions) {
 			$conditions = array_merge($conditions, $categoryConditions);
@@ -84,10 +75,6 @@ class EventsController extends AppController {
 			'Event',
 			$conditions
 		);
-
-		$curMonth = date('F Y', strtotime($date));
-		$prevMonth = date('m/Y', strtotime("-1 month", strtotime($date)));
-		$nextMonth = date('m/Y', strtotime("+1 month", strtotime($date)));
 
 		$userEventRegistrations = array();
 		if ($this->Auth->user()) {
@@ -104,7 +91,19 @@ class EventsController extends AppController {
 			}
 		}
 
-		$this->set(compact('title_for_layout', 'selectedCategory', 'categories', 'prevMonth', 'nextMonth', 'curMonth', 'events', 'userEventRegistrations'));
+		$this->set(
+			compact(
+				'title_for_layout',
+				'selectedCategory',
+				'categories',
+				'bow',
+				'eow',
+				'nextMonday',
+				'prevMonday',
+				'events',
+				'userEventRegistrations'
+			)
+		);
 	}
 
 	public function workshop($month = null, $year = null) {
@@ -551,5 +550,41 @@ class EventsController extends AppController {
 			$this->set(compact('data'));
 			return $this->render(null, null, '/elements/ajaxreturn');			
 	    }
+	}
+
+	private function parse_date() {
+		// If there isn't a date passed, then use today
+		if (isset($this->params['url']['date']) && $this->params['url']['date']) {
+			$date = $this->params['url']['date'];
+			return date('Y-m-d H:i:s', strtotime($date));
+		} else {
+			return date('Y-m-d H:i:s');
+		}
+	}
+
+	private function get_beginning_of_week($date) {
+		// if the date passed in is a mondey, pass 'today' to strtotime
+		// otherwise it will return the previous monday and give us a
+		// two week date range
+		if (date('w', strtotime($date)) == 1) {
+			return date('Y-m-d H:i:s', strtotime('today', strtotime($date)));
+		} else {
+			return date('Y-m-d H:i:s', strtotime('this week last monday', strtotime($date)));
+		}
+	}
+
+	private function get_end_of_week($date) {
+		return date('Y-m-d H:i:s', strtotime('this week next sunday +23 hours 59 minutes 59 seconds', strtotime($date)));
+	}
+
+	private function get_schedule_time_conditions($date, $beginning_of_week, $end_of_week) {
+		return array(
+			'AND' => array(
+				array('Event.scheduled >=' => $beginning_of_week),
+				array('Event.scheduled >' => $date),
+				array('Event.scheduled >' => date('Y-m-d H:i:s')),
+				array('Event.scheduled <' => $end_of_week)
+			)
+		);
 	}
 }
