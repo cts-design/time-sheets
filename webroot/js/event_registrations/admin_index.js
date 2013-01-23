@@ -18,8 +18,9 @@ Ext.create('Ext.data.Store', {
       'data[Event][id]': eventId
     },
     api: {
-      update: '/admin/event_registrations/toggle_present',
-      read: '/admin/event_registrations/index/'+eventId
+      update: '/admin/event_registrations/edit',
+      read: '/admin/event_registrations/index/'+eventId,
+      destroy: '/admin/event_registrations/delete'
     },
     reader: {
       type: 'json',
@@ -89,6 +90,15 @@ Ext.onReady(function() {
               Ext.Array.each(sm.selected.items, function(record) {
                 record.set('present', 0);
               });
+              store.sync();
+              sm.deselectAll();
+            }
+          },{
+            text: 'Delete',
+            iconCls: 'icon_delete',
+            handler: function() {
+              var store = Ext.data.StoreManager.lookup('eventRegistrations');
+              store.remove(sm.selected.items);
               store.sync();
               sm.deselectAll();
             }

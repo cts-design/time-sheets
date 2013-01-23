@@ -38,7 +38,7 @@ class EventRegistrationsController extends AppController {
 		$this->set(compact('title_for_layout'));	
 	}
 
-	public function admin_toggle_present() {
+	public function admin_edit() {
 		if($this->RequestHandler->isAjax()) {
             if(isset($this->data['EventRegistration'])) {
 				$this->data['EventRegistration'] = json_decode($this->data['EventRegistration'], true);
@@ -62,8 +62,34 @@ class EventRegistrationsController extends AppController {
 		}
 	}
 
-	public function admin_delete_registration() {
-		// TODO: add ability for admins to delete registrations
+	public function admin_delete() {
+		if($this->RequestHandler->isAjax()) {
+            if(isset($this->data['EventRegistration'])) {
+				$this->data['EventRegistration'] = json_decode($this->data['EventRegistration'], true);
+				$ids = array();
+				foreach($this->data['EventRegistration'] as $registration) {
+					array_push($ids, $registration['id']);
+				}
+				$conditions = array('EventRegistration.id' => $ids);
+				if($this->EventRegistration->deleteAll($conditions)) {
+					// TODO: add transaction
+					$data['success'] = true;
+					if(count($ids) > 1) {
+						$message = 'registrations';
+					}
+					else {
+						$message = 'registration';
+					}
+					$data['message'] = 'Deleted ' . $message ;
+				}
+				else {
+					$data['success'] = false;
+					$data['message'] = 'Unable to delete ' . $message;
+				}
+			}
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
 	}
 
 	public function admin_attendance_report() {
