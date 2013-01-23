@@ -101,6 +101,7 @@ class EventRegistrationsController extends AppController {
 				$conditions = array('EventRegistration.id' => $ids);
 				if($this->EventRegistration->deleteAll($conditions)) {
 					$data['success'] = true;
+					$data['message'] = 'Deleted successfully';
 					$message = 'Deleted ';
 					if(count($ids) > 1) {
 						$message .= 'registrations for users ';
@@ -121,7 +122,7 @@ class EventRegistrationsController extends AppController {
 				}
 				else {
 					$data['success'] = false;
-					$data['message'] = 'Unable to delete ' . $message;
+					$data['message'] = 'Unable to delete';
 				}
 			}
 			$this->set(compact('data'));
