@@ -14,12 +14,14 @@ class EventRegistrationsController extends AppController {
 
 	public function admin_index() {
 		$eventRegistrations = $this->EventRegistration->findAllByEventId($this->params['pass'][0]);
+		// TODO: add logic to filter events that have been held already
 		if($this->RequestHandler->isAjax()) {
 			$data['registrations'] = array();
 			if($eventRegistrations) {
 				$i = 0;
 				foreach($eventRegistrations as $registration) {
 					$data['registrations'][$i]['id'] = $registration['EventRegistration']['id'];
+					$data['registrations'][$i]['user_id'] = $registration['User']['id'];
 					$data['registrations'][$i]['firstname'] = $registration['User']['firstname'];
 					$data['registrations'][$i]['lastname'] = $registration['User']['lastname'];
 					$data['registrations'][$i]['last4'] = substr($registration['User']['ssn'], -4);
@@ -43,12 +45,31 @@ class EventRegistrationsController extends AppController {
             if(isset($this->data['EventRegistration'])) {
 				$this->data['EventRegistration'] = json_decode($this->data['EventRegistration'], true);
 				if($this->EventRegistration->saveAll($this->data['EventRegistration'])) {
+					$eventId = $this->data['Event']['id'];
+					$userIds = Set::Extract('/user_id', $this->data['EventRegistration']);
+					$present = Set::Extract('/present', $this->data['EventRegistration']);
+					$siteUrl = trim(Router::url('/', true),'/');
+					if(count($userIds) > 1) {
+						$message = 'Marked users ';
+					}
+					else {
+						$message = 'Marked user ';
+					}
+					foreach($userIds as $k => $v) {
+						$message .= "<a href='$siteUrl/admin/user_transactions/index/$v'>$v</a>,&nbsp;";
+					}
+					if($present[0]) {
+						$message .= "present for event id: $eventId";
+					}
+					else {
+						$message .= "absent for event id: $eventId";
+					}
                     $this->Transaction->createUserTransaction(
                         'Events',
                         $this->Auth->user('id'),
                         $this->Auth->user('location_id'),
-                        'Performed attendance for event, id: ' . $this->data['Event']['id']
-                    );
+						$message
+					);
 					$data['success'] = true;
 					$data['message'] = 'Attendance was updated.';
 				}
@@ -66,21 +87,28 @@ class EventRegistrationsController extends AppController {
 		if($this->RequestHandler->isAjax()) {
             if(isset($this->data['EventRegistration'])) {
 				$this->data['EventRegistration'] = json_decode($this->data['EventRegistration'], true);
-				$ids = array();
-				foreach($this->data['EventRegistration'] as $registration) {
-					array_push($ids, $registration['id']);
-				}
+				$userIds = Set::Extract('/user_id', $this->data['EventRegistration']);
+				$ids = Set::Extract('/id', $this->data['EventRegistration']);
 				$conditions = array('EventRegistration.id' => $ids);
 				if($this->EventRegistration->deleteAll($conditions)) {
-					// TODO: add transaction
 					$data['success'] = true;
+					$message = 'Deleted ';
 					if(count($ids) > 1) {
-						$message = 'registrations';
+						$message .= 'registrations for users ';
 					}
 					else {
-						$message = 'registration';
+						$message .= 'registration for user ';
 					}
-					$data['message'] = 'Deleted ' . $message ;
+					$siteUrl = trim(Router::url('/', true),'/');
+					foreach($userIds as $k => $v) {
+						$message .= "<a href='$siteUrl/admin/user_transactions/index/$v'>$v</a>,&nbsp;";
+					}
+                    $this->Transaction->createUserTransaction(
+                        'Events',
+                        $this->Auth->user('id'),
+                        $this->Auth->user('location_id'),
+                        $message . ' for event, id: ' . $this->data['Event']['id']
+					);
 				}
 				else {
 					$data['success'] = false;
