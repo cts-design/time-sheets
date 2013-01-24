@@ -25,7 +25,7 @@ $(function() {
     });
   });
 
-  $('.previousMonth, .nextMonth, .paging a').live('click', function(e) {
+  $('.calnav a, .paging a').live('click', function(e) {
     e.preventDefault();
 
     var target = $(this).attr('href'),
