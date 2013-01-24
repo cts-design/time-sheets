@@ -1,20 +1,21 @@
 <?php echo $this->Html->script('events/category.js', array('inline' => false)) ?>
 <div id="events">
-	<div class="calnav">
-		<h2>
-			Events for the week of
-			<?= date('m/d/Y', strtotime($bow)) ?>
-			&mdash;
-			<?= date('m/d/Y', strtotime($eow)) ?>
-		</h2>
+	<div class="calnav workshop">
 		<a href="/events/workshop?date=<?= $prevMonday ?>" class="button gray">
 			<i class="icon-chevron-left"></i>
 			Previous Week
 		</a>
 
+		<h2>
+			Workshops for the week of
+			<?= date('m/d/Y', strtotime($bow)) ?>
+			&mdash;
+			<?= date('m/d/Y', strtotime($eow)) ?>
+		</h2>
+
 		<a href="/events/workshop?date=<?= $nextMonday ?>" class="button gray">
-			<i class="icon-chevron-right"></i>
 			Next Week
+			<i class="icon-chevron-right"></i>
 		</a>
 	</div>
 	<?php if (!empty($events)): ?>
