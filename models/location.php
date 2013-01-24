@@ -52,6 +52,10 @@ class Location extends AppModel {
 		'QueuedDocument' => array(
 		    'className' => 'QueuedDocument',
 		    'foreignKey' => 'scanned_location_id'
+		),
+		'Event' => array(
+			'className' => 'Event',
+			'foreignKey' => 'location_id'
 		)
 	);
 

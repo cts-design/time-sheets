@@ -138,7 +138,7 @@ Ext.create('Ext.data.Store', {
   model: 'EventCategory',
   proxy: {
     type: 'ajax',
-    url: '/admin/events/get_event_category_list',
+    url: '/admin/event_categories/get_event_category_list',
     reader: {
       type: 'json',
       root: 'categories'
@@ -286,7 +286,7 @@ Ext.create('Ext.menu.Menu', {
     xtype: 'button',
     text: 'Attendance Report',
     icon: '/img/icons/excel.png',
-    href: '/admin/events/attendance_report/'
+    href: '/admin/event_registrations/attendance_report/'
   }]
 });
 
