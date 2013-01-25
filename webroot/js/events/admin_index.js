@@ -201,10 +201,10 @@ Ext.create('Ext.data.Store', {
   storeId: 'eventCategoriesStore',
   proxy: {
     type: 'ajax',
-    url: '/admin/event_categories/get_all_categories',
+    url: '/admin/event_categories/get_list',
     reader: {
       type: 'json',
-      root: 'eventCategories'
+      root: 'categories'
     },
     limitParam: undefined,
     pageParam: undefined,
