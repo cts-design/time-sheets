@@ -512,11 +512,13 @@ Ext.create('Ext.form.Panel', {
     dateConfig: {
       minValue: dt,
       submitFormat: 'y-m-d',
+      format: 'm/d/y'
     },
     timeConfig: {
       minValue: '7:00 am',
       maxValue: '10:00 pm',
       submitFormat: 'H:i:s',
+      format: 'g:i a'
     }
   },{
     fieldLabel: 'Duration in hours',
