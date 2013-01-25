@@ -99,7 +99,7 @@ class EventRegistrationsController extends AppController {
 				$userIds = Set::Extract('/user_id', $this->data['EventRegistration']);
 				$ids = Set::Extract('/id', $this->data['EventRegistration']);
 				$conditions = array('EventRegistration.id' => $ids);
-				if($this->EventRegistration->deleteAll($conditions)) {
+				if($this->EventRegistration->deleteAll($conditions, true, true)) {
 					$data['success'] = true;
 					$data['message'] = 'Deleted successfully';
 					$message = 'Deleted ';
