@@ -51,8 +51,9 @@ class EventsController extends AppController {
 				$selectedCategory = 0;
 				$categoryConditions = null;
 			} else {
-				$categoryConditions = array('Event.event_category_id' => $this->params['form']['event_categories_dropdown']);
-				$selectedCategory = $this->params['form']['event_categories_dropdown'];
+				$cat = $this->params['form']['event_categories_dropdown'];
+				$categoryConditions = array('Event.event_category_id' => $cat);
+				$selectedCategory = $cat;
 			}
 		} else {
 			$categoryConditions = null;
@@ -63,8 +64,9 @@ class EventsController extends AppController {
 				$selectedLocation = 0;
 				$locationConditions = null;
 			} else {
-				$locationConditions = array('Event.location_id' => $this->params['form']['event_locations_dropdown']);
-				$selectedLocation = $this->params['form']['event_locations_dropdown'];
+				$loc = $this->params['form']['event_locations_dropdown'];
+				$locationConditions = array('Event.location_id' => $loc);
+				$selectedLocation = $loc;
 			}
 		} else {
 			$locationConditions = null;

@@ -2,23 +2,20 @@
 <div id="events">
 	<div class="filters">
 		<form class="event_categories" action="<?= $this->here; ?>" method="post">
-					<label class="event_categories_label" for="event_categories_dropdown"><?php __('Filter by event category') ?>:</label>
-					<select id="event_categories_dropdown" name="event_categories_dropdown">
-					<?php $selected = $selectedCategory ?>
-					<?php foreach($categories as $id => $category): ?>
-						<option value="<?= $id ?>"<?= ($id === $selected) ? ' selected="selected"' : '' ?>><?= $category ?></option>
-					<?php endforeach; ?>
-					</select>
-					<label class="event_locations_label" for="event_locations_dropdown"><?php __('Filter by event location') ?>:</label>
-					<select id="event_locations_dropdown" name="event_locations_dropdown">
-					<?php $selected = $selectedLocation ?>
-					<?php debug($selected) ?>
-					<?php foreach($locations as $id => $location): ?>
-						<option value="<?= $id ?>"<?= ($id === $selected) ? ' selected="selected"' : '' ?>><?= $location ?></option>
-					<?php endforeach; ?>
-					</select>
-					<input type="submit" class="button gray" id="filter_submit" value="<?php __('Reset Filters') ?>" />
-					<input type="submit" class="button green" id="filter_submit" value="<?php __('Go') ?>" />
+			<label class="event_categories_label" for="event_categories_dropdown"><?php __('Filter by event category') ?>:</label>
+			<select id="event_categories_dropdown" name="event_categories_dropdown">
+			<?php foreach($categories as $id => $category): ?>
+				<option value="<?= $id ?>"<?= ($id == $selectedCategory) ? ' selected="selected"' : '' ?>><?= $category ?></option>
+			<?php endforeach; ?>
+			</select>
+			<label class="event_locations_label" for="event_locations_dropdown"><?php __('Filter by event location') ?>:</label>
+			<select id="event_locations_dropdown" name="event_locations_dropdown">
+			<?php foreach($locations as $id => $location): ?>
+				<option value="<?= $id ?>"<?= ($id == $selectedLocation) ? ' selected="selected"' : '' ?>><?= $location ?></option>
+			<?php endforeach; ?>
+			</select>
+			<input type="submit" class="button gray" id="reset_filters" value="<?php __('Reset Filters') ?>" />
+			<input type="submit" class="button green" id="filter_submit" value="<?php __('Go') ?>" />
 		</form>
 	</div>
 	<div class="calnav events">
