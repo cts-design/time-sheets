@@ -105,6 +105,11 @@ $config['navigation.settings'] = array(
 			'title' => 'Document Queue Categories'
 		),
 		array(
+			'link' => array('controller' => 'event_categories', 'action' => 'index'),
+			'rel' => 'settings_1',
+			'title' => 'Event Categories'
+		),
+		array(
 			'link' => array('controller' => 'ftp_document_scanners', 'action' => 'index'),
 			'rel' => 'settings_1',
 			'title' => 'FTP Document Scanners'
@@ -157,6 +162,7 @@ $config['navigation.alerts'] = array(
 $config['navigation.events'] = array(
 	'rel' => 'calendar',
 	'title' => 'Events',
+	'id' => 'events',
 	'links' => array(
 		array(
 			'link' => array('controller' => 'events', 'action' => 'index'),
