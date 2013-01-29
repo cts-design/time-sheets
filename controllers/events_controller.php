@@ -313,7 +313,7 @@ class EventsController extends AppController {
 				}
 				else {
 					$data['success'] = false;
-					$data['message'] = 'Unable to save event here, please try again.';
+					$data['message'] = 'Unable to save event, please try again.';
 				}
 			}
 			else {
