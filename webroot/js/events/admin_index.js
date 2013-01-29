@@ -13,7 +13,7 @@ Ext.define('Event', {
     {name: 'other_location'},
     {name: 'url'},
     {name: 'address'},
-    {name: 'scheduled', type: 'date'},
+    {name: 'scheduled', type: 'date', dateFormat: 'Y-m-d H:i:s'},
     {name: 'seats_available'},
     {name: 'duration'},
     {name: 'event_registration_count'},
@@ -43,8 +43,7 @@ Ext.create('Ext.data.Store', {
     writer: {
       root: 'data[Event]',
       encode: true,
-      writeAllFields: false,
-      nameProperty: 'serverKey'
+      writeAllFields: false
     },
     directionParam: 'direction',
     simpleSortMode: true
@@ -188,7 +187,6 @@ Ext.create('Ext.data.Store', {
   listeners: {
     load: function(store, records, successful, operation, eOpts) {
       store.add({id: "0", name: 'Other'});
-      console.log(store);
     }
   }
 });
@@ -203,10 +201,10 @@ Ext.create('Ext.data.Store', {
   storeId: 'eventCategoriesStore',
   proxy: {
     type: 'ajax',
-    url: '/admin/event_categories/get_all_categories',
+    url: '/admin/event_categories/get_list',
     reader: {
       type: 'json',
-      root: 'eventCategories'
+      root: 'categories'
     },
     limitParam: undefined,
     pageParam: undefined,
@@ -409,6 +407,7 @@ Ext.create('Ext.form.Panel', {
     }
   },
   title:'Add / Edit Form',
+  trackResetOnLoad: true,
   defaults: {
     width: 245,
     labelWidth: 70
@@ -422,7 +421,7 @@ Ext.create('Ext.form.Panel', {
     name: 'name',
     allowBlank: false,
     maxLength: 100,
-    enforceMaxLength: true,
+    enforceMaxLength: true
   },{
     fieldLabel: 'Description',
     name: 'description',
@@ -510,16 +509,16 @@ Ext.create('Ext.form.Panel', {
     xtype: 'xdatetime',
     name: 'scheduled',
     allowBlank: false,
-    timeFormat: 'g:i a',
-    dateFormat: 'm/d/Y',
     dateConfig: {
       minValue: dt,
-      submitFormat: 'Y-m-d'
+      submitFormat: 'y-m-d',
+      format: 'm/d/y'
     },
     timeConfig: {
       minValue: '7:00 am',
       maxValue: '10:00 pm',
-      submitFormat: 'H:i:s'
+      submitFormat: 'H:i:s',
+      format: 'g:i a'
     }
   },{
     fieldLabel: 'Duration in hours',
@@ -613,7 +612,7 @@ Ext.create('Ext.form.Panel', {
     formBind: true,
     handler: function() {
       var form = this.up('form').getForm();
-      var vals = form.getValues();
+      var vals = form.getValues(false, false, false, true);
       if(form.isValid()) {
         var event;
         var store = Ext.data.StoreManager.lookup('eventsStore');
@@ -624,10 +623,10 @@ Ext.create('Ext.form.Panel', {
           event.endEdit();
         }
         else {
-          event = Ext.create('Event', form.getValues());
+          event = Ext.create('Event', vals);
           store.add(event);
         }
-        store.sync();
+       store.sync();
       }
     }
   }]
