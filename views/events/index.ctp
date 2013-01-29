@@ -34,12 +34,31 @@
 			<i class="icon-chevron-right"></i>
 		</a>
 	</div>
+
+	<?php $event_start_date = strtotime($events[0]['Event']['scheduled']) ?>
+	<div class="event-start-date">
+		<h2>
+			<i class="icon-calendar"></i>
+			<?= date('l, F dS Y', $event_start_date) ?>
+		</h2>
+	</div>
 	<?php if (!empty($events)): ?>
 		<?php foreach ($events as $event): ?>
 			<?php $day = date('l, F dS', strtotime($event['Event']['scheduled'])) ?>
 			<?php $month = date('M', strtotime($event['Event']['scheduled'])) ?>
 			<?php $startTime = strtotime($event['Event']['scheduled']) ?>
 			<?php $endTime = strtotime("+{$event['Event']['duration']} hours", $startTime) ?>
+			<?php $event_start_date = strtotime($events[0]['Event']['scheduled']) ?>
+
+			<?php if (strtotime(date('m/d/Y', strtotime($event['Event']['scheduled']))) > $event_start_date): ?>
+			<?php $event_start_date = strtotime($event['Event']['scheduled']) ?>
+			<div class="event-start-date">
+				<h2>
+					<i class="icon-calendar"></i>
+					<?= date('l, F dS Y', $event_start_date) ?>
+				</h2>
+			</div>
+			<?php endif ?>
 
 			<div class="event">
 				<div class="details">
@@ -47,7 +66,7 @@
 						<?php if (in_array($event['Event']['id'], $userEventRegistrations)): ?>
 							<a href="/events/cancel/<?= $event['Event']['id'] ?>/workshop" class="button green">Cancel Your Registration</a>
 						<?php else: ?>
-							<a href="/events/attend/<?= $event['Event']['id'] ?>/workshop" class="button green">Attend This Workshop</a>
+							<a href="/events/attend/<?= $event['Event']['id'] ?>/workshop" class="button green">Attend This Event</a>
 						<?php endif ?>
 						<p class="availibility">
 							<i class="icon-group icon-large"></i>
@@ -62,12 +81,6 @@
 					<h2><?php echo $event['Event']['name'] ?></h2>
 
 					<ul>
-						<li>
-							<i class="icon-calendar icon-large"></i>
-							<span class="datetime">
-								<?= $day ?>
-							</span>
-						</li>
 						<li>
 							<i class="icon-time icon-large"></i>
 							<span class="datetime">
