@@ -143,6 +143,29 @@ class EventsController extends AppController {
 		$workshopCategory = $this->Event->EventCategory->findByName('Workshop', array('fields' => 'EventCategory.id'));
 
 		$title_for_layout = 'Upcoming Workshops';
+		$selectedLocation = 0;
+
+		$locations = $this->Event->Location->find('list', array(
+			'fields' => array(
+				'Location.id',
+				'Location.name'
+			),
+			'recursive' => -1
+		));
+		array_unshift($locations, 'All Locations');
+
+		if (isset($this->params['form']['event_locations_dropdown']) && !empty($this->params['form']['event_locations_dropdown'])) {
+			if ($this->params['form']['event_locations_dropdown'] == 0) {
+				$selectedLocation = 0;
+				$locationConditions = null;
+			} else {
+				$loc = $this->params['form']['event_locations_dropdown'];
+				$locationConditions = array('Event.location_id' => $loc);
+				$selectedLocation = $loc;
+			}
+		} else {
+			$locationConditions = null;
+		}
 
 		// setup date stuffs
 		$date = $this->parse_date();
@@ -160,8 +183,13 @@ class EventsController extends AppController {
 		}
 
 		$conditions = array_merge($time_conditions, array(
-			'Event.event_registration_count < Event.seats_available'
+			'Event.event_registration_count < Event.seats_available',
+			'Event.event_category_id' => $workshopCategory['EventCategory']['id']
 		));
+
+		if ($locationConditions) {
+			$conditions = array_merge($conditions, $locationConditions);
+		}
 
 		$events = $this->paginate(
 			'Event',
@@ -186,8 +214,8 @@ class EventsController extends AppController {
 		$this->set(
 			compact(
 				'title_for_layout',
-				'selectedCategory',
-				'categories',
+				'selectedLocation',
+				'locations',
 				'bow',
 				'eow',
 				'nextMonday',
