@@ -74,8 +74,11 @@ Ext.create('Ext.menu.Menu', {
       grid = formPanel.down('grid'),
       form = formPanel.getForm(),
       record = grid.getSelectionModel().getLastSelected();
+      if(record.data.parent_id) {
+        record.data.name = record.data.name.substr(3);
+        record.data.make_child = true;
+      }
       form.loadRecord(record);
-      form.clearInvalid();
    }
   },{
     xtype: 'button',
