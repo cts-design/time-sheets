@@ -29,6 +29,7 @@ class EventsController extends AppController {
 
 		$title_for_layout = 'Upcoming Events';
 		$selectedCategory = 0;
+		$selectedLocation = 0;
 
 		$categories = $this->Event->EventCategory->find('list', array(
 			'fields' => array(
@@ -39,16 +40,39 @@ class EventsController extends AppController {
 		));
 		array_unshift($categories, 'All Categories');
 
+		$locations = $this->Event->Location->find('list', array(
+			'fields' => array(
+				'Location.id',
+				'Location.name'
+			),
+			'recursive' => -1
+		));
+		array_unshift($locations, 'All Locations');
+
 		if (isset($this->params['form']['event_categories_dropdown']) && !empty($this->params['form']['event_categories_dropdown'])) {
 			if ($this->params['form']['event_categories_dropdown'] == 0) {
 				$selectedCategory = 0;
 				$categoryConditions = null;
 			} else {
-				$categoryConditions = array('Event.event_category_id' => $this->params['form']['event_categories_dropdown']);
-				$selectedCategory = $this->params['form']['event_categories_dropdown'];
+				$cat = $this->params['form']['event_categories_dropdown'];
+				$categoryConditions = array('Event.event_category_id' => $cat);
+				$selectedCategory = $cat;
 			}
 		} else {
 			$categoryConditions = null;
+		}
+
+		if (isset($this->params['form']['event_locations_dropdown']) && !empty($this->params['form']['event_locations_dropdown'])) {
+			if ($this->params['form']['event_locations_dropdown'] == 0) {
+				$selectedLocation = 0;
+				$locationConditions = null;
+			} else {
+				$loc = $this->params['form']['event_locations_dropdown'];
+				$locationConditions = array('Event.location_id' => $loc);
+				$selectedLocation = $loc;
+			}
+		} else {
+			$locationConditions = null;
 		}
 
 		// setup date stuffs
@@ -74,6 +98,10 @@ class EventsController extends AppController {
 			$conditions = array_merge($conditions, $categoryConditions);
 		}
 
+		if ($locationConditions) {
+			$conditions = array_merge($conditions, $locationConditions);
+		}
+
 		$events = $this->paginate(
 			'Event',
 			$conditions
@@ -98,7 +126,9 @@ class EventsController extends AppController {
 			compact(
 				'title_for_layout',
 				'selectedCategory',
+				'selectedLocation',
 				'categories',
+				'locations',
 				'bow',
 				'eow',
 				'nextMonday',
@@ -109,13 +139,36 @@ class EventsController extends AppController {
 		);
 	}
 
-	public function workshop() {
+	public function workshop($date = null) {
 		$this->Event->Behaviors->attach('Containable');
 		$this->Event->EventCategory->recursive = -1;
 
 		$workshopCategory = $this->Event->EventCategory->findByName('Workshop', array('fields' => 'EventCategory.id'));
 
 		$title_for_layout = 'Upcoming Workshops';
+		$selectedLocation = 0;
+
+		$locations = $this->Event->Location->find('list', array(
+			'fields' => array(
+				'Location.id',
+				'Location.name'
+			),
+			'recursive' => -1
+		));
+		array_unshift($locations, 'All Locations');
+
+		if (isset($this->params['form']['event_locations_dropdown']) && !empty($this->params['form']['event_locations_dropdown'])) {
+			if ($this->params['form']['event_locations_dropdown'] == 0) {
+				$selectedLocation = 0;
+				$locationConditions = null;
+			} else {
+				$loc = $this->params['form']['event_locations_dropdown'];
+				$locationConditions = array('Event.location_id' => $loc);
+				$selectedLocation = $loc;
+			}
+		} else {
+			$locationConditions = null;
+		}
 
 		// setup date stuffs
 		$date = $this->parse_date();
@@ -133,8 +186,13 @@ class EventsController extends AppController {
 		}
 
 		$conditions = array_merge($time_conditions, array(
-			'Event.event_registration_count < Event.seats_available'
+			'Event.event_registration_count < Event.seats_available',
+			'Event.event_category_id' => $workshopCategory['EventCategory']['id']
 		));
+
+		if ($locationConditions) {
+			$conditions = array_merge($conditions, $locationConditions);
+		}
 
 		$events = $this->paginate(
 			'Event',
@@ -159,8 +217,8 @@ class EventsController extends AppController {
 		$this->set(
 			compact(
 				'title_for_layout',
-				'selectedCategory',
-				'categories',
+				'selectedLocation',
+				'locations',
 				'bow',
 				'eow',
 				'nextMonday',

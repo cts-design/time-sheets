@@ -18,11 +18,21 @@ $(function() {
   $('#event_categories_dropdown').live('change', function(e) {
     e.preventDefault();
 
-    $("#events").empty().html('<img src="/img/ajaxLoader.gif" height="16" width="16" />');
-
-    $.post(currentUrl, { event_categories_dropdown: $(this).attr('value') }, function(data) {
+    $.post(currentUrl, $('.event_categories').serialize(), function(data) {
       $('#events').replaceWith(data);
     });
+
+    $("#events").empty().html('<img src="/img/ajaxLoader.gif" height="16" width="16" />');
+  });
+
+  $('#event_locations_dropdown').live('change', function(e) {
+    e.preventDefault();
+
+    $.post(currentUrl, $('.event_categories').serialize(), function(data) {
+      $('#events').replaceWith(data);
+    });
+
+    $("#events").empty().html('<img src="/img/ajaxLoader.gif" height="16" width="16" />');
   });
 
   $('.calnav a, .paging a').live('click', function(e) {
@@ -31,12 +41,25 @@ $(function() {
     var target = $(this).attr('href'),
       content;
 
-    $("#events").empty().html('<img src="/img/ajaxLoader.gif" height="16" width="16" />');
-
-    $.post(target, {}, function(data) {
+    $.post(target, $('.event_categories').serialize(), function(data) {
       $('#events').html(data);
     });
 
+    $("#events").empty().html('<img src="/img/ajaxLoader.gif" height="16" width="16" />');
+
     currentUrl = target;
+  });
+
+  $('#reset_filters').live('click', function(e) {
+    e.preventDefault();
+
+    $('#event_locations_dropdown').val(0);
+    $('#event_categories_dropdown').val(0);
+
+    $.post(currentUrl, $('.event_categories').serialize(), function(data) {
+      $('#events').html(data);
+    });
+
+    $("#events").empty().html('<img src="/img/ajaxLoader.gif" height="16" width="16" />');
   });
 });

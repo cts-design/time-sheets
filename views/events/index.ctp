@@ -1,21 +1,23 @@
-<?php echo $this->Html->script('events/category.js', array('inline' => false)) ?>
+<?= $this->Html->script('events/category.js', array('inline' => false)) ?>
 <div id="events">
-	<form class="event_categories" action="<?php echo $this->here; ?>" method="post">
-		<ol>
-			<li class="top">
-			<label class="event_categories_label" for="event_categories_dropdown"><?php __('Select an event type') ?></label>
-				<select id="event_categories_dropdown" name="event_categories_dropdown">
-				<?php
-					$selected = $selectedCategory;
-				?>
-				<?php foreach($categories as $id => $category): ?>
-					<option value="<?php echo $id ?>"<?php echo ($id === $selected) ? ' selected="selected"' : '' ?>><?php echo $category ?></option>
-				<?php endforeach; ?>
-				</select>
-					<input type="submit" id="category_submit" value="<?php __('Go') ?>" />
-			</li>
-		</ol>
-	</form>
+	<div class="filters">
+		<form class="event_categories" action="<?= $this->here; ?>" method="post">
+			<label class="event_categories_label" for="event_categories_dropdown"><?php __('Filter by event category') ?>:</label>
+			<select id="event_categories_dropdown" name="event_categories_dropdown">
+			<?php foreach($categories as $id => $category): ?>
+				<option value="<?= $id ?>"<?= ($id == $selectedCategory) ? ' selected="selected"' : '' ?>><?= $category ?></option>
+			<?php endforeach; ?>
+			</select>
+			<label class="event_locations_label" for="event_locations_dropdown"><?php __('Filter by event location') ?>:</label>
+			<select id="event_locations_dropdown" name="event_locations_dropdown">
+			<?php foreach($locations as $id => $location): ?>
+				<option value="<?= $id ?>"<?= ($id == $selectedLocation) ? ' selected="selected"' : '' ?>><?= $location ?></option>
+			<?php endforeach; ?>
+			</select>
+			<input type="submit" class="button gray" id="reset_filters" value="<?php __('Reset Filters') ?>" />
+			<input type="submit" class="button green" id="filter_submit" value="<?php __('Go') ?>" />
+		</form>
+	</div>
 	<div class="calnav events">
 		<a href="/events/index?date=<?= $prevMonday ?>" class="button gray">
 			<i class="icon-chevron-left"></i>
@@ -35,14 +37,14 @@
 		</a>
 	</div>
 
-	<?php $event_start_date = strtotime($events[0]['Event']['scheduled']) ?>
-	<div class="event-start-date">
-		<h2>
-			<i class="icon-calendar"></i>
-			<?= date('l, F dS Y', $event_start_date) ?>
-		</h2>
-	</div>
 	<?php if (!empty($events)): ?>
+		<?php $event_start_date = strtotime($events[0]['Event']['scheduled']) ?>
+		<div class="event-start-date">
+			<h2>
+				<i class="icon-calendar"></i>
+				<?= date('l, F dS Y', $event_start_date) ?>
+			</h2>
+		</div>
 		<?php foreach ($events as $event): ?>
 			<?php $day = date('l, F dS', strtotime($event['Event']['scheduled'])) ?>
 			<?php $month = date('M', strtotime($event['Event']['scheduled'])) ?>
@@ -51,7 +53,7 @@
 			<?php $event_start_date = strtotime($events[0]['Event']['scheduled']) ?>
 
 			<?php if (strtotime(date('m/d/Y', strtotime($event['Event']['scheduled']))) > $event_start_date): ?>
-			<?php $event_start_date = strtotime($event['Event']['scheduled']) ?>
+			<?php $event_start_date = strtotime(date('m/d/Y', strtotime($event['Event']['scheduled']))) ?>
 			<div class="event-start-date">
 				<h2>
 					<i class="icon-calendar"></i>
@@ -78,7 +80,7 @@
 						</p>
 					</div>
 
-					<h2><?php echo $event['Event']['name'] ?></h2>
+					<h2><?= $event['Event']['name'] ?></h2>
 
 					<ul>
 						<li>
@@ -101,10 +103,10 @@
 									$address = join($address_parts, ', ');
 								?>
 								<strong><?= $event['Location']['name'] ?></strong> - <?= $address ?>
-								(<a href="http://maps.google.com/maps?q=<?php echo urlencode($address) ?>"><?php __('Map It') ?></a>)
+								(<a href="http://maps.google.com/maps?q=<?= urlencode($address) ?>"><?php __('Map It') ?></a>)
 							<?php else: ?>
 								<?= $event['Event']['address'] ?>
-								(<a href="http://maps.google.com/maps?q=<?php echo urlencode($event['Event']['address']) ?>"><?php __('Map It') ?></a>)
+								(<a href="http://maps.google.com/maps?q=<?= urlencode($event['Event']['address']) ?>"><?php __('Map It') ?></a>)
 							<?php endif ?>
 						</li>
 					</ul>
@@ -126,16 +128,16 @@
 					<p class="sponsor">
 						This Event is Sponsored By
 						<?php if (!empty($event['Event']['sponsor_url'])): ?>
-						<a href="<?php echo $event['Event']['sponsor_url'] ?>"><?php echo $event['Event']['sponsor'] ?></a>
+						<a href="<?= $event['Event']['sponsor_url'] ?>"><?= $event['Event']['sponsor'] ?></a>
 						<?php else: ?>
-						<?php echo $event['Event']['sponsor'] ?>
+						<?= $event['Event']['sponsor'] ?>
 						<?php endif ?>
 					</p>
 					<?php endif; ?>
 
 					<p class="event_links">
 						<?php if (!empty($event['Event']['event_url'])): ?>
-						<a href="<?php echo $event['Event']['event_url'] ?>"><?php __('Visit Website') ?></a>
+						<a href="<?= $event['Event']['event_url'] ?>"><?php __('Visit Website') ?></a>
 						<?php endif; ?>
 						<?php if (!empty($event['Event']['address'])): ?>
 						<?php endif; ?>

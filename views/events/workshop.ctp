@@ -1,5 +1,17 @@
 <?php echo $this->Html->script('events/category.js', array('inline' => false)) ?>
 <div id="events">
+	<div class="filters">
+		<form class="event_categories" action="<?= $this->here; ?>" method="post">
+			<label class="event_locations_label" for="event_locations_dropdown"><?php __('Filter by event location') ?>:</label>
+			<select id="event_locations_dropdown" name="event_locations_dropdown">
+			<?php foreach($locations as $id => $location): ?>
+				<option value="<?= $id ?>"<?= ($id == $selectedLocation) ? ' selected="selected"' : '' ?>><?= $location ?></option>
+			<?php endforeach; ?>
+			</select>
+			<input type="submit" class="button gray" id="reset_filters" value="<?php __('Reset Filters') ?>" />
+			<input type="submit" class="button green" id="filter_submit" value="<?php __('Go') ?>" />
+		</form>
+	</div>
 	<div class="calnav workshop">
 		<a href="/events/workshop?date=<?= $prevMonday ?>" class="button gray">
 			<i class="icon-chevron-left"></i>
@@ -19,14 +31,14 @@
 		</a>
 	</div>
 
-	<?php $event_start_date = strtotime($events[0]['Event']['scheduled']) ?>
-	<div class="event-start-date">
-		<h2>
-			<i class="icon-calendar"></i>
-			<?= date('l, F dS Y', $event_start_date) ?>
-		</h2>
-	</div>
 	<?php if (!empty($events)): ?>
+		<?php $event_start_date = strtotime($events[0]['Event']['scheduled']) ?>
+		<div class="event-start-date">
+			<h2>
+				<i class="icon-calendar"></i>
+				<?= date('l, F dS Y', $event_start_date) ?>
+			</h2>
+		</div>
 		<?php foreach ($events as $event): ?>
 			<?php $day = date('l, F dS', strtotime($event['Event']['scheduled'])) ?>
 			<?php $month = date('M', strtotime($event['Event']['scheduled'])) ?>
@@ -35,7 +47,7 @@
 			<?php $event_start_date = strtotime(date('m/d/Y', strtotime($events[0]['Event']['scheduled']))) ?>
 
 			<?php if (strtotime(date('m/d/Y', strtotime($event['Event']['scheduled']))) > $event_start_date): ?>
-			<?php $event_start_date = strtotime($event['Event']['scheduled']) ?>
+			<?php $event_start_date = strtotime(date('m/d/Y', strtotime($event['Event']['scheduled']))) ?>
 			<div class="event-start-date">
 				<h2>
 					<i class="icon-calendar"></i>
