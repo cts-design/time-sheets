@@ -35,7 +35,7 @@
 			<?php $event_start_date = strtotime(date('m/d/Y', strtotime($events[0]['Event']['scheduled']))) ?>
 
 			<?php if (strtotime(date('m/d/Y', strtotime($event['Event']['scheduled']))) > $event_start_date): ?>
-			<?php $event_start_date = strtotime($event['Event']['scheduled']) ?>
+			<?php $event_start_date = strtotime(date('m/d/Y', strtotime($event['Event']['scheduled']))) ?>
 			<div class="event-start-date">
 				<h2>
 					<i class="icon-calendar"></i>

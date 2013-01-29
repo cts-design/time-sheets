@@ -26,6 +26,7 @@ class EventsController extends AppController {
 
 		$title_for_layout = 'Upcoming Events';
 		$selectedCategory = 0;
+		$selectedLocation = 0;
 
 		$categories = $this->Event->EventCategory->find('list', array(
 			'fields' => array(
@@ -35,6 +36,15 @@ class EventsController extends AppController {
 			'recursive' => -1
 		));
 		array_unshift($categories, 'All Categories');
+
+		$locations = $this->Event->Location->find('list', array(
+			'fields' => array(
+				'Location.id',
+				'Location.name'
+			),
+			'recursive' => -1
+		));
+		array_unshift($locations, 'All Locations');
 
 		if (isset($this->params['form']['event_categories_dropdown']) && !empty($this->params['form']['event_categories_dropdown'])) {
 			if ($this->params['form']['event_categories_dropdown'] == 0) {
@@ -46,6 +56,18 @@ class EventsController extends AppController {
 			}
 		} else {
 			$categoryConditions = null;
+		}
+
+		if (isset($this->params['form']['event_locations_dropdown']) && !empty($this->params['form']['event_locations_dropdown'])) {
+			if ($this->params['form']['event_locations_dropdown'] == 0) {
+				$selectedLocation = 0;
+				$locationConditions = null;
+			} else {
+				$locationConditions = array('Event.location_id' => $this->params['form']['event_locations_dropdown']);
+				$selectedLocation = $this->params['form']['event_locations_dropdown'];
+			}
+		} else {
+			$locationConditions = null;
 		}
 
 		// setup date stuffs
@@ -69,6 +91,10 @@ class EventsController extends AppController {
 
 		if ($categoryConditions) {
 			$conditions = array_merge($conditions, $categoryConditions);
+		}
+
+		if ($locationConditions) {
+			$conditions = array_merge($conditions, $locationConditions);
 		}
 
 		$events = $this->paginate(
@@ -95,7 +121,9 @@ class EventsController extends AppController {
 			compact(
 				'title_for_layout',
 				'selectedCategory',
+				'selectedLocation',
 				'categories',
+				'locations',
 				'bow',
 				'eow',
 				'nextMonday',
