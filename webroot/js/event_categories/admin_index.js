@@ -61,6 +61,44 @@ Ext.create('Ext.data.Store', {
   }
 });
 
+Ext.create('Ext.menu.Menu', {
+  id: 'contextMenu',
+  title: 'Event Actions',
+  bodyPadding: 5,
+  items:[{
+    xtype: 'button',
+    text: 'Edit Category',
+    icon: '/img/icons/date_edit.png',
+    handler: function() {
+      var formPanel = Ext.getCmp('eventCategoriesForm'),
+      grid = formPanel.down('grid'),
+      form = formPanel.getForm(),
+      record = grid.getSelectionModel().getLastSelected();
+      form.loadRecord(record);
+      form.clearInvalid();
+   }
+  },{
+    xtype: 'button',
+    text: 'Delete Category',
+    icon: '/img/icons/date_delete.png',
+    handler: function() {
+      var formPanel = Ext.getCmp('eventCategoriesForm'),
+      record = formPanel.down('grid').getSelectionModel().getLastSelected();
+      record.destroy({
+        success: function(rec, op) {
+          responseTxt = Ext.JSON.decode(op.response.responseText);
+          processResponse(responseTxt.message, 'x-status-valid');
+        },
+        failure: function(rec, op) {
+          msg = op.request.proxy.reader.jsonData.message;
+          processResponse(msg, 'x-status-error');
+        }
+      });
+    }
+  }]
+});
+
+
 Ext.create('Ext.form.Panel', {
   id: 'eventCategoriesForm',
   frame: true,
@@ -102,6 +140,10 @@ Ext.create('Ext.form.Panel', {
       flex: 1
     }],
     listeners: {
+      itemcontextmenu: function(view, rec, node, index, e){
+        e.stopEvent();
+        Ext.getCmp('contextMenu').showAt(e.getXY());
+      },
       itemdblclick: function(grid, record, item, index, e, eOpts) {
         var formPanel = this.up('form');
         var form = formPanel.getForm();
