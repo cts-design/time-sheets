@@ -15,6 +15,7 @@
             renderTo: 'PermissionTabs',
             items:[
                 {contentEl: 'Alerts', title: 'Alerts'},
+                {contentEl: 'Events', title: 'Events'},
                 {contentEl: 'Users', title: 'Users'},
                 {contentEl: 'Website', title: 'Website'},
                 {contentEl: 'Storage', title: 'Storage'},
@@ -65,6 +66,28 @@
                 'checked' => (isset($controllers['Alerts']['admin_add_customer_login_alert'])) ? $controllers['Alerts']['admin_add_customer_login_alert'] : '' ));?>
             </fieldset>
             <?php echo $this->PluginPermissions->buildFieldset('alerts') ?>
+            <br class="clear" />
+            <?php echo $this->Form->end(__('Submit', true))?>
+    </div>
+    <div id="Events" class="x-hide-display">
+            <?php echo $this->Form->create('permission', array('action' => 'set_permissions')) ?>
+            <?php echo $this->Form->hidden('id', array('value' => $id));?>
+            <?php echo $this->Form->hidden('model', array('value' => $model));?>
+            <fieldset class="left right-mar-10">
+            <legend><?php __('Event Management') ?></legend>
+               <?php echo $this->Form->input('Events.admin_index', array(
+                'type' => 'checkbox',
+                'label' => 'Index',
+                'checked' => (isset($controllers['Events']['admin_index'])) ? $controllers['Events']['admin_index'] : '' ));?>
+            </fieldset>
+            <fieldset class="left right-mar-10">
+            <legend><?php __('Event Archive') ?></legend>
+               <?php echo $this->Form->input('Events.admin_archive', array(
+                'type' => 'checkbox',
+                'label' => 'Index',
+                'checked' => (isset($controllers['Events']['admin_archive'])) ? $controllers['Events']['admin_archive'] : '' ));?>
+            </fieldset>
+            <?php echo $this->PluginPermissions->buildFieldset('events') ?>
             <br class="clear" />
             <?php echo $this->Form->end(__('Submit', true))?>
     </div>
