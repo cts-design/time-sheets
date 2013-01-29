@@ -35,14 +35,15 @@
 		</a>
 	</div>
 
-	<?php $event_start_date = strtotime($events[0]['Event']['scheduled']) ?>
-	<div class="event-start-date">
-		<h2>
-			<i class="icon-calendar"></i>
-			<?= date('l, F dS Y', $event_start_date) ?>
-		</h2>
-	</div>
 	<?php if (!empty($events)): ?>
+		<?php $event_start_date = strtotime($events[0]['Event']['scheduled']) ?>
+		<div class="event-start-date">
+			<h2>
+				<i class="icon-calendar"></i>
+				<?= date('l, F dS Y', $event_start_date) ?>
+			</h2>
+		</div>
+
 		<?php foreach ($events as $event): ?>
 			<?php $day = date('l, F dS', strtotime($event['Event']['scheduled'])) ?>
 			<?php $month = date('M', strtotime($event['Event']['scheduled'])) ?>

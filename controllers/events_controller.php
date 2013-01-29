@@ -106,7 +106,7 @@ class EventsController extends AppController {
 		);
 	}
 
-	public function workshop() {
+	public function workshop($date = null) {
 		$this->Event->Behaviors->attach('Containable');
 		$this->Event->EventCategory->recursive = -1;
 
