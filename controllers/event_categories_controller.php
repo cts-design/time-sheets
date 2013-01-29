@@ -13,7 +13,6 @@ class EventCategoriesController extends AppController {
 		if($this->RequestHandler->isAjax()) {
 			$this->EventCategory->recursive = 0;
 			$categories = $this->EventCategory->find('threaded', array('order' => array('name' => 'asc')));
-			$this->log($results, 'debug');
 			$i = 0;
 			foreach($categories as $category) {
 				$data['categories'][$i]['id'] = $category['EventCategory']['id'];
@@ -77,9 +76,14 @@ class EventCategoriesController extends AppController {
 			if(!empty($this->data)) {
 				$this->data['EventCategory'] = json_decode($this->data['EventCategory'], true);
 				$category = $this->EventCategory->findById($this->data['EventCategory']['id']);
+				$count = $this->EventCategory->find('count', array('conditions' => array('EventCategory.parent_id' => $this->data['EventCategory']['id'])));
 				if(!empty($category['Events'])) {
 					$data['success'] = false;
 					$data['message'] = 'Cannot edit category that already has events.';
+				}
+				elseif($count) {
+					$data['success'] = false;
+					$data['message'] = 'Cannot edit category that has children.';
 				}
 				else {
 					if($this->EventCategory->save($this->data)) {
@@ -106,6 +110,47 @@ class EventCategoriesController extends AppController {
 			$this->render(null, null, '/elements/ajaxreturn');
 		}
 	}
+
+	public function admin_delete() {
+        if($this->RequestHandler->isAjax()) {
+			// TODO: add logic to prevent deleting a cat that has children or events
+            if(isset($this->data['EventCategory'])) {
+				$this->data['EventCategory'] = json_decode($this->data['EventCategory'], true);
+				$category = $this->EventCategory->find('first', array('conditions' => array('EventCategory.id' => $this->data['EventCategory']['id'])));
+				$count = $this->EventCategory->find('count', array('conditions' => array('EventCategory.parent_id' => $this->data['EventCategory']['id'])));
+				if(!empty($category['Events'])) {
+					$data['success'] = false;
+					$data['message'] = 'Cannot delete category that already has events.';
+				}
+				elseif($count) {
+					$data['success'] = false;
+					$data['message'] = 'Cannot delete category that has children.';
+				}
+				else {
+					if($this->EventCategory->delete($this->data['EventCategory']['id'])){
+						$data['success'] = true;
+						$data['message'] = 'Category deleted successfully';
+						$this->Transaction->createUserTransaction(
+							'Events',
+							$this->Auth->user('id'),
+							$this->Auth->user('location_id'),
+							'Deleted event category: ' . $this->data['EventCategory']['name']
+						);
+					}
+					else {
+						$data['success'] = false;
+						$data['message'] = 'Unable to delete category at this time.';
+					}
+				}
+            }
+            else {
+                $data['success'] = false;
+                $data['message'] = 'Invalid category id.';
+            }
+            $this->set(compact('data'));
+            $this->render(null, null, '/elements/ajaxreturn');
+        }
+    }
 
 	public function admin_get_list() {
 	    if ($this->RequestHandler->isAjax()) {
