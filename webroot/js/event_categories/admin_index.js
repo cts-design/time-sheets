@@ -1,13 +1,29 @@
-var dt = new Date();
-	
-
 Ext.define('EventCategory', {
   extend: 'Ext.data.Model',
+  proxy: {
+    type: 'ajax',
+    api: {
+      create: '/admin/event_categories/add/',
+      read: '/admin/event_categories',
+      update: '/admin/event_categories/edit/',
+      destroy: '/admin/event_categories/delete/'
+    },
+    reader: {
+      type: 'json',
+      root: 'categories'
+    },
+    writer: {
+      root: 'data[EventCategory]',
+      encode: true,
+      writeAllFields: false
+    }
+  },
   fields: [
     {name: 'id'},
     {name: 'name'},
     {name: 'parent_name'},
     {name: 'parent_id'},
+    {name: 'make_child'},
     {name: 'created', type: 'date', dateFormat: 'n/j h:ia'},
     {name: 'modified', type: 'date', dateFormat: 'n/j h:ia'}
   ]
@@ -34,74 +50,10 @@ Ext.create('Ext.data.Store', {
 Ext.create('Ext.data.Store', {
   model: 'EventCategory',
   storeId: 'eventCategoriesStore',
-  proxy: {
-    type: 'ajax',
-    api: {
-      create: '/admin/event_categories/add/',
-      read: '/admin/event_categories',
-      update: '/admin/event_categories/edit/',
-      destroy: '/admin/event_categories/delete/'
-    },
-    reader: {
-      type: 'json',
-      root: 'categories'
-    },
-    writer: {
-      root: 'data[EventCategory]',
-      encode: true,
-      writeAllFields: false,
-    }
-  },
+
   remoteSort: false,
   autoLoad: true,
   listeners: {
-    write: function(store, operation, eOpts) {
-      var sb = Ext.getCmp('status-bar');
-      var responseTxt = Ext.JSON.decode(operation.response.responseText);
-      if(!responseTxt.success || !operation.success ) {
-        var msg = null;
-        switch(operation.action) {
-          case 'destroy' :
-            msg = 'Unable to delete event.';
-            break;
-          case 'create' :
-            msg = 'Unable to create event.';
-            break;
-          case 'update' :
-            msg = 'Unable to update event.';
-            break;
-        }
-        sb.setStatus({
-          text: msg,
-          iconCls: 'x-status-error',
-          clear: {
-            anim: false
-          }
-        });
-      }
-      if(responseTxt.success) {
-        sb.setStatus({
-          text: responseTxt.message,
-          iconCls: 'x-status-valid',
-          clear: {
-            anim: false
-          }
-        });
-        var formPanel = Ext.getCmp('eventsForm');
-        if(operation.action === 'create' || operation.action === 'update') {
-          formPanel.getForm().reset();
-          Ext.getCmp('cat2Name').disable();
-          Ext.getCmp('cat3Name').disable();
-          store.load();
-        }
-        if(operation.action === 'destroy') {
-          formPanel.getForm().reset();
-          Ext.getCmp('cat2Name').disable();
-          Ext.getCmp('cat3Name').disable();
-          store.load();
-        }
-      }
-    },
     beforesync: function(){
       var sb = Ext.getCmp('status-bar');
       sb.showBusy({text: 'Saving.....'});
@@ -131,12 +83,6 @@ Ext.create('Ext.form.Panel', {
       style: {
         overflow: 'auto',
         overflowX: 'hidden'
-      },
-      listeners: {
-        itemcontextmenu: function(view, rec, node, index, e){
-          e.stopEvent();
-          Ext.getCmp('contextMenu').showAt(e.getXY());
-        }
       }
     },
     bbar: Ext.create('Ext.ux.StatusBar', {
@@ -155,6 +101,17 @@ Ext.create('Ext.form.Panel', {
       dataIndex: 'name',
       flex: 1
     }],
+    listeners: {
+      itemdblclick: function(grid, record, item, index, e, eOpts) {
+        var formPanel = this.up('form');
+        var form = formPanel.getForm();
+        if(record.data.parent_id) {
+          record.data.name = record.data.name.substr(3);
+          record.data.make_child = true;
+        }
+        form.loadRecord(record);
+      }
+    },
     tbar: [{xtype: 'tbfill'},{
       xtype: 'button',
       text: 'New Event Category',
@@ -198,6 +155,7 @@ Ext.create('Ext.form.Panel', {
     fieldLabel: 'Make Child Category',
     xtype: 'checkbox',
     submitValue: false,
+    name: 'make_child',
     listeners: {
       change: function(field, newValue, oldValue, eOpts) {
         if(newValue) {
@@ -218,7 +176,7 @@ Ext.create('Ext.form.Panel', {
     valueField: 'id',
     displayField: 'name',
     store: Ext.data.StoreManager.lookup('eventCategoryListStore')
-  }]
+   }]
   }],
   buttons: [{
     text: 'Save',
@@ -227,23 +185,46 @@ Ext.create('Ext.form.Panel', {
       var form = this.up('form').getForm();
       var vals = form.getValues();
       if(form.isValid()) {
-        var event;
-        var store = Ext.data.StoreManager.lookup('eventsStore');
+        var category;
+        var store = Ext.data.StoreManager.lookup('eventCategoriesStore');
         if(vals.id !== '') {
-          event = store.getById(vals.id);
-          event.beginEdit();
-          event.set(vals);
-          event.endEdit();
+          category = store.getById(vals.id);
+          category.beginEdit();
+          category.set(vals);
+          category.endEdit();
         }
         else {
-          event = Ext.create('Event', form.getValues());
-          store.add(event);
+          category = Ext.create('EventCategory', form.getValues());
         }
-        store.sync();
+        category.save({
+          success: function(rec, op) {
+            responseTxt = Ext.JSON.decode(op.response.responseText);
+            processResponse(responseTxt.message, 'x-status-valid');
+          },
+          failure: function(rec, op) {
+            msg = op.request.proxy.reader.jsonData.message;
+            processResponse(msg, 'x-status-error');
+          },
+          callback: function() {
+            store.load();
+          }
+        });
       }
     }
   }]
 });
+
+var processResponse = function(msg, icon) {
+  var sb = Ext.getCmp('status-bar');
+  sb.setStatus({
+    text: msg,
+    iconCls: icon,
+    clear: {
+      anim: false
+    }
+  });
+  Ext.getCmp('eventCategoriesForm').getForm().reset();
+};
 
 Ext.onReady(function(){
   Ext.getCmp('eventCategoriesForm').render('eventCategories');

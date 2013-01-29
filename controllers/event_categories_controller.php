@@ -37,13 +37,78 @@ class EventCategoriesController extends AppController {
 		}		
 	}
 
+	public function admin_add()	{
+		if($this->RequestHandler->isAjax()) {
+			if(!empty($this->data)) {
+				$this->data['EventCategory'] = json_decode($this->data['EventCategory'], true);
+				unset($this->data['EventCategory']['created']);
+				unset($this->data['EventCategory']['modified']);
+				unset($this->data['EventCategory']['parent_name']);
+				$this->EventCategory->create();
+				if($this->EventCategory->save($this->data)) {
+                    $this->Transaction->createUserTransaction(
+                        'Events',
+                        $this->Auth->user('id'),
+                        $this->Auth->user('location_id'),
+                        'Added event category: ' . $this->data['EventCategory']['name']
+                    );
+					$data['success'] = true;
+					$data['message'] = 'The category was saved successfully.';
+				}
+				else {
+					$data['success'] = false;
+					$data['message'] = 'Unable to save category, please try again.';
+				}
+			}
+			else {
+				$data['success'] = false;
+				$data['message'] = 'Unable to save category, please try again.';
+			}
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
+
+	public function admin_edit()	{
+		if($this->RequestHandler->isAjax()) {
+			if(!empty($this->data)) {
+				$this->data['EventCategory'] = json_decode($this->data['EventCategory'], true);
+				$category = $this->EventCategory->findById($this->data['EventCategory']['id']);
+				if(!empty($category['Events'])) {
+					$data['success'] = false;
+					$data['message'] = 'Cannot edit category that already has events.';
+				}
+				else {
+					if($this->EventCategory->save($this->data)) {
+						$this->Transaction->createUserTransaction(
+							'Events',
+							$this->Auth->user('id'),
+							$this->Auth->user('location_id'),
+							'Edited event category: ' . $this->data['EventCategory']['name']
+						);
+						$data['success'] = true; 
+						$data['message'] = 'The category was updated successfully.';
+					}
+					else {
+						$data['success'] = false;
+						$data['message'] = 'Unable to update category, please try again.';
+					}
+				}
+			}
+			else {
+				$data['success'] = false;
+				$data['message'] = 'Unable to update category, please try again.';
+			}
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
+
 	public function admin_get_list() {
 	    if ($this->RequestHandler->isAjax()) {
 	    	$this->EventCategory->recursive = -1;			
 			$categories = $this->EventCategory->find('threaded',
 				array('fields' => array('EventCategory.id', 'EventCategory.name', 'EventCategory.parent_id')));
-			$parent = false; // TODO: pass this as a param
-			$this->log($this->params, 'debug');
 			if($this->params['url']['parent']) {
 				$categories = Set::Extract('/EventCategory[parent_id]', $categories);
 			}
