@@ -91,7 +91,7 @@ class EventCategoriesController extends AppController {
 							'Events',
 							$this->Auth->user('id'),
 							$this->Auth->user('location_id'),
-							'Edited event category: ' . $this->data['EventCategory']['name']
+							'Edited event category: ' . $category['EventCategory']['name']
 						);
 						$data['success'] = true; 
 						$data['message'] = 'The category was updated successfully.';
