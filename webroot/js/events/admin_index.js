@@ -193,7 +193,7 @@ Ext.create('Ext.data.Store', {
 
 Ext.define('EventCategory', {
   extend: 'Ext.data.Model',
-  fields: ['id', 'name']
+  fields: ['id', 'parent_id', 'name']
 });
 	
 Ext.create('Ext.data.Store', {
@@ -440,8 +440,18 @@ Ext.create('Ext.form.Panel', {
     allowBlank: false,
     listeners: {
       change: function(combo, newValue, oldValue, eOpts) {
-        var re = /workshop/i;
-        if(re.test(combo.rawValue)) {
+        var re = /workshop/i,
+        value;
+        if(this.valueModels[0] !== undefined && this.valueModels[0].data.parent_id) {
+          var parent = this.store.getById(this.valueModels[0].data.parent_id);
+          if(parent) {
+            value = parent.raw.name;
+          }
+        }
+        else {
+         value = this.rawValue;
+        }
+        if(re.test(value)) {
           Ext.getCmp('cat1Name').enable();
         }
         else { 
