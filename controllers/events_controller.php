@@ -18,6 +18,9 @@ class EventsController extends AppController {
 	function beforeFilter() {
 		parent::beforeFilter();
 		$this->Auth->allow('view', 'index', 'workshop');
+		if($this->Auth->user() && $this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Events/admin_index', '*')) {
+			$this->Auth->allow('admin_add', 'admin_edit', 'admin_delete', 'admin_get_event_category_list');
+		}
 	}
 
 	public function index($month = null, $year = null) {

@@ -12,6 +12,18 @@ class EventRegistrationsController extends AppController {
 
 	public $helpers = array('Excel');
 
+	function beforeFilter() {
+		parent::beforeFilter();
+		if($this->Auth->user()) {
+			if($this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Events/admin_index', '*')) {
+				$this->Auth->allow('admin_index', 'admin_edit', 'admin_delete', 'admin_attendance_report');
+			}
+			if($this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Events/admin_archive', '*')) {
+				$this->Auth->allow('admin_attendance_report');
+			}
+		}
+	}
+
 	public function admin_index() {
 		$eventRegistrations = $this->EventRegistration->findAllByEventId($this->params['pass'][0]);
 		if($eventRegistrations) {
