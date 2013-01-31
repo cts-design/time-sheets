@@ -89,7 +89,7 @@ class EventsController extends AppController {
 			$endDate = date('Y-m-d H:i:s', strtotime("$month/$lastDayOfMonth/$year 23:59:59"));
 		} else {
 			$date = date('Y-m-d H:i:s', strtotime("$month/1/$year 00:00:01"));
-			$lastDayOfMonthyOfMonth = date('t', strtotime($date));
+			$lastDayOfMonth = date('t', strtotime($date));
 			$endDate = date('Y-m-d H:i:selectedLocation', strtotime("$month/$lastDayOfMonth/$year 23:59:59"));
 		}
 
