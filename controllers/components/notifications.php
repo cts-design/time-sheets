@@ -80,6 +80,28 @@ class NotificationsComponent extends Object {
 		return false;
 	}
 
+	function sendEventReminderEmail($event=null, $user=null) {
+		if($event) {
+			if($user) {
+				$data['settings']['to'] = $user['User']['firstname'] . ' ' .
+				$user['User']['lastname'] .' <'. $user['User']['email']. '>';
+			}
+			else {
+				$data['settings']['to'] = $this->Auth->user('firstname') . ' ' .
+				$this->Auth->user('lastname') .' <'. $this->Auth->user('email'). '>';
+			}
+
+			$data['settings']['from'] = Configure::read('System.email');
+			$data['settings']['sendAs'] = 'both';
+			$data['settings']['template'] = 'event_reminder';
+			$data['settings']['subject'] = 'Just a reminder for the ' . $event['Event']['name'] . ' event';
+			$data['vars']['event'] = $event;
+			$data['vars']['user'] = $user;
+			return ClassRegistry::init('Queue.QueuedTask')->createJob('email', $data);
+		}
+		return false;
+	}
+
 	function sendAbsorptionEmail($mySubject,$myMessage) {
 		$this->Email = &new EmailComponent();
 		$this->Email->from = Configure::read('Admin.alert.email');
