@@ -19,13 +19,9 @@ class BarCodeDefinitionsController extends AppController {
 	public function admin_index() {
 		if($this->RequestHandler->isAjax()) {
 			$this->BarCodeDefinition->recursive = 0;
-			$definitions = $this->Paginate('BarCodeDefinition');
-			if(!empty($definitions)) {
-						$this->loadModel('DocumentFilingCategory');
-						$categories = $this->DocumentFilingCategory->find('list', array(
-						'conditions' => array(
-							'DocumentFilingCategory.disabled' => 0),
-						'fields' => array('DocumentFilingCategory.id', 'DocumentFilingCategory.name')));
+			$definitions = $this->BarCodeDefinition->find('all');
+			$data['definitions'] = array();
+			if($definitions) {
 				$i = 0;		
 				foreach($definitions as $definition) {
 					$data['definitions'][$i]['id'] = intval($definition['BarCodeDefinition']['id']);
@@ -38,10 +34,6 @@ class BarCodeDefinitionsController extends AppController {
 					$i++;
 				}		
 			}
-			else {
-				$data['definitions'] = array();
-			}
-			$data['total'] = $this->BarCodeDefinition->find('count');
 			$data['success'] = true;
 			$this->set(compact('data'));			
 			$this->render(null, null, '/elements/ajaxreturn');				
