@@ -138,7 +138,7 @@ Ext.create('Ext.data.Store', {
   model: 'EventCategory',
   proxy: {
     type: 'ajax',
-    url: '/admin/event_categories/get_event_category_list',
+    url: '/admin/event_categories/get_list',
     reader: {
       type: 'json',
       root: 'categories'
