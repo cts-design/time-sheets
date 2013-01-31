@@ -2,6 +2,12 @@
 <div id="events">
 	<div class="filters">
 		<form class="event_categories" action="<?= $this->here; ?>" method="post">
+			<label class="event_categories_label" for="event_categories_dropdown"><?php __('Filter by event category') ?>:</label>
+			<select id="event_categories_dropdown" name="event_categories_dropdown">
+			<?php foreach($categories as $id => $category): ?>
+				<option value="<?= $id ?>"<?= ($id == $selectedCategory) ? ' selected="selected"' : '' ?>><?= $category ?></option>
+			<?php endforeach; ?>
+			</select>
 			<label class="event_locations_label" for="event_locations_dropdown"><?php __('Filter by event location') ?>:</label>
 			<select id="event_locations_dropdown" name="event_locations_dropdown">
 			<?php foreach($locations as $id => $location): ?>
@@ -13,7 +19,7 @@
 		</form>
 	</div>
 	<div class="calnav workshop">
-		<a href="/events/workshop?date=<?= $prevMonday ?>" class="button gray">
+		<a href="/events/workshop?date=<?= $prevMonday ?>" id="previous-week" class="button gray">
 			<i class="icon-chevron-left"></i>
 			Previous Week
 		</a>
@@ -25,7 +31,7 @@
 			<?= date('m/d/Y', strtotime($eow)) ?>
 		</h2>
 
-		<a href="/events/workshop?date=<?= $nextMonday ?>" class="button gray">
+		<a href="/events/workshop?date=<?= $nextMonday ?>" id="next-week" class="button gray">
 			Next Week
 			<i class="icon-chevron-right"></i>
 		</a>

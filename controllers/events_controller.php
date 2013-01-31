@@ -9,11 +9,11 @@
 class EventsController extends AppController {
 	public $name = 'Events';
 
-	public $components = array('Notifications');
+	public $paginate = array('order' => array('Event.scheduled' => 'asc'), 'limit' => 5);
 
 	public $helpers = array('Excel');
 
-	public $paginate = array('order' => array('Event.scheduled' => 'asc'), 'limit' => 5);
+	public $components = array('Notifications');
 
 	function beforeFilter() {
 		parent::beforeFilter();
@@ -23,7 +23,7 @@ class EventsController extends AppController {
 		}
 	}
 
-	public function index() {
+	public function index($month = null, $year = null) {
 		$this->Event->Behaviors->attach('Containable');
 		$this->Event->EventCategory->recursive = -1;
 
@@ -38,7 +38,8 @@ class EventsController extends AppController {
 			),
 			'recursive' => -1
 		));
-		array_unshift($categories, 'All Categories');
+		$categories[0] = 'All Categories';
+		asort($categories);
 
 		$locations = $this->Event->Location->find('list', array(
 			'fields' => array(
@@ -47,7 +48,8 @@ class EventsController extends AppController {
 			),
 			'recursive' => -1
 		));
-		array_unshift($locations, 'All Locations');
+		$locations[0] = 'All Locations';
+		asort($locations);
 
 		if (isset($this->params['form']['event_categories_dropdown']) && !empty($this->params['form']['event_categories_dropdown'])) {
 			if ($this->params['form']['event_categories_dropdown'] == 0) {
@@ -56,6 +58,142 @@ class EventsController extends AppController {
 			} else {
 				$cat = $this->params['form']['event_categories_dropdown'];
 				$categoryConditions = array('Event.event_category_id' => $cat);
+				$selectedCategory = $cat;
+			}
+		} else {
+			$categoryConditions = null;
+		}
+
+		if (isset($this->params['form']['event_locations_dropdown']) && !empty($this->params['form']['event_locations_dropdown'])) {
+			if ($this->params['form']['event_locations_dropdown'] == 0) {
+				$selectedLocation = 0;
+				$locationConditions = null;
+			} else {
+				$loc = $this->params['form']['event_locations_dropdown'];
+				$locationConditions = array('Event.location_id' => $loc);
+				$selectedLocation = $loc;
+			}
+		} else {
+			$locationConditions = null;
+		}
+
+		if ($month && !$year) {
+			$year = date('Y');
+		}
+
+		if (!$month) {
+			$date = date('Y-m-d H:i:s');
+			$month = date('m', strtotime($date));
+			$year = date('Y', strtotime($date));
+			$lastDayOfMonth = date('t', strtotime($date));
+			$endDate = date('Y-m-d H:i:s', strtotime("$month/$lastDayOfMonth/$year 23:59:59"));
+		} else {
+			$date = date('Y-m-d H:i:s', strtotime("$month/1/$year 00:00:01"));
+			$lastDayOfMonth = date('t', strtotime($date));
+			$endDate = date('Y-m-d H:i:s', strtotime("$month/$lastDayOfMonth/$year 23:59:59"));
+		}
+
+		$conditions = array(
+			'Event.scheduled >' => date('Y-m-d H:i:s'),
+			'Event.scheduled BETWEEN ? AND ?' => array($date, $endDate),
+			'Event.event_registration_count < Event.seats_available'
+		);
+
+		if ($categoryConditions) {
+			$conditions = array_merge($conditions, $categoryConditions);
+		}
+
+		if ($locationConditions) {
+			$conditions = array_merge($conditions, $locationConditions);
+		}
+
+		$events = $this->paginate(
+			'Event',
+			$conditions
+		);
+
+		$curMonth = date('F Y', strtotime($date));
+		$prevMonth = date('m/Y', strtotime("-1 month", strtotime($date)));
+		$nextMonth = date('m/Y', strtotime("+1 day", strtotime($endDate)));
+
+		$userEventRegistrations = array();
+		if ($this->Auth->user()) {
+			$this->loadModel('User');
+			$this->User->recursive = -1;
+			$this->User->Behaviors->attach('Containable');
+			$this->User->contain('EventRegistration');
+			$user = $this->User->findById($this->Auth->user('id'));
+
+			if (isset($user['EventRegistration']) && !empty($user['EventRegistration'])) {
+				foreach ($user['EventRegistration'] as $key => $value) {
+					array_push($userEventRegistrations, $value['event_id']);
+				}
+			}
+		}
+
+		$this->set(
+			compact(
+				'title_for_layout',
+				'curMonth',
+				'prevMonth',
+				'nextMonth',
+				'selectedCategory',
+				'selectedLocation',
+				'categories',
+				'locations',
+				'events',
+				'userEventRegistrations'
+			)
+		);
+	}
+
+	public function workshop($date = null) {
+		$this->Event->Behaviors->attach('Containable');
+		$this->Event->EventCategory->recursive = -1;
+
+		$workshopCategory = $this->Event->EventCategory->findByName('Workshop', array('fields' => 'EventCategory.id'));
+
+		$title_for_layout = 'Upcoming Workshops';
+		$selectedLocation = 0;
+		$selectedCategory = 0;
+
+		$categories = $this->Event->EventCategory->find('list', array(
+			'conditions' => array(
+				'OR' => array(
+					'EventCategory.id' => $workshopCategory['EventCategory']['id'],
+					'EventCategory.parent_id' => $workshopCategory['EventCategory']['id']
+				)
+			),
+			'fields' => array(
+				'EventCategory.id',
+				'EventCategory.name'
+			),
+			'recursive' => -1
+		));
+		$categories[$workshopCategory['EventCategory']['id']] = 'All Workshops';
+
+		$locations = $this->Event->Location->find('list', array(
+			'fields' => array(
+				'Location.id',
+				'Location.name'
+			),
+			'recursive' => -1
+		));
+		$locations[0] = 'All Locations';
+		asort($locations);
+
+		if (isset($this->params['form']['event_categories_dropdown']) && !empty($this->params['form']['event_categories_dropdown'])) {
+			if ($this->params['form']['event_categories_dropdown'] == 0) {
+				$selectedCategory = 0;
+				$categoryConditions = null;
+			} else {
+				$cat = $this->params['form']['event_categories_dropdown'];
+				$categoryConditions = array(
+					'OR' => array(
+						'EventCategory.id' => $cat,
+						'EventCategory.parent_id' => $cat
+					)
+				);
 				$selectedCategory = $cat;
 			}
 		} else {
@@ -91,15 +229,19 @@ class EventsController extends AppController {
 		}
 
 		$conditions = array_merge($time_conditions, array(
-			'Event.event_registration_count < Event.seats_available'
+			'Event.event_registration_count < Event.seats_available',
+			'OR' => array(
+				'EventCategory.id' => $workshopCategory['EventCategory']['id'],
+				'EventCategory.parent_id' => $workshopCategory['EventCategory']['id']
+			)
 		));
-
-		if ($categoryConditions) {
-			$conditions = array_merge($conditions, $categoryConditions);
-		}
 
 		if ($locationConditions) {
 			$conditions = array_merge($conditions, $locationConditions);
+		}
+
+		if ($categoryConditions) {
+			$conditions = array_merge($conditions, $categoryConditions);
 		}
 
 		$events = $this->paginate(
@@ -126,97 +268,7 @@ class EventsController extends AppController {
 			compact(
 				'title_for_layout',
 				'selectedCategory',
-				'selectedLocation',
 				'categories',
-				'locations',
-				'bow',
-				'eow',
-				'nextMonday',
-				'prevMonday',
-				'events',
-				'userEventRegistrations'
-			)
-		);
-	}
-
-	public function workshop($date = null) {
-		$this->Event->Behaviors->attach('Containable');
-		$this->Event->EventCategory->recursive = -1;
-
-		$workshopCategory = $this->Event->EventCategory->findByName('Workshop', array('fields' => 'EventCategory.id'));
-
-		$title_for_layout = 'Upcoming Workshops';
-		$selectedLocation = 0;
-
-		$locations = $this->Event->Location->find('list', array(
-			'fields' => array(
-				'Location.id',
-				'Location.name'
-			),
-			'recursive' => -1
-		));
-		array_unshift($locations, 'All Locations');
-
-		if (isset($this->params['form']['event_locations_dropdown']) && !empty($this->params['form']['event_locations_dropdown'])) {
-			if ($this->params['form']['event_locations_dropdown'] == 0) {
-				$selectedLocation = 0;
-				$locationConditions = null;
-			} else {
-				$loc = $this->params['form']['event_locations_dropdown'];
-				$locationConditions = array('Event.location_id' => $loc);
-				$selectedLocation = $loc;
-			}
-		} else {
-			$locationConditions = null;
-		}
-
-		// setup date stuffs
-		$date = $this->parse_date();
-		$bow = $this->get_beginning_of_week($date);
-		$eow = $this->get_end_of_week($date);
-		$time_conditions = $this->get_schedule_time_conditions($date, $bow, $eow);
-
-		// setup for the next/previous buttons
-		$nextMonday = date('Y-m-d', strtotime('next monday', strtotime($eow)));
-		if (date('w', strtotime($date)) != 1) {
-			$thisMonday = date('Y-m-d', strtotime('last monday', strtotime($date)));
-			$prevMonday = date('Y-m-d', strtotime('last monday', strtotime($thisMonday)));
-		} else {
-			$prevMonday = date('Y-m-d', strtotime('last monday', strtotime($date)));
-		}
-
-		$conditions = array_merge($time_conditions, array(
-			'Event.event_registration_count < Event.seats_available',
-			'Event.event_category_id' => $workshopCategory['EventCategory']['id']
-		));
-
-		if ($locationConditions) {
-			$conditions = array_merge($conditions, $locationConditions);
-		}
-
-		$events = $this->paginate(
-			'Event',
-			$conditions
-		);
-
-		$userEventRegistrations = array();
-		if ($this->Auth->user()) {
-			$this->loadModel('User');
-			$this->User->recursive = -1;
-			$this->User->Behaviors->attach('Containable');
-			$this->User->contain('EventRegistration');
-			$user = $this->User->findById($this->Auth->user('id'));
-
-			if (isset($user['EventRegistration']) && !empty($user['EventRegistration'])) {
-				foreach ($user['EventRegistration'] as $key => $value) {
-					array_push($userEventRegistrations, $value['event_id']);
-				}
-			}
-		}
-
-		$this->set(
-			compact(
-				'title_for_layout',
 				'selectedLocation',
 				'locations',
 				'bow',

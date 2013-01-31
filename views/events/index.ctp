@@ -1,4 +1,4 @@
-<?= $this->Html->script('events/category.js', array('inline' => false)) ?>
+<?php echo $this->Html->script('events/category.js', array('inline' => false)) ?>
 <div id="events">
 	<div class="filters">
 		<form class="event_categories" action="<?= $this->here; ?>" method="post">
@@ -18,25 +18,21 @@
 			<input type="submit" class="button green" id="filter_submit" value="<?php __('Go') ?>" />
 		</form>
 	</div>
-	<div class="calnav events">
-		<a href="/events/index?date=<?= $prevMonday ?>" class="button gray">
+	<div class="calnav events monthly">
+	<a href="/events/index/<?= $prevMonth ?>" id="previous-month" class="button gray">
 			<i class="icon-chevron-left"></i>
-			Previous Week
+			Previous Month
 		</a>
 
 		<h2>
-			Events for the week of
-			<?= date('m/d/Y', strtotime($bow)) ?>
-			&mdash;
-			<?= date('m/d/Y', strtotime($eow)) ?>
+			Events for <?= date('F', strtotime($curMonth)) ?>
 		</h2>
 
-		<a href="/events/index?date=<?= $nextMonday ?>" class="button gray">
-			Next Week
+		<a href="/events/index/<?= $nextMonth ?>" id="next-month" class="button gray">
+			Next Month
 			<i class="icon-chevron-right"></i>
 		</a>
 	</div>
-
 	<?php if (!empty($events)): ?>
 		<?php $event_start_date = strtotime($events[0]['Event']['scheduled']) ?>
 		<div class="event-start-date">
@@ -81,7 +77,9 @@
 					</div>
 
 					<h2><?= $event['Event']['name'] ?></h2>
-
+					<ul>
+						<li><?= $event['EventCategory']['name'] ?></li>
+					</ul>
 					<ul>
 						<li>
 							<i class="icon-time icon-large"></i>
