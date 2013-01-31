@@ -356,9 +356,9 @@ class FiledDocumentsController extends AppController {
 		if(isset($query)) {
 			foreach($query as $k => $v) {
 				$report[$k]['id'] = $v['FiledDocument']['id'];
-				$report[$k]['Customer'] = 
-					trim(ucwords($v['User']['lastname'] . ', ' . $v['User']['firstname'] . ' - ' . 
-					substr($v['User']['ssn'], -4)), ' ,');
+				$report[$k]['First Name'] = ucwords($v['User']['firstname']);
+				$report[$k]['Last Name'] = ucwords($v['User']['lastname']);
+				$report[$k]['Last 4 SSN'] = substr($v['User']['ssn'], -4);
 				$report[$k]['Location'] = $v['Location']['name'];
 				$report[$k]['Filed By Admin'] = trim(ucwords($v['Admin']['lastname'] . ', '. $v['Admin']['firstname']), ' ,');
 				$report[$k]['Main Cat'] = $v['Cat1']['name'];
