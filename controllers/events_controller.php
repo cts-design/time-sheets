@@ -20,7 +20,7 @@ class EventsController extends AppController {
 		$this->Auth->allow('view', 'index', 'workshop');
 	}
 
-	public function index() {
+	public function index($month = null, $year = null) {
 		$this->Event->Behaviors->attach('Containable');
 		$this->Event->EventCategory->recursive = -1;
 
@@ -72,24 +72,27 @@ class EventsController extends AppController {
 			$locationConditions = null;
 		}
 
-		// setup date stuffs
-		$date = $this->parse_date();
-		$bow = $this->get_beginning_of_week($date);
-		$eow = $this->get_end_of_week($date);
-		$time_conditions = $this->get_schedule_time_conditions($date, $bow, $eow);
-
-		// setup for the next/previous buttons
-		$nextMonday = date('Y-m-d', strtotime('next monday', strtotime($eow)));
-		if (date('w', strtotime($date)) != 1) {
-			$thisMonday = date('Y-m-d', strtotime('last monday', strtotime($date)));
-			$prevMonday = date('Y-m-d', strtotime('last monday', strtotime($thisMonday)));
-		} else {
-			$prevMonday = date('Y-m-d', strtotime('last monday', strtotime($date)));
+		if ($month && !$year) {
+			$year = date('Y');
 		}
 
-		$conditions = array_merge($time_conditions, array(
+		if (!$month) {
+			$date = date('Y-m-d H:i:s');
+			$month = date('m', strtotime($date));
+			$year = date('Y', strtotime($date));
+			$lastDayOfMonth = date('t', strtotime($date));
+			$endDate = date('Y-m-d H:i:s', strtotime("$month/$lastDayOfMonth/$year 23:59:59"));
+		} else {
+			$date = date('Y-m-d H:i:s', strtotime("$month/1/$year 00:00:01"));
+			$lastDayOfMonthyOfMonth = date('t', strtotime($date));
+			$endDate = date('Y-m-d H:i:selectedLocation', strtotime("$month/$lastDayOfMonth/$year 23:59:59"));
+		}
+
+		$conditions = array(
+			'Event.scheduled >' => date('Y-m-d H:i:s'),
+			'Event.scheduled BETWEEN ? AND ?' => array($date, $endDate),
 			'Event.event_registration_count < Event.seats_available'
-		));
+		);
 
 		if ($categoryConditions) {
 			$conditions = array_merge($conditions, $categoryConditions);
@@ -103,6 +106,10 @@ class EventsController extends AppController {
 			'Event',
 			$conditions
 		);
+
+		$curMonth = date('F Y', strtotime($date));
+		$prevMonth = date('m/Y', strtotime("-1 month", strtotime($date)));
+		$nextMonth = date('m/Y', strtotime("+1 month", strtotime($date)));
 
 		$userEventRegistrations = array();
 		if ($this->Auth->user()) {
@@ -122,14 +129,13 @@ class EventsController extends AppController {
 		$this->set(
 			compact(
 				'title_for_layout',
+				'curMonth',
+				'prevMonth',
+				'nextMonth',
 				'selectedCategory',
 				'selectedLocation',
 				'categories',
 				'locations',
-				'bow',
-				'eow',
-				'nextMonday',
-				'prevMonday',
 				'events',
 				'userEventRegistrations'
 			)
