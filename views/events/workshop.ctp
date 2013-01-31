@@ -2,6 +2,12 @@
 <div id="events">
 	<div class="filters">
 		<form class="event_categories" action="<?= $this->here; ?>" method="post">
+			<label class="event_categories_label" for="event_categories_dropdown"><?php __('Filter by event category') ?>:</label>
+			<select id="event_categories_dropdown" name="event_categories_dropdown">
+			<?php foreach($categories as $id => $category): ?>
+				<option value="<?= $id ?>"<?= ($id == $selectedCategory) ? ' selected="selected"' : '' ?>><?= $category ?></option>
+			<?php endforeach; ?>
+			</select>
 			<label class="event_locations_label" for="event_locations_dropdown"><?php __('Filter by event location') ?>:</label>
 			<select id="event_locations_dropdown" name="event_locations_dropdown">
 			<?php foreach($locations as $id => $location): ?>

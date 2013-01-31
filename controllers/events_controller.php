@@ -144,6 +144,22 @@ class EventsController extends AppController {
 
 		$title_for_layout = 'Upcoming Workshops';
 		$selectedLocation = 0;
+		$selectedCategory = 0;
+
+		$categories = $this->Event->EventCategory->find('list', array(
+			'conditions' => array(
+				'OR' => array(
+					'EventCategory.id' => $workshopCategory['EventCategory']['id'],
+					'EventCategory.parent_id' => $workshopCategory['EventCategory']['id']
+				)
+			),
+			'fields' => array(
+				'EventCategory.id',
+				'EventCategory.name'
+			),
+			'recursive' => -1
+		));
+		array_unshift($categories, 'All Categories');
 
 		$locations = $this->Event->Location->find('list', array(
 			'fields' => array(
@@ -153,6 +169,19 @@ class EventsController extends AppController {
 			'recursive' => -1
 		));
 		array_unshift($locations, 'All Locations');
+
+		if (isset($this->params['form']['event_categories_dropdown']) && !empty($this->params['form']['event_categories_dropdown'])) {
+			if ($this->params['form']['event_categories_dropdown'] == 0) {
+				$selectedCategory = 0;
+				$categoryConditions = null;
+			} else {
+				$cat = $this->params['form']['event_categories_dropdown'];
+				$categoryConditions = array('Event.location_id' => $cat);
+				$selectedCategory = $cat;
+			}
+		} else {
+			$locationConditions = null;
+		}
 
 		if (isset($this->params['form']['event_locations_dropdown']) && !empty($this->params['form']['event_locations_dropdown'])) {
 			if ($this->params['form']['event_locations_dropdown'] == 0) {
@@ -214,6 +243,8 @@ class EventsController extends AppController {
 		$this->set(
 			compact(
 				'title_for_layout',
+				'selectedCategory',
+				'categories',
 				'selectedLocation',
 				'locations',
 				'bow',
