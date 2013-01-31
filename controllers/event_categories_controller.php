@@ -156,8 +156,9 @@ class EventCategoriesController extends AppController {
 	    if ($this->RequestHandler->isAjax()) {
 	    	$this->EventCategory->recursive = -1;			
 			$categories = $this->EventCategory->find('threaded',
-				array('fields' => array('EventCategory.id', 'EventCategory.name', 'EventCategory.parent_id')));
-			if($this->params['url']['parent']) {
+				array('fields' => array('EventCategory.id', 'EventCategory.name', 'EventCategory.parent_id'),
+					  'order' => array('EventCategory.name')));
+			if(isset($this->params['url']['parent'])) {
 				$categories = Set::Extract('/EventCategory[parent_id]', $categories);
 			}
 			$i = 0;
