@@ -81,6 +81,9 @@
 					</div>
 
 					<h2><?php echo $event['Event']['name'] ?></h2>
+					<ul>
+						<li><?= $event['EventCategory']['name'] ?></li>
+					</ul>
 
 					<ul>
 						<li>
