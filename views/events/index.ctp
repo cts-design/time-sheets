@@ -81,7 +81,9 @@
 					</div>
 
 					<h2><?= $event['Event']['name'] ?></h2>
-
+					<ul>
+						<li><?= $event['EventCategory']['name'] ?></li>
+					</ul>
 					<ul>
 						<li>
 							<i class="icon-time icon-large"></i>
