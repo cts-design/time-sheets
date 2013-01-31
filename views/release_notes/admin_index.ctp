@@ -3,6 +3,22 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+	<h1>Release 3.6 (1-31-13) </h1>
+	<h2>Major Updates</h2>
+	<ol>
+		<li>Release of the EVENTS module. This module will allow admins to create Events within the ATLAS Web Services System.</li>
+		<li>Release of expanded "Workshop" interface to automate the process of registration, enrollment and tracking of participants within a workshop</li>
+		<li>Release of redeveloped user Dashboard. Clearly lists all EVENTS, ORIENTATIONS, REGISTRATIONS and ENROLLMENTS the customer is participating in.</li>
+	</ol>
+	<h2>Minor Updates</h2>
+	<ol>
+		<li>Added additional fields to all excel reports within the system. "First Name, Last Name and Last 4" are now separate fields</li>
+	</ol>
+	<h2>Bug Fixes</h2>
+	<ol>
+		<li>Resolved issues that was causing search parameters to be cleared when using breadcrumbs between Users-Customers,Staff screens</li>
+	</ol>
+	<hr />
 	<h1>Release 3.5.8 (1-17-13)</h1>
 	<h2>Minor feature enhancements</h2>
 	<ol>
@@ -12,6 +28,7 @@
 	<ol>
 		<li>Fixed bug that was causing bar code definitions to trip "unique" value validation</li>
 	</ol>
+	<hr />
 	<h1>Release 3.5.7 (1-10-13)</h1>
 	<h2>Minor feature enhancements</h2>
 	<ol>

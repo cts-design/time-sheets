@@ -4,34 +4,62 @@
  * @link http://ctsfla.com
  * @package ATLAS V3
  */
+
+var currentPath = function () {
+  return window.location.pathname;
+}
+
 $(function() {
-	var eventCategory = 0;
-	var currentUrl    = '/events/';
-	
-	$('body').attr('class', 'js');
-	
-	$('#event_categories_dropdown').live('change', function(e) {
-		e.preventDefault();
-		
-		eventCategory =	$(this).attr('value');
-		$.post(currentUrl, { event_categories_dropdown: eventCategory }, function(data) {
-			$(".allEvents").empty().html('<img src="/img/ajaxLoader.gif" height="16" width="16" />');
+  var eventCategory = 0,
+    currentUrl = currentPath();
 
-			var content = $(data).find('.allEvents');
-			$('.allEvents').html(content);
-		});
-	});
-	
-	$('.previousMonth, .nextMonth, .paging a').live('click', function(e) {
-		e.preventDefault();
+  $('body').attr('class', 'js');
 
-		var target = $(this).attr('href');
-		$.post(target, {}, function(data) {
-			$(".allEvents").empty().html('<img src="/img/ajaxLoader.gif" height="16" width="16" />');
+  $('#event_categories_dropdown').live('change', function(e) {
+    e.preventDefault();
 
-			var content = $(data).find('.allEvents');
-			$('.allEvents').html(content);
-		});
-		currentUrl = target;
-	});
-})
+    $.post(currentUrl, $('.event_categories').serialize(), function(data) {
+      $('#events').replaceWith(data);
+    });
+
+    $("#events").empty().html('<img src="/img/ajaxLoader.gif" height="16" width="16" />');
+  });
+
+  $('#event_locations_dropdown').live('change', function(e) {
+    e.preventDefault();
+
+    $.post(currentUrl, $('.event_categories').serialize(), function(data) {
+      $('#events').replaceWith(data);
+    });
+
+    $("#events").empty().html('<img src="/img/ajaxLoader.gif" height="16" width="16" />');
+  });
+
+  $('.calnav a, .paging a').live('click', function(e) {
+    e.preventDefault();
+
+    var target = $(this).attr('href'),
+      content;
+
+    $.post(target, $('.event_categories').serialize(), function(data) {
+      $('#events').html(data);
+    });
+
+    $("#events").empty().html('<img src="/img/ajaxLoader.gif" height="16" width="16" />');
+
+    currentUrl = target;
+  });
+
+  $('#reset_filters').live('click', function(e) {
+    e.preventDefault();
+
+    $('#event_locations_dropdown').val(0);
+    $('#event_categories_dropdown').val(0);
+
+    $.post(currentUrl, $('.event_categories').serialize(), function(data) {
+      $('#events').html(data);
+    });
+
+    $("#events").empty().html('<img src="/img/ajaxLoader.gif" height="16" width="16" />');
+  });
+});

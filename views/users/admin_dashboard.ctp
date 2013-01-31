@@ -26,6 +26,7 @@
                 <?php echo $this->Nav->buildAdminNavigation('settings') ?>
 		    <?php }?>
             <?php echo $this->Nav->buildAdminNavigation('alerts') ?>
+            <?php echo $this->Nav->buildAdminNavigation('events') ?>
             <?php echo $this->Nav->buildAdminNavigation('users') ?>
             <?php echo $this->Nav->buildAdminNavigation('selfSign') ?>
             <?php echo $this->Nav->buildAdminNavigation('storage') ?>
@@ -52,7 +53,7 @@
 	    	<?php endif ?> 
 	    	<p>
 	    		<?php echo $html->image('icons/application_xp_terminal.png')?>
-	    		<?php echo $html->link('Atlas 3.5.8', array('controller' => 'release_notes', 'admin' => true))?>
+	    		<?php echo $html->link('Atlas 3.6', array('controller' => 'release_notes', 'admin' => true))?>
 	    	</p>    	
 	    </div>
     </div>

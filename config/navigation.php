@@ -62,11 +62,6 @@ $config['navigation.website'] = array(
 			)
 		),
 		array(
-			'link' => array('controller' => 'events', 'action' => 'index'),
-			'rel' => 'calendar',
-			'title' => 'Calendar of Events'
-		),
-		array(
 			'link' => array('controller' => 'hot_jobs', 'action' => 'index'),
 			'rel' => 'hotJobs',
 			'title' => 'Hot Jobs'
@@ -108,6 +103,11 @@ $config['navigation.settings'] = array(
 			'link' => array('controller' => 'document_queue_categories', 'action' => 'index'),
 			'rel' => 'settings_1',
 			'title' => 'Document Queue Categories'
+		),
+		array(
+			'link' => array('controller' => 'event_categories', 'action' => 'index'),
+			'rel' => 'settings_1',
+			'title' => 'Event Categories'
 		),
 		array(
 			'link' => array('controller' => 'ftp_document_scanners', 'action' => 'index'),
@@ -158,6 +158,25 @@ $config['navigation.alerts'] = array(
 	'rel' => 'alerts',
 	'title' => 'Alerts'
 );
+
+$config['navigation.events'] = array(
+	'rel' => 'calendar',
+	'title' => 'Events',
+	'id' => 'events',
+	'links' => array(
+		array(
+			'link' => array('controller' => 'events', 'action' => 'index'),
+			'rel' => 'calendar',
+			'title' => 'Event Management'
+		),
+		array(
+			'link' => array('controller' => 'events', 'action' => 'archive'),
+			'rel' => 'calendar',
+			'title' => 'Event Archive'
+		)
+	)
+);
+
 
 $config['navigation.users'] = array(
 	'rel' => 'group',

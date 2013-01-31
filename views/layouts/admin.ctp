@@ -24,20 +24,11 @@
 
 	echo $this->Html->css('ui-redmond/jquery-ui-1.8.10.custom');
 
-	if ($this->params['controller'] === 'events' && $this->params['admin']) {
-		echo $this->Html->css('ext/ext-all');	
-	} else {
-		echo $this->Html->css('/js/ext/resources/css/ext-all');
-	}
+	echo $this->Html->css('/js/ext/resources/css/ext-all');
 
 	echo $this->Html->css('admin');
 
-	if ($this->params['controller'] === 'events' && $this->params['admin']) {
-		echo $this->Html->script('ext/adapter/ext/ext-base');
-		echo $this->Html->script('ext-all');
-	} else {
-        echo $this->Html->script('/js/ext/bootstrap');
-	}
+	echo $this->Html->script('/js/ext/bootstrap');
 
 	echo $this->Html->script('atlas');
 
