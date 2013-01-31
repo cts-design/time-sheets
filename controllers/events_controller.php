@@ -9,11 +9,11 @@
 class EventsController extends AppController {
 	public $name = 'Events';
 
-	public $components = array('Notifications');
+	public $paginate = array('order' => array('Event.scheduled' => 'asc'), 'limit' => 5);
 
 	public $helpers = array('Excel');
 
-	public $paginate = array('order' => array('Event.scheduled' => 'asc'), 'limit' => 5);
+	public $components = array('Notifications');
 
 	function beforeFilter() {
 		parent::beforeFilter();
@@ -90,7 +90,7 @@ class EventsController extends AppController {
 		} else {
 			$date = date('Y-m-d H:i:s', strtotime("$month/1/$year 00:00:01"));
 			$lastDayOfMonth = date('t', strtotime($date));
-			$endDate = date('Y-m-d H:i:selectedLocation', strtotime("$month/$lastDayOfMonth/$year 23:59:59"));
+			$endDate = date('Y-m-d H:i:s', strtotime("$month/$lastDayOfMonth/$year 23:59:59"));
 		}
 
 		$conditions = array(
@@ -114,7 +114,7 @@ class EventsController extends AppController {
 
 		$curMonth = date('F Y', strtotime($date));
 		$prevMonth = date('m/Y', strtotime("-1 month", strtotime($date)));
-		$nextMonth = date('m/Y', strtotime("+1 month", strtotime($date)));
+		$nextMonth = date('m/Y', strtotime("+1 day", strtotime($endDate)));
 
 		$userEventRegistrations = array();
 		if ($this->Auth->user()) {
@@ -188,7 +188,12 @@ class EventsController extends AppController {
 				$categoryConditions = null;
 			} else {
 				$cat = $this->params['form']['event_categories_dropdown'];
-				$categoryConditions = array('EventCategory.id' => $cat);
+				$categoryConditions = array(
+					'OR' => array(
+						'EventCategory.id' => $cat,
+						'EventCategory.parent_id' => $cat
+					)
+				);
 				$selectedCategory = $cat;
 			}
 		} else {
