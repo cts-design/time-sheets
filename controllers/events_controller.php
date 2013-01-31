@@ -38,7 +38,8 @@ class EventsController extends AppController {
 			),
 			'recursive' => -1
 		));
-		array_unshift($categories, 'All Categories');
+		$categories[0] = 'All Categories';
+		asort($categories);
 
 		$locations = $this->Event->Location->find('list', array(
 			'fields' => array(
@@ -47,7 +48,8 @@ class EventsController extends AppController {
 			),
 			'recursive' => -1
 		));
-		array_unshift($locations, 'All Locations');
+		$locations[0] = 'All Locations';
+		asort($locations);
 
 		if (isset($this->params['form']['event_categories_dropdown']) && !empty($this->params['form']['event_categories_dropdown'])) {
 			if ($this->params['form']['event_categories_dropdown'] == 0) {
@@ -168,7 +170,7 @@ class EventsController extends AppController {
 			),
 			'recursive' => -1
 		));
-		array_unshift($categories, 'All Categories');
+		$categories[$workshopCategory['EventCategory']['id']] = 'All Workshops';
 
 		$locations = $this->Event->Location->find('list', array(
 			'fields' => array(
@@ -177,7 +179,8 @@ class EventsController extends AppController {
 			),
 			'recursive' => -1
 		));
-		array_unshift($locations, 'All Locations');
+		$locations[0] = 'All Locations';
+		asort($locations);
 
 		if (isset($this->params['form']['event_categories_dropdown']) && !empty($this->params['form']['event_categories_dropdown'])) {
 			if ($this->params['form']['event_categories_dropdown'] == 0) {
@@ -185,11 +188,11 @@ class EventsController extends AppController {
 				$categoryConditions = null;
 			} else {
 				$cat = $this->params['form']['event_categories_dropdown'];
-				$categoryConditions = array('Event.location_id' => $cat);
+				$categoryConditions = array('EventCategory.id' => $cat);
 				$selectedCategory = $cat;
 			}
 		} else {
-			$locationConditions = null;
+			$categoryConditions = null;
 		}
 
 		if (isset($this->params['form']['event_locations_dropdown']) && !empty($this->params['form']['event_locations_dropdown'])) {
@@ -222,11 +225,18 @@ class EventsController extends AppController {
 
 		$conditions = array_merge($time_conditions, array(
 			'Event.event_registration_count < Event.seats_available',
-			'Event.event_category_id' => $workshopCategory['EventCategory']['id']
+			'OR' => array(
+				'EventCategory.id' => $workshopCategory['EventCategory']['id'],
+				'EventCategory.parent_id' => $workshopCategory['EventCategory']['id']
+			)
 		));
 
 		if ($locationConditions) {
 			$conditions = array_merge($conditions, $locationConditions);
+		}
+
+		if ($categoryConditions) {
+			$conditions = array_merge($conditions, $categoryConditions);
 		}
 
 		$events = $this->paginate(
