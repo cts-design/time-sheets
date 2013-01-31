@@ -54,12 +54,11 @@ class WorkshopCertificateGeneratorShell extends Shell {
 				$data['day'] = date('dS', strtotime($workshop['Event']['scheduled']));
 
 				foreach ($workshop['EventRegistration'] as $eventRegistration) {
-					$this->out(print_r($eventRegistration));
 					$data['first'] = $eventRegistration['User']['firstname'];
 					$data['last'] = $eventRegistration['User']['lastname'];
 
 					$pdf = $this->generateCertificate($data);
-					$this->fileCertificate($eventRegistration, $pdf);
+					$this->fileCertificate($workshop, $eventRegistration, $pdf);
 				}
 			}
 		}
@@ -68,10 +67,10 @@ class WorkshopCertificateGeneratorShell extends Shell {
 	}
 
 	private function generateCertificate($data) {
-		$this->createPDF($data, 'workshop_certificate.pdf');
+		return $this->createPDF($data, 'workshop_certificate.pdf');
 	}
 
-	private function fileCertificate($cert, $pdf) {
+	private function fileCertificate($workshop, $eventRegistration, $pdf) {
 		$this->FiledDocument->User->QueuedDocument->create();
 		$this->FiledDocument->User->QueuedDocument->save();
 		$docId = $this->FiledDocument->User->QueuedDocument->getLastInsertId();
@@ -79,7 +78,14 @@ class WorkshopCertificateGeneratorShell extends Shell {
 
 		// file the cert
 		$data['FiledDocument']['id'] = $docId;
-		$data['FiledDocument']['FiledDocument'] = $pdf;
+		$data['FiledDocument']['filename'] = $pdf;
+		$data['FiledDocument']['user_id'] = $eventRegistration['User']['id'];
+		$data['FiledDocument']['cat_1'] = $workshop['Event']['cat_1'];
+		$data['FiledDocument']['cat_2'] = $workshop['Event']['cat_2'];
+		$data['FiledDocument']['cat_3'] = $workshop['Event']['cat_3'];
+		$data['FiledDocument']['filed'] = date('Y-m-d H:i:s');
+		$data['FiledDocument']['entry_method'] = 'Workshop generated';
+		$this->FiledDocument->save($data);
 	}
 
 	private function createFDF($file, $info) {
