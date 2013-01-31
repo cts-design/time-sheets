@@ -50,6 +50,14 @@ var searchPanel = {
         activeTab: (search_type === 'advanced') ? 1 : 0,
         id: 'tabPanel',
         layout: 'fit',
+        listeners: {
+          tabchange: function (panel, newCard, oldCard, opts) {
+            if (newCard.title === 'Advanced') {
+              oldCard.down('#BasicSearchTerm1').allowBlank = true;
+            } else {
+            }
+          }
+        },
         items: [{
           xtype: 'form',
           id: 'basicForm',
@@ -62,7 +70,9 @@ var searchPanel = {
             listeners: {
               specialkey: function (field, event) {
                 if (event.getKey() === event.ENTER) {
-                  field.up('form').getForm().submit();
+                  field.up('form').getForm().submit({
+                    method: 'get'
+                  });
                 }
               }
             }
@@ -92,16 +102,16 @@ var searchPanel = {
               var form = this.up('form').getForm();
 
               if (form.isValid()) {
-                form.submit();
+                form.submit({
+                  method: 'get'
+                });
               }
             }
           },{
             text: 'Reset',
             icon:  '/img/icons/arrow_redo.png',
-            scope: this,
             handler: function() {
-              var fp = Ext.getCmp('searchFormPanel'),
-              form = fp.getForm();
+              var form = this.up('form').getForm();
 
               form.reset();
               this.setDefaultsAndFocus();
@@ -144,7 +154,9 @@ var searchPanel = {
                 listeners: {
                   specialkey: function (field, event) {
                     if (event.getKey() === event.ENTER) {
-                      field.up('form').getForm().submit();
+                      field.up('form').getForm().submit({
+                        method: 'get'
+                      });
                     }
                   }
                 }
@@ -246,7 +258,9 @@ var searchPanel = {
                 listeners: {
                   specialkey: function (field, event) {
                     if (event.getKey() === event.ENTER) {
-                      field.up('form').getForm().submit();
+                      field.up('form').getForm().submit({
+                        method: 'get'
+                      });
                     }
                   }
                 }
@@ -309,7 +323,9 @@ var searchPanel = {
                 listeners: {
                   specialkey: function (field, event) {
                     if (event.getKey() === event.ENTER) {
-                      field.up('form').getForm().submit();
+                      field.up('form').getForm().submit({
+                        method: 'get'
+                      });
                     }
                   }
                 }
@@ -362,20 +378,19 @@ var searchPanel = {
             icon:  '/img/icons/find.png',
             text: 'Search',
             handler: function() {
-              var fp = Ext.getCmp('searchFormPanel'),
-              form = fp.getForm();
+              var form = this.up('form').getForm();
 
               if (form.isValid()) {
-                form.submit();
+                form.submit({
+                  method: 'get'
+                });
               }
             }
           },{
             text: 'Reset',
             icon:  '/img/icons/arrow_redo.png',
-            scope: this,
             handler: function() {
-              var fp = Ext.getCmp('searchFormPanel'),
-              form = fp.getForm();
+              var form = this.up('form').getForm();
 
               form.reset();
               this.setDefaultsAndFocus();
@@ -407,12 +422,8 @@ var searchPanel = {
 
     if (search_type === 'advanced') {
       form = this.container.down('#advancedForm');
-      form.down('#SearchBy1').select('lastname');
-      form.down('#SearchScope1').select('containing');
-      form.down('#SearchTerm1').focus('', 10);
     } else {
       form = this.container.down('#basicForm');
-      form.down('#BasicSearchTerm1').focus('', 10);
     }
 
     form.getForm().clearInvalid();
@@ -420,7 +431,6 @@ var searchPanel = {
 };
 
 Ext.onReady(function() {
-  //Ext.QuickTips.init();
   searchPanel.init();
   searchPanel.setDefaultsAndFocus();
 });

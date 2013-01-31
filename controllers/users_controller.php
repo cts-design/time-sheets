@@ -126,17 +126,25 @@ class UsersController extends AppController {
 		}
 		$this->User->recursive = -1;
 
-		if (!empty($this->params['form'])) {
-			$formParams = $this->params['form'];
+		if (!empty($this->params['url'])) {
+			$formParams = $this->params['url'];
 		}
 
-		if (!empty($formParams)) {
-			$formParams['search_by1'] = (isset($formParams['search_by1'])) ? $formParams['search_by1'] : '';
-			$formParams['search_scope1'] = (isset($formParams['search_scope1'])) ? $formParams['search_scope1'] : '';
-			$formParams['search_term1'] = (isset($formParams['search_term1'])) ? $formParams['search_term1'] : '';
-			$formParams['search_by2'] = (isset($formParams['search_by2'])) ? $formParams['search_by2'] : '';
-			$formParams['search_scope2'] = (isset($formParams['search_scope2'])) ? $formParams['search_scope2'] : '';
-			$formParams['search_term2'] = (isset($formParams['search_term2'])) ? $formParams['search_term2'] : '';
+		unset($formParams['url']);
+
+		if (empty($formParams)) {
+			if (isset($this->params['named']['basic_search_term'])) {
+				$formParams['basic_search_term'] = $this->params['named']['basic_search_term'];
+				$formParams['search_type'] = 'basic';
+			} else {
+				$formParams['search_type'] = 'advanced';
+				$formParams['search_by1'] = (isset($this->params['named']['search_by1'])) ? $this->params['named']['search_by1'] : '';
+				$formParams['search_scope1'] = (isset($this->params['named']['search_scope1'])) ? $this->params['named']['search_scope1'] : '';
+				$formParams['search_term1'] = (isset($this->params['named']['search_term1'])) ? $this->params['named']['search_term1'] : '';
+				$formParams['search_by2'] = (isset($this->params['named']['search_by2'])) ? $this->params['named']['search_by2'] : '';
+				$formParams['search_scope2'] = (isset($this->params['named']['search_scope2'])) ? $this->params['named']['search_scope2'] : '';
+				$formParams['search_term2'] = (isset($this->params['named']['search_term2'])) ? $this->params['named']['search_term2'] : '';
+			}
 		}
 
 		// set up the default paginate options
@@ -1231,62 +1239,65 @@ class UsersController extends AppController {
 	}
 
 	private function advancedSearch($formParams, $conditions, $limit, $order) {
-		switch ($formParams['search_scope1']) {
-		case 'containing':
-			if ($formParams['search_by1'] === 'last4') {
-				$conditionScope = 'RIGHT (User.ssn , 4) LIKE';
-			} else if ($formParams['search_by1'] === 'fullssn') {
-				$conditionScope = 'User.ssn LIKE';
-			} else {
-				$conditionScope = $formParams['search_by1'] . ' LIKE';
-			}
-
-			$conditionValue = '%' . $formParams['search_term1'] . '%';
-			break;
-		case 'matching exactly':
-			if ($formParams['search_by1'] === 'last4') {
-				$conditionScope = 'RIGHT (User.ssn , 4)';
-			} else if ($formParams['search_by1'] === 'fullssn') {
-				$conditionScope = 'User.ssn';
-			} else {
-				$conditionScope = $formParams['search_by1'];
-			}
-
-			$conditionValue = $formParams['search_term1'];
-			break;
-		}
-
-		$conditions1 = array($conditionScope => $conditionValue);
-		$conditions = array_merge($conditions, $conditions1);
-
-		if (isset($formParams['search_by2']) && $formParams['search_by2'] !== '' && $formParams['search_term2'] !== '') {
-			switch ($formParams['search_scope2']) {
+		if (!empty($formParams) && $formParams['search_term1'] !== '') {
+			switch ($formParams['search_scope1']) {
 			case 'containing':
-				if ($formParams['search_by2'] === 'last4') {
-					$conditionScope2 = 'RIGHT (User.ssn , 4) LIKE';
-				} else if ($formParams['search_by2'] === 'fullssn') {
-					$conditionScope2 = 'User.ssn LIKE';
+				if ($formParams['search_by1'] === 'last4') {
+					$conditionScope = 'RIGHT (User.ssn , 4) LIKE';
+				} else if ($formParams['search_by1'] === 'fullssn') {
+					$conditionScope = 'User.ssn LIKE';
 				} else {
-					$conditionScope2 = $formParams['search_by2'] . ' LIKE';
+					$conditionScope = $formParams['search_by1'] . ' LIKE';
 				}
 
-				$conditionValue2 = '%' . $formParams['search_term2'] . '%';
+				$conditionValue = '%' . $formParams['search_term1'] . '%';
 				break;
 			case 'matching exactly':
-				if ($formParams['search_by2'] === 'last4') {
-					$conditionScope2 = 'RIGHT (User.ssn , 4)';
-				} else if ($formParams['search_by2'] === 'fullssn') {
-					$conditionScope2 = 'User.ssn';
+				if ($formParams['search_by1'] === 'last4') {
+					$conditionScope = 'RIGHT (User.ssn , 4)';
+				} else if ($formParams['search_by1'] === 'fullssn') {
+					$conditionScope = 'User.ssn';
 				} else {
-					$conditionScope2 = $formParams['search_by2'];
+					$conditionScope = $formParams['search_by1'];
 				}
 
-				$conditionValue2 = $formParams['search_term2'];
+				$conditionValue = $formParams['search_term1'];
 				break;
 			}
 
-			$conditions2 = array($conditionScope2 => $conditionValue2);
-			$conditions = array_merge($conditions, $conditions2);
+			$conditions1 = array($conditionScope => $conditionValue);
+			$conditions = array_merge($conditions, $conditions1);
+
+			if (isset($formParams['search_by2']) && $formParams['search_by2'] !== '' && $formParams['search_term2'] !== '') {
+				switch ($formParams['search_scope2']) {
+				case 'containing':
+					if ($formParams['search_by2'] === 'last4') {
+						$conditionScope2 = 'RIGHT (User.ssn , 4) LIKE';
+					} else if ($formParams['search_by2'] === 'fullssn') {
+						$conditionScope2 = 'User.ssn LIKE';
+					} else {
+						$conditionScope2 = $formParams['search_by2'] . ' LIKE';
+					}
+
+					$conditionValue2 = '%' . $formParams['search_term2'] . '%';
+					break;
+				case 'matching exactly':
+					if ($formParams['search_by2'] === 'last4') {
+						$conditionScope2 = 'RIGHT (User.ssn , 4)';
+					} else if ($formParams['search_by2'] === 'fullssn') {
+						$conditionScope2 = 'User.ssn';
+					} else {
+						$conditionScope2 = $formParams['search_by2'];
+					}
+
+					$conditionValue2 = $formParams['search_term2'];
+					break;
+				}
+
+				$conditions2 = array($conditionScope2 => $conditionValue2);
+				$conditions = array_merge($conditions, $conditions2);
+			}
+			$this->set($formParams);
 		}
 
 		$this->paginate = array(
@@ -1295,6 +1306,5 @@ class UsersController extends AppController {
 			'order'      => $order
 		);
 
-		$this->set($formParams);
 	}
 }

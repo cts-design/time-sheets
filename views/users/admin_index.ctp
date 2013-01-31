@@ -89,6 +89,10 @@ if ($i++ % 2 == 0) {
 <?php
 $options = array();
 
+if (isset($basic_search_term) && $basic_search_term) {
+	$options['url']['basic_search_term'] = $basic_search_term;
+}
+
 if (isset($search_by1) && $search_by1) {
 	$options['url']['search_by1'] = $search_by1;
 	$options['url']['search_scope1'] = $search_scope1;
