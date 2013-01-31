@@ -19,7 +19,7 @@
 		</form>
 	</div>
 	<div class="calnav workshop">
-		<a href="/events/workshop?date=<?= $prevMonday ?>" class="button gray">
+		<a href="/events/workshop?date=<?= $prevMonday ?>" id="previous-week" class="button gray">
 			<i class="icon-chevron-left"></i>
 			Previous Week
 		</a>
@@ -31,7 +31,7 @@
 			<?= date('m/d/Y', strtotime($eow)) ?>
 		</h2>
 
-		<a href="/events/workshop?date=<?= $nextMonday ?>" class="button gray">
+		<a href="/events/workshop?date=<?= $nextMonday ?>" id="next-week" class="button gray">
 			Next Week
 			<i class="icon-chevron-right"></i>
 		</a>
