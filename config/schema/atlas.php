@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2013-01-29 10:42:53 : 1359474173*/
+/* atlas schema generated on: 2013-02-04 11:19:46 : 1359994786*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -200,6 +200,59 @@ class atlasSchema extends CakeSchema {
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'user_id' => array('column' => 'user_id', 'unique' => 0)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
+	var $ecourse_module_question_answers = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+		'ecourse_module_question_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+		'text' => array('type' => 'string', 'null' => false, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'correct' => array('type' => 'boolean', 'null' => true, 'default' => NULL),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
+		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MyISAM')
+	);
+	var $ecourse_module_questions = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+		'ecourse_module_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+		'text' => array('type' => 'string', 'null' => false, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'order' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
+		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MyISAM')
+	);
+	var $ecourse_modules = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+		'ecourse_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+		'name' => array('type' => 'string', 'null' => false, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'instructions' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'media_name' => array('type' => 'string', 'null' => false, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'media_description' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'media_type' => array('type' => 'string', 'null' => false, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'media_location' => array('type' => 'string', 'null' => false, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'order' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+		'passing_percentage' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 3),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
+		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MyISAM')
+	);
+	var $ecourses = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+		'type' => array('type' => 'string', 'null' => false, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'name' => array('type' => 'string', 'null' => false, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'instructions' => array('type' => 'text', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'default_passing_percentage' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 3),
+		'snapshot_cat_1' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+		'snapshot_cat_2' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'snapshot_cat_3' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'certificate_cat_1' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+		'certificate_cat_2' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'certificate_cat_3' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
+		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MyISAM')
+	);
 	var $employers_surveys = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 		'answers' => array('type' => 'text', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
@@ -229,12 +282,14 @@ class atlasSchema extends CakeSchema {
 	);
 	var $events = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
-		'event_category_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 9, 'key' => 'index'),
 		'name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'event_category_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 9, 'key' => 'index'),
 		'description' => array('type' => 'text', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'location_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 9, 'key' => 'index'),
 		'other_location' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'url' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'address' => array('type' => 'text', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'scheduled' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'seats_available' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 4),
@@ -243,8 +298,6 @@ class atlasSchema extends CakeSchema {
 		'cat_2' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10, 'key' => 'index'),
 		'cat_3' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10, 'key' => 'index'),
 		'event_registration_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
-		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
-		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'event_category_id' => array('column' => 'event_category_id', 'unique' => 0), 'location_id' => array('column' => 'location_id', 'unique' => 0), 'cat_1' => array('column' => 'cat_1', 'unique' => 0), 'cat_2' => array('column' => 'cat_2', 'unique' => 0), 'cat_3' => array('column' => 'cat_3', 'unique' => 0)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
@@ -598,7 +651,6 @@ class atlasSchema extends CakeSchema {
 		'name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'type' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'atlas_registration_type' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 10, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'disabled' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'queue_category_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
 		'approval_required' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'form_esign_required' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
@@ -613,6 +665,7 @@ class atlasSchema extends CakeSchema {
 		'bar_code_definition_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'paper_forms' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'upload_docs' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'disabled' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'expires' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
