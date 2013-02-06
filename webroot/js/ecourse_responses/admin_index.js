@@ -1,6 +1,5 @@
-var ecourseId = 1;
+var loaded;
 var itemsPerPage = 20;
-var ecourseName = 'This is a Hard Test Man';
 Ext.state.Manager.setProvider(new Ext.state.CookieProvider({
     expires: new Date(new Date().getTime()+(1000*60*60*24*365)) // 1 year
 }));
@@ -15,18 +14,14 @@ Ext.define('EcourseResponse', {
     name : 'modified',
     type : 'date',
     dateFormat : 'Y-m-d H:i:s'
-  }, {
-    name : 'expires_on',
-    type : 'date',
-    dateFormat : 'Y-m-d H:i:s'
-  }, 'confirmation_id', 'actions', 'notes']
+  }, 'actions']
 });
 
 var ecourseResponseProxy = Ext.create('Ext.data.proxy.Ajax', {
   url : '/admin/ecourse_responses/index/' + ecourseId,
   reader: {
     type: 'json',
-    root : 'ecourses',
+    root : 'responses',
     totalProperty: 'totalCount'
   },
   extraParams : {
@@ -58,7 +53,7 @@ Ext.define('Atlas.grid.EcourseResponsePanel', {
   extend: 'Ext.grid.Panel',
   forceFit : true,
   height : 300,
-  frame : true,
+  frame : false,
   store: 'ecourseResponseStore',
   columns: [{
     text : 'Id',
@@ -95,19 +90,14 @@ Ext.define('Atlas.grid.EcourseResponsePanel', {
   selType: 'rowmodel',
   listeners: {
     select: function(sm, record, index, eOpts) {
-      if(!record.data.text) {
-        record.data.text = '';
-      }
       responseId = record.data.id;
-      editor.setValue(record.data.notes);
-      Ext.getCmp('save').enable();
     }
   }
 });
 
 Ext.create('Atlas.grid.EcourseResponsePanel', {
-  title : 'Open',
-  id: 'openResponseGrid',
+  title : 'Incomplete',
+  id: 'incompleteResponseGrid',
   bbar: Ext.create('Ext.PagingToolbar', {
     store: 'ecourseResponseStore',
     displayInfo: true,
@@ -117,8 +107,8 @@ Ext.create('Atlas.grid.EcourseResponsePanel', {
 });
 
 Ext.create('Atlas.grid.EcourseResponsePanel', {
-  title : 'Closed',
-  id: 'closedResponseGrid',
+  title : 'Completed',
+  id: 'completedResponseGrid',
   columns: [{
     text : 'Id',
     dataIndex : 'id',
@@ -154,17 +144,6 @@ Ext.create('Atlas.grid.EcourseResponsePanel', {
   })
 });
 
-Ext.create('Ext.form.HtmlEditor', {
-  width : 800,
-  id: 'editor',
-  height : 225,
-  region : 'south',
-  bodyStyle : {
-    padding : '7px'
-  },
-  value : 'Please select a row in the grid above to see ecourse response notes.'
-});
-
 Ext.create('Ext.tab.Panel', {
   id: 'ecourseResponseTabs',
   region : 'center',
@@ -175,11 +154,11 @@ Ext.create('Ext.tab.Panel', {
   stateId: 'ecourseResponseTabs' + ecourseId,
   stateEvents: ['tabchange'],
   items : [
-    'openResponseGrid',
-    'closedResponseGrid',
+    'incompleteResponseGrid',
+    'completedResponseGrid',
   ],
   getState: function() {
-         return { activeTab: this.getActiveTab().id };
+    return { activeTab: this.getActiveTab().id };
   },
   applyState: function(state) {
     if(state.activeTab !== undefined) {
@@ -188,24 +167,15 @@ Ext.create('Ext.tab.Panel', {
   },
   listeners: {
     tabchange: function(tabPanel, newCard, oldCard, eOpts) {
-      var save = Ext.getCmp('save');
-      if(save) {
-        save.disable();
-      }
-      Ext.getCmp('editor').reset();
       switch (newCard.title) {
-        case 'Open':
+        case 'Incomplete':
           ecourseResponseProxy.extraParams.status= 'incomplete';
           break;
-        case 'Closed':
-          ecourseResponseProxy.extraParams.status= 'complete';
+        case 'Completed':
+          ecourseResponseProxy.extraParams.status= 'completed';
           break;
       }
-      /*
-      if(loaded) {
-        newCard.getStore().loadPage(1, {start: 0, limit: 10});
-      }
-      */
+      newCard.getStore().loadPage(1, {start: 0, limit: 10});
     },
     beforeadd: function(container, component, index) {
       if(this.items.length === 5) {
@@ -353,33 +323,34 @@ Ext.create('Ext.form.Panel', {
     id : 'docSearch',
     icon : '/img/icons/find.png',
     handler : function() {
-      var f = ecourseResponseSearch.getForm(), vals = f.getValues();
+      var f = Ext.getCmp('ecourseResponseSearch').getForm(), vals = f.getValues();
       Ext.iterate(vals, function (key, value){
         ecourseResponseProxy.extraParams[key] = value;
       });
-      ecourseResponseTabs.getActiveTab().getStore().loadPage(1, {start: 0, limit: 10});
+      Ext.getCmp('ecourseResponseTabs').getActiveTab().getStore().loadPage(1, {start: 0, limit: 10});
     }
   }, {
     text : 'Reset',
     icon : '/img/icons/arrow_redo.png',
     handler : function() {
-      var f = ecourseResponseSearch.getForm();
+      var f = Ext.getCmp('ecourseResponseSearch').getForm();
       f.reset();
       ecourseResponseProxy.extraParams.id = undefined;
       ecourseResponseProxy.extraParams.search = undefined;
       ecourseResponseProxy.extraParams.toDate = undefined;
       ecourseResponseProxy.extraParams.fromDate = undefined;
-      ecourseResponseTabs.getActiveTab().getStore().loadPage(1, {start: 0, limit: 10});
+      Ext.getCmp('ecourseResponseTabs').getActiveTab().getStore().loadPage(1, {start: 0, limit: 10});
     }
   },{
     text: 'Report',
     icon:  '/img/icons/excel.png',
     handler: function(){
-      var f = ecourseResponseSearch.getForm();
+      var f = Ext.getCmp('ecourseResponseSearch').getForm();
       var vals = f.getValues();
       vals.status = ecourseResponseProxy.extraParams.status;
       vals.ecourseId = ecourseId;
       vals = Ext.urlEncode(vals);
+      // TODO: add report url for ecourse reports
       window.location = '/admin/ecourse_responses/report?'+ vals;
     }
   }]
@@ -394,79 +365,18 @@ Ext.onReady(function() {
 		renderTo: 'ecourseResponseTabs',
 		title: ecourseName,
 		width : 950,
-		height : 800,
+		height : 600,
 		layout : 'border',
-		items : ['ecourseResponseTabs', 'editor', 'ecourseResponseSearch'],
-		fbar : [{
-			text : 'Save',
-			id: 'save',
-			disabled: true,
-			icon : '/img/icons/save.png',
-			handler : function() {
-				Ext.Msg.wait('Please wait', 'Status');
-				Ext.Ajax.request({
-					url : '/admin/ecourse_responses/edit',
-					success : function(response, opts) {
-						
-						var obj = Ext.decode(response.responseText);
-						if(obj.success) {
-							ecourseResponseTabs.getActiveTab().getStore().loadPage(1, {start: 0, limit: 10});
-							Ext.Msg.alert('Success', obj.message);
-						} else {
-							opts.failure();
-						}
-					},
-					failure : function(response, opts) {
-						var obj = Ext.decode(response.responseText);
-						Ext.Msg.alert('Error', obj.message);
-					},
-					params : {
-						'data[EcourseResponse][id]' : responseId,
-						'data[EcourseResponse][notes]' : editor.getValue()
-					}
-				});
-			}
-		}]
+		items : ['ecourseResponseTabs', 'ecourseResponseSearch']
 	});
 
-	Ext.get('ecourseResponseTabs').on('click', function(e, t) {
-		t = Ext.get(t);
-		var url = '';
-		if(t.hasCls('expire') || t.hasCls('reset') || t.hasCls('allow-new') ) {
-			Ext.Msg.wait('Please wait', 'Status');
-			e.preventDefault();
-			Ext.Ajax.request({
-				url : t.getAttribute('href'),
-				success : function(response, opts) {
-					var obj = Ext.decode(response.responseText);
-					if(obj.success) {
-						Ext.Msg.show({
-							title : 'Status',
-							msg : obj.message,
-							buttons : Ext.Msg.OK,
-							fn : function() {
-								ecourseResponseTabs.getActiveTab().getStore().load();
-							}
-						});
-					} else {
-						opts.failure(response, opts, obj);
-					}
-				},
-				failure : function(response, opts, obj) {
-					Ext.Msg.alert('Status', obj.message);
-				}
-			});
-		}
-	});
 	var state = Ext.state.Manager.get('ecourseResponseGrid'+ecourseId),
 		page = 1;
 	if(state) {
 		page = state.currentPage;
 	}
-  /*
 	if(!loaded) {
-		ecourseResponseTabs.getActiveTab().getStore().loadPage(page, {start: 0, limit: 10});
+	Ext.getCmp('ecourseResponseTabs').getActiveTab().getStore().loadPage(page, {start: 0, limit: 10});
 		loaded = 1;
 	}
-  */
 });
