@@ -1,7 +1,7 @@
 <div id="ChildLoginForm">
 	<p>
         <?php printf(__("Welcome to the %s Online Services System. To begin, please log in
-                         with your child's last name and the last 9 digits of your child's 
+                         with your child's last name and your child's full
                          social security number", true), Configure::read('Company.name')) ?>
 	</p>
 	<?php if(isset($instructions)) : ?>
