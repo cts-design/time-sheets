@@ -15,9 +15,14 @@ class EcoursesController extends AppController {
 	}
 
 	public function admin_index() {
-		$data = array();
-		$this->set(compact('data'));
-		$this->render(null, null, '/elements/ajaxreturn');
+		if ($this->RequestHandler->isAjax()) {
+			$data['ecourses'] = array();
+			$data['success'] = true;
+			$this->set('data', $data);
+			$this->render('/elements/ajaxreturn');
+		}
+		$title_for_layout = 'Ecourses';
+		$this->set(compact('title_for_layout'));
 	}
 }
 

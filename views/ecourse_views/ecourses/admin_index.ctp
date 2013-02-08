@@ -1,4 +1,4 @@
-<?php echo $this->Html->script('programs/admin_index', array('inline' => FALSE));?>
+<?php echo $this->Html->script('ecourses/admin_index', array('inline' => FALSE));?>
 
 <div id="crumbWrapper">
     <span><?php __('You are here') ?> > </span>
