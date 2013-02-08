@@ -258,6 +258,12 @@ $config['navigation.programs'] = array(
 	'title' => 'Programs'
 );
 
+$config['navigation.ecourses'] = array(
+	'link' => array('controller' => 'ecourses', 'action' => 'index'),
+	'rel' => 'ecourses',
+	'title' => 'Ecourses'
+);
+
 $config['navigation.audits'] = array(
 	'link' => array('controller' => 'audits', 'action' => 'index'),
 	'rel' => 'audits',
