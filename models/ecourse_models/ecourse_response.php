@@ -1,8 +1,10 @@
 <?php
 class EcourseResponse extends AppModel {
-	var $name = 'EcourseResponse';
+	public $name = 'EcourseResponse';
 
-	var $belongsTo = array(
+	public $actsAs = array('Containable');
+
+	public $belongsTo = array(
 		'Ecourse' => array(
 			'className' => 'Ecourse',
 			'foreignKey' => 'ecourse_id',
@@ -19,8 +21,8 @@ class EcourseResponse extends AppModel {
 		)
 	);
 
-	var $hasMany = array(
-		'EcourseModuleResponses' => array(
+	public $hasMany = array(
+		'EcourseModuleResponse' => array(
 			'className' => 'EcourseModuleResponse',
 			'foreignKey' => 'ecourse_response_id',
 			'dependent' => false,
