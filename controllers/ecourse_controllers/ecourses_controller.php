@@ -36,8 +36,19 @@ class EcoursesController extends AppController {
 			$this->set('data', $data);
 			$this->render('/elements/ajaxreturn');
 		}
+
 		$title_for_layout = 'Ecourses';
 		$this->set(compact('title_for_layout'));
+	}
+
+	public function admin_create($type = 'customer') {
+		if ($this->RequestHandler->isAjax()) {
+
+		}
+
+		$ecourseType = $type;
+		$title_for_layout = 'New Ecourse';
+		$this->set(compact('title_for_layout', 'type'));
 	}
 }
 
