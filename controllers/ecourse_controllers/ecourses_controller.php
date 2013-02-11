@@ -43,7 +43,19 @@ class EcoursesController extends AppController {
 
 	public function admin_create($type = 'customer') {
 		if ($this->RequestHandler->isAjax()) {
+			$ecourseData = json_decode($this->params['form']['ecourses'], true);
+			$this->data['Ecourse'] = $ecourseData;
 
+			$this->Ecourse->create();
+
+			if ($this->Ecourse->save($this->data)) {
+				$data['success'] = true;
+				$data['ecourses'] = $ecourseData;
+			} else {
+				$data['success'] = false;
+			}
+			$this->set('data', $data);
+			$this->render('/elements/ajaxreturn');
 		}
 
 		$ecourseType = $type;
