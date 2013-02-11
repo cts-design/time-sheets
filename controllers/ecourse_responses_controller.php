@@ -84,8 +84,37 @@ class EcourseResponsesController extends AppController {
 	
 	}
 
-	public function admin_show() {
+	public function admin_view() {
+		$this->EcourseResponse->recursive = -1;
+				
+		$options['contain'] = array('User', 'Ecourse', 'EcourseModuleResponse' => array('EcourseModule', 'EcourseModuleResponseTime'));
+		$options['conditions'] = array('EcourseResponse.id' => $this->params['pass'][0]);
+		$response = $this->EcourseResponse->find('first', $options);
+		if($this->RequestHandler->isAjax()) {
+			if($response) {
+				$i = 0;
+				foreach($response['EcourseModuleResponse'] as $moduleResponse) {
+					$data['response'][$i]['id'] = $moduleResponse['id'];
+					$data['response'][$i]['module'] = $moduleResponse['EcourseModule']['name'];
+					$data['response'][$i]['score'] = $moduleResponse['score'];
+					$data['response'][$i]['pass_fail'] = $moduleResponse['pass_fail'];
+					$data['response'][$i]['time_on_quiz'] =
+						$this->EcourseResponse->EcourseModuleResponse->EcourseModuleResponseTime->getTimeSpent($moduleResponse['id'], 'quiz');
+					$data['response'][$i]['time_on_media'] = 
+						$this->EcourseResponse->EcourseModuleResponse->EcourseModuleResponseTime->getTimeSpent($moduleResponse['id'], 'media');
+					$data['response'][$i]['total_time'] = $data['response'][0]['time_on_media'] + $data['response'][0]['time_on_quiz'];
+					$i++;
+				} 
+				$data['success'] = true;
+			}
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
 
+		}
+		$userName = $response['User']['firstname'] . ' ' . $response['User']['lastname'];
+		$ecourseName = $response['Ecourse']['name'];
+		$ecourseId = $response['Ecourse']['id'];
+		$this->set(compact('ecourseName', 'ecourseId', 'userName'));
 	}
 
 	public function admin_add() {

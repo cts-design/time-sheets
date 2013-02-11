@@ -1211,6 +1211,22 @@ table.raw-data tr td {
 .icon-add {
   background-image: url('../img/icons/add.png');
 }
+
+#EcourseResponsePanel .incorrect-row {
+	color: red;
+}
+
+#EcourseResponsePanel .correct-row {
+	color: green;
+}
+
+#EcourseResponsePanel .x-grid-row-summary {
+	font-style: italic;
+	font-size: 11px;
+}
+
+
+
 // ICONS ***************************************
 .icon_accept {
   background: url(../img/icons/accept.png);
