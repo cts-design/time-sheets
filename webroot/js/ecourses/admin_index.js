@@ -82,13 +82,13 @@ Ext.onReady(function () {
           icon: '/img/icons/user.png',
           text: 'Customer',
           handler: function () {
-            window.location = '/admin/programs/create_registration';
+            window.location = '/admin/ecourses/create/customer';
           }
         }, {
           icon: '/img/icons/user_suit.png',
           text: 'Staff',
           handler: function () {
-            window.location = '/admin/programs/create_registration';
+            window.location = '/admin/ecourses/create/staff';
           }
         }]
       }, {
