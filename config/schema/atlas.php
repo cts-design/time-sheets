@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2013-02-06 10:48:05 : 1360165685*/
+/* atlas schema generated on: 2013-02-11 16:49:26 : 1360619366*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -218,6 +218,26 @@ class atlasSchema extends CakeSchema {
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
+		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MyISAM')
+	);
+	var $ecourse_module_response_times = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+		'ecourse_module_response_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
+		'type' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'time_in' => array('type' => 'timestamp', 'null' => true, 'default' => NULL),
+		'time_out' => array('type' => 'timestamp', 'null' => true, 'default' => NULL),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'module_response_id' => array('column' => 'ecourse_module_response_id', 'unique' => 0)),
+		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MyISAM')
+	);
+	var $ecourse_module_responses = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+		'ecourse_module_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
+		'ecourse_response_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
+		'score' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'pass_fail' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'ecourse_response_id' => array('column' => 'ecourse_response_id', 'unique' => 0), 'ecourse_module_id' => array('column' => 'ecourse_module_id', 'unique' => 0)),
 		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MyISAM')
 	);
 	var $ecourse_modules = array(
