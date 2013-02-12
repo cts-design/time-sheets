@@ -87,9 +87,10 @@ class EcourseResponsesController extends AppController {
 	public function admin_view() {
 		$this->EcourseResponse->recursive = -1;
 				
-		$options['contain'] = array('User', 'Ecourse', 'EcourseModuleResponse' => array('EcourseModule', 'EcourseModuleResponseTime'));
 		$options['conditions'] = array('EcourseResponse.id' => $this->params['pass'][0]);
+		$options['contain'] = array('User', 'Ecourse', 'EcourseModuleResponse' => array('EcourseModule', 'EcourseModuleResponseTime'));
 		$response = $this->EcourseResponse->find('first', $options);
+		$this->log($response, 'debug');
 		if($this->RequestHandler->isAjax()) {
 			if($response) {
 				$i = 0;
@@ -113,7 +114,6 @@ class EcourseResponsesController extends AppController {
 		}
 		$userName = $response['User']['firstname'] . ' ' . $response['User']['lastname'];
 		$ecourseName = $response['Ecourse']['name'];
-		$ecourseId = $response['Ecourse']['id'];
 		$this->set(compact('ecourseName', 'ecourseId', 'userName'));
 	}
 
