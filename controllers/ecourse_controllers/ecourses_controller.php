@@ -16,13 +16,25 @@ class EcoursesController extends AppController {
 
 	public function admin_index() {
 		if ($this->RequestHandler->isAjax()) {
-			$ecourseType = $this->params['url']['ecourse_type'];
+			if (isset($this->params['url']['ecourse_type'])) {
+				$ecourseType = $this->params['url']['ecourse_type'];
 
-			$ecourses = $this->Ecourse->find('all', array(
-				'conditions' => array(
-					'Ecourse.type' => $ecourseType
-				)
-			));
+				$ecourses = $this->Ecourse->find('all', array(
+					'conditions' => array(
+						'Ecourse.type' => $ecourseType
+					)
+				));
+			}
+
+			if (isset($this->params['url']['id'])) {
+				$ecourseId = $this->params['url']['id'];
+
+				$ecourses = $this->Ecourse->find('all', array(
+					'conditions' => array(
+						'Ecourse.id' => $ecourseId
+					)
+				));
+			}
 
 			if ($ecourses) {
 				foreach ($ecourses as $key => $ecourse) {
