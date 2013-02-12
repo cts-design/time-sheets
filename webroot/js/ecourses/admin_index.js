@@ -153,7 +153,9 @@ Ext.onReady(function () {
           allowBlank: false
         }
       }, {
+        xtype: 'numbercolumn',
         dataIndex: 'default_passing_percentage',
+        format: '0%',
         text: 'Default Passing Percentage',
         width: 150,
         editor: {
@@ -161,9 +163,6 @@ Ext.onReady(function () {
           allowBlank: false,
           minValue: 1,
           maxValue: 100
-        },
-        renderer: function (val) {
-          return val + '%';
         }
       }, {
         align: 'center',
@@ -248,7 +247,8 @@ Ext.onReady(function () {
           icon: '/img/icons/report_modules.png',
           tooltip: 'Add Modules',
           handler: function (grid, rowIndex, colIndex) {
-            alert('go to modules');
+            var rec = grid.store.getAt(rowIndex);
+            window.location = '/admin/ecourse_modules?ecourse_id=' + rec.get('id')
           }
         }]
       }, {
@@ -295,7 +295,9 @@ Ext.onReady(function () {
           allowBlank: false
         }
       }, {
+        xtype: 'numbercolumn',
         dataIndex: 'default_passing_percentage',
+        format: '0%',
         text: 'Default Passing Percentage',
         width: 150,
         editor: {
@@ -303,9 +305,6 @@ Ext.onReady(function () {
           allowBlank: false,
           minValue: 1,
           maxValue: 100
-        },
-        renderer: function (val) {
-          return val + '%';
         }
       }, {
         align: 'center',
@@ -390,7 +389,8 @@ Ext.onReady(function () {
           icon: '/img/icons/report_modules.png',
           tooltip: 'Add Modules',
           handler: function (grid, rowIndex, colIndex) {
-            alert('go to modules');
+            var rec = grid.store.getAt(rowIndex);
+            window.location = '/admin/ecourse_modules?ecourse_id=' + rec.get('id')
           }
         }]
       }, {
