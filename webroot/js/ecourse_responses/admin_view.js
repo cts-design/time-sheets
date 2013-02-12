@@ -16,7 +16,7 @@ Ext.create('Ext.data.Store', {
   autoLoad: true,
   proxy: {
     type: 'ajax',
-    url: '/admin/ecourse_responses/view/'+ecourseId,
+    url: '/admin/ecourse_responses/view/'+ecourseResponseId,
     reader: {
       type: 'json',
       root: 'response'
