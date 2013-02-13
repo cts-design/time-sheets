@@ -275,7 +275,6 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.TreeStore', {
-  autoSync: true,
   model: 'ProgramStep',
   proxy: {
     type: 'ajax',
