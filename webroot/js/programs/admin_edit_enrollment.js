@@ -2804,40 +2804,44 @@ instructions = Ext.create('Ext.panel.Panel', {
 
       panelEl.mask('Loading...');
 
-      programStepStore.getRootNode().eachChild(function (module) {
-        module.eachChild(function (step) {
-          var instruction = programInstructionStore.findRecord('program_step_id', step.data.id);
+      programInstructionStore.load({
+        callback: function (recs, op, success) {
+          programStepStore.getRootNode().eachChild(function (module) {
+            module.eachChild(function (step) {
+              var instruction = programInstructionStore.findRecord('program_step_id', step.data.id);
 
-          if (!instruction) {
-            Ext.Ajax.request({
-              url: '/admin/program_instructions/create_single',
-              params: {
-                program_id: ProgramId,
-                program_step_id: step.data.id,
-                text: 'Instructions for ' + step.data.name + ' step',
-                type: step.data.type + '_step'
-              },
-              callback: function (response) {
-                programInstructionStore.load({
+              if (!instruction) {
+                Ext.Ajax.request({
+                  url: '/admin/program_instructions/create_single',
                   params: {
-                    program_id: ProgramId
+                    program_id: ProgramId,
+                    program_step_id: step.data.id,
+                    text: 'Instructions for ' + step.data.name + ' step',
+                    type: step.data.type + '_step'
+                  },
+                  callback: function (response) {
+                    programInstructionStore.load({
+                      params: {
+                        program_id: ProgramId
+                      }
+                    });
                   }
                 });
               }
             });
-          }
-        });
-      });
-
-      programInstructionStore.load({
-        callback: function (recs, op, success) {
+          });
           panelEl.unmask();
         },
         params: {
           program_id: ProgramId
         }
       });
+
+
     }
+  },
+  preprocess: function () {
+    console.log('in preprocess');
   },
   process: function () {
     Ext.data.StoreManager.lookup('ProgramInstructionStore').sync();
