@@ -902,14 +902,6 @@ registrationForm = Ext.create('Ext.form.Panel', {
     }]
   }, {
     xtype: 'hiddenfield',
-    name: 'user_acceptance_required',
-    value: '0'
-  }, {
-    xtype: 'hiddenfield',
-    name: 'form_esign_required',
-    value: '0'
-  }, {
-    xtype: 'hiddenfield',
     name: 'in_test',
     value: 1
   }, {
