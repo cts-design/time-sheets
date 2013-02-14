@@ -1,29 +1,34 @@
-/**
- * Models
- */
-Ext.define('Ecourse', {
-  extend: 'Ext.data.Model',
-  fields: [
-    { name: 'id', type: 'int' },
-    'type',
-    'name',
-    'instructions',
-    { name: 'default_passing_percentage', type: 'int' },
-    { name: 'requires_user_assignment', type: 'int' },
-    { name: 'disabled', type: 'int' },
-  ],
-  proxy: {
-    type: 'ajax',
-    api: {
-      read: '/admin/ecourses/index'
-    },
-    reader: {
-      type: 'json',
-      root: 'ecourses'
+Ext.override(Ext.data.writer.Json, {
+  getRecordData: function(record) {
+    var me = this,
+      i,
+      association,
+      childStore,
+      data = this.callParent(arguments);
+
+
+    /* Iterate over all the hasMany associations */
+    for (i = 0; i < record.associations.length; i++) {
+      association = record.associations.get(i);
+      if (association.type == 'hasMany')  {
+        data[association.name] = [];
+        childStore = eval('record.'+association.name+'()');
+
+
+        //Iterate over all the children in the current association
+        childStore.each(function(childRecord) {
+          data[association.name].push(childRecord.getData());
+        }, me);
+      }
     }
+
+    return data;
   }
 });
 
+/**
+ * Models
+ */
 Ext.define('EcourseModule', {
   extend: 'Ext.data.Model',
   fields: [
@@ -42,32 +47,18 @@ Ext.define('EcourseModule', {
 
 Ext.define('EcourseModuleQuestion', {
   extend: 'Ext.data.Model',
+  associations: [{
+    foreignKey: 'ecourse_module_question_id',
+    model: 'EcourseModuleQuestionAnswer',
+    name: 'answers',
+    type: 'hasMany'
+  }],
   fields: [
     { name: 'id', type: 'int' },
     { name: 'ecourse_module_id', type: 'int' },
     'text',
     { name: 'order', type: 'int' }
-  ]
-});
-
-Ext.define('EcourseModuleQuestionAnswer', {
-  extend: 'Ext.data.Model',
-  fields: [
-    { name: 'id', type: 'int' },
-    { name: 'ecourse_module_question_id', type: 'int' },
-    'text',
-    { name: 'correct', type: 'int' }
-  ]
-});
-
-/**
- * DataStores
- */
-Ext.create('Ext.data.Store', {
-  storeId: 'EcourseModuleQuestionStore',
-  //autoLoad: true,
-  //autoSync: true,
-  model: 'EcourseModuleQuestion',
+  ],
   proxy: {
     type: 'ajax',
     api: {
@@ -92,8 +83,39 @@ Ext.create('Ext.data.Store', {
   }
 });
 
+Ext.define('EcourseModuleQuestionAnswer', {
+  extend: 'Ext.data.Model',
+  fields: [
+    { name: 'id', type: 'int' },
+    { name: 'ecourse_module_question_id', type: 'int' },
+    'text',
+    { name: 'correct', type: 'int' }
+  ]
+});
+
+/**
+ * DataStores
+ */
+Ext.create('Ext.data.Store', {
+  storeId: 'EcourseModuleQuestionStore',
+  autoLoad: true,
+  autoSync: true,
+  model: 'EcourseModuleQuestion',
+  listeners: {
+    load: function (store, records, successful) {
+      Ext.Array.each(records, function(rec) {
+        console.log(rec);
+        var answer = rec.getAssociatedData();
+        console.log(answer);
+      });
+    }
+  }
+});
+
 Ext.onReady(function () {
   Ext.QuickTips.init();
+
+  console.log(ecourse_module);
 
   var moduleForm,
     ecourseModuleQuestionStore = Ext.data.StoreManager.lookup('EcourseModuleQuestionStore');
@@ -101,7 +123,6 @@ Ext.onReady(function () {
   moduleForm = Ext.create('Ext.panel.Panel', {
     renderTo: 'ecourseModuleQuestionsForm',
     height: 439,
-    width: 966,
     layout: {
       type: 'border'
     },
@@ -115,15 +136,16 @@ Ext.onReady(function () {
       },
       bodyPadding: 10,
       items: [{
+        xtype: 'hiddenfield',
+        name: 'ecourse_module_id',
+        value: ecourse_module.id
+      }, {
         xtype: 'textareafield',
         anchor: '100%',
+        fieldLabel: 'Question',
         height: 163,
-        width: 278,
-        fieldLabel: 'Question'
-      }, {
-        xtype: 'combobox',
-        anchor: '100%',
-        fieldLabel: 'Type'
+        name: 'text',
+        width: 278
       }, {
         xtype: 'fieldcontainer',
         height: 24,
@@ -135,16 +157,18 @@ Ext.onReady(function () {
         fieldLabel: 'Answer 1',
         items: [{
           xtype: 'textfield',
-          width: 175,
-          fieldLabel: 'Label',
-          hideLabel: true
-        }, {
-          xtype: 'radiofield',
-          margins: '0 0 0 5',
           fieldLabel: 'Label',
           hideLabel: true,
+          name: 'answer',
+          width: 175
+        }, {
+          xtype: 'radiofield',
           boxLabel: '',
-          boxLabelAlign: 'before'
+          boxLabelAlign: 'before',
+          fieldLabel: 'Label',
+          hideLabel: true,
+          margins: '0 0 0 5',
+          name: '0'
         }]
       }, {
         xtype: 'fieldcontainer',
@@ -159,14 +183,16 @@ Ext.onReady(function () {
           xtype: 'textfield',
           width: 175,
           fieldLabel: 'Label',
-          hideLabel: true
+          hideLabel: true,
+          name: 'answer'
         }, {
           xtype: 'radiofield',
           margins: '0 0 0 5',
           fieldLabel: 'Label',
           hideLabel: true,
           boxLabel: '',
-          boxLabelAlign: 'before'
+          boxLabelAlign: 'before',
+          name: '1'
         }]
       }, {
         xtype: 'fieldcontainer',
@@ -181,14 +207,16 @@ Ext.onReady(function () {
           xtype: 'textfield',
           width: 175,
           fieldLabel: 'Label',
-          hideLabel: true
+          hideLabel: true,
+          name: 'answer'
         }, {
           xtype: 'radiofield',
           margins: '0 0 0 5',
           fieldLabel: 'Label',
           hideLabel: true,
           boxLabel: '',
-          boxLabelAlign: 'before'
+          boxLabelAlign: 'before',
+          name: '2'
         }]
       }, {
         xtype: 'fieldcontainer',
@@ -203,14 +231,16 @@ Ext.onReady(function () {
           xtype: 'textfield',
           width: 175,
           fieldLabel: 'Label',
-          hideLabel: true
+          hideLabel: true,
+          name: 'answer'
         }, {
           xtype: 'radiofield',
           margins: '0 0 0 5',
           fieldLabel: 'Label',
           hideLabel: true,
           boxLabel: '',
-          boxLabelAlign: 'before'
+          boxLabelAlign: 'before',
+          name: '3'
         }]
       }],
       dockedItems: [{
@@ -220,46 +250,74 @@ Ext.onReady(function () {
           xtype: 'tbfill'
         }, {
           xtype: 'button',
-          text: 'Save Question'
+          text: 'Save Question',
+          handler: function () {
+            var formPanel = this.up('form'),
+              form = formPanel.getForm(),
+              formValues,
+              question,
+              answers,
+              questionStore = Ext.data.StoreManager.lookup('EcourseModuleQuestionStore');
+
+            if (form.isValid()) {
+              formValues = form.getValues();
+              formValues.order = questionStore.count() + 1;
+
+              question = Ext.create('EcourseModuleQuestion', {
+                ecourse_module_id: formValues.ecourse_module_id,
+                text: formValues.text,
+                order: formValues.order
+              });
+
+              answers = question.answers();
+
+              Ext.Array.each(formValues.answer, function (answer, index) {
+                obj = { text: answer, correct: 0 }
+                if (formValues.hasOwnProperty(index)) { obj.correct = 1; }
+                answers.add(obj)
+              });
+
+              question.save();
+              questionStore.load();
+              form.reset();
+            }
+          }
         }]
       }]
     }, {
       xtype: 'gridpanel',
-      region: 'center',
       forceFit: true,
+      region: 'center',
+      store: 'EcourseModuleQuestionStore',
       columns: [{
-        xtype: 'gridcolumn',
-        dataIndex: 'string',
-        text: 'String'
+        dataIndex: 'id',
+        hidden: true,
+        text: 'Id',
+        width: 50
       }, {
-        xtype: 'numbercolumn',
-        dataIndex: 'number',
-        text: 'Number'
+        align: 'center',
+        dataIndex: 'order',
+        text: 'Order',
+        width: 50
       }, {
-        xtype: 'datecolumn',
-        dataIndex: 'date',
-        text: 'Date'
-      }, {
-        xtype: 'booleancolumn',
-        dataIndex: 'bool',
-        text: 'Boolean'
+        dataIndex: 'text',
+        flex: 1,
+        text: 'Question'
       }],
-      viewConfig: {
-
-      },
+      viewConfig: {},
       dockedItems: [{
         xtype: 'toolbar',
         dock: 'top',
         items: [{
-            xtype: 'button',
-            text: 'New Question'
-          }, {
-            xtype: 'button',
-            text: 'Edit Question'
-          }, {
-            xtype: 'button',
-            text: 'Delete Question'
-          }]
+          icon: '/img/icons/add.png',
+          text: 'New Question'
+        }, {
+          icon: '/img/icons/edit.png',
+          text: 'Edit Question'
+        }, {
+          icon: '/img/icons/delete.png',
+          text: 'Delete Question'
+        }]
       }]
     }]
   });
