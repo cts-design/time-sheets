@@ -4,5 +4,6 @@ class EcourseModule extends AppModel {
 	public $displayField = 'name';
 
 	public $belongsTo = array('Ecourse');
+	public $hasMany = array('EcourseModuleQuestion');
 }
 ?>
