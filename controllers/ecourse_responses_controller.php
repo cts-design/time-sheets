@@ -15,7 +15,6 @@ class EcourseResponsesController extends AppController {
 				if(!empty($this->params['url']['fromDate']) && !empty($this->params['url']['toDate'])) {
 					$from = date('Y-m-d H:i:m', strtotime($this->params['url']['fromDate'] . '12:00 AM'));
 					$to = date('Y-m-d H:i:m', strtotime($this->params['url']['toDate'] . '11:59 PM'));
-					// TODO find out what date we should query against here
 					if($this->params['url']['status'] === 'incomplete') {
 						$conditions['EcourseResponse.created BETWEEN ? AND ?'] = array($from, $to);
 					} 
@@ -90,7 +89,6 @@ class EcourseResponsesController extends AppController {
 		$options['conditions'] = array('EcourseResponse.id' => $this->params['pass'][0]);
 		$options['contain'] = array('User', 'Ecourse', 'EcourseModuleResponse' => array('EcourseModule', 'EcourseModuleResponseTime'));
 		$response = $this->EcourseResponse->find('first', $options);
-		$this->log($response, 'debug');
 		if($this->RequestHandler->isAjax()) {
 			if($response) {
 				$i = 0;
@@ -103,7 +101,7 @@ class EcourseResponsesController extends AppController {
 						$this->EcourseResponse->EcourseModuleResponse->EcourseModuleResponseTime->getTimeSpent($moduleResponse['id'], 'quiz');
 					$data['response'][$i]['time_on_media'] = 
 						$this->EcourseResponse->EcourseModuleResponse->EcourseModuleResponseTime->getTimeSpent($moduleResponse['id'], 'media');
-					$data['response'][$i]['total_time'] = $data['response'][0]['time_on_media'] + $data['response'][0]['time_on_quiz'];
+					$data['response'][$i]['total_time'] = $data['response'][$i]['time_on_media'] + $data['response'][$i]['time_on_quiz'];
 					$i++;
 				} 
 				$data['success'] = true;
@@ -117,7 +115,21 @@ class EcourseResponsesController extends AppController {
 		$this->set(compact('ecourseName', 'ecourseId', 'userName'));
 	}
 
-	public function admin_add() {
-
+	public function admin_reset() {
+		if($this->RequestHandler->isAjax()) {
+			$this->EcourseResponse->read(null, $this->params['form']['id']);
+			$this->EcourseResponse->set('reset', 1);
+			if($this->EcourseResponse->save()) {
+				$data['success'] = true;
+				$data['message'] = 'Response was reset successfully';
+				// TODO: add user activity transaction
+			}
+			else {
+				$data['success'] = false;
+				$data['message'] = 'Unable to reset response at this time';
+			}
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
 	}
 }
