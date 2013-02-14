@@ -91,8 +91,32 @@ Ext.define('Atlas.grid.EcourseResponsePanel', {
   listeners: {
     select: function(sm, record, index, eOpts) {
       responseId = record.data.id;
+    },
+    itemcontextmenu: function(view, rec, node, index, e){
+      e.stopEvent();
+      Ext.getCmp('contextMenu').showAt(e.getXY());
+      responseId = rec.data.id;
     }
   }
+});
+
+Ext.create('Ext.menu.Menu', {
+  id: 'contextMenu',
+  title: 'Response Actions',
+  bodyPadding: 5,
+  items:[{
+    xtype: 'button',
+    text: 'Reset Response',
+    iconCls: 'icon_arrow_redo',
+    handler: function() {
+      Ext.Ajax.request({
+        url: '/admin/ecourse_responses/reset',
+        params: {
+          id: responseId
+        }
+      });
+    }
+  }]
 });
 
 Ext.create('Atlas.grid.EcourseResponsePanel', {
