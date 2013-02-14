@@ -20,24 +20,24 @@ class EcourseModuleQuestionsController extends AppController {
 								->findById($this->params['url']['ecourse_module_id']);
 
 		if ($this->RequestHandler->isAjax()) {
-			//$ecourse_modules = $this->EcourseModule
-									//->find('all', array(
-										//'conditions' => array(
-											//'EcourseModule.ecourse_id' => $this->params['url']['ecourse_id']
-										//)
-									//));
+			$ecourse_module_questions = $this->EcourseModuleQuestion->find('all', array(
+				'conditions' => array(
+					'EcourseModuleQuestion.ecourse_module_id' => $this->params['url']['ecourse_module_id']
+				)
+			));
 
-			//if ($ecourse_modules) {
-				//$data['success'] = true;
+			if ($ecourse_module_questions) {
+				$data['success'] = true;
 
-				//foreach ($ecourse_modules as $key => $module) {
-					//$data['ecourse_modules'][] = $module['EcourseModule'];
-				//}
-			//} else {
-				//$data['success'] = true;
-				//$data['ecourse_modules'] = array();
-			//}
-			$data['success'] = true;
+				foreach ($ecourse_module_questions as $key => $question) {
+					$data['ecourse_module_questions'][$key] = $question['EcourseModuleQuestion'];
+					$data['ecourse_module_questions'][$key]['answers'] = $question['EcourseModuleQuestionAnswer'];
+				}
+			} else {
+				$data['success'] = true;
+				$data['ecourse_module_questions'] = array();
+			}
+
 			$this->set('data', $data);
 			$this->render('/elements/ajaxreturn');
 		}
@@ -47,15 +47,19 @@ class EcourseModuleQuestionsController extends AppController {
 	}
 
 	public function admin_create() {
-		$ecourse_module = json_decode($this->params['form']['ecourse_modules'], true);
+		$ecourse_module_question = json_decode($this->params['form']['ecourse_module_questions'], true);
 
-		$this->EcourseModule->create();
-		$this->data['EcourseModule'] = $ecourse_module;
+		$this->EcourseModuleQuestion->create();
+		$this->data['EcourseModuleQuestionAnswer'] = $ecourse_module_question['answers'];
+		unset($ecourse_module_question['answers']);
+		$this->data['EcourseModuleQuestion'] = $ecourse_module_question;
 
-		if ($this->EcourseModule->save($this->data)) {
+		$this->log($this->data, 'debug');
+
+		if ($this->EcourseModuleQuestion->saveAll($this->data)) {
 			$data['success'] = true;
-			$data['ecourse_modules'] = $ecourse_module;
-			$data['ecourse_modules']['id'] = $this->EcourseModule->id;
+			$data['ecourse_module_questions'] = $ecourse_module_question;
+			$data['ecourse_module_questions']['id'] = $this->EcourseModuleQuestion->id;
 		} else {
 			$data['success'] = false;
 		}
