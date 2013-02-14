@@ -54,8 +54,6 @@ class EcourseModuleQuestionsController extends AppController {
 		unset($ecourse_module_question['answers']);
 		$this->data['EcourseModuleQuestion'] = $ecourse_module_question;
 
-		$this->log($this->data, 'debug');
-
 		if ($this->EcourseModuleQuestion->saveAll($this->data)) {
 			$data['success'] = true;
 			$data['ecourse_module_questions'] = $ecourse_module_question;
