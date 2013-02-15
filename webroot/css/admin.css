@@ -4228,3 +4228,12 @@ table.raw-data tr td {
 .icon_zoom_out {
   background: url(../img/icons/zoom_out.png);
 }
+
+.x-grid-cell-inner .user-assignment-required {
+  background: transparent url(../img/icons/group_link.png) 0 0 !important;
+}
+
+.x-grid-cell-inner img.x-action-col-icon.user-assignment-disabled {
+  background: transparent url(../img/icons/group_link_disabled.png) 0 0 !important;
+  cursor: default !important;
+}
