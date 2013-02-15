@@ -242,7 +242,7 @@ Ext.onReady(function () {
           tooltip: 'Add Modules',
           handler: function (grid, rowIndex, colIndex) {
             var rec = grid.store.getAt(rowIndex);
-            window.location = '/admin/ecourse_modules?ecourse_id=' + rec.get('id')
+            window.location = '/admin/ecourse_modules/index/' + rec.get('id')
           }
         }]
       }, {
@@ -378,7 +378,7 @@ Ext.onReady(function () {
           tooltip: 'Add Modules',
           handler: function (grid, rowIndex, colIndex) {
             var rec = grid.store.getAt(rowIndex);
-            window.location = '/admin/ecourse_modules?ecourse_id=' + rec.get('id')
+            window.location = '/admin/ecourse_modules/index/' + rec.get('id')
           }
         }]
       }, {
