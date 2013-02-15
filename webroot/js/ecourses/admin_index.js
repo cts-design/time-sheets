@@ -66,6 +66,7 @@ Ext.onReady(function () {
 
   var tabPanel = Ext.create('Ext.tab.Panel', {
     renderTo: 'ecoursesGrid',
+    id: 'ecoursesTabPanel',
     height: 400,
     stateful: true,
     stateEvents: ['tabchange'],
@@ -410,7 +411,8 @@ Ext.onReady(function () {
     }],
     listeners: {
       tabchange: function (panel, newCard) {
-        var store = newCard.getStore(),
+        var store = newCard.getStore();
+          tabPanel = Ext.getCmp('ecoursesTabPanel'),
           duplicateEcourseBtn = tabPanel.down('#duplicateEcourseBtn');
 
         duplicateEcourseBtn.disable();
