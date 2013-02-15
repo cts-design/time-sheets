@@ -174,7 +174,7 @@ Ext.create('Ext.data.Store', {
   storeId: 'locationsStore',
   proxy: {
     type: 'ajax',
-    url: '/admin/locations/get_locations_with_address',
+    url: '/admin/locations/get_location_list',
     reader: {
       type: 'json',
       root: 'locations'
