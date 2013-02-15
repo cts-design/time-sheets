@@ -253,7 +253,8 @@ Ext.onReady(function () {
           icon: '/img/icons/file-cab.png',
           tooltip: 'View Responses',
           handler: function (grid, rowIndex, colIndex) {
-            alert('go to responses');
+            var rec = grid.store.getAt(rowIndex);
+            window.location = '/admin/ecourse_responses/index/' + rec.get('id')
           }
         }]
       }],
@@ -388,7 +389,8 @@ Ext.onReady(function () {
           icon: '/img/icons/file-cab.png',
           tooltip: 'View Responses',
           handler: function (grid, rowIndex, colIndex) {
-            alert('go to responses');
+            var rec = grid.store.getAt(rowIndex);
+            window.location = '/admin/ecourse_responses/index/' + rec.get('id')
           }
         }]
       }],
