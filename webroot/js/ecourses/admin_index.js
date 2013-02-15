@@ -166,37 +166,6 @@ Ext.onReady(function () {
         }
       }, {
         align: 'center',
-        dataIndex: 'requires_user_assignment',
-        text: 'Requires User Assignment?',
-        width: 175,
-        editor: {
-          xtype: 'combo',
-          allowBlank: false,
-          displayField: 'stringVal',
-          store: Ext.create('Ext.data.Store', {
-            fields: ['intVal', 'stringVal'],
-            data: [{
-              intVal: 1, stringVal: 'Yes',
-            }, {
-              intVal: 0, stringVal: 'No',
-            }]
-          }),
-          queryMode: 'local',
-          valueField: 'intVal'
-        },
-        renderer: function (value) {
-          switch (value) {
-            case 0:
-              return "No";
-              break;
-
-            case 1:
-              return "Yes";
-              break;
-          }
-        }
-      }, {
-        align: 'center',
         dataIndex: 'disabled',
         text: 'Active',
         width: 75,
@@ -236,6 +205,30 @@ Ext.onReady(function () {
           tooltip: 'Edit Ecourse',
           handler: function (grid, rowIndex, colIndex) {
             alert('go to edit');
+          }
+        }]
+      }, {
+        xtype: 'actioncolumn',
+        align: 'center',
+        header: 'Assign Users',
+        width: 75,
+        items: [{
+          handler: function (grid, rowIndex, colIndex) {
+            var rec = grid.store.getAt(rowIndex);
+            if (rec.get('requires_user_assignment')) {
+              window.location = '/admin/ecourses/assign_users/' + rec.get('id');
+            } else {
+              return false;
+            }
+          },
+          getClass: function (val, meta, rec) {
+            if (rec.get('requires_user_assignment')) {
+              this.tooltip = 'Assign Users';
+              return 'user-assignment-required';
+            } else {
+              this.tooltip = 'User assignment is not required';
+              return 'user-assignment-disabled';
+            }
           }
         }]
       }, {
@@ -308,37 +301,6 @@ Ext.onReady(function () {
         }
       }, {
         align: 'center',
-        dataIndex: 'requires_user_assignment',
-        text: 'Requires User Assignment?',
-        width: 175,
-        editor: {
-          xtype: 'combo',
-          allowBlank: false,
-          displayField: 'stringVal',
-          store: Ext.create('Ext.data.Store', {
-            fields: ['intVal', 'stringVal'],
-            data: [{
-              intVal: 1, stringVal: 'Yes',
-            }, {
-              intVal: 0, stringVal: 'No',
-            }]
-          }),
-          queryMode: 'local',
-          valueField: 'intVal'
-        },
-        renderer: function (value) {
-          switch (value) {
-            case 0:
-              return "No";
-              break;
-
-            case 1:
-              return "Yes";
-              break;
-          }
-        }
-      }, {
-        align: 'center',
         dataIndex: 'disabled',
         text: 'Active',
         width: 75,
@@ -378,6 +340,30 @@ Ext.onReady(function () {
           tooltip: 'Edit Ecourse',
           handler: function (grid, rowIndex, colIndex) {
             alert('go to edit');
+          }
+        }]
+      }, {
+        xtype: 'actioncolumn',
+        align: 'center',
+        header: 'Assign Staff',
+        width: 75,
+        items: [{
+          handler: function (grid, rowIndex, colIndex) {
+            var rec = grid.store.getAt(rowIndex);
+            if (rec.get('requires_user_assignment')) {
+              window.location = '/admin/ecourses/assign_staff/' + rec.get('id');
+            } else {
+              return false;
+            }
+          },
+          getClass: function (val, meta, rec) {
+            if (rec.get('requires_user_assignment')) {
+              this.tooltip = 'Assign Staff';
+              return 'user-assignment-required';
+            } else {
+              this.tooltip = 'Staff assignment is not required';
+              return 'user-assignment-disabled';
+            }
           }
         }]
       }, {
