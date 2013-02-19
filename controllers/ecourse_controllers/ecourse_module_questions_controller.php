@@ -14,10 +14,19 @@ class EcourseModuleQuestionsController extends AppController {
 		parent::beforeFilter();
 	}
 
-	public function admin_index() {
+	public function admin_index($ecourse_module_id = null) {
+		if (isset($this->params['url']['ecourse_module_id'])) {
+			$ecourse_module_id = $this->params['url']['ecourse_module_id'];
+		}
+
+		if (!$ecourse_module_id) {
+			$this->Session->setFlash(__('Invalid Ecourse Module id', true), 'flash_failure');
+			$this->redirect(array('controller' => 'ecourse_modules', 'admin' => true));
+		}
+
 		$ecourse_module = $this->EcourseModuleQuestion
 								->EcourseModule
-								->findById($this->params['url']['ecourse_module_id']);
+								->findById($ecourse_module_id);
 
 		if ($this->RequestHandler->isAjax()) {
 			$ecourse_module_questions = $this->EcourseModuleQuestion->find('all', array(

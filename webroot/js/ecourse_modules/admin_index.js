@@ -138,7 +138,7 @@ Ext.onReady(function () {
         tooltop: 'Quizzes',
         handler: function (grid, rowIndex, colIndex) {
             var rec = grid.store.getAt(rowIndex);
-            window.location = '/admin/ecourse_module_questions?ecourse_module_id=' + rec.get('id')
+            window.location = '/admin/ecourse_module_questions/index/' + rec.get('id')
         }
       }]
     }],
