@@ -14,7 +14,11 @@ class EcourseModulesController extends AppController {
 		parent::beforeFilter();
 	}
 
-	public function admin_index($ecourse_id) {
+	public function admin_index($ecourse_id = null) {
+		if (isset($this->params['url']['ecourse_id'])) {
+			$ecourse_id = $this->params['url']['ecourse_id'];
+		}
+
 		if (!$ecourse_id) {
 			$this->Session->setFlash(__('Invalid Ecourse id', true), 'flash_failure');
 			$this->redirect(array('controller' => 'ecourses', 'admin' => true));
