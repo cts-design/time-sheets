@@ -1161,6 +1161,63 @@ class UsersController extends AppController {
 		$this -> set('options', $options);
 	}
 
+	public function admin_customer_search() {
+		if($this->RequestHandler->isAjax()) {
+			$data['users'] = array();
+			if(isset($this->params['url']['search'], $this->params['url']['searchType'])) {
+				switch($this->params['url']['searchType']) {
+					case 'lastname':
+						$conditions['User.lastname'] = $this->params['url']['search'];
+						break;
+					case 'last4':
+						$conditions['RIGHT (User.ssn , 4)'] = $this->params['url']['search'];
+						break;
+					case 'ssn':
+						$conditions['User.ssn'] = $this->params['url']['search'];
+						break;
+				}
+				$conditions['User.role_id'] = 1;
+				$users = $this->User->find('all', array('conditions' => $conditions));
+				if($users) {
+					$i = 0;
+					foreach($users as $user) {
+						$data['users'][$i]['id'] = $user['User']['id'];
+						$data['users'][$i]['firstname'] = $user['User']['firstname'];
+						$data['users'][$i]['lastname'] = $user['User']['lastname'];
+						$data['users'][$i]['last_4'] = substr($user['User']['ssn'], -4);
+						$i++;
+					}
+				}
+			}
+			$data['success'] = true;
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
+
+	public function admin_staff_search() {
+		if($this->RequestHandler->isAjax()) {
+			$data['users'] = array();
+			if(isset($this->params['url']['search'], $this->params['url']['searchType'])) {
+				$conditions['User.lastname'] = $this->params['url']['search'];
+				// TODO: find out if this should include non role based admins
+				$conditions['User.role_id >'] = 1;
+				$users = $this->User->find('all', array('conditions' => $conditions));
+				if($users) {
+					$i = 0;
+					foreach($users as $user) {
+						$data['users'][$i]['id'] = $user['User']['id'];
+						$data['users'][$i]['firstname'] = $user['User']['firstname'];
+						$data['users'][$i]['lastname'] = $user['User']['lastname'];
+						$i++;
+					}
+				}
+			}
+			$data['success'] = true;
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
 	// Auditors
 	public function auditor_dashboard() {
 		// check to see if there are any audits this user is associated
