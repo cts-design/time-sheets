@@ -75,5 +75,3 @@ class EcoursesController extends AppController {
 		$this->set(compact('title_for_layout', 'type'));
 	}
 }
-
-?>
