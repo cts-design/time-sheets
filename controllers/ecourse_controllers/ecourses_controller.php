@@ -74,11 +74,4 @@ class EcoursesController extends AppController {
 		$title_for_layout = 'New Ecourse';
 		$this->set(compact('title_for_layout', 'type'));
 	}
-
-	public function admin_assign_users() {
-		if($this->RequestHandler->isAjax()) {
-			
-		}			
-	}
 }
-
