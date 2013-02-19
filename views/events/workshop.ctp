@@ -64,6 +64,7 @@
 
 			<div class="event">
 				<div class="details">
+					<?php if ($event['Event']['allow_registrations']): ?>
 					<div class="attend">
 						<?php if (in_array($event['Event']['id'], $userEventRegistrations)): ?>
 							<a href="/events/cancel/<?= $event['Event']['id'] ?>/workshop" class="button green">Cancel Your Registration</a>
@@ -79,6 +80,7 @@
 							seats still available
 						</p>
 					</div>
+					<?php endif ?>
 
 					<h2><?php echo $event['Event']['name'] ?></h2>
 					<ul>
