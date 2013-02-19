@@ -104,9 +104,7 @@ Ext.create('Ext.data.Store', {
   listeners: {
     load: function (store, records, successful) {
       Ext.Array.each(records, function(rec) {
-        console.log(rec);
         var answer = rec.getAssociatedData();
-        console.log(answer);
       });
     }
   }
@@ -114,8 +112,6 @@ Ext.create('Ext.data.Store', {
 
 Ext.onReady(function () {
   Ext.QuickTips.init();
-
-  console.log(ecourse_module);
 
   var moduleForm,
     ecourseModuleQuestionStore = Ext.data.StoreManager.lookup('EcourseModuleQuestionStore');
@@ -159,6 +155,7 @@ Ext.onReady(function () {
           xtype: 'textfield',
           fieldLabel: 'Label',
           hideLabel: true,
+          id: 'answer1',
           name: 'answer',
           width: 175
         }, {
@@ -184,6 +181,7 @@ Ext.onReady(function () {
           width: 175,
           fieldLabel: 'Label',
           hideLabel: true,
+          id: 'answer2',
           name: 'answer'
         }, {
           xtype: 'radiofield',
@@ -208,6 +206,7 @@ Ext.onReady(function () {
           width: 175,
           fieldLabel: 'Label',
           hideLabel: true,
+          id: 'answer3',
           name: 'answer'
         }, {
           xtype: 'radiofield',
@@ -232,6 +231,7 @@ Ext.onReady(function () {
           width: 175,
           fieldLabel: 'Label',
           hideLabel: true,
+          id: 'answer4',
           name: 'answer'
         }, {
           xtype: 'radiofield',
@@ -304,6 +304,26 @@ Ext.onReady(function () {
         flex: 1,
         text: 'Question'
       }],
+      listeners: {
+        itemclick: function (grid, rec) {
+          var formPanel = this.up('panel').down('form'),
+            form = formPanel.getForm();
+
+          console.log(form.getRecord());
+          form.loadRecord(rec);
+          rec.answers().each(function (answer, index) {
+            var fieldIndex = index + 1,
+              field = formPanel.down('#answer' + fieldIndex),
+              radio = field.nextNode('radiofield');
+
+            field.setValue(answer.get('text'));
+            if (answer.get('correct')) {
+              radio.setValue(true);
+            }
+          });
+          console.log(form.getRecord());
+        }
+      },
       viewConfig: {},
       dockedItems: [{
         xtype: 'toolbar',
