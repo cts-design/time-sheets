@@ -1,4 +1,4 @@
-# Atlas
+# ATLAS
 
 An Automated Tracking, Linking and Archiving Solution for Workforce Development
 
