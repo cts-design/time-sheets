@@ -66,11 +66,14 @@ Ext.onReady(function () {
 
   var tabPanel = Ext.create('Ext.tab.Panel', {
     renderTo: 'ecoursesGrid',
+    id: 'ecoursesTabPanel',
     height: 400,
     stateful: true,
     stateEvents: ['tabchange'],
     stateId: 'ecourseIndexTabs',
     title: 'Ecourses',
+    listeners: {
+    },
     dockedItems: [{
       xtype: 'toolbar',
       dock: 'top',
@@ -166,37 +169,6 @@ Ext.onReady(function () {
         }
       }, {
         align: 'center',
-        dataIndex: 'requires_user_assignment',
-        text: 'Requires User Assignment?',
-        width: 175,
-        editor: {
-          xtype: 'combo',
-          allowBlank: false,
-          displayField: 'stringVal',
-          store: Ext.create('Ext.data.Store', {
-            fields: ['intVal', 'stringVal'],
-            data: [{
-              intVal: 1, stringVal: 'Yes',
-            }, {
-              intVal: 0, stringVal: 'No',
-            }]
-          }),
-          queryMode: 'local',
-          valueField: 'intVal'
-        },
-        renderer: function (value) {
-          switch (value) {
-            case 0:
-              return "No";
-              break;
-
-            case 1:
-              return "Yes";
-              break;
-          }
-        }
-      }, {
-        align: 'center',
         dataIndex: 'disabled',
         text: 'Active',
         width: 75,
@@ -241,32 +213,54 @@ Ext.onReady(function () {
       }, {
         xtype: 'actioncolumn',
         align: 'center',
-        header: 'Modules',
-        width: 75,
-        items: [{
-          icon: '/img/icons/report_modules.png',
-          tooltip: 'Add Modules',
-          handler: function (grid, rowIndex, colIndex) {
-            var rec = grid.store.getAt(rowIndex);
-            window.location = '/admin/ecourse_modules?ecourse_id=' + rec.get('id')
-          }
-        }]
-      }, {
-        xtype: 'actioncolumn',
-        align: 'center',
         header: 'View Responses',
         width: 100,
         items: [{
           icon: '/img/icons/file-cab.png',
           tooltip: 'View Responses',
           handler: function (grid, rowIndex, colIndex) {
-            alert('go to responses');
+            var rec = grid.store.getAt(rowIndex);
+            window.location = '/admin/ecourse_responses/index/' + rec.get('id')
           }
         }]
       }],
       listeners: {
         select: function (rm, rec) {
           tabPanel.down('#duplicateEcourseBtn').enable();
+        },
+        itemcontextmenu: function (view, rec, item, index, e) {
+          var menu,
+            items = [];
+
+          e.preventDefault();
+
+          items.push({
+            icon: '/img/icons/report_modules',
+            text: 'Add/Edit Ecourse Modules',
+            handler: function () {
+              window.location = '/admin/ecourse_modules/index/' + rec.get('id');
+            }
+          });
+
+          if (rec.get('requires_user_assignment')) {
+            items.push('-', {
+              icon: '/img/icons/group_link.png',
+              text: 'Assign Customers',
+              handler: function () {
+                window.location = '/admin/ecourse_users/assign_customers/' + rec.get('id');
+              }
+            }, {
+              icon: '/img/icons/group_gear.png',
+              text: 'View Assigned Customers',
+              handler: function () {
+                window.location = '/admin/ecourse_users/index/' + rec.get('id');
+              }
+            });
+          }
+
+          menu = Ext.create('Ext.menu.Menu', {
+            items: items
+          }).showAt(e.getXY());
         }
       },
       viewConfig: {
@@ -308,37 +302,6 @@ Ext.onReady(function () {
         }
       }, {
         align: 'center',
-        dataIndex: 'requires_user_assignment',
-        text: 'Requires User Assignment?',
-        width: 175,
-        editor: {
-          xtype: 'combo',
-          allowBlank: false,
-          displayField: 'stringVal',
-          store: Ext.create('Ext.data.Store', {
-            fields: ['intVal', 'stringVal'],
-            data: [{
-              intVal: 1, stringVal: 'Yes',
-            }, {
-              intVal: 0, stringVal: 'No',
-            }]
-          }),
-          queryMode: 'local',
-          valueField: 'intVal'
-        },
-        renderer: function (value) {
-          switch (value) {
-            case 0:
-              return "No";
-              break;
-
-            case 1:
-              return "Yes";
-              break;
-          }
-        }
-      }, {
-        align: 'center',
         dataIndex: 'disabled',
         text: 'Active',
         width: 75,
@@ -383,32 +346,54 @@ Ext.onReady(function () {
       }, {
         xtype: 'actioncolumn',
         align: 'center',
-        header: 'Modules',
-        width: 75,
-        items: [{
-          icon: '/img/icons/report_modules.png',
-          tooltip: 'Add Modules',
-          handler: function (grid, rowIndex, colIndex) {
-            var rec = grid.store.getAt(rowIndex);
-            window.location = '/admin/ecourse_modules?ecourse_id=' + rec.get('id')
-          }
-        }]
-      }, {
-        xtype: 'actioncolumn',
-        align: 'center',
         header: 'View Responses',
         width: 100,
         items: [{
           icon: '/img/icons/file-cab.png',
           tooltip: 'View Responses',
           handler: function (grid, rowIndex, colIndex) {
-            alert('go to responses');
+            var rec = grid.store.getAt(rowIndex);
+            window.location = '/admin/ecourse_responses/index/' + rec.get('id')
           }
         }]
       }],
       listeners: {
         select: function (rm, rec) {
           tabPanel.down('#duplicateEcourseBtn').enable();
+        },
+        itemcontextmenu: function (view, rec, item, index, e) {
+          var menu,
+            items = [];
+
+          e.preventDefault();
+
+          items.push({
+            icon: '/img/icons/report_modules',
+            text: 'Add/Edit Ecourse Modules',
+            handler: function () {
+              window.location = '/admin/ecourse_modules/index/' + rec.get('id');
+            }
+          });
+
+          if (rec.get('requires_user_assignment')) {
+            items.push('-', {
+              icon: '/img/icons/group_link.png',
+              text: 'Assign Staff',
+              handler: function () {
+                window.location = '/admin/ecourse_users/assign_staff/' + rec.get('id');
+              }
+            }, {
+              icon: '/img/icons/group_gear.png',
+              text: 'View Assigned Staff',
+              handler: function () {
+                window.location = '/admin/ecourse_users/index/' + rec.get('id');
+              }
+            });
+          }
+
+          menu = Ext.create('Ext.menu.Menu', {
+            items: items
+          }).showAt(e.getXY());
         }
       },
       viewConfig: {
@@ -422,7 +407,8 @@ Ext.onReady(function () {
     }],
     listeners: {
       tabchange: function (panel, newCard) {
-        var store = newCard.getStore(),
+        var store = newCard.getStore();
+          tabPanel = Ext.getCmp('ecoursesTabPanel'),
           duplicateEcourseBtn = tabPanel.down('#duplicateEcourseBtn');
 
         duplicateEcourseBtn.disable();
