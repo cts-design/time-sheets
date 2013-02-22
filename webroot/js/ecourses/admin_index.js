@@ -11,6 +11,7 @@ Ext.define('Ecourse', {
     { name: 'default_passing_percentage', type: 'int' },
     { name: 'requires_user_assignment', type: 'int' },
     { name: 'disabled', type: 'int' },
+    { name: 'assigned_user_count', type: 'int' }
   ]
 });
 
@@ -250,6 +251,7 @@ Ext.onReady(function () {
                 window.location = '/admin/ecourse_users/assign_customers/' + rec.get('id');
               }
             }, {
+              disabled: (rec.get('assigned_user_count') == 0),
               icon: '/img/icons/group_gear.png',
               text: 'View Assigned Customers',
               handler: function () {
@@ -383,6 +385,7 @@ Ext.onReady(function () {
                 window.location = '/admin/ecourse_users/assign_staff/' + rec.get('id');
               }
             }, {
+              disabled: (rec.get('assigned_user_count') == 0),
               icon: '/img/icons/group_gear.png',
               text: 'View Assigned Staff',
               handler: function () {

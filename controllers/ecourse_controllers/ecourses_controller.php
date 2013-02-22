@@ -15,6 +15,9 @@ class EcoursesController extends AppController {
 	}
 
 	public function admin_index() {
+		$this->Ecourse->recursive = -1;
+		$this->Ecourse->Behaviors->attach('Containable');
+
 		if ($this->RequestHandler->isAjax()) {
 			if (isset($this->params['url']['ecourse_type'])) {
 				$ecourseType = $this->params['url']['ecourse_type'];
@@ -22,6 +25,9 @@ class EcoursesController extends AppController {
 				$ecourses = $this->Ecourse->find('all', array(
 					'conditions' => array(
 						'Ecourse.type' => $ecourseType
+					),
+					'contain' => array(
+						'EcourseUser'
 					)
 				));
 			}
@@ -32,13 +38,18 @@ class EcoursesController extends AppController {
 				$ecourses = $this->Ecourse->find('all', array(
 					'conditions' => array(
 						'Ecourse.id' => $ecourseId
+					),
+					'contain' => array(
+						'EcourseUser'
 					)
 				));
 			}
 
 			if ($ecourses) {
+				$this->log($ecourses, 'debug');
 				foreach ($ecourses as $key => $ecourse) {
-					$data['ecourses'][] = $ecourse['Ecourse'];
+					$ecourse['Ecourse']['assigned_user_count'] = count($ecourse['EcourseUser']);
+					$data['ecourses'][$key] = $ecourse['Ecourse'];
 				}
 			} else {
 				$data['ecourses'] = array();
