@@ -4,7 +4,9 @@ Ext.define('EcoureUser', {
         {name: 'id'},
         {name: 'firstname'},
         {name: 'lastname'},
-        {name: 'last4'}
+        {name: 'last4'},
+        {name: 'ecourse_id'},
+        {name: 'user_id'}
      ]
 });
 
@@ -27,7 +29,7 @@ Ext.create('Ext.data.Store', {
     writer: {
       root: 'data[EcourseUser]',
       encode: true,
-      writeAllFields: false 
+      writeAllFields: true 
     }
   },
   autoLoad: true,
@@ -90,10 +92,12 @@ Ext.onReady(function() {
       
         }],
         columns: [
-            {text: "id", dataIndex: 'id', hidden: true},
+            {text: "Id", dataIndex: 'id', hidden: true},
             {text: "First Name", dataIndex: 'firstname', flex: 1},
             {text: "Last Name", dataIndex: 'lastname', flex: 1},
             {text: "Last 4 SSN", dataIndex: 'last4'},
+            {text: 'Ecourse Id', dataIndex: 'ecourse_id', hidden: true},
+            {text: 'User Id', dataIndex: 'user_id', hidden: true}
         ],
         columnLines: true,
         width: 600,
