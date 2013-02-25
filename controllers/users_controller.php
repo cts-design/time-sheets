@@ -270,6 +270,9 @@ class UsersController extends AppController {
 		$this->loadModel('Program');
 		$this->loadModel('Ecourse');
 
+		$this->User->EcourseUser->Behaviors->attach('Containable');
+		$this->Ecourse->Behaviors->attach('Containable');
+
 		$this->Program->contain(array(
 			'ProgramResponse' => array(
 				'conditions' => array(
@@ -323,6 +326,11 @@ class UsersController extends AppController {
 				'conditions' => array(
 					'EcourseUser.user_id' => $this->Auth->user('id'),
 					'Ecourse.type' => 'customer'
+				),
+				'contain' => array(
+					'Ecourse' => array(
+						'EcourseModule'
+					)
 				)
 			)
 		);
@@ -332,6 +340,9 @@ class UsersController extends AppController {
 				'conditions' => array(
 					'Ecourse.requires_user_assignment' => 0,
 					'Ecourse.type' => 'customer'
+				),
+				'contain' => array(
+					'EcourseModule'
 				)
 			)
 		);
@@ -345,7 +356,8 @@ class UsersController extends AppController {
 		}
 
 		if ($publicEcourses) {
-			foreach ($publicEcourses as $ecourse) {
+			foreach ($publicEcourses as $key => $ecourse) {
+				$ecourse['Ecourse']['EcourseModule'] = $ecourse['EcourseModule'];
 				$ecourses[]['Ecourse'] = $ecourse['Ecourse'];
 			}
 		}

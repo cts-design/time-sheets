@@ -70,7 +70,10 @@
 					<div class="title">
 						<a href="#"><?= Inflector::humanize($value['Ecourse']['name']) ?></a>
 					</div>
-					<div class="details"></div>
+					<div class="details">
+						<i class="icon-book"></i>
+						<?= count($value['Ecourse']['EcourseModule']) ?> Modules
+					</div>
 
 					<span class="action">
 						<a href="#" class="button gray">
