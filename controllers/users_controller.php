@@ -268,10 +268,17 @@ class UsersController extends AppController {
 
 	function dashboard() {
 		$this->loadModel('Program');
-		$this->Program->contain(
-			array('ProgramResponse' => array(
-				'conditions' => array('user_id' => $this->Auth->user('id')),
-				'fields' => array('id', 'status'))));
+		$this->loadModel('Ecourse');
+
+		$this->Program->contain(array(
+			'ProgramResponse' => array(
+				'conditions' => array(
+					'user_id' => $this->Auth->user('id')
+				),
+				'fields' => array('id', 'status')
+			)
+		));
+
 		$programs = $this->Program->find(
 			'all',
 			array(
@@ -310,8 +317,41 @@ class UsersController extends AppController {
 				'conditions' => array('EventRegistration.user_id' => $this->Auth->user('id'))
 			)
 		);
+
+		$assignedEcourses = $this->User->EcourseUser->find('all',
+			array(
+				'conditions' => array(
+					'EcourseUser.user_id' => $this->Auth->user('id'),
+					'Ecourse.type' => 'customer'
+				)
+			)
+		);
+
+		$publicEcourses = $this->Ecourse->find('all',
+			array(
+				'conditions' => array(
+					'Ecourse.requires_user_assignment' => 0,
+					'Ecourse.type' => 'customer'
+				)
+			)
+		);
+
+		$ecourses = array();
+
+		if ($assignedEcourses) {
+			foreach ($assignedEcourses as $ecourse) {
+				$ecourses[]['Ecourse'] = $ecourse['Ecourse'];
+			}
+		}
+
+		if ($publicEcourses) {
+			foreach ($publicEcourses as $ecourse) {
+				$ecourses[]['Ecourse'] = $ecourse['Ecourse'];
+			}
+		}
+
 		$title_for_layout = 'Customer Dashboard';
-		$this->set(compact('title_for_layout', 'orientations', 'registrations', 'enrollments', 'eventRegistrations'));
+		$this->set(compact('title_for_layout', 'orientations', 'registrations', 'enrollments', 'eventRegistrations', 'ecourses'));
 	}
 
 	function edit($id=null) {
