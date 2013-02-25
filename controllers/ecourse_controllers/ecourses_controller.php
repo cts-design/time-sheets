@@ -54,7 +54,6 @@ class EcoursesController extends AppController {
 			}
 
 			if ($ecourses) {
-				$this->log($ecourses, 'debug');
 				foreach ($ecourses as $key => $ecourse) {
 					$ecourse['Ecourse']['assigned_user_count'] = count($ecourse['EcourseUser']);
 					$data['ecourses'][$key] = $ecourse['Ecourse'];
