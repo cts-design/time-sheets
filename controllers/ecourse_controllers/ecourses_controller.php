@@ -14,6 +14,14 @@ class EcoursesController extends AppController {
 		parent::beforeFilter();
 	}
 
+	public function media() {
+		
+	}
+
+	public function quiz() {
+
+	}
+
 	public function admin_index() {
 		$this->Ecourse->recursive = -1;
 		$this->Ecourse->Behaviors->attach('Containable');
