@@ -30,10 +30,25 @@ class EcoursesController extends AppController {
 		$instructions = $module['EcourseModule']['media_description'];
 		$media = '/ecourses/load_media/'. $module['EcourseModule']['media_location'];
 		$this->set(compact('media', 'instructions'));
-}
+	}
 
-	public function quiz() {
+	public function quiz($moduleId) {
+		$this->Ecourse->EcourseModule->Behaviors->attach('Containable');
 
+		$ecourseModule = $this->Ecourse->EcourseModule->find('first', array(
+			'conditions' => array(
+				'EcourseModule.id' => $moduleId
+			),
+			'contain' => array(
+				'EcourseModuleQuestion' => array(
+					'order' => array('EcourseModuleQuestion.order ASC'),
+					'EcourseModuleQuestionAnswer'
+				)
+			)
+		));
+
+		$title_for_layout = $ecourseModule['EcourseModule']['name'] . ' Quiz';
+		$this->set(compact('ecourseModule', 'title_for_layout'));
 	}
 
     public function load_media($mediaLocation=null) {
