@@ -217,7 +217,7 @@ Ext.onReady(function () {
       xtype: 'htmleditor',
       allowBlank: false,
       anchor: '100%',
-      fieldLabel: 'Description',
+      fieldLabel: 'Instructions',
       height: 150,
       name: 'instructions',
       style: 'background-color: white;'
