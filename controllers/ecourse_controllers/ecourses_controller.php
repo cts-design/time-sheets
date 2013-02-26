@@ -14,13 +14,43 @@ class EcoursesController extends AppController {
 		parent::beforeFilter();
 	}
 
-	public function media() {
-		
+	public function index($id = null) {
+        if(!$id){
+            $this->Session->setFlash(__('Invalid id', true), 'flash_failure');
+            $this->redirect($this->referer());
+        }
+		$ecourse = $this->Ecourse->findById($id);
+		// TODO logic to figure what user has completed, and what module should be loaded next	
+		$this->redirect(array('action' => 'media', $ecourse['EcourseModule'][0]['id']));
 	}
+
+	public function media($id) {
+		$module = $this->Ecourse->EcourseModule->findById($id);
+		$this->log($module, 'debug');
+		$instructions = $module['EcourseModule']['media_description'];
+		$media = '/ecourses/load_media/'. $module['EcourseModule']['media_location'];
+		$this->set(compact('media', 'instructions'));
+}
 
 	public function quiz() {
 
 	}
+
+    public function load_media($mediaLocation=null) {
+        $this->view = 'Media';
+        if($mediaLocation) {
+            $explode = explode('.', $mediaLocation);
+            $params = array(
+                'id' => $mediaLocation,
+                'name' => $explode[0],
+                'extension' => $explode[1],
+                'path' => Configure::read('Ecourse.media.path')
+            );
+            $this->set($params);
+            return $params;
+        }
+		return false;
+    }
 
 	public function admin_index() {
 		$this->Ecourse->recursive = -1;
