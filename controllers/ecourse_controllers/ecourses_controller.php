@@ -21,16 +21,10 @@ class EcoursesController extends AppController {
         }
 		$ecourse = $this->Ecourse->findById($id);
 		// TODO logic to figure what user has completed, and what module should be loaded next	
-		$this->redirect(array('action' => 'media', $ecourse['EcourseModule'][0]['id']));
-	}
-
-	public function media($id) {
-		$module = $this->Ecourse->EcourseModule->findById($id);
-		$this->log($module, 'debug');
-		$instructions = $module['EcourseModule']['media_description'];
-		$media = '/ecourses/load_media/'. $module['EcourseModule']['media_location'];
+		$instructions = $ecourse['EcourseModule'][0]['instructions'];
+		$media = '/ecourses/load_media/'. $ecourse['EcourseModule'][0]['media_location'];
 		$this->set(compact('media', 'instructions'));
-}
+	}
 
 	public function quiz() {
 
@@ -84,6 +78,7 @@ class EcoursesController extends AppController {
 			}
 
 			if ($ecourses) {
+				$this->log($ecourses, 'debug');
 				foreach ($ecourses as $key => $ecourse) {
 					$ecourse['Ecourse']['assigned_user_count'] = count($ecourse['EcourseUser']);
 					$data['ecourses'][$key] = $ecourse['Ecourse'];
