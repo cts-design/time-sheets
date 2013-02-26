@@ -32,7 +32,6 @@ Ext.define('EcourseModule', {
     'name',
     'instructions',
     'media_name',
-    'media_description',
     'media_type',
     'media_location',
     { name: 'order', type: 'int' },
@@ -182,7 +181,7 @@ Ext.onReady(function () {
     bodyPadding: 10,
     collapsible: true,
     collapsed: true,
-    height: 640,
+    height: 475,
     renderTo: 'ecourseModuleForm',
     title: 'New Module Form',
     fieldDefaults: {
@@ -218,7 +217,7 @@ Ext.onReady(function () {
       xtype: 'htmleditor',
       allowBlank: false,
       anchor: '100%',
-      fieldLabel: 'Description',
+      fieldLabel: 'Instructions',
       height: 150,
       name: 'instructions',
       style: 'background-color: white;'
@@ -286,14 +285,6 @@ Ext.onReady(function () {
       fieldLabel: 'Media Location',
       id: 'mediaLocation',
       name: 'media_location'
-    }, {
-      xtype: 'htmleditor',
-      allowBlank: false,
-      anchor: '100%',
-      height: 150,
-      fieldLabel: 'Media Description',
-      name: 'media_description',
-      style: 'background-color: white;'
     }],
     dockedItems: [{
       xtype: 'toolbar',
