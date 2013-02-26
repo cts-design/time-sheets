@@ -68,7 +68,7 @@
 			<?php foreach($ecourses as $key => $value) : ?>
 				<li>
 					<div class="title">
-						<a href="#"><?= Inflector::humanize($value['Ecourse']['name']) ?></a>
+						<a href="/ecourses/index/<?= $value['Ecourse']['id'] ?>"><?= Inflector::humanize($value['Ecourse']['name']) ?></a>
 					</div>
 					<div class="details">
 						<i class="icon-book"></i>
@@ -76,7 +76,7 @@
 					</div>
 
 					<span class="action">
-						<a href="#" class="button gray">
+						<a href="/ecourses/index/<?= $value['Ecourse']['id'] ?>" class="button gray">
 							<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Get Started') ?>
 						</a>
 					</span>
