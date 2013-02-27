@@ -21,9 +21,7 @@ class EcoursesController extends AppController {
         }
 		$ecourse = $this->Ecourse->findById($id);
 		// TODO logic to figure what user has completed, and what module should be loaded next	
-		$instructions = $ecourse['EcourseModule'][0]['instructions'];
-		$media = '/ecourses/load_media/'. $ecourse['EcourseModule'][0]['media_location'];
-		$this->set(compact('media', 'instructions'));
+		$this->set(compact('ecourse'));
 	}
 
 	public function quiz($id) {
