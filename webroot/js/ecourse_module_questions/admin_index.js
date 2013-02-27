@@ -153,6 +153,7 @@ Ext.onReady(function () {
         fieldLabel: 'Answer 1',
         items: [{
           xtype: 'textfield',
+          allowBlank: false,
           fieldLabel: 'Label',
           hideLabel: true,
           id: 'answer1',
@@ -178,6 +179,7 @@ Ext.onReady(function () {
         fieldLabel: 'Answer 2',
         items: [{
           xtype: 'textfield',
+          allowBlank: false,
           width: 175,
           fieldLabel: 'Label',
           hideLabel: true,
@@ -272,9 +274,11 @@ Ext.onReady(function () {
               answers = question.answers();
 
               Ext.Array.each(formValues.answer, function (answer, index) {
-                obj = { text: answer, correct: 0 }
-                if (formValues.hasOwnProperty(index)) { obj.correct = 1; }
-                answers.add(obj)
+                if (answer) {
+                  obj = { text: answer, correct: 0 }
+                  if (formValues.hasOwnProperty(index)) { obj.correct = 1; }
+                  answers.add(obj)
+                }
               });
 
               question.save();
