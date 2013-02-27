@@ -895,7 +895,6 @@ class UsersController extends AppController {
 
 		if ($assignedEcourses) {
 			foreach ($assignedEcourses as $ecourse) {
-				$ecourse['Ecourse']['EcourseModule'] = $ecourse['EcourseModule'];
 				$ecourses[]['Ecourse'] = $ecourse['Ecourse'];
 			}
 		}
