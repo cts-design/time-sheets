@@ -26,23 +26,39 @@ class EcoursesController extends AppController {
 		$this->set(compact('media', 'instructions'));
 	}
 
-	public function quiz($moduleId) {
-		$this->Ecourse->EcourseModule->Behaviors->attach('Containable');
+	public function quiz($id) {
+		$this->Ecourse->Behaviors->attach('Containable');
 
-		$ecourseModule = $this->Ecourse->EcourseModule->find('first', array(
+		$ecourse = $this->Ecourse->find('first', array(
 			'conditions' => array(
-				'EcourseModule.id' => $moduleId
+				'Ecourse.id' => $id
 			),
 			'contain' => array(
-				'EcourseModuleQuestion' => array(
-					'order' => array('EcourseModuleQuestion.order ASC'),
-					'EcourseModuleQuestionAnswer'
+				'EcourseModule' => array(
+					'EcourseModuleQuestion' => array(
+						'order' => array('EcourseModuleQuestion.order ASC'),
+						'EcourseModuleQuestionAnswer'
+					)
 				)
 			)
 		));
 
-		$title_for_layout = $ecourseModule['EcourseModule']['name'] . ' Quiz';
-		$this->set(compact('ecourseModule', 'title_for_layout'));
+		$title_for_layout = $ecourse['EcourseModule'][0]['name'] . ' Quiz';
+		$this->set(compact('ecourse', 'title_for_layout'));
+	}
+
+	public function save($id) {
+		$ecourse = $this->Ecourse->find('first', array(
+			'conditions' => array(
+				'Ecourse.id' => $id
+			),
+			'contain' => array(
+				'EcourseModule'
+			)
+		));
+
+		$this->Session->setFlash(__('You have passed ' . $ecourse['EcourseModule'][0]['name'], true), 'flash_success');
+		$this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
 	}
 
     public function load_media($mediaLocation=null) {
