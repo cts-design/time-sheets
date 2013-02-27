@@ -45,7 +45,7 @@ class EcourseUsersController extends AppController {
 	}
 
 	public function admin_assign_customers($id=null) {
-		if(!$id) {
+		if($this->RequestHandler->isGet() && !$id) {
 			$this->Session->setFlash('Invalid ecourse id.', 'flash_failure');
 			$this->redirect(array('controller' => 'ecourses', 'action' => 'index', 'admin' => true));
 		}	
@@ -71,7 +71,7 @@ class EcourseUsersController extends AppController {
 	}
 
 	public function admin_assign_staff($id=null) {
-		if(!$id) {
+		if($this->RequestHandler->isGet() && !$id) {
 			$this->Session->setFlash('Invalid ecourse id.', 'flash_failure');
 			$this->redirect(array('controller' => 'ecourses', 'action' => 'index', 'admin' => true));
 		}	
