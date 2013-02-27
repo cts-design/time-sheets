@@ -56,7 +56,15 @@ class EcoursesController extends AppController {
 		));
 
 		$this->Session->setFlash(__('You have passed ' . $ecourse['EcourseModule'][0]['name'], true), 'flash_success');
-		$this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
+
+		
+		if ($this->Auth->user('role_id') == 1) {
+			$userIsAdmin = false;
+		} else {
+			$userIsAdmin = true;
+		}
+
+		$this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => $userIsAdmin));
 	}
 
     public function load_media($mediaLocation=null) {

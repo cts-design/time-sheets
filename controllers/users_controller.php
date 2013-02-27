@@ -865,6 +865,9 @@ class UsersController extends AppController {
 		$this->loadPluginConfigs();
 		$this->loadModel('Ecourse');
 
+		$this->Ecourse->Behaviors->attach('Containable');
+		$this->User->EcourseUser->Behaviors->attach('Containable');
+
 		$assignedEcourses = $this->User->EcourseUser->find('all',
 			array(
 				'conditions' => array(
