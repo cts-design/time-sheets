@@ -351,6 +351,7 @@ class UsersController extends AppController {
 
 		if ($assignedEcourses) {
 			foreach ($assignedEcourses as $ecourse) {
+				$ecourse['Ecourse']['EcourseModule'] = $ecourse['EcourseModule'];
 				$ecourses[]['Ecourse'] = $ecourse['Ecourse'];
 			}
 		}
@@ -862,9 +863,52 @@ class UsersController extends AppController {
 	function admin_dashboard() {
 		$this->loadNavigationConfig();
 		$this->loadPluginConfigs();
+		$this->loadModel('Ecourse');
+
+		$assignedEcourses = $this->User->EcourseUser->find('all',
+			array(
+				'conditions' => array(
+					'EcourseUser.user_id' => $this->Auth->user('id'),
+					'Ecourse.type' => 'staff'
+				),
+				'contain' => array(
+					'Ecourse' => array(
+						'EcourseModule'
+					)
+				)
+			)
+		);
+
+		$publicEcourses = $this->Ecourse->find('all',
+			array(
+				'conditions' => array(
+					'Ecourse.requires_user_assignment' => 0,
+					'Ecourse.type' => 'staff'
+				),
+				'contain' => array(
+					'EcourseModule'
+				)
+			)
+		);
+
+		$ecourses = array();
+
+		if ($assignedEcourses) {
+			foreach ($assignedEcourses as $ecourse) {
+				$ecourse['Ecourse']['EcourseModule'] = $ecourse['EcourseModule'];
+				$ecourses[]['Ecourse'] = $ecourse['Ecourse'];
+			}
+		}
+
+		if ($publicEcourses) {
+			foreach ($publicEcourses as $key => $ecourse) {
+				$ecourse['Ecourse']['EcourseModule'] = $ecourse['EcourseModule'];
+				$ecourses[]['Ecourse'] = $ecourse['Ecourse'];
+			}
+		}
 
 		$title_for_layout = 'Administration Dashboard';
-		$this->set(compact('title_for_layout'));
+		$this->set(compact('title_for_layout', 'ecourses'));
 	}
 
 	function admin_password_reset() {
