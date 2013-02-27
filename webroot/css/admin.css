@@ -380,10 +380,11 @@ legend {
 #ecourses div,
 #information #help {
   border: 1px solid #B5D3DF;
-  height: 125px;
   padding: 10px;
   background-color:#F1F8FB
 }
+
+#information #help { height: 125px; }
 
 #ecourses h3,
 #help h3 {
