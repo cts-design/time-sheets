@@ -5,4 +5,3 @@ class Ecourse extends AppModel {
 
 	public $hasMany = array('EcourseModule', 'EcourseUser');
 }
-?>

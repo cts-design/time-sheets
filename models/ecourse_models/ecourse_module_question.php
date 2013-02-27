@@ -6,5 +6,3 @@ class EcourseModuleQuestion extends AppModel {
 	public $belongsTo = array('EcourseModule');
 	public $hasMany = array('EcourseModuleQuestionAnswer');
 }
-?>
-

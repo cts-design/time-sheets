@@ -5,5 +5,3 @@ class EcourseModuleQuestionAnswer extends AppModel {
 
 	public $belongsTo = array('EcourseModuleQuestion');
 }
-?>
-
