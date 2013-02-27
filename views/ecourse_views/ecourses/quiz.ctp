@@ -1,6 +1,11 @@
+<?php $this->Html->scriptStart(array('inline' => false)); ?>
+  $(function() {
+	  $(".button" ).button();
+  });
+<?php $this->Html->scriptEnd(); ?>
 <div id="ecourse-quiz">
-	<form action="" method="post" accept-charset="utf-8">
-	<?php foreach ($ecourseModule['EcourseModuleQuestion'] as $question): ?>
+	<form action="/ecourses/save/<?= $this->params['pass'][0] ?>" method="post" accept-charset="utf-8">
+	<?php foreach ($ecourse['EcourseModule'][0]['EcourseModuleQuestion'] as $question): ?>
 		<div class="question">
 			<p><strong><?= $question['text'] ?></strong></p>
 			<ol>
@@ -16,6 +21,6 @@
 		</div>
 	<?php endforeach ?>
 
-	<input type="submit" value="Continue" />
+	<input class="button" type="submit" value="Save Quiz" />
 	</form>
 </div>
