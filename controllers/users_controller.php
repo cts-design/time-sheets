@@ -268,10 +268,20 @@ class UsersController extends AppController {
 
 	function dashboard() {
 		$this->loadModel('Program');
-		$this->Program->contain(
-			array('ProgramResponse' => array(
-				'conditions' => array('user_id' => $this->Auth->user('id')),
-				'fields' => array('id', 'status'))));
+		$this->loadModel('Ecourse');
+
+		$this->User->EcourseUser->Behaviors->attach('Containable');
+		$this->Ecourse->Behaviors->attach('Containable');
+
+		$this->Program->contain(array(
+			'ProgramResponse' => array(
+				'conditions' => array(
+					'user_id' => $this->Auth->user('id')
+				),
+				'fields' => array('id', 'status')
+			)
+		));
+
 		$programs = $this->Program->find(
 			'all',
 			array(
@@ -310,8 +320,51 @@ class UsersController extends AppController {
 				'conditions' => array('EventRegistration.user_id' => $this->Auth->user('id'))
 			)
 		);
+
+		$assignedEcourses = $this->User->EcourseUser->find('all',
+			array(
+				'conditions' => array(
+					'EcourseUser.user_id' => $this->Auth->user('id'),
+					'Ecourse.type' => 'customer'
+				),
+				'contain' => array(
+					'Ecourse' => array(
+						'EcourseModule'
+					)
+				)
+			)
+		);
+
+		$publicEcourses = $this->Ecourse->find('all',
+			array(
+				'conditions' => array(
+					'Ecourse.requires_user_assignment' => 0,
+					'Ecourse.type' => 'customer'
+				),
+				'contain' => array(
+					'EcourseModule'
+				)
+			)
+		);
+
+		$ecourses = array();
+
+		if ($assignedEcourses) {
+			foreach ($assignedEcourses as $ecourse) {
+				$ecourse['Ecourse']['EcourseModule'] = $ecourse['EcourseModule'];
+				$ecourses[]['Ecourse'] = $ecourse['Ecourse'];
+			}
+		}
+
+		if ($publicEcourses) {
+			foreach ($publicEcourses as $key => $ecourse) {
+				$ecourse['Ecourse']['EcourseModule'] = $ecourse['EcourseModule'];
+				$ecourses[]['Ecourse'] = $ecourse['Ecourse'];
+			}
+		}
+
 		$title_for_layout = 'Customer Dashboard';
-		$this->set(compact('title_for_layout', 'orientations', 'registrations', 'enrollments', 'eventRegistrations'));
+		$this->set(compact('title_for_layout', 'orientations', 'registrations', 'enrollments', 'eventRegistrations', 'ecourses'));
 	}
 
 	function edit($id=null) {
@@ -810,9 +863,54 @@ class UsersController extends AppController {
 	function admin_dashboard() {
 		$this->loadNavigationConfig();
 		$this->loadPluginConfigs();
+		$this->loadModel('Ecourse');
+
+		$this->Ecourse->Behaviors->attach('Containable');
+		$this->User->EcourseUser->Behaviors->attach('Containable');
+
+		$assignedEcourses = $this->User->EcourseUser->find('all',
+			array(
+				'conditions' => array(
+					'EcourseUser.user_id' => $this->Auth->user('id'),
+					'Ecourse.type' => 'staff'
+				),
+				'contain' => array(
+					'Ecourse' => array(
+						'EcourseModule'
+					)
+				)
+			)
+		);
+
+		$publicEcourses = $this->Ecourse->find('all',
+			array(
+				'conditions' => array(
+					'Ecourse.requires_user_assignment' => 0,
+					'Ecourse.type' => 'staff'
+				),
+				'contain' => array(
+					'EcourseModule'
+				)
+			)
+		);
+
+		$ecourses = array();
+
+		if ($assignedEcourses) {
+			foreach ($assignedEcourses as $ecourse) {
+				$ecourses[]['Ecourse'] = $ecourse['Ecourse'];
+			}
+		}
+
+		if ($publicEcourses) {
+			foreach ($publicEcourses as $key => $ecourse) {
+				$ecourse['Ecourse']['EcourseModule'] = $ecourse['EcourseModule'];
+				$ecourses[]['Ecourse'] = $ecourse['Ecourse'];
+			}
+		}
 
 		$title_for_layout = 'Administration Dashboard';
-		$this->set(compact('title_for_layout'));
+		$this->set(compact('title_for_layout', 'ecourses'));
 	}
 
 	function admin_password_reset() {
@@ -1161,6 +1259,63 @@ class UsersController extends AppController {
 		$this -> set('options', $options);
 	}
 
+	public function admin_customer_search() {
+		if($this->RequestHandler->isAjax()) {
+			$data['users'] = array();
+			if(isset($this->params['url']['search'], $this->params['url']['searchType'])) {
+				switch($this->params['url']['searchType']) {
+					case 'lastname':
+						$conditions['User.lastname'] = $this->params['url']['search'];
+						break;
+					case 'last4':
+						$conditions['RIGHT (User.ssn , 4)'] = $this->params['url']['search'];
+						break;
+					case 'ssn':
+						$conditions['User.ssn'] = $this->params['url']['search'];
+						break;
+				}
+				$conditions['User.role_id'] = 1;
+				$users = $this->User->find('all', array('conditions' => $conditions));
+				if($users) {
+					$i = 0;
+					foreach($users as $user) {
+						$data['users'][$i]['id'] = $user['User']['id'];
+						$data['users'][$i]['firstname'] = $user['User']['firstname'];
+						$data['users'][$i]['lastname'] = $user['User']['lastname'];
+						$data['users'][$i]['last_4'] = substr($user['User']['ssn'], -4);
+						$i++;
+					}
+				}
+			}
+			$data['success'] = true;
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
+
+	public function admin_staff_search() {
+		if($this->RequestHandler->isAjax()) {
+			$data['users'] = array();
+			if(isset($this->params['url']['search'], $this->params['url']['searchType'])) {
+				$conditions['User.lastname'] = $this->params['url']['search'];
+				// TODO: find out if this should include non role based admins
+				$conditions['User.role_id >'] = 1;
+				$users = $this->User->find('all', array('conditions' => $conditions));
+				if($users) {
+					$i = 0;
+					foreach($users as $user) {
+						$data['users'][$i]['id'] = $user['User']['id'];
+						$data['users'][$i]['firstname'] = $user['User']['firstname'];
+						$data['users'][$i]['lastname'] = $user['User']['lastname'];
+						$i++;
+					}
+				}
+			}
+			$data['success'] = true;
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
 	// Auditors
 	public function auditor_dashboard() {
 		// check to see if there are any audits this user is associated

@@ -34,7 +34,10 @@ class User extends AppModel {
 		'EventRegistration' => array(
 			'className' => 'EventRegistration',
 			'foreignKey' => 'user_id'
-			
+		),
+		'EcourseUser' => array(
+			'className' => 'EcourseUser',
+			'foreignKey' => 'user_id'
 		)		
     );
 	

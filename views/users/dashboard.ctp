@@ -54,6 +54,38 @@
 	</div>
 	<?php endif ?>
 
+	<?php if(!empty($ecourses)) : ?>
+	<div id="online-ecourses" class="widget">
+		<div class="widget-header">
+			<h2>
+				<i class="icon-tasks"></i>
+				Online Ecourses
+			</h2>
+		</div>
+
+		<div class="widget-content">
+			<ul>
+			<?php foreach($ecourses as $key => $value) : ?>
+				<li>
+					<div class="title">
+						<a href="/ecourses/index/<?= $value['Ecourse']['id'] ?>"><?= Inflector::humanize($value['Ecourse']['name']) ?></a>
+					</div>
+					<div class="details">
+						<i class="icon-book"></i>
+						<?= count($value['Ecourse']['EcourseModule']) ?> Modules
+					</div>
+
+					<span class="action">
+						<a href="/ecourses/index/<?= $value['Ecourse']['id'] ?>" class="button gray">
+							<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Get Started') ?>
+						</a>
+					</span>
+				</li>
+			<?php endforeach ?>
+			</ul>
+		</div>
+	</div>
+	<?php endif ?>
 
 	<?php if(!empty($registrations)) : ?>
 	<div id="online-registrations" class="widget">

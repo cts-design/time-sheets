@@ -1,0 +1,348 @@
+Ext.override(Ext.data.writer.Json, {
+  getRecordData: function(record) {
+    var me = this,
+      i,
+      association,
+      childStore,
+      data = this.callParent(arguments);
+
+
+    /* Iterate over all the hasMany associations */
+    for (i = 0; i < record.associations.length; i++) {
+      association = record.associations.get(i);
+      if (association.type == 'hasMany')  {
+        data[association.name] = [];
+        childStore = eval('record.'+association.name+'()');
+
+
+        //Iterate over all the children in the current association
+        childStore.each(function(childRecord) {
+          data[association.name].push(childRecord.getData());
+        }, me);
+      }
+    }
+
+    return data;
+  }
+});
+
+/**
+ * Models
+ */
+Ext.define('EcourseModule', {
+  extend: 'Ext.data.Model',
+  fields: [
+    { name: 'id', type: 'int' },
+    { name: 'ecourse_id', type: 'int' },
+    'name',
+    'instructions',
+    'media_name',
+    'media_description',
+    'media_type',
+    'media_location',
+    { name: 'order', type: 'int' },
+    { name: 'passing_percentage', type: 'int' }
+  ]
+});
+
+Ext.define('EcourseModuleQuestion', {
+  extend: 'Ext.data.Model',
+  associations: [{
+    foreignKey: 'ecourse_module_question_id',
+    model: 'EcourseModuleQuestionAnswer',
+    name: 'answers',
+    type: 'hasMany'
+  }],
+  fields: [
+    { name: 'id', type: 'int' },
+    { name: 'ecourse_module_id', type: 'int' },
+    'text',
+    { name: 'order', type: 'int' }
+  ],
+  proxy: {
+    type: 'ajax',
+    api: {
+      create: '/admin/ecourse_module_questions/create',
+      read: '/admin/ecourse_module_questions/index',
+      update: '/admin/ecourse_module_questions/update',
+      destroy: '/admin/ecourse_module_questions/destroy'
+    },
+    extraParams: {
+      ecourse_module_id: ecourse_module.id
+    },
+    reader: {
+      type: 'json',
+      root: 'ecourse_module_questions'
+    },
+    writer: {
+      encode: true,
+      root: 'ecourse_module_questions',
+      type: 'json',
+      writeAllFields: false
+    }
+  }
+});
+
+Ext.define('EcourseModuleQuestionAnswer', {
+  extend: 'Ext.data.Model',
+  fields: [
+    { name: 'id', type: 'int' },
+    { name: 'ecourse_module_question_id', type: 'int' },
+    'text',
+    { name: 'correct', type: 'int' }
+  ]
+});
+
+/**
+ * DataStores
+ */
+Ext.create('Ext.data.Store', {
+  storeId: 'EcourseModuleQuestionStore',
+  autoLoad: true,
+  autoSync: true,
+  model: 'EcourseModuleQuestion',
+  listeners: {
+    load: function (store, records, successful) {
+      Ext.Array.each(records, function(rec) {
+        var answer = rec.getAssociatedData();
+      });
+    }
+  }
+});
+
+Ext.onReady(function () {
+  Ext.QuickTips.init();
+
+  var moduleForm,
+    ecourseModuleQuestionStore = Ext.data.StoreManager.lookup('EcourseModuleQuestionStore');
+
+  moduleForm = Ext.create('Ext.panel.Panel', {
+    renderTo: 'ecourseModuleQuestionsForm',
+    height: 439,
+    layout: {
+      type: 'border'
+    },
+    title: 'My Panel',
+    items: [{
+      xtype: 'form',
+      region: 'east',
+      width: 300,
+      defaults: {
+        labelWidth: 75
+      },
+      bodyPadding: 10,
+      items: [{
+        xtype: 'hiddenfield',
+        name: 'ecourse_module_id',
+        value: ecourse_module.id
+      }, {
+        xtype: 'textareafield',
+        anchor: '100%',
+        fieldLabel: 'Question',
+        height: 163,
+        name: 'text',
+        width: 278
+      }, {
+        xtype: 'fieldcontainer',
+        height: 24,
+        width: 273,
+        layout: {
+          align: 'stretch',
+          type: 'hbox'
+        },
+        fieldLabel: 'Answer 1',
+        items: [{
+          xtype: 'textfield',
+          allowBlank: false,
+          fieldLabel: 'Label',
+          hideLabel: true,
+          id: 'answer1',
+          name: 'answer',
+          width: 175
+        }, {
+          xtype: 'radiofield',
+          boxLabel: '',
+          boxLabelAlign: 'before',
+          fieldLabel: 'Label',
+          hideLabel: true,
+          margins: '0 0 0 5',
+          name: '0'
+        }]
+      }, {
+        xtype: 'fieldcontainer',
+        height: 24,
+        width: 273,
+        layout: {
+          align: 'stretch',
+          type: 'hbox'
+        },
+        fieldLabel: 'Answer 2',
+        items: [{
+          xtype: 'textfield',
+          allowBlank: false,
+          width: 175,
+          fieldLabel: 'Label',
+          hideLabel: true,
+          id: 'answer2',
+          name: 'answer'
+        }, {
+          xtype: 'radiofield',
+          margins: '0 0 0 5',
+          fieldLabel: 'Label',
+          hideLabel: true,
+          boxLabel: '',
+          boxLabelAlign: 'before',
+          name: '1'
+        }]
+      }, {
+        xtype: 'fieldcontainer',
+        height: 24,
+        width: 273,
+        layout: {
+          align: 'stretch',
+          type: 'hbox'
+        },
+        fieldLabel: 'Answer 3',
+        items: [{
+          xtype: 'textfield',
+          width: 175,
+          fieldLabel: 'Label',
+          hideLabel: true,
+          id: 'answer3',
+          name: 'answer'
+        }, {
+          xtype: 'radiofield',
+          margins: '0 0 0 5',
+          fieldLabel: 'Label',
+          hideLabel: true,
+          boxLabel: '',
+          boxLabelAlign: 'before',
+          name: '2'
+        }]
+      }, {
+        xtype: 'fieldcontainer',
+        height: 24,
+        width: 273,
+        layout: {
+          align: 'stretch',
+          type: 'hbox'
+        },
+        fieldLabel: 'Answer 4',
+        items: [{
+          xtype: 'textfield',
+          width: 175,
+          fieldLabel: 'Label',
+          hideLabel: true,
+          id: 'answer4',
+          name: 'answer'
+        }, {
+          xtype: 'radiofield',
+          margins: '0 0 0 5',
+          fieldLabel: 'Label',
+          hideLabel: true,
+          boxLabel: '',
+          boxLabelAlign: 'before',
+          name: '3'
+        }]
+      }],
+      dockedItems: [{
+        xtype: 'toolbar',
+        dock: 'bottom',
+        items: [{
+          xtype: 'tbfill'
+        }, {
+          xtype: 'button',
+          text: 'Save Question',
+          handler: function () {
+            var formPanel = this.up('form'),
+              form = formPanel.getForm(),
+              formValues,
+              question,
+              answers,
+              questionStore = Ext.data.StoreManager.lookup('EcourseModuleQuestionStore');
+
+            if (form.isValid()) {
+              formValues = form.getValues();
+              formValues.order = questionStore.count() + 1;
+
+              question = Ext.create('EcourseModuleQuestion', {
+                ecourse_module_id: formValues.ecourse_module_id,
+                text: formValues.text,
+                order: formValues.order
+              });
+
+              answers = question.answers();
+
+              Ext.Array.each(formValues.answer, function (answer, index) {
+                if (answer) {
+                  obj = { text: answer, correct: 0 }
+                  if (formValues.hasOwnProperty(index)) { obj.correct = 1; }
+                  answers.add(obj)
+                }
+              });
+
+              question.save();
+              questionStore.load();
+              form.reset();
+            }
+          }
+        }]
+      }]
+    }, {
+      xtype: 'gridpanel',
+      forceFit: true,
+      region: 'center',
+      store: 'EcourseModuleQuestionStore',
+      columns: [{
+        dataIndex: 'id',
+        hidden: true,
+        text: 'Id',
+        width: 50
+      }, {
+        align: 'center',
+        dataIndex: 'order',
+        text: 'Order',
+        width: 50
+      }, {
+        dataIndex: 'text',
+        flex: 1,
+        text: 'Question'
+      }],
+      listeners: {
+        itemclick: function (grid, rec) {
+          var formPanel = this.up('panel').down('form'),
+            form = formPanel.getForm();
+
+          console.log(form.getRecord());
+          form.loadRecord(rec);
+          rec.answers().each(function (answer, index) {
+            var fieldIndex = index + 1,
+              field = formPanel.down('#answer' + fieldIndex),
+              radio = field.nextNode('radiofield');
+
+            field.setValue(answer.get('text'));
+            if (answer.get('correct')) {
+              radio.setValue(true);
+            }
+          });
+          console.log(form.getRecord());
+        }
+      },
+      viewConfig: {},
+      dockedItems: [{
+        xtype: 'toolbar',
+        dock: 'top',
+        items: [{
+          icon: '/img/icons/add.png',
+          text: 'New Question'
+        }, {
+          icon: '/img/icons/edit.png',
+          text: 'Edit Question'
+        }, {
+          icon: '/img/icons/delete.png',
+          text: 'Delete Question'
+        }]
+      }]
+    }]
+  });
+});
