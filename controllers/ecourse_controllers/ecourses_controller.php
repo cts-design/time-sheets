@@ -154,4 +154,56 @@ class EcoursesController extends AppController {
 		$title_for_layout = 'New Ecourse';
 		$this->set(compact('title_for_layout', 'type'));
 	}
+
+	public function admin_read($type = 'customer') {
+		if ($this->RequestHandler->isAjax()) {
+			$ecourseId = $this->params['url']['id'];
+
+			$ecourse = $this->Ecourse->findById($ecourseId);
+
+			if ($ecourse) {
+				$data[] = $ecourse['Ecourse'];
+			}
+
+			$this->set('data', $data);
+			$this->render('/elements/ajaxreturn');
+		}
+	}
+
+	public function admin_update($id = null) {
+		if ($this->RequestHandler->isAjax()) {
+			$ecourseData = json_decode($this->params['form']['ecourses'], true);
+
+			// monkey patch to fix ExtJS not sending disabled filed cats
+			if (isset($ecourseData['certificate_cat_1']) && !isset($ecourseData['certificate_cat_2'])) {
+				$ecourseData['certificate_cat_2'] = null;
+			}
+
+			if (isset($ecourseData['certificate_cat_2']) && !isset($ecourseData['certificate_cat_3'])) {
+				$ecourseData['certificate_cat_3'] = null;
+			}
+
+			$ecourse = $this->Ecourse->read(null, $ecourseData['id']);
+			$this->Ecourse->set($ecourseData);
+
+			if ($this->Ecourse->save()) {
+				$data['success'] = true;
+			} else {
+				$data['success'] = false;
+			}
+
+			$this->set('data', $data);
+			$this->render('/elements/ajaxreturn');
+		} else {
+			if(!$id){
+				$this->Session->setFlash(__('Invalid id', true), 'flash_failure');
+				$this->redirect($this->referer());
+			}
+
+			$ecourse = $this->Ecourse->findById($id);
+			$title_for_layout = 'Edit ' . ucwords($ecourse['Ecourse']['name']);
+			$this->set(compact('title_for_layout', 'ecourse'));
+		}
+
+	}
 }

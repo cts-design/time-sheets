@@ -1,5 +1,5 @@
 <?php echo $this->Html->scriptStart(array('inline' => false)) ?>
-  var Ecourse = <?php echo json_encode($ecourse['Ecourse']) ?>;
+  var EcourseRecord = <?php echo json_encode($ecourse['Ecourse']) ?>;
 <?php echo $this->Html->scriptEnd() ?>
 <?php echo $this->Html->script('ecourses/admin_update', array('inline' => FALSE));?>
 
