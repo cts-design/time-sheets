@@ -19,30 +19,47 @@ class EcoursesController extends AppController {
             $this->Session->setFlash(__('Invalid id', true), 'flash_failure');
             $this->redirect($this->referer());
         }
-		$ecourse = $this->Ecourse->findById($id);
-		// TODO logic to figure what user has completed, and what module should be loaded next	
-		$this->set(compact('ecourse'));
+		$this->Ecourse->recursive = -1;
+		$ecourse = $this->Ecourse->find('first', array(
+			'conditions' => array('Ecourse.id' => $id),
+			'contain' => array(
+				'EcourseModule' => array('order' => 'EcourseModule.order ASC'),
+				'EcourseResponse' => array ('conditions' => array('EcourseResponse.user_id' => $this->Auth->user('id')),
+				'EcourseModuleResponse' => array('conditions' => array('EcourseModuleResponse.pass_fail' => 'Pass'))))));
+		if(empty($ecourse['EcourseResponse'])) {
+			$this->data['EcourseResponse']['user_id'] = $this->Auth->uesr('id');
+			$this->data['EcourseResponse']['user_id'] = $this->Auth->uesr('id');
+			$this->Ecourse->EcourseResponse->save($this->data);
+		}
+		$modules = Set::extract('/EcourseModule/id', $ecourse);
+		$moduleRespneses = Set::extract('/EcourseModuleResponse/id', $ecourse['EcourseResponse']);
+		foreach($modules as $module) {
+			if(! in_array($module, $moduleRespneses)) {
+				$nextModule = Set::extract("/EcourseModule[id=$module]/.[:first]", $ecourse);
+			} 
+		}
+		$title_for_layout = $nextModule[0]['name'] ;
+		$this->set(compact('nextModule', 'title_for_layout'));
 	}
 
 	public function quiz($id) {
-		$this->Ecourse->Behaviors->attach('Containable');
-
-		$ecourse = $this->Ecourse->find('first', array(
+        if(!$id){
+            $this->Session->setFlash(__('Invalid id', true), 'flash_failure');
+            $this->redirect($this->referer());
+        }
+		$ecourseModule = $this->Ecourse->EcourseModule->find('first', array(
 			'conditions' => array(
-				'Ecourse.id' => $id
+				'EcourseModule.id' => $id
 			),
 			'contain' => array(
-				'EcourseModule' => array(
-					'EcourseModuleQuestion' => array(
-						'order' => array('EcourseModuleQuestion.order ASC'),
-						'EcourseModuleQuestionAnswer'
-					)
+				'EcourseModuleQuestion' => array(
+					'order' => array('EcourseModuleQuestion.order ASC'),
+					'EcourseModuleQuestionAnswer'
 				)
 			)
 		));
-
-		$title_for_layout = $ecourse['EcourseModule'][0]['name'] . ' Quiz';
-		$this->set(compact('ecourse', 'title_for_layout'));
+		$title_for_layout = $ecourseModule['EcourseModule']['name'] . ' Quiz';
+		$this->set(compact('ecourseModule', 'title_for_layout'));
 	}
 
 	public function save($id) {
