@@ -5,7 +5,7 @@
 <?php $this->Html->scriptEnd(); ?>
 <div id="ecourse-quiz">
 	<form action="/ecourses/save/<?= $this->params['pass'][0] ?>" method="post" accept-charset="utf-8">
-	<?php foreach ($ecourse['EcourseModule'][0]['EcourseModuleQuestion'] as $question): ?>
+	<?php foreach ($ecourseModule['EcourseModuleQuestion'] as $question): ?>
 		<div class="question">
 			<p><strong><?= $question['text'] ?></strong></p>
 			<ol>
