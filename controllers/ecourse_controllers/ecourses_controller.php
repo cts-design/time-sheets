@@ -27,8 +27,7 @@ class EcoursesController extends AppController {
 				'EcourseResponse' => array ('conditions' => array('EcourseResponse.user_id' => $this->Auth->user('id')),
 				'EcourseModuleResponse' => array('conditions' => array('EcourseModuleResponse.pass_fail' => 'Pass'))))));
 		if(empty($ecourse['EcourseResponse'])) {
-			$this->data['EcourseResponse']['user_id'] = $this->Auth->uesr('id');
-			$this->data['EcourseResponse']['user_id'] = $this->Auth->uesr('id');
+			$this->data['EcourseResponse']['user_id'] = $this->Auth->user('id');
 			$this->Ecourse->EcourseResponse->save($this->data);
 		}
 		$modules = Set::extract('/EcourseModule/id', $ecourse);
