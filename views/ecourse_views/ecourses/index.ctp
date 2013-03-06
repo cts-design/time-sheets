@@ -3,18 +3,18 @@
 	  $(".button" ).button();
   });
 <?php $this->Html->scriptEnd(); ?>
-<div id="instructions"><?php echo $ecourse['EcourseModule'][0]['instructions'] ?></div>
+<div id="instructions"><?php echo $nextModule[0]['instructions'] ?></div>
 
-<?php if ($ecourse['EcourseModule'][0]['media_type'] == 'pdf'): ?>
+<?php if ($nextModule[0]['media_type'] == 'pdf'): ?>
 	<div id="EcoursePdf">
-		<object type="application/pdf" data="/ecourses/load_media/<?= $ecourse['EcourseModule'][0]['media_location'] ?>#navpanes=0" width="950" height="800">
+		<object type="application/pdf" data="/ecourses/load_media/<?= $nextModule[0]['media_location'] ?>#navpanes=0" width="950" height="800">
 		</object>
 	</div>
 	<br />
-<?php elseif ($ecourse['EcourseModule'][0]['media_type'] == 'url'): ?>
+<?php elseif ($nextModule[0]['media_type'] == 'url'): ?>
 	<div id="EcoursePdf">
-	<a href="<?= $ecourse['EcourseModule'][0]['media_location'] ?>" target="_blank">View Media</a>
+	<a href="<?= $nextModule[0]['media_location'] ?>" target="_blank">View Media</a>
 	</div>
 	<br />
 <?php endif ?>
-<div> <a class="button" href="/ecourses/quiz/<?php echo $this->params['pass'][0]?>">Proceed to quiz.</a></div>
+<div> <a class="button" href="/ecourses/quiz/<?php echo $nextModule[0]['id']?>">Proceed to quiz.</a></div>
