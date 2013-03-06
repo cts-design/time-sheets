@@ -208,7 +208,8 @@ Ext.onReady(function () {
           icon: '/img/icons/report_edit.png',
           tooltip: 'Edit Ecourse',
           handler: function (grid, rowIndex, colIndex) {
-            alert('go to edit');
+            var rec = grid.store.getAt(rowIndex);
+            window.location = '/admin/ecourses/update/' + rec.get('id')
           }
         }]
       }, {
@@ -342,7 +343,8 @@ Ext.onReady(function () {
           icon: '/img/icons/report_edit.png',
           tooltip: 'Edit Ecourse',
           handler: function (grid, rowIndex, colIndex) {
-            alert('go to edit');
+            var rec = grid.store.getAt(rowIndex);
+            window.location = '/admin/ecourses/update/' + rec.get('id')
           }
         }]
       }, {
