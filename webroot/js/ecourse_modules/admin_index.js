@@ -147,10 +147,11 @@ Ext.onReady(function () {
     }],
     listeners: {
       itemdblclick: function (grid, rec, item, index, e) {
-        var form = moduleForm.getForm();
+        var formPanel = Ext.getCmp('moduleFormPanel'),
+          form = formPanel.getForm();
 
-        if (moduleForm.getCollapsed()) {
-          moduleForm.expand();
+        if (formPanel.getCollapsed()) {
+          formPanel.expand();
         }
 
         form.loadRecord(rec);
@@ -171,8 +172,13 @@ Ext.onReady(function () {
         icon: '/img/icons/add.png',
         text: 'New Module',
         handler: function () {
-          if (moduleForm.getCollapsed()) {
-            moduleForm.expand();
+          var formPanel = Ext.getCmp('moduleFormPanel'),
+            form = formPanel.getForm();
+
+          form.reset(true);
+
+          if (formPanel.getCollapsed()) {
+            formPanel.expand();
           }
         }
       }, {
