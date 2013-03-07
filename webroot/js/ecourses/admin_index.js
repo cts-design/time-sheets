@@ -21,6 +21,7 @@ Ext.define('Ecourse', {
 Ext.create('Ext.data.Store', {
   storeId: 'EcourseStore',
   autoLoad: true,
+  autoSync: true,
   model: 'Ecourse',
   filters: [{
     property: 'disabled',
@@ -73,8 +74,6 @@ Ext.onReady(function () {
     stateEvents: ['tabchange'],
     stateId: 'ecourseIndexTabs',
     title: 'Ecourses',
-    listeners: {
-    },
     dockedItems: [{
       xtype: 'toolbar',
       dock: 'top',
@@ -138,8 +137,18 @@ Ext.onReady(function () {
       xtype: 'ecoursegridpanel',
       id: 'customer',
       plugins: [
-        Ext.create('Ext.grid.plugin.CellEditing', {
-          clicksToEdit: 2
+        Ext.create('Ext.grid.plugin.RowEditing', {
+          clicksToEdit: 2,
+          listeners: {
+            edit: function(editor, e) {
+              var showArchivedEcoursesBtn = Ext.getCmp('showArchivedEcourses'),
+                ecourseDisabled = (e.originalValues.disabled === 0 && e.newValues.disabled === 1);
+
+              if (e.store.isFiltered() && ecourseDisabled) {
+                e.store.filter('disabled', 0);
+              }
+            }
+          }
         })
       ],
       title: 'Customer',
