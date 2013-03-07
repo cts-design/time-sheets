@@ -173,8 +173,12 @@ Ext.onReady(function () {
         text: 'New Module',
         handler: function () {
           var formPanel = Ext.getCmp('moduleFormPanel'),
-            form = formPanel.getForm();
+            form = formPanel.getForm(),
+            mediaUploadField = Ext.getCmp('mediaUpload'),
+            mediaLocationField = Ext.getCmp('mediaLocation');
 
+          mediaUploadField.disable();
+          mediaLocationField.disable();
           form.reset(true);
 
           if (formPanel.getCollapsed()) {
@@ -279,8 +283,6 @@ Ext.onReady(function () {
             if (oldVal === 'url') {
               locationField.disable();
               locationField.allowBlank = true;
-            } else if (typeof oldVal !== 'undefined') {
-              return true;
             }
 
             uploadField.enable();
