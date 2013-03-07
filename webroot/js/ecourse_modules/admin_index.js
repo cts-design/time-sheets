@@ -192,7 +192,7 @@ Ext.onReady(function () {
     bodyPadding: 10,
     collapsible: true,
     collapsed: true,
-    height: 475,
+    height: 500,
     id: 'moduleFormPanel',
     renderTo: 'ecourseModuleForm',
     title: 'New Module Form',
@@ -208,9 +208,14 @@ Ext.onReady(function () {
       name: 'ecourse_id',
       value: ecourse.id
     }, {
-      xtype: 'hiddenfield',
+      xtype: 'numberfield',
+      allowBlank: false,
+      fieldLabel: 'Order',
+      id: 'orderField',
+      maxValue: 100,
+      minValue: 0,
       name: 'order',
-      value: 0
+      width: 200
     }, {
       xtype: 'textfield',
       allowBlank: false,
@@ -224,7 +229,7 @@ Ext.onReady(function () {
       minValue: 1,
       name: 'passing_percentage',
       value: ecourse.default_passing_percentage,
-      width: 250
+      width: 200
     }, {
       xtype: 'htmleditor',
       allowBlank: false,
