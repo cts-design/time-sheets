@@ -141,6 +141,14 @@ Ext.onReady(function () {
         }
       }]
     }],
+    listeners: {
+      itemdblclick: function (grid, rec, item, index, e) {
+        var formPanel = Ext.getCmp('moduleFormPanel'),
+          form = formPanel.getForm();
+
+        formPanel.loadRecord(rec);
+      }
+    },
     viewConfig: {
       deferEmptyText: false,
       emptyText: 'There are no modules for this ecourse at this time',
@@ -182,6 +190,7 @@ Ext.onReady(function () {
     collapsible: true,
     collapsed: true,
     height: 475,
+    id: 'moduleFormPanel',
     renderTo: 'ecourseModuleForm',
     title: 'New Module Form',
     fieldDefaults: {
@@ -301,26 +310,7 @@ Ext.onReady(function () {
             uploadField = formPanel.down('filefield');
 
           if (form.isValid()) {
-            formValues.order = store.count() + 1;
-
-            if (uploadField.isDisabled()) {
-                store.add(formValues);
-                form.reset();
-                formPanel.toggleCollapse();
-            } else {
-              form.submit({
-                url: '/admin/ecourse_modules/upload_media',
-                waitMsg: 'Uploading your media...',
-                success: function (form, operation) {
-                  if (operation.result.success) {
-                    formValues.media_location = operation.result.location;
-                    store.add(formValues);
-                    form.reset();
-                    formPanel.toggleCollapse();
-                  }
-                }
-              });
-            }
+            form.updateRecord();
           }
         }
       }]
