@@ -314,6 +314,7 @@ Ext.onReady(function () {
 
           if (form.isValid()) {
             form.updateRecord();
+            formPanel.collapse();
           }
         }
       }]
