@@ -57,7 +57,6 @@ class EcoursesController extends AppController {
 				)
 			)
 		));
-		$this->log($ecourseModule, 'debug');
 		$title_for_layout = $ecourseModule['EcourseModule']['name'] . ' Quiz';
 		$this->set(compact('ecourseModule', 'title_for_layout'));
 	}
@@ -91,11 +90,11 @@ class EcoursesController extends AppController {
 		$diff = Set::diff($answers, $correctAnswers);
 		$numberWrong = count($correctAnswers) - count($diff);
 		$percent = ($numberWrong / count($correctAnswers)) * 100;
+
 		$this->data['EcourseModuleResponse']['ecourse_module_id'] = $ecourseModule['EcourseModule']['id'];
 		$this->data['EcourseModuleResponse']['ecourse_response_id'] = $ecourseResponse['EcourseResponse']['id'];
 		$this->data['EcourseModuleResponse']['score'] = $percent;
 		$this->data['EcourseModuleResponse']['pass_fail'] = ($ecourseModule['passing_percentage'] <= $percent) ? 'Pass' : 'Fail';
-		$this->log($this->data, 'debug');
 		$this->Ecourse->EcourseResponse->EcourseModuleResponse->save($this->data['EcourseModuleResponse']);
 		if ($this->Auth->user('role_id') == 1) {
 			$userIsAdmin = false;
