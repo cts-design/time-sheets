@@ -382,7 +382,19 @@ Ext.onReady(function () {
           disabled: true,
           icon: '/img/icons/delete.png',
           id: 'deleteQuestionBtn',
-          text: 'Delete Question'
+          text: 'Delete Question',
+          handler: function() {
+            var gridPanel = this.up('grid'),
+              formPanel = moduleForm.down('form'),
+              form = formPanel.getForm(),
+              selectedRecord = gridPanel.getSelectionModel().getSelection()[0];
+
+            if (form.getRecord() === selectedRecord) {
+              form.reset(true);
+            }
+
+            gridPanel.store.remove(selectedRecord);
+          }
         }]
       }]
     }]
