@@ -76,6 +76,25 @@ class EcourseModulesController extends AppController {
 	public function admin_update() {
 		$ecourseData = json_decode($this->params['form']['ecourse_modules'], true);
 
+		if (count($ecourseData) > 1) {
+			$this->data['EcourseModule'] = $ecourseData;
+
+			if ($this->EcourseModule->saveAll($this->data['EcourseModule'])) {
+				$data['success'] = true;
+			} else {
+				$data['success'] = false;
+			}
+		} else {
+			$this->EcourseModule->read(null, $ecourseData['id']);
+			$this->EcourseModule->set($ecourseData);
+
+			if ($this->EcourseModule->save()) {
+				$data['success'] = true;
+			} else {
+				$data['success'] = false;
+			}
+		}
+
 		$this->EcourseModule->read(null, $ecourseData['id']);
 		$this->EcourseModule->set($ecourseData);
 
