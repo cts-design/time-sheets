@@ -431,8 +431,13 @@ Ext.onReady(function () {
             formValues = form.getValues(),
             uploadField = formPanel.down('filefield');
 
+          // Is this a new record?
           if (typeof form.getRecord() === 'undefined') {
-            if (uploadField.isDisabled()) {
+            if (formValues.media_type === 'url') {
+              if (!formValues.media_location.match(/http:\/\//gi)) {
+                formValues.media_location = 'http://' + formValues.media_location;
+              }
+
               store.add(formValues);
             } else {
               form.submit({
