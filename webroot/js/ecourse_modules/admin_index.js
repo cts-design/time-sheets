@@ -170,15 +170,19 @@ Ext.onReady(function () {
         text: 'New Module',
         handler: function () {
           var mediaUploadField = moduleForm.down('#mediaUpload'),
-            mediaLocationField = moduleForm.down('#mediaLocation');
-
-          if (moduleForm.getCollapsed()) {
-            moduleForm.expand();
-          }
+            mediaLocationField = moduleForm.down('#mediaLocation'),
+            orderField = moduleForm.down('#orderField'),
+            ecourseModuleStore = modulesGrid.store;
 
           mediaUploadField.disable();
           mediaLocationField.disable();
           moduleForm.getForm().reset(true);
+
+          orderField.setValue(ecourseModuleStore.totalCount + 1);
+
+          if (moduleForm.getCollapsed()) {
+            moduleForm.expand();
+          }
         }
       }, {
         disabled: true,
@@ -236,6 +240,7 @@ Ext.onReady(function () {
       xtype: 'numberfield',
       allowBlank: false,
       fieldLabel: 'Order',
+      id: 'orderField',
       minValue: 1,
       name: 'order',
       width: 175
