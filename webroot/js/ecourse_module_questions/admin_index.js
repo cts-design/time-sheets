@@ -6,14 +6,12 @@ Ext.override(Ext.data.writer.Json, {
       childStore,
       data = this.callParent(arguments);
 
-
     /* Iterate over all the hasMany associations */
     for (i = 0; i < record.associations.length; i++) {
       association = record.associations.get(i);
       if (association.type == 'hasMany')  {
         data[association.name] = [];
         childStore = eval('record.'+association.name+'()');
-
 
         //Iterate over all the children in the current association
         childStore.each(function(childRecord) {
@@ -310,22 +308,6 @@ Ext.onReady(function () {
       }],
       listeners: {
         itemclick: function (grid, rec) {
-          var formPanel = this.up('panel').down('form'),
-            form = formPanel.getForm();
-
-          console.log(form.getRecord());
-          form.loadRecord(rec);
-          rec.answers().each(function (answer, index) {
-            var fieldIndex = index + 1,
-              field = formPanel.down('#answer' + fieldIndex),
-              radio = field.nextNode('radiofield');
-
-            field.setValue(answer.get('text'));
-            if (answer.get('correct')) {
-              radio.setValue(true);
-            }
-          });
-          console.log(form.getRecord());
         }
       },
       viewConfig: {},
@@ -337,7 +319,26 @@ Ext.onReady(function () {
           text: 'New Question'
         }, {
           icon: '/img/icons/edit.png',
-          text: 'Edit Question'
+          id: 'editQuestionBtn',
+          text: 'Edit Question',
+          handler: function () {
+            var gridPanel = this.up('grid'),
+              formPanel = moduleForm.down('form'),
+              form = formPanel.getForm(),
+              selectedRecord = gridPanel.getSelectionModel().getSelection()[0];
+
+            form.loadRecord(selectedRecord);
+            selectedRecord.answers().each(function (answer, index) {
+              var fieldIndex = index + 1,
+                field = formPanel.down('#answer' + fieldIndex),
+                radio = field.nextNode('radiofield');
+
+              field.setValue(answer.get('text'));
+              if (answer.get('correct')) {
+                radio.setValue(true);
+              }
+            });
+          }
         }, {
           icon: '/img/icons/delete.png',
           text: 'Delete Question'
