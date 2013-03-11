@@ -335,7 +335,14 @@ Ext.onReady(function () {
       },
       plugins: [
         Ext.create('Ext.grid.plugin.RowEditing', {
-          clicksToEdit: 2
+          clicksToEdit: 2,
+          listeners: {
+            edit: function (editor, e) {
+              if (e.originalValues.order !== e.newValues.order) {
+                e.store.sort('order', 'ASC');
+              }
+            }
+          }
         })
       ],
       selModel: {
