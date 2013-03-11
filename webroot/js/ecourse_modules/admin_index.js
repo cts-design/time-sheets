@@ -233,9 +233,12 @@ Ext.onReady(function () {
       name: 'ecourse_id',
       value: ecourse.id
     }, {
-      xtype: 'hiddenfield',
+      xtype: 'numberfield',
+      allowBlank: false,
+      fieldLabel: 'Order',
+      minValue: 1,
       name: 'order',
-      value: 0
+      width: 175
     }, {
       xtype: 'textfield',
       allowBlank: false,
@@ -249,7 +252,7 @@ Ext.onReady(function () {
       minValue: 1,
       name: 'passing_percentage',
       value: ecourse.default_passing_percentage,
-      width: 250
+      width: 175
     }, {
       xtype: 'htmleditor',
       allowBlank: false,
