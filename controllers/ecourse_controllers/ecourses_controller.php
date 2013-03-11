@@ -96,16 +96,17 @@ class EcoursesController extends AppController {
 		$this->data['EcourseModuleResponse']['ecourse_response_id'] = $ecourseResponse['EcourseResponse']['id'];
 		$this->data['EcourseModuleResponse']['score'] = $quizScore;
 		$this->data['EcourseModuleResponse']['pass_fail'] = ($ecourseModule['EcourseModule']['passing_percentage'] <= $quizScore) ? 'Pass' : 'Fail';
+
+		$this->log($nextModule, 'debug');
 		if($this->Ecourse->EcourseResponse->EcourseModuleResponse->save($this->data['EcourseModuleResponse'])) {
 			// TODO: add logic to add transaction. direct to next module if passed, else redirect back to user dash
 			// and show failed flash message
 		}
-		/*
-		$testy = $this->Ecourse->EcourseModule->find('first',
+		$nextModule = $this->Ecourse->EcourseModule->find('first',
 			array('conditions' => array('EcourseModule.ecourse_id' => 2, 'EcourseModule.order >' => $ecourseModule['EcourseModule']['order']))
 		);
-		$this->log($testy, 'debug');
-		 */
+		$this->log($nextModule, 'debug');
+
 		if ($this->Auth->user('role_id') == 1) {
 			$userIsAdmin = false;
 		} else {
