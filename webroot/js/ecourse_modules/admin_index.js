@@ -87,6 +87,11 @@ Ext.onReady(function () {
     height: 250,
     forceFit: true,
     renderTo: 'ecourseModulesGrid',
+    selModel: {
+      allowDeselect: true,
+      mode: 'SINGLE'
+    },
+    selType: 'rowmodel',
     store: 'EcourseModuleStore',
     title: (ecourse.name + ' Modules').capitalize(),
     columns: [{
@@ -162,6 +167,13 @@ Ext.onReady(function () {
       }]
     }],
     listeners: {
+      containerclick: function (grid, e) {
+        grid.getSelectionModel().deselectAll();
+      },
+      deselect: function (grid, record, index) {
+        Ext.getCmp('editModuleBtn').disable();
+        Ext.getCmp('deleteModuleBtn').disable();
+      },
       itemclick: function (grid, record, item, index) {
         Ext.getCmp('editModuleBtn').enable();
         Ext.getCmp('deleteModuleBtn').enable();
@@ -198,6 +210,8 @@ Ext.onReady(function () {
             mediaLocationField = moduleForm.down('#mediaLocation'),
             orderField = moduleForm.down('#orderField'),
             ecourseModuleStore = modulesGrid.store;
+
+          modulesGrid.getSelectionModel().deselectAll();
 
           mediaUploadField.disable();
           mediaLocationField.disable();
