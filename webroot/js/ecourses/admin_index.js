@@ -21,6 +21,7 @@ Ext.define('Ecourse', {
 Ext.create('Ext.data.Store', {
   storeId: 'EcourseStore',
   autoLoad: true,
+  autoSync: true,
   model: 'Ecourse',
   filters: [{
     property: 'disabled',
