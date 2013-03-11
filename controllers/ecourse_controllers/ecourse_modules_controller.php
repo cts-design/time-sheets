@@ -89,6 +89,19 @@ class EcourseModulesController extends AppController {
 		$this->render('/elements/ajaxreturn');
 	}
 
+	public function admin_destroy() {
+		$ecourse = json_decode($this->params['form']['ecourse_modules'], true);
+
+		if ($this->EcourseModule->delete($ecourse['id'])) {
+			$data['success'] = true;
+		} else {
+			$data['success'] = false;
+		}
+
+		$this->set('data', $data);
+		$this->render('/elements/ajaxreturn');
+	}
+
 	public function admin_upload_media() {
 		$this->layout = 'ajax';
 		$storagePath = substr(APP, 0, -1) .
