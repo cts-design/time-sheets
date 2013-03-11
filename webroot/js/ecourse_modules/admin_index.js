@@ -454,7 +454,26 @@ Ext.onReady(function () {
               });
             }
           } else {
-            form.updateRecord();
+            if (!uploadField.isDisabled() && uploadField.getValue()) {
+              form.submit({
+                url: '/admin/ecourse_modules/upload_media',
+                waitMsg: 'Uploading your media...',
+                success: function(form, operation) {
+                  var record = form.getRecord();
+
+                  if (operation.result.success) {
+                    record.set('media_location', operation.result.location);
+                    form.updateRecord();
+                    form.reset(true);
+                    formPanel.collapse();
+                  }
+                }
+              });
+            } else {
+              form.updateRecord();
+              form.reset(true);
+              formPanel.collapse();
+            }
           }
         }
       }]
