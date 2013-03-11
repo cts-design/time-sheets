@@ -344,24 +344,25 @@ Ext.onReady(function () {
             formValues = form.getValues(),
             uploadField = formPanel.down('filefield');
 
+          if (typeof form.getRecord() === 'undefined') {
             if (uploadField.isDisabled()) {
-                store.add(formValues);
-                form.reset();
-                formPanel.toggleCollapse();
+              store.add(formValues);
             } else {
               form.submit({
                 url: '/admin/ecourse_modules/upload_media',
                 waitMsg: 'Uploading your media...',
-                success: function (form, operation) {
+                success: function(form, operation) {
                   if (operation.result.success) {
                     formValues.media_location = operation.result.location;
                     store.add(formValues);
                     form.reset();
-                    formPanel.toggleCollapse();
+                    formPanel.collapse();
                   }
                 }
               });
             }
+          } else {
+            form.updateRecord();
           }
         }
       }]
