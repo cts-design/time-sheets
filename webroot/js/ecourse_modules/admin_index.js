@@ -218,7 +218,7 @@ Ext.onReady(function () {
     bodyPadding: 10,
     collapsible: true,
     collapsed: true,
-    height: 475,
+    height: 500,
     renderTo: 'ecourseModuleForm',
     title: 'New Module Form',
     fieldDefaults: {
