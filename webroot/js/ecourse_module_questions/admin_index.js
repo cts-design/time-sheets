@@ -350,9 +350,11 @@ Ext.onReady(function () {
           icon: '/img/icons/add.png',
           text: 'New Question',
           handler: function () {
-            var formPanel = moduleForm.down('form'),
+            var gridPanel = this.up('grid'),
+              formPanel = moduleForm.down('form'),
               form = formPanel.getForm();
 
+            gridPanel.getSelectionModel().deselectAll();
             form.reset(true);
           }
         }, {
