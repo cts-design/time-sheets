@@ -97,15 +97,27 @@ Ext.onReady(function () {
       align: 'center',
       dataIndex: 'order',
       text: 'Order',
-      width: 50
+      width: 50,
+      editor: {
+        xtype: 'numberfield',
+        allowBlank: false
+      }
     }, {
       dataIndex: 'name',
       flex: 1,
-      text: 'Name'
+      text: 'Name',
+      editor: {
+        xtype: 'textfield',
+        allowBlank: false
+      }
     }, {
       dataIndex: 'media_name',
       flex: 1,
-      text: 'Media Name'
+      text: 'Media Name',
+      editor: {
+        xtype: 'textfield',
+        allowBlank: false
+      }
     }, {
       dataIndex: 'media_type',
       flex: 1,
@@ -126,7 +138,11 @@ Ext.onReady(function () {
       dataIndex: 'passing_percentage',
       format: '0%',
       text: 'Passing Percentage',
-      width: 125
+      width: 125,
+      editor: {
+        xtype: 'numberfield',
+        allowBlank: false
+      }
     }, {
       xtype: 'actioncolumn',
       align: 'center',
@@ -145,15 +161,13 @@ Ext.onReady(function () {
       itemclick: function (grid, record, item, index) {
         Ext.getCmp('editModuleBtn').enable();
         Ext.getCmp('deleteModuleBtn').enable();
-      },
-      itemdblclick: function (grid, record, item, index) {
-        if (moduleForm.getCollapsed()) {
-          moduleForm.expand();
-        }
-
-        moduleForm.loadRecord(record);
       }
     },
+    plugins: [
+      Ext.create('Ext.grid.plugin.RowEditing', {
+        clicksToEdit: 2
+      })
+    ],
     viewConfig: {
       deferEmptyText: false,
       emptyText: 'There are no modules for this ecourse at this time',
