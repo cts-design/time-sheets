@@ -308,6 +308,8 @@ Ext.onReady(function () {
       }],
       listeners: {
         itemclick: function (grid, rec) {
+          Ext.getCmp('editQuestionBtn').enable();
+          Ext.getCmp('deleteQuestionBtn').enable();
         }
       },
       viewConfig: {},
@@ -318,6 +320,7 @@ Ext.onReady(function () {
           icon: '/img/icons/add.png',
           text: 'New Question'
         }, {
+          disabled: true,
           icon: '/img/icons/edit.png',
           id: 'editQuestionBtn',
           text: 'Edit Question',
@@ -340,7 +343,9 @@ Ext.onReady(function () {
             });
           }
         }, {
+          disabled: true,
           icon: '/img/icons/delete.png',
+          id: 'deleteQuestionBtn',
           text: 'Delete Question'
         }]
       }]
