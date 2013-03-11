@@ -311,11 +311,19 @@ Ext.onReady(function () {
         text: 'Question'
       }],
       listeners: {
+        containerclick: function (grid) {
+          grid.getSelectionModel().deselectAll();
+        },
         itemclick: function (grid, rec) {
           Ext.getCmp('editQuestionBtn').enable();
           Ext.getCmp('deleteQuestionBtn').enable();
         }
       },
+      selModel: {
+        allowDeselect: true,
+        mode: 'SINGLE'
+      },
+      selType: 'rowmodel',
       viewConfig: {
         deferEmptyText: false,
         emptyText: 'There are no questions for this module at this time',
