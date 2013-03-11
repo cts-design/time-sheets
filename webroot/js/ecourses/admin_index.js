@@ -139,7 +139,7 @@ Ext.onReady(function () {
       xtype: 'ecoursegridpanel',
       id: 'customer',
       plugins: [
-        Ext.create('Ext.grid.plugin.CellEditing', {
+        Ext.create('Ext.grid.plugin.RowEditing', {
           clicksToEdit: 2
         })
       ],
@@ -279,6 +279,11 @@ Ext.onReady(function () {
       xtype: 'ecoursegridpanel',
       id: 'staff',
       title: 'Staff',
+      plugins: [
+        Ext.create('Ext.grid.plugin.RowEditing', {
+          clicksToEdit: 2
+        })
+      ],
       columns: [{
         dataIndex: 'id',
         hidden: true,
