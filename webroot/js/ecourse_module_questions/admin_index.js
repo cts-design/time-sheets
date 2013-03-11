@@ -321,6 +321,8 @@ Ext.onReady(function () {
       listeners: {
         containerclick: function (grid) {
           grid.getSelectionModel().deselectAll();
+          Ext.getCmp('editQuestionBtn').disable();
+          Ext.getCmp('deleteQuestionBtn').disable();
         },
         itemclick: function (grid, rec) {
           Ext.getCmp('editQuestionBtn').enable();
