@@ -141,6 +141,15 @@ Ext.onReady(function () {
         }
       }]
     }],
+    listeners: {
+      itemdblclick: function (grid, record, item, index) {
+        if (moduleForm.getCollapsed()) {
+          moduleForm.expand();
+        }
+
+        moduleForm.loadRecord(record);
+      }
+    },
     viewConfig: {
       deferEmptyText: false,
       emptyText: 'There are no modules for this ecourse at this time',
