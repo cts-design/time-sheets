@@ -197,7 +197,52 @@ Ext.onReady(function () {
       getRowClass: function (rec) {
         return rec.get('disabled') ? 'row-disabled' : 'row-active';
       },
-      loadMask: true
+      listeners: {
+        drop: function (node, data, overModel, dropPosition) {
+          var store = overModel.store,
+            gridEl = modulesGrid.getEl(),
+            selectedRecord = data.records[0],
+            overModelOrder = overModel.get('order'),
+            parseDrop,
+            batch = new Ext.data.Batch(),
+            i;
+
+          gridEl.mask('Reordering modules...');
+
+          // Reorder the selected field and it's overModel
+          // based on the drop position
+          parseDrop = (function () {
+            return {
+              before: function () {
+                selectedRecord.set('order', overModelOrder);
+                overModel.set('order', (overModelOrder + 1));
+              },
+              after: function () {
+                selectedRecord.set('order', overModelOrder);
+                overModel.set('order', (overModelOrder - 1));
+              }
+            };
+          }());
+          parseDrop[dropPosition] && parseDrop[dropPosition]();
+
+          store.sort('order', 'ASC');
+
+          i = 1;
+          store.each(function (record) {
+            if (record.get('order') !== i) {
+              record.set('order', i);
+            }
+            i++;
+          });
+
+          gridEl.unmask();
+        }
+      },
+      loadMask: true,
+      plugins: {
+        ptype: 'gridviewdragdrop',
+        dragText: 'Drag and drop to re-order',
+      }
     },
     dockedItems: [{
       xtype: 'toolbar',
