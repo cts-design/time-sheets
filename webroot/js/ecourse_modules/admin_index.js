@@ -268,8 +268,6 @@ Ext.onReady(function () {
             if (oldVal === 'url') {
               locationField.disable();
               locationField.allowBlank = true;
-            } else if (typeof oldVal !== 'undefined') {
-              return true;
             }
 
             uploadField.enable();
