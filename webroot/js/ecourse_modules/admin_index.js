@@ -165,9 +165,16 @@ Ext.onReady(function () {
         icon: '/img/icons/add.png',
         text: 'New Module',
         handler: function () {
-          var form = moduleForm.getForm();
+        var mediaUploadField = moduleForm.down('#mediaUpload'),
+          mediaLocationField = moduleForm.down('#mediaLocation');
 
-          moduleForm.toggleCollapse();
+          if (moduleForm.getCollapsed()) {
+            moduleForm.expand();
+          }
+
+          mediaUploadField.disable();
+          mediaLocationField.disable();
+          moduleForm.getForm().reset(true);
         }
       }, {
         disabled: true,
