@@ -312,7 +312,10 @@ Ext.onReady(function () {
           Ext.getCmp('deleteQuestionBtn').enable();
         }
       },
-      viewConfig: {},
+      viewConfig: {
+        deferEmptyText: false,
+        emptyText: 'There are no questions for this module at this time',
+      },
       dockedItems: [{
         xtype: 'toolbar',
         dock: 'top',
