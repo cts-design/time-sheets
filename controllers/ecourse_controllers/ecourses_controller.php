@@ -28,14 +28,19 @@ class EcoursesController extends AppController {
 				'EcourseModuleResponse' => array('conditions' => array('EcourseModuleResponse.pass_fail' => 'Pass'))))));
 		if(empty($ecourse['EcourseResponse'])) {
 			$this->data['EcourseResponse']['user_id'] = $this->Auth->user('id');
+			$this->data['EcourseResponse']['ecourse_id'] = $id;
 			$this->Ecourse->EcourseResponse->save($this->data);
 		}
+		// TODO: add logic to handle reset responses, and completed responses
 		$modules = Set::extract('/EcourseModule/id', $ecourse);
-		$moduleRespneses = Set::extract('/EcourseModuleResponse/id', $ecourse['EcourseResponse']);
-		foreach($modules as $module) {
-			if(! in_array($module, $moduleRespneses)) {
-				$nextModule = Set::extract("/EcourseModule[id=$module]/.[:first]", $ecourse);
-			} 
+		$moduleResponses = Set::extract('/EcourseModuleResponse[pass_fail=Pass]/ecourse_module_id', $ecourse['EcourseResponse']);
+		$diff = Set::diff($moduleResponses, $modules);
+		if(!empty($diff)) {
+			$diff = array_values($diff);
+			$nextModule = Set::extract("/EcourseModule[id=$diff[0]]/.[1]", $ecourse);
+		} 
+		else {
+			$nextModule = Set::extract("/EcourseModule/.[1]", $ecourse);
 		}
 		$title_for_layout = $nextModule[0]['name'] ;
 		$this->set(compact('nextModule', 'title_for_layout'));
@@ -97,22 +102,41 @@ class EcoursesController extends AppController {
 		$this->data['EcourseModuleResponse']['score'] = $quizScore;
 		$this->data['EcourseModuleResponse']['pass_fail'] = ($ecourseModule['EcourseModule']['passing_percentage'] <= $quizScore) ? 'Pass' : 'Fail';
 
-		$this->log($nextModule, 'debug');
-		if($this->Ecourse->EcourseResponse->EcourseModuleResponse->save($this->data['EcourseModuleResponse'])) {
-			// TODO: add logic to add transaction. direct to next module if passed, else redirect back to user dash
-			// and show failed flash message
-		}
-		$nextModule = $this->Ecourse->EcourseModule->find('first',
-			array('conditions' => array('EcourseModule.ecourse_id' => 2, 'EcourseModule.order >' => $ecourseModule['EcourseModule']['order']))
-		);
-		$this->log($nextModule, 'debug');
-
 		if ($this->Auth->user('role_id') == 1) {
 			$userIsAdmin = false;
 		} else {
 			$userIsAdmin = true;
 		}
-		$this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => $userIsAdmin));
+		if($this->Ecourse->EcourseResponse->EcourseModuleResponse->save($this->data['EcourseModuleResponse'])) {
+			if($ecourseModule['EcourseModule']['passing_percentage'] <= $quizScore) {
+				$nextModule = $this->Ecourse->EcourseModule->find('first',
+					array('conditions' => array('EcourseModule.ecourse_id' => 2, 'EcourseModule.order >' => $ecourseModule['EcourseModule']['order']))
+				);
+				// TODO: add logic to add passing transaction.
+				$this->Session->setFlash('You passed the quiz.', 'flash_success');
+				if($nextModule) {
+					$this->redirect(array('controller' => 'ecourses', 'action' => 'index', $ecourseModule['EcourseModule']['ecourse_id'], 'admin' => $userIsAdmin));
+				}
+				else {
+					// Logic to mark the ecourse response complete if passed quiz for last module
+					$this->Ecourse->EcourseResponse->id = $ecourseResponse['EcourseResponse']['id'];
+					$this->Ecourse->EcourseResponse->saveField('completed', date('Y-m-d H:i:s'));
+					$this->Ecourse->EcourseResponse->saveField('status', 'completed');
+					$this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => $userIsAdmin));
+				}
+			}
+			else {
+				// TODO: add logic to add failing transaction.
+				$this->Session->setFlash('You did not pass the quiz, please try again', 'flash_failure');
+				$this->redirect(array('controller' => 'ecourses', 'action' => 'index', $ecourseModule['EcourseModule']['ecourse_id'], 'admin' => $userIsAdmin));
+			}
+		}
+		else {
+			$title_for_layout = $ecourseModule['EcourseModule']['name'] . ' Quiz';
+			$this->set(compact('ecourseModule', 'title_for_layout'));
+			$this->render('/ecourses/quiz/');
+			// TODO: fix this so that form data is preserved in the event the response cannot be saved	
+		}
 	}
 
     public function load_media($mediaLocation=null) {
