@@ -68,7 +68,11 @@ Ext.create('Ext.data.Store', {
       type: 'json',
       writeAllFields: false
     }
-  }
+  },
+  sorters: [{
+    property: 'order',
+    direction: 'ASC'
+  }]
 });
 
 Ext.onReady(function () {
