@@ -70,14 +70,31 @@ class EcoursesController extends AppController {
 				'EcourseModule'
 			)
 		));
+		$ecourseResponse = $this->Ecourse->EcourseResponse->find('first', array(
+			'conditions' => array(
+				'EcourseResponse.user_id' => $this->Auth->user('id'),
+				'EcourseResponse.ecourse_id' => $ecourseModule['EcourseModule']['ecourse_id']),
+			'fields' => array('id')));
 
-		$this->Session->setFlash(__('You have passed ' . $ecourse['EcourseModule'][0]['name'], true), 'flash_success');
+		$answers = $this->data['Ecourse'];
+		array_pop($answers);
+		$answers = array_values($answers);
+		$correctAnswers = Set::extract('/EcourseModuleQuestionAnswer/id', $ecourseModule['EcourseModuleQuestion']);
 
-		
-		if ($this->Auth->user('role_id') == 1) {
-			$userIsAdmin = false;
-		} else {
-			$userIsAdmin = true;
+		$diff = Set::diff($answers, $correctAnswers);
+		$numberWrong = count($correctAnswers) - count($diff);
+		$percent = ($numberWrong / count($correctAnswers)) * 100;
+
+		$this->data['EcourseModuleResponse']['ecourse_module_id'] = $ecourseModule['EcourseModule']['id'];
+		$this->data['EcourseModuleResponse']['ecourse_response_id'] = $ecourseResponse['EcourseResponse']['id'];
+		$this->data['EcourseModuleResponse']['score'] = $percent;
+		$this->data['EcourseModuleResponse']['pass_fail'] = ($ecourseModule['passing_percentage'] <= $percent) ? 'Pass' : 'Fail';
+		if($this->Ecourse->EcourseResponse->EcourseModuleResponse->save($this->data['EcourseModuleResponse'])) {
+			if ($this->Auth->user('role_id') == 1) {
+				$userIsAdmin = false;
+			} else {
+				$userIsAdmin = true;
+			}
 		}
 
 		$this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => $userIsAdmin));

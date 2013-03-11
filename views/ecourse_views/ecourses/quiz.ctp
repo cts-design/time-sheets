@@ -20,7 +20,8 @@
 			</ol>
 		</div>
 	<?php endforeach ?>
-
-	<input class="button" type="submit" value="Save Quiz" />
-	</form>
+	</ol>
+	<br />
+	<?php echo $this->Form->hidden('module_id', array('value' => $ecourseModule['EcourseModule']['id'])); ?>
+	<?php echo $this->Form->end('Save'); ?>
 </div>
