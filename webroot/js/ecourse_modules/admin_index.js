@@ -263,6 +263,7 @@ Ext.onReady(function () {
           moduleForm.getForm().reset(true);
 
           orderField.setValue(ecourseModuleStore.totalCount + 1);
+          mediaUploadField.allowBlank = false;
 
           if (moduleForm.getCollapsed()) {
             moduleForm.expand();
@@ -281,6 +282,8 @@ Ext.onReady(function () {
           }
 
           moduleForm.loadRecord(record);
+          moduleForm.down('#mediaUpload').allowBlank = true; // On an edit we don't want to require another upload
+
         }
       }, {
         disabled: true,
