@@ -105,7 +105,11 @@ Ext.create('Ext.data.Store', {
         var answer = rec.getAssociatedData();
       });
     }
-  }
+  },
+  sorters: [{
+    property: 'order',
+    direction: 'ASC'
+  }]
 });
 
 Ext.onReady(function () {
