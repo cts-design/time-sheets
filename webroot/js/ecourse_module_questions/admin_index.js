@@ -348,7 +348,13 @@ Ext.onReady(function () {
         dock: 'top',
         items: [{
           icon: '/img/icons/add.png',
-          text: 'New Question'
+          text: 'New Question',
+          handler: function () {
+            var formPanel = moduleForm.down('form'),
+              form = formPanel.getForm();
+
+            form.reset(true);
+          }
         }, {
           disabled: true,
           icon: '/img/icons/edit.png',
