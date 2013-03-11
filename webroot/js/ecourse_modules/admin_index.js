@@ -301,6 +301,7 @@ Ext.onReady(function () {
       items: [{
         xtype: 'tbfill'
       }, {
+        formBind: true,
         text: 'Save Module',
         handler: function () {
           var formPanel = this.up('form'),
