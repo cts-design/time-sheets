@@ -4,23 +4,23 @@
   });
 <?php $this->Html->scriptEnd(); ?>
 <div id="ecourse-quiz">
-	<form action="/ecourses/save/<?= $this->params['pass'][0] ?>" method="post" accept-charset="utf-8">
+	<?php echo $this->Form->create(null, array('url' => '/ecourses/grade')) ?>
+	<ol>
 	<?php foreach ($ecourseModule['EcourseModuleQuestion'] as $question): ?>
-		<div class="question">
-			<p><strong><?= $question['text'] ?></strong></p>
-			<ol>
-			<?php foreach ($question['EcourseModuleQuestionAnswer'] as $answer): ?>
-				<li>
-					<label>
-						<input type="radio" name="<?= Inflector::slug($question['text']) ?>" id="" value="" />
-						<?= $answer['text'] ?>
-					</label>
-				</li>
-			<?php endforeach ?>
-			</ol>
-		</div>
+		<?php $answers = array() ?>
+		<?php $attributes = array('legend' => false, 'separator' => '<br />') ?>
+		<?php foreach($question['EcourseModuleQuestionAnswer'] as $answer): ?>
+			<?php $answers[$answer['id']] = $answer['text'] ?>
+		<?php endforeach ?>
+		<li>
+		<?php echo $this->Form->label($question['text']); ?>
+		<br />
+		<?php echo $this->Form->radio(Inflector::slug($question['text']), $answers, $attributes) ?>
+		</li>
 	<?php endforeach ?>
-
-	<input class="button" type="submit" value="Save Quiz" />
-	</form>
+	</ol>
+	
+	<br />
+	<?php echo $this->Form->hidden('module_id', array('value' => $ecourseModule['EcourseModule']['id'])); ?>
+	<?php echo $this->Form->end('Save'); ?>
 </div>
