@@ -197,7 +197,14 @@ Ext.onReady(function () {
       }, {
         disabled: true,
         icon: '/img/icons/delete.png',
-        text: 'Delete Module'
+        id: 'deleteModuleBtn',
+        text: 'Delete Module',
+        handler: function () {
+          var store = modulesGrid.store,
+            record = modulesGrid.getSelectionModel().getSelection()[0];
+
+          store.remove(record);
+        }
       }]
     }, {
       xtype: 'pagingtoolbar',
