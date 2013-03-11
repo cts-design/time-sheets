@@ -140,7 +140,18 @@ Ext.onReady(function () {
       id: 'customer',
       plugins: [
         Ext.create('Ext.grid.plugin.RowEditing', {
-          clicksToEdit: 2
+          clicksToEdit: 2,
+          listeners: {
+            edit: function (editor, e) {
+              var store = e.store,
+                isFiltered = store.isFiltered,
+                recordWasDisabled = !e.originalValues.disabled && e.newValues.disabled;
+
+              if (recordWasDisabled && isFiltered) {
+                store.filter('disabled', 0);
+              }
+            }
+          }
         })
       ],
       title: 'Customer',
@@ -281,7 +292,18 @@ Ext.onReady(function () {
       title: 'Staff',
       plugins: [
         Ext.create('Ext.grid.plugin.RowEditing', {
-          clicksToEdit: 2
+          clicksToEdit: 2,
+          listeners: {
+            edit: function (editor, e) {
+              var store = e.store,
+                isFiltered = store.isFiltered,
+                recordWasDisabled = !e.originalValues.disabled && e.newValues.disabled;
+
+              if (recordWasDisabled && isFiltered) {
+                store.filter('disabled', 0);
+              }
+            }
+          }
         })
       ],
       columns: [{
