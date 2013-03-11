@@ -74,12 +74,35 @@ class EcourseModulesController extends AppController {
 	}
 
 	public function admin_update() {
-		$ecourseModuleData = json_decode($this->params['form']['ecourse_modules'], true);
+		$ecourseData = json_decode($this->params['form']['ecourse_modules'], true);
 
-		$this->EcourseModule->read(null, $ecourseModuleData['id']);
-		$this->EcourseModule->set($ecourseModuleData);
+		if (count($ecourseData) > 1) {
+			$this->data['EcourseModule'] = $ecourseData;
 
-		if ($this->EcourseModule->save()) {
+			if ($this->EcourseModule->saveAll($this->data['EcourseModule'])) {
+				$data['success'] = true;
+			} else {
+				$data['success'] = false;
+			}
+		} else {
+			$this->EcourseModule->read(null, $ecourseData['id']);
+			$this->EcourseModule->set($ecourseData);
+
+			if ($this->EcourseModule->save()) {
+				$data['success'] = true;
+			} else {
+				$data['success'] = false;
+			}
+		}
+
+		$this->set('data', $data);
+		$this->render('/elements/ajaxreturn');
+	}
+
+	public function admin_destroy() {
+		$ecourse = json_decode($this->params['form']['ecourse_modules'], true);
+
+		if ($this->EcourseModule->delete($ecourse['id'])) {
 			$data['success'] = true;
 		} else {
 			$data['success'] = false;

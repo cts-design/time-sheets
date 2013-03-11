@@ -140,12 +140,13 @@ Ext.onReady(function () {
         Ext.create('Ext.grid.plugin.RowEditing', {
           clicksToEdit: 2,
           listeners: {
-            edit: function(editor, e) {
-              var showArchivedEcoursesBtn = Ext.getCmp('showArchivedEcourses'),
-                ecourseDisabled = (e.originalValues.disabled === 0 && e.newValues.disabled === 1);
+            edit: function (editor, e) {
+              var store = e.store,
+                isFiltered = store.isFiltered,
+                recordWasDisabled = !e.originalValues.disabled && e.newValues.disabled;
 
-              if (e.store.isFiltered() && ecourseDisabled) {
-                e.store.filter('disabled', 0);
+              if (recordWasDisabled && isFiltered) {
+                store.filter('disabled', 0);
               }
             }
           }
@@ -287,6 +288,22 @@ Ext.onReady(function () {
       xtype: 'ecoursegridpanel',
       id: 'staff',
       title: 'Staff',
+      plugins: [
+        Ext.create('Ext.grid.plugin.RowEditing', {
+          clicksToEdit: 2,
+          listeners: {
+            edit: function (editor, e) {
+              var store = e.store,
+                isFiltered = store.isFiltered,
+                recordWasDisabled = !e.originalValues.disabled && e.newValues.disabled;
+
+              if (recordWasDisabled && isFiltered) {
+                store.filter('disabled', 0);
+              }
+            }
+          }
+        })
+      ],
       columns: [{
         dataIndex: 'id',
         hidden: true,

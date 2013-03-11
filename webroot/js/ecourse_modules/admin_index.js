@@ -87,6 +87,11 @@ Ext.onReady(function () {
     height: 250,
     forceFit: true,
     renderTo: 'ecourseModulesGrid',
+    selModel: {
+      allowDeselect: true,
+      mode: 'SINGLE'
+    },
+    selType: 'rowmodel',
     store: 'EcourseModuleStore',
     title: (ecourse.name + ' Modules').capitalize(),
     columns: [{
@@ -101,15 +106,27 @@ Ext.onReady(function () {
       align: 'center',
       dataIndex: 'order',
       text: 'Order',
-      width: 50
+      width: 50,
+      editor: {
+        xtype: 'numberfield',
+        allowBlank: false
+      }
     }, {
       dataIndex: 'name',
       flex: 1,
-      text: 'Name'
+      text: 'Name',
+      editor: {
+        xtype: 'textfield',
+        allowBlank: false
+      }
     }, {
       dataIndex: 'media_name',
       flex: 1,
-      text: 'Media Name'
+      text: 'Media Name',
+      editor: {
+        xtype: 'textfield',
+        allowBlank: false
+      }
     }, {
       dataIndex: 'media_type',
       flex: 1,
@@ -130,7 +147,11 @@ Ext.onReady(function () {
       dataIndex: 'passing_percentage',
       format: '0%',
       text: 'Passing Percentage',
-      width: 125
+      width: 125,
+      editor: {
+        xtype: 'numberfield',
+        allowBlank: false
+      }
     }, {
       xtype: 'actioncolumn',
       align: 'center',
@@ -146,24 +167,82 @@ Ext.onReady(function () {
       }]
     }],
     listeners: {
-      itemdblclick: function (grid, rec, item, index, e) {
-        var formPanel = Ext.getCmp('moduleFormPanel'),
-          form = formPanel.getForm();
-
-        if (formPanel.getCollapsed()) {
-          formPanel.expand();
-        }
-
-        form.loadRecord(rec);
+      containerclick: function (grid, e) {
+        grid.getSelectionModel().deselectAll();
+      },
+      deselect: function (grid, record, index) {
+        Ext.getCmp('editModuleBtn').disable();
+        Ext.getCmp('deleteModuleBtn').disable();
+      },
+      itemclick: function (grid, record, item, index) {
+        Ext.getCmp('editModuleBtn').enable();
+        Ext.getCmp('deleteModuleBtn').enable();
       }
     },
+    plugins: [
+      Ext.create('Ext.grid.plugin.RowEditing', {
+        clicksToEdit: 2,
+        listeners: {
+          edit: function (editor, e) {
+            if (e.originalValues.order !== e.newValues.order) {
+              e.store.sort('order', 'ASC');
+            }
+          }
+        }
+      })
+    ],
     viewConfig: {
       deferEmptyText: false,
       emptyText: 'There are no modules for this ecourse at this time',
       getRowClass: function (rec) {
         return rec.get('disabled') ? 'row-disabled' : 'row-active';
       },
-      loadMask: true
+      listeners: {
+        drop: function (node, data, overModel, dropPosition) {
+          var store = overModel.store,
+            gridEl = modulesGrid.getEl(),
+            selectedRecord = data.records[0],
+            overModelOrder = overModel.get('order'),
+            parseDrop,
+            batch = new Ext.data.Batch(),
+            i;
+
+          gridEl.mask('Reordering modules...');
+
+          // Reorder the selected field and it's overModel
+          // based on the drop position
+          parseDrop = (function () {
+            return {
+              before: function () {
+                selectedRecord.set('order', overModelOrder);
+                overModel.set('order', (overModelOrder + 1));
+              },
+              after: function () {
+                selectedRecord.set('order', overModelOrder);
+                overModel.set('order', (overModelOrder - 1));
+              }
+            };
+          }());
+          parseDrop[dropPosition] && parseDrop[dropPosition]();
+
+          store.sort('order', 'ASC');
+
+          i = 1;
+          store.each(function (record) {
+            if (record.get('order') !== i) {
+              record.set('order', i);
+            }
+            i++;
+          });
+
+          gridEl.unmask();
+        }
+      },
+      loadMask: true,
+      plugins: {
+        ptype: 'gridviewdragdrop',
+        dragText: 'Drag and drop to re-order',
+      }
     },
     dockedItems: [{
       xtype: 'toolbar',
@@ -172,27 +251,51 @@ Ext.onReady(function () {
         icon: '/img/icons/add.png',
         text: 'New Module',
         handler: function () {
-          var formPanel = Ext.getCmp('moduleFormPanel'),
-            form = formPanel.getForm(),
-            mediaUploadField = Ext.getCmp('mediaUpload'),
-            mediaLocationField = Ext.getCmp('mediaLocation');
+          var mediaUploadField = moduleForm.down('#mediaUpload'),
+            mediaLocationField = moduleForm.down('#mediaLocation'),
+            orderField = moduleForm.down('#orderField'),
+            ecourseModuleStore = modulesGrid.store;
+
+          modulesGrid.getSelectionModel().deselectAll();
 
           mediaUploadField.disable();
           mediaLocationField.disable();
-          form.reset(true);
+          moduleForm.getForm().reset(true);
 
-          if (formPanel.getCollapsed()) {
-            formPanel.expand();
+          orderField.setValue(ecourseModuleStore.totalCount + 1);
+          mediaUploadField.allowBlank = false;
+
+          if (moduleForm.getCollapsed()) {
+            moduleForm.expand();
           }
         }
       }, {
         disabled: true,
         icon: '/img/icons/edit.png',
-        text: 'Edit Module'
+        id: 'editModuleBtn',
+        text: 'Edit Module',
+        handler: function () {
+          var record = modulesGrid.getSelectionModel().getSelection()[0];
+
+          if (moduleForm.getCollapsed()) {
+            moduleForm.expand();
+          }
+
+          moduleForm.getForm().reset(true);
+          moduleForm.loadRecord(record);
+          moduleForm.down('#mediaUpload').allowBlank = true; // On an edit we don't want to require another upload
+        }
       }, {
         disabled: true,
         icon: '/img/icons/delete.png',
-        text: 'Delete Module'
+        id: 'deleteModuleBtn',
+        text: 'Delete Module',
+        handler: function () {
+          var store = modulesGrid.store,
+            record = modulesGrid.getSelectionModel().getSelection()[0];
+
+          store.remove(record);
+        }
       }]
     }, {
       xtype: 'pagingtoolbar',
@@ -207,7 +310,6 @@ Ext.onReady(function () {
     collapsible: true,
     collapsed: true,
     height: 500,
-    id: 'moduleFormPanel',
     renderTo: 'ecourseModuleForm',
     title: 'New Module Form',
     fieldDefaults: {
@@ -226,10 +328,9 @@ Ext.onReady(function () {
       allowBlank: false,
       fieldLabel: 'Order',
       id: 'orderField',
-      maxValue: 100,
-      minValue: 0,
+      minValue: 1,
       name: 'order',
-      width: 200
+      width: 175
     }, {
       xtype: 'textfield',
       allowBlank: false,
@@ -243,7 +344,7 @@ Ext.onReady(function () {
       minValue: 1,
       name: 'passing_percentage',
       value: ecourse.default_passing_percentage,
-      width: 200
+      width: 175
     }, {
       xtype: 'htmleditor',
       allowBlank: false,
@@ -321,6 +422,7 @@ Ext.onReady(function () {
       items: [{
         xtype: 'tbfill'
       }, {
+        formBind: true,
         text: 'Save Module',
         handler: function () {
           var formPanel = this.up('form'),
@@ -329,9 +431,49 @@ Ext.onReady(function () {
             formValues = form.getValues(),
             uploadField = formPanel.down('filefield');
 
-          if (form.isValid()) {
-            form.updateRecord();
-            formPanel.collapse();
+          // Is this a new record?
+          if (typeof form.getRecord() === 'undefined') {
+            if (formValues.media_type === 'url') {
+              if (!formValues.media_location.match(/http:\/\//gi)) {
+                formValues.media_location = 'http://' + formValues.media_location;
+              }
+
+              store.add(formValues);
+            } else {
+              form.submit({
+                url: '/admin/ecourse_modules/upload_media',
+                waitMsg: 'Uploading your media...',
+                success: function(form, operation) {
+                  if (operation.result.success) {
+                    formValues.media_location = operation.result.location;
+                    store.add(formValues);
+                    form.reset();
+                    formPanel.collapse();
+                  }
+                }
+              });
+            }
+          } else {
+            if (!uploadField.isDisabled() && uploadField.getValue()) {
+              form.submit({
+                url: '/admin/ecourse_modules/upload_media',
+                waitMsg: 'Uploading your media...',
+                success: function(form, operation) {
+                  var record = form.getRecord();
+
+                  if (operation.result.success) {
+                    record.set('media_location', operation.result.location);
+                    form.updateRecord();
+                    form.reset(true);
+                    formPanel.collapse();
+                  }
+                }
+              });
+            } else {
+              form.updateRecord();
+              form.reset(true);
+              formPanel.collapse();
+            }
           }
         }
       }]
