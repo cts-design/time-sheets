@@ -324,6 +324,10 @@ Ext.onReady(function () {
           Ext.getCmp('editQuestionBtn').disable();
           Ext.getCmp('deleteQuestionBtn').disable();
         },
+        deselect: function (grid, record, index) {
+          Ext.getCmp('editQuestionBtn').disable();
+          Ext.getCmp('deleteQuestionBtn').disable();
+        },
         itemclick: function (grid, rec) {
           Ext.getCmp('editQuestionBtn').enable();
           Ext.getCmp('deleteQuestionBtn').enable();
