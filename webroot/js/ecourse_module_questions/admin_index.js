@@ -304,11 +304,19 @@ Ext.onReady(function () {
         align: 'center',
         dataIndex: 'order',
         text: 'Order',
-        width: 50
+        width: 50,
+        editor: {
+          xtype: 'numberfield',
+          allowBlank: false
+        }
       }, {
         dataIndex: 'text',
         flex: 1,
-        text: 'Question'
+        text: 'Question',
+        editor: {
+          xtype: 'textfield',
+          allowBlank: false
+        }
       }],
       listeners: {
         containerclick: function (grid) {
@@ -319,6 +327,11 @@ Ext.onReady(function () {
           Ext.getCmp('deleteQuestionBtn').enable();
         }
       },
+      plugins: [
+        Ext.create('Ext.grid.plugin.RowEditing', {
+          clicksToEdit: 2
+        })
+      ],
       selModel: {
         allowDeselect: true,
         mode: 'SINGLE'
