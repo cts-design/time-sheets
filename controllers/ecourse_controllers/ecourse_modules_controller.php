@@ -73,6 +73,22 @@ class EcourseModulesController extends AppController {
 		$this->render('/elements/ajaxreturn');
 	}
 
+	public function admin_update() {
+		$ecourseData = json_decode($this->params['form']['ecourse_modules'], true);
+
+		$this->EcourseModule->read(null, $ecourseData['id']);
+		$this->EcourseModule->set($ecourseData);
+
+		if ($this->EcourseModule->save()) {
+			$data['success'] = true;
+		} else {
+			$data['success'] = false;
+		}
+
+		$this->set('data', $data);
+		$this->render('/elements/ajaxreturn');
+	}
+
 	public function admin_upload_media() {
 		$this->layout = 'ajax';
 		$storagePath = substr(APP, 0, -1) .
