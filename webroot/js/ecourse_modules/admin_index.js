@@ -142,6 +142,10 @@ Ext.onReady(function () {
       }]
     }],
     listeners: {
+      itemclick: function (grid, record, item, index) {
+        Ext.getCmp('editModuleBtn').enable();
+        Ext.getCmp('deleteModuleBtn').enable();
+      },
       itemdblclick: function (grid, record, item, index) {
         if (moduleForm.getCollapsed()) {
           moduleForm.expand();
@@ -165,8 +169,8 @@ Ext.onReady(function () {
         icon: '/img/icons/add.png',
         text: 'New Module',
         handler: function () {
-        var mediaUploadField = moduleForm.down('#mediaUpload'),
-          mediaLocationField = moduleForm.down('#mediaLocation');
+          var mediaUploadField = moduleForm.down('#mediaUpload'),
+            mediaLocationField = moduleForm.down('#mediaLocation');
 
           if (moduleForm.getCollapsed()) {
             moduleForm.expand();
@@ -179,7 +183,17 @@ Ext.onReady(function () {
       }, {
         disabled: true,
         icon: '/img/icons/edit.png',
-        text: 'Edit Module'
+        id: 'editModuleBtn',
+        text: 'Edit Module',
+        handler: function () {
+          var record = modulesGrid.getSelectionModel().getSelection()[0];
+
+          if (moduleForm.getCollapsed()) {
+            moduleForm.expand();
+          }
+
+          moduleForm.loadRecord(record);
+        }
       }, {
         disabled: true,
         icon: '/img/icons/delete.png',
