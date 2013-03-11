@@ -344,9 +344,6 @@ Ext.onReady(function () {
             formValues = form.getValues(),
             uploadField = formPanel.down('filefield');
 
-          if (form.isValid()) {
-            formValues.order = store.count() + 1;
-
             if (uploadField.isDisabled()) {
                 store.add(formValues);
                 form.reset();
