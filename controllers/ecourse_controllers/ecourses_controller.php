@@ -61,13 +61,19 @@ class EcoursesController extends AppController {
 		$this->set(compact('ecourseModule', 'title_for_layout'));
 	}
 
-	public function save($id) {
-		$ecourse = $this->Ecourse->find('first', array(
+	public function grade() {
+		$this->Ecourse->EcourseModule->recursive = -1;
+		$ecourseModule = $this->Ecourse->EcourseModule->find('first', array(
 			'conditions' => array(
-				'Ecourse.id' => $id
+				'EcourseModule.id' => $this->data['Ecourse']['module_id']
 			),
 			'contain' => array(
-				'EcourseModule'
+				'EcourseModuleQuestion' => array(
+					'order' => array('EcourseModuleQuestion.order ASC'),
+					'EcourseModuleQuestionAnswer' => array(
+						'fields' => array('id', 'text'),
+						'conditions' => array('EcourseModuleQuestionAnswer.correct' => 1 ))
+				)
 			)
 		));
 		$ecourseResponse = $this->Ecourse->EcourseResponse->find('first', array(
@@ -76,27 +82,35 @@ class EcoursesController extends AppController {
 				'EcourseResponse.ecourse_id' => $ecourseModule['EcourseModule']['ecourse_id']),
 			'fields' => array('id')));
 
-		$answers = $this->data['Ecourse'];
-		array_pop($answers);
-		$answers = array_values($answers);
-		$correctAnswers = Set::extract('/EcourseModuleQuestionAnswer/id', $ecourseModule['EcourseModuleQuestion']);
+		$userAnswers = $this->data['Ecourse'];
+		array_pop($userAnswers);
+		$userAnswers = array_values($userAnswers);
 
-		$diff = Set::diff($answers, $correctAnswers);
-		$numberWrong = count($correctAnswers) - count($diff);
-		$percent = ($numberWrong / count($correctAnswers)) * 100;
+		$quizAnswers = Set::extract('/EcourseModuleQuestionAnswer/id', $ecourseModule['EcourseModuleQuestion']);
+
+		$wrongAnswers = Set::diff($userAnswers, $quizAnswers);
+		$numberCorrect = count($quizAnswers) - count($wrongAnswers);
+		$quizScore = ($numberCorrect / count($quizAnswers)) * 100;
 
 		$this->data['EcourseModuleResponse']['ecourse_module_id'] = $ecourseModule['EcourseModule']['id'];
 		$this->data['EcourseModuleResponse']['ecourse_response_id'] = $ecourseResponse['EcourseResponse']['id'];
-		$this->data['EcourseModuleResponse']['score'] = $percent;
-		$this->data['EcourseModuleResponse']['pass_fail'] = ($ecourseModule['passing_percentage'] <= $percent) ? 'Pass' : 'Fail';
+		$this->data['EcourseModuleResponse']['score'] = $quizScore;
+		$this->data['EcourseModuleResponse']['pass_fail'] = ($ecourseModule['EcourseModule']['passing_percentage'] <= $quizScore) ? 'Pass' : 'Fail';
 		if($this->Ecourse->EcourseResponse->EcourseModuleResponse->save($this->data['EcourseModuleResponse'])) {
-			if ($this->Auth->user('role_id') == 1) {
-				$userIsAdmin = false;
-			} else {
-				$userIsAdmin = true;
-			}
+			// TODO: add logic to add transaction. direct to next module if passed, else redirect back to user dash
+			// and show failed flash message
 		}
-
+		/*
+		$testy = $this->Ecourse->EcourseModule->find('first',
+			array('conditions' => array('EcourseModule.ecourse_id' => 2, 'EcourseModule.order >' => $ecourseModule['EcourseModule']['order']))
+		);
+		$this->log($testy, 'debug');
+		 */
+		if ($this->Auth->user('role_id') == 1) {
+			$userIsAdmin = false;
+		} else {
+			$userIsAdmin = true;
+		}
 		$this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => $userIsAdmin));
 	}
 
