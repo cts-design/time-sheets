@@ -281,9 +281,9 @@ Ext.onReady(function () {
             moduleForm.expand();
           }
 
+          moduleForm.getForm().reset(true);
           moduleForm.loadRecord(record);
           moduleForm.down('#mediaUpload').allowBlank = true; // On an edit we don't want to require another upload
-
         }
       }, {
         disabled: true,
