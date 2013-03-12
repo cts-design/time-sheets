@@ -294,8 +294,29 @@ Ext.onReady(function () {
               questionStore.load();
               form.reset();
             } else {
-              console.log(formValues);
-              console.log(form.getRecord().answers());
+              answers = form.getRecord().answers();
+
+              Ext.Array.each(formValues.answer, function (answer, index) {
+                var existingAnswer = answers.getAt(index),
+                  existingAnswerValues;
+
+                if (answer) {
+                  obj = { text: answer, correct: 0 }
+                  if (formValues.hasOwnProperty(index)) { obj.correct = 1; }
+
+                  if (existingAnswer) {
+                    existingAnswerValues = Ext.Object.getValues(existingAnswer);
+
+                    if (existingAnswerValues[2] !== obj.text || existingAnswerValues[3] !== obj.correct) {
+                      existingAnswer.set(obj);
+                    }
+                  } else {
+                    answers.add(obj)
+                  }
+                }
+              });
+
+              form.getRecord().save();
             }
           }
         }]
