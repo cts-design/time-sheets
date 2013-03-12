@@ -439,6 +439,8 @@ Ext.onReady(function () {
               }
 
               store.add(formValues);
+              form.reset();
+              formPanel.collapse();
             } else {
               form.submit({
                 url: '/admin/ecourse_modules/upload_media',
