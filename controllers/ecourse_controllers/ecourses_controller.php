@@ -76,11 +76,8 @@ class EcoursesController extends AppController {
 				'EcourseModuleQuestion' => array(
 					'order' => array('EcourseModuleQuestion.order ASC'),
 					'EcourseModuleQuestionAnswer' => array(
-						'fields' => array('id', 'text'),
-						'conditions' => array('EcourseModuleQuestionAnswer.correct' => 1 ))
-				)
-			)
-		));
+						'fields' => array('id', 'text', 'correct'))
+					))));
 		$ecourseResponse = $this->Ecourse->EcourseResponse->find('first', array(
 			'conditions' => array(
 				'EcourseResponse.user_id' => $this->Auth->user('id'),
@@ -91,7 +88,7 @@ class EcoursesController extends AppController {
 		array_pop($userAnswers);
 		$userAnswers = array_values($userAnswers);
 
-		$quizAnswers = Set::extract('/EcourseModuleQuestionAnswer/id', $ecourseModule['EcourseModuleQuestion']);
+		$quizAnswers = Set::extract('/EcourseModuleQuestionAnswer[correct=1]/id', $ecourseModule['EcourseModuleQuestion']);
 
 		$wrongAnswers = Set::diff($userAnswers, $quizAnswers);
 		$numberCorrect = count($quizAnswers) - count($wrongAnswers);
@@ -128,7 +125,10 @@ class EcoursesController extends AppController {
 			else {
 				// TODO: add logic to add failing transaction.
 				$this->Session->setFlash('You did not pass the quiz, please try again', 'flash_failure');
-				$this->redirect(array('controller' => 'ecourses', 'action' => 'index', $ecourseModule['EcourseModule']['ecourse_id'], 'admin' => $userIsAdmin));
+
+				$this->set(compact('userAnswers', 'ecourseModule'));
+				$this->render('failed_quiz');
+				//$this->redirect(array('controller' => 'ecourses', 'action' => 'index', $ecourseModule['EcourseModule']['ecourse_id'], 'admin' => $userIsAdmin));
 			}
 		}
 		else {
