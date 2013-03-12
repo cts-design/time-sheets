@@ -75,6 +75,25 @@ class EcourseModuleQuestionsController extends AppController {
 		$this->render('/elements/ajaxreturn');
 	}
 
+	public function admin_update() {
+		$ecourse_module_question = json_decode($this->params['form']['ecourse_module_questions'], true);
+
+		$this->data['EcourseModuleQuestionAnswer'] = $ecourse_module_question['answers'];
+		unset($ecourse_module_question['answers']);
+		$this->data['EcourseModuleQuestion'] = $ecourse_module_question;
+
+		if ($this->EcourseModuleQuestion->saveAll($this->data)) {
+			$data['success'] = true;
+			$data['ecourse_module_questions'] = $ecourse_module_question;
+			$data['ecourse_module_questions']['id'] = $this->EcourseModuleQuestion->id;
+		} else {
+			$data['success'] = false;
+		}
+
+		$this->set('data', $data);
+		$this->render('/elements/ajaxreturn');
+	}
+
 	public function admin_destroy() {
 		$ecourse_module_question = json_decode($this->params['form']['ecourse_module_questions'], true);
 
