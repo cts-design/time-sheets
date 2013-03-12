@@ -398,15 +398,40 @@ Ext.onReady(function () {
           text: 'Delete Question',
           handler: function() {
             var gridPanel = this.up('grid'),
+              store = gridPanel.store,
               formPanel = moduleForm.down('form'),
               form = formPanel.getForm(),
-              selectedRecord = gridPanel.getSelectionModel().getSelection()[0];
+              selectedRecord = gridPanel.getSelectionModel().getSelection()[0],
+              reorder = false;
 
             if (form.getRecord() === selectedRecord) {
               form.reset(true);
             }
 
-            gridPanel.store.remove(selectedRecord);
+            // If the record is in the middle of the store we need to reorder
+            // our records
+            if (selectedRecord !== store.first() && selectedRecord !== store.last()) {
+              store.on({
+                remove: {
+                  fn: function () {
+                    store.sort('order', 'ASC');
+                    store.each(function (record) {
+                      console.log(record.get('order'));
+                      var correctOrder = record.index + 1;
+                      console.log(correctOrder);
+
+                      if (record.get('order') !== correctOrder) {
+                        record.set('order', correctOrder);
+                      }
+                    });
+                  },
+                  scope: this,
+                  single: true
+                }
+              });
+            }
+
+            store.remove(selectedRecord);
           }
         }]
       }]
