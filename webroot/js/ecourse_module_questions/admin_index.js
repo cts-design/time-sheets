@@ -313,6 +313,8 @@ Ext.onReady(function () {
                   } else {
                     answers.add(obj)
                   }
+                } else if (!answer && existingAnswer) {
+                  answers.remove(existingAnswer);
                 }
               });
 

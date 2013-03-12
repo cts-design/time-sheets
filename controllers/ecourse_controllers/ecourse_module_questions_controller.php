@@ -82,6 +82,20 @@ class EcourseModuleQuestionsController extends AppController {
 		unset($ecourse_module_question['answers']);
 		$this->data['EcourseModuleQuestion'] = $ecourse_module_question;
 
+		// Get a list of answer id's so we can check if any have been deleted
+		$existingAnswers = $this->EcourseModuleQuestion->EcourseModuleQuestionAnswer->find('list', array(
+			'conditions' => array(
+				'EcourseModuleQuestionAnswer.ecourse_module_question_id' => $ecourse_module_question['id']
+			),
+			'fields' => array('EcourseModuleQuestionAnswer.id')
+		));
+		$answersData = Set::extract('/EcourseModuleQuestionAnswer/id', $this->data);
+		$removedAnswerIds = array_diff($existingAnswers, $answersData);
+
+		foreach ($removedAnswerIds as $id) {
+			$this->EcourseModuleQuestion->EcourseModuleQuestionAnswer->delete($id);
+		}
+
 		if ($this->EcourseModuleQuestion->saveAll($this->data)) {
 			$data['success'] = true;
 			$data['ecourse_module_questions'] = $ecourse_module_question;
