@@ -414,8 +414,7 @@ Ext.onReady(function () {
               store = gridPanel.store,
               formPanel = moduleForm.down('form'),
               form = formPanel.getForm(),
-              selectedRecord = gridPanel.getSelectionModel().getSelection()[0],
-              reorder = false;
+              selectedRecord = gridPanel.getSelectionModel().getSelection()[0];
 
             if (form.getRecord() === selectedRecord) {
               form.reset(true);
