@@ -378,6 +378,7 @@ Ext.onReady(function () {
               form = formPanel.getForm(),
               selectedRecord = gridPanel.getSelectionModel().getSelection()[0];
 
+            form.reset(true);
             form.loadRecord(selectedRecord);
             selectedRecord.answers().each(function (answer, index) {
               var fieldIndex = index + 1,
