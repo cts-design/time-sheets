@@ -254,6 +254,7 @@ Ext.onReady(function () {
           xtype: 'tbfill'
         }, {
           xtype: 'button',
+          formBind: true,
           text: 'Save Question',
           handler: function () {
             var formPanel = this.up('form'),
@@ -263,30 +264,28 @@ Ext.onReady(function () {
               answers,
               questionStore = Ext.data.StoreManager.lookup('EcourseModuleQuestionStore');
 
-            if (form.isValid()) {
-              formValues = form.getValues();
-              formValues.order = questionStore.count() + 1;
+            formValues = form.getValues();
+            formValues.order = questionStore.count() + 1;
 
-              question = Ext.create('EcourseModuleQuestion', {
-                ecourse_module_id: formValues.ecourse_module_id,
-                text: formValues.text,
-                order: formValues.order
-              });
+            question = Ext.create('EcourseModuleQuestion', {
+              ecourse_module_id: formValues.ecourse_module_id,
+              text: formValues.text,
+              order: formValues.order
+            });
 
-              answers = question.answers();
+            answers = question.answers();
 
-              Ext.Array.each(formValues.answer, function (answer, index) {
-                if (answer) {
-                  obj = { text: answer, correct: 0 }
-                  if (formValues.hasOwnProperty(index)) { obj.correct = 1; }
-                  answers.add(obj)
-                }
-              });
+            Ext.Array.each(formValues.answer, function (answer, index) {
+              if (answer) {
+                obj = { text: answer, correct: 0 }
+                if (formValues.hasOwnProperty(index)) { obj.correct = 1; }
+                answers.add(obj)
+              }
+            });
 
-              question.save();
-              questionStore.load();
-              form.reset();
-            }
+            question.save();
+            questionStore.load();
+            form.reset();
           }
         }]
       }]
