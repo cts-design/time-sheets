@@ -47,7 +47,10 @@ Ext.create('Ext.data.Store', {
   autoLoad: true,
   autoSync: true,
   model: 'EcourseModule',
+  pageSize: 10,
   proxy: {
+    directionParam: 'direction',
+    simpleSortMode: true,
     type: 'ajax',
     api: {
       create: '/admin/ecourse_modules/create',
@@ -60,7 +63,8 @@ Ext.create('Ext.data.Store', {
     },
     reader: {
       type: 'json',
-      root: 'ecourse_modules'
+      root: 'ecourse_modules',
+      totalProperty: 'totalCount'
     },
     writer: {
       encode: true,
@@ -69,6 +73,7 @@ Ext.create('Ext.data.Store', {
       writeAllFields: false
     }
   },
+  remoteSort: true,
   sorters: [{
     property: 'order',
     direction: 'ASC'
@@ -299,9 +304,10 @@ Ext.onReady(function () {
       }]
     }, {
       xtype: 'pagingtoolbar',
+      displayInfo: true,
       dock: 'bottom',
-      width: 360,
-      displayInfo: true
+      store: 'EcourseModuleStore',
+      width: 360
     }]
   });
 

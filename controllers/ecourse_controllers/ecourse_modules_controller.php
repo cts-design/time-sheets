@@ -29,12 +29,15 @@ class EcourseModulesController extends AppController {
 						->findById($ecourse_id);
 
 		if ($this->RequestHandler->isAjax()) {
-			$ecourse_modules = $this->EcourseModule
-									->find('all', array(
-										'conditions' => array(
-											'EcourseModule.ecourse_id' => $this->params['url']['ecourse_id']
-										)
-									));
+			$this->paginate = array(
+				'conditions' => array(
+					'EcourseModule.ecourse_id' => $this->params['url']['ecourse_id']
+				),
+				'order' => array(
+					'EcourseModule.order' => 'ASC'
+				)
+			);
+			$ecourse_modules = $this->Paginate('EcourseModule');
 
 			if ($ecourse_modules) {
 				$data['success'] = true;
@@ -46,6 +49,7 @@ class EcourseModulesController extends AppController {
 				$data['success'] = true;
 				$data['ecourse_modules'] = array();
 			}
+			$data['totalCount'] = $this->params['paging']['EcourseModule']['count'];
 
 			$this->set('data', $data);
 			$this->render('/elements/ajaxreturn');
