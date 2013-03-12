@@ -296,10 +296,17 @@ Ext.onReady(function () {
         id: 'deleteModuleBtn',
         text: 'Delete Module',
         handler: function () {
-          var store = modulesGrid.store,
-            record = modulesGrid.getSelectionModel().getSelection()[0];
+          var gridPanel = this.up('grid'),
+            store = gridPanel.store,
+            formPanel = moduleForm,
+            form = formPanel.getForm(),
+            selectedRecord = modulesGrid.getSelectionModel().getSelection()[0];
 
-          store.remove(record);
+          if (form.getRecord() === selectedRecord) {
+            form.reset(true);
+          }
+
+          store.remove(selectedRecord);
         }
       }]
     }, {
