@@ -15,6 +15,7 @@ Ext.override(Ext.data.writer.Json, {
 
         //Iterate over all the children in the current association
         childStore.each(function(childRecord) {
+          console.log(childRecord);
           data[association.name].push(childRecord.getData());
         }, me);
       }
@@ -266,33 +267,36 @@ Ext.onReady(function () {
           handler: function () {
             var formPanel = this.up('form'),
               form = formPanel.getForm(),
-              formValues,
+              formValues = form.getValues(),
               question,
               answers,
-              questionStore = Ext.data.StoreManager.lookup('EcourseModuleQuestionStore');
+              questionStore = Ext.data.StoreManager.lookup('EcourseModuleQuestionStore'),
+              isNewRecord = (typeof form.getRecord() === 'undefined');
 
-            formValues = form.getValues();
-            formValues.order = questionStore.count() + 1;
+            if (isNewRecord) {
+              question = Ext.create('EcourseModuleQuestion', {
+                ecourse_module_id: formValues.ecourse_module_id,
+                text: formValues.text,
+                order: formValues.order
+              });
 
-            question = Ext.create('EcourseModuleQuestion', {
-              ecourse_module_id: formValues.ecourse_module_id,
-              text: formValues.text,
-              order: formValues.order
-            });
+              answers = question.answers();
 
-            answers = question.answers();
+              Ext.Array.each(formValues.answer, function (answer, index) {
+                if (answer) {
+                  obj = { text: answer, correct: 0 }
+                  if (formValues.hasOwnProperty(index)) { obj.correct = 1; }
+                  answers.add(obj)
+                }
+              });
 
-            Ext.Array.each(formValues.answer, function (answer, index) {
-              if (answer) {
-                obj = { text: answer, correct: 0 }
-                if (formValues.hasOwnProperty(index)) { obj.correct = 1; }
-                answers.add(obj)
-              }
-            });
-
-            question.save();
-            questionStore.load();
-            form.reset();
+              question.save();
+              questionStore.load();
+              form.reset();
+            } else {
+              console.log(formValues);
+              console.log(form.getRecord().answers());
+            }
           }
         }]
       }]
@@ -423,6 +427,7 @@ Ext.onReady(function () {
               store.on({
                 remove: {
                   fn: function () {
+                    gridPanel.getEl().mask('Reordering module questions...');
                     store.sort('order', 'ASC');
                     store.each(function (record) {
                       var correctOrder = record.index + 1;
@@ -431,6 +436,7 @@ Ext.onReady(function () {
                         record.set('order', correctOrder);
                       }
                     });
+                    gridPanel.getEl().unmask();
                   },
                   scope: this,
                   single: true
