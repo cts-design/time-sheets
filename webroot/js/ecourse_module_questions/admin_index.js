@@ -138,6 +138,13 @@ Ext.onReady(function () {
         name: 'ecourse_module_id',
         value: ecourse_module.id
       }, {
+        xtype: 'numberfield',
+        allowBlank: false,
+        fieldLabel: 'Order',
+        id: 'orderField',
+        name: 'order',
+        width: 125
+      }, {
         xtype: 'textareafield',
         anchor: '100%',
         fieldLabel: 'Question',
@@ -362,10 +369,12 @@ Ext.onReady(function () {
           handler: function () {
             var gridPanel = this.up('grid'),
               formPanel = moduleForm.down('form'),
-              form = formPanel.getForm();
+              form = formPanel.getForm(),
+              orderField = formPanel.down('#orderField');
 
             gridPanel.getSelectionModel().deselectAll();
             form.reset(true);
+            orderField.setValue(gridPanel.store.totalCount + 1);
           }
         }, {
           disabled: true,
