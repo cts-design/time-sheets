@@ -262,7 +262,7 @@ Ext.onReady(function () {
           mediaLocationField.disable();
           moduleForm.getForm().reset(true);
 
-          orderField.setValue(ecourseModuleStore.totalCount + 1);
+          orderField.setValue(ecourseModuleStore.count() + 1);
           mediaUploadField.allowBlank = false;
 
           if (moduleForm.getCollapsed()) {
