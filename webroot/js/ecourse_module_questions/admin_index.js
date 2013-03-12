@@ -6,7 +6,6 @@ Ext.override(Ext.data.writer.Json, {
       childStore,
       data = this.callParent(arguments);
 
-
     /* Iterate over all the hasMany associations */
     for (i = 0; i < record.associations.length; i++) {
       association = record.associations.get(i);
@@ -14,9 +13,9 @@ Ext.override(Ext.data.writer.Json, {
         data[association.name] = [];
         childStore = eval('record.'+association.name+'()');
 
-
         //Iterate over all the children in the current association
         childStore.each(function(childRecord) {
+          console.log(childRecord);
           data[association.name].push(childRecord.getData());
         }, me);
       }
@@ -107,7 +106,11 @@ Ext.create('Ext.data.Store', {
         var answer = rec.getAssociatedData();
       });
     }
-  }
+  },
+  sorters: [{
+    property: 'order',
+    direction: 'ASC'
+  }]
 });
 
 Ext.onReady(function () {
@@ -135,6 +138,13 @@ Ext.onReady(function () {
         xtype: 'hiddenfield',
         name: 'ecourse_module_id',
         value: ecourse_module.id
+      }, {
+        xtype: 'numberfield',
+        allowBlank: false,
+        fieldLabel: 'Order',
+        id: 'orderField',
+        name: 'order',
+        width: 125
       }, {
         xtype: 'textareafield',
         anchor: '100%',
@@ -252,19 +262,18 @@ Ext.onReady(function () {
           xtype: 'tbfill'
         }, {
           xtype: 'button',
+          formBind: true,
           text: 'Save Question',
           handler: function () {
             var formPanel = this.up('form'),
               form = formPanel.getForm(),
-              formValues,
+              formValues = form.getValues(),
               question,
               answers,
-              questionStore = Ext.data.StoreManager.lookup('EcourseModuleQuestionStore');
+              questionStore = Ext.data.StoreManager.lookup('EcourseModuleQuestionStore'),
+              isNewRecord = (typeof form.getRecord() === 'undefined');
 
-            if (form.isValid()) {
-              formValues = form.getValues();
-              formValues.order = questionStore.count() + 1;
-
+            if (isNewRecord) {
               question = Ext.create('EcourseModuleQuestion', {
                 ecourse_module_id: formValues.ecourse_module_id,
                 text: formValues.text,
@@ -284,6 +293,32 @@ Ext.onReady(function () {
               question.save();
               questionStore.load();
               form.reset();
+            } else {
+              answers = form.getRecord().answers();
+
+              Ext.Array.each(formValues.answer, function (answer, index) {
+                var existingAnswer = answers.getAt(index),
+                  existingAnswerValues;
+
+                if (answer) {
+                  obj = { text: answer, correct: 0 }
+                  if (formValues.hasOwnProperty(index)) { obj.correct = 1; }
+
+                  if (existingAnswer) {
+                    existingAnswerValues = Ext.Object.getValues(existingAnswer);
+
+                    if (existingAnswerValues[2] !== obj.text || existingAnswerValues[3] !== obj.correct) {
+                      existingAnswer.set(obj);
+                    }
+                  } else {
+                    answers.add(obj)
+                  }
+                } else if (!answer && existingAnswer) {
+                  answers.remove(existingAnswer);
+                }
+              });
+
+              form.getRecord().save();
             }
           }
         }]
@@ -302,45 +337,137 @@ Ext.onReady(function () {
         align: 'center',
         dataIndex: 'order',
         text: 'Order',
-        width: 50
+        width: 50,
+        editor: {
+          xtype: 'numberfield',
+          allowBlank: false
+        }
       }, {
         dataIndex: 'text',
         flex: 1,
-        text: 'Question'
+        text: 'Question',
+        editor: {
+          xtype: 'textfield',
+          allowBlank: false
+        }
       }],
       listeners: {
+        containerclick: function (grid) {
+          grid.getSelectionModel().deselectAll();
+          Ext.getCmp('editQuestionBtn').disable();
+          Ext.getCmp('deleteQuestionBtn').disable();
+        },
+        deselect: function (grid, record, index) {
+          Ext.getCmp('editQuestionBtn').disable();
+          Ext.getCmp('deleteQuestionBtn').disable();
+        },
         itemclick: function (grid, rec) {
-          var formPanel = this.up('panel').down('form'),
-            form = formPanel.getForm();
-
-          console.log(form.getRecord());
-          form.loadRecord(rec);
-          rec.answers().each(function (answer, index) {
-            var fieldIndex = index + 1,
-              field = formPanel.down('#answer' + fieldIndex),
-              radio = field.nextNode('radiofield');
-
-            field.setValue(answer.get('text'));
-            if (answer.get('correct')) {
-              radio.setValue(true);
-            }
-          });
-          console.log(form.getRecord());
+          Ext.getCmp('editQuestionBtn').enable();
+          Ext.getCmp('deleteQuestionBtn').enable();
         }
       },
-      viewConfig: {},
+      plugins: [
+        Ext.create('Ext.grid.plugin.RowEditing', {
+          clicksToEdit: 2,
+          listeners: {
+            edit: function (editor, e) {
+              if (e.originalValues.order !== e.newValues.order) {
+                e.store.sort('order', 'ASC');
+              }
+            }
+          }
+        })
+      ],
+      selModel: {
+        allowDeselect: true,
+        mode: 'SINGLE'
+      },
+      selType: 'rowmodel',
+      viewConfig: {
+        deferEmptyText: false,
+        emptyText: 'There are no questions for this module at this time',
+      },
       dockedItems: [{
         xtype: 'toolbar',
         dock: 'top',
         items: [{
           icon: '/img/icons/add.png',
-          text: 'New Question'
+          text: 'New Question',
+          handler: function () {
+            var gridPanel = this.up('grid'),
+              formPanel = moduleForm.down('form'),
+              form = formPanel.getForm(),
+              orderField = formPanel.down('#orderField');
+
+            gridPanel.getSelectionModel().deselectAll();
+            form.reset(true);
+            orderField.setValue(gridPanel.store.totalCount + 1);
+          }
         }, {
+          disabled: true,
           icon: '/img/icons/edit.png',
-          text: 'Edit Question'
+          id: 'editQuestionBtn',
+          text: 'Edit Question',
+          handler: function () {
+            var gridPanel = this.up('grid'),
+              formPanel = moduleForm.down('form'),
+              form = formPanel.getForm(),
+              selectedRecord = gridPanel.getSelectionModel().getSelection()[0];
+
+            form.reset(true);
+            form.loadRecord(selectedRecord);
+            selectedRecord.answers().each(function (answer, index) {
+              var fieldIndex = index + 1,
+                field = formPanel.down('#answer' + fieldIndex),
+                radio = field.nextNode('radiofield');
+
+              field.setValue(answer.get('text'));
+              if (answer.get('correct')) {
+                radio.setValue(true);
+              }
+            });
+          }
         }, {
+          disabled: true,
           icon: '/img/icons/delete.png',
-          text: 'Delete Question'
+          id: 'deleteQuestionBtn',
+          text: 'Delete Question',
+          handler: function() {
+            var gridPanel = this.up('grid'),
+              store = gridPanel.store,
+              formPanel = moduleForm.down('form'),
+              form = formPanel.getForm(),
+              selectedRecord = gridPanel.getSelectionModel().getSelection()[0];
+
+            if (form.getRecord() === selectedRecord) {
+              form.reset(true);
+            }
+
+            // If the record is in the middle of the store we need to reorder
+            // our records
+            if (selectedRecord !== store.first() && selectedRecord !== store.last()) {
+              store.on({
+                remove: {
+                  fn: function () {
+                    gridPanel.getEl().mask('Reordering module questions...');
+                    store.sort('order', 'ASC');
+                    store.each(function (record) {
+                      var correctOrder = record.index + 1;
+
+                      if (record.get('order') !== correctOrder) {
+                        record.set('order', correctOrder);
+                      }
+                    });
+                    gridPanel.getEl().unmask();
+                  },
+                  scope: this,
+                  single: true
+                }
+              });
+            }
+
+            store.remove(selectedRecord);
+          }
         }]
       }]
     }]

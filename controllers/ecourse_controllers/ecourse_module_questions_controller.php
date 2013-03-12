@@ -74,6 +74,52 @@ class EcourseModuleQuestionsController extends AppController {
 		$this->set('data', $data);
 		$this->render('/elements/ajaxreturn');
 	}
+
+	public function admin_update() {
+		$ecourse_module_question = json_decode($this->params['form']['ecourse_module_questions'], true);
+
+		$this->data['EcourseModuleQuestionAnswer'] = $ecourse_module_question['answers'];
+		unset($ecourse_module_question['answers']);
+		$this->data['EcourseModuleQuestion'] = $ecourse_module_question;
+
+		// Get a list of answer id's so we can check if any have been deleted
+		$existingAnswers = $this->EcourseModuleQuestion->EcourseModuleQuestionAnswer->find('list', array(
+			'conditions' => array(
+				'EcourseModuleQuestionAnswer.ecourse_module_question_id' => $ecourse_module_question['id']
+			),
+			'fields' => array('EcourseModuleQuestionAnswer.id')
+		));
+		$answersData = Set::extract('/EcourseModuleQuestionAnswer/id', $this->data);
+		$removedAnswerIds = array_diff($existingAnswers, $answersData);
+
+		foreach ($removedAnswerIds as $id) {
+			$this->EcourseModuleQuestion->EcourseModuleQuestionAnswer->delete($id);
+		}
+
+		if ($this->EcourseModuleQuestion->saveAll($this->data)) {
+			$data['success'] = true;
+			$data['ecourse_module_questions'] = $ecourse_module_question;
+			$data['ecourse_module_questions']['id'] = $this->EcourseModuleQuestion->id;
+		} else {
+			$data['success'] = false;
+		}
+
+		$this->set('data', $data);
+		$this->render('/elements/ajaxreturn');
+	}
+
+	public function admin_destroy() {
+		$ecourse_module_question = json_decode($this->params['form']['ecourse_module_questions'], true);
+
+		if ($this->EcourseModuleQuestion->delete($ecourse_module_question['id'])) {
+			$data['success'] = true;
+		} else {
+			$data['success'] = false;
+		}
+
+		$this->set('data', $data);
+		$this->render('/elements/ajaxreturn');
+	}
 }
 
 ?>

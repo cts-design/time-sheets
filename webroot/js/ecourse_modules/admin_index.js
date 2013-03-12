@@ -47,7 +47,10 @@ Ext.create('Ext.data.Store', {
   autoLoad: true,
   autoSync: true,
   model: 'EcourseModule',
+  pageSize: 10,
   proxy: {
+    directionParam: 'direction',
+    simpleSortMode: true,
     type: 'ajax',
     api: {
       create: '/admin/ecourse_modules/create',
@@ -60,7 +63,8 @@ Ext.create('Ext.data.Store', {
     },
     reader: {
       type: 'json',
-      root: 'ecourse_modules'
+      root: 'ecourse_modules',
+      totalProperty: 'totalCount'
     },
     writer: {
       encode: true,
@@ -69,6 +73,7 @@ Ext.create('Ext.data.Store', {
       writeAllFields: false
     }
   },
+  remoteSort: true,
   sorters: [{
     property: 'order',
     direction: 'ASC'
@@ -262,7 +267,7 @@ Ext.onReady(function () {
           mediaLocationField.disable();
           moduleForm.getForm().reset(true);
 
-          orderField.setValue(ecourseModuleStore.totalCount + 1);
+          orderField.setValue(ecourseModuleStore.count() + 1);
           mediaUploadField.allowBlank = false;
 
           if (moduleForm.getCollapsed()) {
@@ -291,17 +296,25 @@ Ext.onReady(function () {
         id: 'deleteModuleBtn',
         text: 'Delete Module',
         handler: function () {
-          var store = modulesGrid.store,
-            record = modulesGrid.getSelectionModel().getSelection()[0];
+          var gridPanel = this.up('grid'),
+            store = gridPanel.store,
+            formPanel = moduleForm,
+            form = formPanel.getForm(),
+            selectedRecord = modulesGrid.getSelectionModel().getSelection()[0];
 
-          store.remove(record);
+          if (form.getRecord() === selectedRecord) {
+            form.reset(true);
+          }
+
+          store.remove(selectedRecord);
         }
       }]
     }, {
       xtype: 'pagingtoolbar',
+      displayInfo: true,
       dock: 'bottom',
-      width: 360,
-      displayInfo: true
+      store: 'EcourseModuleStore',
+      width: 360
     }]
   });
 
@@ -439,6 +452,8 @@ Ext.onReady(function () {
               }
 
               store.add(formValues);
+              form.reset();
+              formPanel.collapse();
             } else {
               form.submit({
                 url: '/admin/ecourse_modules/upload_media',
