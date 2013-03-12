@@ -416,9 +416,7 @@ Ext.onReady(function () {
                   fn: function () {
                     store.sort('order', 'ASC');
                     store.each(function (record) {
-                      console.log(record.get('order'));
                       var correctOrder = record.index + 1;
-                      console.log(correctOrder);
 
                       if (record.get('order') !== correctOrder) {
                         record.set('order', correctOrder);
