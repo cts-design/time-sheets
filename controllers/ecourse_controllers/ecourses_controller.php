@@ -36,7 +36,6 @@ class EcoursesController extends AppController {
 					))));
 
 		if($ecourse['Ecourse']['requires_user_assignment']) {
-			$this->log($ecourse, 'debug');	
 			if(empty($ecourse['EcourseUser'][0])) {
 				$this->Session->setFlash('You are not assigned to that course', 'flash_failure');	
 				if($this->Auth->user('role_id') > 1) {
