@@ -175,6 +175,20 @@ Ext.onReady(function () {
           fieldLabel: 'Label',
           hideLabel: true,
           id: 'radio1',
+          listeners: {
+            change: function (radio, newVal, oldVal) {
+              var form = this.up('form'),
+                radio2 = form.down('#radio2'),
+                radio3 = form.down('#radio3'),
+                radio4 = form.down('#radio4');
+
+              if (newVal) {
+                radio2.setValue(false);
+                radio3.setValue(false);
+                radio4.setValue(false);
+              }
+            }
+          },
           margins: '0 0 0 5',
           name: '0'
         }]
@@ -202,6 +216,20 @@ Ext.onReady(function () {
           fieldLabel: 'Label',
           hideLabel: true,
           id: 'radio2',
+          listeners: {
+            change: function (radio, newVal, oldVal) {
+              var form = this.up('form'),
+                radio1 = form.down('#radio1'),
+                radio3 = form.down('#radio3'),
+                radio4 = form.down('#radio4');
+
+              if (newVal) {
+                radio1.setValue(false);
+                radio3.setValue(false);
+                radio4.setValue(false);
+              }
+            }
+          },
           margins: '0 0 0 5',
           name: '1'
         }]
@@ -228,6 +256,20 @@ Ext.onReady(function () {
           fieldLabel: 'Label',
           hideLabel: true,
           id: 'radio3',
+          listeners: {
+            change: function (radio, newVal, oldVal) {
+              var form = this.up('form'),
+                radio1 = form.down('#radio1'),
+                radio2 = form.down('#radio2'),
+                radio4 = form.down('#radio4');
+
+              if (newVal) {
+                radio1.setValue(false);
+                radio2.setValue(false);
+                radio4.setValue(false);
+              }
+            }
+          },
           margins: '0 0 0 5',
           name: '2'
         }]
@@ -254,6 +296,20 @@ Ext.onReady(function () {
           fieldLabel: 'Label',
           hideLabel: true,
           id: 'radio4',
+          listeners: {
+            change: function (radio, newVal, oldVal) {
+              var form = this.up('form'),
+                radio1 = form.down('#radio1'),
+                radio2 = form.down('#radio2'),
+                radio3 = form.down('#radio3');
+
+              if (newVal) {
+                radio1.setValue(false);
+                radio2.setValue(false);
+                radio3.setValue(false);
+              }
+            }
+          },
           margins: '0 0 0 5',
           name: '3'
         }]
