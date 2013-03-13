@@ -25,11 +25,28 @@ class EcoursesController extends AppController {
 			'conditions' => array('Ecourse.id' => $id),
 			'contain' => array(
 				'EcourseModule' => array('order' => 'EcourseModule.order ASC'),
+				'EcourseUser' => array(
+						'conditions' => array(
+							'EcourseUser.ecourse_id' => $id, 'EcourseUser.user_id' => $this->Auth->user('id'))),
 				'EcourseResponse' => array (
 					'conditions' => array(
 						'EcourseResponse.user_id' => $this->Auth->user('id'),
 						'EcourseResponse.reset' => 0),
-				'EcourseModuleResponse' => array('conditions' => array('EcourseModuleResponse.pass_fail' => 'Pass'))))));
+					'EcourseModuleResponse' => array('conditions' => array('EcourseModuleResponse.pass_fail' => 'Pass'))
+					))));
+
+		if($ecourse['Ecourse']['requires_user_assignment']) {
+			$this->log($ecourse, 'debug');	
+			if(empty($ecourse['EcourseUser'][0])) {
+				$this->Session->setFlash('You are not assigned to that course', 'flash_failure');	
+				if($this->Auth->user('role_id') > 1) {
+					$this->redirect('/admin/users/dashboard');
+				}
+				else {
+					$this->redirect('/users/dashboard');
+				}
+			}
+		}
 
 		if(empty($ecourse['EcourseResponse'])) {
 			$this->data['EcourseResponse']['user_id'] = $this->Auth->user('id');
