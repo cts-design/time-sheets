@@ -4,7 +4,7 @@
  * Ecourses Controller
  *
  * @package   AtlasV3
- * @author    Brandon Cordell
+ * @author    Brandon Cordell & Daniel Nolan
  * @copyright 2013 Complete Technology Solutions
  */
 class EcoursesController extends AppController {
@@ -19,22 +19,40 @@ class EcoursesController extends AppController {
             $this->Session->setFlash(__('Invalid id', true), 'flash_failure');
             $this->redirect($this->referer());
         }
+
 		$this->Ecourse->recursive = -1;
 		$ecourse = $this->Ecourse->find('first', array(
 			'conditions' => array('Ecourse.id' => $id),
 			'contain' => array(
 				'EcourseModule' => array('order' => 'EcourseModule.order ASC'),
-				'EcourseResponse' => array ('conditions' => array('EcourseResponse.user_id' => $this->Auth->user('id')),
+				'EcourseResponse' => array (
+					'conditions' => array(
+						'EcourseResponse.user_id' => $this->Auth->user('id'),
+						'EcourseResponse.reset' => 0),
 				'EcourseModuleResponse' => array('conditions' => array('EcourseModuleResponse.pass_fail' => 'Pass'))))));
+
 		if(empty($ecourse['EcourseResponse'])) {
 			$this->data['EcourseResponse']['user_id'] = $this->Auth->user('id');
 			$this->data['EcourseResponse']['ecourse_id'] = $id;
 			$this->Ecourse->EcourseResponse->save($this->data);
+			$response = $this->Ecourse->EcourseResponse->findById($this->Ecourse->EcourseResponse->id);
+			$ecourse['EcourseResponse'][0] = $response['EcourseResponse']; 
 		}
-		// TODO: add logic to handle reset responses, and completed responses
+
+		if($ecourse['EcourseResponse'][0]['status'] == 'completed') {
+			$this->Session->setFlash('You have already completed this course', 'flash_failure');
+			if($this->Auth->user('role_id') > 1) {
+				$this->redirect('/admin/users/dashboard');
+			}
+			else {
+				$this->redirect('/users/dashboard');
+			}
+		}
+
 		$modules = Set::extract('/EcourseModule/id', $ecourse);
 		$moduleResponses = Set::extract('/EcourseModuleResponse[pass_fail=Pass]/ecourse_module_id', $ecourse['EcourseResponse']);
 		$diff = Set::diff($moduleResponses, $modules);
+
 		if(!empty($diff)) {
 			$diff = array_values($diff);
 			$nextModule = Set::extract("/EcourseModule[id=$diff[0]]/.[1]", $ecourse);
@@ -42,6 +60,7 @@ class EcoursesController extends AppController {
 		else {
 			$nextModule = Set::extract("/EcourseModule/.[1]", $ecourse);
 		}
+
 		$title_for_layout = $nextModule[0]['name'] ;
 		$this->set(compact('nextModule', 'title_for_layout'));
 	}
