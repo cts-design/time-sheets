@@ -175,6 +175,7 @@ Ext.onReady(function () {
           boxLabelAlign: 'before',
           fieldLabel: 'Label',
           hideLabel: true,
+          id: 'radio1',
           margins: '0 0 0 5',
           name: '0'
         }]
@@ -197,11 +198,12 @@ Ext.onReady(function () {
           name: 'answer'
         }, {
           xtype: 'radiofield',
-          margins: '0 0 0 5',
-          fieldLabel: 'Label',
-          hideLabel: true,
           boxLabel: '',
           boxLabelAlign: 'before',
+          fieldLabel: 'Label',
+          hideLabel: true,
+          id: 'radio2',
+          margins: '0 0 0 5',
           name: '1'
         }]
       }, {
@@ -222,11 +224,12 @@ Ext.onReady(function () {
           name: 'answer'
         }, {
           xtype: 'radiofield',
-          margins: '0 0 0 5',
-          fieldLabel: 'Label',
-          hideLabel: true,
           boxLabel: '',
           boxLabelAlign: 'before',
+          fieldLabel: 'Label',
+          hideLabel: true,
+          id: 'radio3',
+          margins: '0 0 0 5',
           name: '2'
         }]
       }, {
@@ -247,11 +250,12 @@ Ext.onReady(function () {
           name: 'answer'
         }, {
           xtype: 'radiofield',
-          margins: '0 0 0 5',
-          fieldLabel: 'Label',
-          hideLabel: true,
           boxLabel: '',
           boxLabelAlign: 'before',
+          fieldLabel: 'Label',
+          hideLabel: true,
+          id: 'radio4',
+          margins: '0 0 0 5',
           name: '3'
         }]
       }],
