@@ -249,7 +249,7 @@ class EcoursesController extends AppController {
 
 			if ($this->Ecourse->save($this->data)) {
 				$this->Transaction->createUserTransaction(
-					'Ecourses', null, null, 'Added ecourse, id: ' . $this->data['Ecourse']['id']
+					'Ecourses', null, null, 'Added ecourse id: ' . $this->Ecourse->id
 				);
 				$data['success'] = true;
 				$data['ecourses'] = $ecourseData;
@@ -298,7 +298,7 @@ class EcoursesController extends AppController {
 
 			if ($this->Ecourse->save()) {
 				$this->Transaction->createUserTransaction(
-					'Ecourses', null, null, 'Updated ecourse, id: ' . $this->data['Ecourse']['id']
+					'Ecourses', null, null, 'Updated ecourse id: ' . $ecourseData['id']
 				);
 				$data['success'] = true;
 			} else {

@@ -68,8 +68,8 @@ class EcourseModuleQuestionsController extends AppController {
 				'Ecourses',
 				null,
 				null,
-				'Added module question id ' . $this->EcourseModuleQuestion->id .
-				' to ecourse module id ' . $ecourse_module_question['ecourse_module_id']
+				'Added module question id: ' . $this->EcourseModuleQuestion->id .
+				' to ecourse module id: ' . $ecourse_module_question['ecourse_module_id']
 			);
 			$data['success'] = true;
 			$data['ecourse_module_questions'] = $ecourse_module_question;
@@ -108,8 +108,8 @@ class EcourseModuleQuestionsController extends AppController {
 				'Ecourses',
 				null,
 				null,
-				'Updated module question id ' . $ecourse_module_question['id'] .
-				' for ecourse module id ' . $this->params['form']['ecourse_module_id']
+				'Updated module question id: ' . $ecourse_module_question['id'] .
+				' for ecourse module id: ' . $this->params['form']['ecourse_module_id']
 			);
 			$data['success'] = true;
 			$data['ecourse_module_questions'] = $ecourse_module_question;
@@ -130,8 +130,8 @@ class EcourseModuleQuestionsController extends AppController {
 				'Ecourses',
 				null,
 				null,
-				'Deleted module question id ' . $ecourse_module_question['id'] .
-				' for ecourse module id ' . $this->params['form']['ecourse_module_id']
+				'Deleted module question id: ' . $ecourse_module_question['id'] .
+				' for ecourse module id: ' . $this->params['form']['ecourse_module_id']
 			);
 			$data['success'] = true;
 		} else {
