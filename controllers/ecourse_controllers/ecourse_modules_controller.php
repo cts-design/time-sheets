@@ -66,6 +66,12 @@ class EcourseModulesController extends AppController {
 		$this->data['EcourseModule'] = $ecourse_module;
 
 		if ($this->EcourseModule->save($this->data)) {
+			$this->Transaction->createUserTransaction(
+				'Ecourses',
+				null,
+				null,
+				"Added ecourse module id: {$this->EcourseModule->id} to ecourse id: {$this->data['EcourseModule']['ecourse_id']}"
+			);
 			$data['success'] = true;
 			$data['ecourse_modules'] = $ecourse_module;
 			$data['ecourse_modules']['id'] = $this->EcourseModule->id;
@@ -80,7 +86,7 @@ class EcourseModulesController extends AppController {
 	public function admin_update() {
 		$ecourseData = json_decode($this->params['form']['ecourse_modules'], true);
 
-		if (count($ecourseData) > 1) {
+		if (isset($ecourseData[1])) {
 			$this->data['EcourseModule'] = $ecourseData;
 
 			if ($this->EcourseModule->saveAll($this->data['EcourseModule'])) {
@@ -93,6 +99,13 @@ class EcourseModulesController extends AppController {
 			$this->EcourseModule->set($ecourseData);
 
 			if ($this->EcourseModule->save()) {
+				$this->Transaction->createUserTransaction(
+					'Ecourses',
+					null,
+					null,
+					'Updated module id: ' . $ecourseData['id'] .
+					' for ecourse id: ' . $this->params['form']['ecourse_id']
+				);
 				$data['success'] = true;
 			} else {
 				$data['success'] = false;
@@ -107,6 +120,13 @@ class EcourseModulesController extends AppController {
 		$ecourse = json_decode($this->params['form']['ecourse_modules'], true);
 
 		if ($this->EcourseModule->delete($ecourse['id'])) {
+			$this->Transaction->createUserTransaction(
+				'Ecourses',
+				null,
+				null,
+				'Deleted module id: ' . $ecourse['id'] .
+				' from ecourse id: ' . $this->params['form']['ecourse_id']
+			);
 			$data['success'] = true;
 		} else {
 			$data['success'] = false;
