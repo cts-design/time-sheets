@@ -4,7 +4,7 @@
  * Ecourses Controller
  *
  * @package   AtlasV3
- * @author    Brandon Cordell
+ * @author    Brandon Cordell & Daniel Nolan
  * @copyright 2013 Complete Technology Solutions
  */
 class EcoursesController extends AppController {
@@ -19,24 +19,64 @@ class EcoursesController extends AppController {
             $this->Session->setFlash(__('Invalid id', true), 'flash_failure');
             $this->redirect($this->referer());
         }
+
 		$this->Ecourse->recursive = -1;
 		$ecourse = $this->Ecourse->find('first', array(
 			'conditions' => array('Ecourse.id' => $id),
 			'contain' => array(
 				'EcourseModule' => array('order' => 'EcourseModule.order ASC'),
-				'EcourseResponse' => array ('conditions' => array('EcourseResponse.user_id' => $this->Auth->user('id')),
-				'EcourseModuleResponse' => array('conditions' => array('EcourseModuleResponse.pass_fail' => 'Pass'))))));
+				'EcourseUser' => array(
+						'conditions' => array(
+							'EcourseUser.ecourse_id' => $id, 'EcourseUser.user_id' => $this->Auth->user('id'))),
+				'EcourseResponse' => array (
+					'conditions' => array(
+						'EcourseResponse.user_id' => $this->Auth->user('id'),
+						'EcourseResponse.reset' => 0),
+					'EcourseModuleResponse' => array('conditions' => array('EcourseModuleResponse.pass_fail' => 'Pass'))
+					))));
+
+		if($ecourse['Ecourse']['requires_user_assignment']) {
+			if(empty($ecourse['EcourseUser'][0])) {
+				$this->Session->setFlash('You are not assigned to that course', 'flash_failure');	
+				if($this->Auth->user('role_id') > 1) {
+					$this->redirect('/admin/users/dashboard');
+				}
+				else {
+					$this->redirect('/users/dashboard');
+				}
+			}
+		}
+
 		if(empty($ecourse['EcourseResponse'])) {
 			$this->data['EcourseResponse']['user_id'] = $this->Auth->user('id');
+			$this->data['EcourseResponse']['ecourse_id'] = $id;
 			$this->Ecourse->EcourseResponse->save($this->data);
+			$response = $this->Ecourse->EcourseResponse->findById($this->Ecourse->EcourseResponse->id);
+			$ecourse['EcourseResponse'][0] = $response['EcourseResponse']; 
 		}
+
+		if($ecourse['EcourseResponse'][0]['status'] == 'completed') {
+			$this->Session->setFlash('You have already completed this course', 'flash_failure');
+			if($this->Auth->user('role_id') > 1) {
+				$this->redirect('/admin/users/dashboard');
+			}
+			else {
+				$this->redirect('/users/dashboard');
+			}
+		}
+
 		$modules = Set::extract('/EcourseModule/id', $ecourse);
-		$moduleRespneses = Set::extract('/EcourseModuleResponse/id', $ecourse['EcourseResponse']);
-		foreach($modules as $module) {
-			if(! in_array($module, $moduleRespneses)) {
-				$nextModule = Set::extract("/EcourseModule[id=$module]/.[:first]", $ecourse);
-			} 
+		$moduleResponses = Set::extract('/EcourseModuleResponse[pass_fail=Pass]/ecourse_module_id', $ecourse['EcourseResponse']);
+		$diff = Set::diff($moduleResponses, $modules);
+
+		if(!empty($diff)) {
+			$diff = array_values($diff);
+			$nextModule = Set::extract("/EcourseModule[id=$diff[0]]/.[1]", $ecourse);
+		} 
+		else {
+			$nextModule = Set::extract("/EcourseModule/.[1]", $ecourse);
 		}
+
 		$title_for_layout = $nextModule[0]['name'] ;
 		$this->set(compact('nextModule', 'title_for_layout'));
 	}
@@ -61,26 +101,77 @@ class EcoursesController extends AppController {
 		$this->set(compact('ecourseModule', 'title_for_layout'));
 	}
 
-	public function save($id) {
-		$ecourse = $this->Ecourse->find('first', array(
+	public function grade() {
+		$this->Ecourse->EcourseModule->recursive = -1;
+		$ecourseModule = $this->Ecourse->EcourseModule->find('first', array(
 			'conditions' => array(
-				'Ecourse.id' => $id
+				'EcourseModule.id' => $this->data['Ecourse']['module_id']
 			),
 			'contain' => array(
-				'EcourseModule'
-			)
-		));
+				'EcourseModuleQuestion' => array(
+					'order' => array('EcourseModuleQuestion.order ASC'),
+					'EcourseModuleQuestionAnswer' => array(
+						'fields' => array('id', 'text', 'correct'))
+					))));
+		$ecourseResponse = $this->Ecourse->EcourseResponse->find('first', array(
+			'conditions' => array(
+				'EcourseResponse.user_id' => $this->Auth->user('id'),
+				'EcourseResponse.ecourse_id' => $ecourseModule['EcourseModule']['ecourse_id']),
+			'fields' => array('id')));
 
-		$this->Session->setFlash(__('You have passed ' . $ecourse['EcourseModule'][0]['name'], true), 'flash_success');
+		$userAnswers = $this->data['Ecourse'];
+		array_pop($userAnswers);
+		$userAnswers = array_values($userAnswers);
 
-		
+		$quizAnswers = Set::extract('/EcourseModuleQuestionAnswer[correct=1]/id', $ecourseModule['EcourseModuleQuestion']);
+
+		$wrongAnswers = Set::diff($userAnswers, $quizAnswers);
+		$numberCorrect = count($quizAnswers) - count($wrongAnswers);
+		$quizScore = ($numberCorrect / count($quizAnswers)) * 100;
+
+		$this->data['EcourseModuleResponse']['ecourse_module_id'] = $ecourseModule['EcourseModule']['id'];
+		$this->data['EcourseModuleResponse']['ecourse_response_id'] = $ecourseResponse['EcourseResponse']['id'];
+		$this->data['EcourseModuleResponse']['score'] = $quizScore;
+		$this->data['EcourseModuleResponse']['pass_fail'] = ($ecourseModule['EcourseModule']['passing_percentage'] <= $quizScore) ? 'Pass' : 'Fail';
+
 		if ($this->Auth->user('role_id') == 1) {
 			$userIsAdmin = false;
 		} else {
 			$userIsAdmin = true;
 		}
+		if($this->Ecourse->EcourseResponse->EcourseModuleResponse->save($this->data['EcourseModuleResponse'])) {
+			if($ecourseModule['EcourseModule']['passing_percentage'] <= $quizScore) {
+				$nextModule = $this->Ecourse->EcourseModule->find('first',
+					array('conditions' => array('EcourseModule.ecourse_id' => 2, 'EcourseModule.order >' => $ecourseModule['EcourseModule']['order']))
+				);
+				// TODO: add logic to add passing transaction.
+				$this->Session->setFlash('You passed the quiz.', 'flash_success');
+				if($nextModule) {
+					$this->redirect(array('controller' => 'ecourses', 'action' => 'index', $ecourseModule['EcourseModule']['ecourse_id'], 'admin' => $userIsAdmin));
+				}
+				else {
+					// Logic to mark the ecourse response complete if passed quiz for last module
+					$this->Ecourse->EcourseResponse->id = $ecourseResponse['EcourseResponse']['id'];
+					$this->Ecourse->EcourseResponse->saveField('completed', date('Y-m-d H:i:s'));
+					$this->Ecourse->EcourseResponse->saveField('status', 'completed');
+					$this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => $userIsAdmin));
+				}
+			}
+			else {
+				// TODO: add logic to add failing transaction.
+				$this->Session->setFlash('You did not pass the quiz, please try again', 'flash_failure');
 
-		$this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => $userIsAdmin));
+				$this->set(compact('userAnswers', 'ecourseModule'));
+				$this->render('failed_quiz');
+				//$this->redirect(array('controller' => 'ecourses', 'action' => 'index', $ecourseModule['EcourseModule']['ecourse_id'], 'admin' => $userIsAdmin));
+			}
+		}
+		else {
+			$title_for_layout = $ecourseModule['EcourseModule']['name'] . ' Quiz';
+			$this->set(compact('ecourseModule', 'title_for_layout'));
+			$this->render('/ecourses/quiz/');
+			// TODO: fix this so that form data is preserved in the event the response cannot be saved	
+		}
 	}
 
     public function load_media($mediaLocation=null) {
