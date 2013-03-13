@@ -236,22 +236,20 @@ Ext.onReady(function () {
       handler: function () {
         var form = this.up('form').getForm();
 
-        if (form.isValid()) {
-          form.updateRecord();
-          form.getRecord().save({
-            success: function (record, operation) {
-              Ext.Msg.show({
-                buttons: Ext.Msg.OK,
-                icon: Ext.Msg.INFO,
-                fn: function () {
-                  window.location = '/admin/ecourses';
-                },
-                msg: 'The ecourse, ' + EcourseRecord.name + ', has been updated. You will now be redirected to the Ecourse index so you can add Modules and Quizzes.',
-                title: 'Ecourse saved successfully'
-              });
-            }
-          });
-        }
+        form.updateRecord();
+        form.getRecord().save({
+          success: function (record, operation) {
+            Ext.Msg.show({
+              buttons: Ext.Msg.OK,
+              icon: Ext.Msg.INFO,
+              fn: function () {
+                window.location = '/admin/ecourses';
+              },
+              msg: 'The ecourse, ' + EcourseRecord.name + ', has been updated. You will now be redirected to the Ecourse index so you can add Modules and Quizzes.',
+              title: 'Ecourse saved successfully'
+            });
+          }
+        });
       }
     }]
   });
@@ -274,7 +272,6 @@ Ext.onReady(function () {
 
       formPanel.getForm().loadRecord(ecourse);
       formPanel.getEl().unmask();
-      formPanel.loadRecord(ecourse);
     }
   });
 });
