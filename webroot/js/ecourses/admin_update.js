@@ -234,10 +234,16 @@ Ext.onReady(function () {
       formBind: true,
       text: 'Save Ecourse',
       handler: function () {
-        var form = this.up('form').getForm();
+        var form = this.up('form').getForm(),
+          requiresUserAssignmentValue = form.getValues().requires_user_assignment,
+          record;
 
         form.updateRecord();
-        form.getRecord().save({
+
+        record = form.getRecord();
+        record.set('requires_user_assignment', requiresUserAssignmentValue);
+
+        record.save({
           success: function (record, operation) {
             Ext.Msg.show({
               buttons: Ext.Msg.OK,
