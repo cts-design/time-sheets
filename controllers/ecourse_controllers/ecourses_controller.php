@@ -77,7 +77,7 @@ class EcoursesController extends AppController {
 		$modId = $nextModule[0]['id'];
 		$passFail = null;
 		$moduleResponse = Set::extract("/EcourseModuleResponse[ecourse_module_id=$modId]/.[1]", $ecourse['EcourseResponse']);
-		if(empty($moduleResponse)) {
+		if(empty($moduleResponse) || $moduleResponse[0]['pass_fail'] == 'Fail') {
 			$this->data['EcourseModuleResponse']['ecourse_module_id'] = $nextModule[0]['id'];
 			$this->data['EcourseModuleResponse']['ecourse_response_id'] = $ecourse['EcourseResponse'][0]['id'];
 			$this->Ecourse->EcourseResponse->EcourseModuleResponse->save($this->data);	
@@ -142,6 +142,7 @@ class EcoursesController extends AppController {
 		$wrongAnswers = Set::diff($userAnswers, $quizAnswers);
 		$numberCorrect = count($quizAnswers) - count($wrongAnswers);
 		$quizScore = ($numberCorrect / count($quizAnswers)) * 100;
+		$this->log($ecourseResponse, 'debug');
 		
 		$this->data['EcourseModuleResponse']['id'] = $ecourseResponse['EcourseModuleResponse'][0]['id'];
 		$this->data['EcourseModuleResponse']['ecourse_module_id'] = $ecourseModule['EcourseModule']['id'];
