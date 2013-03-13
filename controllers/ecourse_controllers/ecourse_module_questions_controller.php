@@ -64,6 +64,13 @@ class EcourseModuleQuestionsController extends AppController {
 		$this->data['EcourseModuleQuestion'] = $ecourse_module_question;
 
 		if ($this->EcourseModuleQuestion->saveAll($this->data)) {
+			$this->Transaction->createUserTransaction(
+				'Ecourses',
+				null,
+				null,
+				'Added module question id ' . $this->EcourseModuleQuestion->id .
+				' to ecourse module id ' . $ecourse_module_question['ecourse_module_id']
+			);
 			$data['success'] = true;
 			$data['ecourse_module_questions'] = $ecourse_module_question;
 			$data['ecourse_module_questions']['id'] = $this->EcourseModuleQuestion->id;
@@ -97,6 +104,13 @@ class EcourseModuleQuestionsController extends AppController {
 		}
 
 		if ($this->EcourseModuleQuestion->saveAll($this->data)) {
+			$this->Transaction->createUserTransaction(
+				'Ecourses',
+				null,
+				null,
+				'Updated module question id ' . $ecourse_module_question['id'] .
+				' for ecourse module id ' . $this->params['form']['ecourse_module_id']
+			);
 			$data['success'] = true;
 			$data['ecourse_module_questions'] = $ecourse_module_question;
 			$data['ecourse_module_questions']['id'] = $this->EcourseModuleQuestion->id;
@@ -112,6 +126,13 @@ class EcourseModuleQuestionsController extends AppController {
 		$ecourse_module_question = json_decode($this->params['form']['ecourse_module_questions'], true);
 
 		if ($this->EcourseModuleQuestion->delete($ecourse_module_question['id'])) {
+			$this->Transaction->createUserTransaction(
+				'Ecourses',
+				null,
+				null,
+				'Deleted module question id ' . $ecourse_module_question['id'] .
+				' for ecourse module id ' . $this->params['form']['ecourse_module_id']
+			);
 			$data['success'] = true;
 		} else {
 			$data['success'] = false;
