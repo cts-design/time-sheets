@@ -318,7 +318,8 @@ Ext.onReady(function () {
                 }
               });
 
-              form.getRecord().save();
+              form.updateRecord();
+              form.reset(true);
             }
           }
         }]
