@@ -234,24 +234,28 @@ Ext.onReady(function () {
       formBind: true,
       text: 'Save Ecourse',
       handler: function () {
-        var form = this.up('form').getForm();
+        var form = this.up('form').getForm(),
+          requiresUserAssignmentValue = form.getValues().requires_user_assignment,
+          record;
 
-        if (form.isValid()) {
-          form.updateRecord();
-          form.getRecord().save({
-            success: function (record, operation) {
-              Ext.Msg.show({
-                buttons: Ext.Msg.OK,
-                icon: Ext.Msg.INFO,
-                fn: function () {
-                  window.location = '/admin/ecourses';
-                },
-                msg: 'The ecourse, ' + EcourseRecord.name + ', has been updated. You will now be redirected to the Ecourse index so you can add Modules and Quizzes.',
-                title: 'Ecourse saved successfully'
-              });
-            }
-          });
-        }
+        form.updateRecord();
+
+        record = form.getRecord();
+        record.set('requires_user_assignment', requiresUserAssignmentValue);
+
+        record.save({
+          success: function (record, operation) {
+            Ext.Msg.show({
+              buttons: Ext.Msg.OK,
+              icon: Ext.Msg.INFO,
+              fn: function () {
+                window.location = '/admin/ecourses';
+              },
+              msg: 'The ecourse, ' + EcourseRecord.name + ', has been updated. You will now be redirected to the Ecourse index so you can add Modules and Quizzes.',
+              title: 'Ecourse saved successfully'
+            });
+          }
+        });
       }
     }]
   });
@@ -272,10 +276,8 @@ Ext.onReady(function () {
         }
       });
 
-      console.log(typeof ecourse.data.requires_user_assignment);
       formPanel.getForm().loadRecord(ecourse);
       formPanel.getEl().unmask();
-      formPanel.loadRecord(ecourse);
     }
   });
 });
