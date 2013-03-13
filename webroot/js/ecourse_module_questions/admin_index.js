@@ -539,6 +539,8 @@ Ext.onReady(function () {
             }
 
             store.remove(selectedRecord);
+            Ext.getCmp('editQuestionBtn').disable();
+            Ext.getCmp('deleteQuestionBtn').disable();
           }
         }]
       }]
