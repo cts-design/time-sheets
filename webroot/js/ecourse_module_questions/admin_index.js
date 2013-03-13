@@ -15,7 +15,6 @@ Ext.override(Ext.data.writer.Json, {
 
         //Iterate over all the children in the current association
         childStore.each(function(childRecord) {
-          console.log(childRecord);
           data[association.name].push(childRecord.getData());
         }, me);
       }
@@ -175,6 +174,21 @@ Ext.onReady(function () {
           boxLabelAlign: 'before',
           fieldLabel: 'Label',
           hideLabel: true,
+          id: 'radio1',
+          listeners: {
+            change: function (radio, newVal, oldVal) {
+              var form = this.up('form'),
+                radio2 = form.down('#radio2'),
+                radio3 = form.down('#radio3'),
+                radio4 = form.down('#radio4');
+
+              if (newVal) {
+                radio2.setValue(false);
+                radio3.setValue(false);
+                radio4.setValue(false);
+              }
+            }
+          },
           margins: '0 0 0 5',
           name: '0'
         }]
@@ -197,11 +211,26 @@ Ext.onReady(function () {
           name: 'answer'
         }, {
           xtype: 'radiofield',
-          margins: '0 0 0 5',
-          fieldLabel: 'Label',
-          hideLabel: true,
           boxLabel: '',
           boxLabelAlign: 'before',
+          fieldLabel: 'Label',
+          hideLabel: true,
+          id: 'radio2',
+          listeners: {
+            change: function (radio, newVal, oldVal) {
+              var form = this.up('form'),
+                radio1 = form.down('#radio1'),
+                radio3 = form.down('#radio3'),
+                radio4 = form.down('#radio4');
+
+              if (newVal) {
+                radio1.setValue(false);
+                radio3.setValue(false);
+                radio4.setValue(false);
+              }
+            }
+          },
+          margins: '0 0 0 5',
           name: '1'
         }]
       }, {
@@ -222,11 +251,26 @@ Ext.onReady(function () {
           name: 'answer'
         }, {
           xtype: 'radiofield',
-          margins: '0 0 0 5',
-          fieldLabel: 'Label',
-          hideLabel: true,
           boxLabel: '',
           boxLabelAlign: 'before',
+          fieldLabel: 'Label',
+          hideLabel: true,
+          id: 'radio3',
+          listeners: {
+            change: function (radio, newVal, oldVal) {
+              var form = this.up('form'),
+                radio1 = form.down('#radio1'),
+                radio2 = form.down('#radio2'),
+                radio4 = form.down('#radio4');
+
+              if (newVal) {
+                radio1.setValue(false);
+                radio2.setValue(false);
+                radio4.setValue(false);
+              }
+            }
+          },
+          margins: '0 0 0 5',
           name: '2'
         }]
       }, {
@@ -247,11 +291,26 @@ Ext.onReady(function () {
           name: 'answer'
         }, {
           xtype: 'radiofield',
-          margins: '0 0 0 5',
-          fieldLabel: 'Label',
-          hideLabel: true,
           boxLabel: '',
           boxLabelAlign: 'before',
+          fieldLabel: 'Label',
+          hideLabel: true,
+          id: 'radio4',
+          listeners: {
+            change: function (radio, newVal, oldVal) {
+              var form = this.up('form'),
+                radio1 = form.down('#radio1'),
+                radio2 = form.down('#radio2'),
+                radio3 = form.down('#radio3');
+
+              if (newVal) {
+                radio1.setValue(false);
+                radio2.setValue(false);
+                radio3.setValue(false);
+              }
+            }
+          },
+          margins: '0 0 0 5',
           name: '3'
         }]
       }],
@@ -271,54 +330,67 @@ Ext.onReady(function () {
               question,
               answers,
               questionStore = Ext.data.StoreManager.lookup('EcourseModuleQuestionStore'),
-              isNewRecord = (typeof form.getRecord() === 'undefined');
+              isNewRecord = (typeof form.getRecord() === 'undefined'),
+              radioButtons = Ext.ComponentQuery.query('radio'),
+              correctAnswerSelected = false;
 
-            if (isNewRecord) {
-              question = Ext.create('EcourseModuleQuestion', {
-                ecourse_module_id: formValues.ecourse_module_id,
-                text: formValues.text,
-                order: formValues.order
-              });
+            Ext.Array.each(radioButtons, function (radio) {
+              if (radio.getValue() && radio.previousNode('textfield').getValue()) {
+                correctAnswerSelected = true;
+              }
+            });
 
-              answers = question.answers();
-
-              Ext.Array.each(formValues.answer, function (answer, index) {
-                if (answer) {
-                  obj = { text: answer, correct: 0 }
-                  if (formValues.hasOwnProperty(index)) { obj.correct = 1; }
-                  answers.add(obj)
-                }
-              });
-
-              question.save();
-              questionStore.load();
-              form.reset();
+            if (!correctAnswerSelected) {
+              Ext.Msg.alert('Form Error', 'Please choose a correct answer before saving');
             } else {
-              answers = form.getRecord().answers();
+              if (isNewRecord) {
+                question = Ext.create('EcourseModuleQuestion', {
+                  ecourse_module_id: formValues.ecourse_module_id,
+                  text: formValues.text,
+                  order: formValues.order
+                });
 
-              Ext.Array.each(formValues.answer, function (answer, index) {
-                var existingAnswer = answers.getAt(index),
-                  existingAnswerValues;
+                answers = question.answers();
 
-                if (answer) {
-                  obj = { text: answer, correct: 0 }
-                  if (formValues.hasOwnProperty(index)) { obj.correct = 1; }
-
-                  if (existingAnswer) {
-                    existingAnswerValues = Ext.Object.getValues(existingAnswer);
-
-                    if (existingAnswerValues[2] !== obj.text || existingAnswerValues[3] !== obj.correct) {
-                      existingAnswer.set(obj);
-                    }
-                  } else {
+                Ext.Array.each(formValues.answer, function (answer, index) {
+                  if (answer) {
+                    obj = { text: answer, correct: 0 }
+                    if (formValues.hasOwnProperty(index)) { obj.correct = 1; }
                     answers.add(obj)
                   }
-                } else if (!answer && existingAnswer) {
-                  answers.remove(existingAnswer);
-                }
-              });
+                });
 
-              form.getRecord().save();
+                question.save();
+                questionStore.load();
+                form.reset();
+              } else {
+                answers = form.getRecord().answers();
+
+                Ext.Array.each(formValues.answer, function (answer, index) {
+                  var existingAnswer = answers.getAt(index),
+                    existingAnswerValues;
+
+                  if (answer) {
+                    obj = { text: answer, correct: 0 }
+                    if (formValues.hasOwnProperty(index)) { obj.correct = 1; }
+
+                    if (existingAnswer) {
+                      existingAnswerValues = Ext.Object.getValues(existingAnswer);
+
+                      if (existingAnswerValues[2] !== obj.text || existingAnswerValues[3] !== obj.correct) {
+                        existingAnswer.set(obj);
+                      }
+                    } else {
+                      answers.add(obj)
+                    }
+                  } else if (!answer && existingAnswer) {
+                    answers.remove(existingAnswer);
+                  }
+                });
+
+                form.updateRecord();
+                form.reset(true);
+              }
             }
           }
         }]
