@@ -15,7 +15,6 @@ Ext.override(Ext.data.writer.Json, {
 
         //Iterate over all the children in the current association
         childStore.each(function(childRecord) {
-          console.log(childRecord);
           data[association.name].push(childRecord.getData());
         }, me);
       }
@@ -275,55 +274,67 @@ Ext.onReady(function () {
               question,
               answers,
               questionStore = Ext.data.StoreManager.lookup('EcourseModuleQuestionStore'),
-              isNewRecord = (typeof form.getRecord() === 'undefined');
+              isNewRecord = (typeof form.getRecord() === 'undefined'),
+              radioButtons = Ext.ComponentQuery.query('radio'),
+              correctAnswerSelected = false;
 
-            if (isNewRecord) {
-              question = Ext.create('EcourseModuleQuestion', {
-                ecourse_module_id: formValues.ecourse_module_id,
-                text: formValues.text,
-                order: formValues.order
-              });
+            Ext.Array.each(radioButtons, function (radio) {
+              if (radio.getValue() && radio.previousNode('textfield').getValue()) {
+                correctAnswerSelected = true;
+              }
+            });
 
-              answers = question.answers();
-
-              Ext.Array.each(formValues.answer, function (answer, index) {
-                if (answer) {
-                  obj = { text: answer, correct: 0 }
-                  if (formValues.hasOwnProperty(index)) { obj.correct = 1; }
-                  answers.add(obj)
-                }
-              });
-
-              question.save();
-              questionStore.load();
-              form.reset();
+            if (!correctAnswerSelected) {
+              Ext.Msg.alert('Form Error', 'Please choose a correct answer before saving');
             } else {
-              answers = form.getRecord().answers();
+              if (isNewRecord) {
+                question = Ext.create('EcourseModuleQuestion', {
+                  ecourse_module_id: formValues.ecourse_module_id,
+                  text: formValues.text,
+                  order: formValues.order
+                });
 
-              Ext.Array.each(formValues.answer, function (answer, index) {
-                var existingAnswer = answers.getAt(index),
-                  existingAnswerValues;
+                answers = question.answers();
 
-                if (answer) {
-                  obj = { text: answer, correct: 0 }
-                  if (formValues.hasOwnProperty(index)) { obj.correct = 1; }
-
-                  if (existingAnswer) {
-                    existingAnswerValues = Ext.Object.getValues(existingAnswer);
-
-                    if (existingAnswerValues[2] !== obj.text || existingAnswerValues[3] !== obj.correct) {
-                      existingAnswer.set(obj);
-                    }
-                  } else {
+                Ext.Array.each(formValues.answer, function (answer, index) {
+                  if (answer) {
+                    obj = { text: answer, correct: 0 }
+                    if (formValues.hasOwnProperty(index)) { obj.correct = 1; }
                     answers.add(obj)
                   }
-                } else if (!answer && existingAnswer) {
-                  answers.remove(existingAnswer);
-                }
-              });
+                });
 
-              form.updateRecord();
-              form.reset(true);
+                question.save();
+                questionStore.load();
+                form.reset();
+              } else {
+                answers = form.getRecord().answers();
+
+                Ext.Array.each(formValues.answer, function (answer, index) {
+                  var existingAnswer = answers.getAt(index),
+                    existingAnswerValues;
+
+                  if (answer) {
+                    obj = { text: answer, correct: 0 }
+                    if (formValues.hasOwnProperty(index)) { obj.correct = 1; }
+
+                    if (existingAnswer) {
+                      existingAnswerValues = Ext.Object.getValues(existingAnswer);
+
+                      if (existingAnswerValues[2] !== obj.text || existingAnswerValues[3] !== obj.correct) {
+                        existingAnswer.set(obj);
+                      }
+                    } else {
+                      answers.add(obj)
+                    }
+                  } else if (!answer && existingAnswer) {
+                    answers.remove(existingAnswer);
+                  }
+                });
+
+                form.updateRecord();
+                form.reset(true);
+              }
             }
           }
         }]
