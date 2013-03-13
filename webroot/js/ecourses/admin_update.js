@@ -272,7 +272,6 @@ Ext.onReady(function () {
         }
       });
 
-      console.log(typeof ecourse.data.requires_user_assignment);
       formPanel.getForm().loadRecord(ecourse);
       formPanel.getEl().unmask();
       formPanel.loadRecord(ecourse);
