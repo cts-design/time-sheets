@@ -410,7 +410,7 @@ Ext.onReady(function () {
         data: [
           { dbVal: 'flv', stringVal: 'Flash Video' },
           { dbVal: 'pdf', stringVal: 'PDF Document' },
-          { dbVal: 'powerpoint', stringVal: 'PowerPoint Presentation' },
+          { dbVal: 'ppt', stringVal: 'PowerPoint Presentation' },
           { dbVal: 'url', stringVal: 'URL' }
         ]
       }),
