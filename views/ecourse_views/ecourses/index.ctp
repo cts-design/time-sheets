@@ -17,4 +17,4 @@
 	</div>
 	<br />
 <?php endif ?>
-<div> <a class="button" href="/ecourses/quiz/<?php echo $nextModule[0]['id']?>">Proceed to quiz.</a></div>
+<div> <a class="button" href="/ecourses/quiz/<?php echo $nextModule[0]['id'] .'/'. $modResponseTimeId?>">Proceed to quiz.</a></div>

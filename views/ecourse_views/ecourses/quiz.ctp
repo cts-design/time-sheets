@@ -39,5 +39,6 @@
 	
 	<br />
 	<?php echo $this->Form->hidden('module_id', array('value' => $ecourseModule['EcourseModule']['id'])); ?>
+	<?php echo $this->Form->hidden('response_time_id', array('value' => $responseTimeId)); ?>
 	<?php echo $this->Form->end('Save'); ?>
 </div>
