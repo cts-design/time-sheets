@@ -138,9 +138,20 @@ Ext.onReady(function () {
       text: 'Media Type',
       renderer: function (value) {
         switch (value) {
+          case 'flv':
+            return 'Flash Video';
+            break;
+
           case 'pdf':
+            return 'PDF Document';
+            break;
+
+          case 'ppt':
+            return 'PowerPoint Presentation';
+            break;
+
           case 'url':
-            return value.toUpperCase();
+            return 'URL';
             break;
 
           default:
