@@ -25,7 +25,7 @@ $(function () {
 		<?php $answers = array() ?>
 		<?php $attributes = array('legend' => false, 'separator' => '<br />', 'class' =>  'required', 'message' => 'text') ?>
 		<?php foreach($question['EcourseModuleQuestionAnswer'] as $answer): ?>
-			<?php $answers[$answer['id']] = $answer['text'] ?>
+			<?php $answers[$answer['id']] = Sanitize::html($answer['text']) ?>
 		<?php endforeach ?>
 		<li>
 		<?= $this->Form->label(Inflector::slug($question['text']), $question['text'], array('class' => 'main-label') ); ?>

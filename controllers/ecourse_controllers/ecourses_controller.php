@@ -1,5 +1,7 @@
 <?php
 
+App::Import('Sanitize');
+
 /**
  * Ecourses Controller
  *
