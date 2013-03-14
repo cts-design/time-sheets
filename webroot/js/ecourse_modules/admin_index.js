@@ -393,7 +393,7 @@ Ext.onReady(function () {
 
             locationField.enable();
             locationField.allowBlank = false;
-          } else if (newVal === 'pdf' || newVal === 'powerpoint') {
+          } else if (newVal === 'pdf' || newVal === 'ppt' || newVal === 'flv') {
             if (oldVal === 'url') {
               locationField.disable();
               locationField.allowBlank = true;
