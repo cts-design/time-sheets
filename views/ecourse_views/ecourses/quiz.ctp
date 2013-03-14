@@ -37,5 +37,5 @@ $(function () {
 	</ol>
 	<br />
 	<?= $this->Form->hidden('module_id', array('value' => $ecourseModule['EcourseModule']['id'])); ?>
-	<?= $this->Form->end('Save'); ?>
+	<?= $this->Form->end(array('class' => 'button', 'label' => 'Submit', 'name' => 'Submit')); ?>
 </div>
