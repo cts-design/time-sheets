@@ -408,6 +408,7 @@ Ext.onReady(function () {
       store: Ext.create('Ext.data.Store', {
         fields: ['dbVal', 'stringVal'],
         data: [
+          { dbVal: 'flv', stringVal: 'Flash Video' },
           { dbVal: 'pdf', stringVal: 'PDF Document' },
           { dbVal: 'powerpoint', stringVal: 'PowerPoint Presentation' },
           { dbVal: 'url', stringVal: 'URL' }
