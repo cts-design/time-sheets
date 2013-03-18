@@ -204,7 +204,10 @@ class EcoursesController extends AppController {
 							$this->Ecourse->EcourseUser->delete($userAssignment['EcourseUser']['id']);
 						}
 					}
-					// TODO: Logic to generate a certificate
+					$data = $this->Auth->user();
+					$data['Ecourse'] = $ecourseModule['Ecourse'];
+					$data['EcourseResponse'] = $ecourseResponse['EcourseResponse'];
+					ClassRegistry::init('Queue.QueuedTask')->createJob('document', $data);
 					$this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => $userIsAdmin));
 				}
 			}
