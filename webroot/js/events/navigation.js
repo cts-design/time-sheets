@@ -5,13 +5,21 @@
  * @package ATLAS V3
  */
 
-var currentPath = function () {
+var currentPath,
+  queryString;
+
+currentPath = function () {
   return window.location.pathname;
+}
+
+queryString = function(url) {
+  return url.slice(url.indexOf('?')).split('&')[0];
 }
 
 $(function() {
   var eventCategory = 0,
-    currentUrl = currentPath();
+    currentUrl = currentPath(),
+    currentQueryString;
 
   $('body').attr('class', 'js');
 
