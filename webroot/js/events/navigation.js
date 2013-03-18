@@ -43,11 +43,32 @@ $(function() {
     $("#events").empty().html('<img src="/img/ajaxLoader.gif" height="16" width="16" />');
   });
 
-  $('.calnav a, .paging a').live('click', function(e) {
+  $('.pagination a').live('click', function(e) {
     e.preventDefault();
 
     var target = $(this).attr('href'),
       content;
+
+    if (currentQueryString) {
+      target += currentQueryString;
+    }
+
+    $.post(target, $('.event_categories').serialize(), function(data) {
+      $('#events').html(data);
+    });
+
+    $("#events").empty().html('<img src="/img/ajaxLoader.gif" height="16" width="16" />');
+
+    currentUrl = target;
+  });
+
+  $('.calnav a').live('click', function(e) {
+    e.preventDefault();
+
+    var target = $(this).attr('href'),
+      content;
+
+    currentQueryString = queryString(target);
 
     $.post(target, $('.event_categories').serialize(), function(data) {
       $('#events').html(data);
