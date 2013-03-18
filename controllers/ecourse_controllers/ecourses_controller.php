@@ -125,11 +125,12 @@ class EcoursesController extends AppController {
 				'EcourseModule.id' => $this->data['Ecourse']['module_id']
 			),
 			'contain' => array(
+				'Ecourse',
 				'EcourseModuleQuestion' => array(
 					'order' => array('EcourseModuleQuestion.order ASC'),
 					'EcourseModuleQuestionAnswer' => array(
-						'fields' => array('id', 'text', 'correct'))
-					))));
+						'fields' => array('id', 'text', 'correct'))))));
+
 		$this->Ecourse->EcourseResponse->recursive = -1;
 		$ecourseResponse = $this->Ecourse->EcourseResponse->find('first', array(
 			'conditions' => array(
@@ -174,12 +175,24 @@ class EcoursesController extends AppController {
 						'EcourseModule.order >' => $ecourseModule['EcourseModule']['order']))
 				);
 				// TODO: add logic to add passing transaction.
+				$this->Transaction->createUserTransaction(
+					'Ecourses',
+					null,
+					null,
+					'Passed ecourse module: ' . $ecourseModule['EcourseModule']['name']
+				);
 				$this->Session->setFlash('You passed the quiz.', 'flash_success');
 				if($nextModule) {
 					$this->redirect(array('controller' => 'ecourses', 'action' => 'index', $ecourseModule['EcourseModule']['ecourse_id']));
 				}
 				else {
 					// Logic to mark the ecourse response complete if passed quiz for last module
+					$this->Transaction->createUserTransaction(
+						'Ecourses',
+						null,
+						null,
+						'Completed ecourse: ' . $ecourseModule['Ecourse']['name']
+					);
 					$this->Ecourse->EcourseResponse->read(null, $ecourseResponse['EcourseResponse']['id']);
 					$this->Ecourse->EcourseResponse->set(array('completed' => date('Y-m-d H:i:s'), 'status' => 'completed'));
 					if($this->Ecourse->EcourseResponse->save()) {
@@ -191,6 +204,7 @@ class EcoursesController extends AppController {
 							$this->Ecourse->EcourseUser->delete($userAssignment['EcourseUser']['id']);
 						}
 					}
+					// TODO: Logic to generate a certificate
 					$this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => $userIsAdmin));
 				}
 			}
@@ -206,7 +220,6 @@ class EcoursesController extends AppController {
 			$title_for_layout = $ecourseModule['EcourseModule']['name'] . ' Quiz';
 			$this->set(compact('ecourseModule', 'title_for_layout'));
 			$this->render('/ecourses/quiz/');
-			// TODO: fix this so that form data is preserved in the event the response cannot be saved	
 		}
 	}
 
