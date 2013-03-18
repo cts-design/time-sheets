@@ -577,8 +577,14 @@ class EventsController extends AppController {
 
 	private function parse_date() {
 		// If there isn't a date passed, then use today
-		if (isset($this->params['url']['date']) && $this->params['url']['date']) {
-			$date = $this->params['url']['date'];
+		$urlParams = $this->params['url'];
+		$namedParams = $this->params['named'];
+
+		if (isset($urlParams['date']) && $urlParams['date']) {
+			$date = $urlParams['date'];
+			return date('Y-m-d H:i:s', strtotime($date));
+		} else if (isset($namedParams['date']) && $namedParams['date']) {
+			$date = $namedParams['date'];
 			return date('Y-m-d H:i:s', strtotime($date));
 		} else {
 			return date('Y-m-d H:i:s');

@@ -1,3 +1,10 @@
+<?php
+	$options = array();
+	if (isset($this->params['url']['date'])) {
+		$options['url']['date'] = $this->params['url']['date'];
+	}
+	$this->Paginator->options($options);
+?>
 	<div class="pagination pagination-centered">
 		<ul>
 			<?php echo $this->Paginator->prev(
