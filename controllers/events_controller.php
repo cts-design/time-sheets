@@ -523,10 +523,10 @@ class EventsController extends AppController {
 				}
 				if(isset($params['location_id'])){
 					$conditions['Event.location_id'] = $params['location_id'];
-				}	
+				}
 				if(isset($params['event_category_id'])){
 					$conditions['Event.event_category_id'] = $params['event_category_id'];
-				}	
+				}
 				$this->paginate['conditions'] = $conditions;
 			}
 			$events = $this->Paginate('Event');
@@ -547,18 +547,18 @@ class EventsController extends AppController {
 					$data['events'][$i]['registered'] = $event['Event']['event_registration_count'];
 					$data['events'][$i]['attended'] = $this->Event->EventRegistration->countAttended($event['Event']['id']);
 					$i++;
-				}	
+				}
 			}
 			$data['totalCount'] = $this->params['paging']['Event']['count'];
 			$data['success'] = true;
-			$this->set(compact('data'));	
+			$this->set(compact('data'));
 			$this->render(null, null, '/elements/ajaxreturn');
-		}		
+		}
 	}
 
 	public function admin_get_event_category_list() {
 	    if ($this->RequestHandler->isAjax()) {
-	    	$this->Event->EventCategory->recursive = -1;			
+	    	$this->Event->EventCategory->recursive = -1;
 			$categories = $this->Event->EventCategory->find('all',
 				array('fileds' => array('EventCategory.id', 'EventCategory.name')));
 			foreach($categories as $category) {
@@ -571,7 +571,7 @@ class EventsController extends AppController {
 				$data['success'] = false;
 			}
 			$this->set(compact('data'));
-			return $this->render(null, null, '/elements/ajaxreturn');			
+			return $this->render(null, null, '/elements/ajaxreturn');
 	    }
 	}
 
