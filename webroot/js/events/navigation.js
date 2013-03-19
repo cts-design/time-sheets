@@ -26,7 +26,7 @@ $(function() {
   $('#event_categories_dropdown').live('change', function(e) {
     e.preventDefault();
 
-    $.post(currentUrl, $('.event_categories').serialize(), function(data) {
+    $.get(currentUrl, $('.event_categories').serialize(), function(data) {
       $('#events').replaceWith(data);
     });
 
@@ -36,7 +36,7 @@ $(function() {
   $('#event_locations_dropdown').live('change', function(e) {
     e.preventDefault();
 
-    $.post(currentUrl, $('.event_categories').serialize(), function(data) {
+    $.get(currentUrl, $('.event_categories').serialize(), function(data) {
       $('#events').replaceWith(data);
     });
 
@@ -53,7 +53,7 @@ $(function() {
       target += currentQueryString;
     }
 
-    $.post(target, $('.event_categories').serialize(), function(data) {
+    $.get(target, $('.event_categories').serialize(), function(data) {
       $('#events').html(data);
     });
 
@@ -70,7 +70,7 @@ $(function() {
 
     currentQueryString = queryString(target);
 
-    $.post(target, $('.event_categories').serialize(), function(data) {
+    $.get(target, $('.event_categories').serialize(), function(data) {
       $('#events').html(data);
     });
 
@@ -85,7 +85,7 @@ $(function() {
     $('#event_locations_dropdown').val(0);
     $('#event_categories_dropdown').val(0);
 
-    $.post(currentUrl, $('.event_categories').serialize(), function(data) {
+    $.get(currentUrl, $('.event_categories').serialize(), function(data) {
       $('#events').html(data);
     });
 

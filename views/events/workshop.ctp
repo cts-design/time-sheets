@@ -1,7 +1,10 @@
 <?php echo $this->Html->script('events/navigation.js', array('inline' => false)) ?>
 <div id="events">
 	<div class="filters">
-		<form class="event_categories" action="<?= $this->here; ?>" method="get">
+		<form class="event_categories" action="<?= $this->Url->currentUrl(); ?>" method="get">
+			<?php if (isset($this->params['url']['date']) && !$wasAjax): ?>
+				<input type="hidden" id="date" name="date" value="<?= $this->params['url']['date'] ?>">
+			<?php endif ?>
 			<label class="event_categories_label" for="event_categories_dropdown"><?php __('Filter by event category') ?>:</label>
 			<select id="event_categories_dropdown" name="event_categories_dropdown">
 			<?php foreach($categories as $id => $category): ?>
@@ -19,7 +22,16 @@
 		</form>
 	</div>
 	<div class="calnav workshop">
-		<a href="/events/workshop?date=<?= $prevMonday ?>" id="previous-week" class="button gray">
+		<?php
+			$previousMondayUrl = "/events/workshop?date=$prevMonday";
+			if (isset($this->params['url']['event_categories_dropdown'])) {
+				$previousMondayUrl .= "&event_categories_dropdown={$this->params['url']['event_categories_dropdown']}";
+			}
+			if (isset($this->params['url']['event_locations_dropdown'])) {
+				$previousMondayUrl .= "&event_locations_dropdown={$this->params['url']['event_locations_dropdown']}";
+			}
+		?>
+		<a href="<?= $previousMondayUrl ?>" id="previous-week" class="button gray">
 			<i class="icon-chevron-left"></i>
 			Previous Week
 		</a>
@@ -31,7 +43,17 @@
 			<?= date('m/d/Y', strtotime($eow)) ?>
 		</h2>
 
-		<a href="/events/workshop?date=<?= $nextMonday ?>" id="next-week" class="button gray">
+
+		<?php
+			$nextMondayUrl = "/events/workshop?date=$nextMonday";
+			if (isset($this->params['url']['event_categories_dropdown'])) {
+				$nextMondayUrl .= "&event_categories_dropdown={$this->params['url']['event_categories_dropdown']}";
+			}
+			if (isset($this->params['url']['event_locations_dropdown'])) {
+				$nextMondayUrl .= "&event_locations_dropdown={$this->params['url']['event_locations_dropdown']}";
+			}
+		?>
+		<a href="<?= $nextMondayUrl ?>" id="next-week" class="button gray">
 			Next Week
 			<i class="icon-chevron-right"></i>
 		</a>

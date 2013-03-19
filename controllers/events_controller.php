@@ -11,7 +11,7 @@ class EventsController extends AppController {
 
 	public $paginate = array('order' => array('Event.scheduled' => 'asc'), 'limit' => 5);
 
-	public $helpers = array('Excel');
+	public $helpers = array('Excel', 'Url');
 
 	public $components = array('Notifications');
 
@@ -148,6 +148,7 @@ class EventsController extends AppController {
 	}
 
 	public function workshop($date = null) {
+		$this->log($this->params['url'], 'debug');
 		$this->Event->Behaviors->attach('Containable');
 		$this->Event->EventCategory->recursive = -1;
 
@@ -187,7 +188,7 @@ class EventsController extends AppController {
 		if (isset($urlParams['event_categories_dropdown']) && $urlParams['event_categories_dropdown']) {
 			$selectedCategory = $urlParams['event_categories_dropdown'];
 		} else if (isset($namedParams['event_categories_dropdown']) && $namedParams['event_categories_dropdown']) {
-			$selectedCategory = $urlParams['event_categories_dropdown'];
+			$selectedCategory = $namedParams['event_categories_dropdown'];
 		} else {
 			$selectedCategory = 0;
 			$categoryConditions = null;
@@ -212,7 +213,7 @@ class EventsController extends AppController {
 		}
 
 		if ($selectedLocation) {
-			$locationConditions = array('Event.location_id' => $loc);
+			$locationConditions = array('Event.location_id' => $selectedLocation);
 		}
 
 		// setup date stuffs
@@ -266,8 +267,11 @@ class EventsController extends AppController {
 			}
 		}
 
+		$wasAjax = $this->RequestHandler->isAjax();
+
 		$this->set(
 			compact(
+				'wasAjax',
 				'title_for_layout',
 				'selectedCategory',
 				'categories',
