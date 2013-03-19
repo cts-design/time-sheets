@@ -154,6 +154,8 @@ class EventsController extends AppController {
 		$workshopCategory = $this->Event->EventCategory->findByName('Workshop', array('fields' => 'EventCategory.id'));
 
 		$title_for_layout = 'Upcoming Workshops';
+		$urlParams = $this->params['url'];
+		$namedParams = $this->params['named'];
 		$selectedLocation = 0;
 		$selectedCategory = 0;
 
@@ -182,35 +184,35 @@ class EventsController extends AppController {
 		$locations[0] = 'All Locations';
 		asort($locations);
 
-		if (isset($this->params['form']['event_categories_dropdown']) && !empty($this->params['form']['event_categories_dropdown'])) {
-			if ($this->params['form']['event_categories_dropdown'] == 0) {
-				$selectedCategory = 0;
-				$categoryConditions = null;
-			} else {
-				$cat = $this->params['form']['event_categories_dropdown'];
-				$categoryConditions = array(
-					'OR' => array(
-						'EventCategory.id' => $cat,
-						'EventCategory.parent_id' => $cat
-					)
-				);
-				$selectedCategory = $cat;
-			}
+		if (isset($urlParams['event_categories_dropdown']) && $urlParams['event_categories_dropdown']) {
+			$selectedCategory = $urlParams['event_categories_dropdown'];
+		} else if (isset($namedParams['event_categories_dropdown']) && $namedParams['event_categories_dropdown']) {
+			$selectedCategory = $urlParams['event_categories_dropdown'];
 		} else {
+			$selectedCategory = 0;
 			$categoryConditions = null;
 		}
 
-		if (isset($this->params['form']['event_locations_dropdown']) && !empty($this->params['form']['event_locations_dropdown'])) {
-			if ($this->params['form']['event_locations_dropdown'] == 0) {
-				$selectedLocation = 0;
-				$locationConditions = null;
-			} else {
-				$loc = $this->params['form']['event_locations_dropdown'];
-				$locationConditions = array('Event.location_id' => $loc);
-				$selectedLocation = $loc;
-			}
-		} else {
+		if ($selectedCategory) {
+			$categoryConditions = array(
+				'OR' => array(
+					'EventCategory.id' => $selectedCategory,
+					'EventCategory.parent_id' => $selectedCategory
+				)
+			);
+		}
+
+		if (isset($urlParams['event_locations_dropdown']) && $urlParams['event_locations_dropdown']) {
+			$selectedLocation = $urlParams['event_locations_dropdown'];
+		} else if (isset($namedParams['event_locations_dropdown']) && $namedParams['event_locations_dropdown']) {
+			$selectedLocation = $namedParams['event_locations_dropdown'];
+		}  else {
+			$selectedLocation = 0;
 			$locationConditions = null;
+		}
+
+		if ($selectedLocation) {
+			$locationConditions = array('Event.location_id' => $loc);
 		}
 
 		// setup date stuffs
