@@ -117,9 +117,17 @@ class EcourseResponsesController extends AppController {
 
 	public function admin_reset() {
 		if($this->RequestHandler->isAjax()) {
-			$this->EcourseResponse->read(null, $this->params['form']['id']);
-			$this->EcourseResponse->set('reset', 1);
-			if($this->EcourseResponse->save()) {
+			$ecourseResponse = $this->EcourseResponse->find('first', array(
+				'conditions' => array('EcourseResponse.id' => $this->params['form']['id']),
+				'contain' => array('Ecourse')));
+			$data['EcourseResponse']['id'] = $this->params['form']['id'];
+			$data['EcourseResponse']['reset'] = 1;
+			if($this->EcourseResponse->save($data)) {
+				if($ecourseResponse['Ecourse']['requires_user_assignment']) {
+					$data['EcourseUser']['user_id'] = $ecourseResponse['EcourseResponse']['user_id'];
+					$data['EcourseUser']['ecourse_id'] = $ecourseResponse['Ecourse']['id'];
+					$this->EcourseResponse->Ecourse->EcourseUser->save($data);
+				}
 				$data['success'] = true;
 				$data['message'] = 'Response was reset successfully';
 				// TODO: add user activity transaction
