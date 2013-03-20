@@ -82,14 +82,19 @@ class EcoursesController extends AppController {
 		if(empty($moduleResponse) || $moduleResponse[0]['pass_fail'] == 'Fail') {
 			$this->data['EcourseModuleResponse']['ecourse_module_id'] = $nextModule[0]['id'];
 			$this->data['EcourseModuleResponse']['ecourse_response_id'] = $ecourse['EcourseResponse'][0]['id'];
-			$this->Ecourse->EcourseResponse->EcourseModuleResponse->save($this->data);	
+			if($this->Ecourse->EcourseResponse->EcourseModuleResponse->save($this->data)) {
+				$newResponse = $this->Ecourse->EcourseResponse->EcourseModuleResponse->findById($this->Ecourse->EcourseResponse->EcourseModuleResponse->id);
+				$moduleResponse[0] = $newResponse['EcourseModuleResponse'];
+			}
 		}
-		// TODO: add logic to track time
+
+		$modResponseTimeId = $this->logTimeIn($moduleResponse[0]['id'], 'media');
+
 		$title_for_layout = $nextModule[0]['name'] ;
-		$this->set(compact('nextModule', 'title_for_layout'));
+		$this->set(compact('nextModule', 'title_for_layout', 'modResponseTimeId'));
 	}
 
-	public function quiz($id) {
+	public function quiz($id=null, $modResponseTimeId) {
         if(!$id){
             $this->Session->setFlash(__('Invalid id', true), 'flash_failure');
             $this->redirect($this->referer());
@@ -101,15 +106,19 @@ class EcoursesController extends AppController {
 			'contain' => array(
 				'EcourseModuleQuestion' => array(
 					'order' => array('EcourseModuleQuestion.order ASC'),
-					'EcourseModuleQuestionAnswer'
+					'EcourseModuleQuestionAnswer' => array('fields' => array('id', 'text'))
 				)
 			)
 		));
+		$responseTime = $this->Ecourse->EcourseResponse->EcourseModuleResponse->EcourseModuleResponseTime->findById($modResponseTimeId);
+		$this->logTimeOut($responseTime['EcourseModuleResponseTime']['id']);
+		$responseTimeId = $this->logTimeIn($responseTime['EcourseModuleResponseTime']['ecourse_module_response_id'], 'quiz');
 		// TODO: add time tracking
 		// TODO: add transactions
 		$title_for_layout = $ecourseModule['EcourseModule']['name'] . ' Quiz';
-		$this->set(compact('ecourseModule', 'title_for_layout'));
+		$this->set(compact('ecourseModule', 'title_for_layout', 'responseTimeId'));
 	}
+
 
 	public function grade() {
 		$this->Ecourse->EcourseModule->recursive = -1;
@@ -118,11 +127,12 @@ class EcoursesController extends AppController {
 				'EcourseModule.id' => $this->data['Ecourse']['module_id']
 			),
 			'contain' => array(
+				'Ecourse',
 				'EcourseModuleQuestion' => array(
 					'order' => array('EcourseModuleQuestion.order ASC'),
 					'EcourseModuleQuestionAnswer' => array(
-						'fields' => array('id', 'text', 'correct'))
-					))));
+						'fields' => array('id', 'text', 'correct'))))));
+
 		$this->Ecourse->EcourseResponse->recursive = -1;
 		$ecourseResponse = $this->Ecourse->EcourseResponse->find('first', array(
 			'conditions' => array(
@@ -134,17 +144,18 @@ class EcoursesController extends AppController {
 					'conditions' => array(
 						'EcourseModuleResponse.ecourse_module_id' => $ecourseModule['EcourseModule']['id'],
 						'EcourseModuleResponse.pass_fail' => NULL)))));
+		$this->logTimeOut($this->data['Ecourse']['response_time_id']);
 		
 		$userAnswers = $this->data['Ecourse'];
-		array_pop($userAnswers);
+		$count = count($userAnswers);
 		$userAnswers = array_values($userAnswers);
+		$userAnswers = array_slice($userAnswers, 0, $count - 2);
 
 		$quizAnswers = Set::extract('/EcourseModuleQuestionAnswer[correct=1]/id', $ecourseModule['EcourseModuleQuestion']);
 
 		$wrongAnswers = Set::diff($userAnswers, $quizAnswers);
 		$numberCorrect = count($quizAnswers) - count($wrongAnswers);
 		$quizScore = ($numberCorrect / count($quizAnswers)) * 100;
-		$this->log($ecourseResponse, 'debug');
 		
 		$this->data['EcourseModuleResponse']['id'] = $ecourseResponse['EcourseModuleResponse'][0]['id'];
 		$this->data['EcourseModuleResponse']['ecourse_module_id'] = $ecourseModule['EcourseModule']['id'];
@@ -157,6 +168,7 @@ class EcoursesController extends AppController {
 		} else {
 			$userIsAdmin = true;
 		}
+
 		if($this->Ecourse->EcourseResponse->EcourseModuleResponse->save($this->data['EcourseModuleResponse'])) {
 			if($ecourseModule['EcourseModule']['passing_percentage'] <= $quizScore) {
 				$nextModule = $this->Ecourse->EcourseModule->find('first',
@@ -165,12 +177,24 @@ class EcoursesController extends AppController {
 						'EcourseModule.order >' => $ecourseModule['EcourseModule']['order']))
 				);
 				// TODO: add logic to add passing transaction.
+				$this->Transaction->createUserTransaction(
+					'Ecourses',
+					null,
+					null,
+					'Passed ecourse module: ' . $ecourseModule['EcourseModule']['name']
+				);
 				$this->Session->setFlash('You passed the quiz.', 'flash_success');
 				if($nextModule) {
 					$this->redirect(array('controller' => 'ecourses', 'action' => 'index', $ecourseModule['EcourseModule']['ecourse_id']));
 				}
 				else {
 					// Logic to mark the ecourse response complete if passed quiz for last module
+					$this->Transaction->createUserTransaction(
+						'Ecourses',
+						null,
+						null,
+						'Completed ecourse: ' . $ecourseModule['Ecourse']['name']
+					);
 					$this->Ecourse->EcourseResponse->read(null, $ecourseResponse['EcourseResponse']['id']);
 					$this->Ecourse->EcourseResponse->set(array('completed' => date('Y-m-d H:i:s'), 'status' => 'completed'));
 					if($this->Ecourse->EcourseResponse->save()) {
@@ -182,6 +206,10 @@ class EcoursesController extends AppController {
 							$this->Ecourse->EcourseUser->delete($userAssignment['EcourseUser']['id']);
 						}
 					}
+					$data = $this->Auth->user();
+					$data['Ecourse'] = $ecourseModule['Ecourse'];
+					$data['EcourseResponse'] = $ecourseResponse['EcourseResponse'];
+					ClassRegistry::init('Queue.QueuedTask')->createJob('document', $data);
 					$this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => $userIsAdmin));
 				}
 			}
@@ -197,7 +225,6 @@ class EcoursesController extends AppController {
 			$title_for_layout = $ecourseModule['EcourseModule']['name'] . ' Quiz';
 			$this->set(compact('ecourseModule', 'title_for_layout'));
 			$this->render('/ecourses/quiz/');
-			// TODO: fix this so that form data is preserved in the event the response cannot be saved	
 		}
 	}
 
@@ -345,5 +372,21 @@ class EcoursesController extends AppController {
 			$this->set(compact('title_for_layout', 'ecourse'));
 		}
 
+	}
+
+	private function logTimeOut($modResponseTimeId) {
+		$data['EcourseModuleResponseTime']['id'] = $modResponseTimeId;
+		$data['EcourseModuleResponseTime']['time_out'] = date('Y-m-d H:i:s');
+		$this->Ecourse->EcourseResponse->EcourseModuleResponse->EcourseModuleResponseTime->save($data);
+		return $this->Ecourse->EcourseResponse->EcourseModuleResponse->EcourseModuleResponseTime->getLastInsertId();
+	}
+
+	private function logTimeIn($modResponseId, $type) {
+		$data['EcourseModuleResponseTime']['ecourse_module_response_id'] = $modResponseId;
+		$data['EcourseModuleResponseTime']['type'] = $type;
+		$data['EcourseModuleResponseTime']['time_in'] = date("Y-m-d H:i:s");
+		$this->Ecourse->EcourseResponse->EcourseModuleResponse->EcourseModuleResponseTime->create();
+		$this->Ecourse->EcourseResponse->EcourseModuleResponse->EcourseModuleResponseTime->save($data['EcourseModuleResponseTime']);
+		return $this->Ecourse->EcourseResponse->EcourseModuleResponse->EcourseModuleResponseTime->getLastInsertId();
 	}
 }

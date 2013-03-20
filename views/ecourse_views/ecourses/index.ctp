@@ -32,7 +32,6 @@
 	</div>
 	<br />
 <?php endif ?>
-
 <div>
 	<a class="button" href="/ecourses/quiz/<?php echo $nextModule[0]['id']?>">Proceed to quiz.</a>
 </div>
