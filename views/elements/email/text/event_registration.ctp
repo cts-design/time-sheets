@@ -12,7 +12,7 @@
 <?php else: ?>
 	<?php $location = $event['Event']['address'] ?>
 <?php endif ?>
-Dear, <?= ucfirst($user['User']['firstname']) ?>,\r\n
+Dear <?= ucfirst($user['User']['firstname']) ?>,\r\n
 \r\n
 Congratulations!\r\n
 You've registered for the <?= $event['Event']['name'] ?> workshop on

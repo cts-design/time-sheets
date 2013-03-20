@@ -13,7 +13,7 @@
 	<?php $location = $event['Event']['address'] ?>
 <?php endif ?>
 
-<h2>Dear, <?= ucfirst($user['User']['firstname']) ?></h2>
+<h2>Dear <?= ucfirst($user['User']['firstname']) ?>,</h2>
 
 <p>Congratulations!</p>
 
