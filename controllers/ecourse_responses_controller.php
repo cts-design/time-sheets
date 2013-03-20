@@ -121,10 +121,11 @@ class EcourseResponsesController extends AppController {
 				'conditions' => array(
 					'EcourseResponse.id' => $this->params['form']['id'],
 					'EcourseResponse.reset !=' => 1),
-				'contain' => array('Ecourse')));
+				'contain' => array('Ecourse', 'User')));
 			$data['EcourseResponse']['id'] = $this->params['form']['id'];
 			$data['EcourseResponse']['reset'] = 1;
-			if($this->EcourseResponse->save($data)) {
+			
+			if(!empty($ecourseResponse) && $this->EcourseResponse->save($data)) {
 				if($ecourseResponse['Ecourse']['requires_user_assignment']) {
 					$data['EcourseUser']['user_id'] = $ecourseResponse['EcourseResponse']['user_id'];
 					$data['EcourseUser']['ecourse_id'] = $ecourseResponse['Ecourse']['id'];
@@ -132,11 +133,16 @@ class EcourseResponsesController extends AppController {
 				}
 				$data['success'] = true;
 				$data['message'] = 'Response was reset successfully';
-					// TODO: add user activity transaction
+				$this->Transaction->createUserTransaction(
+					'Ecourses',
+					null,
+					null,
+					'Reset ecourse response id:'. $ecourseResponse['EcourseResponse']['id'] . ' for user : ' . $ecourseResponse['User']['name_last_4']
+				);
 			}
 			else {
 				$data['success'] = false;
-				$data['message'] = 'Unable to reset response at this time';
+				$data['message'] = 'Unable to reset response at this time, or resposne has already been reset';
 			}
 			$this->set(compact('data'));
 			$this->render(null, null, '/elements/ajaxreturn');

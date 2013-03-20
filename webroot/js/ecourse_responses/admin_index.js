@@ -113,6 +113,14 @@ Ext.create('Ext.menu.Menu', {
         url: '/admin/ecourse_responses/reset',
         params: {
           id: responseId
+        },
+        success: function(response) {
+          var text = Ext.JSON.decode(response.responseText);
+          var title = 'Success';
+          if(!text.success) {
+            title = 'Failed'; 
+          }
+          Ext.Msg.alert(title, text.message);
         }
       });
     }
