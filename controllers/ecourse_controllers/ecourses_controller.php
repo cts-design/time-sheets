@@ -214,6 +214,12 @@ class EcoursesController extends AppController {
 				}
 			}
 			else {
+				$this->Transaction->createUserTransaction(
+					'Ecourses',
+					null,
+					null,
+					'Failed ecourse module: ' . $ecourseModule['EcourseModule']['name']
+				);
 				// TODO: add logic to add failing transaction.
 				$this->Session->setFlash('You did not pass the quiz, please try again', 'flash_failure');
 
