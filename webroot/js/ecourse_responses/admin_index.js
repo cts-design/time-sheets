@@ -119,6 +119,7 @@ Ext.create('Ext.menu.Menu', {
   }]
 });
 
+
 Ext.create('Atlas.grid.EcourseResponsePanel', {
   title : 'Incomplete',
   id: 'incompleteResponseGrid',

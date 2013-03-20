@@ -122,7 +122,7 @@ class EcourseResponsesController extends AppController {
 			if($this->EcourseResponse->save()) {
 				$data['success'] = true;
 				$data['message'] = 'Response was reset successfully';
-				// TODO: add user activity transaction
+					// TODO: add user activity transaction
 			}
 			else {
 				$data['success'] = false;
