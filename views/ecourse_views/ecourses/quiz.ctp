@@ -1,43 +1,40 @@
-    <style type="text/css">
-        label.error 
-        {
-            border: solid 1px red;  
-			color: Red;
-        }
-    </style><?php echo $this->Html->script('jquery.validate', array('inline' => false)); ?>
+<?= $this->Html->script('jquery.validate', array('inline' => false)); ?>
 <?php $this->Html->scriptStart(array('inline' => false)); ?>
-  $(function() {
-	  $(".button" ).button();
-	  $("#quiz-form").validate({
-		errorPlacement: function(error, element) {
-			console.log(element)
-			error.insertAfter(element.parent("li"));
-		}
-	  });
-	$.validator.messages.required = 'Question must be answered';
+$(function () {
+  $(".button").button();
+  $("#quiz-form").validate({
+    errorPlacement: function (error, element) {
+      var firstLabel = element.parent('li.question').children('label')[0];
+      error.insertAfter(firstLabel);
+    }
   });
-
+  $.validator.messages.required = 'Question must be answered';
+});
 <?php $this->Html->scriptEnd(); ?>
 
 <div id="ecourse-quiz">
-	<?php echo $this->Form->create(null, array('url' => '/ecourses/grade', 'id' => 'quiz-form')) ?>
-	<ol>
+	<?= $this->Form->create(null, array('url' => '/ecourses/grade', 'id' => 'quiz-form')) ?>
+	<ol class="questions">
 	<?php foreach ($ecourseModule['EcourseModuleQuestion'] as $question): ?>
 		<?php $answers = array() ?>
-		<?php $attributes = array('legend' => false, 'separator' => '<br />', 'class' =>  'required', 'message' => 'text') ?>
+		<?php $attributes = array(
+			'legend' => false,
+			'separator' => '<br />',
+			'class' =>  'required answer',
+			'message' => 'text'
+		) ?>
 		<?php foreach($question['EcourseModuleQuestionAnswer'] as $answer): ?>
-			<?php $answers[$answer['id']] = $answer['text'] ?>
+			<?php $answers[$answer['id']] = Sanitize::html($answer['text']) ?>
 		<?php endforeach ?>
-		<li>
-		<?php echo $this->Form->label(Inflector::slug($question['text']), $question['text'], array('class' => 'main-label') ); ?>
-		<br />
-		<?php echo $this->Form->radio(Inflector::slug($question['text']), $answers, $attributes) ?>
+		<li class="question">
+			<?= $this->Form->label(Inflector::slug($question['text']), $question['text'], array('class' => 'main-label') ); ?>
+			<?= $this->Form->radio(Inflector::slug($question['text']), $answers, $attributes) ?>
 		</li>
 		<div class="error"></div>
 	<?php endforeach ?>
 	</ol>
+	<?= $this->Form->hidden('module_id', array('value' => $ecourseModule['EcourseModule']['id'])); ?>
+	<?= $this->Form->hidden('response_time_id', array('value' => $responseTimeId)); ?>
+	<?= $this->Form->end(array('class' => 'button', 'label' => 'Submit', 'name' => 'Submit')); ?>
 	
-	<br />
-	<?php echo $this->Form->hidden('module_id', array('value' => $ecourseModule['EcourseModule']['id'])); ?>
-	<?php echo $this->Form->end('Save'); ?>
 </div>

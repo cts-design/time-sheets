@@ -113,7 +113,7 @@ set :cake_branch, "1.3"
 
 set :shared_children,       %w(config backups plugins system tmp tmp/fdf webroot/files/public
                                webroot/img/public storage storage/thumbnails storage/program_forms
-                               storage/program_media)
+                               storage/program_media storage/ecourse_forms storage/ecourse_media)
 
 namespace :deploy do
   desc "Updates symlinks needed to make application work"

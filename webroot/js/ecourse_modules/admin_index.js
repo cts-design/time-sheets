@@ -138,9 +138,20 @@ Ext.onReady(function () {
       text: 'Media Type',
       renderer: function (value) {
         switch (value) {
+          case 'flv':
+            return 'Flash Video';
+            break;
+
           case 'pdf':
+            return 'PDF Document';
+            break;
+
+          case 'ppt':
+            return 'PowerPoint Presentation';
+            break;
+
           case 'url':
-            return value.toUpperCase();
+            return 'URL';
             break;
 
           default:
@@ -393,7 +404,7 @@ Ext.onReady(function () {
 
             locationField.enable();
             locationField.allowBlank = false;
-          } else if (newVal === 'pdf' || newVal === 'powerpoint') {
+          } else if (newVal === 'pdf' || newVal === 'ppt' || newVal === 'flv') {
             if (oldVal === 'url') {
               locationField.disable();
               locationField.allowBlank = true;
@@ -408,8 +419,9 @@ Ext.onReady(function () {
       store: Ext.create('Ext.data.Store', {
         fields: ['dbVal', 'stringVal'],
         data: [
+          { dbVal: 'flv', stringVal: 'Flash Video' },
           { dbVal: 'pdf', stringVal: 'PDF Document' },
-          { dbVal: 'powerpoint', stringVal: 'PowerPoint Presentation' },
+          { dbVal: 'ppt', stringVal: 'PowerPoint Presentation' },
           { dbVal: 'url', stringVal: 'URL' }
         ]
       }),
