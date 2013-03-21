@@ -34,5 +34,7 @@ $(function () {
 	<?php endforeach ?>
 	</ol>
 	<?= $this->Form->hidden('module_id', array('value' => $ecourseModule['EcourseModule']['id'])); ?>
+	<?= $this->Form->hidden('response_time_id', array('value' => $responseTimeId)); ?>
 	<?= $this->Form->end(array('class' => 'button', 'label' => 'Submit', 'name' => 'Submit')); ?>
+	
 </div>

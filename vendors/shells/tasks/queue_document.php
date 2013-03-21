@@ -2,11 +2,14 @@
 App::import('Vendor', 'wkhtmltopdf/wkhtmltopdf');
 
 class QueueDocumentTask extends Shell {
-	public $uses = array('Queue.QueuedTask', 'FiledDocument');
+	public $uses = array('Queue.QueuedTask', 'FiledDocument', 'EcourseResponse');
 	
 	public function run($data) {
-		if($data['ProgramDocument']['type'] === 'snapshot' || $data['ProgramDocument']['type'] === 'multi_snapshot') {
-			return  $this->generateSnapshot($data);	
+		if(!empty($data['Ecourse'])) {
+			return $this->generateEcourseDoc($data);
+		}
+		if(!empty($data['ProgramDocument']) && ($data['ProgramDocument']['type'] === 'snapshot' || $data['ProgramDocument']['type'] === 'multi_snapshota')) {
+			return $this->generateSnapshot($data);	
 		}
 		else {
 			return $this->generateProgramDoc($data);
@@ -127,7 +130,7 @@ class QueueDocumentTask extends Shell {
 		$pdfData['form_completed'] = date('m/d/Y', strtotime($data['ProgramResponse']['created']));
 		$pdfData['program_name'] = $data['Program']['name'];
 		if(!empty($data['ProgramDocument'])) {
-			$pdf = $this->createPDF($pdfData, $data['ProgramDocument']['template']);
+			$pdf = $this->createPDF($pdfData, $data['ProgramDocument']['template'], 'program_forms');
 			if($pdf) {
 				if(empty($data['docId'])) {
 					$this->FiledDocument->User->QueuedDocument->create();
@@ -184,6 +187,53 @@ class QueueDocumentTask extends Shell {
 		}
 	}
 
+	private function generateEcourseDoc($data) {
+		foreach($data['User'] as $k => $v) {
+			if(!preg_match('[\@]', $v)) {
+				$data['User'][$k] = ucwords($v);
+			}
+		}
+
+		$pdfData = $data['User'];
+		$pdfData['todays_date'] = date('m/d/Y');
+		$pdfData['ecourse_name'] = $data['Ecourse']['name'];
+		if(!empty($data['Ecourse'])) {
+			$pdf = $this->createPDF($pdfData, 'atlas_cert.pdf', 'ecourse_forms');
+			if($pdf) {
+				if(empty($data['docId'])) {
+					$this->FiledDocument->User->QueuedDocument->create();
+					$this->FiledDocument->User->QueuedDocument->save();
+					$data['docId'] = $this->FiledDocument->User->QueuedDocument->getLastInsertId();
+					// delete the empty record so it does not show up in the queue
+					$this->FiledDocument->User->QueuedDocument->delete($data['docId'], false);
+					$genType = 'Generated';
+				}
+
+				$this->data['FiledDocument']['id'] = $data['docId'];
+				$this->data['FiledDocument']['filename'] = $pdf;
+				$this->data['FiledDocument']['user_id'] = $data['User']['id'];
+				$this->data['FiledDocument']['cat_1'] = $data['Ecourse']['certificate_cat_1'];
+				$this->data['FiledDocument']['cat_2'] = $data['Ecourse']['certificate_cat_2'];
+				$this->data['FiledDocument']['cat_3'] = $data['Ecourse']['certificate_cat_3'];
+				$this->data['FiledDocument']['filed'] = date('Y-m-d H:i:s');
+				$this->data['FiledDocument']['entry_method'] = 'Ecourse Generated';
+				if($this->FiledDocument->save($this->data)) {
+					// TODO update user ecourse reponse with the doc id of cert
+					$this->EcourseResponse->read(null, $data['EcourseResponse']['id']);
+					$this->EcourseResponse->set('cert_id', $data['docId']);
+					$this->EcourseResponse->save();
+					return true;
+				}
+				else {
+					return false;
+				}
+			}
+			else {
+				return false;
+			}
+		}
+	}
+
 	private	function createFDF($file,$info){
 		$data="%FDF-1.2\n%����\n1 0 obj\n<< \n/FDF << /Fields [ ";
 		foreach($info as $field => $val){
@@ -204,7 +254,7 @@ class QueueDocumentTask extends Shell {
 		return $data;
 	}
 
-	private function createPDF($data, $template){
+	private function createPDF($data, $template, $dir){
 		$path = $this->getPath();
 		// build our fancy unique filename
 		$fdfFile = date('YmdHis') . rand(0, pow(10, 7)) . '.fdf';
@@ -213,7 +263,7 @@ class QueueDocumentTask extends Shell {
 		// the temp location to write the fdf file to
 		$fdfDir = TMP . 'fdf';
 		// need to know what file the data will go into
-		$pdfTemplate = APP . 'storage' . DS . 'program_forms' . DS . $template;
+		$pdfTemplate = APP . 'storage' . DS . $dir . DS . $template;
 		// generate the file content
 		$fdfData = $this->createFDF($pdfTemplate,$data);
 		// write the file out
@@ -221,7 +271,7 @@ class QueueDocumentTask extends Shell {
 			fwrite($fp,$fdfData,strlen($fdfData));
 		}
 		fclose($fp);
-		$pdftkCommandString = 'pdftk ' . DS . APP . 'storage' . DS . 'program_forms' . DS .
+		$pdftkCommandString = 'pdftk ' . DS . APP . 'storage' . DS . $dir . DS .
 			$template . ' fill_form ' . TMP . 'fdf' . DS . $fdfFile . ' output ' . $path . DS . $pdfFile . ' flatten';
 		passthru($pdftkCommandString, $return);
 		if($return == 0) {
