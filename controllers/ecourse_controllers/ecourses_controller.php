@@ -238,14 +238,24 @@ class EcoursesController extends AppController {
         $this->view = 'Media';
         if($mediaLocation) {
             $explode = explode('.', $mediaLocation);
+
+			if (preg_match('/pp/i', $explode[1])) {
+				$download = true;
+			} else {
+				$download = false;
+			}
+
             $params = array(
                 'id' => $mediaLocation,
+				'mimeType' => array('pptx' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation'),
                 'name' => $explode[0],
+				'download' => $download,
                 'extension' => $explode[1],
-                'path' => Configure::read('Ecourse.media.path')
+				'path' => Configure::read('Ecourse.media.path')
             );
+
             $this->set($params);
-            return $params;
+			return $params;
         }
 		return false;
     }

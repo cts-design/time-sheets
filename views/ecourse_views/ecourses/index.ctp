@@ -26,6 +26,16 @@
 	</script>
 	<br />
 <?php elseif ($nextModule[0]['media_type'] == 'ppt'): ?>
+	<div id="EcoursePdf">
+		<a href="/ecourses/load_media/<?= $nextModule[0]['media_location'] ?>" target="_blank">View Powerpoint</a>
+		<br />
+		<p>
+			If you do not have Microsoft Powerpoint installed on your system, you can download
+			<a href="http://www.microsoft.com/en-us/download/details.aspx?id=13">Microsoft Powerpoint Viewer</a>
+			for free.
+		</p>
+	</div>
+	<br />
 <?php elseif ($nextModule[0]['media_type'] == 'url'): ?>
 	<div id="EcoursePdf">
 		<a href="<?= $nextModule[0]['media_location'] ?>" target="_blank">View Media</a>
@@ -33,5 +43,5 @@
 	<br />
 <?php endif ?>
 <div>
-	<a class="button" href="/ecourses/quiz/<?php echo $nextModule[0]['id']?>">Proceed to quiz.</a>
+	<a class="button" href="/ecourses/quiz/<?php echo $nextModule[0]['id'] . '/' . $modResponseTimeId?>">Proceed to quiz.</a>
 </div>
