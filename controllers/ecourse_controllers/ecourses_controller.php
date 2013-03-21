@@ -137,7 +137,8 @@ class EcoursesController extends AppController {
 		$ecourseResponse = $this->Ecourse->EcourseResponse->find('first', array(
 			'conditions' => array(
 				'EcourseResponse.user_id' => $this->Auth->user('id'),
-				'EcourseResponse.ecourse_id' => $ecourseModule['EcourseModule']['ecourse_id']),
+				'EcourseResponse.ecourse_id' => $ecourseModule['EcourseModule']['ecourse_id'],
+				'EcourseResponse.reset' => 0),
 			'fields' => array('id'),
 			'contain' => array(
 				'EcourseModuleResponse' => array(
