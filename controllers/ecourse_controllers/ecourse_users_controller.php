@@ -55,7 +55,11 @@ class EcourseUsersController extends AppController {
 		if($this->RequestHandler->isAjax()) {
 			$this->data['EcourseUser']['user_id'] = $this->params['form']['user_id'];
 			$this->data['EcourseUser']['ecourse_id'] = $this->params['form']['ecourse_id'];
-			if($this->EcourseUser->save($this->data)) {
+			$count = $this->EcourseUser->find('count', array(
+				'conditions' => array(
+					'EcourseUser.user_id' => $this->params['form']['user_id'],
+					'EcourseUser.ecourse_id' => $this->params['form']['ecourse_id'])));
+			if($count == 0 && $this->EcourseUser->save($this->data)) {
 				$data['success'] = true;
 				$data['message'] = 'User successfully assigned to ecourse.';
 				$this->Transaction->createUserTransaction(
@@ -65,6 +69,10 @@ class EcourseUsersController extends AppController {
 					'Assinged customer id: ' . $this->params['form']['user_id'] . ' to ecourse id: ' . $this->params['form']['ecourse_id']
 				);
 		   	}
+			else {
+				$data['success'] = false;
+				$data['message'] = 'Unable to assign user to course, or user is already assigned.';
+			}
 			$this->set(compact('data'));
 			$this->render(null, null, '/elements/ajaxreturn');
 		}
@@ -81,7 +89,11 @@ class EcourseUsersController extends AppController {
 		if($this->RequestHandler->isAjax()) {
 			$this->data['EcourseUser']['user_id'] = $this->params['form']['user_id'];
 			$this->data['EcourseUser']['ecourse_id'] = $this->params['form']['ecourse_id'];
-			if($this->EcourseUser->save($this->data)) {
+			$count = $this->EcourseUser->find('count', array(
+				'conditions' => array(
+					'EcourseUser.user_id' => $this->params['form']['user_id'],
+					'EcourseUser.ecourse_id' => $this->params['form']['ecourse_id'])));
+			if($count == 0 && $this->EcourseUser->save($this->data)) {
 				$data['success'] = true;
 				$data['message'] = 'User successfully assigned to ecourse.';
 				$this->Transaction->createUserTransaction(
@@ -91,6 +103,10 @@ class EcourseUsersController extends AppController {
 					'Assinged staff member id: ' . $this->params['form']['user_id'] . ' to ecourse id: ' . $this->params['form']['ecourse_id']
 				);
 		   	}
+			else {
+				$data['success'] = false;
+				$data['message'] = 'Unable to assign user to course, or user is alrady assigned.';
+			}
 			$this->set(compact('data'));
 			$this->render(null, null, '/elements/ajaxreturn');
 		}
