@@ -4,9 +4,9 @@
 			<h5><?= Inflector::humanize($question['text']) ?></h5>
 			<?php foreach($question['EcourseModuleQuestionAnswer'] as $answer) : ?>
 				<?php if(in_array($answer['id'], $userAnswers) && $answer['correct']) : ?>
-					<p style="color: green"><?= $answer['text'] ?></p>
+					<p style="color: green"><?= Sanitize::html($answer['text']) ?></p>
 				<?php else : ?>	
-					<p style="color: red"><?= $answer['text'] ?> </p>
+					<p style="color: red"><?= Sanitize::html($answer['text']) ?> </p>
 				<?php endif ?>
 			<?php endforeach ?>
 		</li>
