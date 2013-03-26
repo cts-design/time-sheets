@@ -1,12 +1,12 @@
-<ol>
+<ol id="ecourse-quiz-results">
 	<?php foreach($ecourseModule['EcourseModuleQuestion'] as $question) : ?> 
 		<li>
 			<h5><?= Inflector::humanize($question['text']) ?></h5>
 			<?php foreach($question['EcourseModuleQuestionAnswer'] as $answer) : ?>
 				<?php if(in_array($answer['id'], $userAnswers) && $answer['correct']) : ?>
-					<p style="color: green"><?= Sanitize::html($answer['text']) ?></p>
+					<p class="correct-answer"><?= Sanitize::html($answer['text']) ?></p>
 				<?php else : ?>	
-					<p style="color: red"><?= Sanitize::html($answer['text']) ?> </p>
+					<p class="incorrect-answer"><?= Sanitize::html($answer['text']) ?> </p>
 				<?php endif ?>
 			<?php endforeach ?>
 		</li>
