@@ -176,4 +176,38 @@ class EventRegistrationsController extends AppController {
 		$this->layout = 'ajax';
 		$this->set($data);
 	}
+
+	public function admin_attendance_roster() {
+		$this->EventRegistration->Event->recursive = 2;
+		if(isset($this->params['pass'][0])) {
+			$event = $this->EventRegistration->Event->findById($this->params['pass'][0]);	
+		}
+		$report = array();
+		$title = 'Event Attendance Roster ';
+		if($event) {
+			$title .= 'for ' . $event['Event']['name'] . ' Scheduled ' .
+				date('m/d/y h:i a', strtotime($event['Event']['scheduled'])) . ' at ' . $event['Location']['name']; 
+
+			if(!empty($event['EventRegistration'])) {
+				foreach($event['EventRegistration'] as $k => $v) {
+					$report[$k]['Present'] = null;
+					$report[$k]['First Name'] = $v['User']['firstname'];
+					$report[$k]['Last Name'] = $v['User']['lastname'];
+					$report[$k]['Registered'] = date('m/d/y', strtotime($v['created']));
+				}
+			}
+		}
+
+		$this->Transaction->createUserTransaction(
+			'Events',
+			$this->Auth->user('id'),
+			$this->Auth->user('location_id'),
+			'Printed attendance roster for event, id: ' . $event['Event']['id']
+		);
+		$data = array('data' => $report,
+			'title' => $title);
+		Configure::write('debug', 0);
+		$this->layout = 'ajax';
+		$this->set($data);
+	}
 }
