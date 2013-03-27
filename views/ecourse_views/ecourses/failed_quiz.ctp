@@ -1,12 +1,18 @@
-<ol>
+<?php $this->Html->scriptStart(array('inline' => false)); ?>
+$(function () {
+  $(".button").button();
+});
+<?php $this->Html->scriptEnd(); ?>
+
+<ol id="ecourse-quiz-results">
 	<?php foreach($ecourseModule['EcourseModuleQuestion'] as $question) : ?> 
 		<li>
 			<h5><?= Inflector::humanize($question['text']) ?></h5>
 			<?php foreach($question['EcourseModuleQuestionAnswer'] as $answer) : ?>
 				<?php if(in_array($answer['id'], $userAnswers) && $answer['correct']) : ?>
-					<p style="color: green"><?= $answer['text'] ?></p>
+					<p class="correct-answer"><?= Sanitize::html($answer['text']) ?></p>
 				<?php else : ?>	
-					<p style="color: red"><?= $answer['text'] ?> </p>
+					<p class="incorrect-answer"><?= Sanitize::html($answer['text']) ?> </p>
 				<?php endif ?>
 			<?php endforeach ?>
 		</li>
@@ -14,5 +20,5 @@
 </ol>
 <br />
 <p>
-	<?php echo $this->Html->link('Return to course', '/ecourses/index/'.$ecourseModule['EcourseModule']['ecourse_id'] )?>
+	<?php echo $this->Html->link('Return to course', '/ecourses/index/'.$ecourseModule['EcourseModule']['ecourse_id'], array('class' => 'button'))?>
 </p>
