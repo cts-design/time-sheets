@@ -43,8 +43,8 @@ Ext.create('Ext.data.Store', {
       if(responseTxt.success) {
         iconCls = 'x-status-valid'; 
       }
-      sb.setStatus({
-        text: responseTxt.message,
+      sb.setstatus({
+        text: responsetxt.message,
         iconCls: iconCls,
         clear: {
           anim: false
@@ -99,6 +99,12 @@ Ext.onReady(function() {
               store.sync();
               sm.deselectAll();
             }
+          },{
+            id: 'reportButton',
+            xtype: 'button',
+            text: 'Attendance Roster',
+            icon: '/img/icons/excel.png',
+            href: '/admin/event_registrations/attendance_roster/'+eventId
           },{
             text: 'Delete',
             iconCls: 'icon_delete',
