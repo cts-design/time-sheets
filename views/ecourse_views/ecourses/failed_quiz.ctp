@@ -1,3 +1,9 @@
+<?php $this->Html->scriptStart(array('inline' => false)); ?>
+$(function () {
+  $(".button").button();
+});
+<?php $this->Html->scriptEnd(); ?>
+
 <ol id="ecourse-quiz-results">
 	<?php foreach($ecourseModule['EcourseModuleQuestion'] as $question) : ?> 
 		<li>
@@ -14,5 +20,5 @@
 </ol>
 <br />
 <p>
-	<?php echo $this->Html->link('Return to course', '/ecourses/index/'.$ecourseModule['EcourseModule']['ecourse_id'] )?>
+	<?php echo $this->Html->link('Return to course', '/ecourses/index/'.$ecourseModule['EcourseModule']['ecourse_id'], array('class' => 'button'))?>
 </p>
