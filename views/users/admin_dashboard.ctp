@@ -64,12 +64,21 @@
 		<div>
 			<h3><?php echo $html->image('icons/report.png')?> <?php __('Your Ecourses') ?></h3>
 			<?php foreach ($ecourses as $ecourse): ?>
+				<?php
+					$moduleComplete = (isset($value['Ecourse']['EcourseResponse'][0]) && $ecourse['Ecourse']['EcourseResponse'][0]['status'] == 'completed') ? true : false;
+					$modules = Set::extract('/EcourseModule/id', $ecourse['Ecourse']);
+					$moduleResponses = Set::extract('/EcourseResponse/EcourseModuleResponse[pass_fail=Pass]/ecourse_module_id', $ecourse['Ecourse']);
+				?>
 				<p>
 					<a href="/ecourses/index/<?= $ecourse['Ecourse']['id'] ?>">
 						<?= $ecourse['Ecourse']['name'] ?>
 					</a>
 					<br />
-					<?= count($ecourse['Ecourse']['EcourseModule']) ?> modules
+					<i class="icon-book"></i>
+					<?= count($moduleResponses) ?> of
+					<?= count($ecourse['Ecourse']['EcourseModule']) ?>
+					<?= (count($modules) > 1) ? 'modules' : 'module' ?>
+					completed
 				</p>
 			<?php endforeach ?>
 		</div>
