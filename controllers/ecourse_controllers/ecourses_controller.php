@@ -29,7 +29,8 @@ class EcoursesController extends AppController {
 				'EcourseModule' => array('order' => 'EcourseModule.order ASC'),
 				'EcourseUser' => array(
 						'conditions' => array(
-							'EcourseUser.ecourse_id' => $id, 'EcourseUser.user_id' => $this->Auth->user('id'))),
+							'EcourseUser.ecourse_id' => $id,
+							'EcourseUser.user_id' => $this->Auth->user('id'))),
 				'EcourseResponse' => array (
 					'conditions' => array(
 						'EcourseResponse.user_id' => $this->Auth->user('id'),
@@ -260,6 +261,44 @@ class EcoursesController extends AppController {
         }
 		return false;
     }
+
+	public function view_certificate($responseId = null) {
+		if (!$responseId) {
+			$this->Session->setFlash(__('Invalid Ecourse Response', true), 'flash_failure');
+			$this->redirect($this->referer());
+		}
+
+		$moduleResponse = $this->Ecourse->EcourseResponse->find('first', array(
+			'conditions' => array(
+				'EcourseResponse.id' => $responseId
+			)
+		));
+		$docId = Set::extract('/EcourseResponse/cert_id', $moduleResponse);
+
+		if(!$docId) {
+			$this->Session->setFlash(__('Document has not been generated just yet. Please try again in a few minutes.', true), 'flash_failure');
+			$this->redirect($this->referer());
+		}
+
+		$this->view = 'Media';
+		$this->loadModel('FiledDocument');
+
+		$doc = $this->FiledDocument->read(null, $docId[0]);
+		$params = array(
+			'id' => $doc['FiledDocument']['filename'],
+			'name' => str_replace('.pdf', '', $doc['FiledDocument']['filename']),
+			'extension' => 'pdf',
+			'cache' => true,
+			'path' => Configure::read('Document.storage.path') .
+			date('Y', strtotime($doc['FiledDocument']['created'])) . '/' .
+			date('m', strtotime($doc['FiledDocument']['created'])) . '/'
+		);
+
+		$this->Transaction->createUserTransaction('Ecourses', null, null,
+			'Viewed certificate for ' . $moduleResponse['Ecourse']['name']);
+		$this->set($params);
+		return $params;
+	}
 
 	public function admin_index() {
 		$this->Ecourse->recursive = -1;
