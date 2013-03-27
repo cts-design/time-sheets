@@ -377,6 +377,11 @@ legend {
   width: 350px;
 }
 
+#ecourses div {
+  height: 226px;
+  overflow: auto;
+}
+
 #ecourses div,
 #information #help {
   border: 1px solid #B5D3DF;
@@ -4244,4 +4249,18 @@ table.raw-data tr td {
 .x-grid-cell-inner img.x-action-col-icon.user-assignment-disabled {
   background: transparent url(../img/icons/group_link_disabled.png) 0 0 !important;
   cursor: default !important;
+}
+
+#ecourses h4 {
+  color: #565656;
+  font-weight: bold;
+  margin-bottom: 3px;
+}
+
+#ecourses span.details {
+  color: #999;
+}
+
+#ecourses i {
+  color: #1875BB;
 }
