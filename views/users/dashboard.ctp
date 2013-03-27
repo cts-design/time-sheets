@@ -72,7 +72,10 @@
 					</div>
 					<div class="details">
 						<i class="icon-book"></i>
-						<?= count($value['Ecourse']['EcourseModule']) ?> Modules
+						<?= count($moduleResponses) ?> of
+						<?= count($value['Ecourse']['EcourseModule']) ?>
+						<?= (count($modules) > 1) ? 'modules' : 'module' ?>
+						completed
 					</div>
 
 					<span class="action">
