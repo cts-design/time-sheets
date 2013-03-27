@@ -81,6 +81,9 @@
 						<?= count($value['Ecourse']['EcourseModule']) ?>
 						<?= (count($modules) > 1) ? 'modules' : 'module' ?>
 						completed
+						<?php if ($moduleComplete): ?>
+							(<a href="/ecourses/view_certificate/<?= $value['Ecourse']['EcourseResponse'][0]['id'] ?>">Download Certificate</a>)
+						<?php endif ?>
 					</div>
 
 					<span class="action">
