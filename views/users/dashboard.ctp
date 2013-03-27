@@ -66,6 +66,11 @@
 		<div class="widget-content">
 			<ul>
 			<?php foreach($ecourses as $key => $value) : ?>
+				<?php
+					$moduleComplete = (isset($value['Ecourse']['EcourseResponse'][0]) && $value['Ecourse']['EcourseResponse'][0]['status'] == 'completed') ? true : false;
+					$modules = Set::extract('/EcourseModule/id', $value['Ecourse']);
+					$moduleResponses = Set::extract('/EcourseResponse/EcourseModuleResponse[pass_fail=Pass]/ecourse_module_id', $value['Ecourse']);
+				?>
 				<li>
 					<div class="title">
 						<a href="/ecourses/index/<?= $value['Ecourse']['id'] ?>"><?= Inflector::humanize($value['Ecourse']['name']) ?></a>
@@ -80,7 +85,13 @@
 
 					<span class="action">
 						<a href="/ecourses/index/<?= $value['Ecourse']['id'] ?>" class="button gray">
-							<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Get Started') ?>
+							<?php if (empty($moduleResponses)): ?>
+								<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Get Started') ?>
+							<?php elseif ($moduleComplete): ?>
+								<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Completed') ?>
+							<?php else: ?>
+								<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Continue') ?>
+							<?php endif ?>
 						</a>
 					</span>
 				</li>
