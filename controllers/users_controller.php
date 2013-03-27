@@ -342,7 +342,14 @@ class UsersController extends AppController {
 					'Ecourse.type' => 'customer'
 				),
 				'contain' => array(
-					'EcourseModule'
+					'EcourseModule' => array('order' => 'EcourseModule.order ASC'),
+					'EcourseResponse' => array(
+						'conditions' => array(
+							'EcourseResponse.user_id' => $this->Auth->user('id'),
+							'EcourseResponse.reset' => 0
+						),
+						'EcourseModuleResponse'
+					)
 				)
 			)
 		);
@@ -358,6 +365,7 @@ class UsersController extends AppController {
 		if ($publicEcourses) {
 			foreach ($publicEcourses as $key => $ecourse) {
 				$ecourse['Ecourse']['EcourseModule'] = $ecourse['EcourseModule'];
+				$ecourse['Ecourse']['EcourseResponse'] = $ecourse['EcourseResponse'];
 				$ecourses[]['Ecourse'] = $ecourse['Ecourse'];
 			}
 		}
