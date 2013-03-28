@@ -103,7 +103,7 @@ Ext.onReady(function() {
             id: 'reportButton',
             xtype: 'button',
             text: 'Attendance Roster',
-            icon: '/img/icons/excel.png',
+            icon: '/img/icons/pdf.png',
             href: '/admin/event_registrations/attendance_roster/'+eventId
           },{
             text: 'Delete',
