@@ -64,6 +64,13 @@ task :elcp do
   server "vpk.elcpinellas.net", :app, :web, :db, :primary => true
 end
 
+task :elcmdm do
+  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
+  set :server_name, 'elcmdm production'
+  set :user, 'deploy'
+  server "atlas.elcmdm.org", :app, :web, :db, :primary => true
+end
+
 task :cc do
   set :deploy_to, "/var/www/vhosts/atlasv3.careercentral.jobs/#{application}"
   set :server_name, 'cc production'
