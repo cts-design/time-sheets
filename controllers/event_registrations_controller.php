@@ -6,6 +6,8 @@
  * @package ATLAS V3
  */
 
+App::import('Vendor', 'wkhtmltopdf/wkhtmltopdf');
+
 class EventRegistrationsController extends AppController {
 
 	public $name = 'EventRegistrations';
@@ -182,7 +184,7 @@ class EventRegistrationsController extends AppController {
 		if(isset($this->params['pass'][0])) {
 			$event = $this->EventRegistration->Event->findById($this->params['pass'][0]);	
 		}
-		$report = array();
+		$users = array();
 		$title = 'Event Attendance Roster ';
 		if($event) {
 			$title .= 'for ' . $event['Event']['name'] . ' Scheduled ' .
@@ -190,10 +192,9 @@ class EventRegistrationsController extends AppController {
 
 			if(!empty($event['EventRegistration'])) {
 				foreach($event['EventRegistration'] as $k => $v) {
-					$report[$k]['Present'] = null;
-					$report[$k]['First Name'] = $v['User']['firstname'];
-					$report[$k]['Last Name'] = $v['User']['lastname'];
-					$report[$k]['Registered'] = date('m/d/y', strtotime($v['created']));
+					$users[$k]['First Name'] = $v['User']['firstname'];
+					$users[$k]['Last Name'] = $v['User']['lastname'];
+					$users[$k]['Registered'] = date('m/d/y', strtotime($v['created']));
 				}
 			}
 		}
@@ -204,10 +205,45 @@ class EventRegistrationsController extends AppController {
 			$this->Auth->user('location_id'),
 			'Printed attendance roster for event, id: ' . $event['Event']['id']
 		);
-		$data = array('data' => $report,
-			'title' => $title);
-		Configure::write('debug', 0);
 		$this->layout = 'ajax';
-		$this->set($data);
+		$this->generatePDF($users, $event);
+	}
+
+	private function generatePDF($users, $event) {
+		if($users){
+			$html = "<style>td { text-align: center; height: 50px;font-size: 25px}</style>";
+			$html .= '<div>';
+			$html .= '<table cellspacing="25" cellpadding="5">';
+			$html .= '<tr>';
+			$html .= '<th>Name</th>';
+			$html .= '<th>Registered</th>';
+			$html .= '<th>Signature</th>';
+			$html .= '</tr>';
+			foreach($users as $user) {
+				$html .= '<tr>';
+				$html .= "<td>" . $user['First Name'] . " " . $user['Last Name'] . "</td>";
+				$html .= "<td>" . $user['Registered'] . "</td>";
+				$html .= "<td>X______________________________</td>";
+				$html .= '</tr>';
+			}
+			$html .= '</table>';
+			$html .= '</div>';
+			try {
+				$pdf = new WKPDF_MULTI();
+				$pdf->add_html($html);
+				$pdf->args_add('--header-spacing', '5');
+				$pdf->args_add('--header-left', $event['Event']['name']);
+				$pdf->args_add('--header-center', '[date]');
+				$pdf->args_add('--header-right', Configure::read('Company.name'));
+				$pdf->args_add('--footer-center', 'Page: [page] of [topage]') ;
+				Configure::write('debug', 0);
+				$pdf->render();
+				$pdf->output(WKPDF_MULTI::$PDF_EMBEDDED);
+			}
+			catch(Exception $e) {
+				$this->log('WKPDF Exception (line ' . $e->getLine() .'): ' . $e->getMessage(), 'error');
+				return false;
+			}
+		}
 	}
 }
