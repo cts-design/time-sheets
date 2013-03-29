@@ -14,6 +14,7 @@ Ext.define('Event', {
     {name: 'url'},
     {name: 'address'},
     {name: 'scheduled', type: 'date', dateFormat: 'Y-m-d H:i:s'},
+    {name: 'allow_registrations'},
     {name: 'seats_available'},
     {name: 'duration'},
     {name: 'event_registration_count'},
@@ -507,9 +508,24 @@ Ext.create('Ext.form.Panel', {
     name: 'url',
     vtype: 'url'
   },{
+    fieldLabel: 'Allow Registrations',
+    name: 'allow_registrations',
+    xtype: 'checkbox',
+    listeners: {
+      change: function(checkbox, newValue, oldValue, eOpts) {
+        if(newValue) {
+          this.nextSibling().enable();
+        }
+        else {
+          this.nextSibling().disable();
+        }
+      }
+    }
+  },{
     fieldLabel: 'Seats',
     name: 'seats_available',
     xtype: 'numberfield',
+    disabled: true,
     width: 120,
     minValue: 1,
     maxValue: 100,
