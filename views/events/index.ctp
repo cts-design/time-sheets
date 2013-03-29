@@ -45,7 +45,8 @@
 			<?php $day = date('l, F dS', strtotime($event['Event']['scheduled'])) ?>
 			<?php $month = date('M', strtotime($event['Event']['scheduled'])) ?>
 			<?php $startTime = strtotime($event['Event']['scheduled']) ?>
-			<?php $endTime = strtotime("+{$event['Event']['duration']} hours", $startTime) ?>
+			<?php $mins = ($event['Event']['duration'] / .25) * 15 ?>
+			<?php $endTime = strtotime("$mins minutes", $startTime) ?>
 			<?php $event_start_date = strtotime($events[0]['Event']['scheduled']) ?>
 
 			<?php if (strtotime(date('m/d/Y', strtotime($event['Event']['scheduled']))) > $event_start_date): ?>

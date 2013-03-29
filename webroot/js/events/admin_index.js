@@ -535,9 +535,10 @@ Ext.create('Ext.form.Panel', {
     xtype: 'numberfield',
     name: 'duration',
     minValue: 1,
+    step: .25,
     allowBlank: false,
     maxValue: 8,
-    width: 110
+    width: 150
   },{
     fieldLabel: 'Cat 1',
     disabled: true,
