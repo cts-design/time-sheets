@@ -3,6 +3,24 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+	<h1>Release 3.7 (3-29-13)</h1>
+	<h2>Major Updates</h2>
+	<ol>
+		<li>Release of the ATLAS integrated E-Course Module. This module will allow delivery of Customer and Staff E-course Material.</li>
+	</ol>
+	<h2>Minor Updates</h2>
+	<ol>
+		<li>Added ability to customize an event to allow/disallow self-reservation from the web-services module.</li>
+		<li>Added additional event duration options - .25 increment</li>
+		<li>Added "printable" sign-in sheet for events</li>
+		<li>Added ability for staff to "register" customers from admin area.</li>
+	</ol>
+	<h2>Bug Fixes</h2>
+	<ol>
+		<li>Forced any "location" that was not marked as "Viewable on Web-Site" to be hidden on the Self-Service reservation view within the Events controller.</li>
+		<li>Fixed bug that was causing "role admins" to not be able to view locations on the event creation view.</li>
+	</ol>
+	<hr />	
 	<h1>Release 3.6 (1-31-13) </h1>
 	<h2>Major Updates</h2>
 	<ol>
