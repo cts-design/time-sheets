@@ -27,9 +27,11 @@ class FtpDocumentAbsorptionShell extends Shell {
 		$this->AutoLock->set(array('auto_lock_status' => 1));
 		if ($this->AutoLock->save()) {
 			$scan_path = Configure::read('Document.scan.path');
+			$path = APP . substr(Configure::read('Document.storage.path'), 1);
+                        $path .= date('Y') . '/';
+                        $path .= date('m') . '/';
 			// Read in existing FTP log
 			$ftp_log = file(Configure::read('FTP.log.path'));
-			$path = APP . substr(Configure::read('Document.storage.path'), 1);
 			if ($folder_list = opendir($scan_path)) {
 				while (false != ($scan_folder = readdir($folder_list))) {
 					if (($scan_folder != '.') && ($scan_folder != '..')) {
@@ -69,30 +71,8 @@ class FtpDocumentAbsorptionShell extends Shell {
 										continue;
 									}
 
-									// Barcode section
-									// Needs to be run on Ubuntu, using ImageMagick/convert, pdftk, and bardecode
-									// Make sure path for writing file to filesystem exists; if not, create
-									
-									if (!file_exists($path . date('Y') . '/')) {
-										// If it can't create the year folder, something is wrong. Keep the db locked, E-Mail admin, and exit
-										if (!mkdir($path . date('Y'), 0777)) {
-											$this->log('FTP ABSORB: Can\'t create year folder at: ' . $path, 'error');
-											$this->Notifications->sendAbsorptionEmail('CANNOT CREATE YEAR FOLDER','CANNOT CREATE YEAR FOLDER.\nATLAS FTP doc absorption has exited and will not run until resolved.\n');
-											exit;
-										}
-									}
-									$path .= date('Y') . '/';
-									if (!file_exists($path . date('m') . '/')) {
-										if (!mkdir($path . date('m'), 0777)) {
-											// If it can't create month folder, something is wrong. Keep the db locked, E-Mail admin, and exit
-											$this->log('FTP ABSORB: Can\'t create month folder at: ' . $path, 'error');
-											$this->Notifications->sendAbsorptionEmail('CANNOT CREATE MONTH FOLDER','CANNOT CREATE MONTH FOLDER.\nATLAS FTP doc absorption has exited and will not run until resolved.\n');
-											exit;
-											continue;
-										}
-									}
-									$path .= date('m') . '/';
 									$docName = date('YmdHis') . rand(0, pow(10, 7)) . '.pdf';
+
 									// Copy the file to destination folder
 									// If it can't copy the file, something is wrong. Keep the db locked, E-Mail admin, and exit
 									if (!copy($scan_path . $scan_folder . '/' . $file_name, $path . $docName)) {
