@@ -124,6 +124,7 @@ strong {
 
 #content > div,
 #footer > div,
+#content #ecourses > div,
 #content #administration > div,
 #content #information > div {
   padding: 10px;
@@ -370,26 +371,33 @@ legend {
   margin-bottom: 10px;
 }
 
-#information {
+#information,
+#ecourses {
   margin: 10px 25px 0 0;
   width: 350px;
 }
 
+#ecourses div,
 #information #help {
   border: 1px solid #B5D3DF;
-  height: 125px;
   padding: 10px;
   background-color:#F1F8FB
 }
 
+#information #help { height: 125px; }
+
+#ecourses h3,
 #help h3 {
   margin-bottom: 10px;
   font-weight: bold;
 }
 
+#ecourses p,
 #help p {
   margin-bottom: 5px;
 }
+
+#ecourses p { color: #999; }
 
 #graph {
   margin: 10px auto;
@@ -1211,6 +1219,22 @@ table.raw-data tr td {
 .icon-add {
   background-image: url('../img/icons/add.png');
 }
+
+#EcourseResponsePanel .incorrect-row {
+	color: red;
+}
+
+#EcourseResponsePanel .correct-row {
+	color: green;
+}
+
+#EcourseResponsePanel .x-grid-row-summary {
+	font-style: italic;
+	font-size: 11px;
+}
+
+
+
 // ICONS ***************************************
 .icon_accept {
   background: url(../img/icons/accept.png);
@@ -4211,4 +4235,13 @@ table.raw-data tr td {
 }
 .icon_zoom_out {
   background: url(../img/icons/zoom_out.png);
+}
+
+.x-grid-cell-inner .user-assignment-required {
+  background: transparent url(../img/icons/group_link.png) 0 0 !important;
+}
+
+.x-grid-cell-inner img.x-action-col-icon.user-assignment-disabled {
+  background: transparent url(../img/icons/group_link_disabled.png) 0 0 !important;
+  cursor: default !important;
 }

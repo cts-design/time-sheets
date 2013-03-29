@@ -44,18 +44,21 @@ App::build(
     array(
         'controllers' => array(
 			CONTROLLERS,
+            CONTROLLERS . 'ecourse_controllers' . DS,
             CONTROLLERS . 'program_controllers' . DS,
             CONTROLLERS . 'kiosk_survey_controllers' . DS,
             CONTROLLERS . 'website_controllers' . DS
         ),
         'models' => array(
 			MODELS,
+            MODELS . 'ecourse_models' . DS,
             MODELS . 'program_models' . DS,
             MODELS . 'kiosk_survey_models' . DS,
             MODELS . 'website_models' . DS
         ),
         'views' => array(
 			VIEWS,
+            VIEWS . 'ecourse_views' . DS,
             VIEWS . 'kiosk_survey_views' . DS,
             VIEWS . 'program_views' . DS,
             VIEWS . 'website_views' . DS

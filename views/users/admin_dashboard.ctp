@@ -31,6 +31,7 @@
             <?php echo $this->Nav->buildAdminNavigation('selfSign') ?>
             <?php echo $this->Nav->buildAdminNavigation('storage') ?>
             <?php echo $this->Nav->buildAdminNavigation('programs') ?>
+            <?php echo $this->Nav->buildAdminNavigation('ecourses') ?>
             <?php echo $this->Nav->buildAdminNavigation('audits') ?>
             <?php echo $this->Nav->buildAdminNavigation('tools') ?>
 		</ul>
@@ -57,6 +58,23 @@
 	    	</p>    	
 	    </div>
     </div>
-    <div class="clear"></div>
+
+	<?php if ($ecourses): ?>
+	<div id="ecourses" class="left">
+		<div>
+			<h3><?php echo $html->image('icons/report.png')?> <?php __('Your Ecourses') ?></h3>
+			<?php foreach ($ecourses as $ecourse): ?>
+				<p>
+					<a href="/ecourses/index/<?= $ecourse['Ecourse']['id'] ?>">
+						<?= $ecourse['Ecourse']['name'] ?>
+					</a>
+					<br />
+					<?= count($ecourse['Ecourse']['EcourseModule']) ?> modules
+				</p>
+			<?php endforeach ?>
+		</div>
+	</div>
+	<?php endif ?>
+	<div class="clear"></div>
 </div>
 

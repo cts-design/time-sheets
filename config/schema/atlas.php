@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2013-01-29 10:42:53 : 1359474173*/
+/* atlas schema generated on: 2013-03-19 08:32:17 : 1363696337*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -199,6 +199,98 @@ class atlasSchema extends CakeSchema {
 		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'user_id' => array('column' => 'user_id', 'unique' => 0)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
+	);
+	var $ecourse_module_question_answers = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+		'ecourse_module_question_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+		'text' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'correct' => array('type' => 'boolean', 'null' => true, 'default' => NULL),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
+		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MyISAM')
+	);
+	var $ecourse_module_questions = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+		'ecourse_module_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+		'text' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'order' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
+		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MyISAM')
+	);
+	var $ecourse_module_response_times = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+		'ecourse_module_response_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
+		'type' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'time_in' => array('type' => 'timestamp', 'null' => true, 'default' => NULL),
+		'time_out' => array('type' => 'timestamp', 'null' => true, 'default' => NULL),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'module_response_id' => array('column' => 'ecourse_module_response_id', 'unique' => 0)),
+		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MyISAM')
+	);
+	var $ecourse_module_responses = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+		'ecourse_module_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
+		'ecourse_response_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
+		'score' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'pass_fail' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'ecourse_response_id' => array('column' => 'ecourse_response_id', 'unique' => 0), 'ecourse_module_id' => array('column' => 'ecourse_module_id', 'unique' => 0)),
+		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MyISAM')
+	);
+	var $ecourse_modules = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+		'ecourse_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+		'name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'instructions' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'media_name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'media_type' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'media_location' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'order' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+		'passing_percentage' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 3),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
+		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MyISAM')
+	);
+	var $ecourse_responses = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+		'ecourse_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
+		'user_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
+		'status' => array('type' => 'string', 'null' => false, 'default' => 'incomplete', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'reset' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'time_spent' => array('type' => 'time', 'null' => true, 'default' => NULL),
+		'cert_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'completed' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'ecourse_id' => array('column' => 'ecourse_id', 'unique' => 0), 'user_id' => array('column' => 'user_id', 'unique' => 0)),
+		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MyISAM')
+	);
+	var $ecourse_users = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+		'ecourse_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+		'user_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
+		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MyISAM')
+	);
+	var $ecourses = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+		'type' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'instructions' => array('type' => 'text', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'default_passing_percentage' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 3),
+		'certificate_cat_1' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+		'certificate_cat_2' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'certificate_cat_3' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'requires_user_assignment' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'disabled' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
+		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MyISAM')
 	);
 	var $employers_surveys = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),

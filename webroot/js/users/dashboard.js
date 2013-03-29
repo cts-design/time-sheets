@@ -168,6 +168,11 @@ $(document).ready(function () {
 	        		image: "/img/icons/clipboard.png"
 	        	}
 	        },
+	       	ecourses: {
+	        	icon: {
+	        		image: "/img/icons/report.png"
+	        	}
+	        },
 			selfSignSurvey: {
 				icon: {
 					image: "/img/icons/survey.png"

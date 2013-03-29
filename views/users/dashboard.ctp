@@ -54,6 +54,55 @@
 	</div>
 	<?php endif ?>
 
+	<?php if(!empty($ecourses)) : ?>
+	<div id="online-ecourses" class="widget">
+		<div class="widget-header">
+			<h2>
+				<i class="icon-tasks"></i>
+				Online Ecourses
+			</h2>
+		</div>
+
+		<div class="widget-content">
+			<ul>
+			<?php foreach($ecourses as $key => $value) : ?>
+				<?php
+					$moduleComplete = (isset($value['Ecourse']['EcourseResponse'][0]) && $value['Ecourse']['EcourseResponse'][0]['status'] == 'completed') ? true : false;
+					$modules = Set::extract('/EcourseModule/id', $value['Ecourse']);
+					$moduleResponses = Set::extract('/EcourseResponse/EcourseModuleResponse[pass_fail=Pass]/ecourse_module_id', $value['Ecourse']);
+				?>
+				<li>
+					<div class="title">
+						<a href="/ecourses/index/<?= $value['Ecourse']['id'] ?>"><?= Inflector::humanize($value['Ecourse']['name']) ?></a>
+					</div>
+					<div class="details">
+						<i class="icon-book"></i>
+						<?= count($moduleResponses) ?> of
+						<?= count($value['Ecourse']['EcourseModule']) ?>
+						<?= (count($modules) > 1) ? 'modules' : 'module' ?>
+						completed
+						<?php if ($moduleComplete): ?>
+							(<a href="/ecourses/view_certificate/<?= $value['Ecourse']['EcourseResponse'][0]['id'] ?>">Download Certificate</a>)
+						<?php endif ?>
+					</div>
+
+					<span class="action">
+						<a href="/ecourses/index/<?= $value['Ecourse']['id'] ?>" class="button gray">
+							<?php if (empty($moduleResponses)): ?>
+								<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Get Started') ?>
+							<?php elseif ($moduleComplete): ?>
+								<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Completed') ?>
+							<?php else: ?>
+								<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Continue') ?>
+							<?php endif ?>
+						</a>
+					</span>
+				</li>
+			<?php endforeach ?>
+			</ul>
+		</div>
+	</div>
+	<?php endif ?>
 
 	<?php if(!empty($registrations)) : ?>
 	<div id="online-registrations" class="widget">
