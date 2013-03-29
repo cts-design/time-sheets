@@ -5,6 +5,24 @@
  */
 
 $(document).ready(function () {
+  $('#toggle-completed').bind('click', function (event) {
+    var ul = $(this).next('ul');
+
+    event.preventDefault();
+
+    switch ($(this).text()) {
+      case 'Hide Completed':
+        $(ul).children('.complete').css('display', 'none');
+        $(this).text('Show Completed');
+        break;
+
+      case 'Show Completed':
+        $(ul).children('.complete').css('display', 'list-item');
+        $(this).text('Hide Completed');
+        break;
+    }
+  });
+
   $("#dashboardAdminTree").jstree({
     types: {
       max_depth: -2,
@@ -214,10 +232,10 @@ $(document).ready(function () {
   });
 
   $('#expand').toggle(function () {
-  	$.jstree._reference("#dashboardAdminTree").open_all();
-  	$(this).html('Collapse All')
+    $.jstree._reference("#dashboardadmintree").open_all();
+    $(this).html('Collapse All')
   }, function () {
-  	$.jstree._reference("#dashboardAdminTree").close_all();
-  	$(this).html('Expand All')
+    $.jstree._reference("#dashboardadmintree").close_all();
+    $(this).html('Expand All')
   });
 });
