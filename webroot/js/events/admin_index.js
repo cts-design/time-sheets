@@ -174,7 +174,7 @@ Ext.create('Ext.data.Store', {
   storeId: 'locationsStore',
   proxy: {
     type: 'ajax',
-    url: '/admin/locations/get_locations_with_address',
+    url: '/admin/locations/get_location_list',
     reader: {
       type: 'json',
       root: 'locations'
@@ -479,7 +479,7 @@ Ext.create('Ext.form.Panel', {
         otherLocation.disable();
         otherLocation.nextSibling().reset();
         otherLocation.nextSibling().disable();
-        if(newValue === 0) {
+        if(newValue === "0") {
           if(record !== undefined) {
             otherLocation.setValue(record.data.other_location);
             otherLocation.nextSibling().setValue(record.data.address);
