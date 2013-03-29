@@ -391,9 +391,8 @@ legend {
 }
 
 #ecourses #toggle-completed {
-  position: absolute;
-  top: 15px;
-  right: 10px;
+  display: block;
+  margin-bottom: 8px;
 }
 
 #ecourses h4 {
@@ -431,9 +430,16 @@ legend {
 
 #information #help { height: 125px; }
 
-#ecourses h3,
+#ecourses h3 {
+  margin-bottom: 3px;
+}
+
 #help h3 {
   margin-bottom: 10px;
+}
+
+#ecourses h3,
+#help h3 {
   font-weight: bold;
 }
 
