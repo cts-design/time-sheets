@@ -510,8 +510,8 @@ class QueuedDocumentsController extends AppController {
 		$allowedCats = array();
 		foreach($cats as $cat){
 			if($this->Auth->user('role_id') > 3 && $cat['DocumentQueueCategory']['secure']) {
-				$secureAdmins = json_decode($cat['DocumentQueueCategory']['secure_admins']);
-				if(!in_array($this->Auth->user('id'), $secureAdmins)) {
+				$secureAdmins = json_decode($cat['DocumentQueueCategory']['secure_admins'], true);
+				if($secureAdmins && !in_array($this->Auth->user('id'), $secureAdmins)) {
 					continue;
 				}
 			}
