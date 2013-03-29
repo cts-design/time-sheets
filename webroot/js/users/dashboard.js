@@ -5,6 +5,11 @@
  */
 
 $(document).ready(function () {
+  if ($.cookie('hide_completed_ecourses') === 'true') {
+    $('#toggle-completed').text('Show Completed');
+    $('#toggle-completed').next('ul').children('.complete').css('display', 'none');
+  }
+
   $('#toggle-completed').bind('click', function (event) {
     var ul = $(this).next('ul');
 
@@ -14,11 +19,13 @@ $(document).ready(function () {
       case 'Hide Completed':
         $(ul).children('.complete').css('display', 'none');
         $(this).text('Show Completed');
+        $.cookie('hide_completed_ecourses', true);
         break;
 
       case 'Show Completed':
         $(ul).children('.complete').css('display', 'list-item');
         $(this).text('Hide Completed');
+        $.cookie('hide_completed_ecourses', false);
         break;
     }
   });
