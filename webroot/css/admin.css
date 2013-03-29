@@ -377,7 +377,52 @@ legend {
   width: 350px;
 }
 
-#ecourses div,
+#ecourses > div {
+  background-color:#F1F8FB;
+  height: 226px;
+  overflow: auto;
+  padding: 10px;
+}
+
+#ecourses {
+  border: 1px solid #B5D3DF;
+  background-color:#F1F8FB;
+  position: relative;
+}
+
+#ecourses #toggle-completed {
+  position: absolute;
+  top: 15px;
+  right: 10px;
+}
+
+#ecourses h4 {
+  color: #565656;
+  font-weight: bold;
+  margin-bottom: 3px;
+}
+
+#ecourses li {
+  border-bottom: 1px solid #B5D3DF;
+  margin-bottom: 4px;
+  padding-bottom: 4px;
+  position: relative;
+}
+
+#ecourses span.action {
+  position: absolute;
+  right: 0;
+  top: 8px;
+}
+
+#ecourses .details {
+  color: #999;
+}
+
+#ecourses .details i {
+  color: #1875BB;
+}
+
 #information #help {
   border: 1px solid #B5D3DF;
   padding: 10px;
