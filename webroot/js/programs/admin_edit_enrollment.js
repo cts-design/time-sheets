@@ -275,7 +275,6 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.TreeStore', {
-  autoSync: true,
   model: 'ProgramStep',
   proxy: {
     type: 'ajax',
@@ -900,14 +899,6 @@ registrationForm = Ext.create('Ext.form.Panel', {
       valueField: 'id',
       width: 200
     }]
-  }, {
-    xtype: 'hiddenfield',
-    name: 'user_acceptance_required',
-    value: '0'
-  }, {
-    xtype: 'hiddenfield',
-    name: 'form_esign_required',
-    value: '0'
   }, {
     xtype: 'hiddenfield',
     name: 'in_test',
@@ -2812,40 +2803,44 @@ instructions = Ext.create('Ext.panel.Panel', {
 
       panelEl.mask('Loading...');
 
-      programStepStore.getRootNode().eachChild(function (module) {
-        module.eachChild(function (step) {
-          var instruction = programInstructionStore.findRecord('program_step_id', step.data.id);
+      programInstructionStore.load({
+        callback: function (recs, op, success) {
+          programStepStore.getRootNode().eachChild(function (module) {
+            module.eachChild(function (step) {
+              var instruction = programInstructionStore.findRecord('program_step_id', step.data.id);
 
-          if (!instruction) {
-            Ext.Ajax.request({
-              url: '/admin/program_instructions/create_single',
-              params: {
-                program_id: ProgramId,
-                program_step_id: step.data.id,
-                text: 'Instructions for ' + step.data.name + ' step',
-                type: step.data.type + '_step'
-              },
-              callback: function (response) {
-                programInstructionStore.load({
+              if (!instruction) {
+                Ext.Ajax.request({
+                  url: '/admin/program_instructions/create_single',
                   params: {
-                    program_id: ProgramId
+                    program_id: ProgramId,
+                    program_step_id: step.data.id,
+                    text: 'Instructions for ' + step.data.name + ' step',
+                    type: step.data.type + '_step'
+                  },
+                  callback: function (response) {
+                    programInstructionStore.load({
+                      params: {
+                        program_id: ProgramId
+                      }
+                    });
                   }
                 });
               }
             });
-          }
-        });
-      });
-
-      programInstructionStore.load({
-        callback: function (recs, op, success) {
+          });
           panelEl.unmask();
         },
         params: {
           program_id: ProgramId
         }
       });
+
+
     }
+  },
+  preprocess: function () {
+    console.log('in preprocess');
   },
   process: function () {
     Ext.data.StoreManager.lookup('ProgramInstructionStore').sync();
