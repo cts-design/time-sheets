@@ -42,6 +42,9 @@ class EventsController extends AppController {
 		asort($categories);
 
 		$locations = $this->Event->Location->find('list', array(
+			'conditions' => array(
+				'Location.hidden' => 0
+			),
 			'fields' => array(
 				'Location.id',
 				'Location.name'
@@ -176,6 +179,9 @@ class EventsController extends AppController {
 		$categories[$workshopCategory['EventCategory']['id']] = 'All Workshops';
 
 		$locations = $this->Event->Location->find('list', array(
+			'conditions' => array(
+				'Location.hidden' => 0
+			),
 			'fields' => array(
 				'Location.id',
 				'Location.name'
