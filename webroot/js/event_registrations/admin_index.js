@@ -43,8 +43,8 @@ Ext.create('Ext.data.Store', {
       if(responseTxt.success) {
         iconCls = 'x-status-valid'; 
       }
-      sb.setStatus({
-        text: responseTxt.message,
+      sb.setstatus({
+        text: responsetxt.message,
         iconCls: iconCls,
         clear: {
           anim: false
