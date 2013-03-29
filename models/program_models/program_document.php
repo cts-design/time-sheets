@@ -46,8 +46,10 @@ class ProgramDocument extends AppModel {
 					}
 			}
 			unset($data['ProgramResponse']['ProgramResponseActivity']);
-			return ClassRegistry::init('Queue.QueuedTask')->createJob('document', $data);
+			ClassRegistry::init('Queue.QueuedTask')->createJob('document', $data);
 		}
+
+		return true;
 	}
 
 	public function queueMultiSnapshot($data, $formStepAnswers) {
