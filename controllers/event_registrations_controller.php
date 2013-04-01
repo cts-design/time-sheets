@@ -229,6 +229,7 @@ class EventRegistrationsController extends AppController {
 			'Printed attendance roster for event, id: ' . $event['Event']['id']
 		);
 		$this->layout = 'ajax';
+		$this->render = false;
 		$this->generatePDF($users, $event);
 	}
 
