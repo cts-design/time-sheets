@@ -11,7 +11,7 @@ class EventsController extends AppController {
 
 	public $paginate = array('order' => array('Event.scheduled' => 'asc'), 'limit' => 5);
 
-	public $helpers = array('Excel');
+	public $helpers = array('Excel', 'Url');
 
 	public $components = array('Notifications');
 
@@ -151,12 +151,15 @@ class EventsController extends AppController {
 	}
 
 	public function workshop($date = null) {
+		$this->log($this->params['url'], 'debug');
 		$this->Event->Behaviors->attach('Containable');
 		$this->Event->EventCategory->recursive = -1;
 
 		$workshopCategory = $this->Event->EventCategory->findByName('Workshop', array('fields' => 'EventCategory.id'));
 
 		$title_for_layout = 'Upcoming Workshops';
+		$urlParams = $this->params['url'];
+		$namedParams = $this->params['named'];
 		$selectedLocation = 0;
 		$selectedCategory = 0;
 
@@ -188,35 +191,35 @@ class EventsController extends AppController {
 		$locations[0] = 'All Locations';
 		asort($locations);
 
-		if (isset($this->params['form']['event_categories_dropdown']) && !empty($this->params['form']['event_categories_dropdown'])) {
-			if ($this->params['form']['event_categories_dropdown'] == 0) {
-				$selectedCategory = 0;
-				$categoryConditions = null;
-			} else {
-				$cat = $this->params['form']['event_categories_dropdown'];
-				$categoryConditions = array(
-					'OR' => array(
-						'EventCategory.id' => $cat,
-						'EventCategory.parent_id' => $cat
-					)
-				);
-				$selectedCategory = $cat;
-			}
+		if (isset($urlParams['event_categories_dropdown']) && $urlParams['event_categories_dropdown']) {
+			$selectedCategory = $urlParams['event_categories_dropdown'];
+		} else if (isset($namedParams['event_categories_dropdown']) && $namedParams['event_categories_dropdown']) {
+			$selectedCategory = $namedParams['event_categories_dropdown'];
 		} else {
+			$selectedCategory = 0;
 			$categoryConditions = null;
 		}
 
-		if (isset($this->params['form']['event_locations_dropdown']) && !empty($this->params['form']['event_locations_dropdown'])) {
-			if ($this->params['form']['event_locations_dropdown'] == 0) {
-				$selectedLocation = 0;
-				$locationConditions = null;
-			} else {
-				$loc = $this->params['form']['event_locations_dropdown'];
-				$locationConditions = array('Event.location_id' => $loc);
-				$selectedLocation = $loc;
-			}
-		} else {
+		if ($selectedCategory) {
+			$categoryConditions = array(
+				'OR' => array(
+					'EventCategory.id' => $selectedCategory,
+					'EventCategory.parent_id' => $selectedCategory
+				)
+			);
+		}
+
+		if (isset($urlParams['event_locations_dropdown']) && $urlParams['event_locations_dropdown']) {
+			$selectedLocation = $urlParams['event_locations_dropdown'];
+		} else if (isset($namedParams['event_locations_dropdown']) && $namedParams['event_locations_dropdown']) {
+			$selectedLocation = $namedParams['event_locations_dropdown'];
+		}  else {
+			$selectedLocation = 0;
 			$locationConditions = null;
+		}
+
+		if ($selectedLocation) {
+			$locationConditions = array('Event.location_id' => $selectedLocation);
 		}
 
 		// setup date stuffs
@@ -270,8 +273,11 @@ class EventsController extends AppController {
 			}
 		}
 
+		$wasAjax = $this->RequestHandler->isAjax();
+
 		$this->set(
 			compact(
+				'wasAjax',
 				'title_for_layout',
 				'selectedCategory',
 				'categories',
@@ -529,10 +535,10 @@ class EventsController extends AppController {
 				}
 				if(isset($params['location_id'])){
 					$conditions['Event.location_id'] = $params['location_id'];
-				}	
+				}
 				if(isset($params['event_category_id'])){
 					$conditions['Event.event_category_id'] = $params['event_category_id'];
-				}	
+				}
 				$this->paginate['conditions'] = $conditions;
 			}
 			$events = $this->Paginate('Event');
@@ -553,18 +559,18 @@ class EventsController extends AppController {
 					$data['events'][$i]['registered'] = $event['Event']['event_registration_count'];
 					$data['events'][$i]['attended'] = $this->Event->EventRegistration->countAttended($event['Event']['id']);
 					$i++;
-				}	
+				}
 			}
 			$data['totalCount'] = $this->params['paging']['Event']['count'];
 			$data['success'] = true;
-			$this->set(compact('data'));	
+			$this->set(compact('data'));
 			$this->render(null, null, '/elements/ajaxreturn');
-		}		
+		}
 	}
 
 	public function admin_get_event_category_list() {
 	    if ($this->RequestHandler->isAjax()) {
-	    	$this->Event->EventCategory->recursive = -1;			
+	    	$this->Event->EventCategory->recursive = -1;
 			$categories = $this->Event->EventCategory->find('all',
 				array('fileds' => array('EventCategory.id', 'EventCategory.name')));
 			foreach($categories as $category) {
@@ -577,14 +583,20 @@ class EventsController extends AppController {
 				$data['success'] = false;
 			}
 			$this->set(compact('data'));
-			return $this->render(null, null, '/elements/ajaxreturn');			
+			return $this->render(null, null, '/elements/ajaxreturn');
 	    }
 	}
 
 	private function parse_date() {
 		// If there isn't a date passed, then use today
-		if (isset($this->params['url']['date']) && $this->params['url']['date']) {
-			$date = $this->params['url']['date'];
+		$urlParams = $this->params['url'];
+		$namedParams = $this->params['named'];
+
+		if (isset($urlParams['date']) && $urlParams['date']) {
+			$date = $urlParams['date'];
+			return date('Y-m-d H:i:s', strtotime($date));
+		} else if (isset($namedParams['date']) && $namedParams['date']) {
+			$date = $namedParams['date'];
 			return date('Y-m-d H:i:s', strtotime($date));
 		} else {
 			return date('Y-m-d H:i:s');

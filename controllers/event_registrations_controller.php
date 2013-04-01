@@ -18,7 +18,7 @@ class EventRegistrationsController extends AppController {
 		parent::beforeFilter();
 		if($this->Auth->user()) {
 			if($this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Events/admin_index', '*')) {
-				$this->Auth->allow('admin_index', 'admin_edit', 'admin_delete', 'admin_attendance_report');
+				$this->Auth->allow('admin_index', 'admin_edit', 'admin_delete', 'admin_attendance_report', 'admin_register_customer');
 			}
 			if($this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Events/admin_archive', '*')) {
 				$this->Auth->allow('admin_attendance_report');
@@ -33,10 +33,6 @@ class EventRegistrationsController extends AppController {
 				$this->Session->setFlash('Event has already been held', 'flash_failure');
 				$this->redirect('/admin/events');
 			}
-		}
-		else {
-			$this->Session->setFlash('No registrations for that event', 'flash_failure');
-			$this->redirect('/admin/events');
 		}
 		if($this->RequestHandler->isAjax()) {
 			$data['registrations'] = array();
@@ -179,6 +175,33 @@ class EventRegistrationsController extends AppController {
 		$this->set($data);
 	}
 
+	public function admin_register_customer() {
+		if($this->RequestHandler->isAjax()) {
+			$count = $this->EventRegistration->find('count', array(
+				'conditions' => array(
+					'EventRegistration.user_id' => $this->params['form']['user_id'],
+					'EventRegistration.event_id' => $this->params['form']['event_id'])));
+			$this->data['EventRegistration']['user_id'] = $this->params['form']['user_id'];
+			$this->data['EventRegistration']['event_id'] = $this->params['form']['event_id'];
+			if($count == 0 && $this->EventRegistration->save($this->data)) {
+				$data['success'] = true;
+				$data['message'] = 'Customer was registered successfully.';
+				$this->Transaction->createUserTransaction(
+					'Events',
+					$this->Auth->user('id'),
+					$this->Auth->user('location_id'),
+					'Assigned user id: ' . $this->params['form']['user_id'] . ' to event id: ' . $this->params['form']['event_id']
+				);
+			}
+			else {
+				$data['success'] = false;
+				$data['message'] = 'Unable to register customer at this time, or customer is already registered';
+			}
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
+	
 	public function admin_attendance_roster() {
 		$this->EventRegistration->Event->recursive = 2;
 		if(isset($this->params['pass'][0])) {

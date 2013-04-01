@@ -28,6 +28,16 @@
 
 	echo $this->Html->css('admin');
 
+	echo $this->Html->css('font-awesome.min');
+
+	?>
+
+	<!--[if IE 7]>
+		<?php echo $this->Html->css('font-awesome-ie7.min') ?>
+	<![endif]-->
+
+	<?php
+
 	echo $this->Html->script('/js/ext/bootstrap');
 
 	echo $this->Html->script('atlas');

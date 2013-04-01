@@ -5,20 +5,28 @@
  * @package ATLAS V3
  */
 
-var currentPath = function () {
+var currentPath,
+  queryString;
+
+currentPath = function () {
   return window.location.pathname;
+}
+
+queryString = function(url) {
+  return url.slice(url.indexOf('?')).split('&')[0];
 }
 
 $(function() {
   var eventCategory = 0,
-    currentUrl = currentPath();
+    currentUrl = currentPath(),
+    currentQueryString;
 
   $('body').attr('class', 'js');
 
   $('#event_categories_dropdown').live('change', function(e) {
     e.preventDefault();
 
-    $.post(currentUrl, $('.event_categories').serialize(), function(data) {
+    $.get(currentUrl, $('.event_categories').serialize(), function(data) {
       $('#events').replaceWith(data);
     });
 
@@ -28,20 +36,41 @@ $(function() {
   $('#event_locations_dropdown').live('change', function(e) {
     e.preventDefault();
 
-    $.post(currentUrl, $('.event_categories').serialize(), function(data) {
+    $.get(currentUrl, $('.event_categories').serialize(), function(data) {
       $('#events').replaceWith(data);
     });
 
     $("#events").empty().html('<img src="/img/ajaxLoader.gif" height="16" width="16" />');
   });
 
-  $('.calnav a, .paging a').live('click', function(e) {
+  $('.pagination a').live('click', function(e) {
     e.preventDefault();
 
     var target = $(this).attr('href'),
       content;
 
-    $.post(target, $('.event_categories').serialize(), function(data) {
+    if (currentQueryString) {
+      target += currentQueryString;
+    }
+
+    $.get(target, $('.event_categories').serialize(), function(data) {
+      $('#events').html(data);
+    });
+
+    $("#events").empty().html('<img src="/img/ajaxLoader.gif" height="16" width="16" />');
+
+    currentUrl = target;
+  });
+
+  $('.calnav a').live('click', function(e) {
+    e.preventDefault();
+
+    var target = $(this).attr('href'),
+      content;
+
+    currentQueryString = queryString(target);
+
+    $.get(target, $('.event_categories').serialize(), function(data) {
       $('#events').html(data);
     });
 
@@ -56,7 +85,7 @@ $(function() {
     $('#event_locations_dropdown').val(0);
     $('#event_categories_dropdown').val(0);
 
-    $.post(currentUrl, $('.event_categories').serialize(), function(data) {
+    $.get(currentUrl, $('.event_categories').serialize(), function(data) {
       $('#events').html(data);
     });
 
