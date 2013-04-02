@@ -43,6 +43,7 @@ class UsersController extends AppController {
 			'admin_password_reset',
 			'admin_login',
 			'admin_logout',
+			'kiosk_id_card_login',
 			'kiosk_self_sign_login',
 			'login',
 			'registration',
@@ -436,6 +437,7 @@ class UsersController extends AppController {
 		if (isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'kiosk') {
 			if ($this->Auth->user()) {
 				$user = $this->Auth->user();
+				// TODO add logic to save users id card # if Kiosk Login type is id_card
 				$this->sendCustomerLoginAlert($user, $kiosk);
 				if($user['User']['veteran']) {
 					$this->sendCustomerDetailsAlert('veteran', $user, $kiosk);
@@ -459,6 +461,64 @@ class UsersController extends AppController {
 				}
 			}
 		}
+		$this->set('kioskHasSurvey', (empty($kiosk['KioskSurvey'])) ? false : true);
+		$this->set('kiosk', $kiosk);
+		$this->set('title_for_layout', 'Self Sign Kiosk');
+		$this->layout = 'kiosk';
+	}
+
+	public function kiosk_id_card_login() {
+		$this->loadModel('Kiosk');
+		$oneStop = env('HTTP_USER_AGENT');
+		$arrOneStop = explode('##', $oneStop);
+		if(!isset($arrOneStop[1])) {
+			$oneStopLocation = '';
+		}
+		else {
+			$oneStopLocation = $arrOneStop[1];
+		}
+		$this->Kiosk->recursive = -1;
+		$this->Kiosk->Behaviors->attach('Containable');
+		$this->Kiosk->contain(array('KioskSurvey', 'Location'));
+		$settings = Cache::read('settings');
+		$fields = Set::extract('/field',  json_decode($settings['SelfSign']['KioskRegistration'], true));
+		$kiosk = $this->Kiosk->find('first', array(
+			'conditions' => array(
+				'Kiosk.location_recognition_name' => $oneStopLocation, 'Kiosk.deleted' => 0)));
+		if($this->RequestHandler->isPost()) {
+			if(!empty($this->data)) {
+				$data = $this->User->decodeIdString($this->data);
+				if($data['success']) {
+					$this->User->recursive = -1;
+					$user = $this->User->find('first', array(
+						'conditions' => array('User.id_card_number' => $data['id_full'])));
+					if(!$user) {
+						$this->Session->write('idCard', $data);
+					}
+					if($user) {
+						if($this->Auth->login($user)) {
+							$this->Transaction->createUserTransaction('Self Sign',
+								null, $this->User->SelfSignLog->Kiosk->getKioskLocationId(), 'Logged in at self sign kiosk' );
+							if($settings['SelfSign']['KioskConfirmation'] === 'on') {
+								$this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_confirm'));
+							}
+							else {
+								$this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_service_selection'));
+							}
+						}
+					}
+					else {
+						$this->Session->setFlash('Please fill out information below to continue', 'flash_failure');
+						$this->redirect(array('action' => 'self_sign_login'));
+					}
+				}
+				else {
+					$this->Session->setFlash($data['message'], 'flash_failure');
+					$this->redirect(array('action' => 'id_card_login'));
+				}
+			}
+		}
+
 		$this->set('kioskHasSurvey', (empty($kiosk['KioskSurvey'])) ? false : true);
 		$this->set('kiosk', $kiosk);
 		$this->set('title_for_layout', 'Self Sign Kiosk');
@@ -633,14 +693,14 @@ class UsersController extends AppController {
 	function kiosk_auto_logout() {
 		$this->Session->destroy();
 		$this->Session->setFlash(__('You have been logged out due to inactivity.', true), 'flash_failure');
-		$this->redirect(array('action' => 'self_sign_login'));
+		$this->redirect('/kiosk');
 	}
 
 	function kiosk_mini_registration($lastname=null) {
 		$this->loadModel('Kiosk');
 		$this->Kiosk->recursive = -1;
 		$this->User->recursive  = -1;
-
+		$this->log($this->data, 'debug');
 		if (!empty($this->data)) {
 			$this->User->Behaviors->disable('Disableable');
 			$this->User->setValidation('customerMinimum');
@@ -676,6 +736,19 @@ class UsersController extends AppController {
 		}
 		if (empty($this->data)) {
 			$this->data['User']['lastname'] = $lastname;
+			if(Configure::read('Kiosk.login_type') == 'id_card') {
+				$idCard = $this->Session->read('idCard');
+				if(!empty($idCard)) {
+					$this->data['User']['firstname'] = $idCard['first_name'];
+					$this->data['User']['middle_initial'] = substr($idCard['middle_name'], 1);
+					$this->data['User']['lastname'] = $idCard['last_name'];
+					$this->data['User']['dob'] = $idCard['birth_month'] . '/' . $idCard['birth_day'] . '/' . $idCard['birth_year'];
+					$this->data['User']['address_1'] = $idCard['street'];
+					$this->data['User']['city'] = $idCard['city'];
+					$this->data['User']['state'] = $idCard['state'];
+					$this->data['User']['id_card_number'] = $idCard['id_full']; 
+				}
+			}
 		}
 		$settings = Cache::read('settings');
 		$fields = Set::extract('/field',  json_decode($settings['SelfSign']['KioskRegistration'], true));
