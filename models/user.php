@@ -696,5 +696,90 @@ class User extends AppModel {
 		}
 		return true;	
 	}
-	
+
+	public function decodeIdString($data) {
+		$return = array(
+			'first_name' => null,
+			'last_name' => null,
+			'middle_name' => null,
+			'id_number' => null,
+			'birth_month' => null,
+			'birth_day' => null,
+			'birth_year' => null,
+			'id_full' => null,
+			'success' => true);
+
+		$return['success'] = true;
+
+		if (preg_match("/(\w{2})(.*?)\^(.*?)\^(.*?)\?;(\d+)=(\d+)=\?/", $data['User']['id_card'], $my_results)) {
+			$return['street'] = $my_results[4];
+			$return['state'] = $my_results[1];
+			$return['city'] = $my_results[2];
+
+			$full_name = $my_results[3];
+			$name_parts = explode('$',$full_name);
+			$return['first_name'] = $name_parts[1];
+			$return['last_name'] = $name_parts[0];
+			$return['middle_name'] = $name_parts[2];
+
+			$id_raw = $my_results[5];
+			$return['id_number'] = substr($id_raw,8,11);
+
+			$birth_raw = $my_results[6];
+			$return['birth_month'] = substr($birth_raw,2,2);
+			$return['birth_day'] = substr($birth_raw,10,2);
+			$return['birth_year'] = substr($birth_raw,4,4);
+		}
+
+		elseif (preg_match("/(\w{2})(.*?)\^(.*?)\^(.*?)\^(.*?)\?;(\d+)=(\d+)=\?/", $data['User']['id_card'], $my_results)) {
+			$return['street'] = $my_results[4];
+			$return['state'] = $my_results[1];
+			$return['city'] = $my_results[2];
+
+			$full_name = $my_results[3];
+			$name_parts = explode('$',$full_name);
+			$return['first_name'] = $name_parts[1];
+			$return['last_name'] = $name_parts[0];
+			$return['middle_name'] = $name_parts[2];
+
+			$id_raw = $my_results[6];
+			$return['id_number'] = substr($id_raw,8,11);
+
+			$birth_raw = $my_results[7];
+			$return['birth_month'] = substr($birth_raw,2,2);
+			$return['birth_day'] = substr($birth_raw,10,2);
+			$return['birth_year'] = substr($birth_raw,4,4);
+		}
+
+		elseif (preg_match("/(\w{2})(.*?)\^(.*?)\^(.*?)\^(.*?)\?;(\d+)=(\d+)=\?#!(\s+)(\d{5,})(.*?)\?/", $data['User']['id_card'], $my_results)) {
+			$return['street'] = $my_results[4];
+			$return['state'] = $my_results[1];
+			$return['city'] = $my_results[2];
+
+			$full_name = $my_results[3];
+			$name_parts = explode('$',$full_name);
+			$return['first_name'] = $name_parts[1];
+			$return['last_name'] = $name_parts[0];
+			$return['middle_name'] = $name_parts[2];
+
+			$id_raw = $my_results[6];
+			$return['id_number'] = substr($id_raw,8,11);
+
+			$birth_raw = $my_results[7];
+			$return['birth_month'] = substr($birth_raw,2,2);
+			$return['birth_day'] = substr($birth_raw,10,2);
+			$return['birth_year'] = substr($birth_raw,4,4);
+		
+			$return['zip_code'] = $my_results[9];
+		}
+
+		$return['id_full'] = substr($return['last_name'],0,1) . $return['id_number'];
+		foreach($return as $k => $v) {
+			if(empty($return[$k])) {
+				$return['success'] = false;
+				$return['message'] = 'ID card swipe issue (Not all info present). <br/>Please swipe again.';
+			}
+		}
+		return $return;
+	}
 }

@@ -6,7 +6,8 @@
  * @package ATLAS V3
  */
 ?>
-
+<?php $hideFields = $this->Session->read('idCard.success') ?>
+<?php $hideZip = $this->Session->read('idCard.zip') ?>
 <?php echo $this->Html->script('users/mini.registration', array('inline' => false)) ?>
 <div id="miniRegistration" class="self-sign-wrapper">
     <h2>
@@ -20,28 +21,41 @@
 	<fieldset>
 	    <?php
 	    echo $this->Form->hidden('role_id', array('value' => '1'));
+	    echo $this->Form->hidden('id_card_number');
 		// required fields
-	    echo $this->Form->input('firstname', array(
-		'label' => __('First Name', true),
-		'before' => '<p class="left">',
-		'between' => '</p><p class="left">',
-		'after' => '</p>'));
-	    echo $this->Form->input('lastname', array(
-		'label' => __('Last Name', true),
-		'before' => '<p class="left">',
-		'between' => '</p><p class="left">',
-		'after' => '</p>'));
-	    echo '<br class="clear"/>';
+		if($hideFields) {
+			echo $this->Form->hidden('firstname');
+			echo $this->Form->hidden('lastname');
+		}
+		else {
+			echo $this->Form->input('firstname', array(
+			'label' => __('First Name', true),
+			'before' => '<p class="left">',
+			'between' => '</p><p class="left">',
+			'after' => '</p>'
+			));
+			echo $this->Form->input('lastname', array(
+			'label' => __('Last Name', true),
+			'before' => '<p class="left">',
+			'between' => '</p><p class="left">',
+			'after' => '</p>'));
+			echo '<br class="clear"/>';
+		}
 	    
 	    // dynamic fields
 		if(in_array('middle_initial', $fields)) {
-		    echo $this->Form->input('middle_initial', array(
-				'label' => __('Middle Initial ', true),
-				'type' => 'text',
-				'before' => '<p class="left">',
-				'between' => '</p><p class="left">',
-				'after' => '</p>'));
-		    echo '<br class="clear"/>';			
+			if($hideFields) {
+				$this->Form->hidden('middle_initial');
+			}
+			else {
+				echo $this->Form->input('middle_initial', array(
+					'label' => __('Middle Initial ', true),
+					'type' => 'text',
+					'before' => '<p class="left">',
+					'between' => '</p><p class="left">',
+					'after' => '</p>'));
+				echo '<br class="clear"/>';			
+			}
 		}
 		if(in_array('surname', $fields)) {
 			echo $this->Form->input('surname', array(
@@ -141,30 +155,45 @@
 		
 		//dynamic fields
 		if(in_array('dob', $fields)) {
-		    echo $this->Form->input('dob', array(
-				'label' => __('Birth Date <span class="small gray">(mm/dd/yyyy)</span>', true),
-				'type' => 'text',
-				'maxlength' => 10,
-				'before' => '<p class="left">',
-				'between' => '</p><p class="left">',
-				'after' => '</p>'));
-		    echo '<br class="clear"/>';			
+			if($hideFields) {
+				$this->Form->hidden('dob');
+			}
+			else {
+				echo $this->Form->input('dob', array(
+					'label' => __('Birth Date <span class="small gray">(mm/dd/yyyy)</span>', true),
+					'type' => 'text',
+					'maxlength' => 10,
+					'before' => '<p class="left">',
+					'between' => '</p><p class="left">',
+					'after' => '</p>'));
+				echo '<br class="clear"/>';			
+			}
 		}		
 		if(in_array('address_1', $fields)) {
-			echo $this->Form->input('address_1', array(
-				'label' => __('Address', true),
-				'before' => '<p class="left">',
-				'between' => '</p><p class="left">',
-				'after' => '</p>'));
-			echo '<br class="clear"/>';					
+			if($hideFields) {
+				$this->Form->hidden('address_1');
+			}
+			else {
+				echo $this->Form->input('address_1', array(
+					'label' => __('Address', true),
+					'before' => '<p class="left">',
+					'between' => '</p><p class="left">',
+					'after' => '</p>'));
+				echo '<br class="clear"/>';					
+			}
 		}
 		if(in_array('city', $fields)) {
-			echo $this->Form->input('city', array(
-				'label' => __('City', true),
-				'before' => '<p class="left">',
-				'between' => '</p><p class="left">',
-				'after' => '</p>'));
-			echo '<br class="clear"/>';					
+			if($hideFields) {
+				$this->Form->hidden('city');
+			}
+			else {
+				echo $this->Form->input('city', array(
+					'label' => __('City', true),
+					'before' => '<p class="left">',
+					'between' => '</p><p class="left">',
+					'after' => '</p>'));
+				echo '<br class="clear"/>';					
+			}
 		}
 		if(in_array('county', $fields)) {
 			echo $this->Form->input('county', array(
@@ -175,20 +204,30 @@
 			echo '<br class="clear"/>';		
 		}
 		if(in_array('state', $fields)) {
-			echo $this->Form->input('state', array(
-				'empty' => 'Please Select',
-				'before' => '<p class="left">',
-				'between' => '</p><p class="left">',
-				'after' => '</p>'));
-			echo '<br class="clear"/>';				
+			if($hideFields) {
+				$this->Form->hidden('state');
+			}
+			else {
+				echo $this->Form->input('state', array(
+					'empty' => 'Please Select',
+					'before' => '<p class="left">',
+					'between' => '</p><p class="left">',
+					'after' => '</p>'));
+				echo '<br class="clear"/>';				
+			}
 		}
 		if(in_array('zip', $fields)) {
-		    echo $this->Form->input('zip', array(
-				'label' => __('Zip Code', true),
-				'before' => '<p class="left">',
-				'between' => '</p><p class="left">',
-				'after' => '</p>'));
-			echo '<br class="clear"/>';					
+			if($hideZip) {
+				$this->Form->hidden('zip');
+			}
+			else {
+				echo $this->Form->input('zip', array(
+					'label' => __('Zip Code', true),
+					'before' => '<p class="left">',
+					'between' => '</p><p class="left">',
+					'after' => '</p>'));
+				echo '<br class="clear"/>';					
+			}
 		}
 		if(in_array('phone', $fields)) {
 		    echo $this->Form->input('phone', array(

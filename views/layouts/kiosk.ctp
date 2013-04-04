@@ -37,7 +37,12 @@
 	<?php
 		$settings = Cache::read('settings');
 		$timeOut = json_decode($settings['SelfSign']['KioskTimeOut'], true);
-        $exclude = array('kiosk_self_sign_login', 'kiosk_self_scan_document', 'question');
+		if(Configure::read('Kiosk.login_type') == 'id_card') {
+			$exclude = array('kiosk_self_scan_document', 'question', 'kiosk_id_card_login');
+		}
+		else {
+			$exclude = array('kiosk_self_scan_document', 'question', 'kiosk_self_sign_login');
+		}
 	    if (!in_array($this->params['action'], $exclude)) {
 		echo $this->Html->scriptBlock(
 			"$(document).ready(function(){
@@ -75,12 +80,13 @@
     <body>
 	<div id="container">
 	    <div id="header">		
+		<?php $actions = array('kiosk_self_sign_login', 'kiosk_id_card_login') ?>
 		<?php echo $this->Html->image('/img/kiosk/kiosk_header.jpg');?>
 	    </div>
 	    <div id="content">
 		<?php echo $content_for_layout; ?>
         </div>
-        <?php if ($this->here === '/kiosk'): ?>
+        <?php if (in_array($this->params['action'], $actions)): ?>
 		<div style="margin: 10px 0 0" id="speakspanish">
 			<p style="font-family: Arial, 'sans-serif'; font-size: 16px; text-align: center;">
 	    	<?php if (!$session->read('Config.language')): ?>
