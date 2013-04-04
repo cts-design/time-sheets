@@ -777,7 +777,7 @@ class User extends AppModel {
 		foreach($return as $k => $v) {
 			if(empty($return[$k])) {
 				$return['success'] = false;
-				$return['message'] = 'ID card swipe issue. (Not all info present). Please swipe again.';
+				$return['message'] = 'ID card swipe issue (Not all info present). <br/>Please swipe again.';
 			}
 		}
 		return $return;
