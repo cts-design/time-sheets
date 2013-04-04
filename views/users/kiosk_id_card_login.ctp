@@ -17,21 +17,24 @@
 <?php echo $this->Html->scriptEnd() ?>
 <div class="id-login-wrapper">
 	<h1>
-		<?php printf(__('Welcome to %s. Please please swipe your %s ID.', true),
+		<?php printf(__('Welcome to %s. Please swipe your %s License or ID.', true),
 			Configure::read('Company.name'), Configure::read('Company.state')) ?>
 	</h1>
-    <div id="errorMessage"></div>
-    <?php echo $this->Session->flash(); ?>
-		<div style="margin-left: 300px; width: 600px">
-				<div style="float: left">
+		<div style="width: 650px; float: left">
+			<div style="height: 75px; width: 650px">
+				<?php echo $this->Session->flash(); ?>
+			</div>
+			<div>
+				<p style="margin: 0 0 0 200px; width: 285px">
 					<?php echo $this->Html->image('kiosk/id_sample.jpg') ?>
-					<p style="margin: 25px 0 0 12px">
-						<a href="/kiosk/users/self_sign_login">Login with SSN</a>
-					</p>
-				</div>
-				<div style="float: right">
-					<?php echo $this->Html->image('kiosk/swipe.jpg') ?>
-				</div>
+				</p>
+				<p style="margin: 25px 0 0 210px">
+					<a class="translate-button" href="/kiosk/users/self_sign_login">I'd prefer to login with my SSN</a>
+				</p>
+			</div>
+		</div>
+		<div style="float: right; width: 240px">
+			<?php echo $this->Html->image('kiosk/swipe.jpg') ?>
 		</div>
     <?php
 	    echo $this->Session->flash('auth');
@@ -46,6 +49,8 @@
 	    echo $form->hidden('User.login_type', array('value' => 'kiosk'));
 	    echo $form->end(array('label' => __('Login', true), 'style' => 'visibility: hidden'));
     ?>
+    	<div class="survey-button">
+		</div>
     <?php if ($kioskHasSurvey): ?>
     	<div class="survey-button">
 		<a href="/kiosk/survey/<?php echo $kiosk['KioskSurvey'][0]['id'] ?>">Take Survey</a>
