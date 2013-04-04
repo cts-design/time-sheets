@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2013-03-26 16:20:17 : 1364329217*/
+/* atlas schema generated on: 2013-04-04 14:06:53 : 1365098813*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -329,7 +329,6 @@ class atlasSchema extends CakeSchema {
 		'url' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'address' => array('type' => 'text', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'scheduled' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
-		'allow_registrations' => array('type' => 'boolean', 'null' => true, 'default' => '0'),
 		'seats_available' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 4),
 		'duration' => array('type' => 'float', 'null' => true, 'default' => NULL),
 		'cat_1' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10, 'key' => 'index'),
@@ -866,6 +865,7 @@ class atlasSchema extends CakeSchema {
 		'disabled' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'signature' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 1),
 		'location_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'key' => 'index'),
+		'id_card_number' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'signature_created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'signature_modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
