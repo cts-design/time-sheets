@@ -32,8 +32,8 @@
 			'label' => __('First Name', true),
 			'before' => '<p class="left">',
 			'between' => '</p><p class="left">',
-			'after' => '</p>',
-			'hidden' => $readonly));
+			'after' => '</p>'
+			));
 			echo $this->Form->input('lastname', array(
 			'label' => __('Last Name', true),
 			'before' => '<p class="left">',
