@@ -437,7 +437,10 @@ class UsersController extends AppController {
 		if (isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'kiosk') {
 			if ($this->Auth->user()) {
 				$user = $this->Auth->user();
-				// TODO add logic to save users id card # if Kiosk Login type is id_card
+				if(Configure::read('Kiosk.login_type') == 'id_card') {
+					$this->User->id = $user['User']['id'];
+					$this->User->saveField('id_card_number', $this->Session->read('idCard.id_full'));
+				}
 				$this->sendCustomerLoginAlert($user, $kiosk);
 				if($user['User']['veteran']) {
 					$this->sendCustomerDetailsAlert('veteran', $user, $kiosk);
