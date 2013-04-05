@@ -14,6 +14,7 @@ class EcoursesController extends AppController {
 
 	public function beforeFilter() {
 		parent::beforeFilter();
+		$this->Auth->allow('load_media');
 	}
 
 	public function index($id = null) {
