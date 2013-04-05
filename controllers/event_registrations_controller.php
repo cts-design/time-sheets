@@ -220,6 +220,10 @@ class EventRegistrationsController extends AppController {
 					$users[$k]['Registered'] = date('m/d/y', strtotime($v['created']));
 				}
 			}
+			else {
+				$this->Session->setFlash('No registrations to print roster', 'flash_failure');
+				$this->redirect($this->referer());
+			}
 		}
 
 		$this->Transaction->createUserTransaction(
@@ -229,6 +233,7 @@ class EventRegistrationsController extends AppController {
 			'Printed attendance roster for event, id: ' . $event['Event']['id']
 		);
 		$this->layout = 'ajax';
+		$this->render = false;
 		$this->generatePDF($users, $event);
 	}
 

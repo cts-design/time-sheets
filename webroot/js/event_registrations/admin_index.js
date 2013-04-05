@@ -262,6 +262,12 @@ Ext.create('Ext.grid.Panel', {
         sm.deselectAll();
       }
     },{
+      id: 'reportButton',
+      xtype: 'button',
+      text: 'Attendance Roster',
+      icon: '/img/icons/pdf.png',
+      href: '/admin/event_registrations/attendance_roster/'+eventId
+    },{
       text: 'Delete',
       iconCls: 'icon_delete',
       handler: function() {
