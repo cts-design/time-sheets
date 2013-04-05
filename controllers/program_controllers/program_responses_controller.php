@@ -627,7 +627,7 @@ class ProgramResponsesController extends AppController {
 			}
 		}
 		$responses = $this->ProgramResponse->find('all', array('conditions' => $conditions));
-		if(isset($responses)) {
+		if($responses) {
 			foreach($responses as $k => $v) {
 				$report[$k]['Id'] = $v['ProgramResponse']['id'];
 				$report[$k]['First Name'] = $v['User']['firstname'];
@@ -652,6 +652,27 @@ class ProgramResponsesController extends AppController {
 				$report[$k]['Created'] = date('m/d/Y g:i a', strtotime($v['ProgramResponse']['created']));
 				$report[$k]['Modified'] = date('m/d/Y g:i a', strtotime($v['ProgramResponse']['modified']));
 				$report[$k]['Expires On'] = date('m/d/Y g:i a', strtotime($v['ProgramResponse']['expires_on']));
+				// TODO: add the ability to turn this on or off when running a report
+				// TODO: set a sane limit on how many records can be in a report
+				if(!empty($v['ProgramResponseActivity'])) {
+					$i = 0;
+					foreach($v['ProgramResponseActivity'] as $activity) {
+						if(!empty($activity['answers'])) {
+							$answers = json_decode($activity['answers'], true);
+							foreach($answers as $key => $value) {
+								if(array_key_exists($key, $report[$k])) {
+									$key .= '_' . $i;
+									$this->log($key, 'debug');
+									$report[$k][$key] = $value;
+								}
+								else {
+									$report[$k][$key] = $value;
+								}
+							}
+							$i++;
+						}
+					}
+				}
 			}			
 		}
 		$this->Transaction->createUserTransaction('Programs', null, null, 'Created a program response Excel report');		
