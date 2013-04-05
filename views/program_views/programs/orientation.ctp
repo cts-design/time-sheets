@@ -58,7 +58,6 @@
     <li class="module complete">
       <div class="details">
         <h3><?= $program['Program']['name'] ?> Orientation</h3>
-        <p><?= count($completedSteps) ?> of 2 steps completed</p>
       </div>
       <span class="status">
         <?= Inflector::humanize($programResponse['ProgramResponse']['status']) ?>
