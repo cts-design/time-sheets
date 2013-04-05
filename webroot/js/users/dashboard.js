@@ -239,10 +239,10 @@ $(document).ready(function () {
   });
 
   $('#expand').toggle(function () {
-    $.jstree._reference("#dashboardadmintree").open_all();
+    $.jstree._reference("#dashboardAdminTree").open_all();
     $(this).html('Collapse All')
   }, function () {
-    $.jstree._reference("#dashboardadmintree").close_all();
+    $.jstree._reference("#dashboardAdminTree").close_all();
     $(this).html('Expand All')
   });
 });
