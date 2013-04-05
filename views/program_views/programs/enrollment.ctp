@@ -115,7 +115,6 @@
 			<li class="module complete">
 				<div class="details">
 					<h3><?= $program['Program']['name'] ?> Enrollment</h3>
-					<p><?= count($completedSteps) ?> of X steps completed</p>
 				</div>
 				<span class="status">
 					<?= Inflector::humanize($programResponse['ProgramResponse']['status']) ?>
