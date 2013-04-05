@@ -24,12 +24,12 @@ class NavHelper extends AppHelper {
 		$Navigation->recursive = 1;
 		$links = $Navigation->findChildrenByPosition($position);
 
-		$output = "<ul class=\"sf-menu\">";
+		$output = "<ul class=\"nav sf-menu\">";
 		foreach ($links as $key => $value) {
 			$link = $this->Html->link($value['Navigation']['title'], $value['Navigation']['link']);
 
 			if ($this->checkCurrentPage($value['Navigation']['link'])) {
-				$class = ' class="current"';
+				$class = 'current';
 			} else {
 				$class = null;
 			}
@@ -41,7 +41,7 @@ class NavHelper extends AppHelper {
 						$currentPage = $this->checkCurrentPage($v['Navigation']['link']);
 
 						if ($class === null && $currentPage) {
-							$class = ' class="current"';
+							$class = 'current';
 							$cls = ' class="current"';
 						} else if ($currentPage) {
 							$cls = ' class="current"';
@@ -52,14 +52,14 @@ class NavHelper extends AppHelper {
 						$lnks[] = "<li{$cls}>" . $this->Html->link($v['Navigation']['title'], $v['Navigation']['link']) . "</li>";
 					}
 
-					$output .= "<li{$class}>{$link}<ul>";
+					$output .= "<li class=\"sub-menu {$class}\">{$link}<ul>";
 					$output .= implode('', $lnks);
 					$output .="</ul></li>";
 				} else {
-					$output .= "<li{$class}>{$link}</li>";
+					$output .= "<li class=\"{$class}\">{$link}</li>";
 				}
 			} else {
-				$output .= "<li{$class}>{$link}</li>";
+				$output .= "<li class=\"{$class}\">{$link}</li>";
 			}
 		}
 		$output .= "</ul>";
