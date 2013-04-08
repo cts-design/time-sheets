@@ -45,7 +45,7 @@
 	    // dynamic fields
 		if(in_array('middle_initial', $fields)) {
 			if($hideFields) {
-				$this->Form->hidden('middle_initial');
+				echo $this->Form->hidden('middle_initial');
 			}
 			else {
 				echo $this->Form->input('middle_initial', array(
@@ -147,16 +147,10 @@
 			echo '</div>';					
 		}		
 		
-		
-		
-		
-		
-
-		
 		//dynamic fields
 		if(in_array('dob', $fields)) {
 			if($hideFields) {
-				$this->Form->hidden('dob');
+				echo $this->Form->hidden('dob');
 			}
 			else {
 				echo $this->Form->input('dob', array(
@@ -171,7 +165,7 @@
 		}		
 		if(in_array('address_1', $fields)) {
 			if($hideFields) {
-				$this->Form->hidden('address_1');
+				echo $this->Form->hidden('address_1');
 			}
 			else {
 				echo $this->Form->input('address_1', array(
@@ -184,7 +178,7 @@
 		}
 		if(in_array('city', $fields)) {
 			if($hideFields) {
-				$this->Form->hidden('city');
+				echo $this->Form->hidden('city');
 			}
 			else {
 				echo $this->Form->input('city', array(
@@ -205,7 +199,7 @@
 		}
 		if(in_array('state', $fields)) {
 			if($hideFields) {
-				$this->Form->hidden('state');
+				echo $this->Form->hidden('state');
 			}
 			else {
 				echo $this->Form->input('state', array(
@@ -218,7 +212,7 @@
 		}
 		if(in_array('zip', $fields)) {
 			if($hideZip) {
-				$this->Form->hidden('zip');
+				echo $this->Form->hidden('zip');
 			}
 			else {
 				echo $this->Form->input('zip', array(
