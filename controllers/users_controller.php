@@ -38,6 +38,9 @@ class UsersController extends AppController {
 				}
 			}
 		}
+		if($this->params['action'] == 'kiosk_mini_registration') {
+			$this->Security->validatePost = false;
+		}
 		$this->Auth->allowedActions = array(
 			'kiosk_mini_registration',
 			'admin_password_reset',
