@@ -707,7 +707,6 @@ class UsersController extends AppController {
 		$this->loadModel('Kiosk');
 		$this->Kiosk->recursive = -1;
 		$this->User->recursive  = -1;
-		$this->log($this->data, 'debug');
 		if (!empty($this->data)) {
 			$this->User->Behaviors->disable('Disableable');
 			$this->User->setValidation('customerMinimum');
