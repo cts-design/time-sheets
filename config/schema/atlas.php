@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2013-04-04 14:06:53 : 1365098813*/
+/* atlas schema generated on: 2013-04-08 16:34:42 : 1365453282*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -335,6 +335,7 @@ class atlasSchema extends CakeSchema {
 		'cat_2' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10, 'key' => 'index'),
 		'cat_3' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10, 'key' => 'index'),
 		'event_registration_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		'allow_registrations' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'event_category_id' => array('column' => 'event_category_id', 'unique' => 0), 'location_id' => array('column' => 'location_id', 'unique' => 0), 'cat_1' => array('column' => 'cat_1', 'unique' => 0), 'cat_2' => array('column' => 'cat_2', 'unique' => 0), 'cat_3' => array('column' => 'cat_3', 'unique' => 0)),
@@ -861,6 +862,7 @@ class atlasSchema extends CakeSchema {
 		'ethnicity' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'race' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'veteran' => array('type' => 'boolean', 'null' => true, 'default' => NULL),
+		'disability' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'organization' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'disabled' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'signature' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 1),
