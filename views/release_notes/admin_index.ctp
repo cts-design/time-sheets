@@ -3,6 +3,17 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+	<h1>Release 3.7.1 (4-5-13)</h1>
+	<h2>Minor Updates</h2>
+	<ol>
+		<li>Added support for scribd streaming of powerpoint file within the E-course module</li>
+	</ol>
+	<h2>Bug Fixes</h2>
+	<ol>
+		<li>Fixed bug that was causing printable roster from not displaying within the Events Attendance view</li>
+		<li>Fixed bug that was causing an error with the "expand all" action on the ATLAS Dashboard</li>
+	</ol>
+	<hr />
 	<h1>Release 3.7 (3-29-13)</h1>
 	<h2>Major Updates</h2>
 	<ol>
