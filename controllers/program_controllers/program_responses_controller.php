@@ -627,6 +627,11 @@ class ProgramResponsesController extends AppController {
 			}
 		}
 		$responses = $this->ProgramResponse->find('all', array('conditions' => $conditions));
+		$this->log(count($responses), 'debug');
+		if(count($responses) > 3000) {
+			$this->Session->setFlash('Cannot run excel report with more than 3000 records. Please filter your data further and try again.', 'flash_failure');
+			$this->redirect($this->referer());
+		}
 		if($responses) {
 			foreach($responses as $k => $v) {
 				$report[$k]['Id'] = $v['ProgramResponse']['id'];
@@ -652,7 +657,6 @@ class ProgramResponsesController extends AppController {
 				$report[$k]['Created'] = date('m/d/Y g:i a', strtotime($v['ProgramResponse']['created']));
 				$report[$k]['Modified'] = date('m/d/Y g:i a', strtotime($v['ProgramResponse']['modified']));
 				$report[$k]['Expires On'] = date('m/d/Y g:i a', strtotime($v['ProgramResponse']['expires_on']));
-				// TODO: set a sane limit on how many records can be in a report
 
 				if(!empty($v['ProgramResponseActivity']) && isset($this->params['url']['includeData'])) {
 					$i = 0;
@@ -662,7 +666,6 @@ class ProgramResponsesController extends AppController {
 							foreach($answers as $key => $value) {
 								if(array_key_exists($key, $report[$k])) {
 									$key .= '_' . $i;
-									$this->log($key, 'debug');
 									$report[$k][$key] = $value;
 								}
 								else {
