@@ -616,7 +616,7 @@ class UsersController extends AppController {
 			}
 			$this->Session->destroy();
 			$this->Session->setFlash($msg, 'flash_success_modal');
-			$this->redirect(array('/kiosk'));
+			$this->redirect('/kiosk');
 		}
 		if (preg_match('/auditor/i', $this->Session->read('Auth.User.role_name'))) {
 			$this->Session->destroy();
