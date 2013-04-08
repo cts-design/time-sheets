@@ -652,9 +652,9 @@ class ProgramResponsesController extends AppController {
 				$report[$k]['Created'] = date('m/d/Y g:i a', strtotime($v['ProgramResponse']['created']));
 				$report[$k]['Modified'] = date('m/d/Y g:i a', strtotime($v['ProgramResponse']['modified']));
 				$report[$k]['Expires On'] = date('m/d/Y g:i a', strtotime($v['ProgramResponse']['expires_on']));
-				// TODO: add the ability to turn this on or off when running a report
 				// TODO: set a sane limit on how many records can be in a report
-				if(!empty($v['ProgramResponseActivity'])) {
+
+				if(!empty($v['ProgramResponseActivity']) && isset($this->params['url']['includeData'])) {
 					$i = 0;
 					foreach($v['ProgramResponseActivity'] as $activity) {
 						if(!empty($activity['answers'])) {
