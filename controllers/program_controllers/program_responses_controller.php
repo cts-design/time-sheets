@@ -627,16 +627,55 @@ class ProgramResponsesController extends AppController {
 			}
 		}
 		$responses = $this->ProgramResponse->find('all', array('conditions' => $conditions));
-		if(isset($responses)) {
+		$this->log(count($responses), 'debug');
+		if(count($responses) > 3000) {
+			$this->Session->setFlash('Cannot run excel report with more than 3000 records. Please filter your data further and try again.', 'flash_failure');
+			$this->redirect($this->referer());
+		}
+		if($responses) {
 			foreach($responses as $k => $v) {
 				$report[$k]['Id'] = $v['ProgramResponse']['id'];
 				$report[$k]['First Name'] = $v['User']['firstname'];
+				$report[$k]['Middle Initial'] = $v['User']['middle_initial'];
 				$report[$k]['Last Name'] = $v['User']['lastname'];
+				$report[$k]['Sur Name'] = $v['User']['surname'];
 				$report[$k]['Last 4 SSN'] = substr($v['User']['ssn'], -4);
+				$report[$k]['Address'] = $v['User']['address_1'];
+				$report[$k]['City'] = $v['User']['city'];
+				$report[$k]['County'] = $v['User']['county'];
+				$report[$k]['State'] = $v['User']['state'];
+				$report[$k]['Zip'] = $v['User']['zip'];
+				$report[$k]['Phone'] = $v['User']['phone'];
+				$report[$k]['Gender'] = $v['User']['gender'];
+				$report[$k]['Dob'] = $v['User']['dob'];
+				$report[$k]['Email'] = $v['User']['email'];
+				$report[$k]['Language'] = $v['User']['language'];
+				$report[$k]['Ethnicity'] = $v['User']['ethnicity'];
+				$report[$k]['Race'] = $v['User']['race'];
+				
 				$report[$k]['Status'] = ucfirst($v['ProgramResponse']['status']);
 				$report[$k]['Created'] = date('m/d/Y g:i a', strtotime($v['ProgramResponse']['created']));
 				$report[$k]['Modified'] = date('m/d/Y g:i a', strtotime($v['ProgramResponse']['modified']));
 				$report[$k]['Expires On'] = date('m/d/Y g:i a', strtotime($v['ProgramResponse']['expires_on']));
+
+				if(!empty($v['ProgramResponseActivity']) && isset($this->params['url']['includeData'])) {
+					$i = 0;
+					foreach($v['ProgramResponseActivity'] as $activity) {
+						if(!empty($activity['answers'])) {
+							$answers = json_decode($activity['answers'], true);
+							foreach($answers as $key => $value) {
+								if(array_key_exists($key, $report[$k])) {
+									$key .= '_' . $i;
+									$report[$k][$key] = $value;
+								}
+								else {
+									$report[$k][$key] = $value;
+								}
+							}
+							$i++;
+						}
+					}
+				}
 			}			
 		}
 		$this->Transaction->createUserTransaction('Programs', null, null, 'Created a program response Excel report');		

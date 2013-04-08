@@ -431,6 +431,7 @@ Ext.onReady(function() {
 		},{
 			text: 'Report',
 			icon:  '/img/icons/excel.png',
+      xtype: 'splitbutton',
 			handler: function(){
 				var f = programResponseSearch.getForm();
 				var vals = f.getValues();
@@ -438,7 +439,22 @@ Ext.onReady(function() {
         vals.progId = progId;
 				vals = Ext.urlEncode(vals);
 				window.location = '/admin/program_responses/report?'+ vals;
-			}
+			},
+      menu: new Ext.menu.Menu({
+        items: [{
+          icon:  '/img/icons/excel.png',
+          text: 'Report With Form Answers?',
+          handler: function() {
+            var f = programResponseSearch.getForm();
+            var vals = f.getValues();
+            vals.status = programResponseProxy.extraParams.status;
+            vals.includeData = true;
+            vals.progId = progId;
+            vals = Ext.urlEncode(vals);
+            window.location = '/admin/program_responses/report?'+ vals;
+          }
+        }] 
+       })
 		}]
 	});
 	
