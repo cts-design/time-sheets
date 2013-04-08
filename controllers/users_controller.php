@@ -1,3 +1,4 @@
+		
 <?php
 
 /**
@@ -615,7 +616,7 @@ class UsersController extends AppController {
 			}
 			$this->Session->destroy();
 			$this->Session->setFlash($msg, 'flash_success_modal');
-			$this->redirect(array('action' => 'self_sign_login', 'kiosk' => true));
+			$this->redirect(array('/kiosk'));
 		}
 		if (preg_match('/auditor/i', $this->Session->read('Auth.User.role_name'))) {
 			$this->Session->destroy();
