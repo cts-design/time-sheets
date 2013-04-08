@@ -8,7 +8,7 @@ class QueueDocumentTask extends Shell {
 		if(!empty($data['Ecourse'])) {
 			return $this->generateEcourseDoc($data);
 		}
-		if(!empty($data['ProgramDocument']) && ($data['ProgramDocument']['type'] === 'snapshot' || $data['ProgramDocument']['type'] === 'multi_snapshota')) {
+		if(!empty($data['ProgramDocument']) && ($data['ProgramDocument']['type'] === 'snapshot' || $data['ProgramDocument']['type'] === 'multi_snapshot')) {
 			return $this->generateSnapshot($data);	
 		}
 		else {
@@ -30,6 +30,7 @@ class QueueDocumentTask extends Shell {
 				$pdf->args_add('--header-right', Configure::read('Company.name'));
 				$pdf->args_add('--footer-center', 'Page: [page] of [topage]') ;
 				Configure::write('debug', 0);
+				$pdf->set_page_size('letter');
 				$pdf->render();
 				$pdfFile = date('YmdHis') . rand(0, pow(10, 7)) . '.pdf';
 				$pdf->output(WKPDF_MULTI::$PDF_SAVEFILE, $path . $pdfFile);
@@ -81,6 +82,23 @@ class QueueDocumentTask extends Shell {
 
 	private function getSnapshotHtml($data) {
 		$html = '';
+		$html .= '<h2>User Info</h2>';
+		unset($data['User']['id']);
+		unset($data['User']['role_id']);
+		unset($data['User']['signature']);
+		unset($data['User']['location_id']);
+		unset($data['User']['organization']);
+		unset($data['User']['name_last4']);
+		unset($data['User']['disabled']);
+		foreach($data['User'] as $k => $v) {
+			if(!preg_match('[\@]', $v)) {
+				$data['User'][$k] = ucwords($v);
+			}
+			$html .= '<li><span class="question">' . Inflector::humanize($k); 
+			$html .= ':&nbsp;</span><span class="answer">' . Inflector::humanize($v) . '</span>';
+		}
+		$html .= '<hr />';
+
 		foreach($data['steps'] as $step) {
 			$html .= '<h2>' . $step['name'] . '</h2>';
 			$html .= '<ol>';
