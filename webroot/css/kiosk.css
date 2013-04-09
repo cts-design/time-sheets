@@ -443,7 +443,7 @@ a.translate-button:active {
 div.survey-button {
   bottom: 2px;
   position: absolute;
-  right: 2px;
+  left: 2px;
 }
 
 div.survey-button a {
