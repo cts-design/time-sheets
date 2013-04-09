@@ -94,7 +94,7 @@ class EcourseResponsesController extends AppController {
 				$i = 0;
 				foreach($response['EcourseModuleResponse'] as $moduleResponse) {
 					$data['response'][$i]['id'] = $moduleResponse['id'];
-					$data['response'][$i]['module'] = $moduleResponse['EcourseModule']['name'];
+					$data['response'][$i]['module'] = $moduleResponse['EcourseModule']['order'] . ' ' . $moduleResponse['EcourseModule']['name'];
 					$data['response'][$i]['score'] = $moduleResponse['score'];
 					$data['response'][$i]['pass_fail'] = $moduleResponse['pass_fail'];
 					$data['response'][$i]['time_on_quiz'] =
