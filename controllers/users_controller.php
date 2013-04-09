@@ -340,6 +340,25 @@ class UsersController extends AppController {
 			)
 		);
 
+		$completedAssignedEcourses = $this->Ecourse->find('all',
+			array(
+				'conditions' => array(
+					'Ecourse.requires_user_assignment' => 1,
+					'Ecourse.type' => 'customer'
+				),
+				'contain' => array(
+					'EcourseModule' => array('order' => 'EcourseModule.order ASC'),
+					'EcourseResponse' => array(
+						'conditions' => array(
+							'EcourseResponse.user_id' => $this->Auth->user('id'),
+							'EcourseResponse.status' => 'completed'
+						),
+						'EcourseModuleResponse'
+					)
+				)
+			)
+		);
+
 		$publicEcourses = $this->Ecourse->find('all',
 			array(
 				'conditions' => array(
@@ -369,6 +388,14 @@ class UsersController extends AppController {
 
 		if ($publicEcourses) {
 			foreach ($publicEcourses as $key => $ecourse) {
+				$ecourse['Ecourse']['EcourseModule'] = $ecourse['EcourseModule'];
+				$ecourse['Ecourse']['EcourseResponse'] = $ecourse['EcourseResponse'];
+				$ecourses[]['Ecourse'] = $ecourse['Ecourse'];
+			}
+		}
+
+		if ($completedAssignedEcourses) {
+			foreach ($completedAssignedEcourses as $ecourse) {
 				$ecourse['Ecourse']['EcourseModule'] = $ecourse['EcourseModule'];
 				$ecourse['Ecourse']['EcourseResponse'] = $ecourse['EcourseResponse'];
 				$ecourses[]['Ecourse'] = $ecourse['Ecourse'];
@@ -987,6 +1014,25 @@ class UsersController extends AppController {
 			)
 		);
 
+		$completedAssignedEcourses = $this->Ecourse->find('all',
+			array(
+				'conditions' => array(
+					'Ecourse.requires_user_assignment' => 1,
+					'Ecourse.type' => 'staff'
+				),
+				'contain' => array(
+					'EcourseModule' => array('order' => 'EcourseModule.order ASC'),
+					'EcourseResponse' => array(
+						'conditions' => array(
+							'EcourseResponse.user_id' => $this->Auth->user('id'),
+							'EcourseResponse.status' => 'completed'
+						),
+						'EcourseModuleResponse'
+					)
+				)
+			)
+		);
+
 		$ecourses = array();
 
 		if ($assignedEcourses) {
@@ -997,6 +1043,14 @@ class UsersController extends AppController {
 
 		if ($publicEcourses) {
 			foreach ($publicEcourses as $key => $ecourse) {
+				$ecourse['Ecourse']['EcourseModule'] = $ecourse['EcourseModule'];
+				$ecourse['Ecourse']['EcourseResponse'] = $ecourse['EcourseResponse'];
+				$ecourses[]['Ecourse'] = $ecourse['Ecourse'];
+			}
+		}
+
+		if ($completedAssignedEcourses) {
+			foreach ($completedAssignedEcourses as $ecourse) {
 				$ecourse['Ecourse']['EcourseModule'] = $ecourse['EcourseModule'];
 				$ecourse['Ecourse']['EcourseResponse'] = $ecourse['EcourseResponse'];
 				$ecourses[]['Ecourse'] = $ecourse['Ecourse'];
