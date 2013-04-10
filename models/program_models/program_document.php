@@ -34,18 +34,18 @@ class ProgramDocument extends AppModel {
 						'name' => $data['currentStep']['name']);
 				$data['toc'] = false;
 			}
-			elseif(isset($data['ProgramResponseActivity']) &&
+			elseif((isset($data['ProgramResponseActivity']) && ! empty($data['ProgramResponseActivity'])) && 
 				$doc['ProgramDocument']['type'] === 'certificate' ||
 				$doc['ProgramDocument']['type'] === 'pdf') {
 					$i = 0;
 					foreach($data['ProgramResponseActivity'] as $activity) {
 						if($activity['type'] === 'form') {
 							$data['steps'][$i]['answers'] = json_decode($activity['answers'], true);
+							$i++;
 						}
-						$i++;
 					}
 			}
-			unset($data['ProgramResponse']['ProgramResponseActivity']);
+			unset($data['ProgramResponseActivity']);
 			ClassRegistry::init('Queue.QueuedTask')->createJob('document', $data);
 		}
 
