@@ -62,6 +62,11 @@ class DocumentQueueCategoriesController extends AppController {
 			$this->Session->setFlash(__('Invalid id for document queue category', true), 'flash_failure');
 			$this->redirect(array('action'=>'index'));
 		}
+		$count = $this->DocumentQueueCategory->QueuedDocument->find('count', array('conditions' => array('QueuedDocument.queue_category_id' => $id)));
+		if($count) {
+			$this->Session->setFlash(__('Cannot delete queue categories that have documents in them', true), 'flash_failure');
+			$this->redirect(array('action'=>'index'));
+		}
 		if ($this->DocumentQueueCategory->delete($id)) {
 			$this->Session->setFlash(__('Document queue category deleted', true), 'flash_success');
 			$this->redirect(array('action'=>'index'));
