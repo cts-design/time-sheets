@@ -127,14 +127,12 @@ class QueueDocumentTask extends Shell {
 		}
 		$pdfData = $data['User'];
 		if(!empty($data['steps'])) {
-			$i = 0;
 			foreach($data['steps'] as $step) {
 				foreach($step['answers'] as $k => $v) {
 					if(!preg_match('[\@]', $v)) {
-						$pdfData['steps'][$i]['answers'][$k] = ucwords($v);
+						$pdfData['answers'][$k] = ucwords($v);
 					}
 				}
-			$i++;
 			}
 		}
 		$pdfData['masked_ssn'] = '***-**-' . substr($data['User']['ssn'], -4);
@@ -256,13 +254,13 @@ class QueueDocumentTask extends Shell {
 		$data="%FDF-1.2\n%����\n1 0 obj\n<< \n/FDF << /Fields [ ";
 		foreach($info as $field => $val){
 			if(is_array($val)){
-				$data.='<</T('.$field.')/V[';
-				foreach($val as $opt)
-					if(!is_array($opt)) {
-						$data.='('.trim($opt).')';
+				foreach($val as $f => $v) {
+					if(!is_array($v)) {
+						$data.='<</T('.$f.')/V('.trim($v).')>>';
 					}
-				$data.=']>>';
-			}else{
+				}
+			}
+			else{
 				$data.='<</T('.$field.')/V('.trim($val).')>>';
 			}
 		}
