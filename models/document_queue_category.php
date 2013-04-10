@@ -28,15 +28,4 @@ class DocumentQueueCategory extends AppModel {
 		'message' => 'Please provide a name for the category'
 	    )
 	);
-
-    function delete($id = null) {
-	if($id) {
-	    $data['DocumentQueueCategory']['id'] = $id;
-	    $data['DocumentQueueCategory']['deleted'] = 1;
-	    if ($this->save($data)) {
-		return true;
-	    }
-	}
-	return false;
-    }
 }
