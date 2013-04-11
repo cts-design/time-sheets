@@ -162,6 +162,15 @@
 		    'between' => '</p><p class="left">',
 		    'after' => '</p>'
 	    ));				
+		echo '<br class="clear" />' ;
+		echo $this->Form->input('User.disability', array(
+			'label' => __('Disability', true),
+			'type' => 'select',
+			'empty' => 'Please Select',
+			'options' => array(1 => 'Yes', 0 => 'No'), 
+			'before' => '<p class="left">',
+			'between' => '</p><p class="left">',
+			'after' => '</p>'));
 	    ?>
 	    
 	</fieldset>

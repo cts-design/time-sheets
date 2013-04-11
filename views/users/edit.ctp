@@ -141,6 +141,14 @@
 		    'after' => '</p>'
         ));
 		echo '<br class="clear" />' ;
+		echo $this->Form->input('User.disability', array(
+			'label' => __('Do you have a substantial disability', true),
+			'type' => 'select',
+			'empty' => 'Please Select',
+			'options' => array(1 => 'Yes', 0 => 'No'), 
+			'before' => '<p class="left">',
+			'between' => '</p><p class="left">',
+			'after' => '</p>'));
 	    echo $this->Form->input('ssn', array(
 	    	'type' => 'hidden',
 	    	'empty' => 'Please Select'
