@@ -18,9 +18,6 @@ class DocumentQueueCategoriesController extends AppController {
 		
 	function admin_index() {
 		$this->DocumentQueueCategory->recursive = 0;
-		$this->paginate = array(
-		    'conditions' => array('DocumentQueueCategory.deleted' => 0)
-		);
 		$this->set('documentQueueCategories', $this->paginate());
 	}
 
