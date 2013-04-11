@@ -324,13 +324,16 @@ class UsersController extends AppController {
 		$assignedEcourses = $this->User->EcourseUser->find('all',
 			array(
 				'conditions' => array(
-					'EcourseUser.user_id' => $this->Auth->user('id'),
-					'Ecourse.type' => 'customer'
+					'Ecourse.type' => 'customer',
 					'Ecourse.disabled' => '0',
+					'EcourseUser.user_id' => $this->Auth->user('id')
 				),
 				'contain' => array(
 					'Ecourse' => array(
-						'EcourseModule'
+						'EcourseModule',
+						'EcourseResponse' => array(
+							'EcourseModuleResponse'
+						)
 					)
 				)
 			)
@@ -346,18 +349,21 @@ class UsersController extends AppController {
 				),
 				'contain' => array(
 					'Ecourse' => array(
-						'EcourseModule'
-					),
-					'EcourseModuleResponse'
+						'EcourseModule',
+						'EcourseResponse' => array(
+							'EcourseModuleResponse'
+						)
+					)
 				)
 			)
 		);
+
 
 		$publicEcourses = $this->Ecourse->find('all',
 			array(
 				'conditions' => array(
 					'Ecourse.requires_user_assignment' => 0,
-					'Ecourse.type' => 'customer'
+					'Ecourse.type' => 'customer',
 					'Ecourse.disabled' => '0'
 				),
 				'contain' => array(
