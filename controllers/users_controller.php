@@ -336,22 +336,19 @@ class UsersController extends AppController {
 			)
 		);
 
-		$completedAssignedEcourses = $this->Ecourse->find('all',
+		$completedAssignedEcourses = $this->Ecourse->EcourseResponse->find('all',
 			array(
 				'conditions' => array(
+					'EcourseResponse.user_id' => $this->Auth->user('id'),
+					'EcourseResponse.status' => 'completed',
 					'Ecourse.requires_user_assignment' => 1,
-					'Ecourse.type' => 'customer'
 					'Ecourse.disabled' => '0'
 				),
 				'contain' => array(
-					'EcourseModule' => array('order' => 'EcourseModule.order ASC'),
-					'EcourseResponse' => array(
-						'conditions' => array(
-							'EcourseResponse.user_id' => $this->Auth->user('id'),
-							'EcourseResponse.status' => 'completed'
-						),
-						'EcourseModuleResponse'
-					)
+					'Ecourse' => array(
+						'EcourseModule'
+					),
+					'EcourseModuleResponse'
 				)
 			)
 		);
@@ -393,10 +390,13 @@ class UsersController extends AppController {
 		}
 
 		if ($completedAssignedEcourses) {
+			$i = 0;
 			foreach ($completedAssignedEcourses as $ecourse) {
-				$ecourse['Ecourse']['EcourseModule'] = $ecourse['EcourseModule'];
-				$ecourse['Ecourse']['EcourseResponse'] = $ecourse['EcourseResponse'];
+				$ecourse['Ecourse']['EcourseModule'] = $ecourse['Ecourse']['EcourseModule'];
+				$ecourse['Ecourse']['EcourseResponse'][$i] = $ecourse['EcourseResponse'];
+				$ecourse['Ecourse']['EcourseResponse'][$i]['EcourseModuleResponse'] = $ecourse['EcourseModuleResponse'];
 				$ecourses[]['Ecourse'] = $ecourse['Ecourse'];
+				$i++;
 			}
 		}
 
