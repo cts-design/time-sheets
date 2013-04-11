@@ -154,7 +154,7 @@
 			'type' => 'select',
 			'empty' => 'Please Select',
 			'options' => array(
-				'American Indian or Alaksa Native' => 'American Indian or Alaksa Native',
+				'American Indian or Alaska Native' => 'American Indian or Alaska Native',
 				'Asian' => 'Asian',
 				'Black or African American' => 'Black or African American',
 				'Hawaiian or Other Pacific Islander' => 'Hawaiian or Other Pacific Islander',
