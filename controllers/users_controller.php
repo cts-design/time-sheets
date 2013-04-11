@@ -326,6 +326,7 @@ class UsersController extends AppController {
 				'conditions' => array(
 					'EcourseUser.user_id' => $this->Auth->user('id'),
 					'Ecourse.type' => 'customer'
+					'Ecourse.disabled' => '0',
 				),
 				'contain' => array(
 					'Ecourse' => array(
@@ -340,6 +341,7 @@ class UsersController extends AppController {
 				'conditions' => array(
 					'Ecourse.requires_user_assignment' => 1,
 					'Ecourse.type' => 'customer'
+					'Ecourse.disabled' => '0'
 				),
 				'contain' => array(
 					'EcourseModule' => array('order' => 'EcourseModule.order ASC'),
@@ -359,6 +361,7 @@ class UsersController extends AppController {
 				'conditions' => array(
 					'Ecourse.requires_user_assignment' => 0,
 					'Ecourse.type' => 'customer'
+					'Ecourse.disabled' => '0'
 				),
 				'contain' => array(
 					'EcourseModule' => array('order' => 'EcourseModule.order ASC'),
