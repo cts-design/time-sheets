@@ -67,6 +67,10 @@ class DocumentQueueFiltersController extends AppController {
 					$data['filters']['queue_cats'] = 
 						json_decode($filters['DocumentQueueFilter']['queue_cats']);
 				}
+				if($filters['DocumentQueueFilter']['self_scan_cats']) {
+					$data['filters']['self_scan_cats'] = 
+						json_decode($filters['DocumentQueueFilter']['self_scan_cats']);
+				}
 				if($filters['DocumentQueueFilter']['from_date']) {
 					$data['filters']['from_date'] = 
 						date('m/d/Y', strtotime($filters['DocumentQueueFilter']['from_date']));						
