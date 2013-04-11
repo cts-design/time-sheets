@@ -457,6 +457,10 @@ class QueuedDocumentsController extends AppController {
 			if(!empty($queueCats)) {
 				$conditions['QueuedDocument.queue_category_id'] = $queueCats;
 			}
+			$selfScanCats = json_decode($filters['DocumentQueueFilter']['self_scan_cats'], true);
+			if(!empty($selfScanCats)) {
+				$conditions['QueuedDocument.self_scan_cat_id'] = $selfScanCats;
+			}
 			if(!empty($filters['DocumentQueueFilter']['from_date']) && 
 			   !empty($filters['DocumentQueueFilter']['to_date'] )){
 				    $from = date('Y-m-d H:i:m', 

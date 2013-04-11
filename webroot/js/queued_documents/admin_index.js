@@ -75,7 +75,7 @@ Ext.create('Ext.window.MessageBox',{
 Ext.define('SelfScanCategory', {
 	extend: 'Ext.data.Model',
 	fields: [
-		'id', 'cat_1', 'cat_2','cat_3'
+		'id', 'name', 'cat_1', 'cat_2','cat_3'
 	]
 });
 
@@ -482,7 +482,7 @@ Ext.create('Ext.data.Store', {
 
 Ext.define('DocumentQueueFilter', {
 	extend: 'Ext.data.Model',
-	fields: ['id', 'locations', 'queue_cats', 'from_date', 'to_date', 'auto_load_docs']
+	fields: ['id', 'locations', 'queue_cats', 'self_scan_cats', 'from_date', 'to_date', 'auto_load_docs']
 });
 
 Ext.create('Ext.data.Store', {
@@ -545,6 +545,16 @@ Ext.define('Atlas.form.DocQueueFilterPanel', {
 			}
 		},
 		store: 'queueCatgoriesStore'
+	},{
+		xtype: 'boxselect',
+		fieldLabel: 'Self Scan Cats',
+		id: 'selfScanCatsSelect',
+		encodeSubmitValue: true,
+		name: 'self_scan_cats',
+		emptyText: 'Please Select',
+		displayField: 'name',
+		valueField: 'id',
+		store: 'selfScanCategoriesStore'
 	},{
 		xtype: 'datefield',
 		fieldLabel: 'From',
