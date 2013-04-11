@@ -43,8 +43,8 @@ Ext.create('Ext.data.Store', {
       if(responseTxt.success) {
         iconCls = 'x-status-valid'; 
       }
-      sb.setstatus({
-        text: responsetxt.message,
+      sb.setStatus({
+        text: responseTxt.message,
         iconCls: iconCls,
         clear: {
           anim: false
@@ -271,11 +271,13 @@ Ext.create('Ext.grid.Panel', {
       text: 'Delete',
       iconCls: 'icon_delete',
       handler: function() {
-        Ext.MessageBox.confirm('Confim delete', 'Are you sure you want to delete these registrations?', function() {
-          var store = Ext.data.StoreManager.lookup('eventRegistrations');
-          store.remove(sm.selected.items);
-          store.sync();
-          sm.deselectAll();
+        Ext.MessageBox.confirm('Confim delete', 'Are you sure you want to delete these registrations?', function(button) {
+          if(button == 'yes') {
+            var store = Ext.data.StoreManager.lookup('eventRegistrations');
+            store.remove(sm.selected.items);
+            store.sync();
+            sm.deselectAll();
+          }
         });
       }
     }]       

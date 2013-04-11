@@ -16,6 +16,7 @@
             items:[
                 {contentEl: 'Alerts', title: 'Alerts'},
                 {contentEl: 'Events', title: 'Events'},
+                {contentEl: 'Ecourses', title: 'Ecourses'},
                 {contentEl: 'Users', title: 'Users'},
                 {contentEl: 'Website', title: 'Website'},
                 {contentEl: 'Storage', title: 'Storage'},
@@ -66,6 +67,21 @@
                 'checked' => (isset($controllers['Alerts']['admin_add_customer_login_alert'])) ? $controllers['Alerts']['admin_add_customer_login_alert'] : '' ));?>
             </fieldset>
             <?php echo $this->PluginPermissions->buildFieldset('alerts') ?>
+            <br class="clear" />
+            <?php echo $this->Form->end(__('Submit', true))?>
+    </div>
+    <div id="Ecourses" class="x-hide-display">
+            <?php echo $this->Form->create('permission', array('action' => 'set_permissions')) ?>
+            <?php echo $this->Form->hidden('id', array('value' => $id));?>
+            <?php echo $this->Form->hidden('model', array('value' => $model));?>
+            <fieldset class="left right-mar-10">
+            <legend><?php __('Ecourse Management') ?></legend>
+               <?php echo $this->Form->input('Ecourses.admin_index', array(
+                'type' => 'checkbox',
+                'label' => 'Index',
+                'checked' => (isset($controllers['Ecourses']['admin_index'])) ? $controllers['Ecourses']['admin_index'] : '' ));?>
+            </fieldset>
+            <?php echo $this->PluginPermissions->buildFieldset('ecourses') ?>
             <br class="clear" />
             <?php echo $this->Form->end(__('Submit', true))?>
     </div>
