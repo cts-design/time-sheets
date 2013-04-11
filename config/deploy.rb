@@ -32,7 +32,7 @@ namespace :cts do
     set :deploy_to, "/var/www/vhosts/staging.atlasforworkforce.com/#{application}"
     set :server_name, 'atlas staging'
     set :user, 'atlas_staging'
-    set :keep_releases, 1
+    set :keep_releases, 2
     set :branch, 'staging'
     set :design_branch, ENV['DESIGN'] if ENV.has_key?('DESIGN')
     server "staging.atlasforworkforce.com", :app, :web, :db, :primary => true
@@ -42,7 +42,7 @@ namespace :cts do
     set :deploy_to, "/var/www/vhosts/design.atlasforworkforce.com/#{application}"
     set :server_name, 'atlas design'
     set :user, 'design_deploy'
-    set :keep_releases, 1
+    set :keep_releases, 2
     set :branch, 'staging'
     set :design_branch, "chipola"
     server "192.168.200.74", :app, :web, :db, :primary => true
@@ -275,6 +275,7 @@ after "deploy:web:disable", "notify_campfire:disabled_alert"
 after "deploy:web:enable", "notify_campfire:enabled_alert"
 after "deploy:update_code", :design
 after "deploy:plugins:symlink", "deploy:finalize_update"
-after "deploy:finalize_update", "notify_campfire:deploy_alert"
+after "deploy:finalize_update", "deploy:cleanup"
+after "deploy:cleanup", "notify_campfire:deploy_alert"
 
 capcake
