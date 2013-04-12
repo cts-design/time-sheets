@@ -3,6 +3,25 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+
+	<h1>Release 3.7.2 (4-11-13)</h1>
+	<h2>Minor Updates</h2>
+	<ol>
+		<li>Added  Demographics from Customer Registration to "top" of Program Response PDF snapshot</li>
+		<li>Added all program response fields to excel report for greater report capabilities</li>
+		<li>Implemented the ability to filter the Queue by Self-scan documents using the Self-Scan definition Selection tree criteria</li>
+	</ol>
+	<h2>Bug Fixes</h2>
+	<ol>
+		<li>Fixed spelling error on kiosk registration field</li>
+		<li>Resolved bug with registration and “disability” question nor saving to user profile</li>
+		<li>Fixed issues that was prohibiting Role Admin the ability to be assigned permissions under E-Course</li>
+		<li>Fixed issue that was causing deleted Queues to show up within the Storage Queue as active</li>
+		<li>Resolved issue with E-Course grade results being listed Alpha-Numeric rather than in Step ID order</li>
+		<li>Resolved issue that was causing assigned ecourses that were completed to show up on the last assigned person of the course</li>
+		<li>Fixed issue where confirmation yes|no on a delete of registered user in events was producing undesired results</li>
+	</ol>
+	<hr />
 	<h1>Release 3.7.1 (4-5-13)</h1>
 	<h2>Minor Updates</h2>
 	<ol>

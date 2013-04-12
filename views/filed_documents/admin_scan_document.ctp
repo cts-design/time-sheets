@@ -70,6 +70,7 @@
 	    end if
 	End Sub
 	Sub scan_OnClick
+	    Eztwain.ScanPaperSize = 3
 	    Eztwain.ScanWithUI = false
 	    Eztwain.ScanType = 0
 	    Eztwain.ScanDPI = 300
@@ -80,6 +81,7 @@
 	    enableReScan()
 	End Sub
 	Sub rescan_OnClick
+	    Eztwain.ScanPaperSize = 3
 	    Eztwain.ScanWithUI = false
 	    Eztwain.ScanType = 0
 	    Eztwain.ScanDPI = 300
