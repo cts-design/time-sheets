@@ -141,9 +141,11 @@ class EventRegistrationsController extends AppController {
 	}
 
 	public function admin_attendance_report() {
-		$this->EventRegistration->Event->recursive = 2;
+		$this->EventRegistration->Event->recursive = -1;
 		if(isset($this->params['url']['id'])) {
-			$event = $this->EventRegistration->Event->findById($this->params['url']['id']);	
+			$event = $this->EventRegistration->Event->find('first', array(
+				'conditions' => array('Event.id' => $this->params['url']['id']),
+				'contain' => array('Location', 'EventRegistration' => array('User'))));	
 		}
 		$report = array();
 		$title = 'Event Attendance Report ';
@@ -203,9 +205,11 @@ class EventRegistrationsController extends AppController {
 	}
 	
 	public function admin_attendance_roster() {
-		$this->EventRegistration->Event->recursive = 2;
+		$this->EventRegistration->Event->recursive = -1;
 		if(isset($this->params['pass'][0])) {
-			$event = $this->EventRegistration->Event->findById($this->params['pass'][0]);	
+			$event = $this->EventRegistration->Event->find('first', array(
+				'conditions' => array('Event.id' => $this->params['pass'][0]),
+				'contain' => array('Location', 'EventRegistration' => array('User'))));	
 		}
 		$users = array();
 		$title = 'Event Attendance Roster ';
