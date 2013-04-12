@@ -3,6 +3,13 @@
         <?php printf(__("Welcome to the %s Online Services System. To begin, please log in with your child's last name and your child's full 
                          social security number.", true), Configure::read('Company.name')) ?>
 	</p>
+	<?php $settings = Cache::read('settings'); ?> 
+	<?php if(isset($settings['Users']['LoginAdditionalText'])) : ?>
+		<?php $text = json_decode($settings['Users']['LoginAdditionalText'], true); ?> 
+	<?php endif ?>
+	<?php if(isset($text[1]['value'])) : ?>
+		<p><?= $text[1]['value'] ?></p>
+	<?php endif ?>
 	<?php if(isset($instructions)) : ?>
 		<p><?php echo __($instructions) ?></p>
 	<?php endif ?>
@@ -31,4 +38,5 @@
 	  </fieldset>
 	  <br />
 	 <?php echo $form->end(__('Login', true)); ?>
+
 </div>
