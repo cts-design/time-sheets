@@ -14,6 +14,13 @@
                          your last name and your full social security
                          number.", true), Configure::read('Company.name')) ?>
 	</p>
+	<?php $settings = Cache::read('settings'); ?> 
+	<?php if(isset($setting['Users']['login_additional_text'])) : ?>
+		<?php $text = json_decode($settings['Users']['LoginAdditionalText'], true); ?> 
+	<?php endif ?>
+	<?php if(isset($text[0]['value'])) : ?>
+		<p><?= $text[0]['value'] ?></p>
+	<?php endif ?>
 	<?php if(isset($instructions)) : ?>
 		<p><?php echo __($instructions) ?></p>
 	<?php endif ?>
