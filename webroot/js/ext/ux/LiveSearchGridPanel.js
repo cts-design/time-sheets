@@ -55,7 +55,7 @@ Ext.define('Ext.ux.LiveSearchGridPanel', {
      */
     matchCls: 'x-livesearch-match',
     
-    defaultStatusText: 'Nothing Found',
+    defaultStatusText: '',
     
     // Component initialization override: adds the top and bottom toolbars and setup headers renderer.
     initComponent: function() {
@@ -85,12 +85,6 @@ Ext.define('Ext.ux.LiveSearchGridPanel', {
                 handler: me.onNextClick,
                 scope: me
             }, '-', {
-                xtype: 'checkbox',
-                hideLabel: true,
-                margin: '0 0 0 4px',
-                handler: me.regExpToggle,
-                scope: me                
-            }, 'Regular expression', {
                 xtype: 'checkbox',
                 hideLabel: true,
                 margin: '0 0 0 4px',
