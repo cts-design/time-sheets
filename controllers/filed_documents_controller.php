@@ -422,6 +422,19 @@ class FiledDocumentsController extends AppController {
 		}
     }
 
+	public function admin_get_entry_methods() {
+		$entryMethods = $this->FiledDocument->find('all', array('fields' => array('DISTINCT entry_method')));
+		$data['entry_methods'] = array();
+		if($entryMethods) {
+			foreach($entryMethods as $entryMethod) {
+				$data['entry_methods'][]['name'] = Inflector::humanize($entryMethod['FiledDocument']['entry_method']);
+			}
+		}
+		$data['success'] = true;
+		$this->set('data', $data);
+		$this->render(null, null, '/elements/ajaxreturn');
+	}
+
     function _uploadDocument($entryMethod='Upload') {
 		// get the document relative path to the inital storage folder
 		$path = Configure::read('Document.storage.uploadPath');
@@ -550,6 +563,9 @@ class FiledDocumentsController extends AppController {
 			}
 			if(isset($filters['cat_1'])){
 				$conditions['FiledDocument.cat_1'] = $filters['cat_1'];
+			}
+			if(isset($filters['entry_method'])) {
+				$conditions['FiledDocument.entry_method'] = $filters['entry_method'];
 			}
 			if(isset($filters['cat_2'])) 
 				$conditions['FiledDocument.cat_2'] = $filters['cat_2'];
