@@ -95,6 +95,32 @@ Ext.onReady(function () {
             break;
         }
       }
+    }, {
+        xtype: 'actioncolumn',
+        align: 'center',
+        header: 'Edit',
+        width: 50,
+        items: [{
+          icon: '/img/icons/page_edit.png',
+          tooltip: 'Edit Page',
+          handler: function (grid, rowIndex, colIndex) {
+            var rec = grid.store.getAt(rowIndex);
+            window.location = '/admin/pages/edit/' + rec.get('id')
+          }
+        }]
+    }, {
+        xtype: 'actioncolumn',
+        align: 'center',
+        header: 'Delete',
+        width: 50,
+        items: [{
+          icon: '/img/icons/page_delete.png',
+          tooltip: 'Delete Page',
+          handler: function (grid, rowIndex, colIndex) {
+            var rec = grid.store.getAt(rowIndex);
+            window.location = '/admin/pages/delete/' + rec.get('id')
+          }
+        }]
     }],
     listeners: {
       render: function () {
