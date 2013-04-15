@@ -102,8 +102,22 @@ class PagesController extends AppController {
 	}
 
 	function admin_index() {
-		$this->Page->recursive = 0;
-		$this->set('pages', $this->paginate());
+		if ($this->RequestHandler->isAjax()) {
+			$this->Page->recursive = 0;
+			$pages = $this->Page->find('all');
+
+			if ($pages) {
+				foreach ($pages as $page) {
+					$data['pages'][] = $page['Page'];
+					$data['success'] = true;
+				}
+			} else {
+				$data['success'] = false;
+			}
+
+			$this->set('data', $data);
+			$this->render('/elements/ajaxreturn');
+		}
 	}
 
 	function admin_add() {
