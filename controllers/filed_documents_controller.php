@@ -33,7 +33,7 @@ class FiledDocumentsController extends AppController {
         if ($this->Acl->check(array('model' => 'User',
                                     'foreign_key' => $this->Auth->user('id')),
                                     'FiledDocuments/admin_view_all_docs', '*')) {
-            $this->Auth->allow('admin_get_all_admins', 'admin_report');
+            $this->Auth->allow('admin_get_all_admins', 'admin_report', 'admin_get_entry_methods');
         }
 
         if (preg_match('/auditor/i', $this->Session->read('Auth.User.role_name'))) {
