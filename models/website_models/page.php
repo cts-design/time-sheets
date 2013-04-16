@@ -56,6 +56,12 @@ class Page extends AppModel {
 				'message' => 'A slug with that title already exists, please select a unique slug'
 			)
 		),
+		'content' => array(
+			'notEmptyUnlessLandingPage' => array(
+				'rule' => 'notEmptyUnlessLandingPage',
+				'message' => 'Please provide content for the page'
+			)
+		)
 	);
 
 	/**
@@ -68,6 +74,16 @@ class Page extends AppModel {
 		return $this->find('first', array('conditions' => array('Page.slug' => $slug, 'Page.published' => 1)));
 	}
 
+	public function notEmptyUnlessLandingPage($check) {
+		$value = array_values($check);
+		$value = $value[0];
+
+		if (!$value && !$this->data['Page']['landing_page']) {
+			return false;
+		}
+
+		return true;
+	}
 
 	public function alphaNumericPlus($check) {
 		$key = array_keys($check);
