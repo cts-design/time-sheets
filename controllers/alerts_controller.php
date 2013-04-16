@@ -255,8 +255,37 @@ class AlertsController extends AppController {
         }
     }
 
-    public function admin_add_filed_document_alert() {
-
+    public function admin_add_staff_filed_document_alert() {
+        if($this->RequestHandler->isAjax()) {
+			$this->data['Alert']['watched_id'] = $this->params['form']['admin_id'];
+			$this->data['Alert']['name'] = $this->params['form']['name'];
+			$this->data['Alert']['user_id'] = $this->Auth->user('id');
+			$this->data['Alert']['type'] = 'staff_filed_document';
+			if(isset($this->params['form']['send_email'])) {
+				$this->data['Alert']['send_email'] = 1;
+			}
+			else {
+				$this->data['Alert']['send_email'] = 0;
+			}
+			if($this->Alert->save($this->data)) {
+				$alert = $this->Alert->read(null, $this->params['form']['id']);
+				$data['success'] = true;
+				$data['message'] = 'Alert added successfully';
+				$this->Transaction->createUserTransaction(
+					'Alerts',
+					$this->Auth->user('id'),
+					$this->Auth->user('location_id'),
+                    'Added Staff Filed Document alert. name: ' . $this->data['Alert']['name'] . ' id: ' . $id
+                );
+			}
+			else {
+				$data['message'] = 'Unable to add alert, please try again.';
+				$data['success'] = false;
+			}
+            $this->set(compact('data'));
+            $this->render(null, null, '/elements/ajaxreturn');
+        }
+ 
     }
 
     public function admin_toggle_email() {
@@ -280,7 +309,7 @@ class AlertsController extends AppController {
                         'Alerts',
                         $this->Auth->user('id'),
                         $this->Auth->user('location_id'),
-                        $status . ' email for Self Sign alert, name: ' . $alert['Alert']['name'] . ' id: ' . $alert['Alert']['id']
+                        $status . ' email for alert, name: ' . $alert['Alert']['name'] . ' id: ' . $alert['Alert']['id']
                     );
 
                 }
@@ -322,6 +351,7 @@ class AlertsController extends AppController {
         }
     }
 
+
     public function admin_get_alert_types() {
         if($this->RequestHandler->isAjax()) {
             // if adding a new alert add action to controller,
@@ -341,6 +371,10 @@ class AlertsController extends AppController {
                     'label' => 'Queued Document',
                     'id' => 'queuedDocumentAlertFormPanel'),
                  */
+                array(
+                    'action' => 'Alerts/admin_add_staff_filed_document_alert',
+                    'label' => 'Staff Filed Document',
+                    'id' => 'staffFiledDocumentAlertFormPanel'),
                 array(
                     'action' => 'Alerts/admin_add_self_scan_alert',
                     'label' => 'Self Scan',
