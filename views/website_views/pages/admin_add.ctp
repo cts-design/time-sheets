@@ -28,6 +28,16 @@
 							. $html->url('/', true) .
 							'pages/</p><p class="left">',
 							'after' => '</p>'));
+		echo '<br class="clear" />'
+	?>
+		<div class="input text">
+			<p class="left"><label for="PageLandingPage">Landing Page?</label></p>
+			<p class="left">
+				<input type="hidden" name="data[Page][landing_page]" id="PageLandingPage_" value="0" />
+				<input type="checkbox" name="data[Page][landing_page]" id="PageLandingPage" value="1" />
+			</p>
+		</div>
+	<?php
 		echo '<br class="clear" />';
 		echo $this->Form->input('content', array(
 							'before' => '<p class="left">',
