@@ -35,6 +35,18 @@
 							'after' => '</p>'));
 		echo '<br class="clear" />';
                 echo '<br />';
+		echo $this->Form->input('header_content', array(
+							'before' => '<p class="left">',
+							'between' => '</p><p class="left wide">',
+							'after' => '</p>'));
+		echo '<br class="clear" />';
+                echo '<br />';
+		echo $this->Form->input('footer_content', array(
+							'before' => '<p class="left">',
+							'between' => '</p><p class="left wide">',
+							'after' => '</p>'));
+		echo '<br class="clear" />';
+                echo '<br />';
 		echo $this->Form->input('published', array(
 							'before' => '<p class="left">',
 							'between' => '</p><p class="left short">',
