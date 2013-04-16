@@ -1,6 +1,6 @@
 <?php echo $this->Html->script('ckeditor/ckeditor', array('inline' => FALSE)); ?>
 <?php echo $this->Html->script('ckfinder/ckfinder', array('inline' => FALSE)); ?>
-<?php echo $this->Html->script('pages/wysiwyg', array('inline' => FALSE)); ?>
+<?php echo $this->Html->script('pages/admin_add', array('inline' => FALSE)); ?>
 
 <div id="crumbWrapper">
     <span><?php __('You are here') ?> > </span>
