@@ -1233,24 +1233,30 @@ class UsersController extends AppController {
 	}
 
 	function admin_get_all_admins() {
-		$this->User->recursive = -1;
-		$admins = $this->User->find('all', array(
-			'conditions' => array('User.role_id > 2'),
-			'order' => 'User.lastname ASC'));
-		if($admins) {
-			$i = 0;
-			foreach($admins as $admin) {
-				$data['admins'][$i]['id'] = $admin['User']['id'];
-				$data['admins'][$i]['name'] = $admin['User']['lastname'] . ', ' . $admin['User']['firstname'];
-				$i++;
+		if($this->RequestHandler->isAjax()) {
+			$this->User->recursive = -1;
+			$conditions = array('User.role_id >' => 2);
+			if(isset($this->params['url']['query'])) {
+				$conditions['User.lastname LIKE'] = '%'.$this->params['url']['query'].'%';
 			}
-			$data['success'] = true;
+			$admins = $this->User->find('all', array(
+				'conditions' => $conditions,
+				'order' => 'User.lastname ASC'));
+			if($admins) {
+				$i = 0;
+				foreach($admins as $admin) {
+					$data['admins'][$i]['id'] = $admin['User']['id'];
+					$data['admins'][$i]['name'] = $admin['User']['lastname'] . ', ' . $admin['User']['firstname'];
+					$i++;
+				}
+				$data['success'] = true;
+			}
+			else {
+				$data['success'] = false;
+			}
+			$this->set('data', $data);
+			$this->render(null, null,  '/elements/ajaxreturn');
 		}
-		else {
-			$data['success'] = false;
-		}
-		$this->set('data', $data);
-		$this->render(null, null,  '/elements/ajaxreturn');
 	}
 
 	function admin_request_ssn_change() {
