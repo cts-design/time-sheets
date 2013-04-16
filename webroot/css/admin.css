@@ -511,6 +511,10 @@ div.actions .ui-button-text {
   width: 100px;
 }
 
+.form #PageAdminAddForm p {
+  line-height: 15px;
+}
+
 .mini-form fieldset {
   display: inline;
 }
@@ -1085,6 +1089,7 @@ div.code-coverage-results span.result-good {
 .url_label {
   width:auto !important;
   line-height: 17px !important;
+  margin-right: 2px !important;
 }
 
 fieldset.wide {

@@ -1,6 +1,6 @@
 <?php echo $this->Html->script('ckeditor/ckeditor', array('inline' => FALSE)); ?>
 <?php echo $this->Html->script('ckfinder/ckfinder', array('inline' => FALSE)); ?>
-<?php echo $this->Html->script('pages/wysiwyg', array('inline' => FALSE)); ?>
+<?php echo $this->Html->script('pages/admin_add', array('inline' => FALSE)); ?>
 
 <div id="crumbWrapper">
     <span><?php __('You are here') ?> > </span>
@@ -25,11 +25,33 @@
 		echo $this->Form->input('slug', array(
 							'before' => '<p class="left">',
 							'between' => '</p><p class="left url_label">'
-                                                        . $html->url('/', true) .
-                                                        '</p><p class="left">',
+							. $html->url('/', true) .
+							'pages/</p><p class="left">',
 							'after' => '</p>'));
+		echo '<br class="clear" />'
+	?>
+		<div class="input text">
+			<p class="left"><label for="PageLandingPage">Landing Page?</label></p>
+			<p class="left">
+				<input type="hidden" name="data[Page][landing_page]" id="PageLandingPage_" value="0" />
+				<input type="checkbox" name="data[Page][landing_page]" id="PageLandingPage" value="1" />
+			</p>
+		</div>
+	<?php
 		echo '<br class="clear" />';
 		echo $this->Form->input('content', array(
+							'before' => '<p class="left">',
+							'between' => '</p><p class="left wide">',
+							'after' => '</p>'));
+		echo '<br class="clear" />';
+                echo '<br />';
+		echo $this->Form->input('header_content', array(
+							'before' => '<p class="left">',
+							'between' => '</p><p class="left wide">',
+							'after' => '</p>'));
+		echo '<br class="clear" />';
+                echo '<br />';
+		echo $this->Form->input('footer_content', array(
 							'before' => '<p class="left">',
 							'between' => '</p><p class="left wide">',
 							'after' => '</p>'));
