@@ -57,4 +57,25 @@ $(function() {
       ]
     });
 
+    $(function () {
+      var mainContentField = $('#PageContent'),
+        headerContentField = $('#PageHeaderContent'),
+        footerContentField = $('#PageFooterContent'),
+        landingPageField = $('#PageLandingPage');
+
+      headerContentField.css('display', 'none').parents('div.input').css('display', 'none').nextUntil('div.input').css('display', 'none');
+      footerContentField.css('display', 'none').parents('div.input').css('display', 'none').nextUntil('div.input').css('display', 'none');
+
+      landingPageField.bind('click', function (event) {
+        if ($(this)[0].checked) {
+          headerContentField.parents('div.input').css('display', 'block').nextUntil('div.input').css('display', 'block');
+          footerContentField.parents('div.input').css('display', 'block').nextUntil('div.input').css('display', 'block');
+          mainContentField.parents('div.input').css('display', 'none').nextUntil('div.input').css('display', 'none');
+        } else {
+          headerContentField.parents('div.input').css('display', 'none').nextUntil('div.input').css('display', 'none');
+          footerContentField.parents('div.input').css('display', 'none').nextUntil('div.input').css('display', 'none');
+          mainContentField.parents('div.input').css('display', 'block').nextUntil('div.input').css('display', 'block');
+        }
+      });
+    });
 });
