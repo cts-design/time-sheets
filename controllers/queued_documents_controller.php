@@ -353,6 +353,7 @@ class QueuedDocumentsController extends AppController {
 					$data['message'] = 'Document filed successfully';	
 				}
 			    $this->sendCusFiledDocAlert($user, $this->data['FiledDocument']['id']);
+			    $this->sendStaffFiledDocAlert($this->Auth->user(), $this->data['FiledDocument']['id']);
 				$data['success'] = true;				
 			}
 			else {
@@ -497,6 +498,28 @@ class QueuedDocumentsController extends AppController {
 		}
 	}
 
+	private function sendStaffFiledDocAlert($user, $docId) {
+		$this->loadModel('Alert');
+		$data = $this->Alert->getStaffFiledDocAlerts($user, $docId);
+		if($data) {
+			$HttpSocket = new HttpSocket();
+			$results = $HttpSocket->post('localhost:3000/new', 
+				array('data' => $data));
+			$to = '';
+			foreach($data as $alert) {
+				if($alert['send_email']) {
+					$to .= $alert['email'] . ',';
+				}			
+			}
+			if(!empty($to)) {
+				$to = trim($to, ',');
+				$this->Email->to = $to;
+				$this->Email->from = Configure::read('System.email');
+				$this->Email->subject = 'Staff Member Filed Document';
+				$this->Email->send($alert['message'] . "\r\n" . $alert['url']);				
+			}
+		}
+	}
 	private function checkIfFilingCatSecure($catId) {
 		$this->loadModel('DocumentFilingCategory');
 		return $this->DocumentFilingCategory->isSecure($catId);
