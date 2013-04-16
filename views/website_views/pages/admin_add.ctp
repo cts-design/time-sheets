@@ -25,8 +25,8 @@
 		echo $this->Form->input('slug', array(
 							'before' => '<p class="left">',
 							'between' => '</p><p class="left url_label">'
-                                                        . $html->url('/', true) .
-                                                        '</p><p class="left">',
+							. $html->url('/', true) .
+							'pages/</p><p class="left">',
 							'after' => '</p>'));
 		echo '<br class="clear" />';
 		echo $this->Form->input('content', array(
