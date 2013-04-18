@@ -353,7 +353,7 @@ class QueuedDocumentsController extends AppController {
 					$data['message'] = 'Document filed successfully';	
 				}
 			    $this->sendCusFiledDocAlert($user, $this->data['FiledDocument']['id']);
-			    $this->sendStaffFiledDocAlert($this->Auth->user(), $this->data['FiledDocument']['id']);
+			    $this->sendStaffFiledDocAlert($this->Auth->user(), $this->data['FiledDocument']['id'], $user);
 				$data['success'] = true;				
 			}
 			else {
@@ -498,9 +498,9 @@ class QueuedDocumentsController extends AppController {
 		}
 	}
 
-	private function sendStaffFiledDocAlert($user, $docId) {
+	private function sendStaffFiledDocAlert($admin, $docId, $customer) {
 		$this->loadModel('Alert');
-		$data = $this->Alert->getStaffFiledDocAlerts($user, $docId);
+		$data = $this->Alert->getStaffFiledDocAlerts($admin, $docId, $customer);
 		if($data) {
 			$HttpSocket = new HttpSocket();
 			$results = $HttpSocket->post('localhost:3000/new', 
