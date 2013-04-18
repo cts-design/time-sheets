@@ -25,7 +25,7 @@
 	<div id='embedded_doc' ><a href='http://www.scribd.com'>Scribd</a></div>
 
 	<script type="text/javascript">
-		var url = "/ecourses/load_media/<?= $module['EcourseModule']['media_location'] ?>";
+		var url = "<?= Configure::read('domain') ?>/ecourses/load_media/<?= $module['EcourseModule']['media_location'] ?>";
 		var pub_id = 'pub-76946934246478514942';
 		var scribd_doc = scribd.Document.getDocFromUrl(url, pub_id);
 
