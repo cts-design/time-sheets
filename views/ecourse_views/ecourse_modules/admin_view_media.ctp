@@ -47,6 +47,6 @@
 	</script>
 <?php elseif ($module['EcourseModule']['media_type'] == 'url'): ?>
 	<div id="EcoursePdf">
-		<a href="<?= $module['EcourseModule']['media_location'] ?>" target="_blank">View Media</a>
+		<a href="<?= $module['EcourseModule']['media_location'] ?>" target="_blank">View URL in a new tab</a>
 	</div>
 <?php endif ?>
