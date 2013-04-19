@@ -19,7 +19,7 @@ Ext.define('Atlas.form.field.LocationComboBox', {
 	store: 'locations',
 	queryMode: 'remote',
 	emptyText: 'Please Select',
-	name: 'location',
+	name: 'location_id',
 	allowBlank: false,
 	msgTarget: 'under'
 });
@@ -242,6 +242,7 @@ Ext.define('Atlas.form.SelfSignAlertPanel', {
 		width: 350
 	},
 	items: [{
+    id: 'alertName',
 		xtype: 'alertnametextfield'
 	},{
 		xtype: 'locationcombobox',
@@ -316,12 +317,22 @@ Ext.define('Atlas.form.SelfSignAlertPanel', {
 	},{
 		xtype: 'sendemailcheckbox'
 	},{
+    xtype: 'hiddenfield',
+    name: 'id',
+    value: null
+  },{
 		xtype: 'alertsavebutton',
 		width: 100,
 		handler: function() {
 			var form = this.up('form').getForm();
+      var vals = form.getValues();
+      var url = '/admin/alerts/add_self_sign_alert';
+      if (vals.id) {
+        var url = '/admin/alerts/update_self_sign_alert';
+      }
 			if(form.isValid()) {
 				form.submit({
+          url: url,
 					success: function(form, action) {
 						Ext.Msg.alert('Success', action.result.message);
 						form.reset();
@@ -648,7 +659,7 @@ function disableAndResetButtons(level) {
 
 Ext.define('Alert', {
 	extend: 'Ext.data.Model',
-	fields: ['id', 'name', 'type', 'send_email', 'disabled']
+	fields: ['id', 'name', 'type', 'send_email', 'disabled', 'location_id', 'user_id', 'watched_id']
 });
 
 Ext.create('Ext.data.Store', {
@@ -777,8 +788,7 @@ Ext.onReady(function(){
 				border: 0
 				},{
 					xtype: 'selfsignalertformpanel',
-					id: 'selfSignAlertFormPanel',
-					url: '/admin/alerts/add_self_sign_alert'
+					id: 'selfSignAlertFormPanel'
 				},{
 					xtype: 'customerdetailsalertformpanel',
 					id: 'customerDetailsAlertFromPanel',
@@ -807,6 +817,7 @@ Ext.onReady(function(){
 						xtype: 'combobox',
 						width: 300,
 						fieldLabel: 'Select Alert Type',
+            id: 'alertType',
 						store: 'alertTypes',
 						displayField: 'label',
 						valueField: 'id',
@@ -835,7 +846,23 @@ Ext.onReady(function(){
 						cm.items.items[1].setChecked(Boolean(rec.data.disabled));
 						cm.showAt(e.getXY());
 						return false;
-					}
+					},
+          itemdblclick: function(grid, record, item, index, e, eOpts) {
+            var alertType = Ext.getCmp('alertType');
+            var store = alertType.getStore();
+            store.load({
+              callback: function() {
+                var val = store.findRecord('label', record.data.type);
+                alertType.select(val.data.id, true);
+                alertType.fireEvent('select');
+                switch(record.data.type) {
+                  case 'Self Sign':
+                    editSelfSignAlert(record);
+                    break;
+                }
+              }
+            });
+          }
 				}
 				},
 				columns: [{
@@ -872,4 +899,62 @@ Ext.onReady(function(){
 			store: 'alerts'
 		}]
 	});
+
+  var editSelfSignAlert = function(record) {
+    var text = null;
+    Ext.Ajax.request({
+      url: '/admin/master_kiosk_buttons/get_button_path/'+record.data.watched_id,
+      success: function(response) {
+        text = Ext.JSON.decode(response.responseText);
+        console.log(text);
+        populateForm(text);
+      }
+      
+    });
+    function populateForm(text) {
+      var formPanel = Ext.getCmp('selfSignAlertFormPanel');
+      formPanel.getForm().reset();
+      var locationSelect = Ext.getCmp('locationSelect');
+      var store = locationSelect.getStore();
+      var buttons1 = Ext.getCmp('level1Buttons');
+      var buttons2 = Ext.getCmp('level2Buttons');
+      var buttons3 = Ext.getCmp('level3Buttons');
+      disableAndResetButtons(['1', '2', '3']);
+      formPanel.loadRecord(record);
+      locationId = record.data.location_id;
+      store.load({
+        callback: function() {
+          locationSelect.select(record.data.location_id);
+          var button1store = buttons1.getStore();
+          button1store.load({
+            callback: function() {
+              buttons1.enable();
+              buttons1.setValue(text.buttons[0].id);
+              parentId = text.buttons[0].id;
+              if(text.buttons.length > 1) {
+                var button2store = buttons2.getStore(); 
+                button2store.load({
+                  callback: function() {
+                    buttons2.enable();
+                    buttons2.select(text.buttons[1].id);
+                    parentId = text.buttons[1].id;
+                    if(text.buttons.length > 2) {
+                      button3store = buttons3.getStore();
+                      button3store.load({
+                        callback: function() {
+                          buttons3.enable();
+                          buttons2.select(text.buttons[2].id);
+                        }
+                      });
+                    }
+                  }
+                });
+              }
+            }
+          });
+        }
+      });
+    }
+  };
 });
+
