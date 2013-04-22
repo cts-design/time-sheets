@@ -50,8 +50,10 @@ scribd_doc.addParam('allow_share', false);
 scribd_doc.write('embedded_doc');
 </script>
 <?php elseif ($nextModule[0]['media_type'] == 'url'): ?>
-	<div id="EcoursePdf">
-		<a href="<?= $nextModule[0]['media_location'] ?>" target="_blank">View Media</a>
+	<div id="ecourse-external-url">
+		<h1><?= $nextModule[0]['media_name'] ?></h1>
+		<a href="<?= $nextModule[0]['media_location'] ?>" target="_blank">Open link in a new window</a>
+		<i class="icon-external-link"></i>
 	</div>
 <?php endif ?>
 <br />
