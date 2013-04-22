@@ -54,8 +54,8 @@ class AlertsController extends AppController {
             $this->data['Alert']['name'] = $this->params['form']['name'];
             $this->data['Alert']['type'] = 'self_sign';
             $this->data['Alert']['user_id'] = $this->Auth->user('id');
-            if(!empty($this->params['form']['location'])) {
-                $this->data['Alert']['location_id'] = $this->params['form']['location'];
+            if(!empty($this->params['form']['location_id'])) {
+                $this->data['Alert']['location_id'] = $this->params['form']['location_id'];
             }
             if(isset($this->params['form']['send_email'])) {
                 $this->data['Alert']['send_email'] = 1;
@@ -95,8 +95,8 @@ class AlertsController extends AppController {
             $this->data['Alert']['name'] = $this->params['form']['name'];
             $this->data['Alert']['type'] = 'self_sign';
             $this->data['Alert']['user_id'] = $this->Auth->user('id');
-            if(!empty($this->params['form']['location'])) {
-                $this->data['Alert']['location_id'] = $this->params['form']['location'];
+            if(!empty($this->params['form']['location_id'])) {
+                $this->data['Alert']['location_id'] = $this->params['form']['location_id'];
             }
             if(isset($this->params['form']['send_email'])) {
                 $this->data['Alert']['send_email'] = 1;
@@ -137,8 +137,8 @@ class AlertsController extends AppController {
         if($this->RequestHandler->isAjax()) {
             $this->data['Alert']['name'] = $this->params['form']['name'];
             $this->data['Alert']['type'] = 'customer_details';
-            if(!empty($this->params['form']['location'])) {
-                $this->data['Alert']['location_id'] = $this->params['form']['location'];
+            if(!empty($this->params['form']['location_id'])) {
+                $this->data['Alert']['location_id'] = $this->params['form']['location_id'];
             }
             $this->data['Alert']['detail'] = $this->params['form']['detail'];
             $this->data['Alert']['user_id'] = $this->Auth->user('id');
@@ -159,6 +159,39 @@ class AlertsController extends AppController {
             else {
                 $data['success'] = false;
                 $data['message'] = 'Unable to add alert, please try again.';
+            }
+            $this->set(compact('data'));
+            $this->render(null, null, '/elements/ajaxreturn');
+        }
+    }
+
+    public function admin_update_customer_details_alert() {
+        if($this->RequestHandler->isAjax()) {
+            $this->data['Alert']['id'] = $this->params['form']['id'];
+            $this->data['Alert']['name'] = $this->params['form']['name'];
+            $this->data['Alert']['type'] = 'customer_details';
+            if(!empty($this->params['form']['location_id'])) {
+                $this->data['Alert']['location_id'] = $this->params['form']['location_id'];
+            }
+            $this->data['Alert']['detail'] = $this->params['form']['detail'];
+            $this->data['Alert']['user_id'] = $this->Auth->user('id');
+            if(isset($this->params['form']['send_email'])) {
+                $this->data['Alert']['send_email'] = 1;
+            }
+            if($this->Alert->save($this->data)) {
+                $id = $this->Alert->getLastInsertId();
+                $data['success'] = true;
+                $data['message'] = 'Alert updated successfully';
+                $this->Transaction->createUserTransaction(
+                    'Alerts',
+                    $this->Auth->user('id'),
+                    $this->Auth->user('location_id'),
+                    'Updated Customer Details alert. name: ' . $this->data['Alert']['name'] . ' id: ' . $id
+                );
+            }
+            else {
+                $data['success'] = false;
+                $data['message'] = 'Unable to updated alert, please try again.';
             }
             $this->set(compact('data'));
             $this->render(null, null, '/elements/ajaxreturn');

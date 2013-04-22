@@ -386,8 +386,32 @@ Ext.define('Atlas.form.CustomerDetailsAlertPanel', {
 	},{
 		xtype: 'sendemailcheckbox'
 	},{
+    xtype: 'hiddenfield',
+    name: 'id'
+  },{
 		xtype: 'alertsavebutton',
-		width: 100
+		width: 100,
+		handler: function() {
+			var form = this.up('form').getForm();
+      var vals = form.getValues();
+      var url = '/admin/alerts/add_customer_details_alert';
+      if (vals.id) {
+        var url = '/admin/alerts/update_customer_details_alert';
+      }
+			if(form.isValid()) {
+				form.submit({
+          url: url,
+					success: function(form, action) {
+						Ext.Msg.alert('Success', action.result.message);
+						form.reset();
+						Ext.getCmp('myAlertsGrid').getStore().load();
+					},
+					failure: function(form, action)	{
+						Ext.Msg.alert('Failed', action.result.message);
+					}
+				});
+			}
+		}
 	}, {
 		xtype: 'alertresetbutton',
 		width: 100,
@@ -659,7 +683,7 @@ function disableAndResetButtons(level) {
 
 Ext.define('Alert', {
 	extend: 'Ext.data.Model',
-	fields: ['id', 'name', 'type', 'send_email', 'disabled', 'location_id', 'user_id', 'watched_id']
+	fields: ['id', 'name', 'type', 'send_email', 'disabled', 'location_id', 'user_id', 'watched_id', 'detail']
 });
 
 Ext.create('Ext.data.Store', {
@@ -736,8 +760,7 @@ Ext.create('Ext.menu.Menu', {
 						params: {
 							id: selected.data.id
 						},
-						success: function(response){
-							console.log(response.responseText.message);
+						success: function(response) {
 							var responseText = Ext.JSON.decode(response.responseText);
 							Ext.Msg.alert('Success', responseText.message);
 							Ext.getCmp('myAlertsGrid').getStore().load();
@@ -792,7 +815,6 @@ Ext.onReady(function(){
 				},{
 					xtype: 'customerdetailsalertformpanel',
 					id: 'customerDetailsAlertFromPanel',
-					url: '/admin/alerts/add_customer_details_alert'
 				},{
 					xtype: 'queueddocumentalertformpanel',
 					id: 'queuedDocumentAlertFormPanel',
@@ -859,6 +881,9 @@ Ext.onReady(function(){
                   case 'Self Sign':
                     editSelfSignAlert(record);
                     break;
+                  case 'Customer Details':
+                    editCustomerDetailsAlert(record);
+                    break;
                 }
               }
             });
@@ -906,7 +931,6 @@ Ext.onReady(function(){
       url: '/admin/master_kiosk_buttons/get_button_path/'+record.data.watched_id,
       success: function(response) {
         text = Ext.JSON.decode(response.responseText);
-        console.log(text);
         populateForm(text);
       }
       
@@ -955,6 +979,17 @@ Ext.onReady(function(){
         }
       });
     }
+  };
+
+  var editCustomerDetailsAlert = function(record) {
+    var formPanel = Ext.getCmp('customerDetailsAlertFromPanel');
+    var locationSelect = Ext.getCmp('locationSelect');
+    var store = locationSelect.getStore();
+    store.load({
+      callback: function() {
+        formPanel.loadRecord(record);
+      }
+    });
   };
 });
 
