@@ -151,7 +151,6 @@ class EventsController extends AppController {
 	}
 
 	public function workshop($date = null) {
-		$this->log($this->params['url'], 'debug');
 		$this->Event->Behaviors->attach('Containable');
 		$this->Event->EventCategory->recursive = -1;
 
