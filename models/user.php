@@ -48,7 +48,16 @@ class User extends AppModel {
 		)
     );
     var $belongsTo = array('Role', 'Location');
-	
+
+	var $hasAndBelongsToMany = array(
+		'Audit' => array(
+			'joinTable' => 'audits_auditors',
+			'foreignKey' => 'user_id',
+			'associationForeignKey' => 'audit_id',
+			'unique' => false
+		)
+	);
+
     var $actsAs = array('AtlasAcl' => 'requester', 'Multivalidatable', 'Disableable');
 	
     var $validate = array(
