@@ -23,6 +23,21 @@ class AlertsController extends AppController {
                 'admin_get_alert_types',
                 'admin_delete');
         }
+		if($this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Alerts/admin_add_self_sign_alert', '*')) {
+			$this->Auth->allow('admin_update_self_sign_alert');
+		}
+		if($this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Alerts/admin_add_self_scan_alert', '*')) {
+			$this->Auth->allow('admin_update_self_scan_alert');
+		}
+		if($this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Alerts/admin_add_customer_details_alert', '*')) {
+			$this->Auth->allow('admin_update_customer_details_alert');
+		}
+		if($this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Alerts/admin_add_customer_login_alert', '*')) {
+			$this->Auth->allow('admin_update_customer_login_alert');
+		}
+		if($this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Alerts/admin_add_cus_filed_doc_alert', '*')) {
+			$this->Auth->allow('admin_update_cus_filed_doc_alert');
+		}
     }
 
     public function admin_index() {
