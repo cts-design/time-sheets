@@ -15,7 +15,7 @@
                          number.", true), Configure::read('Company.name')) ?>
 	</p>
 	<?php $settings = Cache::read('settings'); ?> 
-	<?php if(isset($setting['Users']['login_additional_text'])) : ?>
+	<?php if(isset($settings['Users']['LoginAdditionalText'])) : ?>
 		<?php $text = json_decode($settings['Users']['LoginAdditionalText'], true); ?> 
 	<?php endif ?>
 	<?php if(isset($text[0]['value'])) : ?>
