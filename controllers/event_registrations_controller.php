@@ -107,11 +107,19 @@ class EventRegistrationsController extends AppController {
 	public function admin_delete() {
 		if($this->RequestHandler->isAjax()) {
             if(isset($this->data['EventRegistration'])) {
+				$this->EventRegistration->Event->recursive = -1;
 				$this->data['EventRegistration'] = json_decode($this->data['EventRegistration'], true);
 				$userIds = Set::Extract('/user_id', $this->data['EventRegistration']);
 				$ids = Set::Extract('/id', $this->data['EventRegistration']);
 				$conditions = array('EventRegistration.id' => $ids);
 				if($this->EventRegistration->deleteAll($conditions, true, true)) {
+					// send out cancellation emails
+					$event = $this->EventRegistration->Event->findById($this->data['Event']['id']);
+					foreach ($userIds as $id) {
+						$user = $this->EventRegistration->User->findById($id);
+						$this->Notifications->sendEventCancellationEmail($event, $user);
+					}
+
 					$data['success'] = true;
 					$data['message'] = 'Deleted successfully';
 					$message = 'Deleted ';
