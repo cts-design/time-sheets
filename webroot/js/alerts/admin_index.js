@@ -549,20 +549,46 @@ Ext.define('Atlas.form.CustomerLoginAlertPanel', {
 	},{
 		xtype: 'locationcombobox',
 		allowBlank: true,
-		emptyText: 'Select a specific location if nessesary'
+		emptyText: 'Select a specific location if nessesary',
+    id: 'cusLoginLocation'
 	},{
 		xtype: 'findcusbycombobox'
 	},{
 		xtype: 'lastnametextfield'
 	},{
-		xtype: 'firstnamecombobox'
+		xtype: 'firstnamecombobox',
+    id: 'cusLoginFirstName'
 	},{
 		xtype: 'ssncombobox'
 	},{
 		xtype: 'sendemailcheckbox'
 	},{
+    xtype: 'hiddenfield',
+    name: 'id'
+  },{
 		xtype: 'alertsavebutton',
-		width: 100
+		width: 100,
+		handler: function() {
+			var form = this.up('form').getForm();
+      var vals = form.getValues();
+      var url = '/admin/alerts/add_customer_login_alert';
+      if (vals.id) {
+        var url = '/admin/alerts/update_customer_login_alert';
+      }
+			if(form.isValid()) {
+				form.submit({
+          url: url,
+					success: function(form, action) {
+						Ext.Msg.alert('Success', action.result.message);
+						form.reset();
+						Ext.getCmp('myAlertsGrid').getStore().load();
+					},
+					failure: function(form, action)	{
+						Ext.Msg.alert('Failed', action.result.message);
+					}
+				});
+			}
+		}
 	},{
 		xtype: 'alertresetbutton',
 		width: 100,
@@ -939,6 +965,9 @@ Ext.onReady(function(){
                   case 'Customer Filed Document':
                     editCusFiledDocAlert(record);
                     break;
+                  case 'Customer Login':
+                    editCustomerLoginAlert(record);
+                    break;
                 }
               }
             });
@@ -1093,6 +1122,36 @@ Ext.onReady(function(){
       firstNameCombo.select(text.user.id);
       firstNameCombo.collapse();
     }
-  }
+  };
+
+  var editCustomerLoginAlert = function(record) {
+    var formPanel = Ext.getCmp('customerLoginAlertFormPanel');
+    record.data.find_cus_by = 'Name';
+
+    Ext.Ajax.request({
+      url: '/admin/users/get_customer_by_id/'+record.data.watched_id,
+      success: function(response) {
+        text = Ext.JSON.decode(response.responseText);
+        populateForm(text);
+      }
+    });
+
+    function populateForm(text) {
+    var locationSelect = Ext.getCmp('cusLoginLocation');
+    var store = locationSelect.getStore();
+    store.load({
+      callback: function() {
+        record.data.lastname = text.user.lastname;
+        record.data.firstname = text.user.firstname;
+        formPanel.loadRecord(record);
+        firstNameCombo = Ext.getCmp('cusLoginFirstName');
+        firstNameCombo.setValue(text.user.id);
+        firstNameCombo.doQuery();
+        firstNameCombo.select(text.user.id);
+        firstNameCombo.collapse();
+      }
+    });
+    }
+  };
 });
 
