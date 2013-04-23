@@ -811,6 +811,35 @@ class UsersController extends AppController {
 		}
 	}
 
+	function admin_index_auditor($disabled=false) {
+		$this->User->recursive = -1;
+		$this->User->Behaviors->attach('Containable');
+		$this->User->Role->recursive = -1;
+		$auditorRole = $this->User->Role->find('first', array(
+			'conditions' => array(
+				'Role.name' => array('Auditor', 'auditor')
+			)
+		));
+
+		$this->paginate = array(
+			'conditions' => array(
+				'User.role_id' => $auditorRole['Role']['id']
+			),
+			'contain' => array(
+				'Audit'
+			),
+			'limit' => Configure::read('Pagination.admin.limit'),
+			'order' => array('User.lastname' => 'asc')
+		);
+
+		$data = array(
+			'auditors' => $this->paginate('User'),
+			'title_for_layout' => 'Auditors'
+		);
+
+		$this->set($data);
+	}
+
 	function admin_add_admin() {
 		$this->set('title_for_layout', 'Add Administrator');
 		$this->User->Behaviors->disable('Disableable');
