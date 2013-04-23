@@ -365,6 +365,11 @@ Ext.onReady(function () {
                 form.reset();
               } else {
                 answers = form.getRecord().answers();
+                question = form.getRecord();
+
+                question.set({
+                  text: formValues.text
+                });
 
                 Ext.Array.each(formValues.answer, function (answer, index) {
                   var existingAnswer = answers.getAt(index),
@@ -388,7 +393,8 @@ Ext.onReady(function () {
                   }
                 });
 
-                form.updateRecord();
+                question.save();
+                questionStore.load();
                 form.reset(true);
               }
             }
