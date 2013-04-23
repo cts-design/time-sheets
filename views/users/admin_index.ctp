@@ -6,6 +6,21 @@
  * @package ATLAS V3
  */
 ?>
+<?php echo $this->Html->scriptStart(array('inline' => false)) ?>
+	var search_by1 = '<?php echo (isset($search_by1)) ? $search_by1 : null ?>';
+	var search_scope1 = '<?php echo (isset($search_scope1)) ? $search_scope1 : null ?>';
+	var search_term1 = '<?php echo (isset($search_term1)) ? $search_term1 : null ?>';
+	var search_by2 = '<?php echo (isset($search_by2)) ? $search_by2 : null ?>';
+	var search_scope2 = '<?php echo (isset($search_scope2)) ? $search_scope2 : null ?>';
+	var search_term2 = '<?php echo (isset($search_term2)) ? $search_term2 : null ?>';
+	var search_type = '<?php echo (isset($search_type)) ? $search_type : null ?>';
+	var basic_search_term = '<?php echo (isset($basic_search_term)) ? $basic_search_term : null ?>';
+<?php echo $this->Html->scriptEnd() ?>
+<?php echo $this->Html->script('users/search.js', array('inline' => false)) ?>
+<?php if ($canViewFullSsn): ?>
+	<?php echo $this->Html->script('users/obscure_ssn.js', array('inline' => false)) ?>
+<?php endif; ?>
+
 <div id="crumbWrapper">
 	<span><?php __('You are here') ?> > </span>
 	<?php echo $crumb->getHtml(__('Customers', true));?>
@@ -30,6 +45,9 @@
 	<thead class="ui-widget-header">
 		<tr>
 		<th width="10%" class="ui-state-default"><?php echo $this->Paginator->sort('firstname'); ?></th>
+		<th width="10%" class="ui-state-default"><?php echo $this->Paginator->sort('lastname'); ?></th>
+		<th width="10%" class="ui-state-default"><?php echo $this->Paginator->sort('ssn'); ?></th>
+		<th width="30%" class="ui-state-default"><?php echo $this->Paginator->sort('email'); ?></th>
 		<th width="10%" class="actions ui-state-default"><?php __('Actions'); ?></th>
 		</tr>
 	</thead>
@@ -43,6 +61,13 @@ if ($i++ % 2 == 0) {
 ?>
 		<tr<?php echo $class; ?>>
 			<td><?php echo $user['User']['firstname']; ?>&nbsp;</td>
+			<td><?php echo $user['User']['lastname']; ?>&nbsp;</td>
+			<?php if ($canViewFullSsn): ?>
+			<td class="ssn"><?php echo $user['User']['ssn'] ?>&nbsp;</td>
+			<?php else: ?>
+			<td><?php echo "*****" . substr($user['User']['ssn'], -4); ?>&nbsp;</td>
+			<?php endif; ?>
+			<td><?php echo $this->Html->link($user['User']['email'], 'mailto:'.$user['User']['email']); ?>&nbsp;</td>
 			<td class="actions">
 				<?php echo $this->Html->link(__('Docs', true), array('controller' => 'filed_documents',  'action' => 'index', $user['User']['id']), array('class' => 'docs')); ?>
 				<?php echo $this->Html->link(__('Activity', true), array('controller' => 'user_transactions',  'action' => 'index', $user['User']['id']), array('class' => 'activity')); ?>
@@ -62,6 +87,26 @@ if ($i++ % 2 == 0) {
 	</table>
 	<p class="paging-counter">
 <?php
+$options = array();
+
+if (isset($basic_search_term) && $basic_search_term) {
+	$options['url']['basic_search_term'] = $basic_search_term;
+}
+
+if (isset($search_by1) && $search_by1) {
+	$options['url']['search_by1'] = $search_by1;
+	$options['url']['search_scope1'] = $search_scope1;
+	$options['url']['search_term1'] = $search_term1;
+}
+
+if (isset($search_by2) && $search_by2) {
+	$options['url']['search_by2'] = $search_by2;
+	$options['url']['search_scope2'] = $search_scope2;
+	$options['url']['search_term2'] = $search_term2;
+}
+
+$this->Paginator->options($options);
+
 echo $this->Paginator->counter(array(
 	'format' => __('Page %page% of %pages%, showing %current% records out of %count% total, starting on record %start%, ending on %end%', true)
 ));
