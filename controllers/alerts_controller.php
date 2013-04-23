@@ -447,6 +447,7 @@ class AlertsController extends AppController {
             $this->set(compact('data'));
             $this->render(null, null, '/elements/ajaxreturn');
         }
+	}
  
     public function admin_update_cus_filed_doc_alert() {
         if($this->RequestHandler->isAjax()) {
