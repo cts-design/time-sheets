@@ -46,8 +46,7 @@ class SelfScanCategoriesController extends AppController {
 		}
 		$conditions = array('DocumentFilingCategory.parent_id' => null);
 		$cat1 = $this->SelfScanCategory->DocumentFilingCategory->find('list', array('conditions' => $conditions));
-		$conditions = array('DocumentQueueCategory.deleted' => 0);
-		$queueCatList = $this->SelfScanCategory->DocumentQueueCategory->find('list', array('conditions' => $conditions));
+		$queueCatList = $this->SelfScanCategory->DocumentQueueCategory->find('list');
 		$this->set(compact('queueCatList', 'parentId', 'cat1', 'title_for_layout'));
 	}
 
@@ -68,8 +67,7 @@ class SelfScanCategoriesController extends AppController {
 			$this->data = $this->SelfScanCategory->read(null, $id);
 		$conditions = array('DocumentFilingCategory.parent_id' => null);
 		$cat1 = $this->SelfScanCategory->DocumentFilingCategory->find('list', array('conditions' => $conditions));
-		$conditions = array('DocumentQueueCategory.deleted' => 0);
-		$queueCatList = $this->SelfScanCategory->DocumentQueueCategory->find('list', array('conditions' => $conditions));
+		$queueCatList = $this->SelfScanCategory->DocumentQueueCategory->find('list');
 		$this->set(compact('queueCatList', 'cat1'));
 		}
 	}
