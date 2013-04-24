@@ -65,6 +65,10 @@
                 'type' => 'checkbox',
                 'label' => 'Add Cusomer Login Alerts',
                 'checked' => (isset($controllers['Alerts']['admin_add_customer_login_alert'])) ? $controllers['Alerts']['admin_add_customer_login_alert'] : '' ));?>
+               <?php echo $this->Form->input('Alerts.admin_add_staff_filed_document_alert', array(
+                'type' => 'checkbox',
+                'label' => 'Add Staff Filed Doc. Alerts',
+                'checked' => (isset($controllers['Alerts']['admin_add_staff_filed_document_alert'])) ? $controllers['Alerts']['admin_add_staff_filed_document_alert'] : '' ));?>
             </fieldset>
             <?php echo $this->PluginPermissions->buildFieldset('alerts') ?>
             <br class="clear" />
