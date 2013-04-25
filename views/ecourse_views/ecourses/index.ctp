@@ -24,26 +24,31 @@
 		});
 	</script>
 <?php elseif ($nextModule[0]['media_type'] == 'ppt'): ?>
-	<?php $this->Html->script('https://www.scribd.com/javascripts/scribd_api.js', array('inline' => false)) ?>
-	<?php $this->Html->scriptStart(array('inline' => false)); ?>
-		var url = '/ecourses/load_media/<?= $nextModule[0]['media_location'] ?>',
-		  pub_id = 'pub-76946934246478514942',
-		  scribd_doc = scribd.Document.getDocFromUrl(url, pub_id),
-		  onDocReady;
+<script type="text/javascript" src='https://www.scribd.com/javascripts/scribd_api.js'></script>
 
-		onDocReady = function(e){
-			scribd_doc.api.setPage(1);
-		}
+<div id='embedded_doc' ><a href='http://www.scribd.com'>Scribd</a></div>
 
-		scribd_doc.addEventListener('docReady', onDocReady);
-		scribd_doc.addParam('jsapi_version', 2);
-		scribd_doc.addParam('public', true);
-		scribd_doc.addParam('mode', 'slideshow');
-		scribd_doc.addParam('allow_share', false);
-		scribd_doc.write('embedded_doc');
-	<?php $this->Html->scriptEnd(); ?>
+<script type="text/javascript">
+var url = "<?= Configure::read('domain') ?>/ecourses/load_media/<?= $nextModule[0]['media_location'] ?>";
+var pub_id = 'pub-76946934246478514942';
+var scribd_doc = scribd.Document.getDocFromUrl(url, pub_id);
 
-	<div id='embedded_doc' ><a href='http://www.scribd.com'>Scribd</a></div>
+var onDocReady = function(e){
+	scribd_doc.api.setPage(1);
+}
+
+scribd_doc.addEventListener('docReady', onDocReady);
+scribd_doc.addParam('default_embed_format', 'flash');
+scribd_doc.addParam('jsapi_version', 2);
+scribd_doc.addParam('public', true);
+scribd_doc.addParam('title', '<?= $nextModule[0]['media_location'] ?>');
+scribd_doc.addParam('my_user_id', 'tbwa');
+scribd_doc.addParam('mode', 'slideshow');
+scribd_doc.addParam('use_ssl', true);
+scribd_doc.addParam('allow_share', false);
+
+scribd_doc.write('embedded_doc');
+</script>
 <?php elseif ($nextModule[0]['media_type'] == 'url'): ?>
 	<div id="ecourse-external-url">
 		<h1><?= $nextModule[0]['media_name'] ?></h1>
