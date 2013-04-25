@@ -124,7 +124,11 @@
 
 					<span class="action">
 						<a href="/programs/registration/<?= $value['Program']['id'] ?>" class="button gray">
-							<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Get Started') ?>
+							<?php if (!empty($value['ProgramResponse']) && $value['ProgramResponse'][0]['status'] == 'complete'): ?>
+								Completed
+							<?php else: ?>
+								<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Get Started') ?>
+							<?php endif ?>
 						</a>
 					</span>
 				</li>
@@ -154,7 +158,11 @@
 
 					<span class="action">
 						<a href="/programs/orientation/<?= $value['Program']['id'] ?>" class="button gray">
-							<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Get Started') ?>
+							<?php if (!empty($value['ProgramResponse']) && $value['ProgramResponse'][0]['status'] == 'complete'): ?>
+								Completed
+							<?php else: ?>
+								<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Get Started') ?>
+							<?php endif ?>
 						</a>
 					</span>
 				</li>
@@ -184,7 +192,11 @@
 
 					<span class="action">
 						<a href="/programs/enrollment/<?= $value['Program']['id'] ?>" class="button gray">
-							<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Get Started') ?>
+							<?php if (!empty($value['ProgramResponse']) && $value['ProgramResponse'][0]['status'] == 'complete'): ?>
+								Completed
+							<?php else: ?>
+								<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Get Started') ?>
+							<?php endif ?>
 						</a>
 					</span>
 				</li>
