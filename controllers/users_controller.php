@@ -332,6 +332,10 @@ class UsersController extends AppController {
 					'Ecourse' => array(
 						'EcourseModule',
 						'EcourseResponse' => array(
+							'conditions' => array(
+								'EcourseResponse.user_id' => $this->Auth->user('id'),
+								'EcourseResponse.reset' => 0
+							),
 							'EcourseModuleResponse'
 						)
 					)
@@ -990,6 +994,10 @@ class UsersController extends AppController {
 					'Ecourse' => array(
 						'EcourseModule',
 						'EcourseResponse' => array(
+							'conditions' => array(
+								'EcourseResponse.user_id' => $this->Auth->user('id'),
+								'EcourseResponse.reset' => 0
+							),
 							'EcourseModuleResponse'
 						)
 					)
