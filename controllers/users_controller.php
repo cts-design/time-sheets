@@ -54,7 +54,8 @@ class UsersController extends AppController {
 				'admin_auto_complete_ssn_ajax',
 				'admin_get_customers_by_first_and_last_name',
 				'admin_get_customers_by_ssn',
-				'admin_get_all_admins'
+				'admin_get_all_admins',
+				'admin_customer_search'
 			);
 		}
 		if(!empty($this->data)) {
