@@ -14,6 +14,8 @@ class EventRegistrationsController extends AppController {
 
 	public $helpers = array('Excel');
 
+	public $components = array('Notifications');
+
 	function beforeFilter() {
 		parent::beforeFilter();
 		if($this->Auth->user()) {
@@ -105,11 +107,19 @@ class EventRegistrationsController extends AppController {
 	public function admin_delete() {
 		if($this->RequestHandler->isAjax()) {
             if(isset($this->data['EventRegistration'])) {
+				$this->EventRegistration->Event->recursive = -1;
 				$this->data['EventRegistration'] = json_decode($this->data['EventRegistration'], true);
 				$userIds = Set::Extract('/user_id', $this->data['EventRegistration']);
 				$ids = Set::Extract('/id', $this->data['EventRegistration']);
 				$conditions = array('EventRegistration.id' => $ids);
 				if($this->EventRegistration->deleteAll($conditions, true, true)) {
+					// send out cancellation emails
+					$event = $this->EventRegistration->Event->findById($this->data['Event']['id']);
+					foreach ($userIds as $id) {
+						$user = $this->EventRegistration->User->findById($id);
+						$this->Notifications->sendEventCancellationEmail($event, $user);
+					}
+
 					$data['success'] = true;
 					$data['message'] = 'Deleted successfully';
 					$message = 'Deleted ';
@@ -177,13 +187,31 @@ class EventRegistrationsController extends AppController {
 
 	public function admin_register_customer() {
 		if($this->RequestHandler->isAjax()) {
+			$this->EventRegistration->Event->Behaviors->attach('Containable');
+			$this->EventRegistration->User->Behaviors->attach('Containable');
+
 			$count = $this->EventRegistration->find('count', array(
 				'conditions' => array(
 					'EventRegistration.user_id' => $this->params['form']['user_id'],
-					'EventRegistration.event_id' => $this->params['form']['event_id'])));
+					'EventRegistration.event_id' => $this->params['form']['event_id']
+				)
+			));
+
 			$this->data['EventRegistration']['user_id'] = $this->params['form']['user_id'];
 			$this->data['EventRegistration']['event_id'] = $this->params['form']['event_id'];
+
 			if($count == 0 && $this->EventRegistration->save($this->data)) {
+				$event = $this->EventRegistration->Event->find('first', array(
+					'conditions' => array(
+						'Event.id' => $this->params['form']['event_id']
+					),
+					'contain' => array(
+						'Location'
+					)
+				));
+				$user = $this->EventRegistration->User->findById($this->params['form']['user_id']);
+				$this->Notifications->sendEventRegistrationEmail($event, $user);
+
 				$data['success'] = true;
 				$data['message'] = 'Customer was registered successfully.';
 				$this->Transaction->createUserTransaction(
