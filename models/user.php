@@ -8,28 +8,49 @@
  */
 class User extends AppModel {
 
-    var $name = 'User';
-	
-    var $hasMany = array(
+	public $name = 'User';
+
+	public $actsAs = array(
+		'AtlasAcl' => 'requester',
+		'Multivalidatable',
+		'Disableable'
+	);
+
+	public $belongsTo = array(
+		'Role',
+		'Location'
+	);
+
+	public $hasAndBelongsToMany = array(
+		'Audit' => array(
+			'joinTable' => 'audits_auditors',
+			'foreignKey' => 'user_id',
+			'associationForeignKey' => 'audit_id',
+			'unique' => false
+		)
+	);
+
+
+	public $hasMany = array(
 		'SelfSignLog' => array(
-		    'className' => 'SelfSignLog',
-		    'foreignKey' => 'user_id'
+			'className' => 'SelfSignLog',
+			'foreignKey' => 'user_id'
 		),
 		'SelfSignLogArchive' => array(
-		    'className' => 'SelfSignLogArchive',
-		    'foreignKey' => 'user_id'
+			'className' => 'SelfSignLogArchive',
+			'foreignKey' => 'user_id'
 		),
 		'UserTransaction' => array(
-		    'className' => 'UserTransaction',
-		    'foreignKey' => 'user_id'
+			'className' => 'UserTransaction',
+			'foreignKey' => 'user_id'
 		),
 		'FiledDocument' => array(
-		    'className' => 'FiledDocument',
-		    'foreignKey' => 'user_id'
+			'className' => 'FiledDocument',
+			'foreignKey' => 'user_id'
 		),
 		'QueuedDocument' => array(
-		    'className' => 'QueuedDocument',
-		    'foreignKey' => 'user_id'
+			'className' => 'QueuedDocument',
+			'foreignKey' => 'user_id'
 		),
 		'EventRegistration' => array(
 			'className' => 'EventRegistration',
@@ -38,87 +59,84 @@ class User extends AppModel {
 		'EcourseUser' => array(
 			'className' => 'EcourseUser',
 			'foreignKey' => 'user_id'
-		)		
-    );
-	
-    var $hasOne = array(
-		'QueuedDocument' => array(
-		    'className' => 'QueuedDocument',
-		    'foreignKey' => 'locked_by'
 		)
-    );
-    var $belongsTo = array('Role', 'Location');
-	
-    var $actsAs = array('AtlasAcl' => 'requester', 'Multivalidatable', 'Disableable');
-	
-    var $validate = array(
+	);
+
+	public $hasOne = array(
+		'QueuedDocument' => array(
+			'className' => 'QueuedDocument',
+			'foreignKey' => 'locked_by'
+		)
+	);
+
+	public $validate = array(
 		'firstname' => array(
-		    'notEmpty' => array(
+			'notEmpty' => array(
 				'rule' => 'notEmpty',
 				'message' => 'Please provide a first name.',
 				'required' => false
-		    ),
-		    'maxlength' => array(
+			),
+			'maxlength' => array(
 				'rule' => array('maxlength', 50),
 				'message' => 'This field cannot excced 50 characters.',
 				'required' => false
-		    )
+			)
 		),
 		'lastname' => array(
-		    'notEmpty' => array(
+			'notEmpty' => array(
 				'rule' => 'notEmpty',
 				'message' => 'Please provide a last name.',
 				'required' => false
-		    ),
-		    'maxlength' => array(
+			),
+			'maxlength' => array(
 				'rule' => array('maxlength', 50),
 				'message' => 'This field cannot excced 50 characters.',
 				'required' => false
-		    ),
+			),
 		),
 		'ssn' => array(
-		    'notEmpty' => array(
+			'notEmpty' => array(
 				'rule' => 'notEmpty',
 				'message' => 'Please provide a SSN.',
 				'required' => false
-		    ),
-		    'numeric' => array(
+			),
+			'numeric' => array(
 				'rule' => 'numeric',
 				'message' => 'Please provide only numbers, no spaces or dashes.',
 				'required' => false
-		    ),
-		    'unique' => array(
+			),
+			'unique' => array(
 				'rule' => 'isUnique',
 				'message' => 'Sorry, we are unable to register you with the provided SSN.',
 				'required' => false
-		    ),
-		    'minLength' => array(
+			),
+			'minLength' => array(
 				'rule' => array('minLength', 9),
 				'message' => 'SSN must be full 9 digits.',
 				'required' => false
 			)
 		),
 		'ssn_confirm' => array(
-		    'notEmpty' => array(
+			'notEmpty' => array(
 				'rule' => 'notEmpty',
 				'message' => 'Please confirm the SSN.',
 				'required' => false
-		    ),
-		    'numeric' => array(
+			),
+			'numeric' => array(
 				'rule' => 'numeric',
 				'message' => 'Please provide only numbers, no spaces or dashes.',
 				'required' => false
-		    ),
-		    'verify' => array(
+			),
+			'verify' => array(
 				'rule' => array('verifies', 'ssn'),
 				'message' => 'SSNs do not match.',
 				'required' => false
-		    ),
-		    'minLength' => array(
+			),
+			'minLength' => array(
 				'rule' => array('minLength', 9),
 				'message' => 'SSN must be full 9 digits.',
 				'required' => false
-			)		    
+			)
 		),
 		'address_1' => array(
 			'notEmpty' => array(
@@ -150,70 +168,70 @@ class User extends AppModel {
 			)
 		),
 		'zip' => array(
-		    'numeric' => array(
+			'numeric' => array(
 				'rule' => 'numeric',
 				'message' => 'Please provide only numbers, no spaces or dashes.',
 				'required' => false
-		    ),
-		    'minLength' => array(
+			),
+			'minLength' => array(
 				'rule' => array('minLength', 5),
 				'message' => 'Please enter 5 digit zip code.',
 				'required' => false
-		    ),
-		    'maxLength' => array(
+			),
+			'maxLength' => array(
 				'rule' => array('maxLength', 5),
 				'message' => 'Please enter 5 digit zip code.',
 				'required' => false
-		    )
+			)
 		),
 		'phone' => array(
-		    'notEmpty' => array(
+			'notEmpty' => array(
 				'rule' => 'notEmpty',
 				'message' => 'Please provide a phone number',
 				'required' => false
 			),
-		    'phone' => array(
+			'phone' => array(
 				'rule' => array('maxLength', 20),
 				'message' => 'Please no more than 20 characters.',
 				'required' => false
-		    )
+			)
 		),
 		'alt_phone' => array(
-		    'phone' => array(
+			'phone' => array(
 				'rule' => array('maxLength', 20),
 				'message' => 'Please no more than 20 characters.',
 				'required' => false
-		    )
+			)
 		),
 		'gender' => array(
-		    'notEmpty' => array(
+			'notEmpty' => array(
 				'rule' => 'notEmpty',
 				'message' => 'Please select a gender.',
 				'required' => false
-		    )
+			)
 		),
 		'dob' => array(
-		    'notEmpty' => array(
+			'notEmpty' => array(
 				'rule' => 'notEmpty',
 				'message' => 'Please provide date of birth.',
 				'required' => false
-		    ),
-		    'date' => array(
+			),
+			'date' => array(
 				'rule' => array('date', 'mdy'),
 				'message' => 'Please provide a valid date in this format mm/dd/yyyy.',
 				'required' => false
-		    )
+			)
 		),
 		'email' => array(
-		    'notEmpty' => array(
+			'notEmpty' => array(
 				'rule' => 'notEmpty',
 				'message' => 'Please provide an email address.',
 				'required' => false
 			),
-		    'email' => array(
+			'email' => array(
 				'rule' => 'email',
 				'message' => 'Must be a vaild email like bob@test.com.',
-			    'required' => false
+				'required' => false
 			)
 		),
 		'email_confirm' => array(
@@ -222,12 +240,12 @@ class User extends AppModel {
 				'message' => 'Please confirm the email address',
 				'required' => false
 			),
-		    'verify' => array(
+			'verify' => array(
 				'rule' => array('verifies', 'email'),
 				'message' => 'Email addresses do not match.',
 				'required' => false
-		    ),
-		),		
+			),
+		),
 		'language' => array(
 			'notEmpty' => array(
 				'rule' => 'notEmpty',
@@ -255,11 +273,10 @@ class User extends AppModel {
 				'message' => 'Please select yes or no.',
 				'required' => false
 			)
-		)		 
+		)
+	);
 
-    );
-	
-	var $validationSets = array(
+	public $validationSets = array(
 		'customerMinimum' => array(
 			'firstname' => array(
 				'notEmpty' => array(
@@ -327,7 +344,7 @@ class User extends AppModel {
 					'rule' => array('minLength', 9),
 					'message' => 'SSN must be full 9 digits.',
 					'required' => false
-				)		    
+				)
 			)
 		),
 		'auditor' => array(
@@ -359,132 +376,132 @@ class User extends AppModel {
 					'required' => true
 				)
 			)
-		),		
+		),
 		'admin' => array(
 			'firstname' => array(
-			    'notEmpty' => array(
+				'notEmpty' => array(
 					'rule' => 'notEmpty',
 					'message' => 'Please provide a first name.'
-			    ),
-			    'maxlength' => array(
+				),
+				'maxlength' => array(
 					'rule' => array('maxlength', 50),
 					'message' => 'This field cannot excced 50 characters.'
-			    ),
+				),
 			),
 			'lastname' => array(
-			    'notEmpty' => array(
+				'notEmpty' => array(
 					'rule' => 'notEmpty',
 					'message' => 'Please provide a last name.'
-			    ),
-			    'maxlength' => array(
+				),
+				'maxlength' => array(
 					'rule' => array('maxlength', 50),
 					'message' => 'This field cannot excced 50 characters.'
-			    ),
-			),		
+				),
+			),
 			'username' => array(
-			    'unique' => array(
+				'unique' => array(
 					'rule' => 'isUnique',
 					'message' => 'The username entered already exists in the system.',
 					'on' => 'create'
-			    ),
+				),
 			),
 			'pass' => array(
-			    'notEmpty' => array(
+				'notEmpty' => array(
 					'rule' => 'notEmpty',
 					'message' => 'Please provide a password',
 					'on' => 'create'
-			    ),
-			    'minlength' => array(
+				),
+				'minlength' => array(
 					'rule' => array('minlength', 6),
-						'message' => 'Password must be atleast 6 characters.',
-						'required' => false
-			    ),
-			    'maxlength' => array(
+					'message' => 'Password must be atleast 6 characters.',
+					'required' => false
+				),
+				'maxlength' => array(
 					'rule' => array('maxlength', 25),
 					'message' => 'This password cannot excced 25 characters.'
-			    )
+				)
 			),
 			'email' => array(
-			    'notEmpty' => array(
+				'notEmpty' => array(
 					'rule' => 'notEmpty',
 					'message' => 'Please provide an email address.',
 					'on' => 'create'
 				),
-			    'email' => array(
+				'email' => array(
 					'rule' => 'email',
 					'message' => 'Must be a vaild email like bob@test.com.',
-				    'allowEmpty' => true
+					'allowEmpty' => true
 				),
-			    'unique' => array(
+				'unique' => array(
 					'rule' => 'isUnique',
 					'message' => 'The email address already exists in the system.'
-			    )
+				)
 			),
 			'location_id' => array(
-			    'notEmpty' => array(
+				'notEmpty' => array(
 					'rule' => 'notEmpty',
 					'message' => 'Please select a location.'
-			    )
-			),		
+				)
+			),
 			'role_id' => array(
-			    'notEmpty' => array(
+				'notEmpty' => array(
 					'rule' => 'notEmpty',
 					'message' => 'Please select a role.'
-			    )
-			)						
-		)		
+				)
+			)
+		)
 	);
-	
-	var $validationEdits = array(
+
+	public $validationEdits = array(
 		'last4' => array(
 			'ssn' => array(
-			    'notEmpty' => array(
+				'notEmpty' => array(
 					'rule' => 'notEmpty',
 					'message' => 'Please provide a SSN.',
 					'required' => false
-			    ),
-			    'numeric' => array(
+				),
+				'numeric' => array(
 					'rule' => 'numeric',
 					'message' => 'Please provide only numbers, no spaces or dashes.',
 					'required' => false
-			    ),
-			    'unique' => array(
+				),
+				'unique' => array(
 					'rule' => 'lastNameSSNUnique',
 					'message' => 'The system is unable to register you at this time. Please contact us for assistance',
 					'required' => false
-			    ),
-			    '4or9' => array(
+				),
+				'4or9' => array(
 					'rule' => 'ssn4or9',
-					'message' => 
-						'SSN must either be full 9 digits using all three boxes, 
-						or last 4 digits using only the last box.',
-					'required' => false	
+					'message' =>
+					'SSN must either be full 9 digits using all three boxes,
+					or last 4 digits using only the last box.',
+					'required' => false
 				)
 			),
 			'ssn_confirm' => array(
-			    'notEmpty' => array(
+				'notEmpty' => array(
 					'rule' => 'notEmpty',
 					'message' => 'Please confirm the SSN.',
 					'required' => false
-			    ),
-			    'numeric' => array(
+				),
+				'numeric' => array(
 					'rule' => 'numeric',
 					'message' => 'Please provide only numbers, no spaces or dashes.',
 					'required' => false
-			    ),
-			    'verify' => array(
+				),
+				'verify' => array(
 					'rule' => array('verifies', 'ssn'),
 					'message' => 'SSNs do not match.',
 					'required' => false
-			    ),
-			    '4or9' => array(
+				),
+				'4or9' => array(
 					'rule' => 'ssn4or9',
-					'message' => 					
-						'SSN must either be full 9 digits using all three boxes, 
-						or last 4 digits using only the last box.',
-						'required' => false
-				)		    
-			)	
+					'message' =>
+					'SSN must either be full 9 digits using all three boxes,
+					or last 4 digits using only the last box.',
+					'required' => false
+				)
+			)
 		),
 		'customer' => array(
 			'address_1' => array(
@@ -516,138 +533,138 @@ class User extends AppModel {
 				)
 			),
 			'zip' => array(
-			    'numeric' => array(
+				'numeric' => array(
 					'rule' => 'numeric',
 					'message' => 'Please provide only numbers, no spaces or dashes.'
-			    ),
-			    'minLength' => array(
+				),
+				'minLength' => array(
 					'rule' => array('minLength', 5),
 					'message' => 'Please enter 5 digit zip code.'
-			    ),
-			    'maxLength' => array(
+				),
+				'maxLength' => array(
 					'rule' => array('maxLength', 5),
 					'message' => 'Please enter 5 digit zip code.'
-			    )
+				)
 			),
 			'phone' => array(
-			    'notEmpty' => array(
+				'notEmpty' => array(
 					'rule' => 'notEmpty',
 					'message' => 'Please provide a phone number',
 					'on' => 'create'
 				),
-			    'phone' => array(
+				'phone' => array(
 					'rule' => array('maxLength', 20),
 					'message' => 'Please no more than 20 characters.',
 					'allowEmpty' => true
-			    )
+				)
 			),
 			'alt_phone' => array(
-			    'phone' => array(
+				'phone' => array(
 					'rule' => array('maxLength', 20),
 					'message' => 'Please no more than 20 characters.',
 					'allowEmpty' => true
-			    )
+				)
 			),
 			'gender' => array(
-			    'notEmpty' => array(
+				'notEmpty' => array(
 					'rule' => 'notEmpty',
 					'message' => 'Please select a gender.',
 					'on' => 'create'
-			    )
+				)
 			),
 			'dob' => array(
-			    'notEmpty' => array(
+				'notEmpty' => array(
 					'rule' => 'notEmpty',
 					'message' => 'Please provide date of birth.'
-			    ),
-			    'date' => array(
+				),
+				'date' => array(
 					'rule' => array('date', 'mdy'),
 					'message' => 'Please provide a valid date in this format mm/dd/yyyy.'
-			    )
+				)
 			),
 			'email' => array(
-			    'notEmpty' => array(
+				'notEmpty' => array(
 					'rule' => 'notEmpty',
 					'message' => 'Please provide an email address.',
 					'on' => 'create'
 				),
-			    'email' => array(
+				'email' => array(
 					'rule' => 'email',
 					'message' => 'Must be a vaild email like bob@test.com.',
-				    'allowEmpty' => true
+					'allowEmpty' => true
 				)
 			),
 			'language' => array(),
 			'race' => array(),
 			'ethnicity' => array(),
 			'veteran' => array(),
-			'disability' => array()		
+			'disability' => array()
 		)
 	);
-	
-    var $virtualFields = array(
-     'name_last4' => 'CONCAT(User.lastname, ", ", User.firstname, " - ", RIGHT (User.ssn , 4))'
-    );	
+
+	public $virtualFields = array(
+		'name_last4' => 'CONCAT(User.lastname, ", ", User.firstname, " - ", RIGHT (User.ssn , 4))'
+	);
 
 
-    function parentNode() {
+	public function parentNode() {
 		if (!$this->id && empty($this->data)) {
-		    return null;
+			return null;
 		}
 		$data = $this->data;
 		if (empty($this->data)) {
-		    $data = $this->read();
+			$data = $this->read();
 		}
 		if (empty($data['User']['role_id'])) {
-		    return null;
-		} 
-		else {
-		    return array('Role' => array('id' => $data['User']['role_id']));
+			return null;
 		}
-    }
-
-    function beforeSave($options = array()) {
-	if (isset($this->data['User']['pass'])) {
-	    $this->data['User']['password'] = Security::hash($this->data['User']['pass'], null, true);
-	}
-	if (!empty($this->data['User']['ssn'])) {
-	    $this->data['User']['password'] = Security::hash($this->data['User']['ssn'], null, true);
-	}
-	if(!empty($this->data['User']['firstname']) && !empty($this->data['User']['lastname'])) {
-	    if(!empty($this->data['User']['role_id']) && $this->data['User']['role_id'] > 1) {
-			$this->data['User']['username'] = substr($this->data['User']['firstname'], 0, 1) . $this->data['User']['lastname'];
-	    }
-	    else {
-			$this->data['User']['username'] = $this->data['User']['lastname'];
-	    }
-	    
-	}
-	if (isset($this->data['User']['dob']) && !empty($this->data['User']['dob'])) {
-	    $this->data['User']['dob'] = date('Y-m-d', strtotime($this->data['User']['dob']));
-	}
-	else {
-		$this->data['User']['dob'] = null;
+		else {
+			return array('Role' => array('id' => $data['User']['role_id']));
+		}
 	}
 
-	return true;
-    }
+	public function beforeSave($options = array()) {
+		if (isset($this->data['User']['pass'])) {
+			$this->data['User']['password'] = Security::hash($this->data['User']['pass'], null, true);
+		}
+		if (!empty($this->data['User']['ssn'])) {
+			$this->data['User']['password'] = Security::hash($this->data['User']['ssn'], null, true);
+		}
+		if(!empty($this->data['User']['firstname']) && !empty($this->data['User']['lastname'])) {
+			if(!empty($this->data['User']['role_id']) && $this->data['User']['role_id'] > 1) {
+				$this->data['User']['username'] = substr($this->data['User']['firstname'], 0, 1) . $this->data['User']['lastname'];
+			}
+			else {
+				$this->data['User']['username'] = $this->data['User']['lastname'];
+			}
 
-    function afterSave($created) {
+		}
+		if (isset($this->data['User']['dob']) && !empty($this->data['User']['dob'])) {
+			$this->data['User']['dob'] = date('Y-m-d', strtotime($this->data['User']['dob']));
+		}
+		else {
+			$this->data['User']['dob'] = null;
+		}
+
+		return true;
+	}
+
+	public function afterSave($created) {
 		if (!$created) {
-		    $parent = $this->parentNode();
+			$parent = $this->parentNode();
 			if($parent) {
 				$parent = $this->node($parent);
-			}	    
+			}
 			if(isset($parent[0]) && $parent[0]['Aro']['id'] != 1) {
-			    $node = $this->node();
-			    $aro = $node[0];
-			    $aro['Aro']['parent_id'] = $parent[0]['Aro']['id'];
-	        	$this->Aro->save($aro);				
+				$node = $this->node();
+				$aro = $node[0];
+				$aro['Aro']['parent_id'] = $parent[0]['Aro']['id'];
+				$this->Aro->save($aro);
 			}
 		}
-    }
-   
-    function  afterFind($results, $primary = false) {
+	}
+
+	public function afterFind($results, $primary = false) {
 		parent::afterFind($results, $primary);
 		if(is_array($results)) {
 			foreach ($results as $key => $value) {
@@ -660,19 +677,19 @@ class User extends AppModel {
 					}
 					if(isset($value['User']['dob'])) {
 						$results[$key]['User']['dob'] = $this->formatDateAfterFind($value['User']['dob']);
-					}	
+					}
 				}
-			}			
+			}
 		}
 		return $results;
-    }
+	}
 
-    function verifies($data, $field) {
+	public function verifies($data, $field) {
 		$value = Set::extract($data, "{s}");
 		return ($value[0] == $this->data[$this->name][$field]);
 	}
-	
-	function ssn4or9() {
+
+	public function ssn4or9() {
 		if(strlen($this->data['User']['ssn_3']) < 4) {
 			return false;
 		}
@@ -685,16 +702,16 @@ class User extends AppModel {
 		}
 		return true;
 	}
-	
-	function lastNameSSNUnique() {
+
+	public function lastNameSSNUnique() {
 		$user = $this->find('first', array(
 			'conditions' => array(
 				'User.lastname' => $this->data['User']['lastname'],
 				'User.ssn' => $this->data['User']['ssn'])));
 		if($user) {
-			return false;	
+			return false;
 		}
-		return true;	
+		return true;
 	}
 
 	public function decodeIdString($data) {
