@@ -287,7 +287,24 @@ Ext.onReady(function(){
 			['modified', 'Modified']
 		]
 	});
+		Ext.define('EntryMethod', {
+		extend: 'Ext.data.Model',
+		fields: ['id', 'name']
+	});
 	
+	var entryMethodStore = Ext.create('Ext.data.Store', {
+		model: 'Location',
+		proxy: {
+			type: 'ajax',
+			url: '/admin/filed_documents/get_entry_methods',
+			reader: {
+				type: 'json',
+				root: 'entry_methods'
+			}
+		},
+		storeId: 'entryMethodStore'
+	});
+
 	var allDocsSearch = Ext.create('Ext.form.Panel', {
 		frame: true,
 		collapsible: true,
@@ -426,6 +443,15 @@ Ext.onReady(function(){
 					fieldLabel: 'Location',
 					store: locationStore,
 					valueField: 'id',
+					displayField: 'name'
+				},{
+					xtype: 'combo',
+					id: 'entryMethod',
+					name: 'entry_method',
+					queryMode: 'remote',
+					fieldLabel: 'Entry Method',
+					store: 'entryMethodStore',
+					valueField: 'name',
 					displayField: 'name'
 				}]
 			}]
