@@ -627,7 +627,6 @@ class ProgramResponsesController extends AppController {
 			}
 		}
 		$responses = $this->ProgramResponse->find('all', array('conditions' => $conditions));
-		$this->log(count($responses), 'debug');
 		if(count($responses) > 3000) {
 			$this->Session->setFlash('Cannot run excel report with more than 3000 records. Please filter your data further and try again.', 'flash_failure');
 			$this->redirect($this->referer());
