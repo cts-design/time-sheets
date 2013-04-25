@@ -9,6 +9,22 @@ Ext.define('Atlas.form.field.AlertNameText', {
 	name: 'name'
 });
 
+Ext.define('Atlas.form.field.AdminComboBox', {
+  extend: 'Ext.form.field.ComboBox',
+  alias: 'widget.admincombobox',
+  xtype: 'combobox',
+  fieldLabel: 'Staff Member',
+  displayField: 'name',
+  valueField: 'id',
+  store: 'admins',
+  emptyText: 'Please Select',
+  name: 'admin_id',
+  allowBlank: false,
+  msgTarget: 'under',
+  queryMode: 'remote',
+  queryParm: 'query'
+});
+
 Ext.define('Atlas.form.field.LocationComboBox', {
 	extend: 'Ext.form.field.ComboBox',
 	alias: 'widget.locationcombobox',
@@ -87,6 +103,27 @@ Ext.create('Ext.data.Store', {
 		pageParam: undefined,
 		startParam: undefined
 	}
+});
+
+Ext.define('Admin', {
+  extend: 'Ext.data.Model',
+  fields: ['id', 'name']
+});
+
+Ext.create('Ext.data.Store', {
+  model: 'Admin',
+  storeId: 'admins',
+  proxy: {
+    type: 'ajax',
+    url: '/admin/users/get_all_admins',
+    reader: {
+      type: 'json',
+      root: 'admins'
+    },
+    limitParam: undefined,
+    pageParam: undefined,
+    startParam: undefined
+  }
 });
 
 
@@ -596,6 +633,55 @@ Ext.define('Atlas.form.CustomerLoginAlertPanel', {
 	}]
 });
 
+Ext.define('Atlas.form.StaffFiledDocumentAlertPanel', {
+	extend: 'Ext.form.Panel',
+	alias: 'widget.stafffileddocumentalertformpanel',
+	padding: 10,
+	border: 0,
+	defaults: {
+		labelWidth: 100,
+		width: 375
+	},
+	items: [{
+		xtype: 'alertnametextfield'
+	},{
+    xtype: 'admincombobox',
+    id: 'staffFiledAdminSelect'
+  },{
+		xtype: 'sendemailcheckbox'
+	},{
+    xtype: 'hiddenfield',
+    name: 'id'
+  },{
+		xtype: 'alertsavebutton',
+		width: 100,
+		handler: function() {
+			var form = this.up('form').getForm();
+      var vals = form.getValues();
+      var url = '/admin/alerts/add_staff_filed_document_alert';
+      if (vals.id) {
+        var url = '/admin/alerts/update_staff_filed_document_alert';
+      }
+			if(form.isValid()) {
+				form.submit({
+          url: url,
+					success: function(form, action) {
+						Ext.Msg.alert('Success', action.result.message);
+						form.reset();
+						Ext.getCmp('myAlertsGrid').getStore().load();
+					},
+					failure: function(form, action)	{
+						Ext.Msg.alert('Failed', action.result.message);
+					}
+				});
+			}
+		}
+	},{
+		xtype: 'alertresetbutton',
+		width: 100,
+		margin: '0 0 0 10'
+	}]
+});
 
 Ext.define('DocumentQueueCategory', {
 	extend: 'Ext.data.Model',
@@ -906,7 +992,11 @@ Ext.onReady(function(){
 					xtype: 'customerloginalertformpanel',
 					id: 'customerLoginAlertFormPanel',
 					url: '/admin/alerts/add_customer_login_alert'
-				}],
+				},{
+          xtype: 'stafffileddocumentalertformpanel',
+          id: 'staffFiledDocumentAlertFormPanel',
+          url: '/admin/alerts/add_staff_filed_document_alert'
+        }],
 				dockedItems: [{
 					xtype: 'toolbar',
 					dock: 'top',
@@ -967,6 +1057,9 @@ Ext.onReady(function(){
                     break;
                   case 'Customer Login':
                     editCustomerLoginAlert(record);
+                    break;
+                  case 'Staff Filed Document':
+                    editStaffFiledDocument(record);
                     break;
                 }
               }
@@ -1153,5 +1246,17 @@ Ext.onReady(function(){
     });
     }
   };
+
+  var editStaffFiledDocument = function(record) {
+    var formPanel = Ext.getCmp('staffFiledDocumentAlertFormPanel'),
+      adminSelect = Ext.getCmp('staffFiledAdminSelect');
+
+    adminSelect.getStore().load({
+      callback: function() {
+        record.data.admin_id = record.data.watched_id
+        formPanel.loadRecord(record);
+      }
+    });
+  }
 });
 

@@ -103,6 +103,32 @@ class Alert extends AppModel {
 		else return false;
 	}	
 
+	public function getStaffFiledDocAlerts($admin, $docId, $customer) {
+		$alerts = $this->find('all', array(
+			'conditions' => array(
+				'Alert.type' => 'staff_filed_document',
+				'Alert.disabled' => 0,
+				'Alert.watched_id' => $admin['User']['id'])));
+		if($alerts && $admin && $customer) {
+			$data = array();			
+			$i = 0;
+			foreach($alerts as $alert) {		
+				$data[$i]['username'] = strtolower($alert['User']['windows_username']);
+				$data[$i]['email'] = $alert['User']['email'];
+				$data[$i]['send_email'] = $alert['Alert']['send_email'];
+ 				$data[$i]['title'] = 'Staff filed document';
+				$message = $admin['User']['firstname'] . ' ' . $admin['User']['lastname'];
+				$message .= ' filed document id: ' . $docId;
+				$message .= ' to customer: ' . $customer['User']['firstname'] . ' ' . $customer['User']['lastname'];
+				$data[$i]['message'] = $message;
+				$data[$i]['url'] = Router::url('/admin/filed_documents/view/'.$docId, true);							
+				$i++;
+			}
+			return $data;	
+		}
+		else return false;
+	}
+
 	public function getCustomerDetailsAlerts($detail, $user, $kiosk) {
 		$alerts = $this->find('all', array(
 			'conditions' => array(
