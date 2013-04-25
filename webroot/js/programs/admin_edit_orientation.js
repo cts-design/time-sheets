@@ -1261,6 +1261,7 @@ formBuilder = Ext.create('Ext.panel.Panel', {
  */
 filingCategories = Ext.create('Ext.form.Panel', {
   height: 406,
+  trackResetOnLoad: true,
   items: [{
     border: 0,
     html: '<h1>Where would you like to file the orientation certificate?</h1>',
@@ -1402,7 +1403,7 @@ filingCategories = Ext.create('Ext.form.Panel', {
       programStep,
       vals;
 
-    if (form.isValid()) {
+    if (form.isValid() && form.isDirty()) {
       vals = form.getValues();
       program = programStore.first();
       programStep = programStepStore.findRecord('type', /form/);
@@ -1412,10 +1413,12 @@ filingCategories = Ext.create('Ext.form.Panel', {
       vals.type = 'certificate';
       vals.program_id = program.data.id;
       vals.program_step_id = programStep.data.id;
-      programDocumentStore.add(vals);
+      form.updateRecord();
 
       return true;
     }
+
+    return true;
   }
 });
 
