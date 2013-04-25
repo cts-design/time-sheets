@@ -25,6 +25,7 @@ class MasterKioskButton extends AppModel {
     );
 	
 	var $actsAs = array(
+		'tree',
 		'Translatable' => array(
 			'name'
 		),

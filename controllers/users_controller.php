@@ -55,7 +55,8 @@ class UsersController extends AppController {
 				'admin_get_customers_by_first_and_last_name',
 				'admin_get_customers_by_ssn',
 				'admin_get_all_admins',
-				'admin_customer_search'
+				'admin_customer_search',
+				'admin_get_customer_by_id'
 			);
 		}
 		if(!empty($this->data)) {
@@ -1449,6 +1450,21 @@ class UsersController extends AppController {
 				}
 			}
 			$data['success'] = true;
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
+
+	public function admin_get_customer_by_id() {
+		if($this->RequestHandler->isAjax()) {
+			$this->User->recursive = -1;
+			$user = $this->User->findById($this->params['pass'][0], array('firstname', 'lastname', 'id'));
+			if($user) {
+				$data['user'] = $user['User'];
+			}
+			else {
+				$data['user'] = array();
+			}
 			$this->set(compact('data'));
 			$this->render(null, null, '/elements/ajaxreturn');
 		}

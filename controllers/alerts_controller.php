@@ -23,6 +23,21 @@ class AlertsController extends AppController {
                 'admin_get_alert_types',
                 'admin_delete');
         }
+		if($this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Alerts/admin_add_self_sign_alert', '*')) {
+			$this->Auth->allow('admin_update_self_sign_alert');
+		}
+		if($this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Alerts/admin_add_self_scan_alert', '*')) {
+			$this->Auth->allow('admin_update_self_scan_alert');
+		}
+		if($this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Alerts/admin_add_customer_details_alert', '*')) {
+			$this->Auth->allow('admin_update_customer_details_alert');
+		}
+		if($this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Alerts/admin_add_customer_login_alert', '*')) {
+			$this->Auth->allow('admin_update_customer_login_alert');
+		}
+		if($this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Alerts/admin_add_cus_filed_doc_alert', '*')) {
+			$this->Auth->allow('admin_update_cus_filed_doc_alert');
+		}
     }
 
     public function admin_index() {
@@ -54,8 +69,8 @@ class AlertsController extends AppController {
             $this->data['Alert']['name'] = $this->params['form']['name'];
             $this->data['Alert']['type'] = 'self_sign';
             $this->data['Alert']['user_id'] = $this->Auth->user('id');
-            if(!empty($this->params['form']['location'])) {
-                $this->data['Alert']['location_id'] = $this->params['form']['location'];
+            if(!empty($this->params['form']['location_id'])) {
+                $this->data['Alert']['location_id'] = $this->params['form']['location_id'];
             }
             if(isset($this->params['form']['send_email'])) {
                 $this->data['Alert']['send_email'] = 1;
@@ -89,12 +104,56 @@ class AlertsController extends AppController {
         }
     }
 
+	public function admin_update_self_sign_alert() {
+        if($this->RequestHandler->isAjax()) {
+            $this->data['Alert']['id'] = $this->params['form']['id'];
+            $this->data['Alert']['name'] = $this->params['form']['name'];
+            $this->data['Alert']['type'] = 'self_sign';
+            $this->data['Alert']['user_id'] = $this->Auth->user('id');
+            if(!empty($this->params['form']['location_id'])) {
+                $this->data['Alert']['location_id'] = $this->params['form']['location_id'];
+            }
+            if(isset($this->params['form']['send_email'])) {
+                $this->data['Alert']['send_email'] = 1;
+            }
+			else {
+				$this->data['Alert']['send_email'] = 0;
+			}
+            if(!isset($this->params['form']['level2']) && !isset($this->params['form']['level3'])) {
+                $this->data['Alert']['watched_id'] = $this->params['form']['level1'];
+            }
+            elseif(isset($this->params['form']['level2']) && !isset($this->params['form']['level3'])) {
+                $this->data['Alert']['watched_id'] = $this->params['form']['level2'];
+            }
+            elseif(isset($this->params['form']['level2']) && isset($this->params['form']['level3'])) {
+                $this->data['Alert']['watched_id'] = $this->params['form']['level3'];
+            }
+            if($this->Alert->save($this->data)) {
+                $id = $this->Alert->getLastInsertId();
+                $data['success'] = true;
+                $data['message'] = 'Alert updated successfully';
+                $this->Transaction->createUserTransaction(
+                    'Alerts',
+                    $this->Auth->user('id'),
+                    $this->Auth->user('location_id'),
+                    'Updated Self Sign alert. name: ' . $this->data['Alert']['name'] . ' id: ' . $id
+                );
+            }
+            else {
+                $data['success'] = false;
+                $data['message'] = 'Unable to add alert, please try again.';
+            }
+            $this->set(compact('data'));
+            $this->render(null, null, '/elements/ajaxreturn');
+        }
+    }
+
     public function admin_add_customer_details_alert() {
         if($this->RequestHandler->isAjax()) {
             $this->data['Alert']['name'] = $this->params['form']['name'];
             $this->data['Alert']['type'] = 'customer_details';
-            if(!empty($this->params['form']['location'])) {
-                $this->data['Alert']['location_id'] = $this->params['form']['location'];
+            if(!empty($this->params['form']['location_id'])) {
+                $this->data['Alert']['location_id'] = $this->params['form']['location_id'];
             }
             $this->data['Alert']['detail'] = $this->params['form']['detail'];
             $this->data['Alert']['user_id'] = $this->Auth->user('id');
@@ -115,6 +174,39 @@ class AlertsController extends AppController {
             else {
                 $data['success'] = false;
                 $data['message'] = 'Unable to add alert, please try again.';
+            }
+            $this->set(compact('data'));
+            $this->render(null, null, '/elements/ajaxreturn');
+        }
+    }
+
+    public function admin_update_customer_details_alert() {
+        if($this->RequestHandler->isAjax()) {
+            $this->data['Alert']['id'] = $this->params['form']['id'];
+            $this->data['Alert']['name'] = $this->params['form']['name'];
+            $this->data['Alert']['type'] = 'customer_details';
+            if(!empty($this->params['form']['location_id'])) {
+                $this->data['Alert']['location_id'] = $this->params['form']['location_id'];
+            }
+            $this->data['Alert']['detail'] = $this->params['form']['detail'];
+            $this->data['Alert']['user_id'] = $this->Auth->user('id');
+            if(isset($this->params['form']['send_email'])) {
+                $this->data['Alert']['send_email'] = 1;
+            }
+            if($this->Alert->save($this->data)) {
+                $id = $this->Alert->getLastInsertId();
+                $data['success'] = true;
+                $data['message'] = 'Alert updated successfully';
+                $this->Transaction->createUserTransaction(
+                    'Alerts',
+                    $this->Auth->user('id'),
+                    $this->Auth->user('location_id'),
+                    'Updated Customer Details alert. name: ' . $this->data['Alert']['name'] . ' id: ' . $id
+                );
+            }
+            else {
+                $data['success'] = false;
+                $data['message'] = 'Unable to updated alert, please try again.';
             }
             $this->set(compact('data'));
             $this->render(null, null, '/elements/ajaxreturn');
@@ -186,10 +278,53 @@ class AlertsController extends AppController {
         }
     }
 
+    public function admin_update_self_scan_alert() {
+        if($this->RequestHandler->isAjax()) {
+            $this->data['Alert']['id'] = $this->params['form']['id'];
+            $this->data['Alert']['name'] = $this->params['form']['name'];
+            $this->data['Alert']['type'] = 'self_scan';
+            if(!empty($this->params['form']['firstname'])) {
+                $this->data['Alert']['watched_id'] = $this->params['form']['firstname'];
+            }
+            if(!empty($this->params['form']['ssn'])) {
+                $this->data['Alert']['watched_id'] = $this->params['form']['ssn'];
+            }
+
+            $this->data['Alert']['user_id'] = $this->Auth->user('id');
+            if(isset($this->params['form']['send_email'])) {
+                $this->data['Alert']['send_email'] = 1;
+            }
+			else {
+				$this->data['Alert']['send_email'] = 0;
+			}
+            if($this->Alert->save($this->data)) {
+                $id = $this->Alert->getLastInsertId();
+                $data['success'] = true;
+                $data['message'] = 'Alert updated successfully';
+                $this->Transaction->createUserTransaction(
+                    'Alerts',
+                    $this->Auth->user('id'),
+                    $this->Auth->user('location_id'),
+                    'Updated Self Scan alert. name: ' . $this->data['Alert']['name'] . ' id: ' . $id
+                );
+            }
+            else {
+                $data['success'] = false;
+                $data['message'] = 'Unable to update alert, please try again.';
+            }
+            $this->set(compact('data'));
+            $this->render(null, null, '/elements/ajaxreturn');
+        }
+    }
+
+	
     public function admin_add_customer_login_alert() {
         if($this->RequestHandler->isAjax()) {
             $this->data['Alert']['name'] = $this->params['form']['name'];
             $this->data['Alert']['type'] = 'customer_login';
+            if(!empty($this->params['form']['location_id'])) {
+                $this->data['Alert']['location_id'] = $this->params['form']['location_id'];
+            }
             if(!empty($this->params['form']['firstname'])) {
                 $this->data['Alert']['watched_id'] = $this->params['form']['firstname'];
             }
@@ -215,6 +350,48 @@ class AlertsController extends AppController {
             else {
                 $data['success'] = false;
                 $data['message'] = 'Unable to add alert, please try again.';
+            }
+            $this->set(compact('data'));
+            $this->render(null, null, '/elements/ajaxreturn');
+        }
+    }
+
+    public function admin_update_customer_login_alert() {
+        if($this->RequestHandler->isAjax()) {
+            $this->data['Alert']['id'] = $this->params['form']['id'];
+            $this->data['Alert']['name'] = $this->params['form']['name'];
+            $this->data['Alert']['type'] = 'customer_login';
+            if(!empty($this->params['form']['location_id'])) {
+                $this->data['Alert']['location_id'] = $this->params['form']['location_id'];
+            }
+            if(!empty($this->params['form']['firstname'])) {
+                $this->data['Alert']['watched_id'] = $this->params['form']['firstname'];
+            }
+            if(!empty($this->params['form']['ssn'])) {
+                $this->data['Alert']['watched_id'] = $this->params['form']['ssn'];
+            }
+
+            $this->data['Alert']['user_id'] = $this->Auth->user('id');
+            if(isset($this->params['form']['send_email'])) {
+                $this->data['Alert']['send_email'] = 1;
+            }
+			else {
+                $this->data['Alert']['send_email'] = 0;
+			}
+            if($this->Alert->save($this->data)) {
+                $id = $this->Alert->getLastInsertId();
+                $data['success'] = true;
+                $data['message'] = 'Alert updated successfully';
+                $this->Transaction->createUserTransaction(
+                    'Alerts',
+                    $this->Auth->user('id'),
+                    $this->Auth->user('location_id'),
+                    'Updated Cusomter Login alert. name: ' . $this->data['Alert']['name'] . ' id: ' . $id
+                );
+            }
+            else {
+                $data['success'] = false;
+                $data['message'] = 'Unable to updated alert, please try again.';
             }
             $this->set(compact('data'));
             $this->render(null, null, '/elements/ajaxreturn');
@@ -255,6 +432,45 @@ class AlertsController extends AppController {
         }
     }
 
+    public function admin_update_cus_filed_doc_alert() {
+        if($this->RequestHandler->isAjax()) {
+            $this->data['Alert']['id'] = $this->params['form']['id'];
+            $this->data['Alert']['name'] = $this->params['form']['name'];
+            $this->data['Alert']['type'] = 'customer_filed_document';
+            if(!empty($this->params['form']['firstname'])) {
+                $this->data['Alert']['watched_id'] = $this->params['form']['firstname'];
+            }
+            if(!empty($this->params['form']['ssn'])) {
+                $this->data['Alert']['watched_id'] = $this->params['form']['ssn'];
+            }
+            $this->data['Alert']['user_id'] = $this->Auth->user('id');
+            if(isset($this->params['form']['send_email'])) {
+                $this->data['Alert']['send_email'] = 1;
+            }
+			else {
+				$this->data['Alert']['send_email'] = 0;
+			}
+            if($this->Alert->save($this->data)) {
+                $id = $this->Alert->getLastInsertId();
+                $data['success'] = true;
+                $data['message'] = 'Alert updated successfully';
+                $this->Transaction->createUserTransaction(
+                    'Alerts',
+                    $this->Auth->user('id'),
+                    $this->Auth->user('location_id'),
+                    'Updated Customer Filed Document alert. name: ' . $this->data['Alert']['name'] . ' id: ' . $id
+                );
+            }
+            else {
+                $data['success'] = false;
+                $data['message'] = 'Unable to update alert, please try again.';
+            }
+            $this->set(compact('data'));
+            $this->render(null, null, '/elements/ajaxreturn');
+        }
+    }
+
+	
     public function admin_add_filed_document_alert() {
 
     }
