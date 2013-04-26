@@ -30,6 +30,11 @@ class EcoursesController extends AppController {
             $this->Session->setFlash(__('Invalid id', true), 'flash_failure');
             $this->redirect($this->referer());
         }
+	public function media($id = null) {
+		if(!$id){
+			$this->Session->setFlash(__('Invalid id', true), 'flash_failure');
+			$this->redirect($this->referer());
+		}
 
 		$this->Ecourse->recursive = -1;
 		$ecourse = $this->Ecourse->find('first', array(
