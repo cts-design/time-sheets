@@ -16,7 +16,7 @@ class EcoursesController extends AppController {
 		parent::beforeFilter();
 		$this->Auth->allow('load_media');
 		if($this->Auth->user()) {
-			$this->Auth->allow('index', 'quiz', 'grade');
+			$this->Auth->allow('index', 'media', 'quiz', 'grade');
 		    if($this->Acl->check(array(
 				'model' => 'User',
 				'foreign_key' => $this->Auth->user('id')), 'Ecourses/admin_index', '*')){
