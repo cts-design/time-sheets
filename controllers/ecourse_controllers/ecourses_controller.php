@@ -32,7 +32,29 @@ class EcoursesController extends AppController {
 		}
 
 		$this->Ecourse->recursive = -1;
-		$this->set('ecourse', $this->Ecourse->findById($id));
+
+		$ecourse = $this->Ecourse->find('first', array(
+			'conditions' => array(
+				'Ecourse.id' => $id
+			),
+			'contain' => array(
+				'EcourseResponse' => array(
+					'conditions' => array(
+						'EcourseResponse.user_id' => $this->Auth->user('id')
+					)
+				)
+			)
+		));
+
+		if (!empty($ecourse['EcourseResponse'])) {
+			$this->redirect(array(
+				'controller' => 'ecourses',
+				'action' => 'media',
+				$id
+			));
+		}
+
+		$this->set('ecourse', $ecourse);
 	}
 
 	public function media($id = null) {
