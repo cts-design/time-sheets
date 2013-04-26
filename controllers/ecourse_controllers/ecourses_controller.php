@@ -206,7 +206,7 @@ class EcoursesController extends AppController {
 				);
 				$this->Session->setFlash('You passed the quiz.', 'flash_success');
 				if($nextModule) {
-					$this->redirect(array('controller' => 'ecourses', 'action' => 'index', $ecourseModule['EcourseModule']['ecourse_id']));
+					$this->redirect(array('controller' => 'ecourses', 'action' => 'media', $ecourseModule['EcourseModule']['ecourse_id']));
 				}
 				else {
 					// Logic to mark the ecourse response complete if passed quiz for last module
