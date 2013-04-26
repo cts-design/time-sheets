@@ -20,5 +20,5 @@ $(function () {
 </ol>
 <br />
 <p>
-	<?php echo $this->Html->link('Return to course', '/ecourses/index/'.$ecourseModule['EcourseModule']['ecourse_id'], array('class' => 'button'))?>
+	<?php echo $this->Html->link('Return to course', '/ecourses/media/'.$ecourseModule['EcourseModule']['ecourse_id'], array('class' => 'button'))?>
 </p>
