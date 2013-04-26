@@ -192,6 +192,11 @@ $config['navigation.users'] = array(
 			'link' => array('controller' => 'users', 'action' => 'index'),
 			'rel' => 'group',
 			'title' => 'Customers'
+		),
+		array(
+			'link' => array('controller' => 'users', 'action' => 'index_auditor'),
+			'rel' => 'group',
+			'title' => 'Auditors'
 		)
 	)
 );

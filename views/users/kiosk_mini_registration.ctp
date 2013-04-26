@@ -87,11 +87,14 @@
 			'label' => __('SSN', true),
 			'before' => '<p class="left">',
 			'between' => '</p><p class="left">',
+			'maxlength' => 9,
+			'type' => 'password',
 			'after' => '</p>'));
 		    echo '<br class="clear"/>';
 		    echo $this->Form->input('ssn_confirm', array(
 			'label' => __('SSN Confirm', true),
 			'maxlength' => 9,
+			'type' => 'password',
 			'before' => '<p class="left">',
 			'between' => '</p><p class="left">',
 			'after' => '</p>'));
@@ -106,15 +109,18 @@
 						'type' => 'text',
 						'div' => false,
 						'maxlength' => 3, 
+						'type' => 'password',
 						'label' => false));
 					echo $this->Form->input('ssn_2', array(
 						'type' => 'text',
 						'maxlength' => 2,
+						'type' => 'password',
 						'label' => false,
 						'div' => false));
 					echo $this->Form->input('ssn_3', array(
 						'type' => 'text',
 						'maxLength' => 4,
+						'type' => 'password',
 						'label' => false,
 						'div' => false));
 				
@@ -129,18 +135,21 @@
 					echo $this->Form->input('ssn_1_confirm', array(
 						'type' => 'text',
 						'maxlength' => 3,
+						'type' => 'password',
 						'label' => false,
 						'div' => false));
 					echo $this->Form->input('ssn_2_confirm', array(
 						'type' => 'text',
 						'maxlength' => 2,
 						'label' => false,
+						'type' => 'password',
 						'div' => false));
 					echo $this->Form->input('ssn_3_confirm', array(
 						'type' => 'text',
 						'maxlength' => 4,
 						'label' => false,
 						'div' => false,
+						'type' => 'password',
 						'after' => '<br />'));
 				echo '</p>';	
 					echo $this->Form->error('ssn_confirm');

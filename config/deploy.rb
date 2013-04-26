@@ -28,6 +28,14 @@ namespace :cts do
     server "demo.atlasforworkforce.com", :app, :web, :db, :primary => true
   end
 
+  task :internal do
+    set :deploy_to, "/var/www/vhosts/deploy/#{application}"
+    set :server_name, 'cts internal'
+    set :user, 'deploy'
+    set :branch, 'master'
+    server "atlas.ctsfla.com", :app, :web, :db, :primary => true
+  end
+
   task :staging do
     set :deploy_to, "/var/www/vhosts/staging.atlasforworkforce.com/#{application}"
     set :server_name, 'atlas staging'

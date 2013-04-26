@@ -393,12 +393,26 @@ class FiledDocumentsController extends AppController {
 
     function admin_get_all_admins() {
 		if($this->RequestHandler->isAjax()) {
+			$this->loadModel('Role');
+			$auditorRole = $this->Role->find('first', array(
+				'conditions' => array(
+					'Role.name' => array('Auditor', 'auditor')
+				)
+			));
+
             $this->FiledDocument->User->Behaviors->detach('Disableable');
 			if(!empty($this->params['form']['query'])) {
-				$conditions = array( 'User.role_id >' => 2, 'User.lastname LIKE' => '%'.$this->params['form']['query'].'%');
+				$conditions = array(
+					'User.role_id >' => 2,
+					'User.role_id <>' => $auditorRole['Role']['id'],
+					'User.lastname LIKE' => '%'.$this->params['form']['query'].'%'
+				);
 			}
 			else {
-				$conditions = array('User.role_id >' => 2);
+				$conditions = array(
+					'User.role_id >' => 2,
+					'User.role_id <>' => $auditorRole['Role']['id'],
+				);
 			}
 			$this->FiledDocument->User->recursive = -1;
 			$admins = $this->FiledDocument->User->find('all', array(

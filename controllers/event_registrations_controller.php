@@ -301,7 +301,7 @@ class EventRegistrationsController extends AppController {
 				$pdf->args_add('--footer-center', 'Page: [page] of [topage]') ;
 				Configure::write('debug', 0);
 				$pdf->render();
-				$pdf->output(WKPDF_MULTI::$PDF_EMBEDDED);
+				$pdf->output(WKPDF_MULTI::$PDF_EMBEDDED, 'event_roster.pdf');
 			}
 			catch(Exception $e) {
 				$this->log('WKPDF Exception (line ' . $e->getLine() .'): ' . $e->getMessage(), 'error');
