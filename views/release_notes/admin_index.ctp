@@ -3,6 +3,14 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+	<h1>Release 3.7.3.1 (4-26-13)</h1>
+	<h2>Minor updates</h2>
+	<ol>
+		<li>Implement a password mask on initial registration SSN fields</li>
+		<li>Changed the default sort by date within the EVENTS view to Ascending</li>	
+		<li>Added a landing page to ECOURSES</li>
+	</ol>
+	<hr />
 	<h1>Release 3.7.3 (4-25-13)</h1>
 	<h2>Minor Updates</h2>
 	<ol>

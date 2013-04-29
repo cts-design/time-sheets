@@ -309,6 +309,7 @@ class ProgramResponsesController extends AppController {
             $data['instructions'] = $instructions[0];
         }
         $data['title_for_layout'] = $this->currentStep[0]['name'];
+		$data['media_acknowledgement_text'] = $program['Program']['media_acknowledgement_text'];
         $this->set($data);
     }
 
