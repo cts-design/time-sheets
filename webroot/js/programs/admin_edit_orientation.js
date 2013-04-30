@@ -766,8 +766,8 @@ registrationForm = Ext.create('Ext.form.Panel', {
       if (uploadContainer.hidden && !vals.media_location.match(/[http|https]:\/\//)) {
           vals.media_location = 'http://' + vals.media_location;
       }
-
-      record.set(vals);
+      form.updateRecord();
+      //record.set(vals);
       //record.save();
       return true;
     } else {
@@ -1242,8 +1242,6 @@ formBuilder = Ext.create('Ext.panel.Panel', {
       callback: function (recs, op, success) {
         if (success) {
           step = programStepStore.findRecord('type', /form/gi);
-          console.log(step);
-
           programFormFieldStore.load({
             params: {
               program_step_id: step.data.id
