@@ -107,17 +107,17 @@ $(document).ready(function() {
 				echo $this->Form->label(__('Please confirm your Social Security Number', true));
 				echo '<br />';			
 				echo $this->Form->input('ssn_1_confirm', array(
-					'type' => 'text',
+					'type' => 'password',
 					'maxlength' => 3,
 					'label' => false,
 					'div' => false));
 				echo $this->Form->input('ssn_2_confirm', array(
-					'type' => 'text',
+					'type' => 'password',
 					'maxlength' => 2,
 					'label' => false,
 					'div' => false));
 				echo $this->Form->input('ssn_3_confirm', array(
-					'type' => 'text',
+					'type' => 'password',
 					'maxlength' => 4,
 					'label' => false,
 					'div' => false,

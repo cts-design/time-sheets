@@ -83,17 +83,17 @@ $(document).ready(function() {
 				echo $this->Form->label(__('Child\'s Social Security Number', true));
 				echo '<br />';	
 				echo $this->Form->input('ssn_1', array(
-					'type' => 'text',
+					'type' => 'password',
 					'div' => false,
 					'maxlength' => 3, 
 					'label' => false));
 				echo $this->Form->input('ssn_2', array(
-					'type' => 'text',
+					'type' => 'password',
 					'maxlength' => 2,
 					'label' => false,
 					'div' => false));
 				echo $this->Form->input('ssn_3', array(
-					'type' => 'text',
+					'type' => 'password',
 					'maxLength' => 4,
 					'label' => false,
 					'div' => false));
