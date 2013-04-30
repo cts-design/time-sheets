@@ -7,8 +7,7 @@
  */
 ?>
 
-<?php echo $this->Html->script('jquery.dPassword', array('inline' => false)); ?>
-<?php echo $this->Html->script('users/mini.registration', array('inline' => false)) ?>
+<?php echo $this->Html->script('users/child_registration', array('inline' => false)) ?>
 <?php echo $this->Html->script('jquery.autotab-1.1b', array('inline' => false)) ?>
 <?php echo $this->Html->scriptStart(array('inline' => false)) ?>
 $(document).ready(function() {
