@@ -210,7 +210,7 @@ $(document).ready(function() {
 			'after' => '<br />'));				
 	    echo $this->Form->hidden('registration', array('value' => 'child_website'));
 	    ?>    
-	</fieldset>
 	<br />
 	<?php echo $this->Form->end(array('label' => __('Submit', true))); ?>
+	</fieldset>
 </div>
