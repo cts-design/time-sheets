@@ -69,10 +69,12 @@ $(document).ready(function() {
 		    echo $this->Form->input('ssn', array(
 				'label' => __('Child\'s Social Security Number', true),
 				'maxlength' => 9,
+				'type' => 'password',
 				'between' => '<br />'));
 		    echo $this->Form->input('ssn_confirm', array(
 				'label' => __('Please confirm child\'s Social Security Number', true),
 				'maxlength' => 9,
+				'type' => 'password',
 				'between' => '<br />',
 				'after' => '<br />'));
 		}
