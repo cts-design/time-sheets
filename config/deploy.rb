@@ -4,8 +4,9 @@ require 'capcake'
 set :application, 'atlas' # app's location (domain or sub-domain name)
 set :repository, "git@github.com:CTSATLAS/atlas.git"
 set :branch, 'master'
-set :keep_releases, 5
 
+set :user, 'deploy'
+set :deploy_to, "/var/www/vhosts/deploy/#{application}"
 set :deploy_via, :remote_cache
 
 set :default_shell, '/bin/bash'
@@ -15,6 +16,9 @@ set :design_branch, "master"
 
 # plugins, override in region namespace if region has plugins
 set :app_plugins, []
+
+# number of releases to keep after running cap deploy:cleanup
+set :keep_releases, 5
 
 # --- Server Settings.
 
@@ -29,7 +33,6 @@ namespace :cts do
   end
 
   task :internal do
-    set :deploy_to, "/var/www/vhosts/deploy/#{application}"
     set :server_name, 'cts internal'
     set :user, 'deploy'
     set :branch, 'master'
@@ -94,9 +97,7 @@ task :elcm do
 end
 
 task :elcmdm do
-  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
   set :server_name, 'elcmdm production'
-  set :user, 'deploy'
   server "atlas.elcmdm.org", :app, :web, :db, :primary => true
 end
 
@@ -105,6 +106,11 @@ task :elcp do
   set :server_name, 'elcp production'
   set :user, 'vpk_ftp'
   server "vpk.elcpinellas.net", :app, :web, :db, :primary => true
+end
+
+task :jobsplus do
+  set :server_name, 'jobs plus production'
+  server "jobsplus.atlasforworkforce.com", :app, :web, :db, :primary => true
 end
 
 task :suncoast do
