@@ -7,8 +7,7 @@
  */
 ?>
 
-<?php echo $this->Html->script('jquery.dPassword', array('inline' => false)); ?>
-<?php echo $this->Html->script('users/mini.registration', array('inline' => false)) ?>
+<?php echo $this->Html->script('users/child_registration', array('inline' => false)) ?>
 <?php echo $this->Html->script('jquery.autotab-1.1b', array('inline' => false)) ?>
 <?php echo $this->Html->scriptStart(array('inline' => false)) ?>
 $(document).ready(function() {
@@ -69,10 +68,13 @@ $(document).ready(function() {
 		if(Configure::read('Registration.ssn') == 'full') {
 		    echo $this->Form->input('ssn', array(
 				'label' => __('Child\'s Social Security Number', true),
+				'maxlength' => 9,
+				'type' => 'password',
 				'between' => '<br />'));
 		    echo $this->Form->input('ssn_confirm', array(
 				'label' => __('Please confirm child\'s Social Security Number', true),
 				'maxlength' => 9,
+				'type' => 'password',
 				'between' => '<br />',
 				'after' => '<br />'));
 		}
@@ -81,17 +83,17 @@ $(document).ready(function() {
 				echo $this->Form->label(__('Child\'s Social Security Number', true));
 				echo '<br />';	
 				echo $this->Form->input('ssn_1', array(
-					'type' => 'text',
+					'type' => 'password',
 					'div' => false,
 					'maxlength' => 3, 
 					'label' => false));
 				echo $this->Form->input('ssn_2', array(
-					'type' => 'text',
+					'type' => 'password',
 					'maxlength' => 2,
 					'label' => false,
 					'div' => false));
 				echo $this->Form->input('ssn_3', array(
-					'type' => 'text',
+					'type' => 'password',
 					'maxLength' => 4,
 					'label' => false,
 					'div' => false));
@@ -211,7 +213,7 @@ $(document).ready(function() {
 			'after' => '<br />'));				
 	    echo $this->Form->hidden('registration', array('value' => 'child_website'));
 	    ?>    
-	</fieldset>
 	<br />
 	<?php echo $this->Form->end(array('label' => __('Submit', true))); ?>
+	</fieldset>
 </div>
