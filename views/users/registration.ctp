@@ -70,6 +70,7 @@ $(document).ready(function() {
 		    echo $this->Form->input('ssn', array(
 				'label' => __('Social Security Number', true),
 				'type' => 'password',
+				'maxlength' => 9,
 				'between' => '<br />',
 				'after' => '<br />'));
 		    echo $this->Form->input('ssn_confirm', array(
