@@ -65,20 +65,6 @@ namespace :cts do
 end
 
 # Production servers
-task :elcp do
-  set :deploy_to, "/var/www/vhosts/vpk.childcarepinellas.org/#{application}"
-  set :server_name, 'elcp production'
-  set :user, 'vpk_ftp'
-  server "vpk.elcpinellas.net", :app, :web, :db, :primary => true
-end
-
-task :elcmdm do
-  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
-  set :server_name, 'elcmdm production'
-  set :user, 'deploy'
-  server "atlas.elcmdm.org", :app, :web, :db, :primary => true
-end
-
 task :cc do
   set :deploy_to, "/var/www/vhosts/atlasv3.careercentral.jobs/#{application}"
   set :server_name, 'cc production'
@@ -107,13 +93,18 @@ task :elcm do
   server "atlas.elc-marion.org", :app, :web, :db, :primary => true
 end
 
-task :tbwa do
-  set :design_branch, "tbwa"
-  set :server_name, 'tbwa production'
-  set :deploy_to, "/var/www/vhosts/workforcetampa.com/#{application}"
-  set :user, 'ftp_tbwa'
-  server "workforcetampa.com", :app, :web, :db, :primary => true
-  set :app_plugins, ['job_forms']
+task :elcmdm do
+  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
+  set :server_name, 'elcmdm production'
+  set :user, 'deploy'
+  server "atlas.elcmdm.org", :app, :web, :db, :primary => true
+end
+
+task :elcp do
+  set :deploy_to, "/var/www/vhosts/vpk.childcarepinellas.org/#{application}"
+  set :server_name, 'elcp production'
+  set :user, 'vpk_ftp'
+  server "vpk.elcpinellas.net", :app, :web, :db, :primary => true
 end
 
 task :suncoast do
@@ -121,6 +112,15 @@ task :suncoast do
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
   set :user, 'deploy'
   server "atlas.suncoastworkforce.org", :app, :web, :db, :primary => true
+end
+
+task :tbwa do
+  set :design_branch, "tbwa"
+  set :server_name, 'tbwa production'
+  set :deploy_to, "/var/www/vhosts/workforcetampa.com/#{application}"
+  set :user, 'ftp_tbwa'
+  server "workforcetampa.com", :app, :web, :db, :primary => true
+  set :app_plugins, ['job_forms']
 end
 
 # --- Cake Settings
