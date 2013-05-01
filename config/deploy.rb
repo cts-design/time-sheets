@@ -110,7 +110,7 @@ end
 
 task :jobsplus do
   set :server_name, 'jobs plus production'
-  server "jobsplus.atlasforworkforce.com", :app, :web, :db, :primary => true
+  server "192.168.200.57", :app, :web, :db, :primary => true
 end
 
 task :suncoast do
