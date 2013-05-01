@@ -83,7 +83,7 @@ Examples:
 
 ATTENTION: The trailing slash is required.
 */
-$baseDir = '/var/www/vhosts/development.ctsfla.com/atlas/current/webroot/';
+$baseDir = '/var/www/vhosts/deploy/atlas/current/webroot/';
 
 /*
  * ### Advanced Settings
