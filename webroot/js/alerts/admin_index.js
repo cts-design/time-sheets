@@ -295,6 +295,55 @@ Ext.define('Atlas.form.SelfScanAlertPanel', {
 	}]
 });
 
+Ext.define('Atlas.form.SelfScanCategoryAlertPanel', {
+	extend: 'Ext.form.Panel',
+	alias: 'widget.selfscancategoryalertformpanel',
+	padding: 10,
+	border: 0,
+	defaults: {
+		labelWidth: 100,
+		width: 375
+	},
+	items: [{
+		xtype: 'alertnametextfield'
+	},{
+		xtype: 'sendemailcheckbox'
+	},{
+    xtype: 'hiddenfield',
+    name: 'id'
+  },{
+		xtype: 'alertsavebutton',
+		width: 100,
+		handler: function() {
+			var form = this.up('form').getForm();
+      var vals = form.getValues();
+      var url = '/admin/alerts/add_self_scan_alert';
+      if (vals.id) {
+        var url = '/admin/alerts/update_self_scan_alert';
+      }
+			if(form.isValid()) {
+				form.submit({
+          url: url,
+					success: function(form, action) {
+						Ext.Msg.alert('Success', action.result.message);
+						form.reset();
+						Ext.getCmp('myAlertsGrid').getStore().load();
+					},
+					failure: function(form, action)	{
+						Ext.Msg.alert('Failed', action.result.message);
+					}
+				});
+			}
+		}
+	},{
+		xtype: 'alertresetbutton',
+		width: 100,
+		margin: '0 0 0 10'
+	}]
+});
+
+
+
 Ext.define('Atlas.form.SelfSignAlertPanel', {
 	extend: 'Ext.form.Panel',
 	alias: 'widget.selfsignalertformpanel',
@@ -985,6 +1034,9 @@ Ext.onReady(function(){
 				},{
 					xtype: 'selfscanalertformpanel',
 					id: 'selfScanAlertFormPanel',
+				},{
+					xtype: 'selfscancategoryalertformpanel',
+					id: 'selfScanCategoryAlertFormPanel',
 				},{
 					xtype: 'cusfileddocalertformpanel',
 					id: 'cusFiledDocAlertFormPanel',
