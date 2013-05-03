@@ -54,7 +54,9 @@ class UsersController extends AppController {
 				'admin_auto_complete_ssn_ajax',
 				'admin_get_customers_by_first_and_last_name',
 				'admin_get_customers_by_ssn',
-				'admin_get_all_admins'
+				'admin_get_all_admins',
+				'admin_customer_search',
+				'admin_get_customer_by_id'
 			);
 		}
 		if(!empty($this->data)) {
@@ -324,22 +326,51 @@ class UsersController extends AppController {
 		$assignedEcourses = $this->User->EcourseUser->find('all',
 			array(
 				'conditions' => array(
-					'EcourseUser.user_id' => $this->Auth->user('id'),
-					'Ecourse.type' => 'customer'
+					'Ecourse.type' => 'customer',
+					'Ecourse.disabled' => '0',
+					'EcourseUser.user_id' => $this->Auth->user('id')
 				),
 				'contain' => array(
 					'Ecourse' => array(
-						'EcourseModule'
+						'EcourseModule',
+						'EcourseResponse' => array(
+							'conditions' => array(
+								'EcourseResponse.user_id' => $this->Auth->user('id'),
+								'EcourseResponse.reset' => 0
+							),
+							'EcourseModuleResponse'
+						)
 					)
 				)
 			)
 		);
 
+		$completedAssignedEcourses = $this->Ecourse->EcourseResponse->find('all',
+			array(
+				'conditions' => array(
+					'EcourseResponse.user_id' => $this->Auth->user('id'),
+					'EcourseResponse.status' => 'completed',
+					'Ecourse.requires_user_assignment' => 1,
+					'Ecourse.disabled' => '0'
+				),
+				'contain' => array(
+					'Ecourse' => array(
+						'EcourseModule',
+						'EcourseResponse' => array(
+							'EcourseModuleResponse'
+						)
+					)
+				)
+			)
+		);
+
+
 		$publicEcourses = $this->Ecourse->find('all',
 			array(
 				'conditions' => array(
 					'Ecourse.requires_user_assignment' => 0,
-					'Ecourse.type' => 'customer'
+					'Ecourse.type' => 'customer',
+					'Ecourse.disabled' => '0'
 				),
 				'contain' => array(
 					'EcourseModule' => array('order' => 'EcourseModule.order ASC'),
@@ -367,6 +398,17 @@ class UsersController extends AppController {
 				$ecourse['Ecourse']['EcourseModule'] = $ecourse['EcourseModule'];
 				$ecourse['Ecourse']['EcourseResponse'] = $ecourse['EcourseResponse'];
 				$ecourses[]['Ecourse'] = $ecourse['Ecourse'];
+			}
+		}
+
+		if ($completedAssignedEcourses) {
+			$i = 0;
+			foreach ($completedAssignedEcourses as $ecourse) {
+				$ecourse['Ecourse']['EcourseModule'] = $ecourse['Ecourse']['EcourseModule'];
+				$ecourse['Ecourse']['EcourseResponse'][$i] = $ecourse['EcourseResponse'];
+				$ecourse['Ecourse']['EcourseResponse'][$i]['EcourseModuleResponse'] = $ecourse['EcourseModuleResponse'];
+				$ecourses[]['Ecourse'] = $ecourse['Ecourse'];
+				$i++;
 			}
 		}
 
@@ -716,6 +758,13 @@ class UsersController extends AppController {
 
 	function admin_index_admin($disabled=false) {
 		$this->User->recursive = 0;
+
+		$auditorRole = $this->User->Role->find('first', array(
+			'conditions' => array(
+				'Role.name' => array('Auditor', 'auditor')
+			)
+		));
+
 		if($disabled) {
 			$this->User->Behaviors->disable('Disableable');
 		}
@@ -732,16 +781,28 @@ class UsersController extends AppController {
 			$filteredPerms = array();
 
 		if(! empty($this->data) && $this->data['User']['search_term'] != '') {
-
 			$this->paginate = array(
 				'conditions' => array(
 					'User.role_id >' => 2,
-					$this->data['User']['search_by'] . ' LIKE' => '%' . $this->data['User']['search_term'] . '%'),
-				'limit' => Configure::read('Pagination.admin.limit'), 'order' => array('User.lastname' => 'asc'));
+					'User.role_id <>' => $auditorRole['Role']['id'],
+					$this->data['User']['search_by'] . ' LIKE' => '%' . $this->data['User']['search_term'] . '%'
+				),
+				'limit' => Configure::read('Pagination.admin.limit'),
+				'order' => array(
+					'User.lastname' => 'asc'
+				)
+			);
+
 			if($this->Auth->user('role_id') == 2) {
 				$this->paginate['conditions']['User.role_id >'] = 1;
 			}
-			$data = array('users' => $this->paginate('User'), 'perms' => $filteredPerms, 'title_for_layout' => 'Administrators');
+
+			$data = array(
+				'users' => $this->paginate('User'),
+				'perms' => $filteredPerms,
+				'title_for_layout' => 'Administrators'
+			);
+
 			$this->set($data);
 			$this->passedArgs['search_by'] = $this->data['User']['search_by'];
 			$this->passedArgs['search_term'] = $this->data['User']['search_term'];
@@ -750,29 +811,78 @@ class UsersController extends AppController {
 			$this->paginate = array(
 				'conditions' => array(
 					'User.role_id >' => 2,
-					$this->passedArgs['search_by'] . ' LIKE' => '%' . $this->passedArgs['search_term'] . '%'),
-				'limit' => Configure::read('Pagination.admin.limit'), 'order' => array('User.lastname' => 'asc'));
+					'User.role_id <>' => $auditorRole['Role']['id'],
+					$this->passedArgs['search_by'] . ' LIKE' => '%' . $this->passedArgs['search_term'] . '%'
+				),
+				'limit' => Configure::read('Pagination.admin.limit'),
+				'order' => array(
+					'User.lastname' => 'asc'
+				)
+			);
+
 			if($this->Auth->user('role_id') == 2) {
 				$this->paginate['conditions']['User.role_id >'] = 1;
 			}
-			$data = array('users' => $this->paginate('User'), 'perms' => $filteredPerms, 'title_for_layout' => 'Administrators');
+
+			$data = array(
+				'users' => $this->paginate('User'),
+				'perms' => $filteredPerms,
+				'title_for_layout' => 'Administrators'
+			);
+
 			$this->set($data);
 		}
 		else {
 			$this->paginate = array(
 				'conditions' => array(
-					'User.role_id >' => 2
+					'User.role_id >' => 2,
+					'User.role_id <>' => $auditorRole['Role']['id']
 				),
-				'limit' => Configure::read('Pagination.admin.limit'), 'order' => array('User.lastname' => 'asc'));
+				'limit' => Configure::read('Pagination.admin.limit'),
+				'order' => array(
+					'User.lastname' => 'asc'
+				)
+			);
+
 			if($this->Auth->user('role_id') == 2) {
 				$this->paginate['conditions']['User.role_id >'] = 1;
 			}
 			elseif($this->Auth->user('role_id') > 3) {
 				$this->paginate['conditions']['User.role_id >'] = 3;
 			}
+
 			$data = array('users' => $this->paginate('User'), 'perms' => $filteredPerms, 'title_for_layout' => 'Administrators');
 			$this->set($data);
 		}
+	}
+
+	function admin_index_auditor($disabled=false) {
+		$this->User->recursive = -1;
+		$this->User->Behaviors->attach('Containable');
+		$this->User->Role->recursive = -1;
+		$auditorRole = $this->User->Role->find('first', array(
+			'conditions' => array(
+				'Role.name' => array('Auditor', 'auditor')
+			)
+		));
+
+		$this->paginate = array(
+			'conditions' => array(
+				'User.role_id' => $auditorRole['Role']['id']
+			),
+			'contain' => array(
+				'Audit'
+			),
+			'limit' => Configure::read('Pagination.admin.limit'),
+			'order' => array('User.lastname' => 'asc')
+		);
+
+		$data = array(
+			'auditors' => $this->paginate('User'),
+			'title_for_layout' => 'Auditors'
+		);
+
+		$this->set($data);
 	}
 
 	function admin_add_admin() {
@@ -878,12 +988,20 @@ class UsersController extends AppController {
 		$assignedEcourses = $this->User->EcourseUser->find('all',
 			array(
 				'conditions' => array(
-					'EcourseUser.user_id' => $this->Auth->user('id'),
-					'Ecourse.type' => 'staff'
+					'Ecourse.disabled' => '0',
+					'Ecourse.type' => 'staff',
+					'EcourseUser.user_id' => $this->Auth->user('id')
 				),
 				'contain' => array(
 					'Ecourse' => array(
-						'EcourseModule'
+						'EcourseModule',
+						'EcourseResponse' => array(
+							'conditions' => array(
+								'EcourseResponse.user_id' => $this->Auth->user('id'),
+								'EcourseResponse.reset' => 0
+							),
+							'EcourseModuleResponse'
+						)
 					)
 				)
 			)
@@ -893,7 +1011,8 @@ class UsersController extends AppController {
 			array(
 				'conditions' => array(
 					'Ecourse.requires_user_assignment' => 0,
-					'Ecourse.type' => 'staff'
+					'Ecourse.type' => 'staff',
+					'Ecourse.disabled' => '0'
 				),
 				'contain' => array(
 					'EcourseModule' => array('order' => 'EcourseModule.order ASC'),
@@ -904,6 +1023,23 @@ class UsersController extends AppController {
 						),
 						'EcourseModuleResponse'
 					)
+				)
+			)
+		);
+
+		$completedAssignedEcourses = $this->Ecourse->EcourseResponse->find('all',
+			array(
+				'conditions' => array(
+					'Ecourse.disabled' => '0',
+					'Ecourse.requires_user_assignment' => 1,
+					'EcourseResponse.user_id' => $this->Auth->user('id'),
+					'EcourseResponse.status' => 'completed'
+				),
+				'contain' => array(
+					'Ecourse' => array(
+						'EcourseModule'
+					),
+					'EcourseModuleResponse'
 				)
 			)
 		);
@@ -921,6 +1057,17 @@ class UsersController extends AppController {
 				$ecourse['Ecourse']['EcourseModule'] = $ecourse['EcourseModule'];
 				$ecourse['Ecourse']['EcourseResponse'] = $ecourse['EcourseResponse'];
 				$ecourses[]['Ecourse'] = $ecourse['Ecourse'];
+			}
+		}
+
+		if ($completedAssignedEcourses) {
+			$i = 0;
+			foreach ($completedAssignedEcourses as $ecourse) {
+				$ecourse['Ecourse']['EcourseModule'] = $ecourse['Ecourse']['EcourseModule'];
+				$ecourse['Ecourse']['EcourseResponse'][$i] = $ecourse['EcourseResponse'];
+				$ecourse['Ecourse']['EcourseResponse'][$i]['EcourseModuleResponse'] = $ecourse['EcourseModuleResponse'];
+				$ecourses[]['Ecourse'] = $ecourse['Ecourse'];
+				$i++;
 			}
 		}
 
@@ -1077,24 +1224,30 @@ class UsersController extends AppController {
 	}
 
 	function admin_get_all_admins() {
-		$this->User->recursive = -1;
-		$admins = $this->User->find('all', array(
-			'conditions' => array('User.role_id > 2'),
-			'order' => 'User.lastname ASC'));
-		if($admins) {
-			$i = 0;
-			foreach($admins as $admin) {
-				$data['admins'][$i]['id'] = $admin['User']['id'];
-				$data['admins'][$i]['name'] = $admin['User']['lastname'] . ', ' . $admin['User']['firstname'];
-				$i++;
+		if($this->RequestHandler->isAjax()) {
+			$this->User->recursive = -1;
+			$conditions = array('User.role_id >' => 2);
+			if(isset($this->params['url']['query'])) {
+				$conditions['User.lastname LIKE'] = '%'.$this->params['url']['query'].'%';
 			}
-			$data['success'] = true;
+			$admins = $this->User->find('all', array(
+				'conditions' => $conditions,
+				'order' => 'User.lastname ASC'));
+			if($admins) {
+				$i = 0;
+				foreach($admins as $admin) {
+					$data['admins'][$i]['id'] = $admin['User']['id'];
+					$data['admins'][$i]['name'] = $admin['User']['lastname'] . ', ' . $admin['User']['firstname'];
+					$i++;
+				}
+				$data['success'] = true;
+			}
+			else {
+				$data['success'] = false;
+			}
+			$this->set('data', $data);
+			$this->render(null, null,  '/elements/ajaxreturn');
 		}
-		else {
-			$data['success'] = false;
-		}
-		$this->set('data', $data);
-		$this->render(null, null,  '/elements/ajaxreturn');
 	}
 
 	function admin_request_ssn_change() {
@@ -1303,6 +1456,21 @@ class UsersController extends AppController {
 				}
 			}
 			$data['success'] = true;
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
+
+	public function admin_get_customer_by_id() {
+		if($this->RequestHandler->isAjax()) {
+			$this->User->recursive = -1;
+			$user = $this->User->findById($this->params['pass'][0], array('firstname', 'lastname', 'id'));
+			if($user) {
+				$data['user'] = $user['User'];
+			}
+			else {
+				$data['user'] = array();
+			}
 			$this->set(compact('data'));
 			$this->render(null, null, '/elements/ajaxreturn');
 		}

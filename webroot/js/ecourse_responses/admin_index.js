@@ -374,18 +374,6 @@ Ext.create('Ext.form.Panel', {
       ecourseResponseProxy.extraParams.fromDate = undefined;
       Ext.getCmp('ecourseResponseTabs').getActiveTab().getStore().loadPage(1, {start: 0, limit: 10});
     }
-  },{
-    text: 'Report',
-    icon:  '/img/icons/excel.png',
-    handler: function(){
-      var f = Ext.getCmp('ecourseResponseSearch').getForm();
-      var vals = f.getValues();
-      vals.status = ecourseResponseProxy.extraParams.status;
-      vals.ecourseId = ecourseId;
-      vals = Ext.urlEncode(vals);
-      // TODO: add report url for ecourse reports
-      window.location = '/admin/ecourse_responses/report?'+ vals;
-    }
   }]
 });
 

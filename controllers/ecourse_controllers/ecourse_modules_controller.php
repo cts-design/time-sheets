@@ -12,6 +12,13 @@ class EcourseModulesController extends AppController {
 
 	public function beforeFilter() {
 		parent::beforeFilter();
+		if($this->Auth->user()) {
+		    if($this->Acl->check(array(
+				'model' => 'User',
+				'foreign_key' => $this->Auth->user('id')), 'Ecourses/admin_index', '*')){
+					$this->Auth->allow('admin_index', 'admin_update', 'admin_create', 'admin_destroy', 'admin_upload_media');
+			}
+		}
 	}
 
 	public function admin_index($ecourse_id = null) {
@@ -164,6 +171,14 @@ class EcourseModulesController extends AppController {
 
 		$this->set('data', $data);
 		return $this->render(null, null, '/elements/ajaxreturn');
+	}
+
+	public function admin_view_media($moduleId=null) {
+		$this->layout = 'ajax';
+
+		$module = $this->EcourseModule->findById($moduleId);
+
+		$this->set('module', $module);
 	}
 }
 

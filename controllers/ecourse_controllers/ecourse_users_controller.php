@@ -12,6 +12,13 @@ class EcourseUsersController extends AppController {
 
 	public function beforeFilter() {
 		parent::beforeFilter();
+		if($this->Auth->user()) {
+		    if($this->Acl->check(array(
+				'model' => 'User',
+				'foreign_key' => $this->Auth->user('id')), 'Ecourses/admin_index', '*')){
+					$this->Auth->allow('admin_index', 'admin_assign_staff', 'admin_assign_customers', 'admin_delete');
+			}
+		}
 	}
 
 	public function admin_index($id=null) {

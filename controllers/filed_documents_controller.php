@@ -33,7 +33,7 @@ class FiledDocumentsController extends AppController {
         if ($this->Acl->check(array('model' => 'User',
                                     'foreign_key' => $this->Auth->user('id')),
                                     'FiledDocuments/admin_view_all_docs', '*')) {
-            $this->Auth->allow('admin_get_all_admins', 'admin_report');
+            $this->Auth->allow('admin_get_all_admins', 'admin_report', 'admin_get_entry_methods');
         }
 
         if (preg_match('/auditor/i', $this->Session->read('Auth.User.role_name'))) {
@@ -393,12 +393,26 @@ class FiledDocumentsController extends AppController {
 
     function admin_get_all_admins() {
 		if($this->RequestHandler->isAjax()) {
+			$this->loadModel('Role');
+			$auditorRole = $this->Role->find('first', array(
+				'conditions' => array(
+					'Role.name' => array('Auditor', 'auditor')
+				)
+			));
+
             $this->FiledDocument->User->Behaviors->detach('Disableable');
 			if(!empty($this->params['form']['query'])) {
-				$conditions = array( 'User.role_id >' => 2, 'User.lastname LIKE' => '%'.$this->params['form']['query'].'%');
+				$conditions = array(
+					'User.role_id >' => 2,
+					'User.role_id <>' => $auditorRole['Role']['id'],
+					'User.lastname LIKE' => '%'.$this->params['form']['query'].'%'
+				);
 			}
 			else {
-				$conditions = array('User.role_id >' => 2);
+				$conditions = array(
+					'User.role_id >' => 2,
+					'User.role_id <>' => $auditorRole['Role']['id'],
+				);
 			}
 			$this->FiledDocument->User->recursive = -1;
 			$admins = $this->FiledDocument->User->find('all', array(
@@ -421,6 +435,19 @@ class FiledDocumentsController extends AppController {
 
 		}
     }
+
+	public function admin_get_entry_methods() {
+		$entryMethods = $this->FiledDocument->find('all', array('fields' => array('DISTINCT entry_method')));
+		$data['entry_methods'] = array();
+		if($entryMethods) {
+			foreach($entryMethods as $entryMethod) {
+				$data['entry_methods'][]['name'] = Inflector::humanize($entryMethod['FiledDocument']['entry_method']);
+			}
+		}
+		$data['success'] = true;
+		$this->set('data', $data);
+		$this->render(null, null, '/elements/ajaxreturn');
+	}
 
     function _uploadDocument($entryMethod='Upload') {
 		// get the document relative path to the inital storage folder
@@ -550,6 +577,9 @@ class FiledDocumentsController extends AppController {
 			}
 			if(isset($filters['cat_1'])){
 				$conditions['FiledDocument.cat_1'] = $filters['cat_1'];
+			}
+			if(isset($filters['entry_method'])) {
+				$conditions['FiledDocument.entry_method'] = $filters['entry_method'];
 			}
 			if(isset($filters['cat_2'])) 
 				$conditions['FiledDocument.cat_2'] = $filters['cat_2'];

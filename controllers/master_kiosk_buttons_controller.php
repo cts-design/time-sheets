@@ -13,6 +13,9 @@ class MasterKioskButtonsController extends AppController {
 	function beforeFilter() {
 		parent::beforeFilter();
 		$this->Security->disabledFields = array('MasterKioskButton.parent_id');
+		if($this->Auth->user()) {
+			$this->Auth->allow('admin_get_button_path');
+		}
 	}
 
     function admin_index($id = null) {
@@ -119,4 +122,21 @@ class MasterKioskButtonsController extends AppController {
 	$this->set('data', $data);
     }
 
+	function admin_get_button_path($id=null) {
+		if($this->RequestHandler->isAjax()) {
+			$this->loadModel('MasterKioskButton');	
+			$buttons = $this->MasterKioskButton->getPath($id);
+			if($buttons) {
+				$data['success'] = true;
+				$i = 0;
+				foreach($buttons as $button) {
+					$data['buttons'][$i]['id'] = $button['MasterKioskButton']['id'];
+					$data['buttons'][$i]['name'] = $button['MasterKioskButton']['name'];
+					$i++;
+				}
+			}
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
 }

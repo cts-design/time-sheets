@@ -96,6 +96,7 @@ class SelfScanCategoriesController extends AppController {
 		    $cats = $this->SelfScanCategory->find('all', array(
 				'fields' => array(
 					'SelfScanCategory.id',
+					'SelfScanCategory.name',
 					'SelfScanCategory.cat_1',
 					'SelfScanCategory.cat_2',
 					'SelfScanCategory.cat_3')));

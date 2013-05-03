@@ -3,6 +3,60 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+	<h1>Release 3.7.3.1 (4-26-13)</h1>
+	<h2>Minor updates</h2>
+	<ol>
+		<li>Implement a password mask on initial registration SSN fields</li>
+		<li>Changed the default sort by date within the EVENTS view to Ascending</li>	
+		<li>Added a landing page to ECOURSES</li>
+	</ol>
+	<hr />
+	<h1>Release 3.7.3 (4-25-13)</h1>
+	<h2>Minor Updates</h2>
+	<ol>
+		<li>Minor Feature Enhancements</li>
+		<li>Added “Staff Filed” document alert</li>
+		<li>Added “Self-Scan” alert</li>
+		<li>Implemented the ability to edit ALERTS</li>
+		<li>Added ability to view media from admin ecourse create screen</li>
+		<li>Added an “input type” filter within the document queue to allow for documents to be sorted based on the input path into ATLAS</li>
+		<li>Adjusted layout on E-Course media page</li>
+		<li>Changed the language within the DASHBOARD step logic to indicate past tense when a E-course,orientation,event or program was “COMPLETED”</li>
+		<li>Added the ability to add customized content (normal and child) to the user login view</li>
+	</ol>
+	<h2>Bug Fixes</h2>
+	<ol>
+		<li>Resolved intermittent issue with Orientation certificate not generating</li>
+		<li>Resolved issue with SCRIBD plugin not translating powerpoint presentations within the E-course canvas</li>
+		<li>Fixed issue with permissions within the EVENTS module that was preventing Role Admins from adding customers to the event</li>
+		<li>Resolved inconsistency within the core atlas.config file that was stopping the EVENT roster from loading the htmltopdf helper when creating the printable pdf</li>
+		<li>Isolated issue with Ecourse “view responses” not loading because of an apostrophe within the E-course name</li>
+		<li>Resolved issue that was causing the “Queue Cats” to not populate within the “add self-scan cat” view</li>
+		<li>Resolved issue that could potentially allow customer to click an in-active step within the program or ecourse step system.</li>
+		<li>Resolved bug that was causing the Email trigger to not fire when a customer was added to an EVENT</li>
+		<li>Resolved issue that was causing “filter by event” AJAX call to halt within the EVENTS module</li>
+		<li>Resolved issue that was causing multiple "certificates" from being created during the "runworker" helper</li>
+		<li>Resolved issue with media_location database field character limit</li>
+	</ol>
+	<hr />
+	<h1>Release 3.7.2 (4-11-13)</h1>
+	<h2>Minor Updates</h2>
+	<ol>
+		<li>Added  Demographics from Customer Registration to "top" of Program Response PDF snapshot</li>
+		<li>Added all program response fields to excel report for greater report capabilities</li>
+		<li>Implemented the ability to filter the Queue by Self-scan documents using the Self-Scan definition Selection tree criteria</li>
+	</ol>
+	<h2>Bug Fixes</h2>
+	<ol>
+		<li>Fixed spelling error on kiosk registration field</li>
+		<li>Resolved bug with registration and “disability” question nor saving to user profile</li>
+		<li>Fixed issues that was prohibiting Role Admin the ability to be assigned permissions under E-Course</li>
+		<li>Fixed issue that was causing deleted Queues to show up within the Storage Queue as active</li>
+		<li>Resolved issue with E-Course grade results being listed Alpha-Numeric rather than in Step ID order</li>
+		<li>Resolved issue that was causing assigned ecourses that were completed to show up on the last assigned person of the course</li>
+		<li>Fixed issue where confirmation yes|no on a delete of registered user in events was producing undesired results</li>
+	</ol>
+	<hr />
 	<h1>Release 3.7.1 (4-5-13)</h1>
 	<h2>Minor Updates</h2>
 	<ol>

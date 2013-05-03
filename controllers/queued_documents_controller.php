@@ -353,6 +353,7 @@ class QueuedDocumentsController extends AppController {
 					$data['message'] = 'Document filed successfully';	
 				}
 			    $this->sendCusFiledDocAlert($user, $this->data['FiledDocument']['id']);
+			    $this->sendStaffFiledDocAlert($this->Auth->user(), $this->data['FiledDocument']['id'], $user);
 				$data['success'] = true;				
 			}
 			else {
@@ -457,6 +458,10 @@ class QueuedDocumentsController extends AppController {
 			if(!empty($queueCats)) {
 				$conditions['QueuedDocument.queue_category_id'] = $queueCats;
 			}
+			$selfScanCats = json_decode($filters['DocumentQueueFilter']['self_scan_cats'], true);
+			if(!empty($selfScanCats)) {
+				$conditions['QueuedDocument.self_scan_cat_id'] = $selfScanCats;
+			}
 			if(!empty($filters['DocumentQueueFilter']['from_date']) && 
 			   !empty($filters['DocumentQueueFilter']['to_date'] )){
 				    $from = date('Y-m-d H:i:m', 
@@ -493,6 +498,28 @@ class QueuedDocumentsController extends AppController {
 		}
 	}
 
+	private function sendStaffFiledDocAlert($admin, $docId, $customer) {
+		$this->loadModel('Alert');
+		$data = $this->Alert->getStaffFiledDocAlerts($admin, $docId, $customer);
+		if($data) {
+			$HttpSocket = new HttpSocket();
+			$results = $HttpSocket->post('localhost:3000/new', 
+				array('data' => $data));
+			$to = '';
+			foreach($data as $alert) {
+				if($alert['send_email']) {
+					$to .= $alert['email'] . ',';
+				}			
+			}
+			if(!empty($to)) {
+				$to = trim($to, ',');
+				$this->Email->to = $to;
+				$this->Email->from = Configure::read('System.email');
+				$this->Email->subject = 'Staff Member Filed Document';
+				$this->Email->send($alert['message'] . "\r\n" . $alert['url']);				
+			}
+		}
+	}
 	private function checkIfFilingCatSecure($catId) {
 		$this->loadModel('DocumentFilingCategory');
 		return $this->DocumentFilingCategory->isSecure($catId);

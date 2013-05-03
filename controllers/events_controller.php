@@ -151,7 +151,6 @@ class EventsController extends AppController {
 	}
 
 	public function workshop($date = null) {
-		$this->log($this->params['url'], 'debug');
 		$this->Event->Behaviors->attach('Containable');
 		$this->Event->EventCategory->recursive = -1;
 
@@ -374,7 +373,7 @@ class EventsController extends AppController {
 		if($this->RequestHandler->isAjax()) {
 			$date = date('Y-m-d H:i:s', strtotime('today'));
 			$events = $this->Event->find('all', array(
-				'order' => array('Event.scheduled DESC'),
+				'order' => array('Event.scheduled ASC'),
 				'conditions' => array('Event.scheduled >= ' => $date)));
 			$this->loadModel('Location');
 			$locations = $this->Location->find('list');

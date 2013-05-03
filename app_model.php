@@ -6,6 +6,8 @@
  */
 class AppModel extends Model {
 
+	public $actsAs = array('Containable');
+
     function formatDateAfterFind($date) {
 		return date('m/d/Y', strtotime($date));
     }

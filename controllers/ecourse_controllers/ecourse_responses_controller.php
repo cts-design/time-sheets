@@ -4,6 +4,13 @@ class EcourseResponsesController extends AppController {
 
 	public function beforeFilter() {
 		parent::beforeFilter();
+		if($this->Auth->user()) {
+		    if($this->Acl->check(array(
+				'model' => 'User',
+				'foreign_key' => $this->Auth->user('id')), 'Ecourses/admin_index', '*')){
+					$this->Auth->allow('admin_index', 'admin_view', 'admin_reset');
+			}
+		}		
 	}
 
 	public function admin_index($id = null) {
@@ -94,7 +101,7 @@ class EcourseResponsesController extends AppController {
 				$i = 0;
 				foreach($response['EcourseModuleResponse'] as $moduleResponse) {
 					$data['response'][$i]['id'] = $moduleResponse['id'];
-					$data['response'][$i]['module'] = $moduleResponse['EcourseModule']['name'];
+					$data['response'][$i]['module'] = $moduleResponse['EcourseModule']['order'] . ' ' . $moduleResponse['EcourseModule']['name'];
 					$data['response'][$i]['score'] = $moduleResponse['score'];
 					$data['response'][$i]['pass_fail'] = $moduleResponse['pass_fail'];
 					$data['response'][$i]['time_on_quiz'] =

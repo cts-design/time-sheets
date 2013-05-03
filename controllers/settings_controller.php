@@ -105,6 +105,37 @@ class SettingsController extends AppController {
 		}
 	}
 
+	public function admin_login_text() {
+		if($this->RequestHandler->isAjax()) {
+			$settings = $this->Setting->findByName('LoginAdditionalText', array('id','value'));
+			if(!empty($this->params['form'])) {
+				foreach($this->params['form'] as $k => $v) {
+					$values[]['value'] = $v;
+				}
+				if($settings) {
+					$this->data['Setting']['id'] = $settings['Setting']['id'];
+				}	
+				$this->data['Setting']['value'] = json_encode($values);
+				$this->data['Setting']['module'] = 'Users';
+				$this->data['Setting']['name'] = 'LoginAdditionalText';				
+				if($this->Setting->save($this->data)) {
+					Cache::delete('settings');
+					$data['success'] = true;
+					$data['message'] = 'Login additional settings updated successfully';
+					$settings = $this->Setting->findByName('KioskConfirmation', array('id','value'));
+				}
+				else {
+					$data['success'] = false;
+					$data['message'] = 'Login additional settings could not be updated';					
+				}				
+			}
+			else {
+				$data['login_additional_text'] = json_decode($settings['Setting']['value'], true);
+			}
+			$this->set(compact('data'));	
+			$this->render(null, null, '/elements/ajaxreturn');	
+		}
+	}
 
 }
 ?>
