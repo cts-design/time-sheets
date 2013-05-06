@@ -8,6 +8,7 @@ Ext.define('Ecourse', {
     'type',
     'name',
     'instructions',
+    { name: 'order', type: 'int' },
     { name: 'default_passing_percentage', type: 'int' },
     { name: 'requires_user_assignment', type: 'int' },
     { name: 'disabled', type: 'int' },
@@ -46,7 +47,12 @@ Ext.create('Ext.data.Store', {
       type: 'json',
       writeAllFields: false
     }
-  }
+  },
+  remoteSort: false,
+  sorters: [{
+    property: 'order',
+    direction: 'ASC'
+  }]
 });
 
 /**
@@ -160,6 +166,16 @@ Ext.onReady(function () {
         hidden: true,
         text: 'Id',
         width: 50
+      }, {
+        align: 'center',
+        dataIndex: 'order',
+        text: 'Order',
+        width: 50,
+        editor: {
+          xtype: 'numberfield',
+          allowBlank: false,
+          minValue: 1
+        }
       }, {
         dataIndex: 'name',
         text: 'Name',
@@ -311,6 +327,16 @@ Ext.onReady(function () {
         hidden: true,
         text: 'Id',
         width: 50
+      }, {
+        align: 'center',
+        dataIndex: 'order',
+        text: 'Order',
+        width: 50,
+        editor: {
+          xtype: 'numberfield',
+          allowBlank: false,
+          minValue: 1
+        }
       }, {
         dataIndex: 'name',
         text: 'Name',
