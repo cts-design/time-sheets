@@ -73,7 +73,7 @@ Ext.create('Ext.data.Store', {
       writeAllFields: false
     }
   },
-  remoteSort: true,
+  remoteSort: false,
   sorters: [{
     property: 'order',
     direction: 'ASC'
