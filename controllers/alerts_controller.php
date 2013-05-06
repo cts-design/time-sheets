@@ -649,7 +649,7 @@ class AlertsController extends AppController {
                 if($this->Acl->check(array(
                     'model' => 'User',
                     'foreign_key' => $this->Auth->user('id')), $v['action'], '*')) {
-                        $data['types'][$k] = array('label' => $v['label'], 'id' => $v['id']);
+                        $data['types'][] = array('label' => $v['label'], 'id' => $v['id']);
                 }
             }
             $this->set(compact('data'));
