@@ -10,6 +10,7 @@ Vagrant.configure("2") do |config|
   config.vm.box_url = "https://s3.amazonaws.com/gsc-vagrant-boxes/ubuntu-12.04-omnibus-chef.box"
 
   config.vm.network :private_network, ip: "33.33.33.10"
+  config.vm.network :forwarded_port, guest: 3306, host: 3306
 
   config.ssh.max_tries = 40
   config.ssh.timeout   = 120
@@ -23,7 +24,8 @@ Vagrant.configure("2") do |config|
       :mysql => {
         :server_root_password => 'rootpass',
         :server_debian_password => 'debpass',
-        :server_repl_password => 'replpass'
+        :server_repl_password => 'replpass',
+        :bind_address => '33.33.33.10'
       }
     }
 
