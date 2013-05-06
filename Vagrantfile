@@ -23,7 +23,10 @@ Vagrant.configure("2") do |config|
       :mysql => {
         :server_root_password => 'rootpass',
         :server_debian_password => 'debpass',
-        :server_repl_password => 'replpass'
+        :server_repl_password => 'replpass',
+        :bind_address => '33.33.33.10',
+        :allow_remote_root => true,
+        :remove_test_database => true
       }
     }
 
