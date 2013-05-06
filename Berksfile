@@ -1,1 +1,1 @@
-cookbook 'atlas', :path => '/Users/dnolan/Projects/cookbooks/atlas'
+cookbook 'atlas', github: 'CTSATLAS/atlas-cookbook', protocol: :ssh
