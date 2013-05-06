@@ -43,3 +43,4 @@ docs
 docs/*
 shared/
 .rvmrc
+.vagrant/*
