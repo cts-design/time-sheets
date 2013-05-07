@@ -220,7 +220,14 @@
 			<?php if ($currentUser['signature']): ?>
 				<li>
 					<div class="title">
-						<p>You are currently enrolled until mm/dd/YYYY</p>
+						<?php
+							$signatureModified = strtotime($currentUser['signature_modified']);
+							$signatureExpires = strtotime('+365 days', $signatureModified);
+						?>
+
+						<p>
+							You are currently enrolled until <?= date('m/d/Y', $signatureExpires) ?>
+						</p>
 					</div>
 					<div class="details"></div>
 
