@@ -76,6 +76,9 @@ class ProgramResponsesController extends AppController {
 				if($this->nextStep[0]['type'] === 'required_docs' || !$this->nextStep[0]['type']) {
 					$redirect = array('controller' => 'programs', 'action' => $program['Program']['type'], $programId);
 				}
+				else if ($this->nextStep[0]['type'] === 'custom_form') {
+					$redirect = array('controller' => 'program_responses', 'action' => 'form', $programId, $this->nextStep[0]['id']);
+				}
 				else {
 					$redirect = array('action' => $this->nextStep[0]['type'], $programId, $this->nextStep[0]['id']);
 				}
@@ -135,7 +138,10 @@ class ProgramResponsesController extends AppController {
 		$data['formFields'] = $this->currentStep[0]['ProgramFormField'];
 		$data['element'] = 'form';
 		if($this->currentStep[0]['type'] === 'custom_form') {
-			$data['element'] = 'custom_form_' . $this->currentStep[0]['ProgramStep']['id'];
+			$stepMeta = json_decode($this->currentStep[0]['meta'], true);
+			$data['columns'] = $stepMeta['columns'];
+			$data['formFields'] = array('ProgramFormField' => $this->currentStep[0]['ProgramFormField']);
+			$data['element'] = 'custom_form_' . $this->currentStep[0]['id'];
 		}
 		
 		// TODO: determine if esign will be on the program level or on the step level
