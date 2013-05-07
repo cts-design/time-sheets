@@ -77,6 +77,35 @@ class Alert extends AppModel {
 		}
 		else return false;
 	}
+
+	public function getSelfScanCategoryAlerts($user, $selfScanCat, $docId, $locationId) {
+		$alerts = $this->find('all', array(
+			'conditions' => array(
+				'Alert.type' => 'self_scan_category',
+				'Alert.disabled' => 0,
+				'Alert.watched_id' => $selfScanCat['SelfScanCategory']['id'])));
+		if($alerts && $user) {
+			$data = array();			
+			$i = 0;
+			foreach($alerts as $alert) {			
+				if($alert['Alert']['location_id'] && $locationId !== $alert['Alert']['location_id']) {
+					continue;
+				}			
+				$data[$i]['username'] = strtolower($alert['User']['windows_username']);
+				$data[$i]['email'] = $alert['User']['email'];
+				$data[$i]['send_email'] = $alert['Alert']['send_email'];
+ 				$data[$i]['title'] = 'Self Scan Category';
+				$message = $user['User']['firstname'] . ' ' . $user['User']['lastname'];
+				$message .= ' self scanned document id: ' . $docId;
+				$message .= ' to category ' . $selfScanCat['SelfScanCategory']['name'];
+				$data[$i]['message'] = $message;
+				$data[$i]['url'] = Router::url('/admin/queued_documents', true);							
+				$i++;
+			}
+			return $data;	
+		}
+		else return false;
+	}
 	
 	public function getCusFiledDocAlerts($user, $docId) {
 		$alerts = $this->find('all', array(
