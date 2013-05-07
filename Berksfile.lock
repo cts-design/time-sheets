@@ -1,4 +1,4 @@
-cookbook 'atlas', :path => '/Users/dnolan/Projects/cookbooks/atlas'
+cookbook 'atlas', github: 'CTSATLAS/atlas-cookbook'
 cookbook 'apt', :locked_version => '1.9.2'
 cookbook 'apache2', :locked_version => '1.6.2'
 cookbook 'database', :locked_version => '1.3.12'
