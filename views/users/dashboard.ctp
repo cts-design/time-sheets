@@ -205,4 +205,37 @@
 		</div>
 	</div>
 	<?php endif ?>
+
+	<?php $currentUser = $this->Session->read('Auth.User') ?>
+	<div id="online-esignature" class="widget">
+		<div class="widget-header">
+			<h2>
+				<i class="icon-pencil"></i>
+				Electronic Signature
+			</h2>
+		</div>
+
+		<div class="widget-content">
+			<ul>
+			<?php if ($currentUser['signature']): ?>
+				<li>
+					<div class="title">
+						<p>You are currently enrolled until mm/dd/YYYY</p>
+					</div>
+					<div class="details"></div>
+
+					<span class="action">
+						<a href="/programs/enrollment/<?= $value['Program']['id'] ?>" class="button gray">
+							<?php if (!empty($value['ProgramResponse']) && $value['ProgramResponse'][0]['status'] == 'complete'): ?>
+								Completed
+							<?php else: ?>
+								<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Get Started') ?>
+							<?php endif ?>
+						</a>
+					</span>
+				</li>
+			<?php endif ?>
+			</ul>
+		</div>
+	</div>
 </div>
