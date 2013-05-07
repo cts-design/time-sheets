@@ -1,0 +1,4 @@
+production:
+  database: '<%= db_name %>'
+  username: '<%= db_login %>'
+  password: '<%= db_password %>'
