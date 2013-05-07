@@ -76,6 +76,9 @@ class ProgramResponsesController extends AppController {
 				if($this->nextStep[0]['type'] === 'required_docs' || !$this->nextStep[0]['type']) {
 					$redirect = array('controller' => 'programs', 'action' => $program['Program']['type'], $programId);
 				}
+				else if ($this->nextStep[0]['type'] === 'custom_form') {
+					$redirect = array('controller' => 'program_responses', 'action' => 'form', $programId, $this->nextStep[0]['id']);
+				}
 				else {
 					$redirect = array('action' => $this->nextStep[0]['type'], $programId, $this->nextStep[0]['id']);
 				}
