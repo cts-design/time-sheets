@@ -1,5 +1,4 @@
-require 'rubygems'
-require 'capcake'
+require File.join(File.dirname(__FILE__), '../libs/capcake/capcake')
 
 set :application, 'atlas' # app's location (domain or sub-domain name)
 set :repository, "git@github.com:CTSATLAS/atlas.git"
