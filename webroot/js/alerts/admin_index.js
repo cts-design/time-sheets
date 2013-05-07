@@ -84,6 +84,42 @@ Ext.define('Atlas.form.field.FirstNameComboBox', {
 	}
 });
 
+Ext.define('Atlas.form.field.SelfScanCategoryComboBox', {
+	extend: 'Ext.form.field.ComboBox',
+	alias: 'widget.selfscancategorycombobox',
+	xtype: 'combobox',
+	fieldLabel: 'Self Scan Category',
+	displayField: 'name',
+	valueField: 'id',
+	store: 'selfScanCategories',
+	queryMode: 'remote',
+	emptyText: 'Please Select',
+	name: 'self_scan_category_id',
+	allowBlank: false,
+	msgTarget: 'under'
+});
+
+Ext.define('SelfScanCategory', {
+  extend: 'Ext.data.Model',
+  fields: ['id', 'name', 'cat_1', 'cat_2', 'cat_3']
+});
+
+Ext.create('Ext.data.Store', {
+	model: 'SelfScanCategory',
+	storeId: 'selfScanCategories',
+	proxy: {
+		type: 'ajax',
+		url: '/admin/self_scan_categories/get_cats',
+		reader: {
+			type: 'json',
+			root: 'cats'
+		},
+		limitParam: undefined,
+		pageParam: undefined,
+		startParam: undefined
+	}
+});
+
 Ext.define('Customer', {
 	extend: 'Ext.data.Model',
 	fields: ['id', 'firstname', 'lastname', 'fullname', 'ssn']
@@ -307,8 +343,15 @@ Ext.define('Atlas.form.SelfScanCategoryAlertPanel', {
 	items: [{
 		xtype: 'alertnametextfield'
 	},{
-		xtype: 'sendemailcheckbox'
+    xtype: 'locationcombobox',
+    allowBlank: true,
+    id: 'selfScanLocation'
+  },{
+    xtype: 'selfscancategorycombobox',
+    id: 'selfScanCategory'
 	},{
+		xtype: 'sendemailcheckbox'
+  },{
     xtype: 'hiddenfield',
     name: 'id'
   },{
@@ -317,9 +360,9 @@ Ext.define('Atlas.form.SelfScanCategoryAlertPanel', {
 		handler: function() {
 			var form = this.up('form').getForm();
       var vals = form.getValues();
-      var url = '/admin/alerts/add_self_scan_alert';
+      var url = '/admin/alerts/add_self_scan_category_alert';
       if (vals.id) {
-        var url = '/admin/alerts/update_self_scan_alert';
+        var url = '/admin/alerts/update_self_scan_category_alert';
       }
 			if(form.isValid()) {
 				form.submit({
@@ -1030,7 +1073,6 @@ Ext.onReady(function(){
 				},{
 					xtype: 'queueddocumentalertformpanel',
 					id: 'queuedDocumentAlertFormPanel',
-					url: '/admin/alerts/add_queued_document_alert'
 				},{
 					xtype: 'selfscanalertformpanel',
 					id: 'selfScanAlertFormPanel',
@@ -1043,11 +1085,9 @@ Ext.onReady(function(){
 				},{
 					xtype: 'customerloginalertformpanel',
 					id: 'customerLoginAlertFormPanel',
-					url: '/admin/alerts/add_customer_login_alert'
 				},{
           xtype: 'stafffileddocumentalertformpanel',
           id: 'staffFiledDocumentAlertFormPanel',
-          url: '/admin/alerts/add_staff_filed_document_alert'
         }],
 				dockedItems: [{
 					xtype: 'toolbar',
@@ -1104,6 +1144,9 @@ Ext.onReady(function(){
                   case 'Self Scan':
                     editSelfScanAlert(record);
                     break;
+                  case 'Self Scan Category':
+                    editSelfScanCategoryAlert(record);
+                    break;
                   case 'Customer Filed Document':
                     editCusFiledDocAlert(record);
                     break;
@@ -1111,7 +1154,7 @@ Ext.onReady(function(){
                     editCustomerLoginAlert(record);
                     break;
                   case 'Staff Filed Document':
-                    editStaffFiledDocument(record);
+                    editStaffFiledDocumentAlert(record);
                     break;
                 }
               }
@@ -1299,7 +1342,7 @@ Ext.onReady(function(){
     }
   };
 
-  var editStaffFiledDocument = function(record) {
+  var editStaffFiledDocumentAlert = function(record) {
     var formPanel = Ext.getCmp('staffFiledDocumentAlertFormPanel'),
       adminSelect = Ext.getCmp('staffFiledAdminSelect');
 
@@ -1309,6 +1352,22 @@ Ext.onReady(function(){
         formPanel.loadRecord(record);
       }
     });
+  };
+
+  var editSelfScanCategoryAlert = function(record) {
+    var formPanel = Ext.getCmp('selfScanCategoryAlertFormPanel'),
+        locationSelect = Ext.getCmp('selfScanLocation'),
+        categorySelect = Ext.getCmp('selfScanCategory');
+    locationSelect.getStore().load({
+      callback: function() {
+        categorySelect.getStore().load({
+          callback: function() {
+            record.data.self_scan_category_id = record.data.watched_id;
+            formPanel.loadRecord(record);
+          }
+        })
+      }
+    })
   }
 });
 
