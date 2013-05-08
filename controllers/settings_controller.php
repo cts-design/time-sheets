@@ -78,8 +78,10 @@ class SettingsController extends AppController {
 		if($this->RequestHandler->isAjax()) {
 			$settings = $this->Setting->findByName('KioskTimeOut', array('id','value'));
 			if(isset($this->params['form']['timeout']) && $this->params['form']['timeout'] != '') {
-				$values[0]['value'] = $this->params['form']['timeout'];
-				$values[1]['value'] = $this->params['form']['reminder'];
+				// convert seconds to milliseconds
+				$values[0]['value'] = $this->params['form']['timeout'] * 1000;
+				$values[1]['value'] = $this->params['form']['reminder'] * 1000;
+
 				$this->data['Setting']['value'] = json_encode($values);
 				if($settings) {
 					$this->data['Setting']['id'] = $settings['Setting']['id'];
@@ -99,6 +101,10 @@ class SettingsController extends AppController {
 			}
 			else {
 				$data['timeout'] = json_decode($settings['Setting']['value'], true);
+				foreach($data['timeout'] as $k => $v) {
+					//convert milliseconds to seconds
+					$data['timeout'][$k]['value'] = $v['value'] / 1000;
+				}
 			}
 			$this->set(compact('data'));	
 			$this->render(null, null, '/elements/ajaxreturn');	
