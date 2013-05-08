@@ -79,11 +79,15 @@ class Alert extends AppModel {
 	}
 
 	public function getSelfScanCategoryAlerts($user, $selfScanCat, $docId, $locationId) {
+		$ids = array($selfScanCat['SelfScanCategory']['id']);
+		if($selfScanCat['SelfScanCategory']['parent_id']) {
+			array_push($ids, $selfScanCat['SelfScanCategory']['parent_id']);
+		}
 		$alerts = $this->find('all', array(
 			'conditions' => array(
 				'Alert.type' => 'self_scan_category',
 				'Alert.disabled' => 0,
-				'Alert.watched_id' => $selfScanCat['SelfScanCategory']['id'])));
+				'Alert.watched_id' => $ids)));
 		if($alerts && $user) {
 			$data = array();			
 			$i = 0;
@@ -205,7 +209,7 @@ class Alert extends AppModel {
 				$data[$i]['send_email'] = $alert['Alert']['send_email'];
  				$data[$i]['title'] = 'Customer Login';
 				$message = $user['User']['firstname'] . ' ' . $user['User']['lastname'];
-				$message .= ' loggned in to ' . $kiosk['Kiosk']['location_description'];
+				$message .= ' logged in to ' . $kiosk['Kiosk']['location_description'];
 				$message .= ' at ' . $kiosk['Location']['name'];
 				$data[$i]['message'] = $message;
 				$data[$i]['url'] = '';
