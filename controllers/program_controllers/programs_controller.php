@@ -928,6 +928,30 @@ class ProgramsController extends AppController {
 		return true;
 	}
 
+	public function admin_get_programs_by_type() {
+		if($this->RequestHandler->isAjax()) {
+			$this->Program->recursive = -1;
+			$programs =	$this->Program->findAllByType($this->params['url']['type'], array('id', 'name', 'type', 'approval_required'));
+			$data = array();
+			if($programs) {
+				$i = 0;
+				foreach($programs as $program) {
+					$data['programs'][$i]['name'] = $program['Program']['name'];
+					$data['programs'][$i]['id'] = $program['Program']['id'];
+					$data['programs'][$i]['type'] = $program['Program']['type'];
+					$data['programs'][$i]['approval_required'] = $program['Program']['approval_required'];
+					$i++;
+				}
+			}
+			else {
+				$data['programs'] = array();
+			}
+			$data['success'] = true;
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
+
 	private function duplicateTransactionCleanup() {
 		foreach ($this->transactionIds as $key => $value) {
 			// $key is the model name itself, $value is the array of ids
