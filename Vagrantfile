@@ -3,7 +3,7 @@
 
 Vagrant.configure("2") do |config|
 
-  config.vm.hostname = "atlas-dev"
+  config.vm.hostname = "atlas.dev"
 
   config.vm.box = "Ubuntu-12.04-omibus-chef"
 
