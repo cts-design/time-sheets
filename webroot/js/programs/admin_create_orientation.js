@@ -17,6 +17,7 @@ Ext.define('Program', {
     'name',
     'type',
     'atlas_registration_type',
+    'media_acknowledgement_text',
     { name: 'queue_category_id', type: 'int' },
     { name: 'approval_required', type: 'int' },
     { name: 'form_esign_required', type: 'int' },
@@ -633,6 +634,11 @@ registrationForm = Ext.create('Ext.form.Panel', {
       },
       value: 'days prior to expiration'
     }]
+  },{
+    xtype: 'textareafield',
+    fieldLabel: 'Acknowledge Media Text',
+    labelWidth: 175,
+    name: 'media_acknowledgement_text'
   }, {
     border: 0,
     html: '<h1>Program Media</h1>',

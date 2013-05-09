@@ -24,6 +24,7 @@ Ext.define('Program', {
     'name',
     'type',
     'atlas_registration_type',
+    'media_acknowledgement_text',
     { name: 'queue_category_id', type: 'int' },
     { name: 'approval_required', type: 'int' },
     { name: 'form_esign_required', type: 'int' },
@@ -616,7 +617,7 @@ states = {
  */
 registrationForm = Ext.create('Ext.form.Panel', {
   autoScroll: true,
-  height: 490,
+  height: 560,
   items: [{
     border: 0,
     html: '<h1>Program Details</h1>',
@@ -890,6 +891,11 @@ registrationForm = Ext.create('Ext.form.Panel', {
       labelWidth: 190,
       name: 'confirmation_id_length'
     }]
+  },{
+    xtype: 'textareafield',
+    labelWidth: 190,
+    fieldLabel: 'Media acknowledgement text',
+    name: 'media_acknowledgement_text'
   }, {
     border: 0,
     html: '<h1>Program Documentation</h1>',
