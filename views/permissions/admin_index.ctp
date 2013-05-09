@@ -53,6 +53,10 @@
                 'type' => 'checkbox',
                 'label' => 'Self Scan',
                 'checked' => (isset($controllers['Alerts']['admin_add_self_scan_alert'])) ? $controllers['Alerts']['admin_add_self_scan_alert'] : '' ));?>
+               <?php echo $this->Form->input('Alerts.admin_add_self_scan_category_alert', array(
+                'type' => 'checkbox',
+                'label' => 'Add Self Scan Cat Alerts',
+                'checked' => (isset($controllers['Alerts']['admin_add_self_scan_category_alert'])) ? $controllers['Alerts']['admin_add_self_scan_category_alert'] : '' ));?>
                <?php echo $this->Form->input('Alerts.admin_add_customer_details_alert', array(
                 'type' => 'checkbox',
                 'label' => 'Customer Details',
