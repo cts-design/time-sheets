@@ -13,6 +13,9 @@ class ProgramsController extends AppController {
 				$this->Session->setFlash(__('Please complete your profile to continue.', true), 'flash_success');
 				$this->redirect(array('controller' => 'users', 'action' => 'edit', $this->Auth->user('id')));
 		}
+		if($this->Auth->user('role_id') > 1) {
+			$this->Auth->allow('admin_get_programs_by_type', 'admin_get_program_by_id');
+		}
 	}
 
 	// TODO make these actions work with an index method and routes ??
@@ -946,6 +949,23 @@ class ProgramsController extends AppController {
 			}
 			else {
 				$data['programs'] = array();
+			}
+			$data['success'] = true;
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
+
+	public function admin_get_program_by_id() {
+		if($this->RequestHandler->isAjax()) {
+			$this->Program->recursive = -1;
+			$program = $this->Program->findById($this->params['pass'][0], array('id', 'name', 'type', 'approval_required'));
+			$data = array();
+			if($program) {
+					$data['program'] = $program['Program'];
+			}
+			else {
+				$data['program'] = array();
 			}
 			$data['success'] = true;
 			$this->set(compact('data'));

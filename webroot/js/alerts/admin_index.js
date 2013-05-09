@@ -247,12 +247,12 @@ Ext.create('Ext.data.ArrayStore', {
 	storeId: 'programType',
 	autoLoad: true,
 	idIndex: 0,
-	fields: ['type'],
+	fields: ['value', 'label'],
 	data: [
-		['Registration'],
-		['Orientation'],
-    ['Enrollment'],
-    ['Esign']
+		['registration', 'Registration'],
+		['orientation', 'Orientation'],
+    ['enrollment', 'Enrollment'],
+    ['esign', 'E-Signature']
 	]
 });
 
@@ -834,8 +834,8 @@ Ext.define('Atlas.form.ProgramResponseStatusAlertPanel', {
 	},{
 		xtype: 'combobox',
 		fieldLabel: 'Program Type',
-		displayField: 'type',
-		valueField: 'type',
+		displayField: 'label',
+		valueField: 'value',
     store: 'programType',
 		queryMode: 'local',
 		emptyText: 'Please Select',
@@ -867,7 +867,7 @@ Ext.define('Atlas.form.ProgramResponseStatusAlertPanel', {
         this.nextSibling().reset();
         if(records[0].data.approval_required) {
           if(!this.nextSibling().getStore().findRecord('label', 'Pending Approval')) {
-            this.nextSibling().getStore().add({label: 'Pending Approval', status: 'pending approval'});
+            this.nextSibling().getStore().add({label: 'Pending Approval', status: 'pending_approval'});
           }
         }
         else {
@@ -879,6 +879,7 @@ Ext.define('Atlas.form.ProgramResponseStatusAlertPanel', {
   },{
 		xtype: 'combobox',
 		fieldLabel: 'Respone Status',
+    id: 'programResponseStatus',
     disabled: true,
 		displayField: 'label',
 		valueField: 'status',
@@ -1310,6 +1311,9 @@ Ext.onReady(function(){
                   case 'Staff Filed Document':
                     editStaffFiledDocumentAlert(record);
                     break;
+                  case 'Program Response Status':
+                    editProgramResponseStatusAlert(record);
+                    break;
                 }
               }
             });
@@ -1523,5 +1527,31 @@ Ext.onReady(function(){
       }
     })
   }
+
+  var editProgramResponseStatusAlert = function(record) {
+    var formPanel = Ext.getCmp('programResponseStatusAlertFormPanel');
+    Ext.Ajax.request({
+      url: '/admin/programs/get_program_by_id/'+record.data.watched_id,
+      success: function(response) {
+        text = Ext.JSON.decode(response.responseText);
+        populateForm(text);
+      }
+      
+    });
+    function populateForm(text) {
+      var status = Ext.getCmp('programResponseStatus');
+      record.data.program_type = text.program.type;
+      record.data.program_id = text.program.id;
+      status.enable();
+      if(record.data.detail === 'pending_approval') {
+        if(!status.getStore().findRecord('label', 'Pending Approval')) {
+          status.getStore().add({label: 'Pending Approval', status: 'pending_approval'});
+        }
+      }
+      record.data.response_status = record.data.detail;
+      formPanel.loadRecord(record);
+    }
+
+  };
 });
 
