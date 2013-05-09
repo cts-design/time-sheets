@@ -853,7 +853,7 @@ class ProgramResponsesController extends AppController {
 					$user['User'] = $programResponse['User'];
 					$this->Notifications->sendProgramEmail($programEmail['ProgramEmail'], $user);
 
-					$this->Notifications->sendProgramResponseStatusAlert($this->Auth->user(), $programResponse['Program'], $status);
+					$this->Notifications->sendProgramResponseStatusAlert($user, $programResponse['Program'], 'complete');
 
 					$this->Transaction->createUserTransaction('Programs', null, null,
 						'Approved program response for ' . $programResponse['Program']['name'] . ' for customer ' .
