@@ -168,17 +168,6 @@ Ext.create('Ext.form.Panel', {
   }]
 });
 
-Ext.create('Ext.data.Store', {
-  fields: ['value', 'time'],
-  storeId: 'times',
-  data: [
-    {"value":"10000", "time":"10 Seconds"},
-    {"value":"30000", "time":"30 Seconds"},
-    {"value":"45000", "time":"45 Seconds"},
-    {"value":"60000", "time":"1 Minute"}
-  ]
-});
-
 Ext.define('TimeOut', {
   extend: 'Ext.data.Model',
   fields: ['value']
@@ -202,8 +191,8 @@ Ext.create('Ext.data.Store', {
   listeners: {
     load: function(store, records, successful, operation, eOpts) {
       if(records[0] !== undefined && records[1] !== undefined) {
-        Ext.getCmp('kioskTimeOut').getComponent('cb1').select(records[0].data.value);
-        Ext.getCmp('kioskTimeOut').getComponent('cb2').select(records[1].data.value);
+        Ext.getCmp('kioskTimeOut').getComponent('cb1').setValue(records[0].data.value);
+        Ext.getCmp('kioskTimeOut').getComponent('cb2').setValue(records[1].data.value);
       }
     }
   }
@@ -217,23 +206,19 @@ Ext.create('Ext.form.Panel', {
   width: 295,	
   margin: 5,
   items: [{
-    xtype: 'combobox',
+    xtype: 'numberfield',
     itemId: 'cb1',
-    fieldLabel: 'Kiosk Time Out',
-    queryMode: 'local',
-    store: 'times',
-    displayField: 'time',
-    valueField: 'value',
-    name: 'timeout'
+    fieldLabel: 'Kiosk Time Out (secs)',
+    name: 'timeout',
+    minValue: 5,
+    maxValue: 60
   },{
-    xtype: 'combobox',
+    xtype: 'numberfield',
     itemId: 'cb2',
-    fieldLabel: 'Kiosk Time Out Reminder Window',
-    queryMode: 'local',
-    store: 'times',
-    displayField: 'time',
-    valueField: 'value',
-    name: 'reminder'
+    fieldLabel: 'Kiosk Time Out Reminder Window (secs)',
+    name: 'reminder',
+    minValue: 5,
+    maxValue: 60
  }],
   buttons: [{
     text: 'Update',
@@ -277,7 +262,6 @@ Ext.create('Ext.data.Store', {
   autoLoad: true,
   listeners: {
     load: function(store, records, successful, operation, eOpts) {
-      console.log(records)
       if(records[0] !== undefined) {
        Ext.getCmp('loginTextForm').getComponent('loginText').setValue(records[0].data.value);
        Ext.getCmp('loginTextForm').getComponent('childLoginText').setValue(records[1].data.value);
