@@ -3,7 +3,7 @@
 class ProgramsController extends AppController {
 
 	public $name = 'Programs';
-	public $components = array('Email');
+	public $components = array('Notifications', 'Email');
 	public $transactionIds = array();
 
 	public function beforeFilter() {
@@ -174,6 +174,7 @@ class ProgramsController extends AppController {
 					$this->Transaction->createUserTransaction('Programs', null, null,
 					'Initiated program ' . $program['Program']['name']);
 					$programResponse = $this->Program->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
+					$this->Notifications->sendProgramResponseStatusAlert($this->Auth->user(), $program, 'incomplete');
 					$mainEmail = Set::extract('/ProgramEmail[type=main]', $program);
 					if(!empty($mainEmail)) {
 						$this->Notifications->sendProgramEmail($mainEmail[0]['ProgramEmail']);
@@ -986,5 +987,6 @@ class ProgramsController extends AppController {
 	private function issetAndNotEmpty($key) {
 		return isset($key) && !empty($key);
 	}
+
 }
 

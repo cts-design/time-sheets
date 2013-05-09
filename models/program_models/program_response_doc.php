@@ -84,7 +84,7 @@ class ProgramResponseDoc extends AppModel {
 				if($docFiledEmail) {
 					$return['docFiledEmail'] = $docFiledEmail['ProgramEmail'];
 				}
-				$this->updateResponse($Program, $programResponse);
+				$return['status'] = $this->updateResponse($Program, $programResponse);
 			}
 		}
 		return $return;
@@ -126,11 +126,13 @@ class ProgramResponseDoc extends AppModel {
 			if($programResponse['ProgramResponse']['status'] === 'incomplete' ||
 				$programResponse['ProgramResponse']['status'] === 'pending_document_review') {
 					$this->ProgramResponse->saveField('status', 'pending_approval');
+					return 'pending_approval';
 			}
 		}
 		if(!empty($result)) {
 			if($programResponse['ProgramResponse']['status'] === 'pending_approval') {
 				$this->ProgramResponse->saveField('status', 'incomplete');
+				return 'incomplete';
 			}
 		}
 	}
