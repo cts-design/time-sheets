@@ -287,6 +287,15 @@ Ext.create('Ext.menu.Menu', {
     text: 'Attendance Report',
     icon: '/img/icons/excel.png',
     href: '/admin/event_registrations/attendance_report/'
+  },{
+    xtype: 'button',
+    text: 'Event Registrations',
+    icon: '/img/icons/date_go.png',
+    handler: function() {
+      grid = Ext.getCmp('eventsGrid');
+      record = grid.getSelectionModel().getLastSelected();
+      window.location.replace('/admin/event_registrations/index/'+record.data.id); 
+    }
   }]
 });
 
