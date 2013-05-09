@@ -110,4 +110,29 @@ class NotificationsComponent extends Object {
 		$this->Email->send($myMessage);
 		$this->Email->reset();
 	}
+
+   	function sendProgramResponseStatusAlert($user, $program, $status) {
+		$this->Alert = ClassRegistry::init('Alert');
+		$data = $this->Alert->getProgramResponseStatusAlerts($user, $program, $status);
+		$this->log($data, 'debug');
+		if($data) {
+			$HttpSocket = new HttpSocket();
+			$results = $HttpSocket->post('localhost:3000/new', 
+				array('data' => $data));
+			$to = '';
+			foreach($data as $alert) {
+				if($alert['send_email']) {
+					$to .= $alert['email'] . ',';
+				}			
+			}
+			if(!empty($to)) {
+				$to = trim($to, ',');
+				$this->Email = &new EmailComponent();
+				$this->Email->to = $to;
+				$this->Email->from = Configure::read('System.email');
+				$this->Email->subject = 'Program Response Status Alert';
+				$this->Email->send($alert['message'] . "\r\n" . $alert['url']);				
+			}
+		}
+	}	
 }
