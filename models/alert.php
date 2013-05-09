@@ -219,4 +219,32 @@ class Alert extends AppModel {
 		}
 		else return false;
 	}	
+
+	public function getProgramResponseStatusAlerts($user, $program, $status) {
+		$alerts = $this->find('all', array(
+			'conditions' => array(
+				'Alert.type' => 'program_response_status',
+				'Alert.disabled' => 0,
+				'Alert.detail' => $status,
+				'Alert.watched_id' => $program['Program']['id'])));
+		$statuses = array('incomplete' => 'open', 'complete' => 'closed', 'pending_approval' => 'pending_approval');
+		if($alerts && $user) {
+			$data = array();			
+			$i = 0;
+			foreach($alerts as $alert) {			
+				$data[$i]['username'] = strtolower($alert['User']['windows_username']);
+				$data[$i]['email'] = $alert['User']['email'];
+				$data[$i]['send_email'] = $alert['Alert']['send_email'];
+ 				$data[$i]['title'] = 'Program Response Status';
+				$message = $user['User']['firstname'] . ' ' . $user['User']['lastname'] . "'s";
+				$message .= ' program response status has changed to ' . $statuses[$status];
+				$message .= ' for program ' . $program['Program']['name'];
+				$data[$i]['message'] = $message;
+				$data[$i]['url'] = '';
+				$i++;
+			}
+			return $data;	
+		}
+		else return false;
+	}	
 }

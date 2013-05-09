@@ -327,6 +327,13 @@ class QueuedDocumentsController extends AppController {
 				if(isset($processedDoc['finalEmail'])) {
 					$this->Notifications->sendProgramEmail($processedDoc['finalEmail'], $user);
 				}
+
+				if(isset($processedDoc['status'])) {
+					$this->loadModel('Program');
+					$this->Program->recursive = -1;
+					$program = $this->Program->findById($processedDoc['program_id']);
+					$this->Notifications->sendProgramResponseStatusAlert($user, $program, $processedDoc['status']);
+				}
 		
 				if(isset($this->data['FiledDocument']['requeue'])) {
 					$this->data['QueuedDocument'] = $queuedDoc['QueuedDocument'];
