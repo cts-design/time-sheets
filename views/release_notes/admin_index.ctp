@@ -3,6 +3,26 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+
+	<h1>Release 3.7.4 (5-09-13)</h1>
+	<h2>Minor updates</h2>
+	<ol>
+		 <li>Added the ability to customize the media acknowledgment statement within the Programs Module</li>
+		 <li>Added the ability the Re-Order the E-course structure</li>
+		 <li>After the snapshot process of a customer or staff system generated document, the program name is added to the “notes” field within the storage archive</li>
+		 <li>Changed all SSN fields to “completely” hidden. Previously customers could see the last number typed for up to 1 second.</li>
+		 <li>Added the ability to adjust the kiosk timeout and screen refresh down to 1 second intervals</li>
+		 <li>Added the ability to update the events roster after the event has passed</li>
+		 <li>Added the ALERT “Self Scan Category” to allow for certain types of Self-Scanned documents to be alerted on</li>
+		 <li>Added the ALERT “Program Response Status” to allow for changes in program status to be alerted on</li>
+	</ol>
+	<h2>Bug Fixes</h2>
+	<ol>
+		<li>Fixed a recursion issue that was causing the server PHP memory to become maxed when a lookup was performed on a location that had large amounts of data associated with it.</li>
+		<li>Fixed issue that was causing all the alerts to be hidden </li>
+	</ol>
+	<hr />
+
 	<h1>Release 3.7.3.1 (4-26-13)</h1>
 	<h2>Minor updates</h2>
 	<ol>
