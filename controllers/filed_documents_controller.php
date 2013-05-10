@@ -162,7 +162,13 @@ class FiledDocumentsController extends AppController {
 		    $this->data['FiledDocument']['location_id'] = $this->Auth->user('location_id');	
 		    if($this->FiledDocument->save($this->data)) {
 	    		if($this->isModuleEnabled('Programs')) {	
-					$this->_processResponseDoc($user);
+					$processedDoc =	$this->_processResponseDoc($user);
+					if(isset($processedDoc['status'])) {
+						$this->loadModel('Program');
+						$this->Program->recursive = -1;
+						$program = $this->Program->findById($processedDoc['program_id']);
+						$this->Notifications->sendProgramResponseStatusAlert($user, $program, $processedDoc['status']);
+					}
 				}	
 				$this->Transaction->createUserTransaction('Storage', null, null,
 					'Edited filed document ID ' . $id . ' for ' . $user['User']['lastname'] .

@@ -15,6 +15,7 @@ Ext.define('Program', {
     'name',
     'type',
     'atlas_registration_type',
+    'media_acknowledgement_text',
     { name: 'queue_category_id', type: 'int' },
     { name: 'approval_required', type: 'int' },
     { name: 'form_esign_required', type: 'int' },
@@ -512,6 +513,11 @@ registrationForm = Ext.create('Ext.form.Panel', {
       },
       value: 'days'
     }]
+  },{
+    xtype: 'textareafield',
+    fieldLabel: 'Media Acknowledgement Text',
+    labelWidth: 150,
+    name: 'media_acknowledgement_text'
   }, {
     border: 0,
     html: '<h1>Program Media</h1>',
@@ -760,8 +766,8 @@ registrationForm = Ext.create('Ext.form.Panel', {
       if (uploadContainer.hidden && !vals.media_location.match(/[http|https]:\/\//)) {
           vals.media_location = 'http://' + vals.media_location;
       }
-
-      record.set(vals);
+      form.updateRecord();
+      //record.set(vals);
       //record.save();
       return true;
     } else {
@@ -1236,8 +1242,6 @@ formBuilder = Ext.create('Ext.panel.Panel', {
       callback: function (recs, op, success) {
         if (success) {
           step = programStepStore.findRecord('type', /form/gi);
-          console.log(step);
-
           programFormFieldStore.load({
             params: {
               program_step_id: step.data.id

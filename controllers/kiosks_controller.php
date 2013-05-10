@@ -390,8 +390,10 @@ class KiosksController extends AppController {
 		if(!empty($this->data)) {
 			$id = $this->_queueScannedDocument();
 			if($id) {
-				$this->loadModel('User');
+				$this->loadModel('SelfScanCategory');
+				$selfScanCat = $this->SelfScanCategory->findById($this->data['QueuedDocument']['self_scan_cat_id']);
 				$this->sendSelfScanAlert($this->Auth->user(), $id, $this->data['QueuedDocument']['scanned_location_id']);
+				$this->sendSelfScanCategoryAlert($this->Auth->user(), $selfScanCat, $id, $this->data['QueuedDocument']['scanned_location_id']);
 				$this->Transaction->createUserTransaction('Self Scan', null, $this->data['QueuedDocument']['scanned_location_id'], 'Self scanned document ID ' . $id);
 				$this->Session->setFlash(__('Scanned document was saved successfully.', true), 'flash_success');
 				$this->autoRender = false;
@@ -546,6 +548,29 @@ class KiosksController extends AppController {
 				$this->Email->to = $to;
 				$this->Email->from = Configure::read('System.email');
 				$this->Email->subject = 'Self Scan alert';
+				$this->Email->send($alert['message'] . "\r\n" . $alert['url']);				
+			}
+		}
+	}	
+
+	private function sendSelfScanCategoryAlert($user, $selfScanCat, $docId, $locationId) {
+		$this->loadModel('Alert');
+		$data = $this->Alert->getSelfScanCategoryAlerts($user, $selfScanCat, $docId, $locationId);
+		if($data) {
+			$HttpSocket = new HttpSocket();
+			$results = $HttpSocket->post('localhost:3000/new', 
+				array('data' => $data));
+			$to = '';
+			foreach($data as $alert) {
+				if($alert['send_email']) {
+					$to .= $alert['email'] . ',';
+				}			
+			}
+			if(!empty($to)) {
+				$to = trim($to, ',');
+				$this->Email->to = $to;
+				$this->Email->from = Configure::read('System.email');
+				$this->Email->subject = 'Self Scan Category alert';
 				$this->Email->send($alert['message'] . "\r\n" . $alert['url']);				
 			}
 		}

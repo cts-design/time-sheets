@@ -77,6 +77,39 @@ class Alert extends AppModel {
 		}
 		else return false;
 	}
+
+	public function getSelfScanCategoryAlerts($user, $selfScanCat, $docId, $locationId) {
+		$ids = array($selfScanCat['SelfScanCategory']['id']);
+		if($selfScanCat['SelfScanCategory']['parent_id']) {
+			array_push($ids, $selfScanCat['SelfScanCategory']['parent_id']);
+		}
+		$alerts = $this->find('all', array(
+			'conditions' => array(
+				'Alert.type' => 'self_scan_category',
+				'Alert.disabled' => 0,
+				'Alert.watched_id' => $ids)));
+		if($alerts && $user) {
+			$data = array();			
+			$i = 0;
+			foreach($alerts as $alert) {			
+				if($alert['Alert']['location_id'] && $locationId !== $alert['Alert']['location_id']) {
+					continue;
+				}			
+				$data[$i]['username'] = strtolower($alert['User']['windows_username']);
+				$data[$i]['email'] = $alert['User']['email'];
+				$data[$i]['send_email'] = $alert['Alert']['send_email'];
+ 				$data[$i]['title'] = 'Self Scan Category';
+				$message = $user['User']['firstname'] . ' ' . $user['User']['lastname'];
+				$message .= ' self scanned document id: ' . $docId;
+				$message .= ' to category ' . $selfScanCat['SelfScanCategory']['name'];
+				$data[$i]['message'] = $message;
+				$data[$i]['url'] = Router::url('/admin/queued_documents', true);							
+				$i++;
+			}
+			return $data;	
+		}
+		else return false;
+	}
 	
 	public function getCusFiledDocAlerts($user, $docId) {
 		$alerts = $this->find('all', array(
@@ -176,8 +209,36 @@ class Alert extends AppModel {
 				$data[$i]['send_email'] = $alert['Alert']['send_email'];
  				$data[$i]['title'] = 'Customer Login';
 				$message = $user['User']['firstname'] . ' ' . $user['User']['lastname'];
-				$message .= ' loggned in to ' . $kiosk['Kiosk']['location_description'];
+				$message .= ' logged in to ' . $kiosk['Kiosk']['location_description'];
 				$message .= ' at ' . $kiosk['Location']['name'];
+				$data[$i]['message'] = $message;
+				$data[$i]['url'] = '';
+				$i++;
+			}
+			return $data;	
+		}
+		else return false;
+	}	
+
+	public function getProgramResponseStatusAlerts($user, $program, $status) {
+		$alerts = $this->find('all', array(
+			'conditions' => array(
+				'Alert.type' => 'program_response_status',
+				'Alert.disabled' => 0,
+				'Alert.detail' => $status,
+				'Alert.watched_id' => $program['Program']['id'])));
+		$statuses = array('incomplete' => 'open', 'complete' => 'closed', 'pending_approval' => 'pending_approval');
+		if($alerts && $user) {
+			$data = array();			
+			$i = 0;
+			foreach($alerts as $alert) {			
+				$data[$i]['username'] = strtolower($alert['User']['windows_username']);
+				$data[$i]['email'] = $alert['User']['email'];
+				$data[$i]['send_email'] = $alert['Alert']['send_email'];
+ 				$data[$i]['title'] = 'Program Response Status';
+				$message = $user['User']['firstname'] . ' ' . $user['User']['lastname'] . "'s";
+				$message .= ' program response status has changed to ' . $statuses[$status];
+				$message .= ' for program ' . $program['Program']['name'];
 				$data[$i]['message'] = $message;
 				$data[$i]['url'] = '';
 				$i++;

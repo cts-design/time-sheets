@@ -41,6 +41,12 @@ class AlertsController extends AppController {
 		if($this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Alerts/admin_add_staff_filed_document_alert', '*')) {
 			$this->Auth->allow('admin_update_staff_filed_document_alert');
 		}
+		if($this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Alerts/admin_add_program_response_status_alert', '*')) {
+			$this->Auth->allow('admin_update_program_response_status_alert');
+		}
+		if($this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Alerts/admin_add_self_scan_category_alert', '*')) {
+			$this->Auth->allow('admin_update_self_scan_category_alert');
+		}
     }
 
     public function admin_index() {
@@ -320,6 +326,82 @@ class AlertsController extends AppController {
         }
     }
 
+    public function admin_add_self_scan_category_alert() {
+        if($this->RequestHandler->isAjax()) {
+            $this->data['Alert']['name'] = $this->params['form']['name'];
+            $this->data['Alert']['type'] = 'self_scan_category';
+            if(!empty($this->params['form']['self_scan_category_id'])) {
+                $this->data['Alert']['watched_id'] = $this->params['form']['self_scan_category_id'];
+            }
+			if(!empty($this->params['form']['location_id'])) {
+				$this->data['Alert']['location_id'] = $this->params['form']['location_id'];
+			}
+
+            $this->data['Alert']['user_id'] = $this->Auth->user('id');
+            if(isset($this->params['form']['send_email'])) {
+                $this->data['Alert']['send_email'] = 1;
+            }
+			else {
+				$this->data['Alert']['send_email'] = 0;
+			}
+            if($this->Alert->save($this->data)) {
+                $id = $this->Alert->getLastInsertId();
+                $data['success'] = true;
+                $data['message'] = 'Alert updated successfully';
+                $this->Transaction->createUserTransaction(
+                    'Alerts',
+                    $this->Auth->user('id'),
+                    $this->Auth->user('location_id'),
+                    'Added Self Scan Category alert. name: ' . $this->data['Alert']['name'] . ' id: ' . $id
+                );
+            }
+            else {
+                $data['success'] = false;
+                $data['message'] = 'Unable to add alert, please try again.';
+            }
+            $this->set(compact('data'));
+            $this->render(null, null, '/elements/ajaxreturn');
+        }
+    }
+
+    public function admin_update_self_scan_category_alert() {
+        if($this->RequestHandler->isAjax()) {
+            $this->data['Alert']['id'] = $this->params['form']['id'];
+            $this->data['Alert']['name'] = $this->params['form']['name'];
+            $this->data['Alert']['type'] = 'self_scan_category';
+            if(!empty($this->params['form']['self_scan_category_id'])) {
+                $this->data['Alert']['watched_id'] = $this->params['form']['self_scan_category_id'];
+            }
+			if(!empty($this->params['form']['location_id'])) {
+				$this->data['Alert']['location_id'] = $this->params['form']['location_id'];
+			}
+
+            $this->data['Alert']['user_id'] = $this->Auth->user('id');
+            if(isset($this->params['form']['send_email'])) {
+                $this->data['Alert']['send_email'] = 1;
+            }
+			else {
+				$this->data['Alert']['send_email'] = 0;
+			}
+            if($this->Alert->save($this->data)) {
+                $id = $this->Alert->getLastInsertId();
+                $data['success'] = true;
+                $data['message'] = 'Alert updated successfully';
+                $this->Transaction->createUserTransaction(
+                    'Alerts',
+                    $this->Auth->user('id'),
+                    $this->Auth->user('location_id'),
+                    'Updated Self Scan Category alert. name: ' . $this->data['Alert']['name'] . ' id: ' . $id
+                );
+            }
+            else {
+                $data['success'] = false;
+                $data['message'] = 'Unable to update alert, please try again.';
+            }
+            $this->set(compact('data'));
+            $this->render(null, null, '/elements/ajaxreturn');
+        }
+    }
 	
     public function admin_add_customer_login_alert() {
         if($this->RequestHandler->isAjax()) {
@@ -429,6 +511,69 @@ class AlertsController extends AppController {
             else {
                 $data['success'] = false;
                 $data['message'] = 'Unable to add alert, please try again.';
+            }
+            $this->set(compact('data'));
+            $this->render(null, null, '/elements/ajaxreturn');
+        }
+    }
+
+
+    public function admin_add_program_response_status_alert() {
+        if($this->RequestHandler->isAjax()) {
+            $this->data['Alert']['name'] = $this->params['form']['name'];
+            $this->data['Alert']['type'] = 'program_response_status';
+			$this->data['Alert']['watched_id'] = $this->params['form']['program_id'];
+			$this->data['Alert']['detail'] = $this->params['form']['response_status'];
+            $this->data['Alert']['user_id'] = $this->Auth->user('id');
+            if(isset($this->params['form']['send_email'])) {
+                $this->data['Alert']['send_email'] = 1;
+            }
+            if($this->Alert->save($this->data)) {
+                $id = $this->Alert->getLastInsertId();
+                $data['success'] = true;
+                $data['message'] = 'Alert added successfully';
+                $this->Transaction->createUserTransaction(
+                    'Alerts',
+                    $this->Auth->user('id'),
+                    $this->Auth->user('location_id'),
+                    'Added Program Response Status alert. name: ' . $this->data['Alert']['name'] . ' id: ' . $id
+                );
+            }
+            else {
+                $data['success'] = false;
+                $data['message'] = 'Unable to add alert, please try again.';
+            }
+            $this->set(compact('data'));
+            $this->render(null, null, '/elements/ajaxreturn');
+        }
+    }
+
+	
+    public function admin_update_program_response_status_alert() {
+        if($this->RequestHandler->isAjax()) {
+            $this->data['Alert']['id'] = $this->params['form']['id'];
+            $this->data['Alert']['name'] = $this->params['form']['name'];
+            $this->data['Alert']['type'] = 'program_response_status';
+			$this->data['Alert']['watched_id'] = $this->params['form']['program_id'];
+			$this->data['Alert']['detail'] = $this->params['form']['response_status'];
+            $this->data['Alert']['user_id'] = $this->Auth->user('id');
+            if(isset($this->params['form']['send_email'])) {
+                $this->data['Alert']['send_email'] = 1;
+            }
+            if($this->Alert->save($this->data)) {
+                $id = $this->Alert->getLastInsertId();
+                $data['success'] = true;
+                $data['message'] = 'Alert updated successfully';
+                $this->Transaction->createUserTransaction(
+                    'Alerts',
+                    $this->Auth->user('id'),
+                    $this->Auth->user('location_id'),
+                    'Updated Program Response Status alert. name: ' . $this->data['Alert']['name'] . ' id: ' . $id
+                );
+            }
+            else {
+                $data['success'] = false;
+                $data['message'] = 'Unable to update alert, please try again.';
             }
             $this->set(compact('data'));
             $this->render(null, null, '/elements/ajaxreturn');
@@ -635,10 +780,19 @@ class AlertsController extends AppController {
                     'label' => 'Self Scan',
                     'id' => 'selfScanAlertFormPanel'),
                 array(
+                    'action' => 'Alerts/admin_add_self_scan_category_alert',
+                    'label' => 'Self Scan Category',
+                    'id' => 'selfScanCategoryAlertFormPanel'),
+                array(
                     'action' => 'Alerts/admin_add_cus_filed_doc_alert',
                     'label' => 'Customer Filed Document',
                     'id' => 'cusFiledDocAlertFormPanel'
                 ),
+                array(
+                    'action' => 'Alerts/admin_add_program_response_status_alert',
+                    'label' => 'Program Response Status',
+                    'id' => 'programResponseStatusAlertFormPanel'
+				),
                 array(
                     'action' => 'Alerts/admin_add_customer_login_alert',
                     'label' => 'Customer Login',
@@ -649,7 +803,7 @@ class AlertsController extends AppController {
                 if($this->Acl->check(array(
                     'model' => 'User',
                     'foreign_key' => $this->Auth->user('id')), $v['action'], '*')) {
-                        $data['types'][$k] = array('label' => $v['label'], 'id' => $v['id']);
+                        $data['types'][] = array('label' => $v['label'], 'id' => $v['id']);
                 }
             }
             $this->set(compact('data'));

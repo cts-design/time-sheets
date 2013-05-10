@@ -46,6 +46,18 @@ $config['Document']['jpeg']['path'] = '/storage/thumbnails/';
 // Program storage path
 $config['Program']['media']['path'] = '/storage/program_media/';
 
+// Ecourse storage path
+$config['Ecourse']['media']['path'] = '/storage/ecourse_media/';
+
+// Admin alert E-Mail address
+$config['Admin']['alert']['email'] = 'bill@ctsfla.com';
+
+// Document Scan path
+$config['Document']['scan']['path'] = '/var/www/vhosts/deploy/atlas/shared/scan_folders/';
+
+// FTP Log Path
+$config['FTP']['log']['path'] = '/var/log/proftpd/xferlog';
+
 // Pagination Limits
 $config['Pagination']['customer']['limit'] = 10 ;
 $config['Pagination']['admin']['limit'] = 10 ;

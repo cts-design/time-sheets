@@ -3,7 +3,7 @@
 class ProgramsController extends AppController {
 
 	public $name = 'Programs';
-	public $components = array('Email');
+	public $components = array('Notifications', 'Email');
 	public $transactionIds = array();
 
 	public function beforeFilter() {
@@ -12,6 +12,9 @@ class ProgramsController extends AppController {
 			|| preg_match('(none|nobody|noreply)', $this->Auth->user('email')))) {
 				$this->Session->setFlash(__('Please complete your profile to continue.', true), 'flash_success');
 				$this->redirect(array('controller' => 'users', 'action' => 'edit', $this->Auth->user('id')));
+		}
+		if($this->Auth->user('role_id') > 1) {
+			$this->Auth->allow('admin_get_programs_by_type', 'admin_get_program_by_id');
 		}
 	}
 
@@ -174,6 +177,7 @@ class ProgramsController extends AppController {
 					$this->Transaction->createUserTransaction('Programs', null, null,
 					'Initiated program ' . $program['Program']['name']);
 					$programResponse = $this->Program->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
+					$this->Notifications->sendProgramResponseStatusAlert($this->Auth->user(), $program, 'incomplete');
 					$mainEmail = Set::extract('/ProgramEmail[type=main]', $program);
 					if(!empty($mainEmail)) {
 						$this->Notifications->sendProgramEmail($mainEmail[0]['ProgramEmail']);
@@ -928,6 +932,47 @@ class ProgramsController extends AppController {
 		return true;
 	}
 
+	public function admin_get_programs_by_type() {
+		if($this->RequestHandler->isAjax()) {
+			$this->Program->recursive = -1;
+			$programs =	$this->Program->findAllByType($this->params['url']['type'], array('id', 'name', 'type', 'approval_required'));
+			$data = array();
+			if($programs) {
+				$i = 0;
+				foreach($programs as $program) {
+					$data['programs'][$i]['name'] = $program['Program']['name'];
+					$data['programs'][$i]['id'] = $program['Program']['id'];
+					$data['programs'][$i]['type'] = $program['Program']['type'];
+					$data['programs'][$i]['approval_required'] = $program['Program']['approval_required'];
+					$i++;
+				}
+			}
+			else {
+				$data['programs'] = array();
+			}
+			$data['success'] = true;
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
+
+	public function admin_get_program_by_id() {
+		if($this->RequestHandler->isAjax()) {
+			$this->Program->recursive = -1;
+			$program = $this->Program->findById($this->params['pass'][0], array('id', 'name', 'type', 'approval_required'));
+			$data = array();
+			if($program) {
+					$data['program'] = $program['Program'];
+			}
+			else {
+				$data['program'] = array();
+			}
+			$data['success'] = true;
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
+
 	private function duplicateTransactionCleanup() {
 		foreach ($this->transactionIds as $key => $value) {
 			// $key is the model name itself, $value is the array of ids
@@ -962,5 +1007,6 @@ class ProgramsController extends AppController {
 	private function issetAndNotEmpty($key) {
 		return isset($key) && !empty($key);
 	}
+
 }
 
