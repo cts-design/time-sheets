@@ -206,6 +206,7 @@
 	</div>
 	<?php endif ?>
 
+	<?php if ($esignProgram): ?>
 	<?php $currentUser = $this->Session->read('Auth.User') ?>
 	<div id="online-esignature" class="widget">
 		<div class="widget-header">
@@ -225,18 +226,23 @@
 							$signatureExpires = strtotime('+365 days', $signatureModified);
 						?>
 
-						<p>
-							You are currently enrolled until <?= date('m/d/Y', $signatureExpires) ?>
-						</p>
+						<p>You are currently enrolled until <?= date('m/d/Y', $signatureExpires) ?></p>
+					</div>
+					<div class="details"></div>
+				</li>
+			<?php else: ?>
+				<li>
+					<div class="title">
+						<p>You are not currently enrolled</p>
 					</div>
 					<div class="details"></div>
 
 					<span class="action">
-						<a href="/programs/enrollment/<?= $value['Program']['id'] ?>" class="button gray">
-							<?php if (!empty($value['ProgramResponse']) && $value['ProgramResponse'][0]['status'] == 'complete'): ?>
+						<a href="/programs/esign/<?= $esignProgram['Program']['id'] ?>" class="button gray">
+							<?php if (!empty($esignProgram['ProgramResponse']) && $esignProgram['ProgramResponse'][0]['status'] == 'complete'): ?>
 								Completed
 							<?php else: ?>
-								<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Get Started') ?>
+								<?= (!empty($esignProgram['ProgramResponse']) ? Inflector::humanize($esignProgram['ProgramResponse'][0]['status']) : 'Enroll Now') ?>
 							<?php endif ?>
 						</a>
 					</span>
@@ -245,4 +251,5 @@
 			</ul>
 		</div>
 	</div>
+	<?php endif ?>
 </div>
