@@ -226,7 +226,11 @@
 							$signatureExpires = strtotime('+365 days', $signatureModified);
 						?>
 
-						<p>You are currently enrolled until <?= date('m/d/Y', $signatureExpires) ?></p>
+						<?php if($signatureExpires <= strtotime('now')): ?>
+							<p>Your enrollment in the Electronic Signature expired on <?= date('m/d/Y', $signatureExpires) ?></p>
+						<?php else: ?>
+							<p>You are currently enrolled until <?= date('m/d/Y', $signatureExpires) ?></p>
+						<?php endif ?>
 					</div>
 					<div class="details"></div>
 				</li>
