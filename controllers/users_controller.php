@@ -289,6 +289,12 @@ class UsersController extends AppController {
 			)
 		));
 
+		$esignProgram = $this->Program->find('first', array(
+			'conditions' => array(
+				'Program.type' => array('Esign', 'esign', 'E-sign', 'e-sign')
+			)
+		));
+
 		$programs = $this->Program->find(
 			'all',
 			array(
@@ -418,7 +424,7 @@ class UsersController extends AppController {
 		}
 
 		$title_for_layout = 'Customer Dashboard';
-		$this->set(compact('title_for_layout', 'orientations', 'registrations', 'enrollments', 'eventRegistrations', 'ecourses'));
+		$this->set(compact('title_for_layout', 'orientations', 'registrations', 'enrollments', 'eventRegistrations', 'ecourses', 'esignProgram'));
 	}
 
 	function edit($id=null) {
