@@ -6,8 +6,7 @@
  * @package ATLAS V3
  */
 ?>
-<?php echo $this->Html->script('jquery.dPassword', array('inline' => 'false')); ?>
-<?php echo $this->Html->script('users/mini.registration', array('inline' => 'false')) ?>
+<?php echo $this->Html->script('users/registration', array('inline' => 'false')) ?>
 <?php echo $this->Html->script('jquery.autotab-1.1b', array('inline' => false)) ?>
 <?php echo $this->Html->scriptStart(array('inline' => false)) ?>
 $(document).ready(function() {
@@ -70,10 +69,13 @@ $(document).ready(function() {
 		if(Configure::read('Registration.ssn') == 'full') {
 		    echo $this->Form->input('ssn', array(
 				'label' => __('Social Security Number', true),
+				'type' => 'password',
+				'maxlength' => 9,
 				'between' => '<br />',
 				'after' => '<br />'));
 		    echo $this->Form->input('ssn_confirm', array(
 				'label' => __('Please confirm your Social Security Number', true),
+				'type' => 'password',
 				'maxlength' => 9,
 				'between' => '<br />',
 				'after' => '<br />'));
@@ -105,17 +107,17 @@ $(document).ready(function() {
 				echo $this->Form->label(__('Please confirm your Social Security Number', true));
 				echo '<br />';			
 				echo $this->Form->input('ssn_1_confirm', array(
-					'type' => 'text',
+					'type' => 'password',
 					'maxlength' => 3,
 					'label' => false,
 					'div' => false));
 				echo $this->Form->input('ssn_2_confirm', array(
-					'type' => 'text',
+					'type' => 'password',
 					'maxlength' => 2,
 					'label' => false,
 					'div' => false));
 				echo $this->Form->input('ssn_3_confirm', array(
-					'type' => 'text',
+					'type' => 'password',
 					'maxlength' => 4,
 					'label' => false,
 					'div' => false,
