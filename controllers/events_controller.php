@@ -28,6 +28,8 @@ class EventsController extends AppController {
 		$this->Event->EventCategory->recursive = -1;
 
 		$title_for_layout = 'Upcoming Events';
+		$urlParams = $this->params['url'];
+		$namedParams = $this->params['named'];
 		$selectedCategory = 0;
 		$selectedLocation = 0;
 
@@ -56,30 +58,30 @@ class EventsController extends AppController {
 		asort($locations);
 		$this->array_unshift_assoc($locations, 0, 'All Locations');
 
-		if (isset($this->params['form']['event_categories_dropdown']) && !empty($this->params['form']['event_categories_dropdown'])) {
-			if ($this->params['form']['event_categories_dropdown'] == 0) {
-				$selectedCategory = 0;
-				$categoryConditions = null;
-			} else {
-				$cat = $this->params['form']['event_categories_dropdown'];
-				$categoryConditions = array('Event.event_category_id' => $cat);
-				$selectedCategory = $cat;
-			}
+		if (isset($urlParams['event_categories_dropdown']) && $urlParams['event_categories_dropdown']) {
+			$selectedCategory = $urlParams['event_categories_dropdown'];
+		} else if (isset($namedParams['event_categories_dropdown']) && $namedParams['event_categories_dropdown']) {
+			$selectedCategory = $namedParams['event_categories_dropdown'];
 		} else {
+			$selectedCategory = 0;
 			$categoryConditions = null;
 		}
 
-		if (isset($this->params['form']['event_locations_dropdown']) && !empty($this->params['form']['event_locations_dropdown'])) {
-			if ($this->params['form']['event_locations_dropdown'] == 0) {
-				$selectedLocation = 0;
-				$locationConditions = null;
-			} else {
-				$loc = $this->params['form']['event_locations_dropdown'];
-				$locationConditions = array('Event.location_id' => $loc);
-				$selectedLocation = $loc;
-			}
-		} else {
+		if ($selectedCategory) {
+			$categoryConditions = array('Event.event_category_id' => $selectedCategory);
+		}
+
+		if (isset($urlParams['event_locations_dropdown']) && $urlParams['event_locations_dropdown']) {
+			$selectedLocation = $urlParams['event_locations_dropdown'];
+		} else if (isset($namedParams['event_locations_dropdown']) && $namedParams['event_locations_dropdown']) {
+			$selectedLocation = $namedParams['event_locations_dropdown'];
+		}  else {
+			$selectedLocation = 0;
 			$locationConditions = null;
+		}
+
+		if ($selectedLocation) {
+			$locationConditions = array('Event.location_id' => $selectedLocation);
 		}
 
 		if ($month && !$year) {

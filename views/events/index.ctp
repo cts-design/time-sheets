@@ -1,7 +1,7 @@
 <?php echo $this->Html->script('events/navigation.js', array('inline' => false)) ?>
 <div id="events">
 	<div class="filters">
-		<form class="event_categories" action="<?= $this->here; ?>" method="post">
+		<form class="event_categories" action="<?= $this->Url->currentUrl(); ?>" method="get">
 			<label class="event_categories_label" for="event_categories_dropdown"><?php __('Filter by event category') ?>:</label>
 			<select id="event_categories_dropdown" name="event_categories_dropdown">
 			<?php foreach($categories as $id => $category): ?>
