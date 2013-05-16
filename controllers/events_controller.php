@@ -38,8 +38,9 @@ class EventsController extends AppController {
 			),
 			'recursive' => -1
 		));
-		$categories[0] = 'All Categories';
+
 		asort($categories);
+		$this->array_unshift_assoc($categories, 0, 'All Categories');
 
 		$locations = $this->Event->Location->find('list', array(
 			'conditions' => array(
@@ -51,8 +52,9 @@ class EventsController extends AppController {
 			),
 			'recursive' => -1
 		));
-		$locations[0] = 'All Locations';
+
 		asort($locations);
+		$this->array_unshift_assoc($locations, 0, 'All Locations');
 
 		if (isset($this->params['form']['event_categories_dropdown']) && !empty($this->params['form']['event_categories_dropdown'])) {
 			if ($this->params['form']['event_categories_dropdown'] == 0) {
@@ -626,5 +628,17 @@ class EventsController extends AppController {
 				array('Event.scheduled <' => $end_of_week)
 			)
 		);
+	}
+
+	/**
+	 * array_unshift_assoc
+	 *
+	 * Prepend a value onto the beginning of an array without re-indexing it's keys
+	 */
+	private function array_unshift_assoc(&$arr, $key, $val) {
+		$arr = array_reverse($arr, true);
+		$arr[$key] = $val;
+		$arr = array_reverse($arr, true);
+		return count($arr);
 	}
 }
