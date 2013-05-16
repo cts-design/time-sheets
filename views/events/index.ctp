@@ -19,7 +19,20 @@
 		</form>
 	</div>
 	<div class="calnav events monthly">
-	<a href="/events/index/<?= $prevMonth ?>" id="previous-month" class="button gray">
+	<?php
+		$prevMonthUrl = "/events/index/$prevMonth";
+		$nextMonthUrl = "/events/index/$nextMonth";
+
+		if (isset($this->params['url']['event_categories_dropdown'])) {
+			$prevMonthUrl .= "&event_categories_dropdown={$this->params['url']['event_categories_dropdown']}";
+			$nextMonthUrl .= "&event_categories_dropdown={$this->params['url']['event_categories_dropdown']}";
+		}
+		if (isset($this->params['url']['event_locations_dropdown'])) {
+			$prevMonthUrl .= "&event_locations_dropdown={$this->params['url']['event_locations_dropdown']}";
+			$nextMonthUrl .= "&event_locations_dropdown={$this->params['url']['event_locations_dropdown']}";
+		}
+	?>
+	<a href="<?= $prevMonthUrl ?>" id="previous-month" class="button gray">
 			<i class="icon-chevron-left"></i>
 			Previous Month
 		</a>
@@ -28,7 +41,7 @@
 			Events for <?= date('F', strtotime($curMonth)) ?>
 		</h2>
 
-		<a href="/events/index/<?= $nextMonth ?>" id="next-month" class="button gray">
+		<a href="<?= $nextMonthUrl ?>" id="next-month" class="button gray">
 			Next Month
 			<i class="icon-chevron-right"></i>
 		</a>
