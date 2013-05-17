@@ -166,7 +166,14 @@ class EventsController extends AppController {
 		$this->Event->Behaviors->attach('Containable');
 		$this->Event->EventCategory->recursive = -1;
 
-		$workshopCategory = $this->Event->EventCategory->findByName('Workshop', array('fields' => 'EventCategory.id'));
+		$workshopCategory = $this->Event->EventCategory->find('first', array(
+			'conditions' => array(
+				'EventCategory.name' => array('Workshop', 'workshop', 'Workshops', 'workshops')
+			),
+			'fields' => array(
+				'EventCategory.id'
+			)
+		));
 
 		$title_for_layout = 'Upcoming Workshops';
 		$urlParams = $this->params['url'];
