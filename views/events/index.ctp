@@ -2,14 +2,14 @@
 <div id="events">
 	<div class="filters">
 		<form class="event_categories" action="<?= $this->Url->currentUrl(); ?>" method="get">
-			<label class="event_categories_label" for="event_categories_dropdown"><?php __('Filter by event category') ?>:</label>
-			<select id="event_categories_dropdown" name="event_categories_dropdown">
+			<label class="event_categories_label" for="category_id"><?php __('Filter by event category') ?>:</label>
+			<select id="event_categories_dropdown" name="category_id">
 			<?php foreach($categories as $id => $category): ?>
 				<option value="<?= $id ?>"<?= ($id == $selectedCategory) ? ' selected="selected"' : '' ?>><?= $category ?></option>
 			<?php endforeach; ?>
 			</select>
-			<label class="event_locations_label" for="event_locations_dropdown"><?php __('Filter by event location') ?>:</label>
-			<select id="event_locations_dropdown" name="event_locations_dropdown">
+			<label class="event_locations_label" for="location_id"><?php __('Filter by event location') ?>:</label>
+			<select id="event_locations_dropdown" name="location_id">
 			<?php foreach($locations as $id => $location): ?>
 				<option value="<?= $id ?>"<?= ($id == $selectedLocation) ? ' selected="selected"' : '' ?>><?= $location ?></option>
 			<?php endforeach; ?>
@@ -23,13 +23,13 @@
 		$prevMonthUrl = "/events/index/$prevMonth";
 		$nextMonthUrl = "/events/index/$nextMonth";
 
-		if (isset($this->params['url']['event_categories_dropdown'])) {
-			$prevMonthUrl .= "&event_categories_dropdown={$this->params['url']['event_categories_dropdown']}";
-			$nextMonthUrl .= "&event_categories_dropdown={$this->params['url']['event_categories_dropdown']}";
+		if (isset($this->params['url']['category_id'])) {
+			$prevMonthUrl .= "?category_id={$this->params['url']['category_id']}";
+			$nextMonthUrl .= "?category_id={$this->params['url']['category_id']}";
 		}
-		if (isset($this->params['url']['event_locations_dropdown'])) {
-			$prevMonthUrl .= "&event_locations_dropdown={$this->params['url']['event_locations_dropdown']}";
-			$nextMonthUrl .= "&event_locations_dropdown={$this->params['url']['event_locations_dropdown']}";
+		if (isset($this->params['url']['location_id'])) {
+			$prevMonthUrl .= "&location_id={$this->params['url']['location_id']}";
+			$nextMonthUrl .= "&location_id={$this->params['url']['location_id']}";
 		}
 	?>
 	<a href="<?= $prevMonthUrl ?>" id="previous-month" class="button gray">

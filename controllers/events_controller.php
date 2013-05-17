@@ -58,10 +58,10 @@ class EventsController extends AppController {
 		asort($locations);
 		$this->array_unshift_assoc($locations, 0, 'All Locations');
 
-		if (isset($urlParams['event_categories_dropdown']) && $urlParams['event_categories_dropdown']) {
-			$selectedCategory = $urlParams['event_categories_dropdown'];
-		} else if (isset($namedParams['event_categories_dropdown']) && $namedParams['event_categories_dropdown']) {
-			$selectedCategory = $namedParams['event_categories_dropdown'];
+		if (isset($urlParams['category_id']) && $urlParams['category_id']) {
+			$selectedCategory = $urlParams['category_id'];
+		} else if (isset($namedParams['category_id']) && $namedParams['category_id']) {
+			$selectedCategory = $namedParams['category_id'];
 		} else {
 			$selectedCategory = 0;
 			$categoryConditions = null;
@@ -71,10 +71,10 @@ class EventsController extends AppController {
 			$categoryConditions = array('Event.event_category_id' => $selectedCategory);
 		}
 
-		if (isset($urlParams['event_locations_dropdown']) && $urlParams['event_locations_dropdown']) {
-			$selectedLocation = $urlParams['event_locations_dropdown'];
-		} else if (isset($namedParams['event_locations_dropdown']) && $namedParams['event_locations_dropdown']) {
-			$selectedLocation = $namedParams['event_locations_dropdown'];
+		if (isset($urlParams['location_id']) && $urlParams['location_id']) {
+			$selectedLocation = $urlParams['location_id'];
+		} else if (isset($namedParams['location_id']) && $namedParams['location_id']) {
+			$selectedLocation = $namedParams['location_id'];
 		}  else {
 			$selectedLocation = 0;
 			$locationConditions = null;
@@ -194,10 +194,10 @@ class EventsController extends AppController {
 		$locations[0] = 'All Locations';
 		asort($locations);
 
-		if (isset($urlParams['event_categories_dropdown']) && $urlParams['event_categories_dropdown']) {
-			$selectedCategory = $urlParams['event_categories_dropdown'];
-		} else if (isset($namedParams['event_categories_dropdown']) && $namedParams['event_categories_dropdown']) {
-			$selectedCategory = $namedParams['event_categories_dropdown'];
+		if (isset($urlParams['category_id']) && $urlParams['category_id']) {
+			$selectedCategory = $urlParams['category_id'];
+		} else if (isset($namedParams['category_id']) && $namedParams['category_id']) {
+			$selectedCategory = $namedParams['category_id'];
 		} else {
 			$selectedCategory = 0;
 			$categoryConditions = null;
@@ -212,10 +212,10 @@ class EventsController extends AppController {
 			);
 		}
 
-		if (isset($urlParams['event_locations_dropdown']) && $urlParams['event_locations_dropdown']) {
-			$selectedLocation = $urlParams['event_locations_dropdown'];
-		} else if (isset($namedParams['event_locations_dropdown']) && $namedParams['event_locations_dropdown']) {
-			$selectedLocation = $namedParams['event_locations_dropdown'];
+		if (isset($urlParams['location_id']) && $urlParams['location_id']) {
+			$selectedLocation = $urlParams['location_id'];
+		} else if (isset($namedParams['location_id']) && $namedParams['location_id']) {
+			$selectedLocation = $namedParams['location_id'];
 		}  else {
 			$selectedLocation = 0;
 			$locationConditions = null;
