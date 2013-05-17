@@ -38,7 +38,7 @@
 		</a>
 
 		<h2>
-			Events for <?= date('F', strtotime($curMonth)) ?>
+			Events for <?= $curMonth ?>
 		</h2>
 
 		<a href="<?= $nextMonthUrl ?>" id="next-month" class="button gray">

@@ -127,7 +127,7 @@ class EventsController extends AppController {
 			$conditions
 		);
 
-		$curMonth = date('F Y', strtotime($date));
+		$curMonth = date('F', strtotime($date));
 		$prevMonth = date('m/Y', strtotime("-1 month", strtotime($date)));
 		$nextMonth = date('m/Y', strtotime("+1 day", strtotime($endDate)));
 
