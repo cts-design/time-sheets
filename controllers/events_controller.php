@@ -103,7 +103,15 @@ class EventsController extends AppController {
 		$conditions = array(
 			'Event.scheduled >' => date('Y-m-d H:i:s'),
 			'Event.scheduled BETWEEN ? AND ?' => array($date, $endDate),
-			'Event.event_registration_count < Event.seats_available'
+			'OR' => array(
+				array('Event.allow_registrations' => 0),
+				array(
+					'AND' => array(
+						array('Event.allow_registrations' => 1),
+						array('Event.event_registration_count < Event.seats_available')
+					)
+				)
+			)
 		);
 
 		if ($categoryConditions) {
@@ -241,7 +249,15 @@ class EventsController extends AppController {
 		}
 
 		$conditions = array_merge($time_conditions, array(
-			'Event.event_registration_count < Event.seats_available',
+			'OR' => array(
+				array('Event.allow_registrations' => 0),
+				array(
+					'AND' => array(
+						array('Event.allow_registrations' => 1),
+						array('Event.event_registration_count < Event.seats_available')
+					)
+				)
+			),
 			'OR' => array(
 				'EventCategory.id' => $workshopCategory['EventCategory']['id'],
 				'EventCategory.parent_id' => $workshopCategory['EventCategory']['id']
