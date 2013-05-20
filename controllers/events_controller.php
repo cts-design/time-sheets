@@ -28,10 +28,35 @@ class EventsController extends AppController {
 		$this->Event->EventCategory->recursive = -1;
 
 		$title_for_layout = 'Upcoming Events';
+		$url = '/events/index';
 		$urlParams = $this->params['url'];
 		$namedParams = $this->params['named'];
 		$selectedCategory = 0;
 		$selectedLocation = 0;
+
+		if ($month && !$year) {
+			$year = date('Y');
+		}
+
+		if (!$month) {
+			$date = date('Y-m-d H:i:s');
+			$month = date('m', strtotime($date));
+			$year = date('Y', strtotime($date));
+			$lastDayOfMonth = date('t', strtotime($date));
+			$endDate = date('Y-m-d H:i:s', strtotime("$month/$lastDayOfMonth/$year 23:59:59"));
+		} else {
+			$date = date('Y-m-d H:i:s', strtotime("$month/1/$year 00:00:01"));
+			$lastDayOfMonth = date('t', strtotime($date));
+			$endDate = date('Y-m-d H:i:s', strtotime("$month/$lastDayOfMonth/$year 23:59:59"));
+		}
+
+		$curMonth = date('F', strtotime($date));
+
+		$prevMonth = date('m/Y', strtotime("-1 month", strtotime($date)));
+		$prevMonthUrl = "$url/$prevMonth";
+
+		$nextMonth = date('m/Y', strtotime("+1 day", strtotime($endDate)));
+		$nextMonthUrl = "$url/$nextMonth";
 
 		$categories = $this->Event->EventCategory->find('list', array(
 			'fields' => array(
@@ -67,10 +92,6 @@ class EventsController extends AppController {
 			$categoryConditions = null;
 		}
 
-		if ($selectedCategory) {
-			$categoryConditions = array('Event.event_category_id' => $selectedCategory);
-		}
-
 		if (isset($urlParams['location_id']) && $urlParams['location_id']) {
 			$selectedLocation = $urlParams['location_id'];
 		} else if (isset($namedParams['location_id']) && $namedParams['location_id']) {
@@ -80,24 +101,14 @@ class EventsController extends AppController {
 			$locationConditions = null;
 		}
 
+		if ($selectedCategory) {
+			$prevMonthUrl .= "?category_id={$selectedCategory}&location_id={$selectedLocation}";
+			$nextMonthUrl .= "?category_id={$selectedCategory}&location_id={$selectedLocation}";
+			$categoryConditions = array('Event.event_category_id' => $selectedCategory);
+		}
+
 		if ($selectedLocation) {
 			$locationConditions = array('Event.location_id' => $selectedLocation);
-		}
-
-		if ($month && !$year) {
-			$year = date('Y');
-		}
-
-		if (!$month) {
-			$date = date('Y-m-d H:i:s');
-			$month = date('m', strtotime($date));
-			$year = date('Y', strtotime($date));
-			$lastDayOfMonth = date('t', strtotime($date));
-			$endDate = date('Y-m-d H:i:s', strtotime("$month/$lastDayOfMonth/$year 23:59:59"));
-		} else {
-			$date = date('Y-m-d H:i:s', strtotime("$month/1/$year 00:00:01"));
-			$lastDayOfMonth = date('t', strtotime($date));
-			$endDate = date('Y-m-d H:i:s', strtotime("$month/$lastDayOfMonth/$year 23:59:59"));
 		}
 
 		$conditions = array(
@@ -127,10 +138,6 @@ class EventsController extends AppController {
 			$conditions
 		);
 
-		$curMonth = date('F', strtotime($date));
-		$prevMonth = date('m/Y', strtotime("-1 month", strtotime($date)));
-		$nextMonth = date('m/Y', strtotime("+1 day", strtotime($endDate)));
-
 		$userEventRegistrations = array();
 		if ($this->Auth->user()) {
 			$this->loadModel('User');
@@ -150,8 +157,8 @@ class EventsController extends AppController {
 			compact(
 				'title_for_layout',
 				'curMonth',
-				'prevMonth',
-				'nextMonth',
+				'prevMonthUrl',
+				'nextMonthUrl',
 				'selectedCategory',
 				'selectedLocation',
 				'categories',
