@@ -128,6 +128,11 @@ task :tbwa do
   set :app_plugins, ['job_forms']
 end
 
+task :worknetpinellas do
+  set :server_name, 'worknetpinellas production'
+  server "atlas.worknetpinellas.org", :app, :web, :db, :primary => true
+end
+
 # --- Cake Settings
 set :cake_branch, "1.3"
 
