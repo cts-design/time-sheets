@@ -4,6 +4,61 @@
 </div>
 <div id="ReleaseNotes">
 
+	<h1>Release 3.7.4 (5-09-13)</h1>
+	<h2>Minor updates</h2>
+	<ol>
+		 <li>Added the ability to customize the media acknowledgment statement within the Programs Module</li>
+		 <li>Added the ability the Re-Order the E-course structure</li>
+		 <li>After the snapshot process of a customer or staff system generated document, the program name is added to the “notes” field within the storage archive</li>
+		 <li>Changed all SSN fields to “completely” hidden. Previously customers could see the last number typed for up to 1 second.</li>
+		 <li>Added the ability to adjust the kiosk timeout and screen refresh down to 1 second intervals</li>
+		 <li>Added the ability to update the events roster after the event has passed</li>
+		 <li>Added the ALERT “Self Scan Category” to allow for certain types of Self-Scanned documents to be alerted on</li>
+		 <li>Added the ALERT “Program Response Status” to allow for changes in program status to be alerted on</li>
+	</ol>
+	<h2>Bug Fixes</h2>
+	<ol>
+		<li>Fixed a recursion issue that was causing the server PHP memory to become maxed when a lookup was performed on a location that had large amounts of data associated with it.</li>
+		<li>Fixed issue that was causing all the alerts to be hidden </li>
+	</ol>
+	<hr />
+
+	<h1>Release 3.7.3.1 (4-26-13)</h1>
+	<h2>Minor updates</h2>
+	<ol>
+		<li>Implement a password mask on initial registration SSN fields</li>
+		<li>Changed the default sort by date within the EVENTS view to Ascending</li>	
+		<li>Added a landing page to ECOURSES</li>
+	</ol>
+	<hr />
+	<h1>Release 3.7.3 (4-25-13)</h1>
+	<h2>Minor Updates</h2>
+	<ol>
+		<li>Minor Feature Enhancements</li>
+		<li>Added “Staff Filed” document alert</li>
+		<li>Added “Self-Scan” alert</li>
+		<li>Implemented the ability to edit ALERTS</li>
+		<li>Added ability to view media from admin ecourse create screen</li>
+		<li>Added an “input type” filter within the document queue to allow for documents to be sorted based on the input path into ATLAS</li>
+		<li>Adjusted layout on E-Course media page</li>
+		<li>Changed the language within the DASHBOARD step logic to indicate past tense when a E-course,orientation,event or program was “COMPLETED”</li>
+		<li>Added the ability to add customized content (normal and child) to the user login view</li>
+	</ol>
+	<h2>Bug Fixes</h2>
+	<ol>
+		<li>Resolved intermittent issue with Orientation certificate not generating</li>
+		<li>Resolved issue with SCRIBD plugin not translating powerpoint presentations within the E-course canvas</li>
+		<li>Fixed issue with permissions within the EVENTS module that was preventing Role Admins from adding customers to the event</li>
+		<li>Resolved inconsistency within the core atlas.config file that was stopping the EVENT roster from loading the htmltopdf helper when creating the printable pdf</li>
+		<li>Isolated issue with Ecourse “view responses” not loading because of an apostrophe within the E-course name</li>
+		<li>Resolved issue that was causing the “Queue Cats” to not populate within the “add self-scan cat” view</li>
+		<li>Resolved issue that could potentially allow customer to click an in-active step within the program or ecourse step system.</li>
+		<li>Resolved bug that was causing the Email trigger to not fire when a customer was added to an EVENT</li>
+		<li>Resolved issue that was causing “filter by event” AJAX call to halt within the EVENTS module</li>
+		<li>Resolved issue that was causing multiple "certificates" from being created during the "runworker" helper</li>
+		<li>Resolved issue with media_location database field character limit</li>
+	</ol>
+	<hr />
 	<h1>Release 3.7.2 (4-11-13)</h1>
 	<h2>Minor Updates</h2>
 	<ol>

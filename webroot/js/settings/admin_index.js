@@ -168,17 +168,6 @@ Ext.create('Ext.form.Panel', {
   }]
 });
 
-Ext.create('Ext.data.Store', {
-  fields: ['value', 'time'],
-  storeId: 'times',
-  data: [
-    {"value":"10000", "time":"10 Seconds"},
-    {"value":"30000", "time":"30 Seconds"},
-    {"value":"45000", "time":"45 Seconds"},
-    {"value":"60000", "time":"1 Minute"}
-  ]
-});
-
 Ext.define('TimeOut', {
   extend: 'Ext.data.Model',
   fields: ['value']
@@ -202,8 +191,8 @@ Ext.create('Ext.data.Store', {
   listeners: {
     load: function(store, records, successful, operation, eOpts) {
       if(records[0] !== undefined && records[1] !== undefined) {
-        Ext.getCmp('kioskTimeOut').getComponent('cb1').select(records[0].data.value);
-        Ext.getCmp('kioskTimeOut').getComponent('cb2').select(records[1].data.value);
+        Ext.getCmp('kioskTimeOut').getComponent('cb1').setValue(records[0].data.value);
+        Ext.getCmp('kioskTimeOut').getComponent('cb2').setValue(records[1].data.value);
       }
     }
   }
@@ -217,24 +206,92 @@ Ext.create('Ext.form.Panel', {
   width: 295,	
   margin: 5,
   items: [{
-    xtype: 'combobox',
+    xtype: 'numberfield',
     itemId: 'cb1',
-    fieldLabel: 'Kiosk Time Out',
-    queryMode: 'local',
-    store: 'times',
-    displayField: 'time',
-    valueField: 'value',
-    name: 'timeout'
+    fieldLabel: 'Kiosk Time Out (secs)',
+    name: 'timeout',
+    minValue: 5,
+    maxValue: 60
   },{
-    xtype: 'combobox',
+    xtype: 'numberfield',
     itemId: 'cb2',
-    fieldLabel: 'Kiosk Time Out Reminder Window',
-    queryMode: 'local',
-    store: 'times',
-    displayField: 'time',
-    valueField: 'value',
-    name: 'reminder'
+    fieldLabel: 'Kiosk Time Out Reminder Window (secs)',
+    name: 'reminder',
+    minValue: 5,
+    maxValue: 60
  }],
+  buttons: [{
+    text: 'Update',
+    formBind: true,
+    handler: function() {
+      var form = this.up('form').getForm();
+      if(form.isValid()) {
+        form.submit({
+          waitMsg: 'Updating Settings',
+          success: function(form, action) {
+             Ext.Msg.alert('Success', action.result.message);
+          },
+          failure: function(form, action) {
+              Ext.Msg.alert('Failed', action.result.message);
+          }
+        });
+      }
+    }
+  }]
+});
+
+Ext.define('LoginText', {
+  extend: 'Ext.data.Model',
+  fields: ['value']
+});
+
+Ext.create('Ext.data.Store', {
+  model: 'LoginText',
+  id: 'loginTextStore',
+  proxy: {
+    type: 'ajax',
+    url: '/admin/settings/login_text',
+    reader: {
+      type: 'json',
+      root: 'login_additional_text'
+    },
+    pageParam: undefined,
+    limitParam: undefined,
+    startParam: undefined			
+  },
+  autoLoad: true,
+  listeners: {
+    load: function(store, records, successful, operation, eOpts) {
+      if(records[0] !== undefined) {
+       Ext.getCmp('loginTextForm').getComponent('loginText').setValue(records[0].data.value);
+       Ext.getCmp('loginTextForm').getComponent('childLoginText').setValue(records[1].data.value);
+      }
+    }
+  }
+});
+
+Ext.create('Ext.form.Panel', {
+  title: 'Customer Login Additional Text',
+  url: '/admin/settings/login_text',
+  id: 'loginTextForm',
+  frame: true,
+  margin: 5,
+  width: 500,	
+  items: [{
+    xtype: 'htmleditor',
+    fieldLabel: 'Customer Login Additional Text',
+    name: 'login_text',
+    width: 450,
+    height: 200,
+    itemId: 'loginText'
+  },{
+    xtype: 'htmleditor',
+    fieldLabel: 'Child Login Additional Text',
+    width: 450,
+    height: 200,
+    name: 'child_login_text',
+    itemId: 'childLoginText'
+  }],
   buttons: [{
     text: 'Update',
     formBind: true,
@@ -260,10 +317,14 @@ Ext.onReady(function(){
 		width: 950,
 		frame: true,
 		renderTo: 'settingsTabs',
-		items: {
+		items: [{
       layout: 'hbox',
 			title: 'Self Sign',
 			items: [kioskRegistration, 'kioskConfirmation', 'kioskTimeOut']
-		}
+		},{
+      layout: 'hbox',
+      title: 'Users',
+      items: ['loginTextForm']
+    }]
 	});
 });

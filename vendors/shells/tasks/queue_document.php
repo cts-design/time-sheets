@@ -52,6 +52,7 @@ class QueueDocumentTask extends Shell {
 				$this->data['FiledDocument']['cat_1'] = $data['ProgramDocument']['cat_1'];
 				$this->data['FiledDocument']['cat_2'] = $data['ProgramDocument']['cat_2'];
 				$this->data['FiledDocument']['cat_3'] = $data['ProgramDocument']['cat_3'];
+				$this->data['FiledDocument']['description'] = $data['Program']['name'];
 				$this->data['FiledDocument']['filed'] = date('Y-m-d H:i:s');
 				$this->data['FiledDocument']['entry_method'] = 'Program Generated'; 
 				$this->data['ProgramResponseDoc']['program_response_id'] = $data['ProgramResponse']['id'];
@@ -175,6 +176,7 @@ class QueueDocumentTask extends Shell {
 				$this->data['FiledDocument']['cat_1'] = $data['ProgramDocument']['cat_1'];
 				$this->data['FiledDocument']['cat_2'] = $data['ProgramDocument']['cat_2'];
 				$this->data['FiledDocument']['cat_3'] = $data['ProgramDocument']['cat_3'];
+				$this->data['FiledDocument']['description'] = $data['Program']['name'];
 				$this->data['FiledDocument']['filed'] = date('Y-m-d H:i:s');
 				$this->data['FiledDocument']['entry_method'] = 'Program Generated';
 				if($data['ProgramDocument']['cat_3']) {
@@ -231,10 +233,10 @@ class QueueDocumentTask extends Shell {
 				$this->data['FiledDocument']['cat_1'] = $data['Ecourse']['certificate_cat_1'];
 				$this->data['FiledDocument']['cat_2'] = $data['Ecourse']['certificate_cat_2'];
 				$this->data['FiledDocument']['cat_3'] = $data['Ecourse']['certificate_cat_3'];
+				$this->data['FiledDocument']['description'] = $data['Ecourse']['name'];
 				$this->data['FiledDocument']['filed'] = date('Y-m-d H:i:s');
 				$this->data['FiledDocument']['entry_method'] = 'Ecourse Generated';
 				if($this->FiledDocument->save($this->data)) {
-					// TODO update user ecourse reponse with the doc id of cert
 					$this->EcourseResponse->read(null, $data['EcourseResponse']['id']);
 					$this->EcourseResponse->set('cert_id', $data['docId']);
 					$this->EcourseResponse->save();

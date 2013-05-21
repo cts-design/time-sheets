@@ -172,6 +172,14 @@ class EcourseModulesController extends AppController {
 		$this->set('data', $data);
 		return $this->render(null, null, '/elements/ajaxreturn');
 	}
+
+	public function admin_view_media($moduleId=null) {
+		$this->layout = 'ajax';
+
+		$module = $this->EcourseModule->findById($moduleId);
+
+		$this->set('module', $module);
+	}
 }
 
 ?>

@@ -96,6 +96,8 @@ class ProgramResponsesController extends AppController {
 				$this->Transaction->createUserTransaction('Programs', null, null,
 					'Completed ' .  $this->currentStep[0]['name'] . ' for program ' . $program['Program']['name']);
 
+				$this->Notifications->sendProgramResponseStatusAlert($this->Auth->user(), $program, $status);
+
 				$stepEmail = Set::extract('/ProgramEmail[program_step_id='.$stepId.']', $program);
 				if(!empty($stepEmail)) {
 					$this->Notifications->sendProgramEmail($stepEmail[0]['ProgramEmail']);
@@ -195,6 +197,9 @@ class ProgramResponsesController extends AppController {
 				$this->Transaction->createUserTransaction('Programs', null, null,
 					'Completed ' .  $this->currentStep[0]['name'] . ' for program ' . $program['Program']['name']);
 				$this->Session->setFlash(__('Saved', true), 'flash_success');
+
+				$this->Notifications->sendProgramResponseStatusAlert($this->Auth->user(), $program, $status);
+
 				$stepEmail = Set::extract('/ProgramEmail[program_step_id='.$stepId.']', $program);
 				if(!empty($stepEmail)) {
 					$this->Notifications->sendProgramEmail($stepEmail[0]['ProgramEmail']);
@@ -275,6 +280,9 @@ class ProgramResponsesController extends AppController {
                     'Completed' . $this->currentStep[0]['name']);
                 $this->Session->setFlash(__('Saved', true), 'flash_success');
 				$stepEmail = Set::extract('/ProgramEmail[program_step_id='.$stepId.']', $program);
+
+				$this->Notifications->sendProgramResponseStatusAlert($this->Auth->user(), $program, $status);
+
 				if(!empty($stepEmail)) {
 					$this->Notifications->sendProgramEmail($stepEmail[0]['ProgramEmail']);
 				}
@@ -309,6 +317,7 @@ class ProgramResponsesController extends AppController {
             $data['instructions'] = $instructions[0];
         }
         $data['title_for_layout'] = $this->currentStep[0]['name'];
+		$data['media_acknowledgement_text'] = $program['Program']['media_acknowledgement_text'];
         $this->set($data);
     }
 
@@ -627,7 +636,6 @@ class ProgramResponsesController extends AppController {
 			}
 		}
 		$responses = $this->ProgramResponse->find('all', array('conditions' => $conditions));
-		$this->log(count($responses), 'debug');
 		if(count($responses) > 3000) {
 			$this->Session->setFlash('Cannot run excel report with more than 3000 records. Please filter your data further and try again.', 'flash_failure');
 			$this->redirect($this->referer());
@@ -845,6 +853,9 @@ class ProgramResponsesController extends AppController {
 					)));
 					$user['User'] = $programResponse['User'];
 					$this->Notifications->sendProgramEmail($programEmail['ProgramEmail'], $user);
+
+					$this->Notifications->sendProgramResponseStatusAlert($user, $programResponse, 'complete');
+
 					$this->Transaction->createUserTransaction('Programs', null, null,
 						'Approved program response for ' . $programResponse['Program']['name'] . ' for customer ' .
 						ucwords($user['User']['name_last4']));

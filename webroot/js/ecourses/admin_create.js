@@ -8,6 +8,7 @@ Ext.define('Ecourse', {
     'type',
     'name',
     'instructions',
+    { name: 'order', type: 'int' },
     { name: 'default_passing_percentage', type: 'int' },
     { name: 'certificate_cat_1', type: 'int' },
     { name: 'certificate_cat_2', type: 'int' },
@@ -100,7 +101,7 @@ Ext.onReady(function () {
   var formPanel = Ext.create('Ext.form.Panel', {
     renderTo: 'newEcourseForm',
     bodyPadding: 10,
-    height: 525,
+    height: 550,
     title: 'New ' + ecourseType.capitalize() + ' Ecourse',
     defaults: {
       labelWidth: 160
@@ -119,6 +120,14 @@ Ext.onReady(function () {
       fieldLabel: 'Name',
       name: 'name',
       width: 400
+    }, {
+      xtype: 'numberfield',
+      allowBlank: false,
+      fieldLabel: 'Order',
+      id: 'orderField',
+      minValue: 1,
+      name: 'order',
+      width: 225
     }, {
       xtype: 'numberfield',
       allowBlank: false,

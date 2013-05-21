@@ -47,24 +47,36 @@
                 'checked' => (isset($controllers['Alerts']['admin_index'])) ? $controllers['Alerts']['admin_index'] : '' ));?>
                <?php echo $this->Form->input('Alerts.admin_add_self_sign_alert', array(
                 'type' => 'checkbox',
-                'label' => 'Add Self Sign Alerts',
+                'label' => 'Self Sign',
                 'checked' => (isset($controllers['Alerts']['admin_add_self_sign_alert'])) ? $controllers['Alerts']['admin_add_self_sign_alert'] : '' ));?>
                <?php echo $this->Form->input('Alerts.admin_add_self_scan_alert', array(
                 'type' => 'checkbox',
-                'label' => 'Add Self Scan Alerts',
+                'label' => 'Self Scan',
                 'checked' => (isset($controllers['Alerts']['admin_add_self_scan_alert'])) ? $controllers['Alerts']['admin_add_self_scan_alert'] : '' ));?>
+               <?php echo $this->Form->input('Alerts.admin_add_self_scan_category_alert', array(
+                'type' => 'checkbox',
+                'label' => 'Add Self Scan Cat Alerts',
+                'checked' => (isset($controllers['Alerts']['admin_add_self_scan_category_alert'])) ? $controllers['Alerts']['admin_add_self_scan_category_alert'] : '' ));?>
                <?php echo $this->Form->input('Alerts.admin_add_customer_details_alert', array(
                 'type' => 'checkbox',
-                'label' => 'Add Customer Details Alerts',
+                'label' => 'Customer Details',
                 'checked' => (isset($controllers['Alerts']['admin_add_customer_details_alert'])) ? $controllers['Alerts']['admin_add_customer_details_alert'] : '' ));?>
                <?php echo $this->Form->input('Alerts.admin_add_cus_filed_doc_alert', array(
                 'type' => 'checkbox',
-                'label' => 'Add Cus. Filed Doc. Alerts',
+                'label' => 'Customer Filed Document',
                 'checked' => (isset($controllers['Alerts']['admin_add_cus_filed_doc_alert'])) ? $controllers['Alerts']['admin_add_cus_filed_doc_alert'] : '' ));?>
                <?php echo $this->Form->input('Alerts.admin_add_customer_login_alert', array(
                 'type' => 'checkbox',
-                'label' => 'Add Cusomer Login Alerts',
+                'label' => 'Customer Login',
                 'checked' => (isset($controllers['Alerts']['admin_add_customer_login_alert'])) ? $controllers['Alerts']['admin_add_customer_login_alert'] : '' ));?>
+               <?php echo $this->Form->input('Alerts.admin_add_staff_filed_document_alert', array(
+                'type' => 'checkbox',
+                'label' => 'Staff Filed Document',
+                'checked' => (isset($controllers['Alerts']['admin_add_staff_filed_document_alert'])) ? $controllers['Alerts']['admin_add_staff_filed_document_alert'] : '' ));?>
+               <?php echo $this->Form->input('Alerts.admin_add_program_response_status_alert', array(
+                'type' => 'checkbox',
+                'label' => 'Program Response Status',
+                'checked' => (isset($controllers['Alerts']['admin_add_program_response_status__alert'])) ? $controllers['Alerts']['admin_add_program_response_status_alert'] : '' ));?>
             </fieldset>
             <?php echo $this->PluginPermissions->buildFieldset('alerts') ?>
             <br class="clear" />

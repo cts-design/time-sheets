@@ -16,7 +16,7 @@ class EcoursesController extends AppController {
 		parent::beforeFilter();
 		$this->Auth->allow('load_media');
 		if($this->Auth->user()) {
-			$this->Auth->allow('index', 'quiz', 'grade');
+			$this->Auth->allow('index', 'media', 'quiz', 'grade');
 		    if($this->Acl->check(array(
 				'model' => 'User',
 				'foreign_key' => $this->Auth->user('id')), 'Ecourses/admin_index', '*')){
@@ -26,10 +26,42 @@ class EcoursesController extends AppController {
 	}
 
 	public function index($id = null) {
-        if(!$id){
-            $this->Session->setFlash(__('Invalid id', true), 'flash_failure');
-            $this->redirect($this->referer());
-        }
+		if(!$id){
+			$this->Session->setFlash(__('Invalid id', true), 'flash_failure');
+			$this->redirect($this->referer());
+		}
+
+		$this->Ecourse->recursive = -1;
+
+		$ecourse = $this->Ecourse->find('first', array(
+			'conditions' => array(
+				'Ecourse.id' => $id
+			),
+			'contain' => array(
+				'EcourseResponse' => array(
+					'conditions' => array(
+						'EcourseResponse.user_id' => $this->Auth->user('id')
+					)
+				)
+			)
+		));
+
+		if (!empty($ecourse['EcourseResponse'])) {
+			$this->redirect(array(
+				'controller' => 'ecourses',
+				'action' => 'media',
+				$id
+			));
+		}
+
+		$this->set('ecourse', $ecourse);
+	}
+
+	public function media($id = null) {
+		if(!$id){
+			$this->Session->setFlash(__('Invalid id', true), 'flash_failure');
+			$this->redirect($this->referer());
+		}
 
 		$this->Ecourse->recursive = -1;
 		$ecourse = $this->Ecourse->find('first', array(
@@ -196,7 +228,7 @@ class EcoursesController extends AppController {
 				);
 				$this->Session->setFlash('You passed the quiz.', 'flash_success');
 				if($nextModule) {
-					$this->redirect(array('controller' => 'ecourses', 'action' => 'index', $ecourseModule['EcourseModule']['ecourse_id']));
+					$this->redirect(array('controller' => 'ecourses', 'action' => 'media', $ecourseModule['EcourseModule']['ecourse_id']));
 				}
 				else {
 					// Logic to mark the ecourse response complete if passed quiz for last module
@@ -341,7 +373,6 @@ class EcoursesController extends AppController {
 			}
 
 			if ($ecourses) {
-				$this->log($ecourses, 'debug');
 				foreach ($ecourses as $key => $ecourse) {
 					$ecourse['Ecourse']['assigned_user_count'] = count($ecourse['EcourseUser']);
 					$data['ecourses'][$key] = $ecourse['Ecourse'];

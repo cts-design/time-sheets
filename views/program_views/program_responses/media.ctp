@@ -25,10 +25,14 @@
 		<br />
 		<br />
 		<div>
-		    <?php $label = sprintf(__("I acknowledge that I have viewed the orientation and completely understand its content.
-				I futher understand that it is my responsibility to abide by the rules and requirements.
-				I also understand clearly that my failure to comply with the conditions may result in the 
-				loss of %s services.", true), $title_for_layout) ?>
+			<?php if(!empty($media_acknowledgement_text)) : ?>
+				<?php $label = $media_acknowledgement_text ?>
+			<?php else : ?>
+				<?php $label = sprintf(__("I acknowledge that I have viewed the orientation and completely understand its content.
+					I futher understand that it is my responsibility to abide by the rules and requirements.
+					I also understand clearly that my failure to comply with the conditions may result in the 
+					loss of %s services.", true), $title_for_layout) ?>
+			<?php endif ?>
 			<?php echo $form->input('ProgramResponse.viewed_media', array(
 				'type' => 'checkbox', 
 				'label' => $label,

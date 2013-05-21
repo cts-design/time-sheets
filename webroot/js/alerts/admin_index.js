@@ -9,6 +9,22 @@ Ext.define('Atlas.form.field.AlertNameText', {
 	name: 'name'
 });
 
+Ext.define('Atlas.form.field.AdminComboBox', {
+  extend: 'Ext.form.field.ComboBox',
+  alias: 'widget.admincombobox',
+  xtype: 'combobox',
+  fieldLabel: 'Staff Member',
+  displayField: 'name',
+  valueField: 'id',
+  store: 'admins',
+  emptyText: 'Please Select',
+  name: 'admin_id',
+  allowBlank: false,
+  msgTarget: 'under',
+  queryMode: 'remote',
+  queryParm: 'query'
+});
+
 Ext.define('Atlas.form.field.LocationComboBox', {
 	extend: 'Ext.form.field.ComboBox',
 	alias: 'widget.locationcombobox',
@@ -19,7 +35,7 @@ Ext.define('Atlas.form.field.LocationComboBox', {
 	store: 'locations',
 	queryMode: 'remote',
 	emptyText: 'Please Select',
-	name: 'location',
+	name: 'location_id',
 	allowBlank: false,
 	msgTarget: 'under'
 });
@@ -68,6 +84,42 @@ Ext.define('Atlas.form.field.FirstNameComboBox', {
 	}
 });
 
+Ext.define('Atlas.form.field.SelfScanCategoryComboBox', {
+	extend: 'Ext.form.field.ComboBox',
+	alias: 'widget.selfscancategorycombobox',
+	xtype: 'combobox',
+	fieldLabel: 'Self Scan Category',
+	displayField: 'name',
+	valueField: 'id',
+	store: 'selfScanCategories',
+	queryMode: 'remote',
+	emptyText: 'Please Select',
+	name: 'self_scan_category_id',
+	allowBlank: false,
+	msgTarget: 'under'
+});
+
+Ext.define('SelfScanCategory', {
+  extend: 'Ext.data.Model',
+  fields: ['id', 'name', 'cat_1', 'cat_2', 'cat_3']
+});
+
+Ext.create('Ext.data.Store', {
+	model: 'SelfScanCategory',
+	storeId: 'selfScanCategories',
+	proxy: {
+		type: 'ajax',
+		url: '/admin/self_scan_categories/get_cats',
+		reader: {
+			type: 'json',
+			root: 'cats'
+		},
+		limitParam: undefined,
+		pageParam: undefined,
+		startParam: undefined
+	}
+});
+
 Ext.define('Customer', {
 	extend: 'Ext.data.Model',
 	fields: ['id', 'firstname', 'lastname', 'fullname', 'ssn']
@@ -87,6 +139,27 @@ Ext.create('Ext.data.Store', {
 		pageParam: undefined,
 		startParam: undefined
 	}
+});
+
+Ext.define('Admin', {
+  extend: 'Ext.data.Model',
+  fields: ['id', 'name']
+});
+
+Ext.create('Ext.data.Store', {
+  model: 'Admin',
+  storeId: 'admins',
+  proxy: {
+    type: 'ajax',
+    url: '/admin/users/get_all_admins',
+    reader: {
+      type: 'json',
+      root: 'admins'
+    },
+    limitParam: undefined,
+    pageParam: undefined,
+    startParam: undefined
+  }
 });
 
 
@@ -131,6 +204,7 @@ Ext.define('Atlas.form.field.FindCusByComboBox', {
 	alias: 'widget.findcusbycombobox',
 	fieldLabel: 'Find customer by',
 	store: 'findCusBy',
+  name: 'find_cus_by',
 	emptyText: 'Please Select',
 	valueField: 'type',
 	displayField: 'type',
@@ -167,6 +241,51 @@ Ext.create('Ext.data.ArrayStore', {
 		['Name'],
 		['Last 4 SSN']
 	]
+});
+
+Ext.create('Ext.data.ArrayStore', {
+	storeId: 'programType',
+	autoLoad: true,
+	idIndex: 0,
+	fields: ['value', 'label'],
+	data: [
+		['registration', 'Registration'],
+		['orientation', 'Orientation'],
+    ['enrollment', 'Enrollment'],
+    ['esign', 'E-Signature']
+	]
+});
+
+Ext.create('Ext.data.ArrayStore', {
+	storeId: 'programResponseStatuses',
+	autoLoad: true,
+	idIndex: 0,
+	fields: ['status', 'label'],
+	data: [
+		['incomplete', 'Open'],
+		['complete', 'Closed']
+	]
+});
+
+Ext.define('Program', {
+  extend: 'Ext.data.Model',
+  fields: ['id', 'name', 'type', {name: 'approval_required', type: 'int'}]
+});
+
+Ext.create('Ext.data.Store', {
+  model: 'Program',
+  storeId: 'programs',
+  proxy: {
+    type: 'ajax',
+    url: '/admin/programs/get_programs_by_type',
+    reader: {
+      type: 'json',
+      root: 'programs'
+    },
+    limitParam: undefined,
+    pageParam: undefined,
+    startParam: undefined
+  }
 });
 
 Ext.define('Atlas.button.AlertSaveButton', {
@@ -217,20 +336,101 @@ Ext.define('Atlas.form.SelfScanAlertPanel', {
 	},{
 		xtype: 'lastnametextfield'
 	},{
-		xtype: 'firstnamecombobox'
+		xtype: 'firstnamecombobox',
+    id: 'selfScanFirstName'
 	},{
 		xtype: 'ssncombobox'
 	},{
 		xtype: 'sendemailcheckbox'
 	},{
+    xtype: 'hiddenfield',
+    name: 'id'
+  },{
 		xtype: 'alertsavebutton',
-		width: 100
+		width: 100,
+		handler: function() {
+			var form = this.up('form').getForm();
+      var vals = form.getValues();
+      var url = '/admin/alerts/add_self_scan_alert';
+      if (vals.id) {
+        var url = '/admin/alerts/update_self_scan_alert';
+      }
+			if(form.isValid()) {
+				form.submit({
+          url: url,
+					success: function(form, action) {
+						Ext.Msg.alert('Success', action.result.message);
+						form.reset();
+						Ext.getCmp('myAlertsGrid').getStore().load();
+					},
+					failure: function(form, action)	{
+						Ext.Msg.alert('Failed', action.result.message);
+					}
+				});
+			}
+		}
 	},{
 		xtype: 'alertresetbutton',
 		width: 100,
 		margin: '0 0 0 10'
 	}]
 });
+
+Ext.define('Atlas.form.SelfScanCategoryAlertPanel', {
+	extend: 'Ext.form.Panel',
+	alias: 'widget.selfscancategoryalertformpanel',
+	padding: 10,
+	border: 0,
+	defaults: {
+		labelWidth: 100,
+		width: 375
+	},
+	items: [{
+		xtype: 'alertnametextfield'
+	},{
+    xtype: 'locationcombobox',
+    allowBlank: true,
+    id: 'selfScanLocation'
+  },{
+    xtype: 'selfscancategorycombobox',
+    id: 'selfScanCategory'
+	},{
+		xtype: 'sendemailcheckbox'
+  },{
+    xtype: 'hiddenfield',
+    name: 'id'
+  },{
+		xtype: 'alertsavebutton',
+		width: 100,
+		handler: function() {
+			var form = this.up('form').getForm();
+      var vals = form.getValues();
+      var url = '/admin/alerts/add_self_scan_category_alert';
+      if (vals.id) {
+        var url = '/admin/alerts/update_self_scan_category_alert';
+      }
+			if(form.isValid()) {
+				form.submit({
+          url: url,
+					success: function(form, action) {
+						Ext.Msg.alert('Success', action.result.message);
+						form.reset();
+						Ext.getCmp('myAlertsGrid').getStore().load();
+					},
+					failure: function(form, action)	{
+						Ext.Msg.alert('Failed', action.result.message);
+					}
+				});
+			}
+		}
+	},{
+		xtype: 'alertresetbutton',
+		width: 100,
+		margin: '0 0 0 10'
+	}]
+});
+
+
 
 Ext.define('Atlas.form.SelfSignAlertPanel', {
 	extend: 'Ext.form.Panel',
@@ -242,6 +442,7 @@ Ext.define('Atlas.form.SelfSignAlertPanel', {
 		width: 350
 	},
 	items: [{
+    id: 'alertName',
 		xtype: 'alertnametextfield'
 	},{
 		xtype: 'locationcombobox',
@@ -316,12 +517,22 @@ Ext.define('Atlas.form.SelfSignAlertPanel', {
 	},{
 		xtype: 'sendemailcheckbox'
 	},{
+    xtype: 'hiddenfield',
+    name: 'id',
+    value: null
+  },{
 		xtype: 'alertsavebutton',
 		width: 100,
 		handler: function() {
 			var form = this.up('form').getForm();
+      var vals = form.getValues();
+      var url = '/admin/alerts/add_self_sign_alert';
+      if (vals.id) {
+        var url = '/admin/alerts/update_self_sign_alert';
+      }
 			if(form.isValid()) {
 				form.submit({
+          url: url,
 					success: function(form, action) {
 						Ext.Msg.alert('Success', action.result.message);
 						form.reset();
@@ -375,8 +586,32 @@ Ext.define('Atlas.form.CustomerDetailsAlertPanel', {
 	},{
 		xtype: 'sendemailcheckbox'
 	},{
+    xtype: 'hiddenfield',
+    name: 'id'
+  },{
 		xtype: 'alertsavebutton',
-		width: 100
+		width: 100,
+		handler: function() {
+			var form = this.up('form').getForm();
+      var vals = form.getValues();
+      var url = '/admin/alerts/add_customer_details_alert';
+      if (vals.id) {
+        var url = '/admin/alerts/update_customer_details_alert';
+      }
+			if(form.isValid()) {
+				form.submit({
+          url: url,
+					success: function(form, action) {
+						Ext.Msg.alert('Success', action.result.message);
+						form.reset();
+						Ext.getCmp('myAlertsGrid').getStore().load();
+					},
+					failure: function(form, action)	{
+						Ext.Msg.alert('Failed', action.result.message);
+					}
+				});
+			}
+		}
 	}, {
 		xtype: 'alertresetbutton',
 		width: 100,
@@ -433,14 +668,39 @@ Ext.define('Atlas.form.CusFiledDocAlertPanel', {
 	},{
 		xtype: 'lastnametextfield'
 	},{
-		xtype: 'firstnamecombobox'
+		xtype: 'firstnamecombobox',
+    id: 'cusFiledDocFirstName'
 	},{
 		xtype: 'ssncombobox'
 	},{
 		xtype: 'sendemailcheckbox'
 	},{
+    xtype: 'hiddenfield',
+    name: 'id'
+  },{
 		xtype: 'alertsavebutton',
-		width: 100
+		width: 100,
+		handler: function() {
+			var form = this.up('form').getForm();
+      var vals = form.getValues();
+      var url = '/admin/alerts/add_cus_filed_doc_alert';
+      if (vals.id) {
+        var url = '/admin/alerts/update_cus_filed_doc_alert';
+      }
+			if(form.isValid()) {
+				form.submit({
+          url: url,
+					success: function(form, action) {
+						Ext.Msg.alert('Success', action.result.message);
+						form.reset();
+						Ext.getCmp('myAlertsGrid').getStore().load();
+					},
+					failure: function(form, action)	{
+						Ext.Msg.alert('Failed', action.result.message);
+					}
+				});
+			}
+		}
 	},{
 		xtype: 'alertresetbutton',
 		width: 100,
@@ -463,26 +723,208 @@ Ext.define('Atlas.form.CustomerLoginAlertPanel', {
 	},{
 		xtype: 'locationcombobox',
 		allowBlank: true,
-		emptyText: 'Select a specific location if nessesary'
+		emptyText: 'Select a specific location if nessesary',
+    id: 'cusLoginLocation'
 	},{
 		xtype: 'findcusbycombobox'
 	},{
 		xtype: 'lastnametextfield'
 	},{
-		xtype: 'firstnamecombobox'
+		xtype: 'firstnamecombobox',
+    id: 'cusLoginFirstName'
 	},{
 		xtype: 'ssncombobox'
 	},{
 		xtype: 'sendemailcheckbox'
 	},{
+    xtype: 'hiddenfield',
+    name: 'id'
+  },{
 		xtype: 'alertsavebutton',
-		width: 100
+		width: 100,
+		handler: function() {
+			var form = this.up('form').getForm();
+      var vals = form.getValues();
+      var url = '/admin/alerts/add_customer_login_alert';
+      if (vals.id) {
+        var url = '/admin/alerts/update_customer_login_alert';
+      }
+			if(form.isValid()) {
+				form.submit({
+          url: url,
+					success: function(form, action) {
+						Ext.Msg.alert('Success', action.result.message);
+						form.reset();
+						Ext.getCmp('myAlertsGrid').getStore().load();
+					},
+					failure: function(form, action)	{
+						Ext.Msg.alert('Failed', action.result.message);
+					}
+				});
+			}
+		}
 	},{
 		xtype: 'alertresetbutton',
 		width: 100,
 		margin: '0 0 0 10'
 	}]
 });
+
+Ext.define('Atlas.form.StaffFiledDocumentAlertPanel', {
+	extend: 'Ext.form.Panel',
+	alias: 'widget.stafffileddocumentalertformpanel',
+	padding: 10,
+	border: 0,
+	defaults: {
+		labelWidth: 100,
+		width: 375
+	},
+	items: [{
+		xtype: 'alertnametextfield'
+	},{
+    xtype: 'admincombobox',
+    id: 'staffFiledAdminSelect'
+  },{
+		xtype: 'sendemailcheckbox'
+	},{
+    xtype: 'hiddenfield',
+    name: 'id'
+  },{
+		xtype: 'alertsavebutton',
+		width: 100,
+		handler: function() {
+			var form = this.up('form').getForm();
+      var vals = form.getValues();
+      var url = '/admin/alerts/add_staff_filed_document_alert';
+      if (vals.id) {
+        var url = '/admin/alerts/update_staff_filed_document_alert';
+      }
+			if(form.isValid()) {
+				form.submit({
+          url: url,
+					success: function(form, action) {
+						Ext.Msg.alert('Success', action.result.message);
+						form.reset();
+						Ext.getCmp('myAlertsGrid').getStore().load();
+					},
+					failure: function(form, action)	{
+						Ext.Msg.alert('Failed', action.result.message);
+					}
+				});
+			}
+		}
+	},{
+		xtype: 'alertresetbutton',
+		width: 100,
+		margin: '0 0 0 10'
+	}]
+});
+
+Ext.define('Atlas.form.ProgramResponseStatusAlertPanel', {
+	extend: 'Ext.form.Panel',
+	alias: 'widget.programresponsestatusalertformpanel',
+	padding: 10,
+	border: 0,
+	defaults: {
+		labelWidth: 100,
+		width: 375
+	},
+	items: [{
+		xtype: 'alertnametextfield'
+	},{
+		xtype: 'combobox',
+		fieldLabel: 'Program Type',
+		displayField: 'label',
+		valueField: 'value',
+    store: 'programType',
+		queryMode: 'local',
+		emptyText: 'Please Select',
+		name: 'program_type',
+		allowBlank: false,
+		msgTarget: 'under',
+    listeners: {
+      change: function() {
+        this.nextSibling().reset();
+        this.nextSibling().nextSibling().reset();
+        this.nextSibling().getStore().load({ params:{ type: this.getValue() } });
+        this.nextSibling().enable();
+      }
+    }
+  },{
+		xtype: 'combobox',
+		fieldLabel: 'Program',
+    disabled: true,
+		displayField: 'name',
+		valueField: 'id',
+    store: 'programs',
+		queryMode: 'local',
+		emptyText: 'Please Select',
+		name: 'program_id',
+		allowBlank: false,
+		msgTarget: 'under',
+    listeners: {
+      select: function(combo, records, eOpts) {
+        this.nextSibling().reset();
+        if(records[0].data.approval_required) {
+          if(!this.nextSibling().getStore().findRecord('label', 'Pending Approval')) {
+            this.nextSibling().getStore().add({label: 'Pending Approval', status: 'pending_approval'});
+          }
+        }
+        else {
+          this.nextSibling().getStore().load();
+        }
+        this.nextSibling().enable();
+      }
+    }
+  },{
+		xtype: 'combobox',
+		fieldLabel: 'Respone Status',
+    id: 'programResponseStatus',
+    disabled: true,
+		displayField: 'label',
+		valueField: 'status',
+    store: 'programResponseStatuses',
+		queryMode: 'local',
+		emptyText: 'Please Select',
+		name: 'response_status',
+		allowBlank: false,
+		msgTarget: 'under'
+  },{
+		xtype: 'sendemailcheckbox'
+	},{
+    xtype: 'hiddenfield',
+    name: 'id'
+  },{
+		xtype: 'alertsavebutton',
+		width: 100,
+		handler: function() {
+			var form = this.up('form').getForm();
+      var vals = form.getValues();
+      var url = '/admin/alerts/add_program_response_status_alert';
+      if (vals.id) {
+        var url = '/admin/alerts/update_program_response_status_alert';
+      }
+			if(form.isValid()) {
+				form.submit({
+          url: url,
+					success: function(form, action) {
+						Ext.Msg.alert('Success', action.result.message);
+						form.reset();
+						Ext.getCmp('myAlertsGrid').getStore().load();
+					},
+					failure: function(form, action)	{
+						Ext.Msg.alert('Failed', action.result.message);
+					}
+				});
+			}
+		}
+	},{
+		xtype: 'alertresetbutton',
+		width: 100,
+		margin: '0 0 0 10'
+	}]
+});
+
 
 
 Ext.define('DocumentQueueCategory', {
@@ -648,7 +1090,7 @@ function disableAndResetButtons(level) {
 
 Ext.define('Alert', {
 	extend: 'Ext.data.Model',
-	fields: ['id', 'name', 'type', 'send_email', 'disabled']
+	fields: ['id', 'name', 'type', 'send_email', 'disabled', 'location_id', 'user_id', 'watched_id', 'detail']
 });
 
 Ext.create('Ext.data.Store', {
@@ -725,8 +1167,7 @@ Ext.create('Ext.menu.Menu', {
 						params: {
 							id: selected.data.id
 						},
-						success: function(response){
-							console.log(response.responseText.message);
+						success: function(response) {
 							var responseText = Ext.JSON.decode(response.responseText);
 							Ext.Msg.alert('Success', responseText.message);
 							Ext.getCmp('myAlertsGrid').getStore().load();
@@ -777,29 +1218,32 @@ Ext.onReady(function(){
 				border: 0
 				},{
 					xtype: 'selfsignalertformpanel',
-					id: 'selfSignAlertFormPanel',
-					url: '/admin/alerts/add_self_sign_alert'
+					id: 'selfSignAlertFormPanel'
 				},{
 					xtype: 'customerdetailsalertformpanel',
 					id: 'customerDetailsAlertFromPanel',
-					url: '/admin/alerts/add_customer_details_alert'
 				},{
 					xtype: 'queueddocumentalertformpanel',
 					id: 'queuedDocumentAlertFormPanel',
-					url: '/admin/alerts/add_queued_document_alert'
 				},{
 					xtype: 'selfscanalertformpanel',
 					id: 'selfScanAlertFormPanel',
-					url: '/admin/alerts/add_self_scan_alert'
+				},{
+					xtype: 'selfscancategoryalertformpanel',
+					id: 'selfScanCategoryAlertFormPanel',
 				},{
 					xtype: 'cusfileddocalertformpanel',
 					id: 'cusFiledDocAlertFormPanel',
-					url: '/admin/alerts/add_cus_filed_doc_alert'
 				},{
 					xtype: 'customerloginalertformpanel',
 					id: 'customerLoginAlertFormPanel',
-					url: '/admin/alerts/add_customer_login_alert'
-				}],
+				},{
+          xtype: 'stafffileddocumentalertformpanel',
+          id: 'staffFiledDocumentAlertFormPanel',
+        },{
+          xtype: 'programresponsestatusalertformpanel',
+          id: 'programResponseStatusAlertFormPanel',
+        }],
 				dockedItems: [{
 					xtype: 'toolbar',
 					dock: 'top',
@@ -807,6 +1251,7 @@ Ext.onReady(function(){
 						xtype: 'combobox',
 						width: 300,
 						fieldLabel: 'Select Alert Type',
+            id: 'alertType',
 						store: 'alertTypes',
 						displayField: 'label',
 						valueField: 'id',
@@ -835,7 +1280,44 @@ Ext.onReady(function(){
 						cm.items.items[1].setChecked(Boolean(rec.data.disabled));
 						cm.showAt(e.getXY());
 						return false;
-					}
+					},
+          itemdblclick: function(grid, record, item, index, e, eOpts) {
+            var alertType = Ext.getCmp('alertType');
+            var store = alertType.getStore();
+            store.load({
+              callback: function() {
+                var val = store.findRecord('label', record.data.type);
+                alertType.select(val.data.id, true);
+                alertType.fireEvent('select');
+                switch(record.data.type) {
+                  case 'Self Sign':
+                    editSelfSignAlert(record);
+                    break;
+                  case 'Customer Details':
+                    editCustomerDetailsAlert(record);
+                    break;
+                  case 'Self Scan':
+                    editSelfScanAlert(record);
+                    break;
+                  case 'Self Scan Category':
+                    editSelfScanCategoryAlert(record);
+                    break;
+                  case 'Customer Filed Document':
+                    editCusFiledDocAlert(record);
+                    break;
+                  case 'Customer Login':
+                    editCustomerLoginAlert(record);
+                    break;
+                  case 'Staff Filed Document':
+                    editStaffFiledDocumentAlert(record);
+                    break;
+                  case 'Program Response Status':
+                    editProgramResponseStatusAlert(record);
+                    break;
+                }
+              }
+            });
+          }
 				}
 				},
 				columns: [{
@@ -872,4 +1354,204 @@ Ext.onReady(function(){
 			store: 'alerts'
 		}]
 	});
+
+  var editSelfSignAlert = function(record) {
+    var text = null;
+    Ext.Ajax.request({
+      url: '/admin/master_kiosk_buttons/get_button_path/'+record.data.watched_id,
+      success: function(response) {
+        text = Ext.JSON.decode(response.responseText);
+        populateForm(text);
+      }
+      
+    });
+    function populateForm(text) {
+      var formPanel = Ext.getCmp('selfSignAlertFormPanel');
+      formPanel.getForm().reset();
+      var locationSelect = Ext.getCmp('locationSelect');
+      var store = locationSelect.getStore();
+      var buttons1 = Ext.getCmp('level1Buttons');
+      var buttons2 = Ext.getCmp('level2Buttons');
+      var buttons3 = Ext.getCmp('level3Buttons');
+      disableAndResetButtons(['1', '2', '3']);
+      formPanel.loadRecord(record);
+      locationId = record.data.location_id;
+      store.load({
+        callback: function() {
+          locationSelect.select(record.data.location_id);
+          var button1store = buttons1.getStore();
+          button1store.load({
+            callback: function() {
+              buttons1.enable();
+              buttons1.setValue(text.buttons[0].id);
+              parentId = text.buttons[0].id;
+              if(text.buttons.length > 1) {
+                var button2store = buttons2.getStore(); 
+                button2store.load({
+                  callback: function() {
+                    buttons2.enable();
+                    buttons2.select(text.buttons[1].id);
+                    parentId = text.buttons[1].id;
+                    if(text.buttons.length > 2) {
+                      button3store = buttons3.getStore();
+                      button3store.load({
+                        callback: function() {
+                          buttons3.enable();
+                          buttons2.select(text.buttons[2].id);
+                        }
+                      });
+                    }
+                  }
+                });
+              }
+            }
+          });
+        }
+      });
+    }
+  };
+
+  var editCustomerDetailsAlert = function(record) {
+    var formPanel = Ext.getCmp('customerDetailsAlertFromPanel');
+    var locationSelect = Ext.getCmp('locationSelect');
+    var store = locationSelect.getStore();
+    store.load({
+      callback: function() {
+        formPanel.loadRecord(record);
+      }
+    });
+  };
+
+  var editSelfScanAlert = function(record) {
+    var formPanel = Ext.getCmp('selfScanAlertFormPanel');
+    record.data.find_cus_by = 'Name';
+
+    Ext.Ajax.request({
+      url: '/admin/users/get_customer_by_id/'+record.data.watched_id,
+      success: function(response) {
+        text = Ext.JSON.decode(response.responseText);
+        populateForm(text);
+      }
+    });
+
+    function populateForm(text) {
+      record.data.lastname = text.user.lastname;
+      record.data.firstname = text.user.firstname;
+      formPanel.loadRecord(record);
+      firstNameCombo = Ext.getCmp('selfScanFirstName');
+      firstNameCombo.setValue(text.user.id);
+      firstNameCombo.doQuery();
+      firstNameCombo.select(text.user.id);
+      firstNameCombo.collapse();
+    }
+  };
+
+  var editCusFiledDocAlert = function(record) {
+    var formPanel = Ext.getCmp('cusFiledDocAlertFormPanel');
+    record.data.find_cus_by = 'Name';
+
+    Ext.Ajax.request({
+      url: '/admin/users/get_customer_by_id/'+record.data.watched_id,
+      success: function(response) {
+        text = Ext.JSON.decode(response.responseText);
+        populateForm(text);
+      }
+    });
+
+    function populateForm(text) {
+      record.data.lastname = text.user.lastname;
+      record.data.firstname = text.user.firstname;
+      formPanel.loadRecord(record);
+      firstNameCombo = Ext.getCmp('cusFiledDocFirstName');
+      firstNameCombo.setValue(text.user.id);
+      firstNameCombo.doQuery();
+      firstNameCombo.select(text.user.id);
+      firstNameCombo.collapse();
+    }
+  };
+
+  var editCustomerLoginAlert = function(record) {
+    var formPanel = Ext.getCmp('customerLoginAlertFormPanel');
+    record.data.find_cus_by = 'Name';
+
+    Ext.Ajax.request({
+      url: '/admin/users/get_customer_by_id/'+record.data.watched_id,
+      success: function(response) {
+        text = Ext.JSON.decode(response.responseText);
+        populateForm(text);
+      }
+    });
+
+    function populateForm(text) {
+    var locationSelect = Ext.getCmp('cusLoginLocation');
+    var store = locationSelect.getStore();
+    store.load({
+      callback: function() {
+        record.data.lastname = text.user.lastname;
+        record.data.firstname = text.user.firstname;
+        formPanel.loadRecord(record);
+        firstNameCombo = Ext.getCmp('cusLoginFirstName');
+        firstNameCombo.setValue(text.user.id);
+        firstNameCombo.doQuery();
+        firstNameCombo.select(text.user.id);
+        firstNameCombo.collapse();
+      }
+    });
+    }
+  };
+
+  var editStaffFiledDocumentAlert = function(record) {
+    var formPanel = Ext.getCmp('staffFiledDocumentAlertFormPanel'),
+      adminSelect = Ext.getCmp('staffFiledAdminSelect');
+
+    adminSelect.getStore().load({
+      callback: function() {
+        record.data.admin_id = record.data.watched_id
+        formPanel.loadRecord(record);
+      }
+    });
+  };
+
+  var editProgramResponseStatusAlert = function(record) {
+    var formPanel = Ext.getCmp('programResponseStatusAlertFormPanel');
+    Ext.Ajax.request({
+      url: '/admin/programs/get_program_by_id/'+record.data.watched_id,
+      success: function(response) {
+        text = Ext.JSON.decode(response.responseText);
+        populateForm(text);
+      }
+      
+    });
+    function populateForm(text) {
+      var status = Ext.getCmp('programResponseStatus');
+      record.data.program_type = text.program.type;
+      record.data.program_id = text.program.id;
+      status.enable();
+      if(record.data.detail === 'pending_approval') {
+        if(!status.getStore().findRecord('label', 'Pending Approval')) {
+          status.getStore().add({label: 'Pending Approval', status: 'pending_approval'});
+        }
+      }
+      record.data.response_status = record.data.detail;
+      formPanel.loadRecord(record);
+    }
+
+  };
+
+  var editSelfScanCategoryAlert = function(record) {
+    var formPanel = Ext.getCmp('selfScanCategoryAlertFormPanel'),
+        locationSelect = Ext.getCmp('selfScanLocation'),
+        categorySelect = Ext.getCmp('selfScanCategory');
+    locationSelect.getStore().load({
+      callback: function() {
+        categorySelect.getStore().load({
+          callback: function() {
+            record.data.self_scan_category_id = record.data.watched_id;
+            formPanel.loadRecord(record);
+          }
+        })
+      }
+    })
+  };
 });
+

@@ -35,11 +35,12 @@ class LocationsController extends AppController {
 	}
 
 	function admin_index() {
-		$this->Location->recursive = 0;
+		$this->Location->recursive = -1;
 		$this->set('locations', $this->paginate());
 	}
 
 	function admin_add() {
+		$this->Location->recursive = -1;
 		if($this->Acl->check(array('model' => 'User',
 								   'foreign_key' => $this->Auth->user('id')), 'Locations/admin_add', '*')){
 			$_SESSION['ck_authorized'] = true;
@@ -56,6 +57,7 @@ class LocationsController extends AppController {
 	}
 
 	function admin_edit($id = null) {
+		$this->Location->recursive = -1;
 		if($this->Acl->check(array('model' => 'User',
 								   'foreign_key' => $this->Auth->user('id')), 'Locations/admin_edit', '*')){
 			$_SESSION['ck_authorized'] = true;
@@ -78,6 +80,7 @@ class LocationsController extends AppController {
 	}
 
 	function admin_delete($id = null) {
+		$this->Location->recursive = -1;
 		if (!$id) {
 			$this->Session->setFlash(__('Invalid id for location', true), 'flash_failure');
 			$this->redirect(array('action'=>'index'));

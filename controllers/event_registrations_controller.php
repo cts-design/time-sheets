@@ -14,6 +14,8 @@ class EventRegistrationsController extends AppController {
 
 	public $helpers = array('Excel');
 
+	public $components = array('Notifications');
+
 	function beforeFilter() {
 		parent::beforeFilter();
 		if($this->Auth->user()) {
@@ -28,12 +30,6 @@ class EventRegistrationsController extends AppController {
 
 	public function admin_index() {
 		$eventRegistrations = $this->EventRegistration->findAllByEventId($this->params['pass'][0]);
-		if($eventRegistrations) {
-			if(date('Y-m-d', strtotime($eventRegistrations[0]['Event']['scheduled'])) < date('Y-m-d')) {
-				$this->Session->setFlash('Event has already been held', 'flash_failure');
-				$this->redirect('/admin/events');
-			}
-		}
 		if($this->RequestHandler->isAjax()) {
 			$data['registrations'] = array();
 			if($eventRegistrations) {
@@ -105,11 +101,19 @@ class EventRegistrationsController extends AppController {
 	public function admin_delete() {
 		if($this->RequestHandler->isAjax()) {
             if(isset($this->data['EventRegistration'])) {
+				$this->EventRegistration->Event->recursive = -1;
 				$this->data['EventRegistration'] = json_decode($this->data['EventRegistration'], true);
 				$userIds = Set::Extract('/user_id', $this->data['EventRegistration']);
 				$ids = Set::Extract('/id', $this->data['EventRegistration']);
 				$conditions = array('EventRegistration.id' => $ids);
 				if($this->EventRegistration->deleteAll($conditions, true, true)) {
+					// send out cancellation emails
+					$event = $this->EventRegistration->Event->findById($this->data['Event']['id']);
+					foreach ($userIds as $id) {
+						$user = $this->EventRegistration->User->findById($id);
+						$this->Notifications->sendEventCancellationEmail($event, $user);
+					}
+
 					$data['success'] = true;
 					$data['message'] = 'Deleted successfully';
 					$message = 'Deleted ';
@@ -141,9 +145,11 @@ class EventRegistrationsController extends AppController {
 	}
 
 	public function admin_attendance_report() {
-		$this->EventRegistration->Event->recursive = 2;
+		$this->EventRegistration->Event->recursive = -1;
 		if(isset($this->params['url']['id'])) {
-			$event = $this->EventRegistration->Event->findById($this->params['url']['id']);	
+			$event = $this->EventRegistration->Event->find('first', array(
+				'conditions' => array('Event.id' => $this->params['url']['id']),
+				'contain' => array('Location', 'EventRegistration' => array('User'))));	
 		}
 		$report = array();
 		$title = 'Event Attendance Report ';
@@ -177,13 +183,31 @@ class EventRegistrationsController extends AppController {
 
 	public function admin_register_customer() {
 		if($this->RequestHandler->isAjax()) {
+			$this->EventRegistration->Event->Behaviors->attach('Containable');
+			$this->EventRegistration->User->Behaviors->attach('Containable');
+
 			$count = $this->EventRegistration->find('count', array(
 				'conditions' => array(
 					'EventRegistration.user_id' => $this->params['form']['user_id'],
-					'EventRegistration.event_id' => $this->params['form']['event_id'])));
+					'EventRegistration.event_id' => $this->params['form']['event_id']
+				)
+			));
+
 			$this->data['EventRegistration']['user_id'] = $this->params['form']['user_id'];
 			$this->data['EventRegistration']['event_id'] = $this->params['form']['event_id'];
+
 			if($count == 0 && $this->EventRegistration->save($this->data)) {
+				$event = $this->EventRegistration->Event->find('first', array(
+					'conditions' => array(
+						'Event.id' => $this->params['form']['event_id']
+					),
+					'contain' => array(
+						'Location'
+					)
+				));
+				$user = $this->EventRegistration->User->findById($this->params['form']['user_id']);
+				$this->Notifications->sendEventRegistrationEmail($event, $user);
+
 				$data['success'] = true;
 				$data['message'] = 'Customer was registered successfully.';
 				$this->Transaction->createUserTransaction(
@@ -203,9 +227,11 @@ class EventRegistrationsController extends AppController {
 	}
 	
 	public function admin_attendance_roster() {
-		$this->EventRegistration->Event->recursive = 2;
+		$this->EventRegistration->Event->recursive = -1;
 		if(isset($this->params['pass'][0])) {
-			$event = $this->EventRegistration->Event->findById($this->params['pass'][0]);	
+			$event = $this->EventRegistration->Event->find('first', array(
+				'conditions' => array('Event.id' => $this->params['pass'][0]),
+				'contain' => array('Location', 'EventRegistration' => array('User'))));	
 		}
 		$users = array();
 		$title = 'Event Attendance Roster ';
@@ -217,7 +243,8 @@ class EventRegistrationsController extends AppController {
 				foreach($event['EventRegistration'] as $k => $v) {
 					$users[$k]['First Name'] = $v['User']['firstname'];
 					$users[$k]['Last Name'] = $v['User']['lastname'];
-					$users[$k]['Registered'] = date('m/d/y', strtotime($v['created']));
+					$users[$k]['Last 4'] = substr($v['User']['ssn'], -4);
+					$users[$k]['Phone #'] = $v['User']['phone'];
 				}
 			}
 			else {
@@ -239,18 +266,20 @@ class EventRegistrationsController extends AppController {
 
 	private function generatePDF($users, $event) {
 		if($users){
-			$html = "<style>td { text-align: center; height: 50px;font-size: 25px}</style>";
+			$html = "<style>td { text-align: center; height: 10px;font-size: 10px}</style>";
 			$html .= '<div>';
-			$html .= '<table cellspacing="25" cellpadding="5">';
+			$html .= '<table cellspacing="5" cellpadding="5">';
 			$html .= '<tr>';
 			$html .= '<th>Name</th>';
-			$html .= '<th>Registered</th>';
+			$html .= '<th>Last 4</th>';
+			$html .= '<th>Phone #</th>';
 			$html .= '<th>Signature</th>';
 			$html .= '</tr>';
 			foreach($users as $user) {
 				$html .= '<tr>';
 				$html .= "<td>" . $user['First Name'] . " " . $user['Last Name'] . "</td>";
-				$html .= "<td>" . $user['Registered'] . "</td>";
+				$html .= "<td>" . $user['Last 4'] . "</td>";
+				$html .= "<td>" . $user['Phone #'] . "</td>";
 				$html .= "<td>X______________________________</td>";
 				$html .= '</tr>';
 			}
@@ -266,7 +295,7 @@ class EventRegistrationsController extends AppController {
 				$pdf->args_add('--footer-center', 'Page: [page] of [topage]') ;
 				Configure::write('debug', 0);
 				$pdf->render();
-				$pdf->output(WKPDF_MULTI::$PDF_EMBEDDED);
+				$pdf->output(WKPDF_MULTI::$PDF_EMBEDDED, 'event_roster.pdf');
 			}
 			catch(Exception $e) {
 				$this->log('WKPDF Exception (line ' . $e->getLine() .'): ' . $e->getMessage(), 'error');

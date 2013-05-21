@@ -73,7 +73,7 @@ Ext.create('Ext.data.Store', {
       writeAllFields: false
     }
   },
-  remoteSort: true,
+  remoteSort: false,
   sorters: [{
     property: 'order',
     direction: 'ASC'
@@ -193,6 +193,56 @@ Ext.onReady(function () {
       itemclick: function (grid, record, item, index) {
         Ext.getCmp('editModuleBtn').enable();
         Ext.getCmp('deleteModuleBtn').enable();
+      },
+      itemcontextmenu: function (view, rec, item, index, e) {
+        var menu,
+          items = [],
+          media_type = rec.get('media_type'),
+          media_icon;
+
+        e.preventDefault();
+
+        switch (media_type) {
+          case 'flv':
+            media_icon = '/img/icons/page_white_flash.png';
+            break;
+
+          case 'pdf':
+            media_icon = '/img/icons/pdf.png';
+            break;
+
+          case 'ppt':
+            media_icon = '/img/icons/page_white_powerpoint.png';
+            break;
+
+          case 'url':
+            media_icon = '/img/icons/link.png';
+            break;
+        }
+
+        items.push({
+          icon: media_icon,
+          text: 'View Module Media',
+          handler: function () {
+            new Ext.Window({
+              title : 'Media Preview',
+              width : 633,
+              height : 453,
+              layout : 'fit',
+              items : [{
+                xtype : 'component',
+                autoEl : {
+                  tag : 'iframe',
+                  src : '/admin/ecourse_modules/view_media/' + rec.get('id')
+                }
+              }]
+            }).show();
+          }
+        });
+
+        menu = Ext.create('Ext.menu.Menu', {
+          items: items
+        }).showAt(e.getXY());
       }
     },
     plugins: [
