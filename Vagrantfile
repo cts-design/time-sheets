@@ -16,7 +16,7 @@ Vagrant.configure("2") do |config|
   config.ssh.max_tries = 40
   config.ssh.timeout   = 120
 
-  config.vm.synced_folder "./", "/var/www/atlas", :owner => 'www-data', :group => "www-data"
+  config.vm.synced_folder "./", "/var/www/vhosts/deploy/atlas/current", :owner => 'www-data', :group => "www-data"
 
   config.berkshelf.enabled = true
 
