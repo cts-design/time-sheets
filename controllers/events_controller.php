@@ -17,7 +17,7 @@ class EventsController extends AppController {
 
 	function beforeFilter() {
 		parent::beforeFilter();
-		$this->Auth->allow('view', 'index', 'workshop');
+		$this->Auth->allow('view', 'index', 'workshop', 'upcoming');
 		if($this->Auth->user() && $this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Events/admin_index', '*')) {
 			$this->Auth->allow('admin_add', 'admin_edit', 'admin_delete', 'admin_get_event_category_list');
 		}
@@ -290,6 +290,26 @@ class EventsController extends AppController {
 				'userEventRegistrations'
 			)
 		);
+	}
+
+	public function upcoming() {
+		$this->Event->recursive = -1;
+		$this->Event->contain('EventCategory');
+		$today = date('Y-m-d H:i:s');
+		$events = $this->Event->find('all', array(
+			'conditions' => array(
+				'Event.scheduled >=' => $today,
+				'Event.scheduled <' => date('Y-m-d H:i:s', strtotime('+6 days', strtotime($today))),
+				'OR' => array(
+					array('Event.allow_registrations' => 0),
+					array('AND' => array(
+						array('Event.allow_registrations' => 1),
+						array('Event.event_registration_count > Event.seats_available')
+					))
+				)
+			)
+		));
+		return $events;
 	}
 
 	public function attend($eventId, $eventType = null) {
