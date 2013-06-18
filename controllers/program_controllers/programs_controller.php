@@ -518,24 +518,14 @@ class ProgramsController extends AppController {
 
 	public function admin_upload_media() {
 		$this->layout = 'ajax';
-		$storagePath = substr(APP, 0, -1) . Configure::read('Program.media.path');
+		$path = substr(APP, 0, -1) . Configure::read('Program.media.path');
 
-		switch ($_FILES['media']['type']) {
-			case 'application/pdf':
-				$path = $storagePath;
-				$ext = '.pdf';
-				break;
-
-			case 'video/x-flv':
-				$path = $storagePath;
-				$ext = '.flv';
-				break;
-
-			default:
 				break;
 		}
 
-		$filename = date('YmdHis') . $ext;
+		$pathinfo = pathinfo($_FILES['media']['name']);
+		$fileExt  = ".{$pathinfo['extension']}";
+		$filename = date('YmdHis') . $fileExt;
 
 		if (!is_dir($path)) {
 			mkdir($path);

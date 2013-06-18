@@ -568,11 +568,11 @@ registrationForm = Ext.create('Ext.form.Panel', {
       store: Ext.create('Ext.data.Store', {
         fields: ['lcase', 'ucase'],
         data: [{
+          lcase: 'flv', ucase: 'Flash Video'
+        }, {
           lcase: 'pdf', ucase: 'PDF Document'
         }, {
-          lcase: 'video', ucase: 'Flash Video'
-        }, {
-          lcase: 'presenter', ucase: 'Adobe Presenter'
+          lcase: 'swf', ucase: 'Shockwave Video'
         }, {
           lcase: 'url', ucase: 'Website URL'
         }]

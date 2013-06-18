@@ -109,7 +109,9 @@ end
 
 task :jobsplus do
   set :server_name, 'jobs plus production'
-  server "192.168.200.57", :app, :web, :db, :primary => true
+  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
+  set :user, 'deploy'
+  server '68.225.125.205', :app, :web, :db, :primary => true
 end
 
 task :suncoast do
