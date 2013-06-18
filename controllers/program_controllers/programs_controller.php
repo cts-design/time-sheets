@@ -519,10 +519,6 @@ class ProgramsController extends AppController {
 	public function admin_upload_media() {
 		$this->layout = 'ajax';
 		$path = substr(APP, 0, -1) . Configure::read('Program.media.path');
-
-				break;
-		}
-
 		$pathinfo = pathinfo($_FILES['media']['name']);
 		$fileExt  = ".{$pathinfo['extension']}";
 		$filename = date('YmdHis') . $fileExt;
