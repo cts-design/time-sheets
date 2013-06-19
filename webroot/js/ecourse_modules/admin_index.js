@@ -454,7 +454,7 @@ Ext.onReady(function () {
 
             locationField.enable();
             locationField.allowBlank = false;
-          } else if (newVal === 'pdf' || newVal === 'ppt' || newVal === 'flv') {
+          } else if (newVal === 'pdf' || newVal === 'ppt' || newVal === 'flv' || newVal === 'swf') {
             if (oldVal === 'url') {
               locationField.disable();
               locationField.allowBlank = true;
