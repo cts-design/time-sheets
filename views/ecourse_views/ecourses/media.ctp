@@ -1,4 +1,5 @@
 <?php $this->Html->script('flowplayer-3.2.6.min', array('inline' => false)) ?>
+<?php $this->Html->script('swfobject', array('inline' => false)) ?>
 <?php $this->Html->scriptStart(array('inline' => false)); ?>
   $(function() {
 	  $(".button" ).button();
@@ -23,6 +24,22 @@
 			}
 		});
 	</script>
+<?php elseif ($nextModule[0]['media_type'] == 'swf'): ?>
+	<noscript><?php __('You must have Javascript enabled to view this video.') ?></noscript>
+	<script type="text/javascript">
+	  swfobject.registerObject("media", "9", "/swf/expressinstall.swf");
+	</script>
+
+	<object id="media" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="550" height="420">
+		<param name="movie" value="/ecourses/load_media/<?= $nextModule[0]['media_location'] ?>" />
+		<!--[if !IE]>-->
+		<object type="application/x-shockwave-flash" data="/ecourses/load_media/<?= $nextModule[0]['media_location'] ?>" width="550" height="420">
+		<!--<![endif]-->
+		<p>You need flash to view this media</p>
+		<!--[if !IE]>-->
+		</object>
+		<!--<![endif]-->
+	</object>
 <?php elseif ($nextModule[0]['media_type'] == 'ppt'): ?>
 <script type="text/javascript" src='https://www.scribd.com/javascripts/scribd_api.js'></script>
 
