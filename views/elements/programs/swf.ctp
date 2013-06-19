@@ -12,7 +12,7 @@
 	<!--[if !IE]>-->
 	<object type="application/x-shockwave-flash" data="<?= $media ?>" width="550" height="420">
 	<!--<![endif]-->
-	<p>Alternative content</p>
+	<p>You need flash to view this media</p>
 	<!--[if !IE]>-->
 	</object>
 	<!--<![endif]-->
