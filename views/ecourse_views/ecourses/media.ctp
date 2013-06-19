@@ -74,6 +74,7 @@ scribd_doc.write('embedded_doc');
 	</div>
 <?php endif ?>
 <br />
+<br />
 <div>
 	<a class="button" href="/ecourses/quiz/<?php echo $nextModule[0]['id'] . '/' . $modResponseTimeId?>">Proceed to quiz.</a>
 </div>
