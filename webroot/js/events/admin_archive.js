@@ -11,7 +11,7 @@ Ext.define('Event', {
     {name: 'other_location'},
     {name: 'url'},
     {name: 'address'},
-    {name: 'scheduled', type: 'date'},
+    {name: 'scheduled', type: 'date', dateFormat: 'Y-m-d H:i:s'},
     {name: 'seats_available'},
     {name: 'duration'},
     {name: 'registered'},
