@@ -20,10 +20,10 @@ class EventRegistrationsController extends AppController {
 		parent::beforeFilter();
 		if($this->Auth->user()) {
 			if($this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Events/admin_index', '*')) {
-				$this->Auth->allow('admin_index', 'admin_edit', 'admin_delete', 'admin_attendance_report', 'admin_register_customer');
+				$this->Auth->allow('admin_index', 'admin_edit', 'admin_delete', 'admin_attendance_report', 'admin_register_customer', 'admin_attendance_roster');
 			}
 			if($this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Events/admin_archive', '*')) {
-				$this->Auth->allow('admin_attendance_report');
+				$this->Auth->allow('admin_attendance_report', 'admin_attendance_roster');
 			}
 		}
 	}
