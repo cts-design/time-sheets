@@ -668,7 +668,8 @@ class ProgramResponsesController extends AppController {
 
 				if(!empty($v['ProgramResponseActivity']) && isset($this->params['url']['includeData'])) {
 					$i = 0;
-					foreach($v['ProgramResponseActivity'] as $activity) {
+					$activities = Set::sort($v['ProgramResponseActivity'], '{n}.id', 'asc');
+					foreach($activities as $activity) {
 						if(!empty($activity['answers'])) {
 							$answers = json_decode($activity['answers'], true);
 							foreach($answers as $key => $value) {
