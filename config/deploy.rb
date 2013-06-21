@@ -67,18 +67,12 @@ namespace :cts do
 end
 
 # Production servers
+# 5pm deploys
 task :cc do
   set :deploy_to, "/var/www/vhosts/atlasv3.careercentral.jobs/#{application}"
   set :server_name, 'cc production'
   set :user, 'ccv3prod_ftp'
   server "192.168.200.46", :app, :web, :db, :primary => true
-end
-
-task :chipola do
-  set :deploy_to, "/var/www/vhosts/atlas.onestopahead.com/#{application}"
-  set :server_name, 'chipola production'
-  set :user, 'ola_chip0'
-  server "23.25.183.162", :app, :web, :db, :primary => true
 end
 
 task :clm do
@@ -107,13 +101,6 @@ task :elcp do
   server "vpk.elcpinellas.net", :app, :web, :db, :primary => true
 end
 
-task :jobsplus do
-  set :server_name, 'jobs plus production'
-  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
-  set :user, 'deploy'
-  server '68.225.125.205', :app, :web, :db, :primary => true
-end
-
 task :suncoast do
   set :server_name, 'suncoast production'
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
@@ -128,6 +115,26 @@ task :tbwa do
   set :user, 'ftp_tbwa'
   server "workforcetampa.com", :app, :web, :db, :primary => true
   set :app_plugins, ['job_forms']
+end
+
+task :worknetpinellas do
+  set :server_name, 'worknetpinellas production'
+  server "atlas.worknetpinellas.org", :app, :web, :db, :primary => true
+end
+
+# 6pm deploys
+task :chipola do
+  set :deploy_to, "/var/www/vhosts/atlas.onestopahead.com/#{application}"
+  set :server_name, 'chipola production'
+  set :user, 'ola_chip0'
+  server "23.25.183.162", :app, :web, :db, :primary => true
+end
+
+task :jobsplus do
+  set :server_name, 'jobs plus production'
+  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
+  set :user, 'deploy'
+  server '68.225.125.205', :app, :web, :db, :primary => true
 end
 
 # --- Cake Settings
