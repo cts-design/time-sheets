@@ -6,7 +6,7 @@ Ext.define('EventRegistration', {
         {name: 'firstname'},
         {name: 'lastname'},
         {name: 'last4'},
-        {name: 'registered'},
+        {name: 'registered', type: 'date', dateFormat: 'Y-m-d H:i:s'},
         {name: 'present', type: 'boolean'}
      ]
 });
