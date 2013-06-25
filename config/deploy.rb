@@ -101,6 +101,13 @@ task :elcp do
   server "vpk.elcpinellas.net", :app, :web, :db, :primary => true
 end
 
+task :rescare do
+  set :server_name, 'rescare production'
+  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
+  set :user, 'deploy'
+  server "rescare.atlasforworkforce.com", :app, :web, :db, :primary => true
+end
+
 task :suncoast do
   set :server_name, 'suncoast production'
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"

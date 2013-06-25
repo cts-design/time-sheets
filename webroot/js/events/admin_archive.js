@@ -272,7 +272,7 @@ var gridColumns = [{
   sortable: false
 },{
   text: 'Attended',
-  dataIndex: 'registered',
+  dataIndex: 'attended',
   width: 75,
   sortable: false
 }];
