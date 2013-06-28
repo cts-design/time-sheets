@@ -4313,3 +4313,14 @@ table.raw-data tr td {
 .x-toolbar .x-form-checkbox {
   vertical-align: 0;
 }
+
+.current_image {
+  margin-left: 110px;
+  margin-bottom: 28px;
+}
+
+.current_image h6 {
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
