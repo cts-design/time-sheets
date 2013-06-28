@@ -203,5 +203,30 @@ class PagesController extends AppController {
 		$this->set(compact('data'));
 		return $this->render(null, null, '/elements/ajaxreturn');
 	}
+
+	private function uploadPageImage() {
+		// get the document relative path to the inital storage folder
+		$abs_path = WWW_ROOT . 'img/public/pages/';
+		$rel_path = 'img/public/pages/';
+
+		$pathinfo = pathinfo($_FILES['data']['name']['Page']['image_url']);
+		$fileExt = ".{$pathinfo['extension']}";
+
+		$filename = date('YmdHis') . $fileExt;
+
+		// check to see if the directory exists
+		if (!is_dir($abs_path)) {
+			mkdir($abs_path);
+		}
+
+		$absFileLocation = $abs_path . $filename;
+
+		if (!move_uploaded_file($_FILES['data']['tmp_name']['Page']['image_url'], $absFileLocation)) {
+			return false;
+		}
+
+		$this->data['Page']['image_url'] = $filename;
+		return true;
+	}
 }
 ?>
