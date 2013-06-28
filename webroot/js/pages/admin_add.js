@@ -61,7 +61,9 @@ $(function() {
       var mainContentField = $('#PageContent'),
         headerContentField = $('#PageHeaderContent'),
         footerContentField = $('#PageFooterContent'),
-        landingPageField = $('#PageLandingPage');
+        landingPageField = $('#PageLandingPage'),
+        parentPageSelect = $('#PageParentId'),
+        pageImageField = $('#PageImageUrl');
 
       headerContentField.css('display', 'none').parents('div.input').css('display', 'none').nextUntil('div.input').css('display', 'none');
       footerContentField.css('display', 'none').parents('div.input').css('display', 'none').nextUntil('div.input').css('display', 'none');
@@ -71,10 +73,14 @@ $(function() {
           headerContentField.parents('div.input').css('display', 'block').nextUntil('div.input').css('display', 'block');
           footerContentField.parents('div.input').css('display', 'block').nextUntil('div.input').css('display', 'block');
           mainContentField.parents('div.input').css('display', 'none').nextUntil('div.input').css('display', 'none');
+          parentPageSelect.parents('div.input').css('display', 'none').nextUntil('div.input').css('display', 'none');
+          pageImageField.parents('div.input').css('display', 'none').nextUntil('div.input').css('display', 'none');
         } else {
           headerContentField.parents('div.input').css('display', 'none').nextUntil('div.input').css('display', 'none');
           footerContentField.parents('div.input').css('display', 'none').nextUntil('div.input').css('display', 'none');
           mainContentField.parents('div.input').css('display', 'block').nextUntil('div.input').css('display', 'block');
+          parentPageSelect.parents('div.input').css('display', 'block').nextUntil('div.input').css('display', 'block');
+          pageImageField.parents('div.input').css('display', 'block').nextUntil('div.input').css('display', 'block');
         }
       });
     });
