@@ -136,22 +136,31 @@ class PagesController extends AppController {
 		}
 	}
 
-	function admin_add() {
-		if($this->Acl->check(array('model' => 'User',
-								   'foreign_key' => $this->Auth->user('id')), 'Pages/admin_add', '*')){
-			$_SESSION['ck_authorized'] = true;
-	    }
+	public function admin_add() {
+		$landingPages = $this->Page->findLandingPages();
+
 		if (!empty($this->data)) {
+			if (isset($this->data['Page']['image_url'])) {
+				if ($this->data['Page']['image_url']['error'] === 0) {
+					$this->uploadPageImage();
+				} elseif ($this->data['Page']['image_url']['error'] === 4) {
+					unset($this->data['Page']['image_url']);
+				}
+			}
+
 			$this->Page->create();
+
 			if ($this->Page->save($this->data)) {
-                                $this->Transaction->createUserTransaction('CMS', null, null,
-                                        'Created page: ' . $this->data['Page']['title'] . ' (ID ' . $this->Page->id . ')');
+				$this->Transaction->createUserTransaction('CMS', null, null,
+					'Created page: ' . $this->data['Page']['title'] . ' (ID ' . $this->Page->id . ')');
 				$this->Session->setFlash(__('The page has been saved', true), 'flash_success');
 				$this->redirect(array('action' => 'index'));
 			} else {
 				$this->Session->setFlash(__('The page could not be saved. Please, try again.', true), 'flash_failure');
 			}
 		}
+
+		$this->set(compact('landingPages'));
 	}
 
 	function admin_edit($id = null) {
