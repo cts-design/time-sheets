@@ -91,11 +91,27 @@ class PagesController extends AppController {
 					$this->Session->write('Auth.redirect', '/' . $this->params['url']['url']);
 					$this->redirect(array('controller' => 'users', 'action' => 'login'));
 				} else {
-					$data = array(
-						'title_for_layout' => $page['Page']['title'],
-						'content' => $page['Page']['content']
-					);
-					$this->set($data);
+					if ($page['Page']['landing_page']) {
+						$title_for_layout = $page['Page']['title'];
+
+						$subpages = $this->Page->find('all', array(
+							'conditions' => array(
+								'Page.parent_id' => $page['Page']['id'],
+								'Page.published' => '1'
+							)
+						));
+
+						$this->log($subpages, 'debug');
+
+						$this->set(compact('page', 'subpages', 'title_for_layout'));
+						$this->render('landing_page');
+					} else {
+						$data = array(
+							'title_for_layout' => $page['Page']['title'],
+							'content' => $page['Page']['content']
+						);
+						$this->set($data);
+					}
 				}
 			}
 		}
