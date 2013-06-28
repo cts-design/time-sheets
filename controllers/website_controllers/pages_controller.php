@@ -163,22 +163,32 @@ class PagesController extends AppController {
 		$this->set(compact('landingPages'));
 	}
 
-	function admin_edit($id = null) {
-		if($this->Acl->check(array('model' => 'User',
-								   'foreign_key' => $this->Auth->user('id')), 'Pages/admin_edit', '*')){
-			$_SESSION['ck_authorized'] = true;
-	    }
+	public function admin_edit($id = null) {
+		$landingPages = $this->Page->findLandingPages();
+
 		if (!$id && empty($this->data)) {
 			$this->Session->setFlash(__('Invalid page', true), 'flash_failure');
 			$this->redirect(array('action' => 'index'));
 		}
+
 		if (!empty($this->data)) {
+			if (isset($this->data['Page']['image_url'])) {
+				if ($this->data['Page']['image_url']['error'] === 0) {
+					$this->uploadPageImage();
+				} elseif ($this->data['Page']['image_url']['error'] === 4) {
+					unset($this->data['Page']['image_url']);
+				}
+			}
+
 			if ($this->Page->save($this->data)) {
-                if ($this->data['Page']['slug'] === 'homepage') {
-                    Cache::delete('homepage_middle');
-                }
-                                $this->Transaction->createUserTransaction('CMS', null, null,
-                                        'Edit page ID: ' . $id);
+				if ($this->data['Page']['slug'] === 'homepage') {
+					Cache::delete('homepage_middle');
+				} elseif (Cache::read($this->data['Page']['slug'])) {
+					Cache::delete($this->data['Page']['slug']);
+				}
+
+				$this->Transaction->createUserTransaction('CMS', null, null,
+					'Edit page ID: ' . $id);
 				$this->Session->setFlash(__('The page has been saved', true), 'flash_success');
 				$this->redirect(array('action' => 'index'));
 			} else {
@@ -188,6 +198,8 @@ class PagesController extends AppController {
 		if (empty($this->data)) {
 			$this->data = $this->Page->read(null, $id);
 		}
+
+		$this->set(compact('landingPages'));
 	}
 
 	function admin_delete($id = null) {
