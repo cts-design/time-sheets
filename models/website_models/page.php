@@ -74,6 +74,24 @@ class Page extends AppModel {
 		return $this->find('first', array('conditions' => array('Page.slug' => $slug, 'Page.published' => 1)));
 	}
 
+
+	/**
+	 * Finds only landing pages
+	 *
+	 * @return Array all landing pages
+	 */
+	public function findLandingPages() {
+		return $this->find('list', array(
+			'fields' => array(
+				'Page.id',
+				'Page.title'
+			),
+			'conditions' => array(
+				'Page.landing_page' => 1
+			)
+		));
+	}
+
 	public function notEmptyUnlessLandingPage($check) {
 		$value = array_values($check);
 		$value = $value[0];
