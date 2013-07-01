@@ -41,15 +41,9 @@
 
 		<div class="input text">
 			<p class="left"><label for="PageLandingPage">Landing Page?</label></p>
-			<p class="left">
-			<?php if ($this->data['Page']['landing_page']): ?>
-				<input type="hidden" name="data[Page][landing_page]" id="PageLandingPage_" value="0" />
-				<input type="checkbox" name="data[Page][landing_page]" id="PageLandingPage" value="1" checked="checked" />
-			<?php else: ?>
-				<input type="hidden" name="data[Page][landing_page]" id="PageLandingPage_" value="1" />
-				<input type="checkbox" name="data[Page][landing_page]" id="PageLandingPage" value="0" />
-			<?php endif ?>
-			</p>
+			<?= $this->Form->input('landing_page', array(
+				'label' => false
+			)) ?>
 		</div>
 
 		<?php
@@ -59,7 +53,7 @@
 				'before' => '<p class="left">',
 				'between' => '</p><p class="left">',
 				'after' => '</p>',
-				'options' => $landingPages,
+				'options' => $landingPageList,
 				'empty' => true
 			));
 			echo '<br class="clear" />';

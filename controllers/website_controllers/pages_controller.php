@@ -101,8 +101,6 @@ class PagesController extends AppController {
 							)
 						));
 
-						$this->log($subpages, 'debug');
-
 						$this->set(compact('page', 'subpages', 'title_for_layout'));
 						$this->render('landing_page');
 					} else {
@@ -164,7 +162,7 @@ class PagesController extends AppController {
 	}
 
 	public function admin_edit($id = null) {
-		$landingPages = $this->Page->findLandingPages();
+		$landingPageList = $this->Page->findLandingPages();
 
 		if (!$id && empty($this->data)) {
 			$this->Session->setFlash(__('Invalid page', true), 'flash_failure');
@@ -172,6 +170,7 @@ class PagesController extends AppController {
 		}
 
 		if (!empty($this->data)) {
+			$this->log($this->data, 'debug');
 			if (isset($this->data['Page']['image_url'])) {
 				if ($this->data['Page']['image_url']['error'] === 0) {
 					$this->uploadPageImage();
@@ -199,7 +198,7 @@ class PagesController extends AppController {
 			$this->data = $this->Page->read(null, $id);
 		}
 
-		$this->set(compact('landingPages'));
+		$this->set(compact('landingPageList'));
 	}
 
 	function admin_delete($id = null) {
