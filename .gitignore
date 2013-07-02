@@ -44,3 +44,5 @@ docs/*
 shared/
 .rvmrc
 .vagrant/*
+views/themed/*
+/views/themed/*
