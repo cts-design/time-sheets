@@ -27,7 +27,14 @@ namespace :design do
 
   desc 'Remove the design repo and asset symlinks'
   task :cleanup do
-    branch = ENV['REPO']
+    ignore = ['.', '..', '.DS_Store']
+    branch = ''
+
+    Dir.foreach 'views/themed' do |file|
+      next if ignore.include? file
+      branch = file
+    end
+
     puts "= Removing the #{branch} theme folder"
     sh "cd views/themed && rm -rf #{branch}"
 
