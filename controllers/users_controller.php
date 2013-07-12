@@ -1435,35 +1435,46 @@ class UsersController extends AppController {
 
 	public function admin_customer_search() {
 		if($this->RequestHandler->isAjax()) {
-			$data['users'] = array();
-			if(isset($this->params['url']['search'], $this->params['url']['searchType'])) {
-				switch($this->params['url']['searchType']) {
-					case 'lastname':
-						$conditions['User.lastname'] = $this->params['url']['search'];
-						break;
-					case 'last4':
-						$conditions['RIGHT (User.ssn , 4)'] = $this->params['url']['search'];
-						break;
-					case 'ssn':
-						$conditions['User.ssn'] = $this->params['url']['search'];
-						break;
-				}
-				$conditions['User.role_id'] = 1;
-				$users = $this->User->find('all', array('conditions' => $conditions));
-				if($users) {
-					$i = 0;
-					foreach($users as $user) {
-						$data['users'][$i]['id'] = $user['User']['id'];
-						$data['users'][$i]['firstname'] = $user['User']['firstname'];
-						$data['users'][$i]['lastname'] = $user['User']['lastname'];
-						$data['users'][$i]['email'] = $user['User']['email'];
-						$data['users'][$i]['phone'] = $user['User']['phone'];
-						$data['users'][$i]['last_4'] = substr($user['User']['ssn'], -4);
-						$i++;
+			if ($this->RequestHandler->isGet()) {
+				$data['users'] = array();
+				if(isset($this->params['url']['search'], $this->params['url']['searchType'])) {
+					switch($this->params['url']['searchType']) {
+						case 'lastname':
+							$conditions['User.lastname'] = $this->params['url']['search'];
+							break;
+						case 'last4':
+							$conditions['RIGHT (User.ssn , 4)'] = $this->params['url']['search'];
+							break;
+						case 'ssn':
+							$conditions['User.ssn'] = $this->params['url']['search'];
+							break;
+					}
+					$conditions['User.role_id'] = 1;
+					$users = $this->User->find('all', array('conditions' => $conditions));
+					if($users) {
+						$i = 0;
+						foreach($users as $user) {
+							$data['users'][$i]['id'] = $user['User']['id'];
+							$data['users'][$i]['firstname'] = $user['User']['firstname'];
+							$data['users'][$i]['lastname'] = $user['User']['lastname'];
+							$data['users'][$i]['email'] = $user['User']['email'];
+							$data['users'][$i]['phone'] = $user['User']['phone'];
+							$data['users'][$i]['last_4'] = substr($user['User']['ssn'], -4);
+							$i++;
+						}
 					}
 				}
+				$data['success'] = true;
+			} else {
+				$user = json_decode($this->params['form']['user'], true);
+				$userRecord = $this->User->findById($user['id']);
+				$this->User->save(array(
+					'User' => $user
+				));
+				$data['users'][] = $userRecord;
+				$data['success'] = true;
 			}
-			$data['success'] = true;
+
 			$this->set(compact('data'));
 			$this->render(null, null, '/elements/ajaxreturn');
 		}

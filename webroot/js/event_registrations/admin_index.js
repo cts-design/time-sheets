@@ -177,7 +177,12 @@ Ext.create('Ext.grid.Panel', {
   frame: true,
   selModel: {
       selType: 'rowmodel'
-  },		
+  },
+  plugins: [
+    Ext.create('Ext.grid.plugin.RowEditing', {
+      clicksToEdit: 2
+    })
+  ],
   columns: [{
     id: 'firstname',
     text: 'First Name',
@@ -186,9 +191,6 @@ Ext.create('Ext.grid.Panel', {
   },{
     text: 'Last Name',
     dataIndex: 'lastname',
-    editor: {
-      xtype: 'textfield'
-    },
     sortable: true
   },{
     text: 'SSN Last 4',
@@ -199,10 +201,18 @@ Ext.create('Ext.grid.Panel', {
   },{
     text: 'Email',
     dataIndex: 'email',
+    editor: {
+      xtype: 'textfield',
+      allowBlank: false
+    },
     sortable: true
   },{
     text: 'Phone',
     dataIndex: 'phone',
+    editor: {
+      xtype: 'textfield',
+      allowBlank: false
+    },
     sortable: true
   },{
     text: 'Actions',
