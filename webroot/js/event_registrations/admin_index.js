@@ -5,6 +5,7 @@ Ext.define('EventRegistration', {
         {name: 'user_id'},
         {name: 'firstname'},
         {name: 'lastname'},
+        {name: 'email'},
         {name: 'last4'},
         {name: 'registered'},
         {name: 'present', type: 'boolean'}
@@ -122,7 +123,7 @@ Ext.create('Ext.form.Panel',{
 
 Ext.define('User', {
   extend: 'Ext.data.Model',
-  fields: ['id', 'firstname', 'lastname', 'last_4']	
+  fields: ['id', 'firstname', 'lastname', 'email', 'phone', 'last_4']	
 });
 Ext.create('Ext.data.Store', {
   storeId: 'users',
@@ -193,6 +194,13 @@ Ext.create('Ext.grid.Panel', {
   },{
     text: 'SSN Last 4',
     dataIndex: 'last_4',
+    sortable: true,
+    width: 60,
+    align: 'center'
+  },{
+    text: 'Email',
+    dataIndex: 'email',
+    sortable: true
     sortable: true
 
   },{
