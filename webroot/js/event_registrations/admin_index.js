@@ -68,7 +68,7 @@ Ext.create('Ext.data.Store', {
 Ext.create('Ext.form.Panel',{
   frame:true,
   title: 'Search Form',
-  width: 425,
+  width: 475,
   id: 'searchForm',
   collapsible: true,
   defaultType: 'textfield',
@@ -93,7 +93,7 @@ Ext.create('Ext.form.Panel',{
       boxLabel: 'Full SSN',
       name: 'searchType',
       inputValue: 'ssn'
-    }]    	
+    }]
   },{
     fieldLabel: 'Search',
     name: 'search',
@@ -173,7 +173,7 @@ Ext.create('Ext.grid.Panel', {
   id: 'cusGrid',
   height: 300,
   title: 'Customers',
-  width: 425,
+  width: 475,
   frame: true,
   selModel: {
       selType: 'rowmodel'
@@ -206,6 +206,8 @@ Ext.create('Ext.grid.Panel', {
     sortable: true
   },{
     text: 'Actions',
+    align: 'center',
+    width: 60,
     xtype: 'actioncolumn',
     items: [{
       icon: '/img/icons/user_add.png',
@@ -300,7 +302,7 @@ Ext.create('Ext.grid.Panel', {
     {text: "Present", dataIndex: 'present', xtype: 'booleancolumn', trueText: 'Yes', falseText: 'No'}
   ],
   columnLines: true,
-  width: 525,
+  width: 475,
   height: 420,
   frame: true,
   title: 'Registered Users',
