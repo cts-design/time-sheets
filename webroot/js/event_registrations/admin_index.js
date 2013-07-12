@@ -6,6 +6,7 @@ Ext.define('EventRegistration', {
         {name: 'firstname'},
         {name: 'lastname'},
         {name: 'email'},
+        {name: 'phone'},
         {name: 'last4'},
         {name: 'registered'},
         {name: 'present', type: 'boolean'}
@@ -182,7 +183,6 @@ Ext.create('Ext.grid.Panel', {
     text: 'First Name',
     dataIndex: 'firstname',
     sortable: true
-
   },{
     text: 'Last Name',
     dataIndex: 'lastname',
@@ -190,7 +190,6 @@ Ext.create('Ext.grid.Panel', {
       xtype: 'textfield'
     },
     sortable: true
-
   },{
     text: 'SSN Last 4',
     dataIndex: 'last_4',
@@ -201,8 +200,10 @@ Ext.create('Ext.grid.Panel', {
     text: 'Email',
     dataIndex: 'email',
     sortable: true
+  },{
+    text: 'Phone',
+    dataIndex: 'phone',
     sortable: true
-
   },{
     text: 'Actions',
     xtype: 'actioncolumn',

@@ -1457,6 +1457,7 @@ class UsersController extends AppController {
 						$data['users'][$i]['firstname'] = $user['User']['firstname'];
 						$data['users'][$i]['lastname'] = $user['User']['lastname'];
 						$data['users'][$i]['email'] = $user['User']['email'];
+						$data['users'][$i]['phone'] = $user['User']['phone'];
 						$data['users'][$i]['last_4'] = substr($user['User']['ssn'], -4);
 						$i++;
 					}
