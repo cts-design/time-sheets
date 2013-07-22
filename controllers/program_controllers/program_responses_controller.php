@@ -801,8 +801,9 @@ class ProgramResponsesController extends AppController {
 		}
 		$programId = $programResponse['Program']['id'];
 		$programName = $programResponse['Program']['name'];
+		$programStatus = $programResponse['ProgramResponse']['status'];
 		$title_for_layout = 'Program Response';
-		$this->set(compact('title_for_layout', 'approval', 'programName', 'programId'));
+		$this->set(compact('title_for_layout', 'approval', 'programName', 'programId', 'programStatus'));
 	}
 
 
