@@ -127,6 +127,36 @@ Ext.onReady(function(){
       height: 25,
       id: 'tB',
       items: [{
+        text: 'Regenerate Documents',
+        id: 'regenerateDocs',
+        hidden: true,
+        icon: '/img/icons/page_refresh.png',
+        handler: function() {
+          Ext.Msg.wait('Please wait', 'Status');
+          Ext.Ajax.request({
+            url: '/admin/program_responses/regenerate_docs/'+programResponseId,
+            success: function(response, opts) {
+              var obj = Ext.decode(response.responseText);
+              if(obj.success) {
+                Ext.Msg.alert('Status', obj.message);
+              }
+              else {
+                opts.failure(response, opts, obj);
+              }
+            },
+            failure: function(repsonse, opts, obj) {
+              var msg = '';
+              if(obj.message) {
+                msg = obj.message;
+              }
+              else {
+                msg = "An error has occurred";
+              }
+              Ext.Msg.alert('Status', msg);
+            }
+          });
+        }
+      }, {
         text: 'Approved',
         id: 'approved',
         hidden: true,
@@ -256,5 +286,9 @@ Ext.onReady(function(){
     Ext.getCmp('approved').show();
     Ext.getCmp('notApproved').show();
     Ext.getCmp('nextResponse').show();
+  }
+
+  if (programStatus == 'complete') {
+    Ext.getCmp('regenerateDocs').show();
   }
 });
