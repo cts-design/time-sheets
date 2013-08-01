@@ -205,4 +205,55 @@
 		</div>
 	</div>
 	<?php endif ?>
+
+	<?php if ($esignProgram): ?>
+	<?php $currentUser = $this->Session->read('Auth.User') ?>
+	<div id="online-esignature" class="widget">
+		<div class="widget-header">
+			<h2>
+				<i class="icon-pencil"></i>
+				Electronic Signature
+			</h2>
+		</div>
+
+		<div class="widget-content">
+			<ul>
+			<?php if ($currentUser['signature']): ?>
+				<li>
+					<div class="title">
+						<?php
+							$signatureModified = strtotime($currentUser['signature_modified']);
+							$signatureExpires = strtotime('+365 days', $signatureModified);
+						?>
+
+						<?php if($signatureExpires <= strtotime('now')): ?>
+							<p>Your enrollment in the Electronic Signature expired on <?= date('m/d/Y', $signatureExpires) ?></p>
+						<?php else: ?>
+							<p>You are currently enrolled until <?= date('m/d/Y', $signatureExpires) ?></p>
+						<?php endif ?>
+					</div>
+					<div class="details"></div>
+				</li>
+			<?php else: ?>
+				<li>
+					<div class="title">
+						<p>You are not currently enrolled</p>
+					</div>
+					<div class="details"></div>
+
+					<span class="action">
+						<a href="/programs/esign/<?= $esignProgram['Program']['id'] ?>" class="button gray">
+							<?php if (!empty($esignProgram['ProgramResponse']) && $esignProgram['ProgramResponse'][0]['status'] == 'complete'): ?>
+								Completed
+							<?php else: ?>
+								<?= (!empty($esignProgram['ProgramResponse']) ? Inflector::humanize($esignProgram['ProgramResponse'][0]['status']) : 'Enroll Now') ?>
+							<?php endif ?>
+						</a>
+					</span>
+				</li>
+			<?php endif ?>
+			</ul>
+		</div>
+	</div>
+	<?php endif ?>
 </div>

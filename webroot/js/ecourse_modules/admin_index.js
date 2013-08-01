@@ -454,7 +454,7 @@ Ext.onReady(function () {
 
             locationField.enable();
             locationField.allowBlank = false;
-          } else if (newVal === 'pdf' || newVal === 'ppt' || newVal === 'flv') {
+          } else if (newVal === 'pdf' || newVal === 'ppt' || newVal === 'flv' || newVal === 'swf') {
             if (oldVal === 'url') {
               locationField.disable();
               locationField.allowBlank = true;
@@ -472,6 +472,7 @@ Ext.onReady(function () {
           { dbVal: 'flv', stringVal: 'Flash Video' },
           { dbVal: 'pdf', stringVal: 'PDF Document' },
           { dbVal: 'ppt', stringVal: 'PowerPoint Presentation' },
+          { dbVal: 'swf', stringVal: 'Shockwave Video' },
           { dbVal: 'url', stringVal: 'URL' }
         ]
       }),

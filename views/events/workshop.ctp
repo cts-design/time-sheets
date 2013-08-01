@@ -5,14 +5,14 @@
 			<?php if (isset($this->params['url']['date']) && !$wasAjax): ?>
 				<input type="hidden" id="date" name="date" value="<?= $this->params['url']['date'] ?>">
 			<?php endif ?>
-			<label class="event_categories_label" for="event_categories_dropdown"><?php __('Filter by event category') ?>:</label>
-			<select id="event_categories_dropdown" name="event_categories_dropdown">
+			<label class="event_categories_label" for="category_id"><?php __('Filter by event category') ?>:</label>
+			<select id="event_categories_dropdown" name="category_id">
 			<?php foreach($categories as $id => $category): ?>
 				<option value="<?= $id ?>"<?= ($id == $selectedCategory) ? ' selected="selected"' : '' ?>><?= $category ?></option>
 			<?php endforeach; ?>
 			</select>
-			<label class="event_locations_label" for="event_locations_dropdown"><?php __('Filter by event location') ?>:</label>
-			<select id="event_locations_dropdown" name="event_locations_dropdown">
+			<label class="event_locations_label" for="location_id"><?php __('Filter by event location') ?>:</label>
+			<select id="event_locations_dropdown" name="location_id">
 			<?php foreach($locations as $id => $location): ?>
 				<option value="<?= $id ?>"<?= ($id == $selectedLocation) ? ' selected="selected"' : '' ?>><?= $location ?></option>
 			<?php endforeach; ?>
@@ -24,11 +24,11 @@
 	<div class="calnav workshop">
 		<?php
 			$previousMondayUrl = "/events/workshop?date=$prevMonday";
-			if (isset($this->params['url']['event_categories_dropdown'])) {
-				$previousMondayUrl .= "&event_categories_dropdown={$this->params['url']['event_categories_dropdown']}";
+			if (isset($this->params['url']['category_id'])) {
+				$previousMondayUrl .= "&category_id={$this->params['url']['category_id']}";
 			}
-			if (isset($this->params['url']['event_locations_dropdown'])) {
-				$previousMondayUrl .= "&event_locations_dropdown={$this->params['url']['event_locations_dropdown']}";
+			if (isset($this->params['url']['location_id'])) {
+				$previousMondayUrl .= "&location_id={$this->params['url']['location_id']}";
 			}
 		?>
 		<a href="<?= $previousMondayUrl ?>" id="previous-week" class="button gray">
@@ -46,11 +46,11 @@
 
 		<?php
 			$nextMondayUrl = "/events/workshop?date=$nextMonday";
-			if (isset($this->params['url']['event_categories_dropdown'])) {
-				$nextMondayUrl .= "&event_categories_dropdown={$this->params['url']['event_categories_dropdown']}";
+			if (isset($this->params['url']['category_id'])) {
+				$nextMondayUrl .= "&category_id={$this->params['url']['category_id']}";
 			}
-			if (isset($this->params['url']['event_locations_dropdown'])) {
-				$nextMondayUrl .= "&event_locations_dropdown={$this->params['url']['event_locations_dropdown']}";
+			if (isset($this->params['url']['location_id'])) {
+				$nextMondayUrl .= "&location_id={$this->params['url']['location_id']}";
 			}
 		?>
 		<a href="<?= $nextMondayUrl ?>" id="next-week" class="button gray">

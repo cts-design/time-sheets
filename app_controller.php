@@ -81,7 +81,13 @@ class AppController extends Controller {
 		'WY'=>"Wyoming");
 		
     function beforeFilter() {
-		parent::beforeFilter();	
+		parent::beforeFilter();
+
+		if (Configure::read('Website.theme')) {
+			$this->view = 'Theme';
+			$this->theme = Configure::read('Website.theme');
+		}
+
 		if(! defined('CAKEPHP_TEST_SUITE')) {
 			define('CAKEPHP_TEST_SUITE', false);
 		}
