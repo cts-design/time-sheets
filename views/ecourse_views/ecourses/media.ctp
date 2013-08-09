@@ -30,10 +30,10 @@
 	  swfobject.registerObject("media", "9", "/swf/expressinstall.swf");
 	</script>
 
-	<object id="media" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="550" height="420">
+	<object id="media" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="100%" height="550px">
 		<param name="movie" value="/ecourses/load_media/<?= $nextModule[0]['media_location'] ?>" />
 		<!--[if !IE]>-->
-		<object type="application/x-shockwave-flash" data="/ecourses/load_media/<?= $nextModule[0]['media_location'] ?>" width="550" height="420">
+		<object type="application/x-shockwave-flash" data="/ecourses/load_media/<?= $nextModule[0]['media_location'] ?>" width="100%" height="550px">
 		<!--<![endif]-->
 		<p>You need flash to view this media</p>
 		<!--[if !IE]>-->
