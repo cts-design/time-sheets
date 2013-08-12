@@ -9,6 +9,58 @@ class NavHelper extends AppHelper {
 
 	var $helpers = array('Html', 'Session');
 
+	public function suncoastTopLinks() {
+		$Navigation = ClassRegistry::init('Navigation'); // load the navigation model
+		$Navigation->recursive = 1;
+		$links = $Navigation->findChildrenByPosition('Top');
+
+		$output = "<ul class=\"navContent\">";
+		$i = 0;
+		foreach ($links as $key => $value) {
+			$link = $this->Html->link($value['Navigation']['title'], $value['Navigation']['link']);
+
+			if ($this->checkCurrentPage($value['Navigation']['link'])) {
+				$class = 'current';
+			} else {
+				$class = null;
+			}
+
+			$lnks = array();
+			if (isset($value['Navigation']['children']) && !empty($value['Navigation']['children'])) {
+				$i++;
+				foreach ($value['Navigation']['children'] as $k => $v) {
+					$currentPage = $this->checkCurrentPage($v['Navigation']['link']);
+
+					if ($class === null && $currentPage) {
+						$class = 'current';
+						$cls = ' class="current"';
+					} else if ($currentPage) {
+						$cls = ' class="current"';
+					} else {
+						$cls = null;
+					}
+
+					$lnks[] =
+						"<li class=\"$cls\">" .
+						$this->Html->link($v['Navigation']['title'], $v['Navigation']['link']) .
+						"</li>";
+				}
+
+				$output .= "<li class=\"nav drop-down {$class}\">{$link}";
+				$output .= "<div class=\"content contentBox$i\">";
+				$output .= "<ul class=\"careerSeekerDropNav\">";
+				$output .= implode('', $lnks);
+				$output .= "</ul>";
+				$output .= "</div>";
+				$output .= "</li>";
+			} else {
+				$output .= "<li class=\"nav {$class}\">{$link}</li>";
+			}
+		}
+		$output .= "</ul>";
+		return $output;
+	}
+
 	/**
 	 * Retreives the navigation links from the database and outputs the html
 	 *
