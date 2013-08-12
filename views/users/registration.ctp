@@ -160,6 +160,14 @@ $(document).ready(function() {
 			'label' => __('Email Address', true),
 			'between' => '<br />',
 			'after' => '<br />'));
+
+		if ($usePassword) {
+			echo $this->Form->input('password', array(
+				'label' => __('Password', true),
+				'between' => '<br />',
+				'after' => '<br />'));
+		}
+
 		echo $this->Form->input('language', array(
 			'label' => __('Primary Spoken Language', true),
 			'type' => 'select',
