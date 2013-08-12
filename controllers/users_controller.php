@@ -52,6 +52,8 @@ class UsersController extends AppController {
 			'login',
 			'registration',
 			'logout',
+			'forgot_password',
+			'reset_password',
 			'kiosk_auto_logout');
 		if($this->Auth->user('role_id') > 1) {
 			$this->Auth->allow(
@@ -676,6 +678,12 @@ class UsersController extends AppController {
 	}
 
 	function registration($type=null, $lastname=null) {
+		$usePassword = Configure::read('Registration.usePassword');
+
+		if ($usePassword) {
+			$this->User->editValidation('password');
+		}
+
 		if(isset($this->params['pass'][2], $this->params['pass'][3]) &&
 			$this->params['pass'][2] === 'program') {
 				$this->loadModel('Program');
@@ -690,7 +698,9 @@ class UsersController extends AppController {
 		if(!empty($this->data)) {
 			$this->User->Behaviors->disable('Disableable');
 			$this->User->create();
-			if(Configure::read('Registration.ssn') == 'last4') {
+			if ($usePassword) {
+				$this->User->editValidation('password');
+			} else if(Configure::read('Registration.ssn') == 'last4') {
 				if($this->data['User']['registration'] == 'child_website') {
 					$this->User->editValidation('last4');
 				}
@@ -708,7 +718,11 @@ class UsersController extends AppController {
 			}
 			if ($this->User->save($this->data)) {
 				$userId = $this->User->getInsertId();
-				$this->data['User']['password'] = Security::hash($this->data['User']['ssn'], null, true);
+				if ($usePassword) {
+					$this->data['User']['password'] = Security::hash($this->data['User']['password'], null, true);
+				} else {
+					$this->data['User']['password'] = Security::hash($this->data['User']['ssn'], null, true);
+				}
 				$this->data['User']['username'] = $this->data['User']['lastname'];
 				$this->Auth->login($this->data);
 				$this->Transaction->createUserTransaction('Web Site',
@@ -738,7 +752,7 @@ class UsersController extends AppController {
 			$title_for_layout = 'Registration';
 		}
 		$states = $this->states;
-		$this->set(compact('title_for_layout', 'states'));
+		$this->set(compact('title_for_layout', 'states', 'usePassword'));
 		if(isset($type) && $type == 'child' ||
 			isset($this->data['User']['registration']) && $this->data['User']['registration'] == 'child_website') {
 				$this->render('child_registration');
@@ -1742,5 +1756,126 @@ class UsersController extends AppController {
 			'order'      => $order
 		);
 
+	}
+
+	public function forgot_password() {
+		$this->User->recursive = -1;
+		$title_for_layout = 'Forgot Password';
+
+		if (!empty($this->data)) {
+			$user = $this->User->findByEmail($this->data['User']['email']);
+
+			$this->log($user, 'debug');
+
+			if (!empty($user)) {
+				$userId = $user['User']['id'];
+				$userPassword = $user['User']['password'];
+				$expires = round(microtime(true) + (48 * 3600)); // this request will expire after 2 days
+
+				$requestHash = $this->generateResetRequest($userId, $userPassword, $expires);
+				$domain = Configure::read('domain');
+				$resetUrl = "https://{$domain}/users/reset_password/{$userId}/{$expires}/{$requestHash}";
+
+				$userData['email'] = $user['User']['email'];
+				$userData['name'] = $user['User']['firstname'];
+				$userData['username'] = $user['User']['username'];
+
+				if ($this->emailResetRequest($userData, $resetUrl)) {
+					$this->Session->setFlash(__('The instructions to reset your password have been emailed to you', true), 'flash_success');
+				} else {
+					$this->Session->setFlash(__('We could not process your password reset request. Please try again', true), 'flash_failure');
+				}
+			} else {
+				$this->Session->setFlash(__('No user found with that username or email address', true), 'flash_failure');
+			}
+		}
+
+		$this->set(compact('title_for_layout'));
+	}
+
+	public function reset_password($userId = null, $time = null, $hash = null) {
+		if (!$userId || !$time || !$hash) {
+			$this->Session->setFlash(__('We could not authenticate your request for a password reset', true), 'flash_failure');
+			$this->redirect(array('action' => 'forgot_password'));
+		}
+
+		$user = $this->User->findById($userId);
+		if (!empty($user)) {
+			$password = $user['User']['password'];
+			$now = round(microtime(true));
+
+			if ($now < $time) {
+				if ($this->authenticateResetRequest($password, $this->params['pass'])) {
+					if (!empty($this->data)) {
+						if ($this->User->save($this->data)) {
+							$this->Session->setFlash(__('Your password has been reset. Please login with your new password', true), 'flash_success');
+							$this->redirect(array('action' => 'login'));
+						} else {
+							$this->Session->setFlash(__('Your password could not be reset. Please try again', true), 'flash_failure');
+						}
+					}
+				} else {
+					$this->Session->setFlash(__('Invalid password reset request. Please try again', true), 'flash_failure');
+					$this->redirect(array('action' => 'forgot_password'));
+				}
+			} else {
+				$this->Session->setFlash(__('Your password reset request has expired. Please send a new request', true), 'flash_failure');
+				$this->redirect(array('action' => 'forgot_password'));
+			}
+		}
+	}
+
+	/**
+	 * generateResetRequest
+	 *
+	 * param int $userId The ID of the user that requested the password reset
+	 * param string $oldPassword The current password of the user that requested the password reset
+	 * param float $expireTime The expiration time of the request (in milliseconds)
+	 * return string
+	 */
+	private function generateResetRequest($userId, $oldPassword, $expireTime) {
+		$oldPassword = Security::hash($oldPassword);
+		return Security::hash($oldPassword . $expireTime . $userId, null, true);
+	}
+
+	/**
+	 * emailResetRequest
+	 *
+	 * param array $userData An array containing keys for the users email and the users name
+	 * param string $resetUrl The reset url generated by generateResetRequest
+	 * return boolean
+	 */
+	private function emailResetRequest($userData, $resetUrl) {
+		$companyName = Configure::read('Company.name');
+		$systemEmail = Configure::read('System.email');
+
+		$this->Email->to = $userData['email'];
+		$this->Email->subject = 'Password Reset Request - ' . $companyName;
+		$this->Email->from = "$companyName <$systemEmail>";
+		$this->Email->template = 'forgot_password';
+		$this->Email->sendAs = 'both';
+
+		$this->set(compact('userData', 'resetUrl'));
+
+		if ($this->Email->send()) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * authenticateResetRequest
+	 *
+	 * param string $oldPassword The users current password, to use in building the reset request
+	 * param array $params An array containing the users ID, the users current password, and the request Expiration
+	 * return boolean
+	 */
+	private function authenticateResetRequest($oldPassword, $params = array()) {
+		$userId = $params[0];
+		$expire = $params[1];
+		$hash = $params[2];
+
+		return $this->generateResetRequest($userId, $oldPassword, $expire) === $hash;
 	}
 }

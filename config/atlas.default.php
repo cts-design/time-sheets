@@ -37,6 +37,10 @@ $config['Registration']['ssn'] = 'full';
 // Kiosk login type (options are 'id_card or normal'
 $config['Kiosk']['login_type'] = 'normal';
 
+// Registration - Use password or SSN
+// True to use a password, false to use SSN
+$config['Registration']['usePassword'] = false;
+
 // Document Storage location
 $config['Document']['storage']['path'] = '/storage/';
 
