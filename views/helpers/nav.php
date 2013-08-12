@@ -61,6 +61,20 @@ class NavHelper extends AppHelper {
 		return $output;
 	}
 
+	public function suncoastBottomLinks() {
+		$Navigation = ClassRegistry::init('Navigation'); // load the navigation model
+		$Navigation->recursive = 1;
+		$links = $Navigation->findChildrenByPosition('Bottom');
+
+		$output = "<ul>";
+		foreach ($links as $key => $value) {
+			$link = $this->Html->link($value['Navigation']['title'], $value['Navigation']['link']);
+			$output .= "<li>{$link}</li>";
+		}
+		$output .= "</ul>";
+		return $output;
+	}
+
 	/**
 	 * Retreives the navigation links from the database and outputs the html
 	 *
