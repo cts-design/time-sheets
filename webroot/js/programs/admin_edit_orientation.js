@@ -244,6 +244,7 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.data.Store', {
+  autoSync: true,
   storeId: 'ProgramStepStore',
   model: 'ProgramStep',
   proxy: {
@@ -261,8 +262,10 @@ Ext.create('Ext.data.Store', {
     },
     writer: {
       type: 'json',
+      allowSingle: false,
       encode: true,
-      root: 'program_steps'
+      root: 'program_steps',
+      writeAllFields: true
     }
   }
 });
@@ -646,6 +649,8 @@ registrationForm = Ext.create('Ext.form.Panel', {
         mediaTypeField = formPanel.down('#mediaType'),
         uploadMediaButton = formPanel.down('#uploadMediaButton'),
         programStore = Ext.data.StoreManager.lookup('ProgramStore'),
+        programStepStore = Ext.data.StoreManager.lookup('ProgramStepStore'),
+        mediaStep = programStepStore.findRecord('type', /^media$/gi),
         allFormFields,
         // this will be an array to hold the index of the items in the mixed
         // collection to set them back to allowBlank: false
@@ -680,14 +685,12 @@ registrationForm = Ext.create('Ext.form.Panel', {
           mediaTypeField.disable().allowBlank = true;
           uploadMediaButton.disable();
 
-          media = {
-            location: action.result.url,
-            type: vals.media_type
-          };
+          mediaStep.beginEdit();
+          mediaStep.set('media_location', action.result.url);
+          mediaStep.set('media_type', vals.media_type);
+          mediaStep.endEdit();
 
-          programStore.getProxy().extraParams = {
-            media: Ext.JSON.encode(media)
-          };
+          console.log(mediaStep);
         },
         failure: function (form, action) {
           switch (action.failureType) {
