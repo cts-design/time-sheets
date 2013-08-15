@@ -1,15 +1,15 @@
 <?php echo $this->Html->script('events/navigation.js', array('inline' => false)) ?>
 <div id="events">
 	<div class="filters">
-		<form class="event_categories" action="<?= $this->here; ?>" method="post">
-			<label class="event_categories_label" for="event_categories_dropdown"><?php __('Filter by event category') ?>:</label>
-			<select id="event_categories_dropdown" name="event_categories_dropdown">
+		<form class="event_categories" action="<?= $this->Url->currentUrl(); ?>" method="get">
+			<label class="event_categories_label" for="category_id"><?php __('Filter by event category') ?>:</label>
+			<select id="event_categories_dropdown" name="category_id">
 			<?php foreach($categories as $id => $category): ?>
 				<option value="<?= $id ?>"<?= ($id == $selectedCategory) ? ' selected="selected"' : '' ?>><?= $category ?></option>
 			<?php endforeach; ?>
 			</select>
-			<label class="event_locations_label" for="event_locations_dropdown"><?php __('Filter by event location') ?>:</label>
-			<select id="event_locations_dropdown" name="event_locations_dropdown">
+			<label class="event_locations_label" for="location_id"><?php __('Filter by event location') ?>:</label>
+			<select id="event_locations_dropdown" name="location_id">
 			<?php foreach($locations as $id => $location): ?>
 				<option value="<?= $id ?>"<?= ($id == $selectedLocation) ? ' selected="selected"' : '' ?>><?= $location ?></option>
 			<?php endforeach; ?>
@@ -19,16 +19,14 @@
 		</form>
 	</div>
 	<div class="calnav events monthly">
-	<a href="/events/index/<?= $prevMonth ?>" id="previous-month" class="button gray">
+		<a href="<?= $prevMonthUrl ?>" id="previous-month" class="button gray">
 			<i class="icon-chevron-left"></i>
 			Previous Month
 		</a>
 
-		<h2>
-			Events for <?= date('F', strtotime($curMonth)) ?>
-		</h2>
+		<h2>Events for <?= $curMonth ?></h2>
 
-		<a href="/events/index/<?= $nextMonth ?>" id="next-month" class="button gray">
+		<a href="<?= $nextMonthUrl ?>" id="next-month" class="button gray">
 			Next Month
 			<i class="icon-chevron-right"></i>
 		</a>

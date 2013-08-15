@@ -4,6 +4,21 @@
 </div>
 <div id="ReleaseNotes">
 
+	<h1>Release 3.7.5 (6-20-13)</h1>
+	<h2>Minor updates</h2>
+	<ol>
+		 <li>Added Electronic signature status to customer dashboard</li>
+		 <li>Added the ability to use SWF files to Programs and Ecourses</li>
+		 <li>Added Social media component support to various customized ATLAS layouts</li>
+	</ol>
+	<h2>Bug Fixes</h2>
+	<ol>
+		<li>Fixed issue that was causing program response excel reports to generate data out of order within the excel file</li>
+		<li>Fixed issue that was causing undesired results within the events web-services module</li>
+		<li>Fixed a bug that was causing the Event scheduled date to not display properly</li>
+	</ol>
+	<hr />
+
 	<h1>Release 3.7.4 (5-09-13)</h1>
 	<h2>Minor updates</h2>
 	<ol>

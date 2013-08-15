@@ -453,6 +453,15 @@ class User extends AppModel {
 	);
 
 	public $validationEdits = array(
+		'password' => array(
+			'password' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a password.',
+					'required' => false
+				)
+			)
+		),
 		'last4' => array(
 			'ssn' => array(
 				'notEmpty' => array(
@@ -624,10 +633,13 @@ class User extends AppModel {
 	}
 
 	public function beforeSave($options = array()) {
-		if (isset($this->data['User']['pass'])) {
+		if (Configure::read('Registration.usePassword')) {
+			$this->data['User']['password'] = Security::hash($this->data['User']['password'], null, true);
+		}
+		if (!Configure::read('Registration.usePassword') && isset($this->data['User']['pass'])) {
 			$this->data['User']['password'] = Security::hash($this->data['User']['pass'], null, true);
 		}
-		if (!empty($this->data['User']['ssn'])) {
+		if (!Configure::read('Registration.usePassword') && !empty($this->data['User']['ssn'])) {
 			$this->data['User']['password'] = Security::hash($this->data['User']['ssn'], null, true);
 		}
 		if(!empty($this->data['User']['firstname']) && !empty($this->data['User']['lastname'])) {
