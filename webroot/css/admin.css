@@ -4296,3 +4296,15 @@ table.raw-data tr td {
   background: transparent url(../img/icons/group_link_disabled.png) 0 0 !important;
   cursor: default !important;
 }
+
+.x-livesearch-match {
+  font-weight: bold;
+  background-color: yellow;
+}
+
+.x-toolbar .x-form-cb-wrap {
+  line-height: 22px;
+}
+.x-toolbar .x-form-checkbox {
+  vertical-align: 0;
+}
