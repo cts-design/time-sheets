@@ -71,7 +71,7 @@ class FiledDocumentsController extends AppController {
 		$this->set(compact('title_for_layout', 'filedDocuments', 'actButton', 'user', 'reasons'));
 	}
 
-	function admin_view($id = null) {
+	public function admin_view($id = null) {
 		if(!$id) {
 			$this->Session->setFlash(__('Invalid filed document', true), 'flash_failure');
 			$this->redirect($this->referer());
@@ -122,7 +122,7 @@ class FiledDocumentsController extends AppController {
 		return $params;
 	}
 
-	function auditor_view($id = null) {
+	public function auditor_view($id = null) {
 		$this->view = 'Media';
 		$doc = $this->FiledDocument->findById($id);
 		$params = array(
