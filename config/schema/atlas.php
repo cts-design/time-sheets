@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2013-06-21 10:50:13 : 1371826213*/
+/* atlas schema generated on: 2013-06-28 15:22:00 : 1372447320*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -549,8 +549,10 @@ class atlasSchema extends CakeSchema {
 	);
 	var $pages = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
+		'parent_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'title' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'slug' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'key' => 'index', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'image_url' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'content' => array('type' => 'text', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'header_content' => array('type' => 'text', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'footer_content' => array('type' => 'text', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),

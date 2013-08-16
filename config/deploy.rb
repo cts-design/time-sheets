@@ -13,6 +13,11 @@ set :default_shell, '/bin/bash'
 # branch to pull atlas design files from
 set :design_branch, "master"
 
+# design branch architecture
+# This is only necessary until all the new designs are deployed and
+# all the old branches are changed over to the CakePHP "theme architecture"
+set :design_architecture, 'old'
+
 # plugins, override in region namespace if region has plugins
 set :app_plugins, []
 
@@ -101,6 +106,13 @@ task :elcp do
   server "vpk.elcpinellas.net", :app, :web, :db, :primary => true
 end
 
+task :phelc do
+  set :server_name, 'phelc production'
+  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
+  set :user, 'deploy'
+  server "atlas.phelc.org", :app, :web, :db, :primary => true
+end
+
 task :rescare do
   set :server_name, 'rescare production'
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
@@ -122,6 +134,15 @@ task :tbwa do
   set :user, 'ftp_tbwa'
   server "workforcetampa.com", :app, :web, :db, :primary => true
   set :app_plugins, ['job_forms']
+end
+
+task :united_way do
+  set :design_branch, 'united-way'
+  set :design_architecture, 'new'
+  set :server_name, 'job smart tampa bay production'
+  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
+  set :user, 'deploy'
+  server "jobsmarttampabay.com", :app, :web, :db, :primary => true
 end
 
 task :worknetpinellas do
@@ -219,16 +240,29 @@ namespace :cake do
 end
 
 task :design do
-  transaction do
-    on_rollback { run "rm -rf #{release_path}; true" }
-    run "cd #{release_path} && git clone --depth 1 git://github.com/CTSATLAS/atlas-design.git design"
-    set :git_flag_quiet, "-q "
-    stream "cd #{release_path}/design && git checkout #{git_flag_quiet}#{design_branch}"
-    run "mv #{release_path}/design/img/default/ #{release_path}/webroot/img/"
-    run "mv #{release_path}/design/js/default/ #{release_path}/webroot/js/"
-    run "mv #{release_path}/design/css/style.css #{release_path}/webroot/css/"
-    run "mv #{release_path}/design/views/layouts/default.ctp #{release_path}/views/layouts/default.ctp"
-    run "mv #{release_path}/design/views/website_views/pages/home.ctp #{release_path}/views/website_views/pages/home.ctp"
+  if design_architecture == 'new'
+    transaction do
+      on_rollback { run "rm -rf #{release_path}; true" }
+      run "if [ ! -d #{release_path}/views/themed/ ]; then mkdir #{release_path}/views/themed; fi"
+      run "cd #{release_path}/views/themed && git clone --depth 1 git://github.com/CTSATLAS/atlas-design.git #{design_branch}"
+      set :git_flag_quiet, "-q "
+      stream "cd #{release_path}/views/themed/#{design_branch} && git checkout #{git_flag_quiet}#{design_branch}"
+      run "cd #{release_path}/webroot/css && ln -s #{release_path}/views/themed/#{design_branch}/webroot/css/theme theme"
+      run "cd #{release_path}/webroot/js && ln -s #{release_path}/views/themed/#{design_branch}/webroot/js/theme theme"
+      run "cd #{release_path}/webroot/img && ln -s #{release_path}/views/themed/#{design_branch}/webroot/img/theme theme"
+    end
+  else design_architecture == 'old'
+    transaction do
+      on_rollback { run "rm -rf #{release_path}; true" }
+      run "cd #{release_path} && git clone --depth 1 git://github.com/CTSATLAS/atlas-design.git design"
+      set :git_flag_quiet, "-q "
+      stream "cd #{release_path}/design && git checkout #{git_flag_quiet}#{design_branch}"
+      run "mv #{release_path}/design/img/default/ #{release_path}/webroot/img/"
+      run "mv #{release_path}/design/js/default/ #{release_path}/webroot/js/"
+      run "mv #{release_path}/design/css/style.css #{release_path}/webroot/css/"
+      run "mv #{release_path}/design/views/layouts/default.ctp #{release_path}/views/layouts/default.ctp"
+      run "mv #{release_path}/design/views/website_views/pages/home.ctp #{release_path}/views/website_views/pages/home.ctp"
+    end
   end
 end
 
