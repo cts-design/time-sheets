@@ -4,6 +4,11 @@
 </div>
 <div id="ReleaseNotes">
 
+	<h1>Release 3.7.6 (8-16-13)</h1>
+	<h2>Minor updates</h2>
+	<ol>
+		 <li>Small release and bug fixes throughout ATLAS</li>
+	</ol>
 	<h1>Release 3.7.5 (6-20-13)</h1>
 	<h2>Minor updates</h2>
 	<ol>
