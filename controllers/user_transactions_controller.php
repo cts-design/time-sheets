@@ -26,6 +26,11 @@ class UserTransactionsController extends AppController {
 		);
 		$userTransactions = $this->paginate();
 		$user = $this->UserTransaction->User->read(null, $userId);
+
+		/*
+		* I need a way to filter UserTransactions where its field 'module' = 'Self Sign'
+		*/
+
 		if(!empty($user['User']['lastname'])) {
 		    $title_for_layout = 'Activity for ' . $user['User']['lastname'] . ', ' . $user['User']['firstname'] ;
 		}
