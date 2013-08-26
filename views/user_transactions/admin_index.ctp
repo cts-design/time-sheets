@@ -6,6 +6,7 @@
  * @package ATLAS V3
  */
 ?>
+<?php echo $this->Html->css('user_transactions/admin_index.css') ?>
 <div id="crumbWrapper">
 <span><?php __('You are here') ?> > </span>
     <?php echo $crumb->getHtml('Activity', null, 'unique') ; ?>
@@ -14,7 +15,20 @@
     <div class="actions ui-widget-header">
 	<ul>
 	    <li><?php echo $this->Html->link(__('Docs', true), array('controller' => 'filed_documents', 'action' => 'index', $this->params['pass'][0])); ?></li>
-	    <li><?php echo $this->Html->link(__('Activity Report', true), array('controller' => 'user_transactions', 'action' => 'report', 'admin' => true, $this->params['pass'][0])); ?></li>
+	    <li><?php echo $this->Html->link(__('Activity Report', true), array('controller' => 'user_transactions', 'action' => 'report', 'admin' => true, $this->params['pass'][0])); ?>
+	    </li>
+
+	    <li class="search-module">
+	    	<label for="select-module">Find by module:</label>
+	    	<select name="select-module" id="select-module">
+	    		<option value=""></option>
+	    		<?php foreach($modules as $avail_module): ?>
+	    			<option value="<?php echo $avail_module ?>" <?php ($avail_module == $selected_module ? "selected" : "")?>>
+	    				<?php echo $avail_module ?>
+	    			</option>
+	    		<?php endforeach ?>
+	    	</select>
+	    </li>
 	</ul>
     </div>
     <table cellpadding="0" cellspacing="0">
