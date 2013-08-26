@@ -17,11 +17,34 @@ class UserTransactionsController extends AppController {
 		    $this->Session->setFlash(__('Invalid user id.', true), 'flash_failure');
 		    $this->redirect($this->referer());
 		}
+
+		if( isset($this->params['url']['module']) )
+		{
+			$selected_module = $this->params['url']['module'];
+		}
+		else
+		{
+			$selected_module = "";
+		}
+		$this->set('selected_module', $selected_module);
+
+
+		$modules = $this->UserTransaction->find('list', array(
+			'fields' => array('UserTransaction.module'),
+			'group' => array('UserTransaction.module')
+		));
+		$this->set('modules', $modules);
+
 		$this->UserTransaction->recursive = 0;
+
+		$conditions = array('UserTransaction.user_id' => $userId);
+		if($selected_module != "" && $selected_module != NULL)
+		{
+			$conditions['UserTransaction.module'] = $selected_module;
+		}
+
 		$this->paginate = array(
-		    'conditions' => array(
-			'UserTransaction.user_id' => $userId
-		    ),
+		    'conditions' => $conditions,
 		    'order' => array('UserTransaction.id' => 'desc')
 		);
 		$userTransactions = $this->paginate();
