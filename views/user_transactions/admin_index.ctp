@@ -7,6 +7,7 @@
  */
 ?>
 <?php echo $this->Html->css('user_transactions/admin_index.css') ?>
+<?php echo $this->Html->script('user_transactions/admin_index.js') ?>
 <div id="crumbWrapper">
 <span><?php __('You are here') ?> > </span>
     <?php echo $crumb->getHtml('Activity', null, 'unique') ; ?>
