@@ -1,0 +1,14 @@
+.waiting
+{
+	float:right !important;
+	margin-top:-35px;
+}
+.status
+{
+	margin-right:175px !important;
+}
+.loader
+{
+	float:left;
+	margin-right:5px;
+}
