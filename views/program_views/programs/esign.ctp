@@ -1,5 +1,6 @@
 <?= $this->Html->script('programs/dashboard', array('inline' => false)) ?>
 <?= $this->Html->script('adobe-reader-check', array('inline' => false)) ?>
+<?= $this->Html->script('programs/esign') ?>
 <?= $this->Html->css('programs/esign'); ?>
 <?php echo (!empty($instructions) ? '<div id="instructions">' . $instructions . '</div>' : '' ) ?>
 
@@ -16,10 +17,12 @@
 					echo Inflector::humanize($programResponse['ProgramResponse']['status']) 
 				?>
 			</span>
-			<span class="waiting">
-				<?= $this->Html->image('programs/ajax-loader.gif', array('class' => 'loader')) ?>
-				Waiting for E-Signature...
-			</span>
+			<?php if($programResponse['ProgramResponse']['status'] === 'pending_document_review'): ?>
+				<span class="waiting">
+					<?= $this->Html->image('programs/ajax-loader.gif', array('class' => 'loader')) ?>
+					Waiting for E-Signature...
+				</span>
+			<?php endif ?>
 			<ol>
 			<?php if($programResponse['ProgramResponse']['status'] === 'incomplete') : ?>
 				<li class="step incomplete">

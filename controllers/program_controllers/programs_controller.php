@@ -32,7 +32,30 @@ class ProgramsController extends AppController {
 	}
 
 	public function esign($id=null) {
-		$this->loadProgram($id);
+		if($this->RequestHandler->isAjax())
+		{
+			$esign = $this->User->findById($id);
+			echo json_encode(array('success' => TRUE, 'output' => 'Worked'));
+			exit;
+		}
+		else
+		{
+			$this->loadProgram($id);
+		}
+	}
+
+	public function esign_get_status($id = null) {
+		if($id == null)
+			$id = $this->params['url']['id'];
+
+		$this->loadModel('ProgramResponse');
+		$esign = $this->ProgramResponse->find('first', array(
+			'conditions' => array( 'ProgramResponse.id' => $id)
+		));
+
+		$message = array('success' => TRUE, 'output' => $esign);
+		echo json_encode($message);
+		exit();
 	}
 
 	public function enrollment($id=null) {
