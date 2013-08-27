@@ -29,6 +29,7 @@
 	    			</option>
 	    		<?php endforeach ?>
 	    	</select>
+	    	<button name="reset" class="reset-button reset-select">Reset</button>
 	    </li>
 	</ul>
     </div>
