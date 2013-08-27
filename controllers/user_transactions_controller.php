@@ -10,7 +10,7 @@ class UserTransactionsController extends AppController {
 
     var $name = 'UserTransactions';
 	
-	var $helpers = array('Excel');
+	var $helpers = array('Excel', 'Time');
 
     function admin_index($userId=null) {
 		if(!$userId) {
@@ -18,9 +18,13 @@ class UserTransactionsController extends AppController {
 		    $this->redirect($this->referer());
 		}
 
+		$conditions = array('UserTransaction.user_id' => $userId);
+
+		//Checks if module param exists
 		if( isset($this->params['url']['module']) )
 		{
 			$selected_module = $this->params['url']['module'];
+			$conditions['UserTransaction.module'] = $selected_module;
 		}
 		else
 		{
@@ -28,7 +32,40 @@ class UserTransactionsController extends AppController {
 		}
 		$this->set('selected_module', $selected_module);
 
+		//Checks if from-to date param exists
+		if( isset($this->params['url']['from']) )
+		{
+			$human_from_date = $this->params['url']['from'];
+			$from_date = date( "Y-m-d H:i:s", strtotime($human_from_date) );
+		}
+		else
+		{
+			$human_from_date = "";
+			$from_date = "";
+		}
+		$this->set('human_from_date', $human_from_date);
 
+		//Checks if to date param exists
+		if( isset($this->params['url']['to']) )
+		{
+			$human_to_date = $this->params['url']['to'];
+			$to_date = date( "Y-m-d H:i:s", strtotime($human_to_date) );
+		}
+		else
+		{
+			$human_to_date = "";
+			$to_date = "";
+		}
+		$this->set('human_to_date', $human_to_date);
+
+		//if both dates exist then filter by date
+		if($from_date != "" && $to_date != "")
+		{
+			$conditions['UserTransaction.created >='] = $from_date;
+			$conditions['UserTransaction.created <='] = $to_date;
+		}
+
+		//Get's available modules from table
 		$modules = $this->UserTransaction->find('list', array(
 			'fields' => array('UserTransaction.module'),
 			'group' => array('UserTransaction.module')
@@ -37,22 +74,12 @@ class UserTransactionsController extends AppController {
 
 		$this->UserTransaction->recursive = 0;
 
-		$conditions = array('UserTransaction.user_id' => $userId);
-		if($selected_module != "" && $selected_module != NULL)
-		{
-			$conditions['UserTransaction.module'] = $selected_module;
-		}
-
 		$this->paginate = array(
 		    'conditions' => $conditions,
 		    'order' => array('UserTransaction.id' => 'desc')
 		);
 		$userTransactions = $this->paginate();
 		$user = $this->UserTransaction->User->read(null, $userId);
-
-		/*
-		* I need a way to filter UserTransactions where its field 'module' = 'Self Sign'
-		*/
 
 		if(!empty($user['User']['lastname'])) {
 		    $title_for_layout = 'Activity for ' . $user['User']['lastname'] . ', ' . $user['User']['firstname'] ;
