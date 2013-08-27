@@ -3,7 +3,6 @@ tmp/
 /config/atlas.php 
 /config/core.php
 /config/database.php
-*.default.php
 storage/
 /config/core.php
 .settings

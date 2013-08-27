@@ -1,5 +1,6 @@
 <?= $this->Html->script('programs/dashboard', array('inline' => false)) ?>
 <?= $this->Html->script('adobe-reader-check', array('inline' => false)) ?>
+<?= $this->Html->css('programs/esign'); ?>
 <?php echo (!empty($instructions) ? '<div id="instructions">' . $instructions . '</div>' : '' ) ?>
 
 <div class="steps-container">
@@ -9,8 +10,15 @@
 				<h3>E-Signature</h3>
 				<p><?= ($programResponse['ProgramResponse']['status'] === 'incomplete') ? 0 : 1 ?> of 1 steps completed</p>
 			</div>
+			
 			<span class="status">
-				<?php echo Inflector::humanize($programResponse['ProgramResponse']['status']) ?>
+				<?php 
+					echo Inflector::humanize($programResponse['ProgramResponse']['status']) 
+				?>
+			</span>
+			<span class="waiting">
+				<?= $this->Html->image('programs/ajax-loader.gif', array('class' => 'loader')) ?>
+				Waiting for E-Signature...
 			</span>
 			<ol>
 			<?php if($programResponse['ProgramResponse']['status'] === 'incomplete') : ?>

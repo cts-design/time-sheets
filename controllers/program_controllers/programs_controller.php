@@ -150,6 +150,7 @@ class ProgramsController extends AppController {
 					'order' => 'lft ASC'
 				),
 				'ProgramInstruction')));
+		
 		if($program['Program']['disabled']) {
 			$this->Session->setFlash(__('This program is disabled', true), 'flash_failure');
 			$this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
@@ -158,6 +159,7 @@ class ProgramsController extends AppController {
 			$this->Session->setFlash(__('This program id does not match the program type specified in the url.', true), 'flash_failure');
 			$this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
 		}
+
 		if($program['Program']['form_esign_required'] && !$this->Auth->user('signature')) {
 			$esignId = $this->Program->field('id', array('Program.type' => 'esign'));
 			$this->Session->setFlash(__('This program requires that you be enrolled in the e-sign program first', true), 'flash_failure');

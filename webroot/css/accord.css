@@ -1,0 +1,28 @@
+.accord
+{
+	background-color:transparent;
+	border:1px solid #4297d7;
+}
+.accord-header
+{
+	background: url(ui-redmond/images/ui-bg_gloss-wave_55_5c9ccc_500x100.png) 50% 50% repeat-x;
+	color:white;
+	font-weight:bold;
+
+	margin:0px;
+	padding:7px 0px 7px 5px;
+
+	cursor:pointer;
+}
+.accord-body
+{
+	display:none;
+
+	margin:0px;
+	padding:10px 5px;
+}
+.form-button
+{
+	float:right;
+	clear:both;
+}
