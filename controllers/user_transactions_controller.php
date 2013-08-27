@@ -21,7 +21,7 @@ class UserTransactionsController extends AppController {
 		$conditions = array('UserTransaction.user_id' => $userId);
 
 		//Checks if module param exists
-		if( isset($this->params['url']['module']) )
+		if( isset($this->params['url']['module']) && $this->params['url']['module'] != "" )
 		{
 			$selected_module = $this->params['url']['module'];
 			$conditions['UserTransaction.module'] = $selected_module;
@@ -33,10 +33,11 @@ class UserTransactionsController extends AppController {
 		$this->set('selected_module', $selected_module);
 
 		//Checks if from-to date param exists
-		if( isset($this->params['url']['from']) )
+		if( isset($this->params['url']['from']) && $this->params['url']['from'] != "")
 		{
 			$human_from_date = $this->params['url']['from'];
 			$from_date = date( "Y-m-d H:i:s", strtotime($human_from_date) );
+			$conditions['UserTransaction.created >='] = $from_date;
 		}
 		else
 		{
@@ -46,10 +47,11 @@ class UserTransactionsController extends AppController {
 		$this->set('human_from_date', $human_from_date);
 
 		//Checks if to date param exists
-		if( isset($this->params['url']['to']) )
+		if( isset($this->params['url']['to']) && $this->params['url']['to'] != "")
 		{
 			$human_to_date = $this->params['url']['to'];
 			$to_date = date( "Y-m-d H:i:s", strtotime($human_to_date) );
+			$conditions['UserTransaction.created <='] = $to_date;
 		}
 		else
 		{
@@ -57,13 +59,6 @@ class UserTransactionsController extends AppController {
 			$to_date = "";
 		}
 		$this->set('human_to_date', $human_to_date);
-
-		//if both dates exist then filter by date
-		if($from_date != "" && $to_date != "")
-		{
-			$conditions['UserTransaction.created >='] = $from_date;
-			$conditions['UserTransaction.created <='] = $to_date;
-		}
 
 		//Get's available modules from table
 		$modules = $this->UserTransaction->find('list', array(
