@@ -34,9 +34,6 @@ class ProgramsController extends AppController {
 	}
 
 	public function esign($id=null) {
-		$redirect = $this->Session->read('esign_redirect');
-
-		$this->set('redirect', $redirect);
 		$this->loadProgram($id);
 	}
 
