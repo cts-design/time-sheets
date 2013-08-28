@@ -1,5 +1,6 @@
 <?= $this->Html->script('programs/dashboard', array('inline' => false)) ?>
 <?= $this->Html->script('adobe-reader-check', array('inline' => false)) ?>
+<?= $this->Html->script('QueryString'); ?>
 <?= $this->Html->script('programs/esign') ?>
 <?= $this->Html->css('programs/esign'); ?>
 <?php echo (!empty($instructions) ? '<div id="instructions">' . $instructions . '</div>' : '' ) ?>

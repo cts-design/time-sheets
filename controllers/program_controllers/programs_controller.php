@@ -20,10 +20,12 @@ class ProgramsController extends AppController {
 
 	// TODO make these actions work with an index method and routes ??
 	public function registration($id=null) {
+		$this->Session->write('esign_redirect', $this->here);
 		$this->loadProgram($id);
 	}
 
 	public function orientation($id=null) {
+		$this->Session->write('esign_redirect', $this->here);
 		$this->loadProgram($id);
 	}
 
@@ -32,26 +34,25 @@ class ProgramsController extends AppController {
 	}
 
 	public function esign($id=null) {
-		if($this->RequestHandler->isAjax())
-		{
-			$esign = $this->User->findById($id);
-			echo json_encode(array('success' => TRUE, 'output' => 'Worked'));
-			exit;
-		}
-		else
-		{
-			$this->loadProgram($id);
-		}
+		$redirect = $this->Session->read('esign_redirect');
+
+		$this->set('redirect', $redirect);
+		$this->loadProgram($id);
 	}
 
 	public function esign_get_status($id = null) {
 		if($id == null)
 			$id = $this->params['url']['id'];
 
+		
 		$this->loadModel('ProgramResponse');
 		$esign = $this->ProgramResponse->find('first', array(
 			'conditions' => array( 'ProgramResponse.id' => $id)
 		));
+
+		$user_id = $this->Auth->user('id');
+		$this->loadModel('User');
+		$esign = $this->User->findById($user_id);
 
 		$message = array('success' => TRUE, 'output' => $esign);
 		echo json_encode($message);
@@ -183,10 +184,21 @@ class ProgramsController extends AppController {
 			$this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
 		}
 
-		if($program['Program']['form_esign_required'] && !$this->Auth->user('signature')) {
+		//Get signature
+		$user_id = $this->Auth->user('id');
+		$this->loadModel('User');
+		$user = $this->User->findById($user_id);
+
+		if($program['Program']['form_esign_required'] && !$user['User']['signature']) {
 			$esignId = $this->Program->field('id', array('Program.type' => 'esign'));
 			$this->Session->setFlash(__('This program requires that you be enrolled in the e-sign program first', true), 'flash_failure');
-			$this->redirect(array('controller' => 'programs', 'action' => 'esign', $esignId));
+
+			$this->redirect(
+				array('controller' => 'programs', 
+					'action' => 'esign',
+					'?' => array('redirect' => $this->here),
+					$esignId
+			));
 		}
 		$programResponse = $this->Program->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
 		if(!$programResponse) {
@@ -198,7 +210,8 @@ class ProgramsController extends AppController {
 					substr($string, 0, $program['Program']['confirmation_id_length']);
 				$this->data['ProgramResponse']['expires_on'] =
 					date('Y-m-d H:i:s', strtotime('+' . $program['Program']['response_expires_in'] . ' days'));
-				if($this->Program->ProgramResponse->save($this->data)) {
+				if($this->Program->ProgramResponse->save($this->data))
+				{
 					$this->Transaction->createUserTransaction('Programs', null, null,
 					'Initiated program ' . $program['Program']['name']);
 					$programResponse = $this->Program->ProgramResponse->getProgramResponse($id, $this->Auth->user('id'));
