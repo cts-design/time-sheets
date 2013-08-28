@@ -4,16 +4,18 @@ var statusPoll = {
 	type: 'GET',
 	dataType : 'json',
 	success : function(data){
+		console.log(data);
 		if(data.output.User.signature != "0")
 		{
 			$(".waiting").hide();
 
-			var status = data.output.ProgramResponse.status;
-			status = status.replace(/\_/g, " ");
-			status = toTitleCase(status);
-
-			$(".status").text(status);
+			$(".status").text("E-Signature Recieved");
 			$(".status").css('color', '#60b05a');
+
+			setTimeout(function(){
+				var fullQuery = parseString();
+				location.pathname = fullQuery.redirect;
+			}, 1);
 		}
 	},
 	error : reportError
