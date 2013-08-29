@@ -14,7 +14,15 @@ var statusPoll = {
 
 			setTimeout(function(){
 				var fullQuery = parseString();
-				location.pathname = fullQuery.redirect;
+
+				if(typeof fullQuery.redirect !== 'undefined' || fullQuery.redirect !== '')
+				{
+					location.pathname = fullQuery.redirect;
+				}
+				else
+				{
+					location.pathname = '/users/dashboard';
+				}
 			}, 1);
 		}
 	},
