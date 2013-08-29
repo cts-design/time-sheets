@@ -28,7 +28,7 @@ Ext.onReady( function() {
 			fieldStyle: 'margin-left:10px',
 			fieldLabel: 'Category Name',
 			name: "text",
-			allowBlank: false,
+			allowBlank: false
 		}],
 		buttons: [{
 			text: 'Save',
