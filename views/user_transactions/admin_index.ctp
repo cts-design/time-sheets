@@ -22,7 +22,7 @@
 	    <li><?php echo $this->Html->link(__('Activity Report', true), array('controller' => 'user_transactions', 'action' => 'report', 'admin' => true, $this->params['pass'][0])); ?>
 	    </li>
 
-	    <li style="float:right">
+	    <li style="float:right;vertical-align:middle">
 	    	<a name="reset" class="reset-button reset-select">Reset Form</a>
 	    </li>
 
