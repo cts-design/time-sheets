@@ -22,17 +22,21 @@
 	    <li><?php echo $this->Html->link(__('Activity Report', true), array('controller' => 'user_transactions', 'action' => 'report', 'admin' => true, $this->params['pass'][0])); ?>
 	    </li>
 
+	    <li style="float:right">
+	    	<a name="reset" class="reset-button reset-select">Reset Form</a>
+	    </li>
+
 	    <li class="search-module">
-	    	<label for="select-module">Find by module:</label>
-	    	<select name="select-module" id="select-module">
-	    		<option value=""></option>
-	    		<?php foreach($modules as $avail_module): ?>
-	    			<option value="<?php echo $avail_module ?>" <?= ($avail_module == $selected_module ? "selected" : "")?>>
-	    				<?php echo $avail_module ?>
-	    			</option>
-	    		<?php endforeach ?>
-	    	</select>
-	    	<button name="reset" class="reset-button reset-select">Reset</button>
+	    	<label>Find by module:
+		    	<select name="select-module" id="select-module">
+		    		<option value=""></option>
+		    		<?php foreach($modules as $avail_module): ?>
+		    			<option value="<?php echo $avail_module ?>" <?= ($avail_module == $selected_module ? "selected" : "")?>>
+		    				<?php echo $avail_module ?>
+		    			</option>
+		    		<?php endforeach ?>
+		    	</select>
+	    	</label>
 	    </li>
 	</ul>
     </div>

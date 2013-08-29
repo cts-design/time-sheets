@@ -6,8 +6,6 @@
 .reset-button
 {
 	float:right !important;
-
-	margin-top:-23px;
 	margin-right:3px !important;
 	background:#DDD;
 }
