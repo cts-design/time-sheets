@@ -51,6 +51,17 @@
 				'between' => '</p><p class="left">',
 				'after' => '</p>'
 			    ));
+
+			echo '<br class="clear" />';
+			echo '<br class="clear" />';
+
+			echo $this->Form->input('default_sign_in', array(
+				'label' => 'Default Sign in Method',
+				'before' => '<p class="left">',
+				'between' => '</p><p class="left">',
+				'after' => '</p>',
+				'options' => array("id_card" => "Id Card", "user_login" => "User Login")
+			));
 		?>
     </fieldset>
     <?php echo $this->Form->end(__('Submit', true)); ?>

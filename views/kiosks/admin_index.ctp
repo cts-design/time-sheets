@@ -46,6 +46,12 @@
 		    <?php echo $this->Html->link(__('Buttons', true), array('controller' => 'kiosk_buttons', 'action' => 'index', $kiosk['Kiosk']['id']), array('class' => 'buttons')); ?>
 		    <?php echo $this->Html->link(__('Edit', true), array('action' => 'edit', $kiosk['Kiosk']['id']), array('class' => 'edit')); ?>
 		    <?php echo $this->Html->link(__('Delete', true), array('action' => 'delete', $kiosk['Kiosk']['id']), array('class' => 'delete'), sprintf(__('Are you sure you want to delete this kiosk?', true), $kiosk['Kiosk']['id'])); ?>
+
+		    <?php 
+		    	echo $this->Html->link( 'Set Defaults', 
+		    		array('action' => 'set_default_login', $kiosk['Kiosk']['id']) );
+		    ?>
+
 		    <?php if (!empty($kiosk['KioskSurvey'])): ?>
 		    	<?php echo $this->Html->link(__('Remove Survey', true), '', array('class' => 'remove-survey')) ?>
 			    <?php echo $this->Html->link(__('Add Survey', true), '', array('class' => 'add-survey hidden')) ?>

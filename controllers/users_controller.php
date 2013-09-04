@@ -49,6 +49,7 @@ class UsersController extends AppController {
 			'admin_logout',
 			'kiosk_id_card_login',
 			'kiosk_self_sign_login',
+			'kiosk_sign_in_redirect',
 			'login',
 			'registration',
 			'logout',
@@ -469,6 +470,40 @@ class UsersController extends AppController {
 		$this->set($data);
 	}
 
+	/*
+		Will be the initial action when program routes to '/kiosk' 
+		@name kiosk redirect
+	*/
+	function kiosk_sign_in_redirect()
+	{
+		$this->loadModel('Kiosk');
+		$oneStop = env('HTTP_USER_AGENT');
+		$arrOneStop = explode('##', $oneStop);
+		if(!isset($arrOneStop[1])) {
+			$oneStopLocation = '';
+		}
+		else {
+			$oneStopLocation = $arrOneStop[1];
+		}
+		$this->Kiosk->recursive = -1;
+		$this->Kiosk->Behaviors->attach('Containable');
+		$this->Kiosk->contain(array('KioskSurvey', 'Location'));
+		$settings = Cache::read('settings');
+		$fields = Set::extract('/field',  json_decode($settings['SelfSign']['KioskRegistration'], true));
+		$kiosk = $this->Kiosk->find('first', array(
+			'conditions' => array(
+				'Kiosk.location_recognition_name' => $oneStopLocation, 'Kiosk.deleted' => 0)));
+
+		if($kiosk['Kiosk']['default_sign_in'] == 'id_card')
+		{
+			$this->redirect(array('action' => 'id_card_login', 'kiosk' => true));	
+		}
+		else
+		{
+			$this->redirect(array('action' => 'self_sign_login', 'kiosk' => true));
+		}
+	}
+
 	function kiosk_self_sign_login() {
 		$this->loadModel('Kiosk');
 		$oneStop = env('HTTP_USER_AGENT');
@@ -491,7 +526,7 @@ class UsersController extends AppController {
 		if (isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'kiosk') {
 			if ($this->Auth->user()) {
 				$user = $this->Auth->user();
-				if(Configure::read('Kiosk.login_type') == 'id_card') {
+				if($kiosk['Kiosk']['default_sign_in'] == 'id_card') {
 					$this->User->id = $user['User']['id'];
 					$this->User->saveField('id_card_number', $this->Session->read('idCard.id_full'));
 				}
@@ -542,6 +577,7 @@ class UsersController extends AppController {
 		$kiosk = $this->Kiosk->find('first', array(
 			'conditions' => array(
 				'Kiosk.location_recognition_name' => $oneStopLocation, 'Kiosk.deleted' => 0)));
+		
 		if($this->RequestHandler->isPost()) {
 			if(!empty($this->data)) {
 				$data = $this->User->decodeIdString($this->data);
