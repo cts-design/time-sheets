@@ -59,11 +59,13 @@
 
 	Router::connect('/admin', array('controller' => 'users', 'action' => 'login', 'admin' => true));
 	
+	/*
 	if(Configure::read('Kiosk.login_type') == 'id_card') {
 		Router::connect('/kiosk', array('controller' => 'users', 'action' => 'id_card_login', 'kiosk' => true));
 	}
 	else {
 		Router::connect('/kiosk', array('controller' => 'users', 'action' => 'self_sign_login', 'kiosk' => true));
-	}
+	}*/
+	Router::connect('/kiosk', array('controller' => 'users', 'action' => 'sign_in_redirect', 'kiosk' => true));
 
 
