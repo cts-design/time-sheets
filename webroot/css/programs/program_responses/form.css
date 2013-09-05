@@ -1,0 +1,19 @@
+.checkbox
+{
+	display:block;
+	margin-bottom:5px;
+	font-weight:bold;
+}
+.checkbox input
+{
+	margin-right:3px;
+}
+.select
+{
+	font-weight:bold;
+}
+.instructions
+{
+	margin:5px 0px 3px 5px;
+	font-weight:normal;
+}
