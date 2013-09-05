@@ -391,6 +391,7 @@ class KiosksController extends AppController {
 			$id = $this->_queueScannedDocument();
 			if($id) {
 				$this->loadModel('SelfScanCategory');
+				$this->SelfScanCategory->recursive = -1;
 				$selfScanCat = $this->SelfScanCategory->findById($this->data['QueuedDocument']['self_scan_cat_id']);
 				$this->sendSelfScanAlert($this->Auth->user(), $id, $this->data['QueuedDocument']['scanned_location_id']);
 				$this->sendSelfScanCategoryAlert($this->Auth->user(), $selfScanCat, $id, $this->data['QueuedDocument']['scanned_location_id']);
