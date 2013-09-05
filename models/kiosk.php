@@ -73,10 +73,10 @@ class Kiosk extends AppModel {
 	$arrOneStop = explode('##', $oneStop);
 	if(isset($arrOneStop[1])) {
 	$oneStopLocation = $arrOneStop[1];
-	    $kiosk = $this->find('first',
-			    array('conditions' => array(
-				'Kiosk.location_recognition_name' => $oneStopLocation,
-				'Kiosk.deleted' => 0)));
+	$kiosk = $this->find('first',
+		array('conditions' => array('Kiosk.location_recognition_name' => $oneStopLocation, 'Kiosk.deleted' => 0),
+		'recursive' => -1
+		));
 	}
 
 	if(isset($kiosk)) {
