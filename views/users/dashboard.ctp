@@ -3,7 +3,6 @@
 		.widget .header { filter: none; }
 	</style>
 <![endif]-->
-
 <div id="dashboard">
 	<?php if(!empty($eventRegistrations)) : ?>
 	<div id="event-registrations" class="widget">
@@ -124,11 +123,33 @@
 
 					<span class="action">
 						<a href="/programs/registration/<?= $value['Program']['id'] ?>" class="button gray">
+							<!--
 							<?php if (!empty($value['ProgramResponse']) && $value['ProgramResponse'][0]['status'] == 'complete'): ?>
 								Completed
 							<?php else: ?>
 								<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Get Started') ?>
 							<?php endif ?>
+						-->
+
+							<?php
+							$found = false;
+							foreach($value['ProgramResponse'] as $response){
+								if($response['user_id'] == 8)
+								{
+									$found = true;
+									if( !empty($response['status']) )
+										echo Inflector::humanize($response['status']);
+									else
+										echo 'Get Started';
+									break;
+								}
+							}
+
+							if(!$found)
+							{
+								echo 'Get Started';
+							}
+							?>
 						</a>
 					</span>
 				</li>
@@ -158,11 +179,34 @@
 
 					<span class="action">
 						<a href="/programs/orientation/<?= $value['Program']['id'] ?>" class="button gray">
+
+							<!--
 							<?php if (!empty($value['ProgramResponse']) && $value['ProgramResponse'][0]['status'] == 'complete'): ?>
 								Completed
 							<?php else: ?>
 								<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Get Started') ?>
 							<?php endif ?>
+						-->
+
+							<?php
+							$found = false;
+							foreach($value['ProgramResponse'] as $response){
+								if($response['user_id'] == 8)
+								{
+									$found = true;
+									if( !empty($response['status']) )
+										echo Inflector::humanize($response['status']);
+									else
+										echo 'Get Started';
+									break;
+								}
+							}
+
+							if(!$found)
+							{
+								echo 'Get Started';
+							}
+							?>
 						</a>
 					</span>
 				</li>
@@ -192,11 +236,34 @@
 
 					<span class="action">
 						<a href="/programs/enrollment/<?= $value['Program']['id'] ?>" class="button gray">
+
+							<!--
 							<?php if (!empty($value['ProgramResponse']) && $value['ProgramResponse'][0]['status'] == 'complete'): ?>
 								Completed
 							<?php else: ?>
 								<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Get Started') ?>
 							<?php endif ?>
+							-->
+
+							<?php
+							$found = false;
+							foreach($value['ProgramResponse'] as $response){
+								if($response['user_id'] == 8)
+								{
+									$found = true;
+									if( !empty($response['status']) )
+										echo Inflector::humanize($response['status']);
+									else
+										echo 'Get Started';
+									break;
+								}
+							}
+
+							if(!$found)
+							{
+								echo 'Get Started';
+							}
+							?>
 						</a>
 					</span>
 				</li>
@@ -243,11 +310,34 @@
 
 					<span class="action">
 						<a href="/programs/esign/<?= $esignProgram['Program']['id'] ?>" class="button gray">
+
+							<!--
 							<?php if (!empty($esignProgram['ProgramResponse']) && $esignProgram['ProgramResponse'][0]['status'] == 'complete'): ?>
 								Completed
 							<?php else: ?>
 								<?= (!empty($esignProgram['ProgramResponse']) ? Inflector::humanize($esignProgram['ProgramResponse'][0]['status']) : 'Enroll Now') ?>
 							<?php endif ?>
+							-->
+
+							<?php
+							$found = false;
+							foreach($value['ProgramResponse'] as $response){
+								if($response['user_id'] == 8)
+								{
+									$found = true;
+									if( !empty($response['status']) )
+										echo Inflector::humanize($response['status']);
+									else
+										echo 'Enroll Now';
+									break;
+								}
+							}
+
+							if(!$found)
+							{
+								echo 'Enroll Now';
+							}
+							?>
 						</a>
 					</span>
 				</li>
