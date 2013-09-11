@@ -243,7 +243,7 @@
 							<?php else: ?>
 								<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Get Started') ?>
 							<?php endif ?>
-							-->ø
+							-->
 
 							<?php
 							$found = false;
