@@ -292,6 +292,16 @@ class UsersController extends AppController {
 			)
 		));
 
+		$programs = $this->Program->query(
+			"SELECT * FROM programs AS Program
+			LEFT JOIN program_responses AS ProgramResponse
+			ON Program.id = ProgramResponse.program_id
+			AND ProgramResponse.user_id = " . $this->Auth->user('id') .	
+			" WHERE Program.in_test = 0
+			AND Program.show_in_dash = 1"
+		);
+
+
 		$esignProgram = $this->Program->find('first', array(
 			'conditions' => array(
 				'Program.type' => array('Esign', 'esign', 'E-sign', 'e-sign')
@@ -308,6 +318,7 @@ class UsersController extends AppController {
 				'fields' => array('id', 'name', 'type')
 			)
 		);
+
 		if($programs) {
 			$orientations = array();
 			$registrations = array();
