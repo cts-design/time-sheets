@@ -88,11 +88,11 @@
 					<span class="action">
 						<a href="/ecourses/index/<?= $value['Ecourse']['id'] ?>" class="button gray">
 							<?php if (empty($moduleResponses)): ?>
-								<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Get Started') ?>
+								<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse']['status']) : 'Get Started') ?>
 							<?php elseif ($moduleComplete): ?>
-								<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Completed') ?>
+								<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse']['status']) : 'Completed') ?>
 							<?php else: ?>
-								<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Continue') ?>
+								<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse']['status']) : 'Continue') ?>
 							<?php endif ?>
 						</a>
 					</span>
@@ -123,20 +123,12 @@
 
 					<span class="action">
 						<a href="/programs/registration/<?= $value['Program']['id'] ?>" class="button gray">
-							<!--
-							<?php if (!empty($value['ProgramResponse']) && $value['ProgramResponse'][0]['status'] == 'complete'): ?>
-								Completed
-							<?php else: ?>
-								<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Get Started') ?>
-							<?php endif ?>
-						-->
-
 							<?php
 								$response = $value['ProgramResponse'];
 
 								if( !empty($response) )
 								{
-									echo Inflector::humanize($response[0]['status']);
+									echo Inflector::humanize($response['status']);
 								}
 								else
 								{
@@ -177,7 +169,7 @@
 
 								if( !empty($response) )
 								{
-									echo Inflector::humanize($response[0]['status']);
+									echo Inflector::humanize($response['status']);
 								}
 								else
 								{
@@ -218,7 +210,7 @@
 
 								if( !empty($response) )
 								{
-									echo Inflector::humanize($response[0]['status']);
+									echo Inflector::humanize($response['status']);
 								}
 								else
 								{
@@ -276,7 +268,7 @@
 
 								if( !empty($response) )
 								{
-									echo Inflector::humanize($response[0]['status']);
+									echo Inflector::humanize($response['status']);
 								}
 								else
 								{

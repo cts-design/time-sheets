@@ -308,7 +308,7 @@ class UsersController extends AppController {
 			)
 		));
 
-		$programs = $this->Program->find(
+		/*$programs = $this->Program->find(
 			'all',
 			array(
 				'conditions' => array(
@@ -317,7 +317,7 @@ class UsersController extends AppController {
 				),
 				'fields' => array('id', 'name', 'type')
 			)
-		);
+		);*/
 
 		if($programs) {
 			$orientations = array();
