@@ -35,13 +35,18 @@
 	    echo $form->hidden('User.login_type', array('value' => 'kiosk'));
 	    echo $form->end(array('label' => __('Login', true), 'class' => 'self-sign-kiosk-button'));
     ?>
-	<?php if(Configure::read('Kiosk.login_type') == 'id_card') : ?>
-		<!--
-		<p style="margin: 10px 0 10px 300px">
-			<a class="translate-button" href="/kiosk/users/id_card_login">I'd prefer to login with License or ID</a>
-		</p>
-	-->
-	<?php endif ?>
+    <?php
+    if(isset($kiosk['Kiosk']) && isset($kiosk['Kiosk']['default_sign_in']))
+    {
+    	if($kiosk['Kiosk']['default_sign_in'] == 'id_card'){
+    		?>
+    		<p style="margin: 10px 0 10px 300px">
+				<a class="translate-button" href="/kiosk/users/id_card_login">I'd prefer to login with License or ID</a>
+			</p>
+    		<?php
+    	}
+    }
+    ?>
     <?php if ($kioskHasSurvey): ?>
     	<div class="survey-button">
 		<a href="/kiosk/survey/<?php echo $kiosk['KioskSurvey'][0]['id'] ?>">Take Survey</a>
