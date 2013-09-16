@@ -266,7 +266,7 @@
 							<?php
 								$response = $value['ProgramResponse'];
 
-								if( !$response['status'] != NULL )
+								if( $response['status'] != NULL )
 								{
 									echo Inflector::humanize($response['status']);
 								}
