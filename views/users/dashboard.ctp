@@ -126,7 +126,7 @@
 							<?php
 								$response = $value['ProgramResponse'];
 
-								if( !empty($response) )
+								if( $response['status'] != NULL )
 								{
 									echo Inflector::humanize($response['status']);
 								}
@@ -167,7 +167,7 @@
 							<?php
 								$response = $value['ProgramResponse'];
 
-								if( !empty($response) )
+								if( $response['status'] != NULL )
 								{
 									echo Inflector::humanize($response['status']);
 								}
@@ -208,7 +208,7 @@
 							<?php
 								$response = $value['ProgramResponse'];
 
-								if( !empty($response) )
+								if( $response['status'] != NULL )
 								{
 									echo Inflector::humanize($response['status']);
 								}
@@ -266,7 +266,7 @@
 							<?php
 								$response = $value['ProgramResponse'];
 
-								if( !empty($response) )
+								if( !$response['status'] != NULL )
 								{
 									echo Inflector::humanize($response['status']);
 								}
