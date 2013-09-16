@@ -59,6 +59,14 @@ strong {
     width: 900px;
 }
 
+.id-login-wrapper {
+    position: relative;
+    margin-top: 50px;
+    border: #000 thin solid;
+    width: 900px;
+	height: 388px;
+}
+
 .left {
     float: left;
 }
@@ -103,7 +111,7 @@ margin-left: 100px;
     margin: 15px auto 10px;
 }
 
-.self-sign-survey-wrapper h1, .self-sign-wrapper h1,  .self-scan-wrapper h1, #SelfScanDoument h1 {
+.self-sign-survey-wrapper h1, .self-sign-wrapper h1,  .self-scan-wrapper h1, #SelfScanDoument h1, .id-login-wrapper h1 {
     color: white;
     text-align: center;
     font-size: 25px;
@@ -435,7 +443,7 @@ a.translate-button:active {
 div.survey-button {
   bottom: 2px;
   position: absolute;
-  right: 2px;
+  left: 2px;
 }
 
 div.survey-button a {

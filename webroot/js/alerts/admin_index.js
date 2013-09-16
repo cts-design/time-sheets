@@ -1512,6 +1512,22 @@ Ext.onReady(function(){
     });
   };
 
+  var editSelfScanCategoryAlert = function(record) {
+    var formPanel = Ext.getCmp('selfScanCategoryAlertFormPanel'),
+        locationSelect = Ext.getCmp('selfScanLocation'),
+        categorySelect = Ext.getCmp('selfScanCategory');
+    locationSelect.getStore().load({
+      callback: function() {
+        categorySelect.getStore().load({
+          callback: function() {
+            record.data.self_scan_category_id = record.data.watched_id;
+            formPanel.loadRecord(record);
+          }
+        })
+      }
+    })
+  }
+
   var editProgramResponseStatusAlert = function(record) {
     var formPanel = Ext.getCmp('programResponseStatusAlertFormPanel');
     Ext.Ajax.request({
@@ -1536,22 +1552,6 @@ Ext.onReady(function(){
       formPanel.loadRecord(record);
     }
 
-  };
-
-  var editSelfScanCategoryAlert = function(record) {
-    var formPanel = Ext.getCmp('selfScanCategoryAlertFormPanel'),
-        locationSelect = Ext.getCmp('selfScanLocation'),
-        categorySelect = Ext.getCmp('selfScanCategory');
-    locationSelect.getStore().load({
-      callback: function() {
-        categorySelect.getStore().load({
-          callback: function() {
-            record.data.self_scan_category_id = record.data.watched_id;
-            formPanel.loadRecord(record);
-          }
-        })
-      }
-    })
   };
 });
 

@@ -80,8 +80,6 @@ Ext.onReady(function () {
     stateEvents: ['tabchange'],
     stateId: 'ecourseIndexTabs',
     title: 'Ecourses',
-    listeners: {
-    },
     dockedItems: [{
       xtype: 'toolbar',
       dock: 'top',

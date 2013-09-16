@@ -41,11 +41,11 @@ class AlertsController extends AppController {
 		if($this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Alerts/admin_add_staff_filed_document_alert', '*')) {
 			$this->Auth->allow('admin_update_staff_filed_document_alert');
 		}
-		if($this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Alerts/admin_add_program_response_status_alert', '*')) {
-			$this->Auth->allow('admin_update_program_response_status_alert');
-		}
 		if($this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Alerts/admin_add_self_scan_category_alert', '*')) {
 			$this->Auth->allow('admin_update_self_scan_category_alert');
+		}
+		if($this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Alerts/admin_add_program_response_status_alert', '*')) {
+			$this->Auth->allow('admin_update_program_response_status_alert');
 		}
     }
 

@@ -34,6 +34,9 @@ $config['PrePop']['email'] = '@development.ctsfla.com';
 // Registration SSN requirement (options are 'full' or 'last4')
 $config['Registration']['ssn'] = 'full';
 
+// Kiosk login type (options are 'id_card or normal'
+$config['Kiosk']['login_type'] = 'normal';
+
 // Registration - Use password or SSN
 // True to use a password, false to use SSN
 $config['Registration']['usePassword'] = false;

@@ -603,11 +603,18 @@ class FiledDocumentsController extends AppController {
 		$this->loadModel('DocumentFilingCategory');
 		return $this->DocumentFilingCategory->find('list',
 			array('conditions' => array('DocumentFilingCategory.parent_id' => null)));
-	}
+    }
+	
+	function _processResponseDoc($data, $user) {
+		$this->loadModel('ProgramResponse');							
+		$processedDoc = $this->ProgramResponse->ProgramResponseDoc->processResponseDoc($data, $user);	
 
-	function _processResponseDoc($user) {
-		$this->loadModel('ProgramResponse');
-		$processedDoc = $this->ProgramResponse->ProgramResponseDoc->processResponseDoc($this->data, $user);
+		if(isset($processedDoc['status'])) {
+			$this->loadModel('Program');
+			$this->Program->recursive = -1;
+			$program = $this->Program->findById($processedDoc['program_id']);
+			$this->Notifications->sendProgramResponseStatusAlert($user, $program, $processedDoc['status']);
+		}
 		if(isset($processedDoc['docFiledEmail'])) {
 			$this->Notifications->sendProgramEmail($processedDoc['docFiledEmail'], $user);
 		}

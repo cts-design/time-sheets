@@ -3,7 +3,6 @@
 		.widget .header { filter: none; }
 	</style>
 <![endif]-->
-
 <div id="dashboard">
 	<?php if(!empty($eventRegistrations)) : ?>
 	<div id="event-registrations" class="widget">
@@ -89,11 +88,11 @@
 					<span class="action">
 						<a href="/ecourses/index/<?= $value['Ecourse']['id'] ?>" class="button gray">
 							<?php if (empty($moduleResponses)): ?>
-								<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Get Started') ?>
+								<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse']['status']) : 'Get Started') ?>
 							<?php elseif ($moduleComplete): ?>
-								<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Completed') ?>
+								<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse']['status']) : 'Completed') ?>
 							<?php else: ?>
-								<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Continue') ?>
+								<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse']['status']) : 'Continue') ?>
 							<?php endif ?>
 						</a>
 					</span>
@@ -124,11 +123,18 @@
 
 					<span class="action">
 						<a href="/programs/registration/<?= $value['Program']['id'] ?>" class="button gray">
-							<?php if (!empty($value['ProgramResponse']) && $value['ProgramResponse'][0]['status'] == 'complete'): ?>
-								Completed
-							<?php else: ?>
-								<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Get Started') ?>
-							<?php endif ?>
+							<?php
+								$response = $value['ProgramResponse'];
+
+								if( $response['status'] != NULL )
+								{
+									echo Inflector::humanize($response['status']);
+								}
+								else
+								{
+									echo 'Get Started';
+								}
+							?>
 						</a>
 					</span>
 				</li>
@@ -158,11 +164,18 @@
 
 					<span class="action">
 						<a href="/programs/orientation/<?= $value['Program']['id'] ?>" class="button gray">
-							<?php if (!empty($value['ProgramResponse']) && $value['ProgramResponse'][0]['status'] == 'complete'): ?>
-								Completed
-							<?php else: ?>
-								<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Get Started') ?>
-							<?php endif ?>
+							<?php
+								$response = $value['ProgramResponse'];
+
+								if( $response['status'] != NULL )
+								{
+									echo Inflector::humanize($response['status']);
+								}
+								else
+								{
+									echo 'Get Started';
+								}
+							?>
 						</a>
 					</span>
 				</li>
@@ -192,11 +205,18 @@
 
 					<span class="action">
 						<a href="/programs/enrollment/<?= $value['Program']['id'] ?>" class="button gray">
-							<?php if (!empty($value['ProgramResponse']) && $value['ProgramResponse'][0]['status'] == 'complete'): ?>
-								Completed
-							<?php else: ?>
-								<?= (!empty($value['ProgramResponse']) ? Inflector::humanize($value['ProgramResponse'][0]['status']) : 'Get Started') ?>
-							<?php endif ?>
+							<?php
+								$response = $value['ProgramResponse'];
+
+								if( $response['status'] != NULL )
+								{
+									echo Inflector::humanize($response['status']);
+								}
+								else
+								{
+									echo 'Get Started';
+								}
+							?>
 						</a>
 					</span>
 				</li>
@@ -243,11 +263,18 @@
 
 					<span class="action">
 						<a href="/programs/esign/<?= $esignProgram['Program']['id'] ?>" class="button gray">
-							<?php if (!empty($esignProgram['ProgramResponse']) && $esignProgram['ProgramResponse'][0]['status'] == 'complete'): ?>
-								Completed
-							<?php else: ?>
-								<?= (!empty($esignProgram['ProgramResponse']) ? Inflector::humanize($esignProgram['ProgramResponse'][0]['status']) : 'Enroll Now') ?>
-							<?php endif ?>
+							<?php
+								$response = $value['ProgramResponse'];
+
+								if( $response['status'] != NULL )
+								{
+									echo Inflector::humanize($response['status']);
+								}
+								else
+								{
+									echo 'Enroll Now';
+								}
+							?>
 						</a>
 					</span>
 				</li>

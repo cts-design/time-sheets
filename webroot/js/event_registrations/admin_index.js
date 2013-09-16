@@ -5,8 +5,10 @@ Ext.define('EventRegistration', {
         {name: 'user_id'},
         {name: 'firstname'},
         {name: 'lastname'},
+        {name: 'email'},
+        {name: 'phone'},
         {name: 'last4'},
-        {name: 'registered'},
+        {name: 'registered', type: 'date', dateFormat: 'Y-m-d H:i:s'},
         {name: 'present', type: 'boolean'}
      ]
 });
@@ -66,7 +68,7 @@ Ext.create('Ext.data.Store', {
 Ext.create('Ext.form.Panel',{
   frame:true,
   title: 'Search Form',
-  width: 425,
+  width: 475,
   id: 'searchForm',
   collapsible: true,
   defaultType: 'textfield',
@@ -91,7 +93,7 @@ Ext.create('Ext.form.Panel',{
       boxLabel: 'Full SSN',
       name: 'searchType',
       inputValue: 'ssn'
-    }]    	
+    }]
   },{
     fieldLabel: 'Search',
     name: 'search',
@@ -122,7 +124,7 @@ Ext.create('Ext.form.Panel',{
 
 Ext.define('User', {
   extend: 'Ext.data.Model',
-  fields: ['id', 'firstname', 'lastname', 'last_4']	
+  fields: ['id', 'firstname', 'lastname', 'email', 'phone', 'last_4']	
 });
 Ext.create('Ext.data.Store', {
   storeId: 'users',
@@ -171,32 +173,51 @@ Ext.create('Ext.grid.Panel', {
   id: 'cusGrid',
   height: 300,
   title: 'Customers',
-  width: 425,
+  width: 475,
   frame: true,
   selModel: {
       selType: 'rowmodel'
-  },		
+  },
+  plugins: [
+    Ext.create('Ext.grid.plugin.RowEditing', {
+      clicksToEdit: 2
+    })
+  ],
   columns: [{
     id: 'firstname',
     text: 'First Name',
     dataIndex: 'firstname',
     sortable: true
-
   },{
     text: 'Last Name',
     dataIndex: 'lastname',
-    editor: {
-      xtype: 'textfield'
-    },
     sortable: true
-
   },{
     text: 'SSN Last 4',
     dataIndex: 'last_4',
+    sortable: true,
+    width: 60,
+    align: 'center'
+  },{
+    text: 'Email',
+    dataIndex: 'email',
+    editor: {
+      xtype: 'textfield',
+      allowBlank: false
+    },
     sortable: true
-
+  },{
+    text: 'Phone',
+    dataIndex: 'phone',
+    editor: {
+      xtype: 'textfield',
+      allowBlank: false
+    },
+    sortable: true
   },{
     text: 'Actions',
+    align: 'center',
+    width: 60,
     xtype: 'actioncolumn',
     items: [{
       icon: '/img/icons/user_add.png',
@@ -291,7 +312,7 @@ Ext.create('Ext.grid.Panel', {
     {text: "Present", dataIndex: 'present', xtype: 'booleancolumn', trueText: 'Yes', falseText: 'No'}
   ],
   columnLines: true,
-  width: 525,
+  width: 475,
   height: 420,
   frame: true,
   title: 'Registered Users',

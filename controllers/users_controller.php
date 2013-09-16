@@ -1,3 +1,4 @@
+		
 <?php
 
 /**
@@ -38,12 +39,17 @@ class UsersController extends AppController {
 				}
 			}
 		}
+		if($this->params['action'] == 'kiosk_mini_registration') {
+			$this->Security->validatePost = false;
+		}
 		$this->Auth->allowedActions = array(
 			'kiosk_mini_registration',
 			'admin_password_reset',
 			'admin_login',
 			'admin_logout',
+			'kiosk_id_card_login',
 			'kiosk_self_sign_login',
+			'kiosk_sign_in_redirect',
 			'login',
 			'registration',
 			'logout',
@@ -286,13 +292,23 @@ class UsersController extends AppController {
 			)
 		));
 
+		$programs = $this->Program->query(
+			"SELECT * FROM programs AS Program
+			LEFT JOIN program_responses AS ProgramResponse
+			ON Program.id = ProgramResponse.program_id
+			AND ProgramResponse.user_id = " . $this->Auth->user('id') .	
+			" WHERE Program.in_test = 0
+			AND Program.show_in_dash = 1"
+		);
+
+
 		$esignProgram = $this->Program->find('first', array(
 			'conditions' => array(
 				'Program.type' => array('Esign', 'esign', 'E-sign', 'e-sign')
 			)
 		));
 
-		$programs = $this->Program->find(
+		/*$programs = $this->Program->find(
 			'all',
 			array(
 				'conditions' => array(
@@ -301,7 +317,8 @@ class UsersController extends AppController {
 				),
 				'fields' => array('id', 'name', 'type')
 			)
-		);
+		);*/
+
 		if($programs) {
 			$orientations = array();
 			$registrations = array();
@@ -464,6 +481,40 @@ class UsersController extends AppController {
 		$this->set($data);
 	}
 
+	/*
+		Will be the initial action when program routes to '/kiosk' 
+		@name kiosk redirect
+	*/
+	function kiosk_sign_in_redirect()
+	{
+		$this->loadModel('Kiosk');
+		$oneStop = env('HTTP_USER_AGENT');
+		$arrOneStop = explode('##', $oneStop);
+		if(!isset($arrOneStop[1])) {
+			$oneStopLocation = '';
+		}
+		else {
+			$oneStopLocation = $arrOneStop[1];
+		}
+		$this->Kiosk->recursive = -1;
+		$this->Kiosk->Behaviors->attach('Containable');
+		$this->Kiosk->contain(array('KioskSurvey', 'Location'));
+		$settings = Cache::read('settings');
+		$fields = Set::extract('/field',  json_decode($settings['SelfSign']['KioskRegistration'], true));
+		$kiosk = $this->Kiosk->find('first', array(
+			'conditions' => array(
+				'Kiosk.location_recognition_name' => $oneStopLocation, 'Kiosk.deleted' => 0)));
+
+		if($kiosk['Kiosk']['default_sign_in'] == 'id_card')
+		{
+			$this->redirect(array('action' => 'id_card_login', 'kiosk' => true));	
+		}
+		else
+		{
+			$this->redirect(array('action' => 'self_sign_login', 'kiosk' => true));
+		}
+	}
+
 	function kiosk_self_sign_login() {
 		$this->loadModel('Kiosk');
 		$oneStop = env('HTTP_USER_AGENT');
@@ -486,6 +537,10 @@ class UsersController extends AppController {
 		if (isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'kiosk') {
 			if ($this->Auth->user()) {
 				$user = $this->Auth->user();
+				if($kiosk['Kiosk']['default_sign_in'] == 'id_card') {
+					$this->User->id = $user['User']['id'];
+					$this->User->saveField('id_card_number', $this->Session->read('idCard.id_full'));
+				}
 				$this->sendCustomerLoginAlert($user, $kiosk);
 				if($user['User']['veteran']) {
 					$this->sendCustomerDetailsAlert('veteran', $user, $kiosk);
@@ -509,6 +564,65 @@ class UsersController extends AppController {
 				}
 			}
 		}
+		$this->set('kioskHasSurvey', (empty($kiosk['KioskSurvey'])) ? false : true);
+		$this->set('kiosk', $kiosk);
+		$this->set('title_for_layout', 'Self Sign Kiosk');
+		$this->layout = 'kiosk';
+	}
+
+	public function kiosk_id_card_login() {
+		$this->loadModel('Kiosk');
+		$oneStop = env('HTTP_USER_AGENT');
+		$arrOneStop = explode('##', $oneStop);
+		if(!isset($arrOneStop[1])) {
+			$oneStopLocation = '';
+		}
+		else {
+			$oneStopLocation = $arrOneStop[1];
+		}
+		$this->Kiosk->recursive = -1;
+		$this->Kiosk->Behaviors->attach('Containable');
+		$this->Kiosk->contain(array('KioskSurvey', 'Location'));
+		$settings = Cache::read('settings');
+		$fields = Set::extract('/field',  json_decode($settings['SelfSign']['KioskRegistration'], true));
+		$kiosk = $this->Kiosk->find('first', array(
+			'conditions' => array(
+				'Kiosk.location_recognition_name' => $oneStopLocation, 'Kiosk.deleted' => 0)));
+		
+		if($this->RequestHandler->isPost()) {
+			if(!empty($this->data)) {
+				$data = $this->User->decodeIdString($this->data);
+				if($data['success']) {
+					$this->User->recursive = -1;
+					$user = $this->User->find('first', array(
+						'conditions' => array('User.id_card_number' => $data['id_full'])));
+					if(!$user) {
+						$this->Session->write('idCard', $data);
+					}
+					if($user) {
+						if($this->Auth->login($user)) {
+							$this->Transaction->createUserTransaction('Self Sign',
+								null, $this->User->SelfSignLog->Kiosk->getKioskLocationId(), 'Logged in at self sign kiosk' );
+							if($settings['SelfSign']['KioskConfirmation'] === 'on') {
+								$this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_confirm'));
+							}
+							else {
+								$this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_service_selection'));
+							}
+						}
+					}
+					else {
+						$this->Session->setFlash('Please fill out information below to continue', 'flash_failure');
+						$this->redirect(array('action' => 'self_sign_login'));
+					}
+				}
+				else {
+					$this->Session->setFlash($data['message'], 'flash_failure');
+					$this->redirect(array('action' => 'id_card_login'));
+				}
+			}
+		}
+
 		$this->set('kioskHasSurvey', (empty($kiosk['KioskSurvey'])) ? false : true);
 		$this->set('kiosk', $kiosk);
 		$this->set('title_for_layout', 'Self Sign Kiosk');
@@ -599,7 +713,7 @@ class UsersController extends AppController {
 			}
 			$this->Session->destroy();
 			$this->Session->setFlash($msg, 'flash_success_modal');
-			$this->redirect(array('action' => 'self_sign_login', 'kiosk' => true));
+			$this->redirect('/kiosk');
 		}
 		if (preg_match('/auditor/i', $this->Session->read('Auth.User.role_name'))) {
 			$this->Session->destroy();
@@ -695,14 +809,13 @@ class UsersController extends AppController {
 	function kiosk_auto_logout() {
 		$this->Session->destroy();
 		$this->Session->setFlash(__('You have been logged out due to inactivity.', true), 'flash_failure');
-		$this->redirect(array('action' => 'self_sign_login'));
+		$this->redirect('/kiosk');
 	}
 
 	function kiosk_mini_registration($lastname=null) {
 		$this->loadModel('Kiosk');
 		$this->Kiosk->recursive = -1;
 		$this->User->recursive  = -1;
-
 		if (!empty($this->data)) {
 			$this->User->Behaviors->disable('Disableable');
 			$this->User->setValidation('customerMinimum');
@@ -738,6 +851,19 @@ class UsersController extends AppController {
 		}
 		if (empty($this->data)) {
 			$this->data['User']['lastname'] = $lastname;
+			if(Configure::read('Kiosk.login_type') == 'id_card') {
+				$idCard = $this->Session->read('idCard');
+				if(!empty($idCard)) {
+					$this->data['User']['firstname'] = $idCard['first_name'];
+					$this->data['User']['middle_initial'] = substr($idCard['middle_name'], 1);
+					$this->data['User']['lastname'] = $idCard['last_name'];
+					$this->data['User']['dob'] = $idCard['birth_month'] . '/' . $idCard['birth_day'] . '/' . $idCard['birth_year'];
+					$this->data['User']['address_1'] = $idCard['street'];
+					$this->data['User']['city'] = $idCard['city'];
+					$this->data['User']['state'] = $idCard['state'];
+					$this->data['User']['id_card_number'] = $idCard['id_full']; 
+				}
+			}
 		}
 		$settings = Cache::read('settings');
 		$fields = Set::extract('/field',  json_decode($settings['SelfSign']['KioskRegistration'], true));
@@ -1449,33 +1575,46 @@ class UsersController extends AppController {
 
 	public function admin_customer_search() {
 		if($this->RequestHandler->isAjax()) {
-			$data['users'] = array();
-			if(isset($this->params['url']['search'], $this->params['url']['searchType'])) {
-				switch($this->params['url']['searchType']) {
-					case 'lastname':
-						$conditions['User.lastname'] = $this->params['url']['search'];
-						break;
-					case 'last4':
-						$conditions['RIGHT (User.ssn , 4)'] = $this->params['url']['search'];
-						break;
-					case 'ssn':
-						$conditions['User.ssn'] = $this->params['url']['search'];
-						break;
-				}
-				$conditions['User.role_id'] = 1;
-				$users = $this->User->find('all', array('conditions' => $conditions));
-				if($users) {
-					$i = 0;
-					foreach($users as $user) {
-						$data['users'][$i]['id'] = $user['User']['id'];
-						$data['users'][$i]['firstname'] = $user['User']['firstname'];
-						$data['users'][$i]['lastname'] = $user['User']['lastname'];
-						$data['users'][$i]['last_4'] = substr($user['User']['ssn'], -4);
-						$i++;
+			if ($this->RequestHandler->isGet()) {
+				$data['users'] = array();
+				if(isset($this->params['url']['search'], $this->params['url']['searchType'])) {
+					switch($this->params['url']['searchType']) {
+						case 'lastname':
+							$conditions['User.lastname'] = $this->params['url']['search'];
+							break;
+						case 'last4':
+							$conditions['RIGHT (User.ssn , 4)'] = $this->params['url']['search'];
+							break;
+						case 'ssn':
+							$conditions['User.ssn'] = $this->params['url']['search'];
+							break;
+					}
+					$conditions['User.role_id'] = 1;
+					$users = $this->User->find('all', array('conditions' => $conditions));
+					if($users) {
+						$i = 0;
+						foreach($users as $user) {
+							$data['users'][$i]['id'] = $user['User']['id'];
+							$data['users'][$i]['firstname'] = $user['User']['firstname'];
+							$data['users'][$i]['lastname'] = $user['User']['lastname'];
+							$data['users'][$i]['email'] = $user['User']['email'];
+							$data['users'][$i]['phone'] = $user['User']['phone'];
+							$data['users'][$i]['last_4'] = substr($user['User']['ssn'], -4);
+							$i++;
+						}
 					}
 				}
+				$data['success'] = true;
+			} else {
+				$user = json_decode($this->params['form']['user'], true);
+				$userRecord = $this->User->findById($user['id']);
+				$this->User->save(array(
+					'User' => $user
+				));
+				$data['users'][] = $userRecord;
+				$data['success'] = true;
 			}
-			$data['success'] = true;
+
 			$this->set(compact('data'));
 			$this->render(null, null, '/elements/ajaxreturn');
 		}

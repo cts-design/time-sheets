@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2013-06-28 15:22:00 : 1372447320*/
+/* atlas schema generated on: 2013-09-04 12:38:20 : 1378312700*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -489,6 +489,7 @@ class atlasSchema extends CakeSchema {
 		'assistance_message' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'default_sign_in' => array('type' => 'string', 'null' => true, 'default' => 'user_login', 'length' => 50, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'location_id' => array('column' => 'location_id', 'unique' => 0)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
@@ -653,7 +654,7 @@ class atlasSchema extends CakeSchema {
 		'program_response_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
 		'doc_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
 		'program_doc_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'key' => 'index'),
-		'type' => array('type' => 'string', 'null' => false, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'type' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'deleted' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'deleted_reason' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'rejected_reason' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
@@ -684,7 +685,7 @@ class atlasSchema extends CakeSchema {
 		'name' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'type' => array('type' => 'string', 'null' => true, 'default' => NULL, 'key' => 'index', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'media_location' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'media_type' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'media_type' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'redoable' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'meta' => array('type' => 'text', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'lft' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'key' => 'index'),
@@ -699,6 +700,7 @@ class atlasSchema extends CakeSchema {
 		'name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'type' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'atlas_registration_type' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 10, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'disabled' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'queue_category_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
 		'approval_required' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'form_esign_required' => array('type' => 'boolean', 'null' => false, 'default' => '0'),

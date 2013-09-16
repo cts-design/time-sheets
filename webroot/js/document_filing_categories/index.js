@@ -25,6 +25,7 @@ Ext.onReady( function() {
 		frame: true,
 		items: [{
 			xtype: 'textfield',
+			fieldStyle: 'margin-left:10px',
 			fieldLabel: 'Category Name',
 			name: "text",
 			allowBlank: false
@@ -96,6 +97,7 @@ Ext.onReady( function() {
 		frame: true,
 		items: [{
 			xtype: 'textfield',
+			fieldStyle: 'margin-left:10px',
 			fieldLabel: 'Category Name',
 			name: "text",
 			allowBlank: false

@@ -1,0 +1,15 @@
+.search-module
+{
+	float:right !important;
+	vertical-align: middle;
+	margin-top:3px;
+	margin-right:10px;
+
+	
+}
+.reset-button
+{
+	float:right !important;
+	margin-right:3px !important;
+	background:#DDD;
+}

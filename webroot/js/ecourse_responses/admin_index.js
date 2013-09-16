@@ -116,9 +116,9 @@ Ext.create('Ext.menu.Menu', {
         },
         success: function(response) {
           var text = Ext.JSON.decode(response.responseText);
-          var title = 'Success';
+          var title = 'Success'; 
           if(!text.success) {
-            title = 'Failed'; 
+            title = 'Failure';
           }
           Ext.Msg.alert(title, text.message);
         }
