@@ -11,7 +11,7 @@ class EventsController extends AppController {
 
 	public $paginate = array('order' => array('Event.scheduled' => 'asc'), 'limit' => 5);
 
-	public $helpers = array('Excel', 'Url');
+	public $helpers = array('Excel', 'Url', 'Nav');
 
 	public $components = array('Notifications');
 
@@ -19,7 +19,8 @@ class EventsController extends AppController {
 		parent::beforeFilter();
 		$this->Auth->allow('view', 'index', 'workshop', 'upcoming');
 		if($this->Auth->user() && $this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Events/admin_index', '*')) {
-			$this->Auth->allow('admin_add', 'admin_edit', 'admin_delete', 'admin_get_event_category_list');
+
+			$this->Auth->allow('admin_add', 'admin_edit', 'admin_delete', 'admin_get_event_category_list', 'admin_list_events_registration');
 		}
 	}
 
@@ -422,6 +423,17 @@ class EventsController extends AppController {
 	}
 
 	public function view() {}
+
+	public function admin_list_events_registration()
+	{
+
+		$this->loadModel('Event');
+
+		$this->Event->recursive = 1;
+		$events = $this->paginate('Event');
+
+		$this->set('events', $events);
+	}
 
 	public function admin_index() {
 		if($this->RequestHandler->isAjax()) {
