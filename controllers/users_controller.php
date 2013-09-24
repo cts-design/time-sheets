@@ -518,7 +518,7 @@ class UsersController extends AppController {
 		{
 			$this->redirect(array('controller' => 'users', 'action' => 'kiosk_id_card_login'));	
 		}
-		else if($kiosk['Kiosk']['default_sign_in'] == 'default_sign_in')
+		else if($kiosk['Kiosk']['default_sign_in'] == 'user_login')
 		{
 			$this->redirect(array('controller' => 'users', 'action' => 'kiosk_self_sign_login'));
 		}
