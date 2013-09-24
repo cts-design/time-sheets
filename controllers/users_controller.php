@@ -516,11 +516,15 @@ class UsersController extends AppController {
 
 		if($kiosk['Kiosk']['default_sign_in'] == 'id_card')
 		{
-			$this->redirect(array('action' => 'id_card_login', 'kiosk' => true));	
+			$this->redirect(array('controller' => 'users', 'action' => 'kiosk_id_card_login'));	
+		}
+		else if($kiosk['Kiosk']['default_sign_in'] == 'default_sign_in')
+		{
+			$this->redirect(array('controller' => 'users', 'action' => 'kiosk_self_sign_login'));
 		}
 		else
 		{
-			$this->redirect(array('action' => 'self_sign_login', 'kiosk' => true));
+			$this->redirect(array('controller' => 'users', 'action' => 'kiosk_self_sign_login'));
 		}
 	}
 
