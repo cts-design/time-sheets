@@ -115,6 +115,13 @@
                 'label' => 'Index',
                 'checked' => (isset($controllers['Events']['admin_archive'])) ? $controllers['Events']['admin_archive'] : '' ));?>
             </fieldset>
+            <fieldset class="left right-mar-10">
+            <legend><?php __('Event Registration') ?></legend>
+               <?php echo $this->Form->input('Events.admin_list_events_registration', array(
+                'type' => 'checkbox',
+                'label' => 'Index',
+                'checked' => (isset($controllers['Events']['admin_list_events_registration'])) ? $controllers['Events']['admin_list_events_registration'] : '' ));?>
+            </fieldset>
             <?php echo $this->PluginPermissions->buildFieldset('events') ?>
             <br class="clear" />
             <?php echo $this->Form->end(__('Submit', true))?>
