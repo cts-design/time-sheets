@@ -122,6 +122,15 @@ class UsersController extends AppController {
 		if($this->params['action'] == 'admin_login' && $this->RequestHandler->isAjax()) {
 			$this->Security->validatePost = false;
 		}
+		
+		if($this->Auth->user('id') == NULL)
+		{
+			$this->set('user_logged_in', FALSE);
+		}
+		else
+		{
+			$this->set('user_logged_in', TRUE);
+		}
 	}
 
 	function admin_index($disabled=false) {
@@ -519,12 +528,9 @@ class UsersController extends AppController {
 		$this->loadModel('Kiosk');
 		$oneStop = env('HTTP_USER_AGENT');
 		$arrOneStop = explode('##', $oneStop);
-		if(!isset($arrOneStop[1])) {
-			$oneStopLocation = '';
-		}
-		else {
-			$oneStopLocation = $arrOneStop[1];
-		}
+
+		$oneStopLocation = ( isset($arrOneStop[1]) ? $arrOneStop[1] : '' );
+
 		$this->Kiosk->recursive = -1;
 		$this->Kiosk->Behaviors->attach('Containable');
 		$this->Kiosk->contain(array('KioskSurvey', 'Location'));
@@ -831,6 +837,7 @@ class UsersController extends AppController {
 					$this->data['User']['ssn_3_confirm'];
 			}
 			$this->User->create();
+			var_dump($this->data);
 			if ($this->User->save($this->data)) {
 				$userId = $this->User->getInsertId();
 				$this->data['User']['password'] = Security::hash($this->data['User']['ssn'], null, true);
