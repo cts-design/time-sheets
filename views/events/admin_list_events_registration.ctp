@@ -26,6 +26,17 @@ table td
 	padding:10px;
 	border:1px solid #CCC;
 }
+.pager
+{
+	width:100%;
+	text-align: center;
+	margin-top:10px;
+}
+.pager li
+{
+	width:40%;
+	display:inline-block;
+}
 </style>
 <h1>List of Events</h1>
 <table style="width:100%">
@@ -72,3 +83,11 @@ table td
 <?php endforeach ?>
 </tbody>
 </table>
+<ul class="pager">
+	<li>
+		&larr;<?= $this->Paginator->prev('Previous', array(), null, array()) ?>
+	</li>
+	<li>
+		<?= $this->Paginator->next('Next', array(), null, array()) ?>&rarr;
+	</li>
+</ul>
