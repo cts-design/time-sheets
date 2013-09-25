@@ -841,7 +841,6 @@ class UsersController extends AppController {
 					$this->data['User']['ssn_3_confirm'];
 			}
 			$this->User->create();
-			var_dump($this->data);
 			if ($this->User->save($this->data)) {
 				$userId = $this->User->getInsertId();
 				$this->data['User']['password'] = Security::hash($this->data['User']['ssn'], null, true);
