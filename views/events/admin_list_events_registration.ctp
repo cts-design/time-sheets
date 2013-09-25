@@ -38,6 +38,10 @@ table td
 	display:inline-block;
 }
 </style>
+<div id="crumbWrapper">
+    <span><?php __('You are here') ?> > </span>
+    <?php echo $crumb->getHtml(__('List of Events', true), null, 'unique') ; ?>
+</div>
 <h1>List of Events</h1>
 <table style="width:100%">
 	<thead>
