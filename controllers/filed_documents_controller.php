@@ -154,9 +154,10 @@ class FiledDocumentsController extends AppController {
 			$this->data['FiledDocument']['user_id'] = $user['User']['id'];
 			$this->data['FiledDocument']['last_activity_admin_id'] = $this->Auth->user('id');
 			$this->data['FiledDocument']['location_id'] = $this->Auth->user('location_id');
+			
 			if($this->FiledDocument->save($this->data)) {
 				if($this->isModuleEnabled('Programs')) {
-					$processedDoc =	$this->_processResponseDoc($user);
+					$processedDoc =	$this->_processResponseDoc($this->data, $user);
 					if(isset($processedDoc['status'])) {
 						$this->loadModel('Program');
 						$this->Program->recursive = -1;
