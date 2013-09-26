@@ -19,15 +19,6 @@
     <div class="miniRegistrationForm">
 	<?php echo $this->Form->create('User'); ?>
 	<fieldset>
-		<?php
-
-		$errors = $this->Form->validationErrors;
-		$flat_errors = Set::flatten($errors);
-		print_r($flat_errors);
-
-		?>
-	</fieldset>
-	<fieldset>
 	    <?php
 	    echo $this->Form->hidden('role_id', array('value' => '1'));
 	    echo $this->Form->hidden('id_card_number');
