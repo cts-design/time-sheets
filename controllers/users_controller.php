@@ -544,34 +544,38 @@ class UsersController extends AppController {
 			'conditions' => array(
 				'Kiosk.location_recognition_name' => $oneStopLocation, 'Kiosk.deleted' => 0)));
 
-		if (isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'kiosk') {
-			if ($this->Auth->user()) {
-				$user = $this->Auth->user();
-				if($kiosk['Kiosk']['default_sign_in'] == 'id_card') {
-					$this->User->id = $user['User']['id'];
-					$this->User->saveField('id_card_number', $this->Session->read('idCard.id_full'));
+		if (isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'kiosk' && $this->Auth->user()) {
+			$user = $this->Auth->user();
+
+			$this->sendCustomerLoginAlert($user, $kiosk);
+
+			if($user['User']['veteran'])
+			{
+				$this->sendCustomerDetailsAlert('veteran', $user, $kiosk);
+			}
+
+			foreach($user['User'] as $k => $v)
+			{
+				if($v === 'Spanish')
+				{
+					$this->sendCustomerDetailsAlert('spanish', $user, $kiosk);
 				}
-				$this->sendCustomerLoginAlert($user, $kiosk);
-				if($user['User']['veteran']) {
-					$this->sendCustomerDetailsAlert('veteran', $user, $kiosk);
+				if(in_array($k, $fields) && empty($v) && $v != 0)
+				{
+					$this->redirect(array(
+						'controller' => 'kiosks',
+						'action' => 'self_sign_edit',
+						$user['User']['id']
+					));
 				}
-				foreach($user['User'] as $k => $v) {
-					if($v === 'Spanish') {
-						$this->sendCustomerDetailsAlert('spanish', $user, $kiosk);
-					}
-					if(in_array($k, $fields) && empty($v) && $v != 0) {
-						$this->redirect(
-							array('controller' => 'kiosks', 'action' => 'self_sign_edit', $user['User']['id']));
-					}
-				}
-				$this->Transaction->createUserTransaction('Self Sign',
-					null, $this->User->SelfSignLog->Kiosk->getKioskLocationId(), 'Logged in at self sign kiosk' );
-				if($settings['SelfSign']['KioskConfirmation'] === 'on') {
-					$this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_confirm'));
-				}
-				else {
-					$this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_service_selection'));
-				}
+			}
+			$this->Transaction->createUserTransaction('Self Sign',
+				null, $this->User->SelfSignLog->Kiosk->getKioskLocationId(), 'Logged in at self sign kiosk' );
+			if($settings['SelfSign']['KioskConfirmation'] === 'on') {
+				$this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_confirm'));
+			}
+			else {
+				$this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_service_selection'));
 			}
 		}
 		$this->set('kioskHasSurvey', (empty($kiosk['KioskSurvey'])) ? false : true);
@@ -604,27 +608,62 @@ class UsersController extends AppController {
 				$data = $this->User->decodeIdString($this->data);
 				if($data['success']) {
 					$this->User->recursive = -1;
-					$user = $this->User->find('first', array(
-						'conditions' => array('User.id_card_number' => $data['id_full'])));
+					$user = $this->User->findByIdCardNumber( $data['id_full'] );
+
+					if( !$user )
+					{
+						$this->Session->write('idCard', $data);
+						$this->Session->setFlash('Please fill out information below to continue', 'flash_failure');
+						$this->redirect(array('action' => 'self_sign_login'));
+					}
+					else
+					{
+						if($this->Auth->login( $user ))
+						{
+							$kiosk_location_id = $this->User->SelfSignLog->Kiosk->getKioskLocationId();
+							$this->Transaction->createUserTransaction(
+								'Self Sign',
+								null,
+								$kiosk_location_id,
+								'Logged in at self sign kiosk'
+							);
+							if($settings['SelfSign']['KioskConfirmation'] === 'on')
+							{
+								$this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_confirm'));
+							}
+							else
+							{
+								$this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_service_selection'));
+							}
+						}
+						else
+						{
+							$this->Session->setFlash('You could not be signed in, try again at a later time', 'flash_failure');
+							$this->redirect(array('action' => 'id_card_login'));
+						}
+					}
+
+					/*
 					if(!$user) {
 						$this->Session->write('idCard', $data);
 					}
-					if($user) {
-						if($this->Auth->login($user)) {
-							$this->Transaction->createUserTransaction('Self Sign',
-								null, $this->User->SelfSignLog->Kiosk->getKioskLocationId(), 'Logged in at self sign kiosk' );
-							if($settings['SelfSign']['KioskConfirmation'] === 'on') {
-								$this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_confirm'));
-							}
-							else {
-								$this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_service_selection'));
-							}
+					if($user && $this->Auth->login($user)) {
+						$this->Transaction->createUserTransaction('Self Sign',
+							null, $this->User->SelfSignLog->Kiosk->getKioskLocationId(), 'Logged in at self sign kiosk' );
+						if($settings['SelfSign']['KioskConfirmation'] === 'on') {
+							$this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_confirm'));
+						}
+						else {
+							$this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_service_selection'));
 						}
 					}
 					else {
 						$this->Session->setFlash('Please fill out information below to continue', 'flash_failure');
-						$this->redirect(array('action' => 'self_sign_login'));
-					}
+						var_dump($user);
+						echo "<br />";
+						var_dump($data);
+						//$this->redirect(array('action' => 'self_sign_login'));
+					}*/
 				}
 				else {
 					$this->Session->setFlash($data['message'], 'flash_failure');
