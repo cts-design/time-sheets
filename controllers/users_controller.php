@@ -546,7 +546,7 @@ class UsersController extends AppController {
 
 		if (isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'kiosk' && $this->Auth->user()) {
 			$user = $this->Auth->user();
-			
+
 			$this->sendCustomerLoginAlert($user, $kiosk);
 
 			if($user['User']['veteran'])
@@ -638,7 +638,8 @@ class UsersController extends AppController {
 						}
 						else
 						{
-							var_dump("User could not be signed in ");
+							$this->Session->setFlash('You could not be signed in, try again at a later time', 'flash_failure');
+							$this->redirect(array('action' => 'id_card_login'));
 						}
 					}
 
