@@ -25,6 +25,15 @@ class KiosksController extends AppController {
 		$this->Cookie->name = 'self_sign';
 		$this->Cookie->domain = Configure::read('domain');
         $this->Auth->allow('kiosk_set_language');
+
+        if($this->Auth->user('id') == NULL)
+		{
+			$this->set('user_logged_in', FALSE);
+		}
+		else
+		{
+			$this->set('user_logged_in', TRUE);
+		}
 	}
 
     function admin_index() {

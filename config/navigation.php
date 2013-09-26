@@ -165,6 +165,11 @@ $config['navigation.events'] = array(
 	'id' => 'events',
 	'links' => array(
 		array(
+			'link' => array('controller' => 'events', 'action' => 'admin_list_events_registration'),
+			'rel' => 'calendar',
+			'title' => 'Event Registration'
+		),
+		array(
 			'link' => array('controller' => 'events', 'action' => 'index'),
 			'rel' => 'calendar',
 			'title' => 'Event Management'

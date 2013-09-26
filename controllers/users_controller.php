@@ -122,6 +122,15 @@ class UsersController extends AppController {
 		if($this->params['action'] == 'admin_login' && $this->RequestHandler->isAjax()) {
 			$this->Security->validatePost = false;
 		}
+		
+		if($this->Auth->user('id') == NULL)
+		{
+			$this->set('user_logged_in', FALSE);
+		}
+		else
+		{
+			$this->set('user_logged_in', TRUE);
+		}
 	}
 
 	function admin_index($disabled=false) {
@@ -507,11 +516,15 @@ class UsersController extends AppController {
 
 		if($kiosk['Kiosk']['default_sign_in'] == 'id_card')
 		{
-			$this->redirect(array('action' => 'id_card_login', 'kiosk' => true));	
+			$this->redirect(array('controller' => 'users', 'action' => 'kiosk_id_card_login'));	
+		}
+		else if($kiosk['Kiosk']['default_sign_in'] == 'user_login')
+		{
+			$this->redirect(array('controller' => 'users', 'action' => 'kiosk_self_sign_login'));
 		}
 		else
 		{
-			$this->redirect(array('action' => 'self_sign_login', 'kiosk' => true));
+			$this->redirect(array('controller' => 'users', 'action' => 'kiosk_self_sign_login'));
 		}
 	}
 
@@ -519,12 +532,9 @@ class UsersController extends AppController {
 		$this->loadModel('Kiosk');
 		$oneStop = env('HTTP_USER_AGENT');
 		$arrOneStop = explode('##', $oneStop);
-		if(!isset($arrOneStop[1])) {
-			$oneStopLocation = '';
-		}
-		else {
-			$oneStopLocation = $arrOneStop[1];
-		}
+
+		$oneStopLocation = ( isset($arrOneStop[1]) ? $arrOneStop[1] : '' );
+
 		$this->Kiosk->recursive = -1;
 		$this->Kiosk->Behaviors->attach('Containable');
 		$this->Kiosk->contain(array('KioskSurvey', 'Location'));

@@ -43,7 +43,9 @@
 		else {
 			$exclude = array('kiosk_self_scan_document', 'question', 'kiosk_self_sign_login');
 		}
-	    if (!in_array($this->params['action'], $exclude)) {
+
+		
+	    if (!in_array($this->params['action'], $exclude) && $user_logged_in) {
 		echo $this->Html->scriptBlock(
 			"$(document).ready(function(){
 		      $(document).idleTimeout({
