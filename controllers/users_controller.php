@@ -827,7 +827,6 @@ class UsersController extends AppController {
 		$this->Kiosk->recursive = -1;
 		$this->User->recursive  = -1;
 		if (!empty($this->data)) {
-			var_dump($this->data);
 			$this->User->Behaviors->disable('Disableable');
 			$this->User->setValidation('customerMinimum');
 			if(Configure::read('Registration.ssn') == 'last4') {
