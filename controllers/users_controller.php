@@ -606,44 +606,11 @@ class UsersController extends AppController {
 		if($this->RequestHandler->isPost()) {
 			if(!empty($this->data)) {
 				$data = $this->User->decodeIdString($this->data);
+
 				if($data['success']) {
 					$this->User->recursive = -1;
 					$user = $this->User->findByIdCardNumber( $data['id_full'] );
 
-					if( !$user )
-					{
-						$this->Session->write('idCard', $data);
-						$this->Session->setFlash('Please fill out information below to continue', 'flash_failure');
-						$this->redirect(array('action' => 'self_sign_login'));
-					}
-					else
-					{
-						if($this->Auth->login( $user ))
-						{
-							$kiosk_location_id = $this->User->SelfSignLog->Kiosk->getKioskLocationId();
-							$this->Transaction->createUserTransaction(
-								'Self Sign',
-								null,
-								$kiosk_location_id,
-								'Logged in at self sign kiosk'
-							);
-							if($settings['SelfSign']['KioskConfirmation'] === 'on')
-							{
-								$this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_confirm'));
-							}
-							else
-							{
-								$this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_service_selection'));
-							}
-						}
-						else
-						{
-							$this->Session->setFlash('You could not be signed in, try again at a later time', 'flash_failure');
-							$this->redirect(array('action' => 'id_card_login'));
-						}
-					}
-
-					/*
 					if(!$user) {
 						$this->Session->write('idCard', $data);
 					}
@@ -659,11 +626,8 @@ class UsersController extends AppController {
 					}
 					else {
 						$this->Session->setFlash('Please fill out information below to continue', 'flash_failure');
-						var_dump($user);
-						echo "<br />";
-						var_dump($data);
-						//$this->redirect(array('action' => 'self_sign_login'));
-					}*/
+						$this->redirect(array('action' => 'self_sign_login'));
+					}
 				}
 				else {
 					$this->Session->setFlash($data['message'], 'flash_failure');
@@ -900,7 +864,10 @@ class UsersController extends AppController {
 		}
 		if (empty($this->data)) {
 			$this->data['User']['lastname'] = $lastname;
-			if(Configure::read('Kiosk.login_type') == 'id_card') {
+			$kiosk = $this->Kiosk->findByLocationId(
+				$this->Kiosk->getKioskLocationId()
+			);
+			if($kiosk['Kiosk']['default_sign_in'] == 'id_card') {
 				$idCard = $this->Session->read('idCard');
 				if(!empty($idCard)) {
 					$this->data['User']['firstname'] = $idCard['first_name'];
