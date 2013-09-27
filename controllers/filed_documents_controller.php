@@ -490,7 +490,7 @@ class FiledDocumentsController extends AppController {
 		if($this->FiledDocument->save($this->data)) {
 			if($this->isModuleEnabled('Programs')) {
 				$user = $this->FiledDocument->User->findById($this->data['User']['id']);
-				$this->_processResponseDoc($user);
+				$this->_processResponseDoc($this->data, $user);
 			}
 			return $this->data['FiledDocument']['id'];
 		}
