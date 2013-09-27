@@ -24,7 +24,9 @@
 	    echo $this->Form->hidden('id_card_number');
 		// required fields
 		if($hideFields) {
-			echo $this->Form->hidden('firstname');
+			$data = $this->Session->read('idCard');
+			echo $this->Form->hidden('firstname', array( 
+				'value' => ucfirst(strtolower($data['first_name'])) ));
 			echo $this->Form->hidden('lastname');
 		}
 		else {
