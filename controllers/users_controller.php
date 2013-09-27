@@ -544,40 +544,60 @@ class UsersController extends AppController {
 			'conditions' => array(
 				'Kiosk.location_recognition_name' => $oneStopLocation, 'Kiosk.deleted' => 0)));
 
-		if (isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'kiosk' && $this->Auth->user()) {
-			$user = $this->Auth->user();
+		/* start of if */
+		if (isset($this->data['User']['login_type']) && $this->data['User']['login_type'] == 'kiosk') {
+			if ($this->Auth->user()) {
+				$user = $this->Auth->user();
+				
+				if($kiosk['Kiosk']['default_sign_in'] == 'id_card') {
+					$idCard = $this->Session->read('idCard');
+					if(!empty($idCard) && $idCard != NULL) {
+						$this->User->create();
+						$this->User->id = $this->Auth->user('id');
+						$this->User->saveField('id_card_number', $idCard['id_full']);
+						$this->User->save();
 
-			$this->sendCustomerLoginAlert($user, $kiosk);
+						/*
+						$update_user['id'] = $this->Auth->user('id');
+						$update_user['firstname'] = $idCard['first_name'];
+						$update_user['middle_initial'] = $idCard['middle_name'][0];
+						$update_user['lastname'] = $idCard['last_name'];
+						$update_user['dob'] = $idCard['birth_month'] . '/' . $idCard['birth_day'] . '/' . $idCard['birth_year'];
+						$update_user['address_1'] = $idCard['street'];
+						$update_user['city'] = $idCard['city'];
+						$update_user['state'] = $idCard['state'];
+						$update_user['id_card_number'] = $idCard['id_full'];
 
-			if($user['User']['veteran'])
-			{
-				$this->sendCustomerDetailsAlert('veteran', $user, $kiosk);
-			}
+						*/
 
-			foreach($user['User'] as $k => $v)
-			{
-				if($v === 'Spanish')
-				{
-					$this->sendCustomerDetailsAlert('spanish', $user, $kiosk);
+						$this->Session->delete('idCard');
+					}
 				}
-				if(in_array($k, $fields) && empty($v) && $v != 0)
-				{
-					$this->redirect(array(
-						'controller' => 'kiosks',
-						'action' => 'self_sign_edit',
-						$user['User']['id']
-					));
+				$this->sendCustomerLoginAlert($user, $kiosk);
+
+				if($user['User']['veteran']) {
+					$this->sendCustomerDetailsAlert('veteran', $user, $kiosk);
 				}
-			}
-			$this->Transaction->createUserTransaction('Self Sign',
-				null, $this->User->SelfSignLog->Kiosk->getKioskLocationId(), 'Logged in at self sign kiosk' );
-			if($settings['SelfSign']['KioskConfirmation'] === 'on') {
-				$this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_confirm'));
-			}
-			else {
-				$this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_service_selection'));
+				foreach($user['User'] as $k => $v) {
+					if($v === 'Spanish') {
+						$this->sendCustomerDetailsAlert('spanish', $user, $kiosk);
+					}
+					if(in_array($k, $fields) && empty($v) && $v != 0) {
+						$this->redirect(
+							array('controller' => 'kiosks', 'action' => 'self_sign_edit', $user['User']['id']));
+					}
+				}
+				$this->Transaction->createUserTransaction('Self Sign',
+					null, $this->User->SelfSignLog->Kiosk->getKioskLocationId(), 'Logged in at self sign kiosk' );
+				if($settings['SelfSign']['KioskConfirmation'] === 'on') {
+					$this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_confirm'));
+				}
+				else {
+					$this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_service_selection'));
+				}
 			}
 		}
+		/* end of if */
 		$this->set('kioskHasSurvey', (empty($kiosk['KioskSurvey'])) ? false : true);
 		$this->set('kiosk', $kiosk);
 		$this->set('title_for_layout', 'Self Sign Kiosk');
@@ -869,7 +889,8 @@ class UsersController extends AppController {
 			);
 			if($kiosk['Kiosk']['default_sign_in'] == 'id_card') {
 				$idCard = $this->Session->read('idCard');
-				if(!empty($idCard)) {
+				if(!empty($idCard) && $idCard != NULL) {
+					var_dump($idCard);
 					$this->data['User']['firstname'] = $idCard['first_name'];
 					$this->data['User']['middle_initial'] = substr($idCard['middle_name'], 1);
 					$this->data['User']['lastname'] = $idCard['last_name'];
@@ -877,7 +898,9 @@ class UsersController extends AppController {
 					$this->data['User']['address_1'] = $idCard['street'];
 					$this->data['User']['city'] = $idCard['city'];
 					$this->data['User']['state'] = $idCard['state'];
-					$this->data['User']['id_card_number'] = $idCard['id_full']; 
+					$this->data['User']['id_card_number'] = $idCard['id_full'];
+
+					$this->Session->delete('idCard');
 				}
 			}
 		}
