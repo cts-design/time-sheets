@@ -890,7 +890,6 @@ class UsersController extends AppController {
 			if($kiosk['Kiosk']['default_sign_in'] == 'id_card') {
 				$idCard = $this->Session->read('idCard');
 				if(!empty($idCard) && $idCard != NULL) {
-					var_dump($idCard);
 					$this->data['User']['firstname'] = $idCard['first_name'];
 					$this->data['User']['middle_initial'] = substr($idCard['middle_name'], 1);
 					$this->data['User']['lastname'] = $idCard['last_name'];
