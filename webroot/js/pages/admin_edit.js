@@ -6,11 +6,13 @@
  */
 $(function() {
     CKFinder.setupCKEditor(null, '/js/ckfinder/');
+
+    
     CKEDITOR.replace('PageContent', {
       toolbar: [
         ['Source'],
         ['Cut','Copy','Paste','PasteText','PasteFromWord','-', 'SpellChecker', 'Scayt'],
-        ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
+        ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat', 'youtube'],
         '/',
         ['Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
         ['NumberedList','BulletedList','-','Outdent','Indent','Blockquote'],
@@ -23,11 +25,12 @@ $(function() {
       ]
     });
 
+    
     CKEDITOR.replace('PageHeaderContent', {
       toolbar: [
         ['Source'],
         ['Cut','Copy','Paste','PasteText','PasteFromWord','-', 'SpellChecker', 'Scayt'],
-        ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
+        ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat', 'youtube'],
         '/',
         ['Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
         ['NumberedList','BulletedList','-','Outdent','Indent','Blockquote'],
@@ -44,7 +47,7 @@ $(function() {
       toolbar: [
         ['Source'],
         ['Cut','Copy','Paste','PasteText','PasteFromWord','-', 'SpellChecker', 'Scayt'],
-        ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
+        ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat', 'youtube'],
         '/',
         ['Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
         ['NumberedList','BulletedList','-','Outdent','Indent','Blockquote'],
