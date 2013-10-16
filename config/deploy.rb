@@ -150,6 +150,13 @@ task :worknetpinellas do
   server "atlas.worknetpinellas.org", :app, :web, :db, :primary => true
 end
 
+task :wrec do
+  set :server_name, 'wrec v2'
+  set :deploy_to, "/var/www/vhosts/wrec-v2.ctsfla.com/#{application}"
+  set :user, 'wrec_new'
+  server "192.168.200.108", :app, :web, :db, :primary => true
+end
+
 # 6pm deploys
 task :chipola do
   set :deploy_to, "/var/www/vhosts/atlas.onestopahead.com/#{application}"
