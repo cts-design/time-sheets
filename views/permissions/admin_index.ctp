@@ -131,6 +131,11 @@
                 'type' => 'checkbox',
                 'label' => 'Register Users to Events',
                 'checked' => (isset($controllers['EventRegistrations']['admin_register_customer'])) ? $controllers['EventRegistrations']['admin_register_customer'] : '' ));?>
+
+                <?php echo $this->Form->input('EventRegistrations.admin_delete', array(
+                'type' => 'checkbox',
+                'label' => 'Remove Users from Events',
+                'checked' => (isset($controllers['EventRegistrations']['admin_delete'])) ? $controllers['EventRegistrations']['admin_delete'] : '' ));?>
             </fieldset>
             <?php echo $this->PluginPermissions->buildFieldset('events') ?>
             <br class="clear" />
