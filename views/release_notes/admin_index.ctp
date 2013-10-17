@@ -4,6 +4,22 @@
 </div>
 <div id="ReleaseNotes">
 
+	<h1>Release 3.7.7 (8-16-13)</h1>
+	<h2>Minor updates</h2>
+	<ol>
+		 <li>
+		 	Added more permission options for event registration
+		 </li>
+		 <li>Added Event Registration List Page</li>
+		 <li>Added more options to kiosks for admins</li>
+	</ol>
+	<h2>Bug Fixes</h2>
+	<ol>
+		<li>Fixed issue where kiosk would not register existing users with id cards</li>
+	</ol>
+
+	<hr />
+
 	<h1>Release 3.7.6 (8-16-13)</h1>
 	<h2>Minor updates</h2>
 	<ol>
