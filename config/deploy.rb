@@ -22,7 +22,7 @@ set :design_architecture, 'old'
 set :app_plugins, []
 
 # number of releases to keep after running cap deploy:cleanup
-set :keep_releases, 5
+set :keep_releases, 10
 
 # --- Server Settings.
 
