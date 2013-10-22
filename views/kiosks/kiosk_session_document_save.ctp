@@ -119,7 +119,7 @@ $(document).ready(function(){
 
 	function upload()
 	{
-		var url = "<?= $html->url('/kiosk/kiosks/sessiondocumentsave', true) ?>";
+		var url = "http://" + location.hostname + '/kiosk/vstwain/upload_image';
 		VSTwain1.SetHttpServerParams(url, "", 5);
 
 		if(VSTwain1.ErrorCode != 0)
@@ -133,7 +133,7 @@ $(document).ready(function(){
 		}
 		else
 		{
-			window.location.href = "<?= $html->url('/kiosk/kiosks/session_document_save') ?>";
+			window.location.href = "<?= $html->url('/kiosk/kiosks/session_document_save', true) ?>";
 		}
 	}
 	

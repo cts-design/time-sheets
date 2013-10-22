@@ -56,7 +56,7 @@ $(document).ready(function(){
 
 	function upload()
 	{
-		var url = "<?= $html->url('/tests/process_scan', true) ?>";
+		var url = "http://" + location.hostname + '/tests/process_scan';
 		VSTwain1.SetHttpServerParams(url, "", 5);
 
 		if(VSTwain1.ErrorCode != 0)
@@ -70,7 +70,8 @@ $(document).ready(function(){
 		}
 		else
 		{
-			window.location.href = "<?= $html->url('/tests/success', true) ?>";
+			
+			window.location.href = "<?= $html->url('/tests/scan', true) ?>";
 		}
 	}
 });

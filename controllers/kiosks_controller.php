@@ -419,6 +419,7 @@ class KiosksController extends AppController {
 			if( isset($_FILES['file']) )
 			{
 				$file = $_FILES['file'];
+				$this->log( var_export($file, true) );
 			}
 			else
 			{	
