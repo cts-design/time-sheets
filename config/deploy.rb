@@ -22,7 +22,7 @@ set :design_architecture, 'old'
 set :app_plugins, []
 
 # number of releases to keep after running cap deploy:cleanup
-set :keep_releases, 5
+set :keep_releases, 10
 
 # --- Server Settings.
 
@@ -117,7 +117,8 @@ task :rescare do
   set :server_name, 'rescare production'
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
   set :user, 'deploy'
-  server "rescare.atlasforworkforce.com", :app, :web, :db, :primary => true
+  set :port, 23
+  server "montgomery.rescare.com", :app, :web, :db, :primary => true
 end
 
 task :suncoast do

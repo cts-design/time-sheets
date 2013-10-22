@@ -25,6 +25,8 @@ class KiosksController extends AppController {
 		$this->Cookie->name = 'self_sign';
 		$this->Cookie->domain = Configure::read('domain');
         $this->Auth->allow('kiosk_set_language');
+		$this->Auth->allow('kiosk_session_document_save');
+		$this->Auth->allow('kiosk_get_last_image');
 
         if($this->Auth->user('id') == NULL)
 		{
@@ -394,7 +396,73 @@ class KiosksController extends AppController {
 		$title_for_layout = __('Self Scan Program Selection', true);
 		$this->set(compact('title_for_layout', 'parentButtons', 'referer'));
 	}
-
+	
+	function kiosk_get_last_image()
+	{
+		$this->loadModel('SessionDocument');
+		$id = $this->Session->read('session_document_id');
+		$sess_doc = $this->SessionDocument->findById($id);
+		
+		$message = array(
+			'success' => TRUE,
+			'output' => $sess_doc
+		);
+		
+		echo json_encode($message);
+		exit();
+	}
+	
+	function kiosk_session_document_save() {
+		$this->layout = 'kiosk';
+		if($this->RequestHandler->isPost())
+		{
+			if( isset($_FILES['file']) )
+			{
+				$file = $_FILES['file'];
+			}
+			else
+			{	
+				$this->log("File was not provided");
+				$this->Session->setFlash( __('No file was provided') );
+				$this->redirect(array('controller' => 'users', 'action' => 'sign_in_redirect', 'kiosk' => true));
+			}
+			
+			//Generate name for temporary file
+			$file_name = date('YmdHis') . '_' . $this->Auth->User('id');
+			$file_location = APP . 'storage' . DS . 'session_documents' . DS;
+			
+			//Save file as a session document
+			if( move_uploaded_file($file['tmp_name'], $file_location . $file_name) )
+			{
+				$this->loadModel('SessionDocument');
+				$this->SessionDocument->create();
+				$session_document_id = $this->Session->read('session_document_id');
+			
+				$session_document = array(
+					'file' => $file_name,
+					'user_id' => $this->Auth->user('id'),
+					'meta' => $file,
+				);
+			
+				if($session_document_id != NULL)
+				{
+					$session_document['id'] = $session_document_id;
+				}
+			
+				$this->SessionDocument->save($session_document);
+			
+				$this->Session->setFlash( __('The upload was successful') );
+				$this->redirect(array('controller' => 'kiosks', 'action' => 'self_scan_document', 'kiosk' => true));
+			}
+			else
+			{
+				$this->log("Could not save file to system at" . $file_location . $file_name . ": " . is_dir($file_location . $file_name));
+				$this->Session->setFlash( __('Unable to save file to system') );
+				$this->redirect(array('controller' => 'kiosks', 'action' => 'self_scan_document', 'kiosk' => true));
+			}
+		}
+	}
+	/*
     function kiosk_self_scan_document($selfScanCatId=null, $queueCatId=null) {	
 		if(!empty($this->data)) {
 			$id = $this->_queueScannedDocument();
@@ -420,6 +488,7 @@ class KiosksController extends AppController {
 		$this->set(compact('selfScanCatId', 'queueCatId', 'locationId', 'referer'));
 		$this->layout = 'kiosk';
 	}
+	*/
 
     function kiosk_self_scan_another_document() {
 		$this->layout = 'kiosk';
