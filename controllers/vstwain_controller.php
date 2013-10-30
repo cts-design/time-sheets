@@ -271,6 +271,7 @@ class VstwainController extends AppController
 		} //end else of if
 	} //end function
 	
+	
 	private function writePdfFile($images)
 	{
 		//HTML generated from looping through images
