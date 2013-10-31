@@ -22,7 +22,7 @@ set :design_architecture, 'old'
 set :app_plugins, []
 
 # number of releases to keep after running cap deploy:cleanup
-set :keep_releases, 5
+set :keep_releases, 10
 
 # --- Server Settings.
 
@@ -148,6 +148,13 @@ end
 task :worknetpinellas do
   set :server_name, 'worknetpinellas production'
   server "atlas.worknetpinellas.org", :app, :web, :db, :primary => true
+end
+
+task :wrec do
+  set :server_name, 'wrec v2'
+  set :deploy_to, "/var/www/vhosts/wrec-v2.ctsfla.com/#{application}"
+  set :user, 'wrec_new'
+  server "192.168.200.108", :app, :web, :db, :primary => true
 end
 
 # 6pm deploys

@@ -7,7 +7,7 @@
 Ext.SSL_SECURE_URL = "about:blank";
 
 $(document).ready(function(){
-    $('th a').live('click', function(){
+    $('th a').on('click', function(){
 	$(this).parent().addClass('ui-state-active')
     })
     if($('th a').hasClass('desc') || $('th a').hasClass('asc')) {
