@@ -430,6 +430,12 @@ class EventsController extends AppController {
 		
 		$this->Event->recursive = -1;
 		
+		if( empty($this->params['named']) )
+		{
+			$this->Session->delete('ler_paginate');
+			$this->Session->delete('ler');
+		}
+		
 		if($this->RequestHandler->isPost())
 		{
 			$conditions = array();
