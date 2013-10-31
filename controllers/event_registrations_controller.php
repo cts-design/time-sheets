@@ -30,6 +30,10 @@ class EventRegistrationsController extends AppController {
 
 	public function admin_index() {
 		$eventRegistrations = $this->EventRegistration->findAllByEventId($this->params['pass'][0]);
+		
+		$this->loadModel('Event');
+		$event = $this->Event->findById( $this->params['pass'][0] );
+		$this->set('event', $event);
 		if($this->RequestHandler->isAjax()) {
 			$data['registrations'] = array();
 			if($eventRegistrations) {
@@ -48,10 +52,8 @@ class EventRegistrationsController extends AppController {
 			$this->set(compact('data'));
 			$this->render(null, null, '/elements/ajaxreturn');
 		}
-		$title_for_layout = 'Event';
-		if($eventRegistrations) {
-			$title_for_layout = 'Event - ' . $eventRegistrations[0]['Event']['name']; 
-		}
+		$title_for_layout = 'Event - ' . $event['Event']['name'];
+		
 		$this->set(compact('title_for_layout'));	
 	}
 
@@ -182,44 +184,57 @@ class EventRegistrationsController extends AppController {
 	}
 
 	public function admin_register_customer() {
-		if($this->RequestHandler->isAjax()) {
+		if( $this->RequestHandler->isAjax()) {
 			$this->EventRegistration->Event->Behaviors->attach('Containable');
 			$this->EventRegistration->User->Behaviors->attach('Containable');
 
+			//$this->params['form']['user_id'] = 44;
+			//$this->params['form']['event_id'] = 3;
 			$count = $this->EventRegistration->find('count', array(
 				'conditions' => array(
 					'EventRegistration.user_id' => $this->params['form']['user_id'],
 					'EventRegistration.event_id' => $this->params['form']['event_id']
 				)
 			));
+			
+			$this->loadModel('Event');
+			$event = $this->Event->findbyId( $this->params['form']['event_id'] );
 
 			$this->data['EventRegistration']['user_id'] = $this->params['form']['user_id'];
 			$this->data['EventRegistration']['event_id'] = $this->params['form']['event_id'];
 
-			if($count == 0 && $this->EventRegistration->save($this->data)) {
-				$event = $this->EventRegistration->Event->find('first', array(
-					'conditions' => array(
-						'Event.id' => $this->params['form']['event_id']
-					),
-					'contain' => array(
-						'Location'
-					)
-				));
-				$user = $this->EventRegistration->User->findById($this->params['form']['user_id']);
-				$this->Notifications->sendEventRegistrationEmail($event, $user);
+			if( count($event['EventRegistration']) < $event['Event']['seats_available'] )
+			{
+				if($count == 0 && $this->EventRegistration->save($this->data)) {
+					$event = $this->EventRegistration->Event->find('first', array(
+						'conditions' => array(
+							'Event.id' => $this->params['form']['event_id']
+						),
+						'contain' => array(
+							'Location'
+						)
+					));
+					$user = $this->EventRegistration->User->findById($this->params['form']['user_id']);
+					$this->Notifications->sendEventRegistrationEmail($event, $user);
 
-				$data['success'] = true;
-				$data['message'] = 'Customer was registered successfully.';
-				$this->Transaction->createUserTransaction(
-					'Events',
-					$this->Auth->user('id'),
-					$this->Auth->user('location_id'),
-					'Assigned user id: ' . $this->params['form']['user_id'] . ' to event id: ' . $this->params['form']['event_id']
-				);
+					$data['success'] = true;
+					$data['message'] = 'Customer was registered successfully.';
+					$this->Transaction->createUserTransaction(
+						'Events',
+						$this->Auth->user('id'),
+						$this->Auth->user('location_id'),
+						'Assigned user id: ' . $this->params['form']['user_id'] . ' to event id: ' . $this->params['form']['event_id']
+					);
+				}
+				else {
+					$data['success'] = false;
+					$data['message'] = 'Unable to register customer at this time, or customer is already registered';
+				}
 			}
-			else {
+			else
+			{
 				$data['success'] = false;
-				$data['message'] = 'Unable to register customer at this time, or customer is already registered';
+				$data['message'] = "Unable to register customer, no seats available";
 			}
 			$this->set(compact('data'));
 			$this->render(null, null, '/elements/ajaxreturn');
