@@ -47,11 +47,10 @@ table td
 	padding:5px 10px;
 }
 .searchbar input[name=keywords],
-.searchbar input[name=datepicker]
+.searchbar input[name=date]
 {
-	height:27px;
 	font-size:11pt;
-	padding:0px 5px;
+	padding:2px 5px;
 }
 .searchbar a
 {
@@ -68,6 +67,7 @@ table td
 {
 	width:0px;height:0px;
 	border:0px;
+	margin-top:-5px;
 }
 .ui-datepicker-trigger
 {
@@ -77,11 +77,14 @@ table td
 }
 #date
 {
-	min-width:70px;
-	padding:5px;
+	min-width:40px;
+	max-width:90px;
 	display:inline-block;
 	vertical-align:middle;
 	border:0px;
+	margin-top:-1px;
+	padding-top:3px;
+	padding-bottom:3px;
 }
 .form-search
 {
