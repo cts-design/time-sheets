@@ -473,6 +473,12 @@ class EventsController extends AppController {
 		else
 		{
 			$cond = $this->Session->read('ler_paginate');
+			
+			if( !isset($cond['Event.scheduled >']) )
+			{
+				$cond['Event.scheduled >'] = date('Y/m/d 00:00:00');
+			}
+			
 			$events = $this->paginate('Event', $cond);
 			$this->set('events', $events);
 		}
