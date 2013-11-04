@@ -45,8 +45,9 @@ Ext.create('Ext.data.Store', {
       if(responseTxt.success) {
         iconCls = 'x-status-valid'; 
       }
+      
       sb.setStatus({
-        text: responseTxt.message,
+        text: responseTxt.message + ' (' + currentSeats + ' / ' + seatsAvailable + ' Users Registered)',
         iconCls: iconCls,
         clear: {
           anim: false
@@ -231,8 +232,17 @@ Ext.create('Ext.grid.Panel', {
           },
           success: function(response) {
             var txt = Ext.JSON.decode(response.responseText);
+
             Ext.MessageBox.alert('Success', txt.message);
             Ext.data.StoreManager.lookup('eventRegistrations').load();
+
+            var registeredUsersPanel = Ext.getCmp('registrations');
+            var statusBarPanel = Ext.getCmp('status-bar');
+            currentSeats += 1;
+
+            statusBarPanel.setStatus({
+              text : 'Ready (' + currentSeats + ' / ' + seatsAvailable + ' Users Registered)'
+            });
           },
           failure: function() {
             Ext.MessageBox.alert('Failure', 'Unable to register customer, please try again.');
@@ -254,10 +264,22 @@ Ext.create('Ext.grid.Panel', {
   id: 'registrations',
   bbar: Ext.create('Ext.ux.StatusBar', {
     id: 'status-bar',
-    defaultText: 'Ready',
+    //defaultText: 'Ready (' + currentSeats + '/' + seatsAvailable + ' Users Registered)',
     defaultIconCls: 'default-icon',
     text: 'Ready'
   }),
+  listeners : {
+    viewReady : function(store){
+      var registeredUsersPanel = Ext.getCmp('registrations');
+      var statusBarPanel = Ext.getCmp('status-bar');
+      currentSeats = registeredUsersPanel.getStore().getTotalCount();
+
+      console.log( Ext.StoreMgr.lookup("eventRegistrations") );
+      statusBarPanel.setStatus({
+        text : 'Ready (' + currentSeats + ' / ' + seatsAvailable + ' Users Registered)'
+      });
+    }
+  },
   dockedItems: [{
     xtype: 'toolbar',
     items:[{
@@ -292,12 +314,14 @@ Ext.create('Ext.grid.Panel', {
       text: 'Delete',
       iconCls: 'icon_delete',
       handler: function() {
-        Ext.MessageBox.confirm('Confim delete', 'Are you sure you want to delete these registrations?', function(button) {
+        Ext.MessageBox.confirm('Confirm delete', 'Are you sure you want to delete these registrations?', function(button) {
           if(button == 'yes') {
             var store = Ext.data.StoreManager.lookup('eventRegistrations');
             store.remove(sm.selected.items);
             store.sync();
             sm.deselectAll();
+
+            currentSeats = store['data']['length'];
           }
         });
       }
