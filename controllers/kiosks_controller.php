@@ -22,9 +22,18 @@ class KiosksController extends AppController {
 		if($this->Auth->user('role_id') > 1) {
 			$this->Auth->allow('admin_get_kiosk_buttons_by_location');
 		}
+		
+		$this->Auth->allowedActions = array(
+			'kiosk_upload_image', 'kiosk_getPreviewImage', 
+			'kiosk_get_last_id', 'kiosk_get_latest_preview', 'kiosk_merge_images',
+			'kiosk_delete_last'
+		);
+		
 		$this->Cookie->name = 'self_sign';
 		$this->Cookie->domain = Configure::read('domain');
         $this->Auth->allow('kiosk_set_language');
+		$this->Auth->allow('kiosk_session_document_save');
+		$this->Auth->allow('kiosk_get_last_image');
 
         if($this->Auth->user('id') == NULL)
 		{
@@ -394,7 +403,75 @@ class KiosksController extends AppController {
 		$title_for_layout = __('Self Scan Program Selection', true);
 		$this->set(compact('title_for_layout', 'parentButtons', 'referer'));
 	}
+	
+	function kiosk_session_document_save($selfScanCatId = NULL, $queueCatId = NULL) {
+		$this->layout = 'kiosk';
+		
+		$self_scan_cat_id = ($selfScanCatId == NULL ? 0 : $selfScanCatId);
+		$this->set('self_scan_cat_id', $self_scan_cat_id);
+		
+		$queue_cat_id = ($queueCatId == NULL ? 0 : $queueCatId);
+		$this->set('queue_cat_id', $queue_cat_id);
+		
+		//Gets the user's images
+		$user_id = ( $this->Auth->user('id') != NULL ? $this->Auth->user('id') : 0 );
+		
+		$this->set('user_id', $user_id);
+		
+		$this->loadModel('PartialDocument');
+		
+		$partial_files = $this->PartialDocument->find('all', array(
+			'conditions' => array(
+				'user_id' => $user_id,
+				'expires >' => date('Y-m-d H:i:s')
+			),
+			'order' => array(
+				'expires DESC'
+			)
+		));
+		
+		if($partial_files != FALSE)
+		{
+			$partial_files = $this->PartialDocument->find('all', array(
+				'conditions' => array(
+					'user_id' => $user_id
+				),
+				'order' => array(
+					'expires ASC'
+				)
+			));
+		}
+		else
+		{
+			$partial_files = $this->PartialDocument->find('all', array(
+				'conditions' => array(
+					'user_id' => $user_id
+				),
+				'order' => array(
+					'expires ASC'
+				)
+			));
 
+			foreach($partial_files as $file)
+			{
+				$filename = $file['PartialDocument']['file_location'];
+
+				if( file_exists($filename) )
+					$is_deleted = unlink($filename);
+				else
+					$is_deleted = TRUE;
+
+				if($is_deleted)
+				{
+					$this->PartialDocument->delete($file['PartialDocument']['id']);
+				}
+			}
+			$partial_files = array();
+		}
+		
+		$this->set('partial_files', $partial_files);
+	}
+	
     function kiosk_self_scan_document($selfScanCatId=null, $queueCatId=null) {	
 		if(!empty($this->data)) {
 			$id = $this->_queueScannedDocument();
@@ -420,6 +497,7 @@ class KiosksController extends AppController {
 		$this->set(compact('selfScanCatId', 'queueCatId', 'locationId', 'referer'));
 		$this->layout = 'kiosk';
 	}
+	
 
     function kiosk_self_scan_another_document() {
 		$this->layout = 'kiosk';
@@ -584,5 +662,346 @@ class KiosksController extends AppController {
 				$this->Email->send($alert['message'] . "\r\n" . $alert['url']);				
 			}
 		}
-	}	
+	}
+	
+	
+	
+	
+	
+	
+	
+	public function kiosk_upload_image()
+	{
+		$this->autoRender = FALSE;
+
+		if( isset($_FILES['file']) )
+		{
+			$file = $_FILES['file'];
+
+			$user_id = $this->params['url']['user_id'];
+			
+			$this->log("User Id used to save: " . $user_id);
+			
+			$file_name = date('YmdHis') . '_' . $user_id . '.jpg';
+			$file_location = APP . 'webroot' . DS . 'storage' . DS;
+			
+			//Save file as a session document
+			if( move_uploaded_file($file['tmp_name'], $file_location . $file_name) )
+			{
+				$this->loadModel('PartialDocument');
+				$meta = array(
+					'queue_category_id' => 1,
+					'scanned_location_id' => 1,
+					'self_scan_cat_id' => 1
+				);
+				$partial_doc = array(
+					'file_location' => $file_location . $file_name,
+					'web_location' => DS . 'storage' . DS . $file_name,
+					'meta' => json_encode($meta),
+					'created' => date('Y-m-d H:i:s'),
+					'expires' => date('Y-m-d H:i:s', strtotime( Configure::read('PartialDocumentSessionTimeout') )),
+					'user_id' => $user_id
+				);
+				
+				$this->PartialDocument->create();
+				$is_saved = $this->PartialDocument->save($partial_doc);
+				
+				if( !$is_saved )
+				{
+					$this->log("Could not save data");
+				}
+			}
+			else
+			{
+				$this->log("Could not save the file to the folder, that means it was also not inserted into the database");
+			}
+		}
+		else
+		{
+			$this->log("file was not set inside of the _FILES global variable");
+		}
+	}
+	
+	public function kiosk_get_latest_preview()
+	{
+		$this->loadModel('PartialDocument');
+		$this->autoRender = false;
+		$user_id = $this->params['url']['user_id'];
+		$image = $this->PartialDocument->find('first', array(
+			'conditions' => array(
+				'user_id' => $user_id,
+			),
+			'order' => array(
+				'expires DESC'
+			)
+		));
+		
+		
+		if( !$image )
+		{
+			$message = array(
+				'success' => FALSE,
+				'output' => $image
+			);
+		}
+		else
+		{
+			$message = array(
+				'success' => TRUE,
+				'output' => $image
+			);
+		}
+		
+		echo json_encode($message);
+	}
+	
+	public function kiosk_merge_images()
+	{	
+		$this->loadModel('PartialDocument');
+		$this->loadModel('SelfScanCategory');
+		$this->autoRender = false;
+		
+		$self_scan_cat_id = $this->params['url']['self_scan_cat_id'];
+		$scanned_location_id = $this->params['url']['scanned_location_id'];
+		
+		//Grabs user id, sets it to 0 for tests from admin		
+		$user_id = $this->params['url']['user_id'];
+		
+		$images = $this->getImages($user_id);
+		
+		if($images != NULL && $images != FALSE)
+		{
+			$data = $this->writePdfFile($images);
+
+			$save['filename'] = $data['path'] . $data['docName'];
+			$save['entry_method'] = 'Self Scan';
+			$save['user_id'] = $user_id;
+			$save['self_scan_cat_id'] = $self_scan_cat_id;
+			$save['scanned_location_id'] = $scanned_location_id;
+			
+			$id = $this->savePdfDocument($save);
+		
+			$this->SelfScanCategory->recursive = -1;
+			$selfScanCat = $this->SelfScanCategory->findById( $self_scan_cat_id );
+		
+			$this->sendSelfScanAlert($this->Auth->user(), $id, $scanned_location_id);
+		
+			$this->sendSelfScanCategoryAlert($this->Auth->user(), $selfScanCat, $id, $scanned_location_id);
+		
+			$this->Transaction->createUserTransaction($save['entry_method'], null, $scanned_location_id, 'Self scanned document ID ' . $id);
+		
+			$this->PartialDocument->deleteAll(array('user_id' => $user_id));
+		
+			$message = array(
+				'success' => TRUE,
+				'output' => 'Document saved in filesystem and database'
+			);
+			
+			echo json_encode($message);
+		}
+		else
+		{
+			$message = array(
+				'success' => FALSE,
+				'output' => 'There were no pending documents'
+			);
+			
+			echo json_encode($message);
+		}
+	}
+	
+	public function kiosk_delete_last()
+	{
+		$this->autoRender = false;
+		if($this->RequestHandler->isAjax())
+		{
+			$this->loadModel('PartialDocument');
+			
+			$user_id = $this->params['url']['user_id'];
+			
+			$image = $this->PartialDocument->find('first', array(
+				'conditions' => array(
+					'user_id' => $user_id,
+				),
+				'order' => array('expires DESC')
+			));
+			
+			if($image == NULL || !$image)
+			{
+				$message = array(
+					'success' => FALSE,
+					'output' => "Could not find last submitted image"
+				);
+				
+				echo json_encode($message);
+				return;
+			}
+			
+			$is_deleted = unlink($image['PartialDocument']['file_location']);
+			
+			
+			if($is_deleted)
+			{
+				$this->PartialDocument->query(
+					"DELETE FROM partial_documents WHERE user_id = " . $user_id . " ORDER BY expires DESC LIMIT 1"
+				);
+				
+				//Selects new last image and updates it's expiration to the last image's expiration.
+				
+				$second_last_image = $this->PartialDocument->find('first', array(
+					'conditions' => array(
+						'user_id' => $user_id,
+					),
+					'order' => array('expires DESC')
+				));
+				
+				$second_last_image['PartialDocument']['expires'] = $image['PartialDocument']['expires'];
+				
+				$this->PartialDocument->create();
+				$this->PartialDocument->save($second_last_image);
+				
+				$message = array(
+					'success' => TRUE,
+					'output' => "The image was deleted"
+				);
+				
+				echo json_encode($message);
+			}
+			else
+			{
+				$message = array(
+					'success' => FALSE,
+					'output' => "Could not delete the image"
+				);
+				
+				echo json_encode($message);
+			}
+		}
+		else
+		{
+			$message = array(
+				'success' => FALSE,
+				'output' => "Was not an ajax call"
+			);
+			
+			echo json_encode($message);
+		}
+	}
+
+ 	private function getImages($images)
+	{	
+		$this->loadModel('PartialDocument');
+		
+		$user_id = $this->params['url']['user_id'];
+		
+		$images = $this->PartialDocument->find('first', array(
+			'conditions' => array(
+				'user_id' => $user_id,
+				'expires >' => date('Y-m-d H:i:s')
+			),
+			'order' => array(
+				'expires ASC'
+			)
+		));
+		
+		if( $images )
+		{
+			$images = $this->PartialDocument->find('all', array(
+				'conditions' => array(
+					'user_id' => $user_id
+				),
+				'order' => array(
+					'expires ASC'
+				)
+			));
+			
+			return $images;
+		}
+		else
+		{
+			$this->removeUserMedia($user_id);
+			return FALSE;
+		} //end else of if
+	} //end function
+	
+	private function writePdfFile($images)
+	{
+		//HTML generated from looping through images
+		$html 		= "";
+		
+		//File's new name when saved in the storage folder
+		$docName 	= "";
+		
+		//Loaded MPDF library which we use to merge original images into the pdf
+		require(APP . 'vendors' . DS . 'MPDF54' . DS . 'mpdf.php');
+		$mpdf 		= new MPDF();
+		$mpdf->debug= FALSE;
+		
+		//Path to save PDF from merged images
+		$path = Configure::read('Document.storage.uploadPath') . date('Y') . DS . date('m') . DS;
+		
+		foreach($images as $image)
+		{
+			$html .= "<img src=\"" . $image['PartialDocument']['web_location'] . "\" />";
+		}
+		$html = '<HEAD></HEAD><BODY>' . $html . '</BODY>';
+		
+		ob_start();
+		$mpdf->WriteHtml($html);
+		ob_end_clean();
+		
+		if(!file_exists($path))
+		{
+		    mkdir($path, 0777, TRUE);
+		}
+		
+		$docName = date('YmdHis') . rand(0, pow(10, 7)) . '.pdf';
+		
+		ob_start();
+		$is_saved = $mpdf->Output($path . $docName, 'F');
+		ob_end_clean();
+		
+		return array('docName' => $docName, 'is_saved' => $is_saved, 'path' => $path);
+	}
+	
+	private function savePDFDocument($save, $meta = NULL)
+	{
+		//filename, entry_method
+		$this->loadModel('QueuedDocument');
+		$this->QueuedDocument->create();
+		$this->QueuedDocument->save($save);
+		
+		return $this->QueuedDocument->getLastInsertId();
+	}
+	
+	private function removeUserMedia($user_id)
+	{
+		$this->loadModel('PartialDocument');
+		
+		$user_id = $this->params['url']['user_id'];
+		
+		$images = $this->PartialDocument->find('all', array(
+			'conditions' => array(
+				'user_id' => $user_id
+			)
+		));
+		
+		foreach($images as $image)
+		{
+			$is_deleted = unlink($image['PartialDocument']['file_location']);
+			
+			if(!$is_deleted)
+			{
+				$this->log("Was not able to remove file at: " . $image['PartialDocument']['file_location']);
+			}
+			else
+			{
+				$this->PartialDocument->delete($image['PartialDocument']['id']);
+			}
+		}
+		
+		
+	}
+	
+		
 }
