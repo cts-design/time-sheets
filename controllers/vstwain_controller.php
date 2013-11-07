@@ -37,7 +37,6 @@ class VstwainController extends AppController
 				$this->loadModel('PartialDocument');
 				$meta = array(
 					'queue_category_id' => 1,
-					'scanned_location_id' => 1,
 					'self_scan_cat_id' => 1
 				);
 				$partial_doc = array(
@@ -45,7 +44,7 @@ class VstwainController extends AppController
 					'web_location' => DS . 'storage' . DS . $file_name,
 					'meta' => json_encode($meta),
 					'created' => date('Y-m-d H:i:s'),
-					'expires' => date('Y-m-d H:i:s', strtotime( Configure::read('PartialDocumentSessionTimeout') )),
+					'expires' => date('Y-m-d H:i:s', strtotime( Configure::read('Document.selfScanTimeout') )),
 					'user_id' => $user_id
 				);
 				
@@ -110,7 +109,8 @@ class VstwainController extends AppController
 		$this->autoRender = false;
 		
 		$self_scan_cat_id = $this->params['url']['self_scan_cat_id'];
-		$scanned_location_id = $this->params['url']['scanned_location_id'];
+		$queue_cat_id = $this->params['url']['queue_cat_id'];
+		$scanned_location_id = 4;
 		
 		$user_id = $this->params['url']['user_id'];
 		
@@ -124,6 +124,7 @@ class VstwainController extends AppController
 			$save['entry_method'] = 'Self Scan';
 			$save['user_id'] = $user_id;
 			$save['self_scan_cat_id'] = $self_scan_cat_id;
+			$save['queue_category_id'] = $queue_cat_id;
 			$save['scanned_location_id'] = $scanned_location_id;
 			
 			$id = $this->savePdfDocument($save);
@@ -286,7 +287,7 @@ class VstwainController extends AppController
 		$mpdf->debug= FALSE;
 		
 		//Path to save PDF from merged images
-		$path = Configure::read('Document.storage.absolutePath') . date('Y') . DS . date('m') . DS;
+		$path = Configure::read('Document.storage.absoluteUploadPath') . date('Y') . DS . date('m') . DS;
 		
 		foreach($images as $image)
 		{

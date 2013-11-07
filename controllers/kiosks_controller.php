@@ -410,8 +410,8 @@ class KiosksController extends AppController {
 		$self_scan_cat_id = ($selfScanCatId == NULL ? 0 : $selfScanCatId);
 		$this->set('self_scan_cat_id', $self_scan_cat_id);
 		
-		$location_id = ($queueCatId == NULL ? 0 : $queueCatId);
-		$this->set('location_id', $location_id);
+		$queue_cat_id = ($queueCatId == NULL ? 0 : $queueCatId);
+		$this->set('queue_cat_id', $queue_cat_id);
 		
 		//Gets the user's images
 		$user_id = ( $this->Auth->user('id') != NULL ? $this->Auth->user('id') : 0 );
@@ -430,7 +430,7 @@ class KiosksController extends AppController {
 			)
 		));
 		
-		if($partial_files != NULL && !empty($partial_files))
+		if($partial_files != FALSE)
 		{
 			$partial_files = $this->PartialDocument->find('all', array(
 				'conditions' => array(
@@ -443,9 +443,29 @@ class KiosksController extends AppController {
 		}
 		else
 		{
-			$this->PartialDocument->deleteAll(array(
-				'user_id' => $user_id
+			$partial_files = $this->PartialDocument->find('all', array(
+				'conditions' => array(
+					'user_id' => $user_id
+				),
+				'order' => array(
+					'expires ASC'
+				)
 			));
+
+			foreach($partial_files as $file)
+			{
+				$filename = $file['PartialDocument']['file_location'];
+
+				if( file_exists($filename) )
+					$is_deleted = unlink($filename);
+				else
+					$is_deleted = TRUE;
+
+				if($is_deleted)
+				{
+					$this->PartialDocument->delete($file['PartialDocument']['id']);
+				}
+			}
 			$partial_files = array();
 		}
 		

@@ -106,14 +106,23 @@ $(document).ready(function(){
 	function finish()
 	{
 		//VSTwain1.StopDevice();
+		
+		
 		$.ajax({
 			url : "<?= $html->url('/kiosk/vstwain/merge_images', true) ?>",
 			type : 'GET',
 			dataType : 'json',
-			data : { self_scan_cat_id : <?= $self_scan_cat_id ?>, scanned_location_id : <?= $location_id ?>, user_id : '<?= $user_id ?>' },
+			data : { self_scan_cat_id : '<?= $self_scan_cat_id ?>', queue_cat_id : '<?= $queue_cat_id ?>', user_id : '<?= $user_id ?>' },
 			success : function(response)
 			{
-				window.location.href = "<?= $html->url('/kiosk/kiosks/self_sign_service_selection', true) ?>";
+				if(response.success)
+					window.location.href = "<?= $html->url('/kiosk/kiosks/self_sign_service_selection', true) ?>";
+				else
+					alert(response.output);
+			},
+			error : function(response, error)
+			{
+				alert(error);
 			}
 		});
 	}
@@ -121,7 +130,7 @@ $(document).ready(function(){
 	function addPage()
 	{
 		VSTwain1.StopDevice();
-		window.location.href = "<?= $html->url('/kiosk/kiosks/session_document_save/' . $self_scan_cat_id . '/' . $location_id, true) ?>";
+		window.location.href = "<?= $html->url('/kiosk/kiosks/session_document_save/' . $self_scan_cat_id . '/' . $queue_cat_id, true) ?>";
 	}
 });
 
