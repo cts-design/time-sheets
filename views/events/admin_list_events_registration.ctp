@@ -141,6 +141,7 @@ $post = $session->read('ler');
 		</tr>
 	</thead>
 <tbody>
+
 <?php foreach($events as $event): ?>
 <tr>
 	<td>
@@ -152,7 +153,7 @@ $post = $session->read('ler');
 		?>
 	</td>
 	<td style="text-align:center">
-		<?= $event['Event']['seats_available'] ?>
+		<?= $event['Event']['seats_available'] - count($event['EventRegistration']) . '/' . $event['Event']['seats_available'] ?> Seats Available
 	</td>
 	<td style="text-align:center">
 		<?= date('n/d/Y g:i A', strtotime($event['Event']['scheduled'])) ?>

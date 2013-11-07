@@ -429,7 +429,7 @@ class EventsController extends AppController {
 	{
 		$this->loadModel('Event');
 		
-		$this->Event->recursive = -1;
+		//$this->Event->recursive = -1;
 		
 		if( empty($this->params['named']) )
 		{

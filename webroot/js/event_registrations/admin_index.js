@@ -47,7 +47,7 @@ Ext.create('Ext.data.Store', {
       }
       
       sb.setStatus({
-        text: responseTxt.message + ' (' + currentSeats + ' / ' + seatsAvailable + ' Users Registered)',
+        text: responseTxt.message + ' (' + (seatsAvailable - currentSeats) + ' Seats Available)',
         iconCls: iconCls,
         clear: {
           anim: false
@@ -241,7 +241,7 @@ Ext.create('Ext.grid.Panel', {
             currentSeats += 1;
 
             statusBarPanel.setStatus({
-              text : 'Ready (' + currentSeats + ' / ' + seatsAvailable + ' Users Registered)'
+              text : 'Ready (' + (seatsAvailable - currentSeats) + '/' + seatsAvailable + ' Seats Available)'
             });
           },
           failure: function() {
@@ -264,7 +264,6 @@ Ext.create('Ext.grid.Panel', {
   id: 'registrations',
   bbar: Ext.create('Ext.ux.StatusBar', {
     id: 'status-bar',
-    //defaultText: 'Ready (' + currentSeats + '/' + seatsAvailable + ' Users Registered)',
     defaultIconCls: 'default-icon',
     text: 'Ready'
   }),
@@ -276,7 +275,7 @@ Ext.create('Ext.grid.Panel', {
 
       console.log( Ext.StoreMgr.lookup("eventRegistrations") );
       statusBarPanel.setStatus({
-        text : 'Ready (' + currentSeats + ' / ' + seatsAvailable + ' Users Registered)'
+        text : 'Ready (' + (seatsAvailable - currentSeats) + ' / ' + seatsAvailable + ' Seats Available)'
       });
     }
   },
