@@ -99,6 +99,13 @@ task :elcmdm do
   server "atlas.elcmdm.org", :app, :web, :db, :primary => true
 end
 
+task :elcmanatee do
+  set :server_name, 'elc manatee'
+  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
+  set :user, 'deploy'
+  server "192.168.200.116", :app, :web, :db, :primary => true
+end
+
 task :elcp do
   set :deploy_to, "/var/www/vhosts/vpk.childcarepinellas.org/#{application}"
   set :server_name, 'elcp production'
