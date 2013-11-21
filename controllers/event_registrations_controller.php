@@ -30,6 +30,11 @@ class EventRegistrationsController extends AppController {
 
 	public function admin_index() {
 		$eventRegistrations = $this->EventRegistration->findAllByEventId($this->params['pass'][0]);
+
+		$this->loadModel('Event');
+        $event = $this->Event->findById( $this->params['pass'][0] );
+        $this->set('event', $event);
+		
 		if($this->RequestHandler->isAjax()) {
 			$data['registrations'] = array();
 			if($eventRegistrations) {

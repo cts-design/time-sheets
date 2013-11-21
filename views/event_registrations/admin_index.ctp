@@ -1,5 +1,7 @@
 <?php $this->Html->scriptStart(array('inline' => FALSE)) ?>
 	var eventId = <?php echo $this->params['pass'][0] ?>;
+	var seatsAvailable = <?= $event['Event']['seats_available'] ?>;
+	var currentSeats = 0;
 <?php $this->Html->scriptEnd() ?>
 <?php echo $this->Html->css('ext/statusbar', null, array('inline' => false)); ?>
 <?php echo $this->Html->script('ext/ux/StatusBar', array('inline' => false)) ?>
