@@ -45,8 +45,9 @@ Ext.create('Ext.data.Store', {
       if(responseTxt.success) {
         iconCls = 'x-status-valid'; 
       }
+      
       sb.setStatus({
-        text: responseTxt.message,
+        text: responseTxt.message + ' (' + (seatsAvailable - currentSeats) + ' Seats Available)',
         iconCls: iconCls,
         clear: {
           anim: false
@@ -88,7 +89,7 @@ Ext.create('Ext.form.Panel',{
     },{
       boxLabel: 'Last 4 SSN',
       name: 'searchType', 
-      inputValue: 'last4'	
+      inputValue: 'last4' 
     },{
       boxLabel: 'Full SSN',
       name: 'searchType',
@@ -116,15 +117,15 @@ Ext.create('Ext.form.Panel',{
               search: vals.search,
               searchType: vals.searchType
             }
-          });            	        		
+          });                         
         }
       }
     }]
-	});
+  });
 
 Ext.define('User', {
   extend: 'Ext.data.Model',
-  fields: ['id', 'firstname', 'lastname', 'email', 'phone', 'last_4']	
+  fields: ['id', 'firstname', 'lastname', 'email', 'phone', 'last_4'] 
 });
 Ext.create('Ext.data.Store', {
   storeId: 'users',
@@ -144,7 +145,7 @@ Ext.create('Ext.data.Store', {
         writeAllFields: false,
         root: 'user',
         encode: true
-      }			
+      }     
   },
   listeners : {
     write:  function(store, operation, eOps) {
@@ -153,7 +154,7 @@ Ext.create('Ext.data.Store', {
               search: vals.search,
               searchType: vals.searchType,
               from: vals.from,
-              to: vals.to						
+              to: vals.to           
         }
       });
       var res = Ext.JSON.decode(operation.response.responseText);
@@ -162,9 +163,9 @@ Ext.create('Ext.data.Store', {
       }
       else {
         Ext.Msg.alert('Error', 'Unable to save record please try again.');
-      }				
+      }       
     }
-  }		
+  }   
 });
 
 Ext.create('Ext.grid.Panel', {
@@ -231,8 +232,17 @@ Ext.create('Ext.grid.Panel', {
           },
           success: function(response) {
             var txt = Ext.JSON.decode(response.responseText);
+
             Ext.MessageBox.alert('Success', txt.message);
             Ext.data.StoreManager.lookup('eventRegistrations').load();
+
+            var registeredUsersPanel = Ext.getCmp('registrations');
+            var statusBarPanel = Ext.getCmp('status-bar');
+            currentSeats += 1;
+
+            statusBarPanel.setStatus({
+              text : 'Ready (' + (seatsAvailable - currentSeats) + '/' + seatsAvailable + ' Seats Available)'
+            });
           },
           failure: function() {
             Ext.MessageBox.alert('Failure', 'Unable to register customer, please try again.');
@@ -254,10 +264,21 @@ Ext.create('Ext.grid.Panel', {
   id: 'registrations',
   bbar: Ext.create('Ext.ux.StatusBar', {
     id: 'status-bar',
-    defaultText: 'Ready',
     defaultIconCls: 'default-icon',
     text: 'Ready'
   }),
+  listeners : {
+    viewReady : function(store){
+      var registeredUsersPanel = Ext.getCmp('registrations');
+      var statusBarPanel = Ext.getCmp('status-bar');
+      currentSeats = registeredUsersPanel.getStore().getTotalCount();
+
+      console.log( Ext.StoreMgr.lookup("eventRegistrations") );
+      statusBarPanel.setStatus({
+        text : 'Ready (' + (seatsAvailable - currentSeats) + ' / ' + seatsAvailable + ' Seats Available)'
+      });
+    }
+  },
   dockedItems: [{
     xtype: 'toolbar',
     items:[{
@@ -292,12 +313,14 @@ Ext.create('Ext.grid.Panel', {
       text: 'Delete',
       iconCls: 'icon_delete',
       handler: function() {
-        Ext.MessageBox.confirm('Confim delete', 'Are you sure you want to delete these registrations?', function(button) {
+        Ext.MessageBox.confirm('Confirm delete', 'Are you sure you want to delete these registrations?', function(button) {
           if(button == 'yes') {
             var store = Ext.data.StoreManager.lookup('eventRegistrations');
             store.remove(sm.selected.items);
             store.sync();
             sm.deselectAll();
+
+            currentSeats = store['data']['length'];
           }
         });
       }
