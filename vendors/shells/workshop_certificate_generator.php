@@ -31,9 +31,16 @@ class WorkshopCertificateGeneratorShell extends Shell {
 				'AND' => array(
 					array('Event.scheduled >' => $yesterdayStartOfDay),
 					array('Event.scheduled <' => $yesterdayEndOfDay),
-					array('Event.event_category_id' => $workshopCategoryId)
+					// array('Event.event_category_id' => $workshopCategoryId)
 				)
 			),
+                       'contain' => array(
+                                'EventCategory' => array(
+                                        'conditions' => array(
+                                                'EventCategory.parent_id' => $workshopCategoryId
+                                        )
+                                )
+                        ),			
 			'contain' => array(
 				'EventRegistration' => array(
 					'conditions' => array(
