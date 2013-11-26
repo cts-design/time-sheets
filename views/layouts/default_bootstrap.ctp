@@ -14,6 +14,8 @@
 
 	<?= $this->Html->script('pdfobject_min.js') ?>
 
+	<?= $this->Html->script('respond.min') ?>
+
 	<!--[if IE]> 
 	<script type="text/javascript" src="js/excanvas.js"></script>
 	<?= $this->Html->script('jqueryui_signature/excanvas') ?>

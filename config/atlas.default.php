@@ -47,6 +47,12 @@ $config['Document']['storage']['path'] = '/storage/';
 // Document Upload path
 $config['Document']['storage']['uploadPath'] = '../storage/';
 
+// Absolute path to storage
+$config['Document']['storage']['absolutePath'] = APP . 'storage';
+
+// Time before partial_document timeout
+$config['PartialDocumentSessionTimeout'] = "+30 mintes";
+
 // Document Jpeg location
 $config['Document']['jpeg']['path'] = '/storage/thumbnails/';
 
