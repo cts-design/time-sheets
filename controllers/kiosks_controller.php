@@ -43,6 +43,8 @@ class KiosksController extends AppController {
 		{
 			$this->set('user_logged_in', TRUE);
 		}
+
+		$this->Auth->allow('kiosk_session_document_save');
 	}
 
     function admin_index() {
@@ -452,6 +454,12 @@ class KiosksController extends AppController {
 				)
 			));
 
+<<<<<<< HEAD
+    function kiosk_self_scan_document($selfScanCatId=null, $queueCatId=null) {
+
+    	$location_id = $this->Kiosk->Location->find('all');
+
+=======
 			foreach($partial_files as $file)
 			{
 				$filename = $file['PartialDocument']['file_location'];
@@ -473,6 +481,7 @@ class KiosksController extends AppController {
 	}
 	
     function kiosk_self_scan_document($selfScanCatId=null, $queueCatId=null) {	
+>>>>>>> origin/staging
 		if(!empty($this->data)) {
 			$id = $this->_queueScannedDocument();
 			if($id) {
@@ -577,6 +586,74 @@ class KiosksController extends AppController {
 			$this->set(compact('data'));
 			$this->render(null, null, '/elements/ajaxreturn');				
 		}
+	}
+
+	function kiosk_session_document_save($selfScanCatId = NULL, $queueCatId = NULL) {
+		$this->layout = 'kiosk';
+		
+		$self_scan_cat_id = ($selfScanCatId == NULL ? 0 : $selfScanCatId);
+		$this->set('self_scan_cat_id', $self_scan_cat_id);
+		
+		$queue_cat_id = ($queueCatId == NULL ? 0 : $queueCatId);
+		$this->set('queue_cat_id', $queue_cat_id);
+		
+		//Gets the user's images
+		$user_id = ( $this->Auth->user('id') != NULL ? $this->Auth->user('id') : 0 );
+		
+		$this->set('user_id', $user_id);
+		
+		$this->loadModel('PartialDocument');
+		
+		$partial_files = $this->PartialDocument->find('all', array(
+			'conditions' => array(
+				'user_id' => $user_id,
+				'expires >' => date('Y-m-d H:i:s')
+			),
+			'order' => array(
+				'expires DESC'
+			)
+		));
+		
+		if($partial_files != FALSE)
+		{
+			$partial_files = $this->PartialDocument->find('all', array(
+				'conditions' => array(
+					'user_id' => $user_id
+				),
+				'order' => array(
+					'expires ASC'
+				)
+			));
+		}
+		else
+		{
+			$partial_files = $this->PartialDocument->find('all', array(
+				'conditions' => array(
+					'user_id' => $user_id
+				),
+				'order' => array(
+					'expires ASC'
+				)
+			));
+
+			foreach($partial_files as $file)
+			{
+				$filename = $file['PartialDocument']['file_location'];
+
+				if( file_exists($filename) )
+					$is_deleted = unlink($filename);
+				else
+					$is_deleted = TRUE;
+
+				if($is_deleted)
+				{
+					$this->PartialDocument->delete($file['PartialDocument']['id']);
+				}
+			}
+			$partial_files = array();
+		}
+		
+		$this->set('partial_files', $partial_files);
 	}
 
 	function kiosk_set_language($lang) {

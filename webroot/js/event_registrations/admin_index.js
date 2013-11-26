@@ -89,7 +89,7 @@ Ext.create('Ext.form.Panel',{
     },{
       boxLabel: 'Last 4 SSN',
       name: 'searchType', 
-      inputValue: 'last4'	
+      inputValue: 'last4' 
     },{
       boxLabel: 'Full SSN',
       name: 'searchType',
@@ -117,15 +117,15 @@ Ext.create('Ext.form.Panel',{
               search: vals.search,
               searchType: vals.searchType
             }
-          });            	        		
+          });                         
         }
       }
     }]
-	});
+  });
 
 Ext.define('User', {
   extend: 'Ext.data.Model',
-  fields: ['id', 'firstname', 'lastname', 'email', 'phone', 'last_4']	
+  fields: ['id', 'firstname', 'lastname', 'email', 'phone', 'last_4'] 
 });
 Ext.create('Ext.data.Store', {
   storeId: 'users',
@@ -145,7 +145,7 @@ Ext.create('Ext.data.Store', {
         writeAllFields: false,
         root: 'user',
         encode: true
-      }			
+      }     
   },
   listeners : {
     write:  function(store, operation, eOps) {
@@ -154,7 +154,7 @@ Ext.create('Ext.data.Store', {
               search: vals.search,
               searchType: vals.searchType,
               from: vals.from,
-              to: vals.to						
+              to: vals.to           
         }
       });
       var res = Ext.JSON.decode(operation.response.responseText);
@@ -163,9 +163,9 @@ Ext.create('Ext.data.Store', {
       }
       else {
         Ext.Msg.alert('Error', 'Unable to save record please try again.');
-      }				
+      }       
     }
-  }		
+  }   
 });
 
 Ext.create('Ext.grid.Panel', {

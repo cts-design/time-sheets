@@ -182,7 +182,6 @@ $post = $session->read('ler');
 		<?= $this->Paginator->next('Next', array(), null, array()) ?>&rarr;
 	</li>
 </ul>
-
 <script type="text/javascript">
 $(function() {
 	$("#datepicker").datepicker({

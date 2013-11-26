@@ -62,6 +62,16 @@
 				'after' => '</p>',
 				'options' => array("id_card" => "Id Card", "user_login" => "User Login")
 			));
+
+			echo '<br class="clear" /> ';
+
+			echo $this->Form->input('kiosk_version', array(
+				'options' => array('1' => 'v1.0', '2' => 'v2.0'),
+				'label' => 'Kiosk Version',
+				'before' => '<p class="left">',
+				'between' => '</p><p class="left">',
+				'after' => '</p>'
+			));
 		?>
     </fieldset>
     <?php echo $this->Form->end(__('Submit', true)); ?>

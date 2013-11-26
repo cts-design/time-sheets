@@ -1,4 +1,7 @@
 
+/*
+*	Object that get's passed to $.ajax method
+*/
 var statusPoll = {
 	url : '/programs/esign_get_status/',
 	type: 'GET',
@@ -23,12 +26,15 @@ var statusPoll = {
 				{
 					location.pathname = '/users/dashboard';
 				}
-			}, 1);
+			}, 1000);
 		}
 	},
 	error : reportError
 };
 
+/*
+*	$.ajax object error function
+*/
 function reportError(data, error)
 {
 	console.log(data);
@@ -38,14 +44,20 @@ function reportError(data, error)
 $(document).ready(function(){
 	var path = location.pathname.split(/\//);
 	var id = path[ path.length-1 ];
+
+	//Add's the program id to the end of the url for redirecting
 	statusPoll.url += id;
 	
 	$.ajax(statusPoll);
+
 	setInterval(function(){
 		$.ajax(statusPoll);
 	}, 4000);
 });
 
+/*
+*	Used to capitalize letters
+*/
 function toTitleCase(str)
 {
     return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
