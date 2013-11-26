@@ -35,6 +35,7 @@ class ProgramsController extends AppController {
 
 	public function esign($id=null) {
 		$this->loadProgram($id);
+		$this->layout = 'default_bootstrap';
 	}
 
 	public function esign_get_status($id = null) {
