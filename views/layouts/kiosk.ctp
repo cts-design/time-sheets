@@ -37,6 +37,8 @@
 	<?php
 		$settings = Cache::read('settings');
 		$timeOut = json_decode($settings['SelfSign']['KioskTimeOut'], true);
+
+		var_dump($settings);
 		if(Configure::read('Kiosk.login_type') == 'id_card') {
 			$exclude = array('kiosk_self_scan_document', 'question', 'kiosk_id_card_login');
 		}

@@ -71,7 +71,9 @@ class UsersController extends AppController {
 				return;
 			}
 			elseif(isset($this->data['User']['login_type'])) {
-				$this->User->setValidation('customerLogin');
+
+				//$this->User->setValidation('customerLogin');
+
 				$this->User->set($this->data);
 				if($this->User->validates()) {
 					$count = $this->User->find('count', array(
