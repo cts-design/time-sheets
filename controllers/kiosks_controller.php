@@ -401,8 +401,6 @@ class KiosksController extends AppController {
 
     	$location_id = $this->Kiosk->Location->find('all');
 
-    	var_dump($location_id);
-
 		if(!empty($this->data)) {
 			$id = $this->_queueScannedDocument();
 			if($id) {
