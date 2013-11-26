@@ -62,9 +62,6 @@ class TestController extends AppController
 		$height = 100;
 		$img = imagecreatetruecolor($width, $height);
 
-		imageantialias($img, true);
-		imagesetthickness($img, 5);
-
 		$bg = imagecolorallocate($img, 255, 255, 255);
 		imagefill($img, 0, 0, $bg);
 		$color = imagecolorallocate($img, 0, 0, 0);
