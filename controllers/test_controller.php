@@ -99,7 +99,7 @@ class TestController extends AppController
 			
 		}
 
-		$save_directory = APP . 'webroot' . DS . 'storage' . DS . 'signatures' . DS . $this->Auth->user('id');
+		$save_directory = APP . 'storage' . DS . 'signatures' . DS . $this->Auth->user('id');
 		$web_directory = 'storage/signatures/' . $this->Auth->user('id') . '/';
 
 		if( !is_dir($save_directory) )
