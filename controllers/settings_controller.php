@@ -3,6 +3,12 @@ class SettingsController extends AppController {
 
 	public $name = 'Settings';
 	
+	public function beforeFilter()
+	{
+		parent::beforeFilter();
+		$this->Auth->allow('admin_esign_options');
+	}
+
 	public function admin_index() {
 		$this->Setting->recursive = 0;
 		$this->set('settings', $this->paginate());
@@ -141,6 +147,41 @@ class SettingsController extends AppController {
 			$this->set(compact('data'));	
 			$this->render(null, null, '/elements/ajaxreturn');	
 		}
+	}
+
+	public function admin_esign_options()
+	{
+		$this->autoRender = FALSE;
+		$value = $_GET['value'];
+
+		$esign_option = $this->Setting->findByName('EsignOption');
+
+		$this->Setting->create();
+		if($esign_option === FALSE)
+		{
+			$now = date('Y/m/d H:i:s');
+			$settings = array(
+				'module' => 'Esign',
+				'name' => 'EsignOption',
+				'created' => $now,
+				'modified' => $now,
+				'value' => $value
+			);
+
+			$created = $this->Setting->save($settings);
+		}
+		else
+		{
+			$this->Setting->id = $esign_option['Setting']['id'];
+			$this->Setting->saveField('value', $value);
+		}
+
+		$message = array(
+			'output' => 'Updated the version type',
+			'success' => TRUE
+		);
+
+		echo json_encode($message);
 	}
 
 }

@@ -12,7 +12,7 @@
 // Changes:  See changelog.txt                                                  *
 // ******************************************************************************
 
-
+error_reporting(0);
 define('mPDF_VERSION','5.4');
 
 //Scale factor

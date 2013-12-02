@@ -38,21 +38,6 @@ class TestController extends AppController
 			$lines = $_POST['lines'];
 		}
 
-		if( !isset($_POST['esign_id']) )
-		{
-			$message = array(
-				'output' => 'esign_id is not set',
-				'success' => FALSE
-			);
-
-			echo json_encode($message);
-			exit();
-		}
-		else
-		{
-			$esign_id = $_POST['esign_id'];
-		}
-
 		$lines = json_decode($lines, true);
 		$lines = $lines['lines'];
 
@@ -65,6 +50,8 @@ class TestController extends AppController
 		$bg = imagecolorallocate($img, 255, 255, 255);
 		imagefill($img, 0, 0, $bg);
 		$color = imagecolorallocate($img, 0, 0, 0);
+
+		imagesetthickness($img, 4);
 
 		for($j = 0; $j < count($lines); $j += 1)
 		{
@@ -99,7 +86,7 @@ class TestController extends AppController
 			
 		}
 
-		$save_directory = APP . 'storage' . DS . 'signatures' . DS . $this->Auth->user('id');
+		$save_directory = APP . 'webroot' . DS . 'storage' . DS . 'signatures' . DS . $this->Auth->user('id');
 		$web_directory = 'storage/signatures/' . $this->Auth->user('id') . '/';
 
 		if( !is_dir($save_directory) )
@@ -117,16 +104,10 @@ class TestController extends AppController
 		imagedestroy($img);
 
 		//Updates that the user has submitted an e-signature
-		$this->loadModel('ProgramResponse');
 		$this->loadModel('User');
-		
-		$result = $this->ProgramResponse->find('first', array(
-			'conditions' => array( 'Program.id' => $esign_id)
-		));
-		$user = $result['User'];
 
 		$this->User->create();
-		$this->User->id = $user['id'];
+		$this->User->id = $this->Auth->user('id');
 		$this->User->saveField('signature', 1);
 		
 		$message = array(
