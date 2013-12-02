@@ -99,6 +99,10 @@ $("button[name=done]").click(function(){
 				var image = '/' + response.output;
 				$("#post-save-image").attr('src', image);
 			}
+			else
+			{
+				console.log(response);
+			}
 		},
 		error : function(response, error){
 			console.log(response);

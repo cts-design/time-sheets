@@ -35,7 +35,23 @@ class ProgramsController extends AppController {
 
 	public function esign($id=null) {
 		$this->loadProgram($id);
-		$this->layout = 'default_bootstrap';
+
+		$this->loadModel('Setting');
+
+		$esign_setting = $this->Setting->findByName('EsignOption');
+
+		$value = $esign_setting['Setting']['value'];
+
+		if(!isset($esign_setting['Setting']['value']) || $esign_setting['Setting']['value'] == 'v1.0')
+		{
+			$this->layout = 'default';
+			$this->render('/program_views/programs/esign_old');
+		}
+		else
+		{
+			$this->layout = 'default_bootstrap';
+			$this->render('/program_views/programs/esign');
+		}
 	}
 
 	public function esign_get_status($id = null) {
