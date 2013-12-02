@@ -95,8 +95,9 @@ class TestController extends AppController
 
 			if( !$is_made )
 			{
-				$message = array('output' => 'Could not make user signatures directory', 'success' => FALSE);
+				$message = array('output' => 'Could not make user signatures directory at: ' . $save_directory, 'success' => FALSE);
 				echo json_encode($message);
+				exit();
 			}
 		}
 
