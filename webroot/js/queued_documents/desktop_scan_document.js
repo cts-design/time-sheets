@@ -5,7 +5,7 @@
  */
 $(document).ready(function(){
     $('.scan').button();
-    $('.save, .re-scan,').button({disabled: true});
+    $('.save, .re-scan').button({disabled: true});
     var validator = $('#QueuedDocumentDesktopScanDocumentForm').validate({
 	errorPlacement: function(error,element) {
 	    return true;
