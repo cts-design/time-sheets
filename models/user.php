@@ -10,12 +10,12 @@ class User extends AppModel {
 
 	public $name = 'User';
 
-	/*
+	
 	public $actsAs = array(
 		'AtlasAcl' => 'requester',
 		'Multivalidatable',
 		'Disableable'
-	);*/
+	);
 
 	public $actAs = array(
 		'Acl' => array(
