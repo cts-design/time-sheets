@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2013-12-03 16:48:23 : 1386107303*/
+/* atlas schema generated on: 2013-12-04 15:59:56 : 1386190796*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -892,8 +892,9 @@ class atlasSchema extends CakeSchema {
 		'id_card_number' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'signature_created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'signature_modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
-		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
-		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => 'CURRENT_TIMESTAMP'),
+		'modified' => array('type' => 'datetime', 'null' => true, 'default' => 'CURRENT_TIMESTAMP'),
+		'guardian' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 45, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'role_id' => array('column' => 'role_id', 'unique' => 0), 'location_id' => array('column' => 'location_id', 'unique' => 0)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
