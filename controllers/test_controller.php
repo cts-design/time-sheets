@@ -7,12 +7,51 @@ class TestController extends AppController
 
 	public function beforeFilter()
 	{
-		$this->Auth->allowedActions = array('sign', 'esign_document');
+		$this->Auth->allowedActions = array('sign', 'esign_document', 'pdf');
 	}
 
 	public function sign()
 	{
 		$this->layout = 'test';
+	}
+
+	public function pdf()
+	{
+		$this->loadModel('User');
+		$this->loadModel('QueuedDocument');
+		$user = $this->User->findById( $this->Auth->user('id') );
+
+		//Finds ESIGN Queue Category in the system
+		$this->loadModel('DocumentQueueCategory');
+		$esign_category = $this->DocumentQueueCategory->findByName('ESIGN');
+		$no_category = $this->DocumentQueueCategory->findByName('Unassigned');
+
+		var_dump($esign_category);
+
+		$db_data = array(
+			'user_id' => $this->Auth->user('id'),
+			'entry_method' => 'esign'
+		);
+		if(!$esign_category && !$no_category)
+		{
+			$db_data['queue_category_id'] = 0;
+		}
+		else if(!$esign_category && $no_category)
+		{
+			$db_data['queue_category_id'] = $no_category['DocumentQueueCategory']['id'];
+		}
+		else
+		{
+			$db_data['queue_category_id'] = $esign_category['DocumentQueueCategory']['id'];
+		}
+
+		$this->QueuedDocument->createEsignPDF( $user, $db_data );
+		exit();
+	}
+
+	public function pass_to_scan()
+	{
+		$this->layout = 'default_bootstrap';
 	}
 
 	public function esign_document()
