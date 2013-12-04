@@ -7,10 +7,13 @@
 	border:1px solid #CCC;
 	padding:10px;
 }
-#sig
+#sig, #guard
 {
 	width:100%;
 	height:75px;
+}
+#sig
+{
 	margin-top:5px;
 	margin-bottom:5px;
 }
@@ -85,6 +88,29 @@
 					<div id="sig"></div>
 				</div>
 			</div>
+
+			<div class="row" style="margin-bottom:5px">
+				<div class="col-sm-3">
+					<p class="pull-right">
+						Guardian Name
+					</p>
+				</div>
+				<div class="col-sm-7">
+					<input type="text" name="guardian_name" class="input-sm" style="width:60%" placeholder="Enter guardian name" />
+				</div>
+			</div>
+
+			<div class="row" id="under18" style="<?= (!$under_18 ? 'display:none' : '') ?>">
+				<div class="col-sm-3">
+					<p class="pull-right">
+						You are under 18 years of age, have a parent or guardian sign
+					</p>
+				</div>
+				<div class="col-sm-7">
+					<div id="guard"></div>
+				</div>
+			</div>
+
 			<div class="row">
 				<div class="col-sm-4">
 					<p class="error-output pull-right text-danger"></p>
@@ -103,11 +129,22 @@
 
 <textarea name="lines" id="lines" style="display:none"></textarea>
 
+<textarea name="guardian" id="guardian" style="display:none"></textarea>
+
 
 
 <script type="text/javascript">
 $(document).ready(function(){
-$("#sig").signature({syncField: '#lines'});
+
+var sig = $("#sig");
+sig.signature({syncField: '#lines'});
+
+var guard = $("#guard");
+guard.signature({syncField: '#guardian'});
+
+var guardian_name = $("input[name=guardian_name]");
+
+var under18 = $("#under18");
 
 var errorOutput = $(".error-output");
 
@@ -116,7 +153,8 @@ var reset = $("#reset");
 
 done.click(function(){
 
-	var isEmpty = $('#sig').signature('isEmpty');
+	var isEmpty = sig.signature('isEmpty');
+	var guardEmpty = guard.signature('isEmpty');
 
 	if(isEmpty)
 	{
@@ -124,6 +162,19 @@ done.click(function(){
 		$(this).addClass('btn-danger');
 
 		errorOutput.text("You must sign with your mouse before continuing");
+	}
+	else if(guardEmpty && under18.css('display') != 'none'){
+		$(this).removeClass('btn-primary');
+		$(this).addClass('btn-danger');
+
+		errorOutput.text("An adult over the age of 18 must sign the bottom signature");
+	}
+	else if(guardian_name.val() == "")
+	{
+		$(this).removeClass('btn-primary');
+		$(this).addClass('btn-danger');
+
+		errorOutput.text("Guardian's name is required");
 	}
 	else
 	{
@@ -135,7 +186,12 @@ done.click(function(){
 			url : '/programs/esign_document',
 			type : 'POST',
 			dataType : 'json',
-			data : { lines : $("#lines").val(), esign_id : '<?= $this->params['pass'][0] ?>' },
+			data : { 
+				lines : $("#lines").val(), 
+				esign_id : '<?= $this->params['pass'][0] ?>', 
+				guardian: $("#guardian").val(),
+				guardian_name : guardian_name.val()
+			},
 			success : function(response){
 				if(response.success)
 				{
