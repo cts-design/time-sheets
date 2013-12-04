@@ -89,7 +89,7 @@
 				</div>
 			</div>
 
-			<div class="row" style="margin-bottom:5px">
+			<div class="row" id="guardian_container" style="margin-bottom:5px;<?= (!$under_18 ? 'display:none' : '') ?>">
 				<div class="col-sm-3">
 					<p class="pull-right">
 						Guardian Name
@@ -143,6 +143,7 @@ var guard = $("#guard");
 guard.signature({syncField: '#guardian'});
 
 var guardian_name = $("input[name=guardian_name]");
+var guardian_container = $("#guardian_container");
 
 var under18 = $("#under18");
 
@@ -169,8 +170,9 @@ done.click(function(){
 
 		errorOutput.text("An adult over the age of 18 must sign the bottom signature");
 	}
-	else if(guardian_name.val() == "")
+	else if(guardian_container.css('display') != 'none' && guardian_name.val() == "")
 	{
+		console.log(guardian_container);
 		$(this).removeClass('btn-primary');
 		$(this).addClass('btn-danger');
 
