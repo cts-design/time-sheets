@@ -238,11 +238,23 @@ $(document).ready(function () {
     ]
   });
 
+$("#expand").click(function(e){
+  e.preventDefault();
+  var tree = $.jstree._reference("#dashboardAdminTree");
+  tree.open_all();
+});
+
+$("#collapse").click(function(e){
+  e.preventDefault();
+  var tree = $.jstree._reference("#dashboardAdminTree");
+  tree.close_all();
+});
+  /*
   $('#expand').toggle(function () {
     $.jstree._reference("#dashboardAdminTree").open_all();
     $(this).html('Collapse All')
   }, function () {
     $.jstree._reference("#dashboardAdminTree").close_all();
     $(this).html('Expand All')
-  });
+  });*/
 });
