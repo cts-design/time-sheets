@@ -655,8 +655,61 @@ registrationForm = Ext.create('Ext.form.Panel', {
       xtype: 'combo',
       allowBlank: false,
       displayField: 'ucase',
-      fieldLabel: 'Media Type',
+      fieldLabel: 'Media Stuff',
       id: 'mediaType',
+      labelWidth: 175,
+      listeners: {
+        change: {
+          fn: function (field, newValue, oldValue) {
+            var container = Ext.getCmp('uploadContainer'),
+              uploadField = Ext.getCmp('uploadField'),
+              urlContainer = Ext.getCmp('urlContainer'),
+              urlField = Ext.getCmp('urlField'),
+              uploadButton = Ext.getCmp('uploadMediaButton');
+
+            if (newValue !== 'url') {
+              container.setVisible(true);
+              uploadField.allowBlank = false;
+              urlContainer.setVisible(false);
+              urlField.allowBlank = true;
+              uploadButton.setVisible(true);
+              if (oldValue === 'url') {
+                container.getEl().highlight('C9DFEE', { duration: 1000 });
+              }
+            } else {
+              uploadButton.setVisible(false);
+              container.setVisible(false);
+              uploadField.allowBlank = true;
+              urlContainer.setVisible(true);
+              urlField.allowBlank = false;
+              urlContainer.getEl().highlight('C9DFEE', { duration: 1000 });
+            }
+          }
+        }
+      },
+      name: 'media_type',
+      queryMode: 'local',
+      store: Ext.create('Ext.data.Store', {
+        fields: ['lcase', 'ucase'],
+        data: [{
+          lcase: 'flv', ucase: 'Flash Video'
+        }, {
+          lcase: 'pdf', ucase: 'PDF Document'
+        }, {
+          lcase: 'swf', ucase: 'Shockwave Video'
+        }, {
+          lcase: 'url', ucase: 'Website URL'
+        }]
+      }),
+      value: '',
+      valueField: 'lcase',
+      width: 300
+    }, {
+      xtype: 'combo',
+      allowBlank: false,
+      displayField: 'ucase',
+      fieldLabel: 'Media Things',
+      id: 'alternateMediaType',
       labelWidth: 175,
       listeners: {
         change: {
