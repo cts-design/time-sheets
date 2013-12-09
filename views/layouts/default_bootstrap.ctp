@@ -1,7 +1,7 @@
-<DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
-	<?= $this->Html->css('bootstrap_yeti.min') ?>
+	<?= $this->Html->css('bootstrap.min') ?>
 	<?= $this->Html->script('https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js') ?>
 	<?= $this->Html->script('bootstrap.min') ?>
 
@@ -64,6 +64,14 @@
 		margin:0px;
 		padding:5px 0px 5px 0px;
 	}
+	.bleach
+	{
+		background-color:#FFF;
+	}
+	.pad 
+	{
+		padding:5px;
+	}
 	</style>
 </head>
 <body>
@@ -105,7 +113,7 @@
 		</div>
 
 		<div class="row"> <!-- This is the large white line -->
-			<div class="col-lg-10 col-lg-offset-1 col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1">
+			<div class="col-sm-10 col-sm-offset-1">
 
 			</div>
 		</div>

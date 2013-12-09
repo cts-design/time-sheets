@@ -806,7 +806,7 @@ class UsersController extends AppController {
 				}
 				$this->data['User']['username'] = $this->data['User']['lastname'];
 				$this->Auth->login($this->data);
-				$this->Transaction->createUserTransaction('Web Site',
+				$this->Transaction->createUserTransaction('Website',
 					$userId, null, 'User self registered using the website.');
 				$this->Session->setFlash(__('Your account has been created.', true), 'flash_success');
 				if($this->Session->read('Auth.redirect') != '') {
