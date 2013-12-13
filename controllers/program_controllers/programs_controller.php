@@ -5,6 +5,11 @@ class ProgramsController extends AppController {
 	public $name = 'Programs';
 	public $components = array('Notifications', 'Email');
 	public $transactionIds = array();
+	
+	var $paginate = array(
+		'limit' => 10
+	);
+
 
 	public function beforeFilter() {
 		parent::beforeFilter();
@@ -18,6 +23,7 @@ class ProgramsController extends AppController {
 		}
 		
 		$this->Auth->allow('esign_document');
+		$this->Auth->allow('admin_orientation_media');
 	}
 
 	// TODO make these actions work with an index method and routes ??
@@ -33,6 +39,32 @@ class ProgramsController extends AppController {
 
 	public function ecourse() {
 		//ecouse logic here
+	}
+
+	public function admin_orientation_media()
+	{
+		$this->layout = 'default_bootstrap';
+
+		require(APP . 'vendors' . DS . 'HtmlTableGenerator' . DS . 'HtmlTableGenerator.php');
+		$htg = new HtmlTableGenerator('Program');
+
+		$fields = array('name', 'type', 'disabled');
+		$filters = array('type');
+
+		$htg->set_fields($fields);
+		$htg->set_filters($filters);
+
+		$conditions = array();
+		if(isset($_GET['type']))
+			$conditions['type'] = $_GET['type'];
+
+		if(isset($_GET['name']))
+			$conditions['name LIKE'] = '%' . $_GET['name'] . '%';
+
+		$data = $htg->format($fields, $conditions);
+
+		$this->set($data);
+		$this->render('/program_views/programs/admin_orientation_media');
 	}
 
 	public function esign($id=null) {

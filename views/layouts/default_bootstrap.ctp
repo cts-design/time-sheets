@@ -72,6 +72,12 @@
 	{
 		padding:5px;
 	}
+	.bread-fit
+	{
+		padding:0px;
+		margin:0px;
+		background-color:transparent;
+	}
 	</style>
 </head>
 <body>
@@ -114,7 +120,16 @@
 
 		<div class="row"> <!-- This is the large white line -->
 			<div class="col-sm-10 col-sm-offset-1">
-
+				<?= $this->Html->getCrumbs('Dashboard', '/users') ?>
+				<!--
+				<ol class="breadcrumb bread-fit">
+					<li>
+						>>
+					</li>
+					<li>
+						<a href="">Dashboard</a>
+					</li>
+				</ol>-->
 			</div>
 		</div>
 	</div>
