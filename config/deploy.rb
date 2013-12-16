@@ -214,7 +214,7 @@ namespace :deploy do
     run "ln -s #{shared_path}/webroot/index.php #{latest_release}/webroot/index.php"
     run "ln -s #{shared_path}/webroot/test.php #{latest_release}/webroot/test.php"
     run "ln -s #{shared_path}/webroot/js/ckfinder/config.php #{latest_release}/webroot/js/ckfinder/config.php"
-    run "ln -s #{shared_path}/storage/signatures #{latest_release}/webroot/signatures"
+    #run "ln -s #{shared_path}/storage/signatures #{latest_release}/webroot/signatures"
     deploy.plugins.symlink
   end
 
