@@ -5,6 +5,11 @@ class ProgramsController extends AppController {
 	public $name = 'Programs';
 	public $components = array('Notifications', 'Email');
 	public $transactionIds = array();
+	
+	var $paginate = array(
+		'limit' => 10
+	);
+
 
 	public function beforeFilter() {
 		parent::beforeFilter();
@@ -17,7 +22,8 @@ class ProgramsController extends AppController {
 			$this->Auth->allow('admin_get_programs_by_type', 'admin_get_program_by_id');
 		}
 		
-		$this->Auth->allow('esign_document');
+		$this->Auth->allow('esign_document', 'admin_add_alt_media');
+		$this->Auth->allow('admin_orientation_media');
 	}
 
 	// TODO make these actions work with an index method and routes ??
@@ -33,6 +39,104 @@ class ProgramsController extends AppController {
 
 	public function ecourse() {
 		//ecouse logic here
+	}
+
+	public function admin_orientation_media()
+	{
+		$this->layout = 'default_bootstrap';
+
+		require(APP . 'vendors' . DS . 'HtmlTableGenerator' . DS . 'HtmlTableGenerator.php');
+		$htg = new HtmlTableGenerator('Program');
+
+		$fields = array('id', 'name', 'type', 'disabled');
+		$filters = array('type');
+
+		$htg->set_fields($fields);
+		$htg->set_filters($filters);
+
+		$conditions = array();
+		if(isset($_GET['type']))
+			$conditions['type'] = $_GET['type'];
+
+		if(isset($_GET['name']))
+			$conditions['name LIKE'] = '%' . $_GET['name'] . '%';
+
+		$this->paginate = array(
+			'conditions' => $conditions,
+			'fields' => $fields
+		);
+		$rows = $this->paginate('Program');
+		$data = $htg->format($rows);
+
+		$this->set($data);
+		$this->render('/program_views/programs/admin_orientation_media');
+	}
+
+	public function admin_add_alt_media($id = NULL)
+	{
+		$this->layout = 'default_bootstrap';
+		$title_for_layout = 'Add Alternative Media';
+
+		$this->set('program_id', $id);
+
+		//Get steps for program
+		$this->loadModel('ProgramDocument');
+		$docs = $this->ProgramDocument->find('all', array(
+			'conditions' => array(
+				'ProgramDocument.program_id' => $id
+			)
+		));
+		$this->set('docs', $docs);
+
+		if( !isset( $_FILES['file'] ))
+		{
+		}
+		else
+		{
+			$upload_folder = APP . 'storage' . DS . 'program_media';
+			$extension = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
+
+			if( !is_dir($upload_folder))
+			{
+				$this->log('Attempting to create upload directory');
+				$created = mkdir($upload_folder, TRUE);
+			}
+			else
+			{
+				$name = date('YmdHis') . '.' . $extension;
+				$is_moved = move_uploaded_file($_FILES['file']['tmp_name'], $upload_folder . DS . $name);
+			}
+
+			$original_document = $this->ProgramDocument->findbyId($_POST['program_document_id']);
+
+			if(empty($original_document['ProgramDocument']))
+			{
+
+			}
+			else
+			{
+				$document = array(
+					'program_step_id' => $original_document['ProgramDocument']['program_step_id'],
+					'program_id' => $_POST['program_id'],
+					'name' => $_POST['altname'],
+					'cat1' => $original_document['ProgramDocument']['cat_1'],
+					'cat2' => $original_document['ProgramDocument']['cat_2'],
+					'cat3' => $original_document['ProgramDocument']['cat_3'],
+					'type' => 'alternative_media',
+					'created' => date('Y-m-d H:i:s'),
+					'modified' => date('Y-m-d H:i:s'),
+					'template' => $name
+				);
+
+				$this->ProgramDocument->create();
+				$is_saved = $this->ProgramDocument->save($document);
+
+				$this->Session->setFlash('Successfully uploaded alternative media for Program Document: ' . $original_document['ProgramDocument']['name']);
+				$this->redirect(array('action' => 'admin_orientation_media'));
+			}
+		}
+
+		$this->set(compact('title_for_layout'));
 	}
 
 	public function esign($id=null) {

@@ -102,7 +102,7 @@ class UsersController extends AppController {
 							break;
 						case 'child_program':
 							$this->redirect(array('action' => 'registration', 'child', 'program',
-								$this->data['User']['username'], 'kisok' => false));
+								$this->data['User']['username'], 'kiosk' => false));
 							break;
 						}
 					}
@@ -667,6 +667,7 @@ class UsersController extends AppController {
 		$this->User->setValidation('customerLogin');
 		$loginType = 'website';
 		$render = 'login';
+
 		if(isset($this->params['pass'][0], $this->params['pass'][1]) && $this->params['pass'][0] === 'program') {
 			$this->loadModel('Program');
 			$this->Program->contain(array('ProgramInstruction' => array('conditions' => array('ProgramInstruction.type' => 'login'))));
@@ -806,7 +807,7 @@ class UsersController extends AppController {
 				}
 				$this->data['User']['username'] = $this->data['User']['lastname'];
 				$this->Auth->login($this->data);
-				$this->Transaction->createUserTransaction('Web Site',
+				$this->Transaction->createUserTransaction('Website',
 					$userId, null, 'User self registered using the website.');
 				$this->Session->setFlash(__('Your account has been created.', true), 'flash_success');
 				if($this->Session->read('Auth.redirect') != '') {
