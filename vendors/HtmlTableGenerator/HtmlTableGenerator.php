@@ -6,11 +6,6 @@ class HtmlTableGenerator extends AppController
 	var $fields = array();
 	var $distincts = array();
 	var $model = '';
-	
-
-	var $paginate = array(
-		'limit' => 25
-	);
 
 	public function __construct($model)
 	{
@@ -18,16 +13,10 @@ class HtmlTableGenerator extends AppController
 		
 		$this->loadModel($model);
 	}
-	public function format($fields, $conditions)
+	public function format($rows)
 	{
 		$model = $this->model;
-	
-		$this->paginate = array(
-			'conditions' => $conditions,
-			'fields' => $fields
-		);
 
-		$rows = $this->paginate($model);
 		$data = array(
 			'fields' => $this->fields,
 			'model' => $this->model,

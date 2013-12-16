@@ -668,12 +668,6 @@ class UsersController extends AppController {
 		$loginType = 'website';
 		$render = 'login';
 
-		$user = $this->Auth->user();
-
-		var_dump($user);
-
-		//var_dump( Configure::read('Login.ssn') );
-		/*
 		if(isset($this->params['pass'][0], $this->params['pass'][1]) && $this->params['pass'][0] === 'program') {
 			$this->loadModel('Program');
 			$this->Program->contain(array('ProgramInstruction' => array('conditions' => array('ProgramInstruction.type' => 'login'))));
@@ -729,7 +723,6 @@ class UsersController extends AppController {
 				$title_for_layout = 'Auditor Login';
 				$render = 'auditor_login';
 			}
-			*/
 		$this->set(compact('loginType', 'title_for_layout'));
 		$this->render($render);
 	}

@@ -23,12 +23,36 @@
 		    	'between' => '<br />',
 				'after' => '<br />'));
 		    echo '<br class="clear"/>';
-		    echo $form->input('password', array(
-		    	'label' => __('Child\'s 9 Digit SSN', true),
-		    	'maxlength' => 9,
-		    	'between' => '<br />',
-		    	'after' => '<br />'
-		    ));
+
+		    $ssn = Configure::read('Login.child.ssn');
+ 
+			if($ssn == 'last4')
+			{
+				echo $form->input('password', array(
+			    	'label' => __('Child\'s last 4 Digits of SSN', true),
+			    	'maxlength' => 9,
+			    	'between' => '<br />',
+			    	'after' => '<br />'
+			    ));
+			}
+			else if($ssn == 'last5')
+			{
+				echo $form->input('password', array(
+			    	'label' => __('Child\'s last 5 Digits of SSN', true),
+			    	'maxlength' => 9,
+			    	'between' => '<br />',
+			    	'after' => '<br />'
+			    ));
+			}
+			else
+			{
+				echo $form->input('password', array(
+			    	'label' => __('Child\'s 9 Digit SSN', true),
+			    	'maxlength' => 9,
+			    	'between' => '<br />',
+			    	'after' => '<br />'
+			    ));
+			}
 			echo $form->hidden('User.login_type', array('value' => 'child_website'));
 		    echo '<br class="clear"/>';
 			if(isset($this->params['pass'][0]) && $this->params['pass'][0] === 'program') {

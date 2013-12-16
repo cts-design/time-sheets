@@ -80,6 +80,9 @@
 								<?= Inflector::humanize($field) ?>
 							</th>
 						<?php endforeach ?>
+						<th>
+							Actions
+						</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -90,6 +93,9 @@
 								<?= $row[$model][$field] ?>
 							</td>
 						<?php endforeach ?>
+							<td width="60px">
+								<a href="<?= $html->url('/admin/programs/add_alt_media/' . $row[$model]['id'], true) ?>" class="btn btn-default">Add Alternate Media</a>
+							</td>
 					</tr>
 					<?php endforeach ?>
 				</tbody>
@@ -102,13 +108,13 @@
 		<div class="col-sm-10 col-sm-offset-1 bleach">
 			<ul class="pager">
 				<li class="previous">
-					<?= $this->Paginator->prev('<< Previous') ?>
+					<?php echo $this->Paginator->prev('<< Previous') ?>
 				</li>
 				<li>
 					<?= $this->Paginator->counter() ?>
 				</li>
 				<li class="next">
-					<?= $this->Paginator->next('Next >>') ?>
+					<?php echo $this->Paginator->next('Next >>') ?>
 				</li>
 			</ul>
 		</div>
@@ -120,9 +126,6 @@ $(document).ready(function(){
 	var krampus_links = $("#krampus a");
 	var search_submit = $("button[type=submit]");
 
-	krampus_links.click(function(e){
-		e.preventDefault();
-	});
 	var toggables = $('.btn-group[data-toggle=true]');
 	var tog_buttons = toggables.find('> button');
 	tog_buttons.click(function(){

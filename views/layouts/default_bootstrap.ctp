@@ -120,16 +120,8 @@
 
 		<div class="row"> <!-- This is the large white line -->
 			<div class="col-sm-10 col-sm-offset-1">
-				<?= $this->Html->getCrumbs('Dashboard', '/users') ?>
-				<!--
-				<ol class="breadcrumb bread-fit">
-					<li>
-						>>
-					</li>
-					<li>
-						<a href="">Dashboard</a>
-					</li>
-				</ol>-->
+				<span><?php __('You are here') ?> > </span>
+				<?php echo $crumb->getHtml(__($title_for_layout, true), null, 'unique') ; ?>
 			</div>
 		</div>
 	</div>
