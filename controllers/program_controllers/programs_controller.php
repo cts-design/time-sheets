@@ -103,11 +103,9 @@ class ProgramsController extends AppController {
 				$this->log('Attempting to create upload directory');
 				$created = mkdir($upload_folder, TRUE);
 			}
-			else
-			{
-				$name = date('YmdHis') . '.' . $extension;
-				$is_moved = move_uploaded_file($_FILES['file']['tmp_name'], $upload_folder . DS . $name);
-			}
+
+			$name = date('YmdHis') . '.' . $extension;
+			$is_moved = move_uploaded_file($_FILES['file']['tmp_name'], $upload_folder . DS . $name);
 
 			$original_document = $this->ProgramStep->findbyId($_POST['program_step_id']);
 
@@ -125,6 +123,7 @@ class ProgramsController extends AppController {
 					'parent_id' => $_POST['program_step_id'],
 					'redoable' => 0,
 					'meta' => '',
+					'media_location' => $name,
 					'created' => date('Y-m-d H:i:s'),
 					'modified' => date('Y-m-d H:i:s')
 				);
@@ -299,7 +298,8 @@ class ProgramsController extends AppController {
 			'conditions' => array('Program.id' => $id),
 			'contain' => array(
 				'ProgramStep' => array(
-					'order' => 'lft ASC'
+					'order' => 'lft ASC',
+					'conditions' => array('ProgramStep.type <>' => 'alt_media')
 				),
 				'ProgramInstruction')));
 		

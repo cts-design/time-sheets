@@ -17,10 +17,6 @@
 	background-color:#C0C0C0;
 	text-decoration: none;
 }
-.version-btns:active
-{
-	border: none;
-}
 </style>
 <?php if(isset($instructions)) : ?>
 	<?php echo $html->script('program_responses/toggle_instructions', array('inline' => false)) ?>
