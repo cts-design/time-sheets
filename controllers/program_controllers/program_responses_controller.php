@@ -255,6 +255,40 @@ class ProgramResponsesController extends AppController {
 	function media($programId=null, $stepId=null) {
         $program = $this->ProgramResponse->Program->getProgramAndResponse($programId, $this->Auth->user('id'));
 		$this->whatsNext($program, $stepId);
+
+		$this->loadModel('ProgramStep');
+		if($this->currentStep[0]['type'] == 'media')
+		{
+			$alternate_media = $this->ProgramStep->find('all', array(
+				'conditions' => array(
+					'ProgramStep.program_id' => $programId,
+					'ProgramStep.parent_id' => $stepId,
+					'ProgramStep.type' => 'alt_media'
+				)
+			));
+		}
+		else if($this->currentStep[0]['type'] == 'alt_media') //Get parent and other alt media
+		{
+			$parent_media_step = $this->ProgramStep->find('first', array(
+				'conditions' => array(
+					'ProgramStep.program_id' => $programId,
+					'ProgramStep.id' => $this->currentStep[0]['parent_id']
+				)
+			));
+
+			$alternate_media = $this->ProgramStep->find('all', array(
+				'conditions' => array(
+					'ProgramStep.program_id' => $programId,
+					'ProgramStep.parent_id' => $parent_media_step['ProgramStep']['id'],
+					'ProgramStep.type' => 'alt_media'
+				)
+			));
+
+			$this->set(compact('parent_media_step'));
+		}
+
+		$this->set(compact('alternate_media'));
+
         if(!empty($this->data)) {
             $this->data['ProgramResponse']['id'] = $program['ProgramResponse'][0]['id'];
 			$this->data['ProgramResponse']['next_step_id'] = null;

@@ -14,11 +14,11 @@
 
 							<div class="form-group">
 								<label for="altname">Alternative Media For:</label>
-								<select name="program_document_id" class="form-control">
+								<select name="program_step_id" class="form-control">
 									<option value="0"></option>
 										<?php foreach($docs as $doc): ?>
-											<option value="<?= $doc['ProgramDocument']['id'] ?>">
-												<?= $doc['ProgramDocument']['name'] ?>
+											<option value="<?= $doc['ProgramStep']['id'] ?>">
+												<?= $doc['ProgramStep']['name'] ?>
 											</option>
 										<?php endforeach ?>
 									</select>

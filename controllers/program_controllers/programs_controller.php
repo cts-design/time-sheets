@@ -81,9 +81,11 @@ class ProgramsController extends AppController {
 
 		//Get steps for program
 		$this->loadModel('ProgramDocument');
-		$docs = $this->ProgramDocument->find('all', array(
+		$this->loadModel('ProgramStep');
+		$docs = $this->ProgramStep->find('all', array(
 			'conditions' => array(
-				'ProgramDocument.program_id' => $id
+				'ProgramStep.program_id' => $id,
+				'ProgramStep.type' => 'media',
 			)
 		));
 		$this->set('docs', $docs);
@@ -107,31 +109,30 @@ class ProgramsController extends AppController {
 				$is_moved = move_uploaded_file($_FILES['file']['tmp_name'], $upload_folder . DS . $name);
 			}
 
-			$original_document = $this->ProgramDocument->findbyId($_POST['program_document_id']);
+			$original_document = $this->ProgramStep->findbyId($_POST['program_step_id']);
 
-			if(empty($original_document['ProgramDocument']))
+			if(empty($original_document['ProgramStep']))
 			{
 
 			}
 			else
 			{
 				$document = array(
-					'program_step_id' => $original_document['ProgramDocument']['program_step_id'],
-					'program_id' => $_POST['program_id'],
+					'program_id' => $id,
 					'name' => $_POST['altname'],
-					'cat1' => $original_document['ProgramDocument']['cat_1'],
-					'cat2' => $original_document['ProgramDocument']['cat_2'],
-					'cat3' => $original_document['ProgramDocument']['cat_3'],
-					'type' => 'alternative_media',
+					'type' => 'alt_media',
+					'media_type' => $extension,
+					'parent_id' => $_POST['program_step_id'],
+					'redoable' => 0,
+					'meta' => '',
 					'created' => date('Y-m-d H:i:s'),
-					'modified' => date('Y-m-d H:i:s'),
-					'template' => $name
+					'modified' => date('Y-m-d H:i:s')
 				);
 
-				$this->ProgramDocument->create();
-				$is_saved = $this->ProgramDocument->save($document);
+				$this->ProgramStep->create();
+				$is_saved = $this->ProgramStep->save($document);
 
-				$this->Session->setFlash('Successfully uploaded alternative media for Program Document: ' . $original_document['ProgramDocument']['name']);
+				$this->Session->setFlash('Successfully uploaded alternative media for Program Document: ' . $original_document['ProgramStep']['name']);
 				$this->redirect(array('action' => 'admin_orientation_media'));
 			}
 		}

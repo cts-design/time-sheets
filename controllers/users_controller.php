@@ -318,17 +318,6 @@ class UsersController extends AppController {
 			)
 		));
 
-		/*$programs = $this->Program->find(
-			'all',
-			array(
-				'conditions' => array(
-					'Program.show_in_dash' => 1,
-					'Program.in_test' => 0
-				),
-				'fields' => array('id', 'name', 'type')
-			)
-		);*/
-
 		if($programs) {
 			$orientations = array();
 			$registrations = array();
