@@ -90,10 +90,7 @@ class ProgramsController extends AppController {
 		));
 		$this->set('docs', $docs);
 
-		if( !isset( $_FILES['file'] ))
-		{
-		}
-		else
+		if( isset( $_FILES['file'] ))
 		{
 			$upload_folder = APP . 'storage' . DS . 'program_media';
 			$extension = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
@@ -109,11 +106,7 @@ class ProgramsController extends AppController {
 
 			$original_document = $this->ProgramStep->findbyId($_POST['program_step_id']);
 
-			if(empty($original_document['ProgramStep']))
-			{
-
-			}
-			else
+			if(!empty($original_document['ProgramStep']))
 			{
 				$document = array(
 					'program_id' => $id,
@@ -132,7 +125,7 @@ class ProgramsController extends AppController {
 				$is_saved = $this->ProgramStep->save($document);
 
 				$this->Session->setFlash('Successfully uploaded alternative media for Program Document: ' . $original_document['ProgramStep']['name']);
-				$this->redirect(array('action' => 'admin_orientation_media'));
+				//$this->redirect(array('action' => 'admin_orientation_media'));
 			}
 		}
 
