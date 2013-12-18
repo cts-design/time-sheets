@@ -34,14 +34,12 @@
 	</noscript>
 	<br />
 <?php endif ?>
+	
+	<a class="version-btns" href="<?= $html->url('/program_responses/media/' . $parent_media['Program']['id'] . '/' . $parent_media['ProgramStep']['id'], true) ?>">
+		<?= $parent_media['ProgramStep']['name'] ?>
+	</a>
 
-	<?php if(isset($parent_media_step)): ?>
-		<a class="version-btns" href="<?= $html->url('/program_responses/media/' . $this->params['pass'][0] . '/' . $parent_media_step['ProgramStep']['id'], true) ?>">
-			<?= $parent_media_step['ProgramStep']['name'] ?>
-		</a>
-	<?php endif ?>
-
-	<?php foreach($alternate_media as $alt): ?>
+	<?php foreach($children_media as $alt): ?>
 		<a class="version-btns" href="<?= $html->url('/program_responses/media/' . $this->params['pass'][0] . '/' . $alt['ProgramStep']['id'], true) ?>">
 			<?= $alt['ProgramStep']['name'] ?>
 		</a>

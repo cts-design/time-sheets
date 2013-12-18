@@ -254,41 +254,38 @@ class ProgramResponsesController extends AppController {
 	}
 
 	function media($programId=null, $stepId=null) {
-        $program = $this->ProgramResponse->Program->getProgramAndResponse($programId, $this->Auth->user('id'));
-		$this->whatsNext($program, $stepId);
+        $this->loadModel('ProgramStep');
+        $program 		= $this->ProgramResponse->Program->getProgramAndResponse($programId, $this->Auth->user('id'));
+        $current_step 	= $this->ProgramStep->findById($stepId);
+        $children_media	= FALSE;
+        $parent_media	= FALSE;
 
-		$this->loadModel('ProgramStep');
-		if($this->currentStep[0]['type'] == 'media')
-		{
-			$alternate_media = $this->ProgramStep->find('all', array(
+        if($current_step['ProgramStep']['type'] == 'media') //means this is a child
+        {
+        	$children_media = $this->ProgramStep->find('all', array(
 				'conditions' => array(
 					'ProgramStep.program_id' => $programId,
 					'ProgramStep.parent_id' => $stepId,
 					'ProgramStep.type' => 'alt_media'
 				)
 			));
-		}
-		else if($this->currentStep[0]['type'] == 'alt_media') //Get parent and other alt media
-		{
-			$parent_media_step = $this->ProgramStep->find('first', array(
+        	$parent_media = $this->ProgramStep->findById($stepId);
+			$this->whatsNext($program, $current_step['ProgramStep']['id']);
+        }
+        else
+        {
+        	$children_media = $this->ProgramStep->find('all', array(
 				'conditions' => array(
 					'ProgramStep.program_id' => $programId,
-					'ProgramStep.id' => $this->currentStep[0]['parent_id']
-				)
-			));
-
-			$alternate_media = $this->ProgramStep->find('all', array(
-				'conditions' => array(
-					'ProgramStep.program_id' => $programId,
-					'ProgramStep.parent_id' => $parent_media_step['ProgramStep']['id'],
+					'ProgramStep.parent_id' => $current_step['ProgramStep']['parent_id'],
 					'ProgramStep.type' => 'alt_media'
 				)
 			));
+			$parent_media = $this->ProgramStep->findById($current_step['ProgramStep']['parent_id']);
+        	$this->whatsNext($program, $stepId); //Get's the step like usual
+        }
 
-			$this->set(compact('parent_media_step'));
-		}
-
-		$this->set(compact('alternate_media'));
+        $this->set(compact('children_media', 'parent_media'));
 
         if(!empty($this->data)) {
             $this->data['ProgramResponse']['id'] = $program['ProgramResponse'][0]['id'];
@@ -1270,7 +1267,7 @@ class ProgramResponsesController extends AppController {
             $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => false));
 		}
 		$this->currentStep = $steps['current'];
-		if(isset($steps['previous'])) {
+		if(isset($steps['previous']) && $this->currentStep[0]['type'] != 'alt_media') {
 			$this->Session->setFlash(__('Steps must be completed in order.', true), 'flash_failure');
 			$previousStep = $steps['previous'];
 			$this->redirect(array('action' => $previousStep[0]['type'], $program['Program']['id'], $previousStep[0]['id']));
