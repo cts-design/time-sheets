@@ -73,11 +73,14 @@ class ProgramResponsesController extends AppController {
 			$this->data['ProgramResponseActivity'][0]['program_response_id'] = $program['ProgramResponse'][0]['id'];
 			$this->data['ProgramResponseActivity'][0]['program_step_id'] = $this->currentStep[0]['id'];
 			$this->data['ProgramResponseActivity'][0]['type'] = 'form';
+
 			if(isset($this->nextStep)) {
-				if($this->nextStep[0]['type'] === 'required_docs' || !$this->nextStep[0]['type']) {
+				if($this->nextStep[0]['type'] === 'required_docs' || !$this->nextStep[0]['type'])
+				{
 					$redirect = array('controller' => 'programs', 'action' => $program['Program']['type'], $programId);
 				}
-				else if ($this->nextStep[0]['type'] === 'custom_form') {
+				else if ($this->nextStep[0]['type'] === 'custom_form')
+				{
 					$redirect = array('controller' => 'program_responses', 'action' => 'form', $programId, $this->nextStep[0]['id']);
 				}
 				else {
@@ -282,7 +285,7 @@ class ProgramResponsesController extends AppController {
 				)
 			));
 			$parent_media = $this->ProgramStep->findById($current_step['ProgramStep']['parent_id']);
-        	$this->whatsNext($program, $stepId); //Get's the step like usual
+        	$this->whatsNext($program, $current_step['ProgramStep']['parent_id']); //Get's the step like usual
         }
 
         $this->set(compact('children_media', 'parent_media'));
@@ -352,7 +355,8 @@ class ProgramResponsesController extends AppController {
             $data['media'] = $this->currentStep[0]['location'];
         }
         else {
-            $data['media'] = '/program_responses/load_media/' . $this->currentStep[0]['id'];
+            //$data['media'] = '/program_responses/load_media/' . $this->currentStep[0]['id'];
+            $data['media'] = '/program_responses/load_media/' . $current_step['ProgramStep']['id'];
         }
         if($instructions) {
             $data['instructions'] = $instructions[0];
