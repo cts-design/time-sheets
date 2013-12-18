@@ -35,15 +35,8 @@
 				'after' => '<br />'));
 
 			$ssn_style = Configure::read('Login.ssn');
-			if($ssn_style == 'full')
-			{
-			    echo $form->input('password', array(
-					'label' => __('9 Digit SSN', true),
-					'between' => '<br />',
-					'after' => '<br />'
-			    ));
-			}
-			else if($ssn_style == 'last4')
+
+			if($ssn_style == 'last4')
 			{
 				echo $form->input('password', array(
 					'label' => __('Last 4 SSN Digits', true),
@@ -55,6 +48,14 @@
 			{
 				echo $form->input('password', array(
 					'label' => __('Last 5 SSN Digits', true),
+					'between' => '<br />',
+					'after' => '<br />'
+			    ));
+			}
+			else
+			{
+				echo $form->input('password', array(
+					'label' => __('9 Digit SSN', true),
 					'between' => '<br />',
 					'after' => '<br />'
 			    ));

@@ -1,3 +1,27 @@
+<style>
+.version-btns
+{
+	display:inline-block;
+	padding:6px 16px;
+	margin:5px;
+
+	border-bottom:2px solid #E0E0E0;
+	border-top:2px solid #E0E0E0;
+
+	background-color:#D0D0D0;
+	color:#FFF;
+	font-size:12pt;
+}
+.version-btns:hover
+{
+	background-color:#C0C0C0;
+	text-decoration: none;
+}
+.version-btns:active
+{
+	border: none;
+}
+</style>
 <?php if(isset($instructions)) : ?>
 	<?php echo $html->script('program_responses/toggle_instructions', array('inline' => false)) ?>
   <div class="show-instructions">
@@ -14,6 +38,18 @@
 	</noscript>
 	<br />
 <?php endif ?>
+
+	<?php if(isset($parent_media_step)): ?>
+		<a class="version-btns" href="<?= $html->url('/program_responses/media/' . $this->params['pass'][0] . '/' . $parent_media_step['ProgramStep']['id'], true) ?>">
+			<?= $parent_media_step['ProgramStep']['name'] ?>
+		</a>
+	<?php endif ?>
+
+	<?php foreach($alternate_media as $alt): ?>
+		<a class="version-btns" href="<?= $html->url('/program_responses/media/' . $this->params['pass'][0] . '/' . $alt['ProgramStep']['id'], true) ?>">
+			<?= $alt['ProgramStep']['name'] ?>
+		</a>
+	<?php endforeach ?>
 
 <?php echo $this->element($element) ?>
 
