@@ -67,6 +67,7 @@ class ProgramResponsesController extends AppController {
 		if(!empty($this->data)) {
             $this->data['ProgramResponse']['id'] = $program['ProgramResponse'][0]['id'];
 			$this->data['ProgramResponse']['next_step_id'] = null;
+
 			$this->data['ProgramResponseActivity'][0]['answers'] = json_encode($this->data['ProgramResponseActivity'][0]);
 			$this->data['ProgramResponseActivity'][0]['status'] = 'complete';
 			$this->data['ProgramResponseActivity'][0]['program_response_id'] = $program['ProgramResponse'][0]['id'];
@@ -296,6 +297,15 @@ class ProgramResponsesController extends AppController {
 			$this->data['ProgramResponseActivity'][0]['program_response_id'] = $program['ProgramResponse'][0]['id'];
 			$this->data['ProgramResponseActivity'][0]['program_step_id'] = $this->currentStep[0]['id'];
 			$this->data['ProgramResponseActivity'][0]['type'] = 'media';
+
+			if($program['Program']['approval_required'])
+			{
+				$status = 'pending_approval';
+			}
+			else
+			{
+				$status = 'complete';
+			}
 			if(isset($this->nextStep)) {
 				$this->data['ProgramResponse']['next_step_id'] = $this->nextStep[0]['id'];
 				if($this->nextStep[0]['type'] === 'required_docs' || !$this->nextStep[0]['type']) {
@@ -306,12 +316,6 @@ class ProgramResponsesController extends AppController {
 				}
 			}
 			else {
-				if($program['Program']['approval_required']) {
-					$status = 'pending_approval';
-				}
-				else {
-					$status = 'complete';
-				}
 				$this->data['ProgramResponse']['status'] = $status;
 			}
 			// TODO: make sure validation works
@@ -369,6 +373,7 @@ class ProgramResponsesController extends AppController {
         $this->view = 'Media';
         $this->ProgramResponse->Program->ProgramStep->id = $id;
         $path = $this->ProgramResponse->Program->ProgramStep->field('media_location');
+
         if($path) {
             $explode = explode('.', $path);
             $params = array(
