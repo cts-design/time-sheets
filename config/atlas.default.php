@@ -35,6 +35,14 @@ $config['PrePop']['email'] = '@development.ctsfla.com';
 $config['Registration']['ssn'] = 'full';
 
 // Login SSN enum = 'full', 'last4', 'last5'
+$config['Login']['child']['ssn_length'] 		= 5;
+$config['Login']['program']['ssn_length'] 		= 9;
+$config['Login']['website']['ssn_length']		= 9;
+$config['Login']['auditor']['ssn_length']		= 9;
+$config['Login']['kiosk']['ssn_length']			= 9;
+
+
+// Login SSN enum = 'full', 'last4', 'last5'
 $config['Login']['ssn'] = 'full';
 
 // Kiosk login type (options are 'id_card or normal'
