@@ -72,9 +72,35 @@ class UsersController extends AppController {
 			);
 		}
 
+		if($this->params['action'] == 'kiosk_self_sign_login' && $this->RequestHandler->isPost())
+		{
+			$this->User->setValidation('customerLogin');
+            $this->User->set($this->data);
+
+            if($this->User->validates())
+            {
+            	$count = $this->User->find('count', array(
+                    'conditions' => array(
+                        'User.username' => $this->data['User']['username'],
+                        'and' => array(
+                            'User.password' => $this->Auth->password($this->data['User']['password'])))));
+
+            	if($count == 0)
+            	{
+            		$this->redirect(array(
+            			'action' => 'mini_registration',
+                        $this->data['User']['username'], 
+                        'kiosk' => true
+                    	)
+            		);
+            	}
+            }
+		}
+
+		/*
 		if((!empty($this->data) || $this->RequestHandler->isPost()) && $this->params['action'] != 'login')
 		{
-			/*
+			
 			if($this->User->validates())
 			{
 				$conditions = array(
@@ -145,12 +171,7 @@ class UsersController extends AppController {
 					}
 				}
 			}
-			else
-			{
-
-			}
-			*/
-		}
+		}*/
 
 		if($this->Auth->user() &&  $this->params['action'] == 'admin_dashboard' ) {
 			if(! $this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Users/admin_dashboard', '*')) {
@@ -723,7 +744,7 @@ class UsersController extends AppController {
 					'action' => 'login'
 				));
 			}
-			
+
 			$this->loadModel('Program');
 			$this->Program->contain(array(
 				'ProgramInstruction' => array(
