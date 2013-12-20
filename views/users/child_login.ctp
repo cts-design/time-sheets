@@ -17,29 +17,18 @@
 	<fieldset>
 		<legend>Login</legend>
 		<?php
-		    echo $form->create('User', array('action' => 'login'));
+		    echo $form->create('User', array('url' => $this->Html->url()));
 		    echo $form->input('username', array(
 		    	'label' => 'Child\'s Lastname', 
 		    	'between' => '<br />',
 				'after' => '<br />'));
 		    echo '<br class="clear"/>';
-
-		    $ssn = Configure::read('Login.child.ssn');
  
-			if($ssn == 'last4')
+			if($ssn_length != 9)
 			{
 				echo $form->input('password', array(
-			    	'label' => __('Child\'s last 4 Digits of SSN', true),
-			    	'maxlength' => 9,
-			    	'between' => '<br />',
-			    	'after' => '<br />'
-			    ));
-			}
-			else if($ssn == 'last5')
-			{
-				echo $form->input('password', array(
-			    	'label' => __('Child\'s last 5 Digits of SSN', true),
-			    	'maxlength' => 9,
+			    	'label' => __('Child\'s last ' . $ssn_length . ' Digits of SSN', true),
+			    	'maxlength' => $ssn_length,
 			    	'between' => '<br />',
 			    	'after' => '<br />'
 			    ));
@@ -47,8 +36,8 @@
 			else
 			{
 				echo $form->input('password', array(
-			    	'label' => __('Child\'s 9 Digit SSN', true),
-			    	'maxlength' => 9,
+			    	'label' => __('Child\'s Full 9 Digit SSN', true),
+			    	'maxlength' => $ssn_length,
 			    	'between' => '<br />',
 			    	'after' => '<br />'
 			    ));

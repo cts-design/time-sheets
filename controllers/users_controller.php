@@ -17,9 +17,11 @@ class UsersController extends AppController {
 
 	function beforeFilter() {
 		parent::beforeFilter();
+
 		$this->Security->blackHoleCallback = 'forceSSL';
 		$this->Security->requireSecure();
 		$this->User->recursive = 0;
+		
 		if(!empty($this->data['User'])) {
 			foreach($this->data['User'] as $k => $v) {
 				$this->data['User'][$k] = trim($v, ' ');
@@ -27,18 +29,21 @@ class UsersController extends AppController {
 		}
 		if(isset($this->data['User']['username'])) {
 			// TODO add the other login types
-			if($this->params['action'] == 'admin_login' || $this->params['action'] == 'kiosk_self_sign_login') {
+			if($this->params['action'] == 'admin_login' || $this->params['action'] == 'kiosk_self_sign_login')
+			{
 				$this->User->Behaviors->disable('Disableable');
 				$user = $this->User->find('first', array('conditions' => array(
 					'username' => $this->data['User']['username'],
 					'password' => Security::hash($this->data['User']['password'], null, true))));
-				if($user['User']['disabled'] == 1) {
+				if($user['User']['disabled'] == 1)
+				{
 					$this->Session->setFlash(__('This account has been disabled.', true), 'flash_failure');
 					$this->redirect($this->referer());
 				}
 			}
 		}
-		if($this->params['action'] == 'kiosk_mini_registration') {
+		if($this->params['action'] == 'kiosk_mini_registration')
+		{
 			$this->Security->validatePost = false;
 		}
 		$this->Auth->allowedActions = array(
@@ -66,50 +71,108 @@ class UsersController extends AppController {
 				'admin_get_customer_by_id'
 			);
 		}
-		if(!empty($this->data)) {
-			if(isset($this->params['prefix']) && $this->params['prefix'] == 'admin') {
-				return;
-			}
-			elseif(isset($this->data['User']['login_type'])) {
 
-				//$this->User->setValidation('customerLogin');
+		if($this->params['action'] == 'kiosk_self_sign_login' && $this->RequestHandler->isPost())
+		{
+			$this->User->setValidation('customerLogin');
+            $this->User->set($this->data);
 
-				$this->User->set($this->data);
-				if($this->User->validates()) {
-					$count = $this->User->find('count', array(
-						'conditions' => array(
-							'User.username' => $this->data['User']['username'],
-							'and' => array(
-								'User.password' => $this->Auth->password($this->data['User']['password'])))));
-					if($count === 0 && isset($this->data['User']['login_type'])) {
-						switch($this->data['User']['login_type']) {
+            if($this->User->validates())
+            {
+            	$count = $this->User->find('count', array(
+                    'conditions' => array(
+                        'User.username' => $this->data['User']['username'],
+                        'and' => array(
+                            'User.password' => $this->Auth->password($this->data['User']['password'])))));
+
+            	if($count == 0)
+            	{
+            		$this->redirect(array(
+            			'action' => 'mini_registration',
+                        $this->data['User']['username'], 
+                        'kiosk' => true
+                    	)
+            		);
+            	}
+            }
+		}
+
+		/*
+		if((!empty($this->data) || $this->RequestHandler->isPost()) && $this->params['action'] != 'login')
+		{
+			
+			if($this->User->validates())
+			{
+				$conditions = array(
+					'User.username' => $_POST['data']['User']['username'],
+				);
+
+				if($ssn_length != 9)
+				{
+					$conditions['User.ssn LIKE'] = '%' . $_POST['data']['User']['password'];
+				}
+				else
+				{
+					$conditions['User.password'] = $this->Auth->password( $this->data['User']['password'] );
+				}
+
+				$results = $this->User->find('count', array(
+					'conditions' => $conditions
+				));
+
+				if($results == 0)
+				{
+					switch($_POST['data']['User']['login_type'])
+					{
 						case 'kiosk':
-							$this->redirect(array('action' => 'mini_registration',
-								$this->data['User']['username'], 'kiosk' => true));
+							$this->redirect(array(
+								'action' => 'mini_registration',
+								$this->data['User']['username'], 
+								'kiosk' => true
+								)
+							);
 							break;
 						case 'website':
-							$this->redirect(array('action' => 'registration', 'regular',
-								$this->data['User']['username'], 'kiosk' => false));
+							$this->redirect(array(
+								'action' => 'registration', 'regular',
+								$this->data['User']['username'], 
+								'kiosk' => false
+								)
+							);
 							break;
 						case 'child_website':
-							$this->redirect(array('action' => 'registration', 'child',
-								$this->data['User']['username'], 'kiosk' => false));
+							$this->redirect(array(
+								'action' => 'registration', 'child',
+								$this->data['User']['username'], 
+								'kiosk' => false
+								)
+							);
 							break;
 						case 'program':
-							$this->redirect(array('action' => 'registration', 'regular',
-								$this->data['User']['username'], 'program',
-								$this->data['User']['program_id'], 'kiosk' => false));
+							$this->redirect(array(
+								'action' => 'registration', 'regular',
+								$this->data['User']['username'], 
+								'program',
+								$this->data['User']['program_id'], 
+								'kiosk' => false
+								)
+							);
 							break;
 						case 'child_program':
-							$this->redirect(array('action' => 'registration', 'child', 'program',
-								$this->data['User']['username'], 'kiosk' => false));
+							$this->redirect(array(
+								'action' => 'registration', 
+								'child', 
+								'program',
+								$this->data['User']['username'], 
+								'kiosk' => false
+								)
+							);
 							break;
-						}
 					}
 				}
 			}
+		}*/
 
-		}
 		if($this->Auth->user() &&  $this->params['action'] == 'admin_dashboard' ) {
 			if(! $this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Users/admin_dashboard', '*')) {
 				$this->Session->setFlash(__('You are not authorized to access the admin dashboard.', true) , 'flash_failure') ;
@@ -652,29 +715,124 @@ class UsersController extends AppController {
 		$this->layout = 'kiosk';
 	}
 
-	function login($type=null) {
-		$this->User->setValidation('customerLogin');
-		$loginType = 'website';
-		$render = 'login';
+	function login($type = NULL) {
+		$loginType 	= 'website';
+		$render 	= 'login';
+		$program 	= FALSE;
+		$program_id = FALSE;
 
-		if(isset($this->params['pass'][0], $this->params['pass'][1]) && $this->params['pass'][0] === 'program') {
+		if( isset($this->params['pass'][0]) )
+		{
+			$loginType 	= $this->params['pass'][0]; //Represents program type ie. program/child/website/auditor
+		}
+
+		if( isset($this->params['pass'][1]) )
+		{
+			$program_id = $this->params['pass'][1]; //Represents program id if type == program
+		}
+
+		$ssn_length = Configure::read('Login.' . $loginType . '.ssn_length');
+		$this->set('ssn_length', $ssn_length);
+
+		$this->User->setValidation('last' . $ssn_length . 'ssn');
+
+		if($loginType === 'program')
+		{
+			if(!$program_id)
+			{
+				$this->redirect(array(
+					'action' => 'login'
+				));
+			}
+
 			$this->loadModel('Program');
-			$this->Program->contain(array('ProgramInstruction' => array('conditions' => array('ProgramInstruction.type' => 'login'))));
-			$program = $this->Program->findById($this->params['pass'][1]);
-			if($program) {
-				$this->Session->write('Auth.redirect', '/programs/' . $program['Program']['type'] . '/' . $this->params['pass'][1]);
-				$title_for_layout = $program['Program']['name'] . ' Login';
-				$loginType = 'program';
-				if(!empty($program['ProgramInstruction'][0])) {
-					$this->set('instructions', $program['ProgramInstruction'][0]['text']);
-				}
-				if($program['Program']['atlas_registration_type'] === 'child') {
-					$type = 'child';
-				}
+			$this->Program->contain(array(
+				'ProgramInstruction' => array(
+					'conditions' => array('ProgramInstruction.type' => 'login')
+				)
+			));
+
+			$program = $this->Program->findById( $program_id );
+
+			$session_redirect = '/programs/' . $program['Program']['type'] . '/' . $program_id;
+			$this->Session->write( 'Auth.redirect', $session_redirect );
+
+			$title_for_layout = $program['Program']['name'] . ' Login';
+
+			if( !empty($program['ProgramInstruction'][0]) )
+			{
+				$instructions = $program['ProgramInstruction'][0]['text'];
+				$this->set('instructions', $instructions);
+			}
+
+			if($program['Program']['atlas_registration_type'] == 'child')
+			{
+				$loginType = $program['Program']['atlas_registration_type'];
 			}
 		}
+
+		if(!empty($this->data) && !$this->Auth->user())
+		{
+			$username 			= $_POST['data']['User']['username'];
+			$password			= $_POST['data']['User']['password'];
+			
+			$this->User->recursive = -1;
+
+			$conditions = array(
+				'User.username' => $username
+			);
+
+			switch($ssn_length)
+			{
+				case 2:
+					$conditions['User.ssn LIKE'] = '_______' . $password;
+					break;
+				case 3:
+					$conditions['User.ssn LIKE'] = '______' . $password;
+					break;
+				case 4:
+					$conditions['User.ssn LIKE'] = '_____' . $password;
+					break;
+				case 5:
+					$conditions['User.ssn LIKE'] = '____' . $password;
+					break;
+				case 6:
+					$conditions['User.ssn LIKE'] = '___' . $password;
+					break;
+				case 7:
+					$conditions['User.ssn LIKE'] = '__' . $password;
+					break;
+				case 8:
+					$conditions['User.ssn LIKE'] = '_' . $password;
+					break;
+				default:
+					$conditions['User.ssn'] =  $password;
+			}
+
+			$login_user = $this->User->find('first', array(
+				'conditions' => $conditions
+			));
+			
+
+			$validation_data = array(
+				'User' => array(
+					'username' => $username,
+					'password' => $password
+				)
+			);
+
+			$this->User->set($validation_data);
+
+			if($this->User->validates())
+			{
+				$this->Auth->login($login_user['User']['id']);
+			}
+		}
+
+		
 		if($this->Auth->user()){
-			if ($this->Auth->user('role_id') > 3) {
+			if ($this->Auth->user('role_id') > 3)
+			{
 				$this->User->Role->recursive = -1;
 				$role = $this->User->Role->find('first', array(
 					'fields' => array('Role.name'),
@@ -683,35 +841,52 @@ class UsersController extends AppController {
 				$this->Session->write('Auth.User.role_name', $role['Role']['name']);
 			}
 
-			if (preg_match('/auditor/i', $this->Auth->user('role_name'))) {
+			if (preg_match('/auditor/i', $this->Auth->user('role_name')))
+			{
 				$this->Transaction->createUserTransaction('Auditor', null, null, 'Logged into auditor dashboard');
 				$this->redirect(array('action' => 'dashboard', 'auditor' => true));
 			}
-			else {
+			else
+			{	
 				$this->Transaction->createUserTransaction('Website',
 					null, null, 'Logged in using website.' );
-				if($this->Auth->user('email') == null || preg_match('(none|nobody|noreply)', $this->Auth->user('email'))) {
-					$this->Session->setFlash(__('Please complete your profile to continue.', true), 'flash_success');
-					$this->redirect(array('controller' => 'users', 'action' => 'edit', $this->Auth->user('id')));
+				if($this->Auth->user('email') == null || preg_match('(none|nobody|noreply)', $this->Auth->user('email')))
+				{
+					$this->Session->setFlash('Please complete your profile to continue.', 'flash_success');
+					$this->redirect(array(
+						'controller' => 'users', 
+						'action' => 'edit', 
+						$this->Auth->user('id')
+					));
 				}
-				if($this->Session->read('Auth.redirect') != '') {
+				
+				if($this->Session->read('Auth.redirect') != '')
+				{
 					$this->redirect($this->Session->read('Auth.redirect'));
 				}
 				else {
 					$this->redirect(array('action' => 'dashboard', 'admin' => false));
 				}
 			}
+			
 		}
-		if(isset($type) && $type === 'child' ||
-			isset($this->data['User']['login_type']) && $this->data['User']['login_type'] === 'child_website') {
-				$title_for_layout = 'Child Login';
-				$render = 'child_login';
-			}
-		if(isset($type) && $type == 'auditor' ||
-			isset($this->data['User']['login_type']) && $this->data['User']['login_type'] === 'auditor') {
-				$title_for_layout = 'Auditor Login';
-				$render = 'auditor_login';
-			}
+
+		switch($loginType)
+		{
+			case 'child':
+				$title_for_layout 	= 'Child Login';
+				$render 			= 'child_login';
+				break;
+
+			case 'auditor':
+				$title_for_layout 	= 'Auditor Login';
+				$render 			= 'auditor_login';
+				break;
+			default:
+				$title_for_layout 	= 'User Login';
+				$render 			= 'login';
+		}
+
 		$this->set(compact('loginType', 'title_for_layout'));
 		$this->render($render);
 	}
