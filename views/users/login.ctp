@@ -28,28 +28,19 @@
 	<fieldset>
 		<legend>Login</legend>
 		<?php
-		    echo $form->create('User');
+		    echo $form->create('User', array('url' => $this->Html->url()));
 			echo $form->input('username', array(
 				'label' =>__('Lastname', true),
 				'between' => '<br />',
 				'after' => '<br />'));
 
-			$ssn_style = Configure::read('Login.ssn');
-
-			if($ssn_style == 'last4')
+			if($ssn_length != 9)
 			{
 				echo $form->input('password', array(
-					'label' => __('Last 4 SSN Digits', true),
+					'label' => __('Last ' . $ssn_length . ' SSN Digits', true),
 					'between' => '<br />',
-					'after' => '<br />'
-			    ));
-			}
-			else if($ssn_style == 'last5')
-			{
-				echo $form->input('password', array(
-					'label' => __('Last 5 SSN Digits', true),
-					'between' => '<br />',
-					'after' => '<br />'
+					'after' => '<br />',
+					'maxlength' => $ssn_length
 			    ));
 			}
 			else
@@ -57,7 +48,8 @@
 				echo $form->input('password', array(
 					'label' => __('9 Digit SSN', true),
 					'between' => '<br />',
-					'after' => '<br />'
+					'after' => '<br />',
+					'maxlength' => $ssn_length
 			    ));
 			}
 		   echo $form->hidden('User.login_type', array('value' => $loginType));
