@@ -97,82 +97,6 @@ class UsersController extends AppController {
             }
 		}
 
-		/*
-		if((!empty($this->data) || $this->RequestHandler->isPost()) && $this->params['action'] != 'login')
-		{
-			
-			if($this->User->validates())
-			{
-				$conditions = array(
-					'User.username' => $_POST['data']['User']['username'],
-				);
-
-				if($ssn_length != 9)
-				{
-					$conditions['User.ssn LIKE'] = '%' . $_POST['data']['User']['password'];
-				}
-				else
-				{
-					$conditions['User.password'] = $this->Auth->password( $this->data['User']['password'] );
-				}
-
-				$results = $this->User->find('count', array(
-					'conditions' => $conditions
-				));
-
-				if($results == 0)
-				{
-					switch($_POST['data']['User']['login_type'])
-					{
-						case 'kiosk':
-							$this->redirect(array(
-								'action' => 'mini_registration',
-								$this->data['User']['username'], 
-								'kiosk' => true
-								)
-							);
-							break;
-						case 'website':
-							$this->redirect(array(
-								'action' => 'registration', 'regular',
-								$this->data['User']['username'], 
-								'kiosk' => false
-								)
-							);
-							break;
-						case 'child_website':
-							$this->redirect(array(
-								'action' => 'registration', 'child',
-								$this->data['User']['username'], 
-								'kiosk' => false
-								)
-							);
-							break;
-						case 'program':
-							$this->redirect(array(
-								'action' => 'registration', 'regular',
-								$this->data['User']['username'], 
-								'program',
-								$this->data['User']['program_id'], 
-								'kiosk' => false
-								)
-							);
-							break;
-						case 'child_program':
-							$this->redirect(array(
-								'action' => 'registration', 
-								'child', 
-								'program',
-								$this->data['User']['username'], 
-								'kiosk' => false
-								)
-							);
-							break;
-					}
-				}
-			}
-		}*/
-
 		if($this->Auth->user() &&  $this->params['action'] == 'admin_dashboard' ) {
 			if(! $this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Users/admin_dashboard', '*')) {
 				$this->Session->setFlash(__('You are not authorized to access the admin dashboard.', true) , 'flash_failure') ;
@@ -809,11 +733,6 @@ class UsersController extends AppController {
 					$conditions['User.ssn'] =  $password;
 			}
 
-			$login_user = $this->User->find('first', array(
-				'conditions' => $conditions
-			));
-			
-
 			$validation_data = array(
 				'User' => array(
 					'username' => $username,
@@ -825,6 +744,51 @@ class UsersController extends AppController {
 
 			if($this->User->validates())
 			{
+				$login_user = $this->User->find('first', array(
+					'conditions' => $conditions
+				));
+
+				if(empty($login_user['User']))
+				{
+					switch($loginType)
+					{
+						case 'website':
+							$this->redirect(array(
+								'action' => 'registration', 
+								'regular',
+			                    $username, 
+			                    'kiosk' => false
+		                    ));
+							break;
+						case 'child':
+							$this->redirect(array(
+								'action' => 'registration', 
+								'child',
+			                    $username, 
+			                    'kiosk' => false
+		                    ));
+							break;
+						case 'program':
+							$this->redirect(array(
+								'action' => 'registration', 
+								'regular',
+			                    $username,
+			                    'program',
+			                    $program_id, 
+			                    'kiosk' => false
+		                    ));
+		                    break;
+		                case 'child_program':
+		                	$this->redirect(array(
+		                		'action' => 'registration', 
+		                		'child', 
+		                		'program',
+                            	$this->data['User']['username'], 
+                            	'kisok' => false
+                            ));
+		                	break;
+					}
+				}
 				$this->Auth->login($login_user['User']['id']);
 			}
 		}

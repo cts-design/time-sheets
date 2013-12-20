@@ -385,6 +385,25 @@ class User extends AppModel {
 				)
 			)
 		),
+		'last9ssn' => array(
+			'username' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Last name field is required.'
+				)
+			),
+			'password' => array(
+				'numeric' => array(
+					'rule' => 'numeric',
+					'message' => 'SSN must only be numbers'
+				),
+				'minLength' => array(
+					'rule' => array('minLength', 9),
+					'message' => 'SSN must be 9 digits',
+					'required' => true
+				)
+			)
+		),
 		'last5ssn' => array(
 			'username' => array(
 				'notEmpty' => array(
