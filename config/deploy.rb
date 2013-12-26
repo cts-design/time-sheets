@@ -154,7 +154,7 @@ end
 
 task :worknetpinellas do
   set :server_name, 'worknetpinellas production'
-  server "atlas.worknetpinellas.org", :app, :web, :db, :primary => true
+  server "10.66.49.13", :app, :web, :db, :primary => true
 end
 
 task :wrec do
