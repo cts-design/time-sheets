@@ -740,55 +740,56 @@ class UsersController extends AppController {
 				)
 			);
 
+			$login_user = $this->User->find('first', array(
+				'conditions' => $conditions
+			));
+
+			if(empty($login_user['User']))
+			{
+				switch($loginType)
+				{
+					case 'website':
+						$this->redirect(array(
+							'action' => 'registration', 
+							'regular',
+		                    $username, 
+		                    'kiosk' => false
+	                    ));
+						break;
+					case 'child':
+						$this->redirect(array(
+							'action' => 'registration', 
+							'child',
+		                    $username, 
+		                    'kiosk' => false
+	                    ));
+						break;
+					case 'program':
+						$this->redirect(array(
+							'action' => 'registration', 
+							'regular',
+		                    $username,
+		                    'program',
+		                    $program_id, 
+		                    'kiosk' => false
+	                    ));
+	                    break;
+	                case 'child_program':
+	                	$this->redirect(array(
+	                		'action' => 'registration', 
+	                		'child', 
+	                		'program',
+                        	$this->data['User']['username'], 
+                        	'kisok' => false
+                        ));
+	                	break;
+				}
+			}
+
 			$this->User->set($validation_data);
 
 			if($this->User->validates())
 			{
-				$login_user = $this->User->find('first', array(
-					'conditions' => $conditions
-				));
-
-				if(empty($login_user['User']))
-				{
-					switch($loginType)
-					{
-						case 'website':
-							$this->redirect(array(
-								'action' => 'registration', 
-								'regular',
-			                    $username, 
-			                    'kiosk' => false
-		                    ));
-							break;
-						case 'child':
-							$this->redirect(array(
-								'action' => 'registration', 
-								'child',
-			                    $username, 
-			                    'kiosk' => false
-		                    ));
-							break;
-						case 'program':
-							$this->redirect(array(
-								'action' => 'registration', 
-								'regular',
-			                    $username,
-			                    'program',
-			                    $program_id, 
-			                    'kiosk' => false
-		                    ));
-		                    break;
-		                case 'child_program':
-		                	$this->redirect(array(
-		                		'action' => 'registration', 
-		                		'child', 
-		                		'program',
-                            	$this->data['User']['username'], 
-                            	'kisok' => false
-                            ));
-		                	break;
-					}
-				}
 				$this->Auth->login($login_user['User']['id']);
 			}
 		}
@@ -887,13 +888,14 @@ class UsersController extends AppController {
 		}
 	}
 
+	/*
 	function registration($type=null, $lastname=null) {
 		$usePassword = Configure::read('Registration.usePassword');
 
 		if ($usePassword) {
 			$this->User->editValidation('password');
 		}
-
+		
 		if(isset($this->params['pass'][2], $this->params['pass'][3]) &&
 			$this->params['pass'][2] === 'program') {
 				$this->loadModel('Program');
@@ -967,6 +969,90 @@ class UsersController extends AppController {
 			isset($this->data['User']['registration']) && $this->data['User']['registration'] == 'child_website') {
 				$this->render('child_registration');
 			}
+	}*/
+
+	function registration($type = NULL)
+	{
+		$usePassword 		= Configure::read('Registration.usePassword');
+		$title_for_layout	= 'Registration';
+
+		if($type != NULL)
+			$ssn_length		= Configure::read('Registration.' . $type . '.ssn_length');
+		else
+			$ssn_length		= Configure::read('Registration.default.ssn_length');
+
+		if($type == 'program')
+		{
+			$this->loadModel('Program');
+			$this->Program->contain(array(
+				'ProgramInstruction' => array(
+					'conditions' => array(
+						'ProgramInstruction.type' => 'registration'
+					)
+				)
+			));
+
+			if(isset( $this->params['pass'][3] ))
+			{
+				$program = $this->Program->findById($this->params['pass'][3]);
+				$this->set('instructions', $program['ProgramInstruction'][0]['text']);
+				$title_for_layout = $program['Program']['name'] . ' Registration';
+			}
+			else
+			{
+				$program = FALSE;
+			}
+		}
+
+		if($this->RequestHandler->isPost() && !empty($this->data))
+		{
+			$this->User->editValidation('last' . $ssn_length . 'ssn');
+
+			if( $usePassword )
+			{
+				$this->data['User']['password'] = Security::hash($this->data['User']['password'], null, true);
+			}
+			else
+			{
+				$this->data['User']['password'] = Security::hash($this->data['User']['ssn'], null, true);
+			}
+
+			$this->data['User']['username'] = $this->data['User']['lastname'];
+
+			if($this->User->validates() && $this->User->save($this->data))
+			{
+				$user_id = $this->User->getInsertId();
+				$user = $this->User->findById( $user_id );
+				$this->Auth->login($user);
+
+				$this->Transaction->createUserTransaction('Website',
+					$user_id, null, 'User self registered using the website.');
+
+				$this->Session->setFlash(__('Your account has been created.', true), 'flash_success');
+
+				if($this->Session->read('Auth.redirect') != '') {
+					$this->redirect($this->Session->read('Auth.redirect'));
+				}
+				else{
+					$this->redirect('/');
+				}
+			}
+			else
+			{
+				$this->Session->setFlash('There are mistakes in your information');
+			}
+		}
+
+		$this->set(compact('title_for_layout', 'ssn_length', 'usePassword'));
+
+		switch($type)
+		{
+			case 'child':
+				$this->render('child_registration');
+				break;
+			default:
+				$this->render('registration');
+		}
 	}
 
 	function kiosk_auto_logout() {

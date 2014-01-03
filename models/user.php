@@ -546,6 +546,93 @@ class User extends AppModel {
 				)
 			)
 		),
+		'last4ssn' => array(
+			'ssn' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a SSN',
+				),
+				'numeric' => array(
+					'rule' => 'numeric',
+					'message' => 'Please provide only numbers, no spaces or dashes',
+					'required' => false
+				),
+				'unique' => array(
+					'rule' => 'lastNameSSNUnique',
+					'message' => 'The system is unable to register you at this time. Please contact us for assistance',
+					'required' => false
+				),
+				'minLength' => array(
+					'rule' => array('minLength', 4),
+					'message' => 'Must be at least 4 numeric characters',
+				)
+			),
+			'ssn_confirm' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please confirm the SSN.',
+					'required' => false
+				),
+				'numeric' => array(
+					'rule' => 'numeric',
+					'message' => 'Please provide only numbers, no spaces or dashes.',
+					'required' => false
+				),
+				'verify' => array(
+					'rule' => array('verifies', 'ssn'),
+					'message' => 'SSNs do not match.',
+					'required' => false
+				),
+				'minLength' => array(
+					'rule' => array('minLength', 4),
+					'message' => 'Must be at least 4 numeric characters',
+				)
+			)
+		),
+		'last5ssn' => array(
+			'ssn' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a SSN',
+					'required' => false
+				),
+				'numeric' => array(
+					'rule' => 'numeric',
+					'message' => 'Please provide only numbers, no spaces or dashes',
+					'required' => false
+				),
+				'unique' => array(
+					'rule' => 'lastNameSSNUnique',
+					'message' => 'The system is unable to register you at this time. Please contact us for assistance',
+					'required' => false
+				),
+				'minLength' => array(
+					'rule' => array('minLength', 5),
+					'message' => 'Must be at least 5 numeric characters',
+				)
+			),
+			'ssn_confirm' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please confirm the SSN.',
+					'required' => false
+				),
+				'numeric' => array(
+					'rule' => 'numeric',
+					'message' => 'Please provide only numbers, no spaces or dashes.',
+					'required' => false
+				),
+				'verify' => array(
+					'rule' => array('verifies', 'ssn'),
+					'message' => 'SSNs do not match.',
+					'required' => false
+				),
+				'minLength' => array(
+					'rule' => array('minLength', 5),
+					'message' => 'Must be at least 5 numeric characters',
+				)
+			)
+		),
 		'last4' => array(
 			'ssn' => array(
 				'notEmpty' => array(
