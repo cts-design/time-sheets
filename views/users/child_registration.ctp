@@ -87,14 +87,14 @@ $(document).ready(function() {
 		else
 		{
 			echo $this->Form->input('ssn', array(
-				'label' => 'The last ' . $ssn_length . ' digits of your Social Security Number',
+				'label' => 'The last ' . $ssn_length . ' digits of your child\'s Social Security Number',
 				'type' => 'password',
 				'maxlength' => $ssn_length,
 				'between' => '<br />',
 				'after' => '<br />'
 			));
 			echo $this->Form->input('ssn_confirm', array(
-				'label' => 'Confirm the last ' . $ssn_length . ' digits of your Social Security Number',
+				'label' => 'Confirm the last ' . $ssn_length . ' digits of your child\'s Social Security Number',
 				'type' => 'password',
 				'maxlength' => $ssn_length,
 				'between' => '<br />',
