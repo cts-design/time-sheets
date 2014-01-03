@@ -10,10 +10,18 @@ class User extends AppModel {
 
 	public $name = 'User';
 
+	
 	public $actsAs = array(
 		'AtlasAcl' => 'requester',
 		'Multivalidatable',
 		'Disableable'
+	);
+
+	public $actAs = array(
+		'Acl' => array(
+			'type' => 'requester',
+			'enabled' => 'false'
+		)
 	);
 
 	public $belongsTo = array(
@@ -377,6 +385,82 @@ class User extends AppModel {
 				)
 			)
 		),
+		'last9ssn' => array(
+			'username' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Last name field is required.'
+				)
+			),
+			'password' => array(
+				'numeric' => array(
+					'rule' => 'numeric',
+					'message' => 'SSN must only be numbers'
+				),
+				'minLength' => array(
+					'rule' => array('minLength', 9),
+					'message' => 'SSN must be 9 digits',
+					'required' => true
+				)
+			)
+		),
+		'last5ssn' => array(
+			'username' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Last name field is required.'
+				)
+			),
+			'password' => array(
+				'numeric' => array(
+					'rule' => 'numeric',
+					'message' => 'SSN must only be numbers'
+				),
+				'minLength' => array(
+					'rule' => array('minLength', 5),
+					'message' => 'SSN must be 5 digits',
+					'required' => true
+				)
+			)
+		),
+		'last4ssn' => array(
+			'username' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Last name field is required.'
+				)
+			),
+			'password' => array(
+				'numeric' => array(
+					'rule' => 'numeric',
+					'message' => 'SSN must only be numbers'
+				),
+				'minLength' => array(
+					'rule' => array('minLength', 4),
+					'message' => 'SSN must be 4 digits',
+					'required' => true
+				)
+			)
+		),
+		'childLogin' => array(
+			'username' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Last name field is required.'
+				)
+			),
+			'password' => array(
+				'numeric' => array(
+					'rule' => 'numeric',
+					'message' => 'SSN must only be numbers'
+				),
+				'minLength' => array(
+					'rule' => array('minLength', 9),
+					'message' => 'SSN must be 9 digits',
+					'required' => true
+				)
+			)
+		),
 		'admin' => array(
 			'firstname' => array(
 				'notEmpty' => array(
@@ -459,6 +543,93 @@ class User extends AppModel {
 					'rule' => 'notEmpty',
 					'message' => 'Please provide a password.',
 					'required' => false
+				)
+			)
+		),
+		'last4ssn' => array(
+			'ssn' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a SSN',
+				),
+				'numeric' => array(
+					'rule' => 'numeric',
+					'message' => 'Please provide only numbers, no spaces or dashes',
+					'required' => false
+				),
+				'unique' => array(
+					'rule' => 'lastNameSSNUnique',
+					'message' => 'The system is unable to register you at this time. Please contact us for assistance',
+					'required' => false
+				),
+				'minLength' => array(
+					'rule' => array('minLength', 4),
+					'message' => 'Must be at least 4 numeric characters',
+				)
+			),
+			'ssn_confirm' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please confirm the SSN.',
+					'required' => false
+				),
+				'numeric' => array(
+					'rule' => 'numeric',
+					'message' => 'Please provide only numbers, no spaces or dashes.',
+					'required' => false
+				),
+				'verify' => array(
+					'rule' => array('verifies', 'ssn'),
+					'message' => 'SSNs do not match.',
+					'required' => false
+				),
+				'minLength' => array(
+					'rule' => array('minLength', 4),
+					'message' => 'Must be at least 4 numeric characters',
+				)
+			)
+		),
+		'last5ssn' => array(
+			'ssn' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a SSN',
+					'required' => false
+				),
+				'numeric' => array(
+					'rule' => 'numeric',
+					'message' => 'Please provide only numbers, no spaces or dashes',
+					'required' => false
+				),
+				'unique' => array(
+					'rule' => 'lastNameSSNUnique',
+					'message' => 'The system is unable to register you at this time. Please contact us for assistance',
+					'required' => false
+				),
+				'minLength' => array(
+					'rule' => array('minLength', 5),
+					'message' => 'Must be at least 5 numeric characters',
+				)
+			),
+			'ssn_confirm' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please confirm the SSN.',
+					'required' => false
+				),
+				'numeric' => array(
+					'rule' => 'numeric',
+					'message' => 'Please provide only numbers, no spaces or dashes.',
+					'required' => false
+				),
+				'verify' => array(
+					'rule' => array('verifies', 'ssn'),
+					'message' => 'SSNs do not match.',
+					'required' => false
+				),
+				'minLength' => array(
+					'rule' => array('minLength', 5),
+					'message' => 'Must be at least 5 numeric characters',
 				)
 			)
 		),

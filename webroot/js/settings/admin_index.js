@@ -312,6 +312,56 @@ Ext.create('Ext.form.Panel', {
   }]
 });
 
+var esign_versions = Ext.create('Ext.data.Store', {
+  fields : ['value', 'name'],
+  data : [{
+    'value' : 'v1.0',
+    'name' : 'Print Out'
+  }, {
+    'value' : 'v2.0',
+    'name' : 'Electronic Signature (recommended)'
+  }]
+});
+
+Ext.create('Ext.form.Panel', {
+  title: 'Esignature Options',
+  url: '/admin/settings/esign_options',
+  id: 'esignatureOptions',
+  frame: true,
+  margin: 5,
+  width: 500,
+  items: [{
+    fieldLabel: 'Esign Version',
+    name: 'esign_version',
+    xtype: 'combo',
+    emptyText: 'Please Select',
+    editable: false,
+    displayField: 'name',
+    valueField: 'value',
+    store: esign_versions,
+    queryMode: 'local',
+    allowBlank: false,
+    listeners: {
+      change: function(combo, newValue, oldValue, eOpts) {
+        $.ajax({
+          url : '/admin/settings/esign_options',
+          data : { 'value' : newValue },
+          type : 'GET',
+          dataType : 'json',
+          success : function(result){
+            if(!result.success)
+            {
+              alert('Could not save the')
+            }
+          }
+        });
+      }
+    }
+  }]
+});
+
+
+
 Ext.onReady(function(){
 	Ext.create('Ext.tab.Panel', {
 		width: 950,
@@ -325,6 +375,10 @@ Ext.onReady(function(){
       layout: 'hbox',
       title: 'Users',
       items: ['loginTextForm']
+    }, {
+      layout : 'hbox',
+      title: 'Esign',
+      items: ['esignatureOptions']
     }]
 	});
 });

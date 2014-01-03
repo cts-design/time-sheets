@@ -114,6 +114,7 @@ class EventsController extends AppController {
 
 		$conditions = array(
 			'Event.scheduled >' => date('Y-m-d H:i:s'),
+			'Event.private' => 0,
 			'Event.scheduled BETWEEN ? AND ?' => array($date, $endDate),
 			'OR' => array(
 				array('Event.allow_registrations' => 0),
@@ -426,13 +427,65 @@ class EventsController extends AppController {
 
 	public function admin_list_events_registration()
 	{
-
 		$this->loadModel('Event');
-
-		$this->Event->recursive = 1;
-		$events = $this->paginate('Event');
-
-		$this->set('events', $events);
+		
+		//$this->Event->recursive = -1;
+		
+		if( empty($this->params['named']) )
+		{
+			$this->Session->delete('ler_paginate');
+			$this->Session->delete('ler');
+		}
+		
+		if($this->RequestHandler->isPost())
+		{
+			$conditions = array();
+			if( isset($_POST['today']) )
+			{
+				$conditions['Event.scheduled >'] = date('Y/m/d H:i:s');
+				$conditions['Event.scheduled <'] = date('Y/m/d 00:00:00', strtotime("+1 day"));
+			}
+			else if ( isset($_POST['tomorrow']))
+			{
+				$conditions['Event.scheduled >'] = date('Y/m/d 00:00:00', strtotime("+1 days"));
+				$conditions['Event.scheduled <'] = date('Y/m/d 00:00:00', strtotime("+2 days"));
+			}
+			else if($_POST['datepicker'] != "")
+			{
+				$conditions['Event.scheduled >'] = date('Y/m/d 00:00:00', strtotime($_POST['datepicker']));
+				$conditions['Event.scheduled <'] = date('Y/m/d 00:00:00', strtotime($_POST['datepicker'] . " +1 day"));
+			}
+			else
+			{
+				$conditions['Event.scheduled >'] = date('Y/m/d 00:00:00');
+			}
+			
+			if( count($_POST['keywords']) > 0 )
+			{
+				$conditions['Event.name LIKE'] = "%" . $_POST['keywords'] . "%";
+			}
+			$this->Session->write('ler', $_POST);
+			$this->Session->write('ler_paginate', $conditions);
+			
+			
+			$events = $this->paginate('Event', $conditions);
+			$this->set('events', $events);
+		}
+		else
+		{
+			$cond = $this->Session->read('ler_paginate');
+			
+			if( !isset($cond['Event.scheduled >']) )
+			{
+				$cond['Event.scheduled >'] = date('Y/m/d 00:00:00');
+			}
+			
+			$events = $this->paginate('Event', $cond);
+			$this->set('events', $events);
+		}
+		
+		
+		
 	}
 
 	public function admin_index() {

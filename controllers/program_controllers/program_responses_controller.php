@@ -67,16 +67,20 @@ class ProgramResponsesController extends AppController {
 		if(!empty($this->data)) {
             $this->data['ProgramResponse']['id'] = $program['ProgramResponse'][0]['id'];
 			$this->data['ProgramResponse']['next_step_id'] = null;
+
 			$this->data['ProgramResponseActivity'][0]['answers'] = json_encode($this->data['ProgramResponseActivity'][0]);
 			$this->data['ProgramResponseActivity'][0]['status'] = 'complete';
 			$this->data['ProgramResponseActivity'][0]['program_response_id'] = $program['ProgramResponse'][0]['id'];
 			$this->data['ProgramResponseActivity'][0]['program_step_id'] = $this->currentStep[0]['id'];
 			$this->data['ProgramResponseActivity'][0]['type'] = 'form';
+
 			if(isset($this->nextStep)) {
-				if($this->nextStep[0]['type'] === 'required_docs' || !$this->nextStep[0]['type']) {
+				if($this->nextStep[0]['type'] === 'required_docs' || !$this->nextStep[0]['type'])
+				{
 					$redirect = array('controller' => 'programs', 'action' => $program['Program']['type'], $programId);
 				}
-				else if ($this->nextStep[0]['type'] === 'custom_form') {
+				else if ($this->nextStep[0]['type'] === 'custom_form')
+				{
 					$redirect = array('controller' => 'program_responses', 'action' => 'form', $programId, $this->nextStep[0]['id']);
 				}
 				else {
@@ -253,8 +257,39 @@ class ProgramResponsesController extends AppController {
 	}
 
 	function media($programId=null, $stepId=null) {
-        $program = $this->ProgramResponse->Program->getProgramAndResponse($programId, $this->Auth->user('id'));
-		$this->whatsNext($program, $stepId);
+        $this->loadModel('ProgramStep');
+        $program 		= $this->ProgramResponse->Program->getProgramAndResponse($programId, $this->Auth->user('id'));
+        $current_step 	= $this->ProgramStep->findById($stepId);
+        $children_media	= FALSE;
+        $parent_media	= FALSE;
+
+        if($current_step['ProgramStep']['type'] == 'media') //means this is a child
+        {
+        	$children_media = $this->ProgramStep->find('all', array(
+				'conditions' => array(
+					'ProgramStep.program_id' => $programId,
+					'ProgramStep.parent_id' => $stepId,
+					'ProgramStep.type' => 'alt_media'
+				)
+			));
+        	$parent_media = $this->ProgramStep->findById($stepId);
+			$this->whatsNext($program, $current_step['ProgramStep']['id']);
+        }
+        else
+        {
+        	$children_media = $this->ProgramStep->find('all', array(
+				'conditions' => array(
+					'ProgramStep.program_id' => $programId,
+					'ProgramStep.parent_id' => $current_step['ProgramStep']['parent_id'],
+					'ProgramStep.type' => 'alt_media'
+				)
+			));
+			$parent_media = $this->ProgramStep->findById($current_step['ProgramStep']['parent_id']);
+        	$this->whatsNext($program, $current_step['ProgramStep']['parent_id']); //Get's the step like usual
+        }
+
+        $this->set(compact('children_media', 'parent_media'));
+
         if(!empty($this->data)) {
             $this->data['ProgramResponse']['id'] = $program['ProgramResponse'][0]['id'];
 			$this->data['ProgramResponse']['next_step_id'] = null;
@@ -262,6 +297,15 @@ class ProgramResponsesController extends AppController {
 			$this->data['ProgramResponseActivity'][0]['program_response_id'] = $program['ProgramResponse'][0]['id'];
 			$this->data['ProgramResponseActivity'][0]['program_step_id'] = $this->currentStep[0]['id'];
 			$this->data['ProgramResponseActivity'][0]['type'] = 'media';
+
+			if($program['Program']['approval_required'])
+			{
+				$status = 'pending_approval';
+			}
+			else
+			{
+				$status = 'complete';
+			}
 			if(isset($this->nextStep)) {
 				$this->data['ProgramResponse']['next_step_id'] = $this->nextStep[0]['id'];
 				if($this->nextStep[0]['type'] === 'required_docs' || !$this->nextStep[0]['type']) {
@@ -272,12 +316,6 @@ class ProgramResponsesController extends AppController {
 				}
 			}
 			else {
-				if($program['Program']['approval_required']) {
-					$status = 'pending_approval';
-				}
-				else {
-					$status = 'complete';
-				}
 				$this->data['ProgramResponse']['status'] = $status;
 			}
 			// TODO: make sure validation works
@@ -317,7 +355,8 @@ class ProgramResponsesController extends AppController {
             $data['media'] = $this->currentStep[0]['location'];
         }
         else {
-            $data['media'] = '/program_responses/load_media/' . $this->currentStep[0]['id'];
+            //$data['media'] = '/program_responses/load_media/' . $this->currentStep[0]['id'];
+            $data['media'] = '/program_responses/load_media/' . $current_step['ProgramStep']['id'];
         }
         if($instructions) {
             $data['instructions'] = $instructions[0];
@@ -335,6 +374,7 @@ class ProgramResponsesController extends AppController {
         $this->view = 'Media';
         $this->ProgramResponse->Program->ProgramStep->id = $id;
         $path = $this->ProgramResponse->Program->ProgramStep->field('media_location');
+
         if($path) {
             $explode = explode('.', $path);
             $params = array(
@@ -1231,7 +1271,7 @@ class ProgramResponsesController extends AppController {
             $this->redirect(array('controller' => 'users', 'action' => 'dashboard', 'admin' => false));
 		}
 		$this->currentStep = $steps['current'];
-		if(isset($steps['previous'])) {
+		if(isset($steps['previous']) && $this->currentStep[0]['type'] != 'alt_media') {
 			$this->Session->setFlash(__('Steps must be completed in order.', true), 'flash_failure');
 			$previousStep = $steps['previous'];
 			$this->redirect(array('action' => $previousStep[0]['type'], $program['Program']['id'], $previousStep[0]['id']));

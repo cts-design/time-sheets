@@ -294,6 +294,11 @@ $config['navigation.tools'] = array(
 			'link' => array('controller' => 'reports', 'action' => 'index'),
 			'rel' => 'reports',
 			'title' => 'Reports'
+		),
+		array(
+			'link' => array('controller' => 'programs', 'action' => 'alternative_media'),
+			'rel' => 'alternativeMedia',
+			'title' => 'Alternative Media'
 		)
 	)
 );

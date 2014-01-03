@@ -4,6 +4,13 @@
 </div>
 <div id="ReleaseNotes">
 
+	<h1>Release 3.8 (1-3-14)</h1>
+	<p>
+		Release notes coming soon.
+	</p>
+
+	<hr />
+
 	<h1>Release 3.7.7 (8-16-13)</h1>
 	<h2>Minor updates</h2>
 	<ol>

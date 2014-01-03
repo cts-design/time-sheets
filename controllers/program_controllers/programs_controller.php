@@ -5,6 +5,11 @@ class ProgramsController extends AppController {
 	public $name = 'Programs';
 	public $components = array('Notifications', 'Email');
 	public $transactionIds = array();
+	
+	var $paginate = array(
+		'limit' => 10
+	);
+
 
 	public function beforeFilter() {
 		parent::beforeFilter();
@@ -16,6 +21,9 @@ class ProgramsController extends AppController {
 		if($this->Auth->user('role_id') > 1) {
 			$this->Auth->allow('admin_get_programs_by_type', 'admin_get_program_by_id');
 		}
+		
+		$this->Auth->allow('esign_document', 'admin_add_alt_media');
+		$this->Auth->allow('admin_alternative_media');
 	}
 
 	// TODO make these actions work with an index method and routes ??
@@ -33,8 +41,123 @@ class ProgramsController extends AppController {
 		//ecouse logic here
 	}
 
+	public function admin_alternative_media()
+	{
+		$this->layout = 'default_bootstrap';
+
+		require(APP . 'vendors' . DS . 'HtmlTableGenerator' . DS . 'HtmlTableGenerator.php');
+		$htg = new HtmlTableGenerator('Program');
+
+		$fields = array('id', 'name', 'type', 'disabled');
+		$filters = array('type');
+
+		$htg->set_fields($fields);
+		$htg->set_filters($filters);
+
+		$conditions = array();
+		if(isset($_GET['type']))
+			$conditions['type'] = $_GET['type'];
+
+		if(isset($_GET['name']))
+			$conditions['name LIKE'] = '%' . $_GET['name'] . '%';
+
+		$this->paginate = array(
+			'conditions' => $conditions,
+			'fields' => $fields
+		);
+		$rows = $this->paginate('Program');
+		$data = $htg->format($rows);
+
+		$this->set($data);
+		$this->render('/program_views/programs/admin_alternative_media');
+	}
+
+	public function admin_add_alt_media($id = NULL)
+	{
+		$this->layout = 'default_bootstrap';
+		$title_for_layout = 'Add Alternative Media';
+
+		$this->set('program_id', $id);
+
+		//Get steps for program
+		$this->loadModel('ProgramDocument');
+		$this->loadModel('ProgramStep');
+		$docs = $this->ProgramStep->find('all', array(
+			'conditions' => array(
+				'ProgramStep.program_id' => $id,
+				'ProgramStep.type' => 'media',
+			)
+		));
+		$this->set('docs', $docs);
+
+		if( isset( $_FILES['file'] ))
+		{
+			$upload_folder = APP . 'storage' . DS . 'program_media';
+			$extension = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
+
+			if( !is_dir($upload_folder))
+			{
+				$this->log('Attempting to create upload directory');
+				$created = mkdir($upload_folder, TRUE);
+			}
+
+			$name = date('YmdHis') . '.' . $extension;
+			$is_moved = move_uploaded_file($_FILES['file']['tmp_name'], $upload_folder . DS . $name);
+
+			$original_document = $this->ProgramStep->findbyId($_POST['program_step_id']);
+
+			if(!empty($original_document['ProgramStep']))
+			{
+				$document = array(
+					'program_id' => $id,
+					'name' => $_POST['altname'],
+					'type' => 'alt_media',
+					'media_type' => $extension,
+					'parent_id' => $_POST['program_step_id'],
+					'redoable' => 0,
+					'meta' => '',
+					'media_location' => $name,
+					'created' => date('Y-m-d H:i:s'),
+					'modified' => date('Y-m-d H:i:s')
+				);
+
+				$this->ProgramStep->create();
+				$is_saved = $this->ProgramStep->save($document);
+
+				$this->Session->setFlash('Successfully uploaded alternative media for Program Document: ' . $original_document['ProgramStep']['name']);
+				//$this->redirect(array('action' => 'admin_orientation_media'));
+			}
+		}
+
+		$this->set(compact('title_for_layout'));
+	}
+
 	public function esign($id=null) {
 		$this->loadProgram($id);
+
+		$this->loadModel('Setting');
+		$this->loadModel('User');
+
+		$esign_setting = $this->Setting->findByName('EsignOption');
+
+		$value = $esign_setting['Setting']['value'];
+
+		//Checks if user is under 18
+		$user = $this->User->findById( $this->Auth->user('id') );
+
+		$under_18 = strtotime($user['User']['dob']) > strtotime("-18 years");
+		$this->set('under_18', $under_18);
+
+		if(!isset($esign_setting['Setting']['value']) || $esign_setting['Setting']['value'] == 'v1.0')
+		{
+			$this->layout = 'default';
+			$this->render('/program_views/programs/esign_old');
+		}
+		else
+		{
+			$this->layout = 'default_bootstrap';
+			$this->render('/program_views/programs/esign');
+		}
 	}
 
 	public function esign_get_status($id = null) {
@@ -168,7 +291,8 @@ class ProgramsController extends AppController {
 			'conditions' => array('Program.id' => $id),
 			'contain' => array(
 				'ProgramStep' => array(
-					'order' => 'lft ASC'
+					'order' => 'lft ASC',
+					'conditions' => array('ProgramStep.type <>' => 'alt_media')
 				),
 				'ProgramInstruction')));
 		
@@ -992,6 +1116,189 @@ class ProgramsController extends AppController {
 			$this->set(compact('data'));
 			$this->render(null, null, '/elements/ajaxreturn');
 		}
+	}
+
+	public function esign_document()
+	{
+		$this->autoRender = false;
+		$this->loadModel('User');
+		$user = $this->User->findById( $this->Auth->user('id') );
+
+		if( !isset($_POST['lines']) )
+		{
+			$message = array(
+				'output' => 'lines is not set',
+				'success' => FALSE
+			);
+
+			echo json_encode($message);
+			exit();
+		}
+		else
+		{
+			$lines = $_POST['lines'];
+			$lines = json_decode($lines, true);
+			$lines = $lines['lines'];
+		}
+
+		$under_18 = strtotime($user['User']['dob']) > strtotime('-18 years');
+		if($under_18 && $_POST['guardian'] == "")
+		{
+			$message = array(
+				'output' => 'Guardian signature required',
+				'success' => FALSE
+			);
+
+			echo json_encode($message);
+			exit();
+		}
+		else if($under_18 && $_POST['guardian'] != "")
+		{
+			$guardian_lines = $_POST['guardian'];
+			$guardian_lines = json_decode($guardian_lines, true);
+			$guardian_lines = $guardian_lines['lines'];
+		}
+		else
+		{
+			$guardian_lines = NULL;
+		}
+
+		$save_directory = APP . 'storage' . DS . 'signatures' . DS . $this->Auth->user('id');
+		$save_name = 'signature.png';
+		$guardian_name = 'guardian.png';
+
+		if( !is_dir($save_directory) )
+		{
+			$is_made = mkdir( $save_directory, 0777, true );
+
+			if( !$is_made )
+			{
+				$message = array('output' => 'Could not make user signatures directory', 'success' => FALSE);
+				echo json_encode($message);
+				exit();
+			}
+		}
+
+		$img_lines = $this->createImageFromLines($lines);
+		imagepng($img_lines, $save_directory . DS . $save_name);
+		imagedestroy($img_lines);
+
+
+		if($guardian_lines != NULL)
+		{
+			$img_guardian = $this->createImageFromLines($guardian_lines);
+			imagepng($img_guardian, $save_directory . DS . $guardian_name);
+			imagedestroy($guardian_lines);
+		}
+
+		//Updates that the user has submitted an e-signature
+		$this->User->create();
+		$this->User->id = $this->Auth->user('id');
+		$this->User->saveField('signature', 1);
+		$this->User->saveField('signature_created', date('Y/m/d H:i:s'));
+		$this->User->saveField('guardian', $_POST['guardian_name']);
+		$is_saved = $this->User->saveField('signature_modified', date('Y/m/d H:i:s'));
+
+		$this->saveEsignPDF();
+
+
+		if(!$is_saved)
+		{
+			$message = array(
+				'output' => 'Did not save to database',
+				'success' => FALSE
+			);
+			echo json_encode($message);
+		}
+		else
+		{
+			$message = array(
+				'output' => 'Saved!',
+				'success' => TRUE
+			);
+			echo json_encode($message);
+		}
+		exit();
+	}
+
+
+	private function createImageFromLines($lines, $width=400, $height=100)
+	{
+		$img = imagecreatetruecolor($width, $height);
+
+		$bg = imagecolorallocate($img, 255, 255, 255);
+		imagefill($img, 0, 0, $bg);
+		$color = imagecolorallocate($img, 0, 0, 0);
+
+		imagesetthickness($img, 4);
+
+		for($j = 0; $j < count($lines); $j += 1)
+		{
+			$row = $lines[$j];
+			for($i = 0; $i < count($row); $i += 1)
+			{
+				$col = $row[$i];
+				$last_col = array();
+				if($i == 0 && $j == 0)
+				{
+					continue;
+				}
+				else if($i == 0 AND $j > 0)
+				{
+					$last_row = $lines[$j - 1]; //Get's the last col in the last row
+					$last_col = $last_row[ (count($last_row) - 1) ];
+				}
+				else
+				{
+					$last_col = $row[$i - 1];
+				}
+
+				$x1 = $last_col[0];
+				$y1 = $last_col[1];
+
+				$x2 = $col[0];
+				$y2 = $col[1];
+
+				imageline($img, $x1, $y1, $x2, $y2, $color);
+
+			}
+			
+		}
+
+		return $img;
+	}
+
+	private function saveEsignPDF()
+	{
+		$this->loadModel('User');
+		$this->loadModel('QueuedDocument');
+		$user = $this->User->findById( $this->Auth->user('id') );
+
+		//Finds ESIGN Queue Category in the system
+		$this->loadModel('DocumentQueueCategory');
+		$esign_category = $this->DocumentQueueCategory->findByName('ESIGN');
+		$no_category = $this->DocumentQueueCategory->findByName('Unassigned');
+
+		$db_data = array(
+			'user_id' => $this->Auth->user('id'),
+			'entry_method' => 'esign'
+		);
+		if(!$esign_category && !$no_category)
+		{
+			$db_data['queue_category_id'] = 0;
+		}
+		else if(!$esign_category && $no_category)
+		{
+			$db_data['queue_category_id'] = $no_category['DocumentQueueCategory']['id'];
+		}
+		else
+		{
+			$db_data['queue_category_id'] = $esign_category['DocumentQueueCategory']['id'];
+		}
+
+		$is_saved = $this->QueuedDocument->createEsignPDF( $user, $db_data );
+		
+		return $is_saved;
 	}
 
 	private function duplicateTransactionCleanup() {

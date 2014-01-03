@@ -178,6 +178,41 @@ class QueuedDocument extends AppModel {
 		}
 	}
 
+	function createEsignPDF($user, $db_data = NULL){
+		
+		//Get Document storage path
+		$path = APP . 'storage';
+		$save_directory = $path . DS . date('Y') . DS . date('m');
+
+		//Recursively makes directories for upload file
+		if( !is_dir($save_directory) )
+		{
+			mkdir($save_directory, 0777, TRUE);
+		}
+
+		$docName = date('YmdHis') . rand(0, pow(10, 7)) . '.pdf';
+
+		//Create PDF with signature and save the PDF
+		include(APP . 'vendors' . DS . 'MPDF54' . DS . 'mpdf.php');
+
+		$content_base = APP . 'webroot' . DS . 'html';
+
+		$html = include($content_base . DS . 'esign.php');
+		$css = file_get_contents( $content_base . DS . 'esign.css');
+		$mpdf = new mPDF();
+
+		$mpdf->WriteHtml($css, 1);
+		$mpdf->WriteHtml($html, 2);
+
+		$mpdf->Output($save_directory . DS . $docName, 'F');
+
+		$db_data['filename'] = $docName;
+
+		$is_saved = $this->save($db_data);
+
+		return $is_saved;
+	}
+
 	function isPDF() {
 		if($this->data['QueuedDocument']['submittedfile']['type'] != 'application/pdf') {
 			return false;

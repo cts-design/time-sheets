@@ -5,6 +5,12 @@
  * @link http://ctsfla.com
  */
 ?>
+<style>
+.expand-wrap
+{
+	display:inline-block;
+}
+</style>
 <?php echo $this->Html->script(array('jquery.cookie', 'jquery.jstree', 'users/dashboard'), array('inline' => false)) ?>
 <div id="crumbWrapper">
     <span><?php __('You are here') ?> > </span>
@@ -19,6 +25,7 @@
         <div>
 	    <h3><?php echo $html->image('icons/user_suit.png')?> Administration</h3>
 	    <p class="expand-wrap"><?php echo $this->Html->link(__('Expand All', true), '', array('id' => 'expand')) ?></p>
+	    <p class="expand-wrap"><?php echo $this->Html->link(__('Collapse All', true), '', array('id' => 'collapse')) ?></p>
 	    <div id="dashboardAdminTree" style="background-color: transparent">
 		<ul>
 		    <?php if($this->Session->read('Auth.User.role_id') == 2 || $this->Session->read('Auth.User.role_id') == 3 )  { ?>
@@ -54,7 +61,7 @@
 	    	<?php endif ?> 
 	    	<p>
 	    		<?php echo $html->image('icons/application_xp_terminal.png')?>
-	    		<?php echo $html->link('Atlas 3.7.7', array('controller' => 'release_notes', 'admin' => true))?>
+	    		<?php echo $html->link('Atlas 3.8', array('controller' => 'release_notes', 'admin' => true))?>
 	    	</p>    	
 	    </div>
     </div>

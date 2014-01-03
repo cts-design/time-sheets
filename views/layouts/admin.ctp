@@ -42,9 +42,9 @@
 
 	echo $this->Html->script('atlas');
 
-	echo $this->Html->script('https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js');
+	echo $this->Html->script('jquery1102.min');
 	
-	echo $this->Html->script('https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js');
+	echo $this->Html->script('https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js');
 
 	echo $this->Html->script('layouts/admin'); 
 	?>

@@ -34,6 +34,25 @@ $config['PrePop']['email'] = '@development.ctsfla.com';
 // Registration SSN requirement (options are 'full' or 'last4')
 $config['Registration']['ssn'] = 'full';
 
+// Login SSN enum = 'full', 'last4', 'last5'
+$config['Registration']['program']['ssn_length']	= 9;
+$config['Registration']['child']['ssn_length']		= 9;
+$config['Registration']['website']['ssn_length']	= 9;
+$config['Registration']['auditor']['ssn_length']	= 9;
+$config['Registration']['kiosk']['ssn_length']		= 9;
+$config['Registration']['default']['ssn_length']	= 9;
+
+// Login SSN enum = 'full', 'last4', 'last5'
+$config['Login']['child']['ssn_length'] 		= 9;
+$config['Login']['program']['ssn_length'] 		= 9;
+$config['Login']['website']['ssn_length']		= 9;
+$config['Login']['auditor']['ssn_length']		= 9;
+$config['Login']['kiosk']['ssn_length']			= 9;
+
+
+// Login SSN enum = 'full', 'last4', 'last5'
+$config['Login']['ssn'] = 'full';
+
 // Kiosk login type (options are 'id_card or normal'
 $config['Kiosk']['login_type'] = 'normal';
 
@@ -46,6 +65,12 @@ $config['Document']['storage']['path'] = '/storage/';
 
 // Document Upload path
 $config['Document']['storage']['uploadPath'] = '../storage/';
+
+// Absolute path to storage
+$config['Document']['storage']['absolutePath'] = APP . 'storage';
+
+// Time before partial_document timeout
+$config['PartialDocumentSessionTimeout'] = "+30 mintes";
 
 // Document Jpeg location
 $config['Document']['jpeg']['path'] = '/storage/thumbnails/';

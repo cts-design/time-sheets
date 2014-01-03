@@ -10,9 +10,7 @@
 
 <div id="UserLoginForm">
 	<p>
-        <?php printf(__("Welcome to the %s Online Services System. To begin, please log in with
-                         your last name and your full social security
-                         number.", true), Configure::read('Company.name')) ?>
+        <?php printf(__("Welcome to the %s Online Services System. To begin, please log in below.", true), Configure::read('Company.name')) ?>
 	</p>
 	<?php $settings = Cache::read('settings'); ?> 
 	<?php if(isset($settings['Users']['LoginAdditionalText'])) : ?>
@@ -28,16 +26,30 @@
 	<fieldset>
 		<legend>Login</legend>
 		<?php
-		    echo $form->create('User');
+		    echo $form->create('User', array('url' => $this->Html->url()));
 			echo $form->input('username', array(
-				'label' =>__('Lastname', true),
+				'label' =>__('Last Name', true),
 				'between' => '<br />',
 				'after' => '<br />'));
-		    echo $form->input('password', array(
-				'label' => __('9 Digit SSN', true),
-				'between' => '<br />',
-				'after' => '<br />'
-		    ));
+
+			if($ssn_length != 9)
+			{
+				echo $form->input('password', array(
+					'label' => __('Last ' . $ssn_length . ' SSN Digits', true),
+					'between' => '<br />',
+					'after' => '<br />',
+					'maxlength' => $ssn_length
+			    ));
+			}
+			else
+			{
+				echo $form->input('password', array(
+					'label' => __('9 Digit Social Security Number', true),
+					'between' => '<br />',
+					'after' => '<br />',
+					'maxlength' => $ssn_length
+			    ));
+			}
 		   echo $form->hidden('User.login_type', array('value' => $loginType));
 			if(isset($this->params['pass'][0]) && $this->params['pass'][0] === 'program') {
 				echo $form->hidden('User.program_id', array('value' => $this->params['pass'][1]));

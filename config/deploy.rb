@@ -124,7 +124,8 @@ task :rescare do
   set :server_name, 'rescare production'
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
   set :user, 'deploy'
-  server "rescare.atlasforworkforce.com", :app, :web, :db, :primary => true
+  set :port, 23
+  server "montgomery.rescare.com", :app, :web, :db, :primary => true
 end
 
 task :suncoast do
@@ -213,6 +214,7 @@ namespace :deploy do
     run "ln -s #{shared_path}/webroot/index.php #{latest_release}/webroot/index.php"
     run "ln -s #{shared_path}/webroot/test.php #{latest_release}/webroot/test.php"
     run "ln -s #{shared_path}/webroot/js/ckfinder/config.php #{latest_release}/webroot/js/ckfinder/config.php"
+    #run "ln -s #{shared_path}/storage/signatures #{latest_release}/webroot/signatures"
     deploy.plugins.symlink
   end
 
