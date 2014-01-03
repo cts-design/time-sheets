@@ -65,6 +65,44 @@ $(document).ready(function() {
 			'options' => array('Male' => 'Male', 'Female' => 'Female'),
 			'between' => '<br />',
 			'after' => '<br />'));
+
+
+		if($ssn_length == 9)
+		{
+			echo $this->Form->input('ssn', array(
+				'label' => 'Your Social Security Number',
+				'type' => 'password',
+				'maxlength' => $ssn_length,
+				'between' => '<br />',
+				'after' => '<br />'
+			));
+			echo $this->Form->input('ssn_confirm', array(
+				'label' => 'Your ' . $ssn_length,
+				'type' => 'password',
+				'maxlength' => $ssn_length,
+				'between' => '<br />',
+				'after' => '<br />'
+			));
+		}
+		else
+		{
+			echo $this->Form->input('ssn', array(
+				'label' => 'The last ' . $ssn_length . ' digits of your Social Security Number',
+				'type' => 'password',
+				'maxlength' => $ssn_length,
+				'between' => '<br />',
+				'after' => '<br />'
+			));
+			echo $this->Form->input('ssn_confirm', array(
+				'label' => 'Confirm the last ' . $ssn_length . ' digits of your Social Security Number',
+				'type' => 'password',
+				'maxlength' => $ssn_length,
+				'between' => '<br />',
+				'after' => '<br />'
+			));
+		}
+
+		/*
 		if(Configure::read('Registration.ssn') == 'full') {
 		    echo $this->Form->input('ssn', array(
 				'label' => __('Child\'s Social Security Number', true),
@@ -121,7 +159,7 @@ $(document).ready(function() {
 					'after' => '<br />'));
 				echo $this->Form->error('ssn_confirm');
 			echo '</div>';					
-		}	
+		}*/
 	    echo $this->Form->input('dob', array(
 			'label' => __('Child\'s Birth Date <span class="small gray">(mm/dd/yyyy)</span>', true),
 			'type' => 'text',
