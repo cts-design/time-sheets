@@ -35,7 +35,15 @@ $config['PrePop']['email'] = '@development.ctsfla.com';
 $config['Registration']['ssn'] = 'full';
 
 // Login SSN enum = 'full', 'last4', 'last5'
-$config['Login']['child']['ssn_length'] 		= 5;
+$config['Registration']['program']['ssn_length']	= 9;
+$config['Registration']['child']['ssn_length']		= 9;
+$config['Registration']['website']['ssn_length']	= 9;
+$config['Registration']['auditor']['ssn_length']	= 9;
+$config['Registration']['kiosk']['ssn_length']		= 9;
+$config['Registration']['default']['ssn_length']	= 9;
+
+// Login SSN enum = 'full', 'last4', 'last5'
+$config['Login']['child']['ssn_length'] 		= 9;
 $config['Login']['program']['ssn_length'] 		= 9;
 $config['Login']['website']['ssn_length']		= 9;
 $config['Login']['auditor']['ssn_length']		= 9;
