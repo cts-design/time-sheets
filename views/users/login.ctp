@@ -28,7 +28,7 @@
 		<?php
 		    echo $form->create('User', array('url' => $this->Html->url()));
 			echo $form->input('username', array(
-				'label' =>__('Lastname', true),
+				'label' =>__('Last Name', true),
 				'between' => '<br />',
 				'after' => '<br />'));
 
@@ -44,7 +44,7 @@
 			else
 			{
 				echo $form->input('password', array(
-					'label' => __('9 Digit SSN', true),
+					'label' => __('9 Digit Social Security Number', true),
 					'between' => '<br />',
 					'after' => '<br />',
 					'maxlength' => $ssn_length
