@@ -23,7 +23,7 @@ class ProgramsController extends AppController {
 		}
 		
 		$this->Auth->allow('esign_document', 'admin_add_alt_media');
-		$this->Auth->allow('admin_orientation_media');
+		$this->Auth->allow('admin_alternative_media');
 	}
 
 	// TODO make these actions work with an index method and routes ??
@@ -41,7 +41,7 @@ class ProgramsController extends AppController {
 		//ecouse logic here
 	}
 
-	public function admin_orientation_media()
+	public function admin_alternative_media()
 	{
 		$this->layout = 'default_bootstrap';
 
@@ -69,7 +69,7 @@ class ProgramsController extends AppController {
 		$data = $htg->format($rows);
 
 		$this->set($data);
-		$this->render('/program_views/programs/admin_orientation_media');
+		$this->render('/program_views/programs/admin_alternative_media');
 	}
 
 	public function admin_add_alt_media($id = NULL)

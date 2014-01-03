@@ -220,6 +220,10 @@ reset.click(function(e){
 	$("#sig").signature('clear');
 	$("#lines").val('');
 
+	guardian_name.val('');
+
+	guard.signature('clear');
+
 	done.removeClass('btn-danger');
 	done.addClass('btn-primary');
 	errorOutput.text("");

@@ -19,7 +19,7 @@
 		<?php
 		    echo $form->create('User', array('url' => $this->Html->url()));
 		    echo $form->input('username', array(
-		    	'label' => 'Child\'s Lastname', 
+		    	'label' => 'Child\'s Last Name', 
 		    	'between' => '<br />',
 				'after' => '<br />'));
 		    echo '<br class="clear"/>';

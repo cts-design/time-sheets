@@ -44,15 +44,15 @@ Ext.create('Ext.data.Store', {
       var iconCls = 'x-status-error';
       if(responseTxt.success) {
         iconCls = 'x-status-valid'; 
-      }
       
-      sb.setStatus({
-        text: responseTxt.message + ' (' + (seatsAvailable - currentSeats) + ' Seats Available)',
-        iconCls: iconCls,
-        clear: {
-          anim: false
-        }
-      });
+        sb.setStatus({
+          text: responseTxt.message + ' (' + (seatsAvailable - currentSeats) + ' Seats Available)',
+          iconCls: iconCls,
+          clear: {
+            anim: false
+          }
+        });
+      }
     },
     beforesync: function(options, eOpts) {
       var sb = Ext.getCmp('status-bar');
@@ -273,7 +273,6 @@ Ext.create('Ext.grid.Panel', {
       var statusBarPanel = Ext.getCmp('status-bar');
       currentSeats = registeredUsersPanel.getStore().getTotalCount();
 
-      console.log( Ext.StoreMgr.lookup("eventRegistrations") );
       statusBarPanel.setStatus({
         text : 'Ready (' + (seatsAvailable - currentSeats) + ' / ' + seatsAvailable + ' Seats Available)'
       });
