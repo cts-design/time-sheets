@@ -351,7 +351,7 @@ Ext.create('Ext.form.Panel', {
           success : function(result){
             if(!result.success)
             {
-              alert('Could not save the')
+              alert('Could not save the');
             }
           }
         });
@@ -359,6 +359,140 @@ Ext.create('Ext.form.Panel', {
     }
   }]
 });
+
+/*
+*   TRANSLATION SETTING TAB
+*/
+
+var translation = Ext.create('Ext.data.Store', {
+  fields : ['value', 'name'],
+  data : [{
+    'value' : '0',
+    'name' : 'Off'
+  }, {
+    'value' : '1',
+    'name' : 'On'
+  }]
+});
+
+var translationMode = Ext.create('Ext.data.Store', {
+  fields : ['value', 'name'],
+  data : [{
+    'value' : 'spanish',
+    'name' : 'Spanish'
+  }, {
+    'value' : 'french',
+    'name' : 'French'
+  }]
+});
+
+Ext.create('Ext.form.Panel', {
+  title: 'Translation Options',
+  url: '/admin/settings/translation_options',
+  id: 'translation',
+  frame: true,
+  margin: 5,
+  width: 500,
+  items: [{
+    fieldLabel: 'Translation On/Off',
+    name: 'translation_name',
+    xtype: 'combo',
+    emptyText: 'Please Select',
+    editable: false,
+    displayField: 'name',
+    valueField: 'value',
+    store: translation,
+    queryMode: 'local',
+    allowBlank: false,
+    listeners: {
+      afterRender : function(combo) {
+        $.ajax({
+          url : '/admin/settings/index/translation/active',
+          data : { 'action' : 'get' },
+          type : 'GET',
+          dataType : 'json',
+          success : function(result){
+            if(result.success)
+            {
+              combo.setValue(result.output['Setting'].value);
+            }
+          }
+        });
+      },
+      change: function(combo, newValue, oldValue, eOpts) {
+        $.ajax({
+          url : '/admin/settings/index/translation/active',
+          data : { 'value' : newValue, 'action' : 'set' },
+          type : 'GET',
+          dataType : 'json',
+          success : function(result){
+            if(!result.success)
+            {
+              console.log(result.output);
+            }
+            else
+            {
+              console.log(result.output);
+            }
+          }
+        });
+      }
+    }
+  }, {
+    fieldLabel: 'Translation Mode',
+    name: 'translation_mode',
+    xtype: 'combo',
+    emptyText: 'Please Select',
+    editable: false,
+    displayField: 'name',
+    valueField: 'value',
+    store: translationMode,
+    queryMode: 'local',
+    allowBlank: false,
+    listeners: {
+      afterRender : function(combo) {
+        $.ajax({
+          url : '/admin/settings/index/translation/mode',
+          data : { 'action' : 'get' },
+          type : 'GET',
+          dataType : 'json',
+          success : function(result){
+            if(result.success)
+            {
+              combo.setValue(result.output['Setting'].value);
+            }
+          },
+          error : function(result, error)
+          {
+            console.log(result);
+            console.log(error);
+          }
+        });
+      },
+      change: function(combo, newValue, oldValue, eOpts) {
+        $.ajax({
+          url : '/admin/settings/index/translation/mode',
+          data : { 'value' : newValue, 'action' : 'set' },
+          type : 'GET',
+          dataType : 'json',
+          success : function(result){
+            if(!result.success)
+            {
+              console.log(result.output);
+            }
+            else
+            {
+              console.log(result.output);
+            }
+          }
+        });
+      }
+    }
+  }]
+});
+/*
+*   END OF TRANSLATION SETTING TAB
+*/
 
 
 
@@ -379,6 +513,10 @@ Ext.onReady(function(){
       layout : 'hbox',
       title: 'Esign',
       items: ['esignatureOptions']
+    }, {
+      layout : 'hbox',
+      title: 'Translate',
+      items: ['translation']
     }]
 	});
 });

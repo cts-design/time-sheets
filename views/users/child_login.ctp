@@ -1,7 +1,6 @@
 <div id="ChildLoginForm">
 	<p>
-        <?php printf(__("Welcome to the %s Online Services System. To begin, please log in with your child's last name and your child's full 
-                         social security number.", true), Configure::read('Company.name')) ?>
+        <?php printf(__("Welcome to the %s Online Services System. To begin, please log in below", true), Configure::read('Company.name')) ?>
 	</p>
 	<?php $settings = Cache::read('settings'); ?> 
 	<?php if(isset($settings['Users']['LoginAdditionalText'])) : ?>

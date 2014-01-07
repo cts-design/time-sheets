@@ -67,7 +67,6 @@ $(document).ready(function() {
 			'between' => '<br />',
 			'after' => '<br />'));
 
-
 		if($ssn_length == 9)
 		{
 			echo $this->Form->input('ssn', array(
