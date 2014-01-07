@@ -193,6 +193,20 @@ class AppController extends Controller {
 
 	}
 
+	function ajaxMessage($success, $output, $exit = TRUE)
+	{
+		$message = array('success' => $success, 'output' => $output);
+		if($exit)
+		{
+			echo json_encode($message);
+			exit();
+		}
+		else
+		{
+			return json_encode($message);
+		}
+	}
+
 /**
  * Handles automatic pagination of model records.
  *
