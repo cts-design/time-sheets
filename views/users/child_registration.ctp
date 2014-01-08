@@ -77,7 +77,7 @@ $(document).ready(function() {
 				'after' => '<br />'
 			));
 			echo $this->Form->input('ssn_confirm', array(
-				'label' => 'Your ' . $ssn_length,
+				'label' => 'Confirm your Social Security Number',
 				'type' => 'password',
 				'maxlength' => $ssn_length,
 				'between' => '<br />',
