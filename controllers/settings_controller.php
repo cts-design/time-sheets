@@ -7,11 +7,143 @@ class SettingsController extends AppController {
 	{
 		parent::beforeFilter();
 		$this->Auth->allow('admin_esign_options');
+
+		$this->Auth->allow('admin_translation', 'admin_translation_mode', 'admin_set');
 	}
 
 	public function admin_index() {
-		$this->Setting->recursive = 0;
-		$this->set('settings', $this->paginate());
+
+		if($this->RequestHandler->isAjax())
+		{
+			$this->autoRender = false;
+			if( isset($this->params['pass'][0]) && isset($this->params['pass'][1]) && isset($_GET['action']))
+			{
+				$module 	= $this->params['pass'][0];
+				$name 		= $this->params['pass'][1];
+				$action 	= $_GET['action'];
+
+				switch($action)
+				{
+					case 'set':
+
+						if( isset($_GET['value']) )
+						{
+							$value = $_GET['value'];
+						}
+						else
+						{
+							$this->ajaxMessage(FALSE, 'Value is not set');
+						}
+
+						$setting = $this->Setting->find('first', array(
+							'conditions' => array(
+								'module' => $module,
+								'name' => $name,
+							)
+						));
+
+						if($setting)
+						{
+							$setting['Setting']['value'] = $value;
+						}
+						else
+						{
+							$setting['Setting'] = array(
+								'module' => $module,
+								'name' => $name,
+								'value' => $value
+							);
+						}
+
+						$is_saved = $this->Setting->save($setting);
+
+						if($is_saved)
+						{
+							$this->ajaxMessage(TRUE, 'Setting has been saved');
+						}
+						else
+						{
+							$this->ajaxMessage(FALSE, 'Could not save Setting');
+						}
+
+						break;
+					case 'get':
+
+						$setting = $this->Setting->find('first', array(
+							'conditions' => array(
+								'module' => $module,
+								'name' => $name,
+							)
+						));
+						if($setting)
+						{
+							$this->ajaxMessage(TRUE, $setting);
+						}
+						else
+						{
+							$this->ajaxMessage(FALSE, 'No Module-Name Combo');
+						}
+						break;
+				}
+			}
+			else
+			{
+				$this->ajaxMessage(FALSE, 'Not all Parameters set');
+			}
+		}
+		else
+		{
+			$this->Setting->recursive = 0;
+			$this->set('settings', $this->paginate());
+		}
+	}
+
+	public function admin_translation_mode()
+	{
+		if($this->RequestHandler->isAjax())
+		{
+			$settings = $this->Setting->findByName('Translation', array('id','value'));
+			$fields = array();
+			if(isset($this->params['form']['fields']) && $this->params['form']['fields'] != '')
+			{
+				$arr = explode(',', $this->params['form']['fields']);
+				$i = 0;
+
+				foreach ($arr as $key => $value)
+				{
+					$fields[$i]['field'] = $value;
+					$i++;
+				}
+
+				if($settings)
+				{
+					$this->data['Setting']['id'] = $settings['Setting']['id'];
+				}			
+				
+				$this->data['Setting']['value'] = json_encode($fields);
+				$this->data['Setting']['module'] = 'SelfSign';
+				$this->data['Setting']['name'] = 'KioskRegistration';				
+				
+				if($this->Setting->save($this->data))
+				{
+					Cache::delete('settings');
+					$data['success'] = true;
+					$data['message'] = 'Kiosk registration settings updated successfully';
+					$settings = $this->Setting->findByName('KioskRegistration', array('id','value'));
+				}
+				else
+				{
+					$data['success'] = false;
+					$data['message'] = 'Kiosk registration settings could not be updated';					
+				}				
+			}
+			else
+			{
+				$data['fields'] = json_decode($settings['Setting']['value'], true);
+			}
+			$this->set(compact('data'));	
+			$this->render(null, null, '/elements/ajaxreturn');	
+		}
 	}
 	
 	public function admin_kiosk_registration() {
