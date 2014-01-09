@@ -113,6 +113,13 @@ task :elcp do
   server "vpk.elcpinellas.net", :app, :web, :db, :primary => true
 end
 
+task :elcpolk do
+  set :server_name, 'vpkelcpolk.org production'
+  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
+  set :user, 'deploy'
+  server "www.vpkelcpolk.org", :app, :web, :db, :primary => true
+end
+
 task :phelc do
   set :server_name, 'phelc production'
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
