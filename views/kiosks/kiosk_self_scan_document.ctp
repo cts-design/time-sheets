@@ -60,7 +60,7 @@
 	set Eztwain = document.getElementById("Eztwain")
 	Sub save_OnClick
 	    stopTimeout()
-	    Eztwain.UploadExtraField "data[QueuedDocument][scanned_location_id]", <?php echo $locationId . "\r\n"?>
+	    Eztwain.UploadExtraField "data[QueuedDocument][scanned_location_id]", <?php echo 'CTS' . "\r\n"?>
 	    Eztwain.UploadExtraField "data[QueuedDocument][self_scan_cat_id]", <?php echo $selfScanCatId . "\r\n"?>
 	    Eztwain.UploadExtraField "data[QueuedDocument][queue_category_id]", <?php echo $queueCatId . "\r\n"?>
 	    Eztwain.UploadExtraField "data[QueuedDocument][user_id]", <?php echo $session->read('Auth.User.id') . "\r\n"?>

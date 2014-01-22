@@ -118,7 +118,7 @@ class BarCodeDefinitionsController extends AppController {
 	}
 	
    public function admin_get_definitions() {
-		if($this->RequestHandler->isAjax()) {
+		if(!$this->RequestHandler->isAjax()) {
 			$definitions = $this->BarCodeDefinition->find('all', array(
 				'fields' => array(
 					'BarCodeDefinition.id',

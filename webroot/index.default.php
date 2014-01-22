@@ -36,21 +36,21 @@
  *
  */
 	if (!defined('ROOT')) {
-		define('ROOT', DS . 'var' . DS . 'www' . DS . 'vhosts' . DS . 'deploy' . DS . 'atlas');
+		define('ROOT', DS . 'Users' . DS . 'joseph' . DS . 'Projects');
 	}
 /**
  * The actual directory name for the "app".
  *
  */
 	if (!defined('APP_DIR')) {
-		define('APP_DIR', 'current');
+		define('APP_DIR', 'atlas');
 	}
 /**
  * The absolute path to the "cake" directory, WITHOUT a trailing DS.
  *
  */
 	if (!defined('CAKE_CORE_INCLUDE_PATH')) {
-		define('CAKE_CORE_INCLUDE_PATH', DS . 'var' . DS . 'www' . DS . 'vhosts' . DS . 'deploy' . DS . 'atlas'. DS . 'shared' . DS . 'cakephp');
+		define('CAKE_CORE_INCLUDE_PATH', DS . 'usr' . DS . 'lib' . DS . 'cakephp');
 	}
 
 /**

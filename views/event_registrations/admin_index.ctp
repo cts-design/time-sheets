@@ -1,6 +1,7 @@
 <?php $this->Html->scriptStart(array('inline' => FALSE)) ?>
 	var eventId = <?php echo $this->params['pass'][0] ?>;
 	var seatsAvailable = <?= $event['Event']['seats_available'] ?>;
+	var allowRegistrations = <?= $event['Event']['allow_registrations'] ?>;
 	var currentSeats = 0;
 <?php $this->Html->scriptEnd() ?>
 <?php echo $this->Html->css('ext/statusbar', null, array('inline' => false)); ?>

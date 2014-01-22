@@ -5,7 +5,7 @@
  */
 $(document).ready(function(){
     $('.scan').button();
-    $('.save, .re-scan,').button({disabled: true});
+    $('.save, .re-scan').button({disabled: true});
     var validator = $('#FiledDocumentScanDocumentForm').validate({
 	errorPlacement: function(error,element) {
 	    return true;
@@ -68,7 +68,7 @@ function disableScan() {
     $('.scan').button({disabled: true});
 }
 function enableReScan(){
-    $('.save, .re-scan,').button({disabled: false});
+    $('.save, .re-scan').button({disabled: false});
 }
 function populateChildCatsList(childCats) {
     var options = '<option value="">Select 2nd Cat</option>';
