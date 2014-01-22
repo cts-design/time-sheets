@@ -65,9 +65,6 @@
 											$step['id'])
 											)
 										?>
-										<?php
-											var_dump($class . ' ' . $step['type']);
-										?>
 										<?php if($programResponse['ProgramResponse']['status'] === 'not_approved') : ?>
 											<?php $link = $this->Html->link('Edit Form', array(
 												'controller' => 'program_responses',

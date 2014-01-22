@@ -236,8 +236,6 @@ function autoPopulateFilingCats(doc) {
 	var cat, cat2Store, cat3Store;
 
 	if(doc.data.self_scan_cat_id || doc.data.bar_code_definition_id) {
-		console.log(doc.data.self_scan_cat_id);
-
 		if(doc.data.self_scan_cat_id) {
 			cat = Ext.data.StoreManager.lookup('selfScanCategoriesStore').getById(doc.data.self_scan_cat_id);
 		}
