@@ -8,7 +8,7 @@ var $bar;
 var running;
 $(document).ready(function(){
     $('.scan').button();
-    $('.save, .re-scan,').button({disabled: true});
+    $('.save, .re-scan').button({disabled: true});
 
     $bar = $('#idletimeout'), // id of the warning div
     $countdown = $bar.find('span'), // span tag that will hold the countdown value
@@ -71,6 +71,6 @@ function disableScan() {
     $('.scan').button({disabled: true});
 }
 function enableReScan(){
-    $('.save, .re-scan,').button({disabled: false});
+    $('.save, .re-scan').button({disabled: false});
 }
 

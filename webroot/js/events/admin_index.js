@@ -295,7 +295,7 @@ Ext.create('Ext.form.Panel', {
   frame: true,
   bodyPadding: 5,
   width: 950,
-  height: 550,
+  height: 610, //550
   layout: 'column',
   fieldDefaults: {
     labelAlign: 'left',
@@ -304,7 +304,7 @@ Ext.create('Ext.form.Panel', {
   items: [{
     columnWidth: 0.7,
     xtype: 'gridpanel',
-    height: 500,
+    height: 555, //500
     id: 'eventsGrid',
     store: Ext.data.StoreManager.lookup('eventsStore'),
     scroll: false,

@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2014-01-03 12:28:38 : 1388770118*/
+/* atlas schema generated on: 2014-01-22 16:50:38 : 1390427438*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -12,8 +12,8 @@ class atlasSchema extends CakeSchema {
 
 	var $absorb_cache = array(
 		'cache_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 8, 'key' => 'primary'),
-		'cache_filename' => array('type' => 'string', 'null' => false, 'length' => 150, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'cache_folder' => array('type' => 'string', 'null' => false, 'length' => 150, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'cache_filename' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 150, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'cache_folder' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 150, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'cache_date' => array('type' => 'date', 'null' => false, 'default' => '0000-00-00'),
 		'cache_time' => array('type' => 'time', 'null' => false, 'default' => '00:00:00'),
 		'cache_count' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 3),
@@ -433,7 +433,7 @@ class atlasSchema extends CakeSchema {
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'parent_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'key' => 'index'),
 		'kiosk_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'key' => 'index'),
-		'status' => array('type' => 'boolean', 'null' => false, 'default' => NULL),
+		'status' => array('type' => 'boolean', 'null' => false, 'default' => '1'),
 		'button_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 		'logout_message' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'order' => array('type' => 'integer', 'null' => true, 'default' => NULL),
@@ -522,9 +522,10 @@ class atlasSchema extends CakeSchema {
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 		'parent_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'key' => 'index'),
 		'tag' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'deleted' => array('type' => 'boolean', 'null' => false, 'default' => NULL),
+		'deleted' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'lft' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'rght' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		'name' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 60, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'parent_id' => array('column' => 'parent_id', 'unique' => 0)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
@@ -668,10 +669,10 @@ class atlasSchema extends CakeSchema {
 		'program_doc_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'key' => 'index'),
 		'type' => array('type' => 'string', 'null' => false, 'default' => ' ', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'deleted' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
-		'deleted_reason' => array('type' => 'string', 'null' => false, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'deleted_reason' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'rejected_reason' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'created' => array('type' => 'datetime', 'null' => false, 'default' => 'CURRENT_TIMESTAMP'),
-		'modified' => array('type' => 'datetime', 'null' => false, 'default' => 'CURRENT_TIMESTAMP'),
+		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'cat_id' => array('column' => 'cat_id', 'unique' => 0), 'program_response_id' => array('column' => 'program_response_id', 'unique' => 0), 'doc_id' => array('column' => 'doc_id', 'unique' => 0), 'program_doc_id' => array('column' => 'program_doc_id', 'unique' => 0)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
@@ -683,8 +684,8 @@ class atlasSchema extends CakeSchema {
 		'confirmation_id' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 12, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'notes' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'not_approved_comment' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'created' => array('type' => 'datetime', 'null' => true, 'default' => 'CURRENT_TIMESTAMP'),
-		'modified' => array('type' => 'datetime', 'null' => true, 'default' => 'CURRENT_TIMESTAMP'),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'expires_on' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'time_spent' => array('type' => 'timestamp', 'null' => true, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'prog_id' => array('column' => 'program_id', 'unique' => 0), 'user_id' => array('column' => 'user_id', 'unique' => 0)),
@@ -762,30 +763,30 @@ class atlasSchema extends CakeSchema {
 		'kiosk' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'location' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'program' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'created' => array('type' => 'datetime', 'null' => false, 'default' => 'CURRENT_TIMESTAMP'),
-		'modified' => array('type' => 'datetime', 'null' => false, 'default' => 'CURRENT_TIMESTAMP'),
+		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
 	var $rfps = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 9, 'key' => 'primary'),
-		'title' => array('type' => 'string', 'null' => false, 'length' => 50, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'byline' => array('type' => 'string', 'null' => false, 'length' => 80, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'title' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 50, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'byline' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 80, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'description' => array('type' => 'text', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'deadline' => array('type' => 'datetime', 'null' => false, 'default' => 'CURRENT_TIMESTAMP'),
-		'expires' => array('type' => 'datetime', 'null' => false, 'default' => 'CURRENT_TIMESTAMP'),
-		'contact_email' => array('type' => 'string', 'null' => false, 'length' => 50, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'file' => array('type' => 'string', 'null' => false, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'created' => array('type' => 'datetime', 'null' => false, 'default' => 'CURRENT_TIMESTAMP'),
-		'modified' => array('type' => 'datetime', 'null' => false, 'default' => 'CURRENT_TIMESTAMP'),
+		'deadline' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+		'expires' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+		'contact_email' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 50, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'file' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
 	var $roles = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
-		'name' => array('type' => 'string', 'null' => false, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'created' => array('type' => 'datetime', 'null' => false, 'default' => 'CURRENT_TIMESTAMP'),
-		'modified' => array('type' => 'datetime', 'null' => false, 'default' => 'CURRENT_TIMESTAMP'),
+		'name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'can_view_full_ssn' => array('type' => 'boolean', 'null' => false, 'default' => '1'),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
@@ -826,7 +827,7 @@ class atlasSchema extends CakeSchema {
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 		'user_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'key' => 'index'),
 		'kiosk_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'key' => 'index'),
-		'location_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'index'),
+		'location_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'key' => 'index'),
 		'level_1' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'key' => 'index'),
 		'level_2' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'key' => 'index'),
 		'level_3' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'key' => 'index'),
@@ -844,8 +845,8 @@ class atlasSchema extends CakeSchema {
 		'module' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'value' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'created' => array('type' => 'datetime', 'null' => false, 'default' => 'CURRENT_TIMESTAMP'),
-		'modified' => array('type' => 'datetime', 'null' => false, 'default' => 'CURRENT_TIMESTAMP'),
+		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
@@ -885,7 +886,7 @@ class atlasSchema extends CakeSchema {
 		'race' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'veteran' => array('type' => 'boolean', 'null' => true, 'default' => NULL),
 		'disability' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
-		'organization' => array('type' => 'string', 'null' => false, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'organization' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'disabled' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'signature' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 1),
 		'location_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'key' => 'index'),

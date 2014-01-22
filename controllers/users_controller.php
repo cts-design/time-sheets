@@ -96,7 +96,7 @@ class UsersController extends AppController {
             	}
             }
 		}
-
+		
 		if($this->Auth->user() &&  $this->params['action'] == 'admin_dashboard' ) {
 			if(! $this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Users/admin_dashboard', '*')) {
 				$this->Session->setFlash(__('You are not authorized to access the admin dashboard.', true) , 'flash_failure') ;
