@@ -5,6 +5,9 @@
  * @link http://ctsfla.com
  */
 ?>
+<?php
+	$url_pieces = parse_url( Router::url('/', true) );
+?>
 <?php echo $this->Html->script('jquery.validate', array('inline' => false)) ?>
 <?php echo $this->Html->script('queued_documents/desktop_scan_document' ,array('inline' => false)) ?>
 <div id="crumbWrapper">
@@ -50,7 +53,7 @@
 	    Eztwain.UploadExtraField "data[QueuedDocument][queue_category_id]", getQueueCat()
 	    Eztwain.UploadExtraField "data[QueuedDocument][scanned_location_id]", getLocationId()
 	    Eztwain.UploadAddCookie ("PHPSESSID=<?php echo $this->Session->id()?>")
-	    if not Eztwain.UploadToURL("<?php echo $html->url('/admin/queued_documents/desktop_scan_document', true)?>", "file.pdf", "data[QueuedDocument][submittedfile]") then
+	    if not Eztwain.UploadToURL("http://<?= $url_pieces['host'] ?>/admin/queued_documents/desktop_scan_document", "file.pdf", "data[QueuedDocument][submittedfile]") then
 		newURL = "<?php echo $html->url('/admin/queued_documents/desktop_scan_document', true)?>"
 		location.href = newURL
 	    else
