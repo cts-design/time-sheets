@@ -6,10 +6,7 @@
  */
 ?>
 <?php
-
-$url_pieces = parse_url( Router::url('/', true) );
-var_dump($url_pieces['host']);
-
+	$url_pieces = parse_url( Router::url('/', true) );
 ?>
 <?php echo $this->Html->script('jquery.validate', array('inline' => false)) ?>
 <?php echo $this->Html->script('queued_documents/desktop_scan_document' ,array('inline' => false)) ?>
