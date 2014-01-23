@@ -97,7 +97,7 @@ end
 task :elcmdm do
   set :server_name, 'elcmdm production'
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
-  set :user, 'deploy'  
+  set :user, 'deploy'
   server "atlas.elcmdm.org", :app, :web, :db, :primary => true
 end
 

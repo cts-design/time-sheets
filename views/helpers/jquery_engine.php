@@ -174,7 +174,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		if ($options['wrap']) {
 			$callback = sprintf($function, $callback);
 		}
-		return sprintf('%s.live("%s", %s);', $this->selection, $type, $callback);
+		return sprintf('%s.on("%s", %s);', $this->selection, $type, $callback);
 	}
 
 /**

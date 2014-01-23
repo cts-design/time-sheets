@@ -65,7 +65,7 @@ $(document).ready( function() {
 		plugins : [ "themes", "html_data", "ui", "cookies", "types", "dnd", "crrm" ]
 	})
 	$("#masterKioskButtonTree").bind("select_node.jstree", function (e, data) {
-		var tree1 = $.jstree._reference("#kioskButtonTree");
+		var tree1 = $.jstree._reference("kioskButtonTree");
 		if(tree1 != null) {
 			tree1.deselect_all();
 		}

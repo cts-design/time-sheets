@@ -156,8 +156,9 @@ class KiosksController extends AppController {
 		if(empty($buttonId)) {
 			$oneStop = env('HTTP_USER_AGENT');
 			$arrOneStop = explode('##', $oneStop);
+
 			if(!isset($arrOneStop[1])) {
-				$oneStopLocation = '';
+				$oneStopLocation = 'demo';
 			}
 			else {
 				$oneStopLocation = $arrOneStop[1];

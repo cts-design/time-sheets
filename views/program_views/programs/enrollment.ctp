@@ -62,7 +62,9 @@
 											'controller' => 'program_responses',
 											'action' => 'form',
 											$program['Program']['id'],
-											$step['id'])) ?>
+											$step['id'])
+											)
+										?>
 										<?php if($programResponse['ProgramResponse']['status'] === 'not_approved') : ?>
 											<?php $link = $this->Html->link('Edit Form', array(
 												'controller' => 'program_responses',

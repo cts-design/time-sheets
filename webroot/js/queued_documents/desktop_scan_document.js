@@ -38,7 +38,7 @@ function disableScan() {
     $('.scan').button({disabled: true});
 }
 function enableReScan(){
-    $('.save, .re-scan,').button({disabled: false});
+    $('.save, .re-scan').button({disabled: false});
 }
 
 function getQueueCat () {

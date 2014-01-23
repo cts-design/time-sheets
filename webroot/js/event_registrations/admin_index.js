@@ -224,30 +224,38 @@ Ext.create('Ext.grid.Panel', {
       icon: '/img/icons/user_add.png',
       handler: function(grid, rowIndex, colIndex) {
         var rec = grid.getStore().getAt(rowIndex);
-        Ext.Ajax.request({
-          url: '/admin/event_registrations/register_customer',
-          params: {
-            user_id: rec.get('id'),
-            event_id: eventId 
-          },
-          success: function(response) {
-            var txt = Ext.JSON.decode(response.responseText);
 
-            Ext.MessageBox.alert('Success', txt.message);
-            Ext.data.StoreManager.lookup('eventRegistrations').load();
+        if( allowRegistrations > 0 )
+        {
+          Ext.Ajax.request({
+            url: '/admin/event_registrations/register_customer',
+            params: {
+              user_id: rec.get('id'),
+              event_id: eventId 
+            },
+            success: function(response) {
+              var txt = Ext.JSON.decode(response.responseText);
 
-            var registeredUsersPanel = Ext.getCmp('registrations');
-            var statusBarPanel = Ext.getCmp('status-bar');
-            currentSeats += 1;
+              Ext.MessageBox.alert('Success', txt.message);
+              Ext.data.StoreManager.lookup('eventRegistrations').load();
 
-            statusBarPanel.setStatus({
-              text : 'Ready (' + (seatsAvailable - currentSeats) + '/' + seatsAvailable + ' Seats Available)'
-            });
-          },
-          failure: function() {
-            Ext.MessageBox.alert('Failure', 'Unable to register customer, please try again.');
-          }
-        });
+              var registeredUsersPanel = Ext.getCmp('registrations');
+              var statusBarPanel = Ext.getCmp('status-bar');
+              currentSeats += 1;
+
+              statusBarPanel.setStatus({
+                text : 'Ready (' + (seatsAvailable - currentSeats) + '/' + seatsAvailable + ' Seats Available)'
+              });
+            },
+            failure: function() {
+              Ext.MessageBox.alert('Failure', 'Unable to register customer, please try again.');
+            }
+          });
+        }
+        else
+        {
+          Ext.MessageBox.alert('Failure', 'This event cannot have users registered');
+        }
       }
     }]
   }],
