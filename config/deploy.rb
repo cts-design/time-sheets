@@ -167,6 +167,11 @@ task :worknetpinellas do
   server "10.66.49.13", :app, :web, :db, :primary => true
 end
 
+task :temp_worknetpinellas do
+  set: server_name '*TEMP* worknetpinellas'
+  server "192.168.200.97", :app, :web, :db, :primary => true
+end
+
 task :wrec do
   set :server_name, 'wrec v2'
   set :deploy_to, "/var/www/vhosts/wrec-v2.ctsfla.com/#{application}"
