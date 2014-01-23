@@ -115,6 +115,13 @@ task :elcp do
   server "vpk.elcpinellas.net", :app, :web, :db, :primary => true
 end
 
+task :elcpolk do
+  set :server_name, 'vpkelcpolk.org production'
+  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
+  set :user, 'deploy'
+  server "www.vpkelcpolk.org", :app, :web, :db, :primary => true
+end
+
 task :phelc do
   set :server_name, 'phelc production'
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
@@ -157,7 +164,7 @@ end
 
 task :worknetpinellas do
   set :server_name, 'worknetpinellas production'
-  server "atlas.worknetpinellas.org", :app, :web, :db, :primary => true
+  server "10.66.49.13", :app, :web, :db, :primary => true
 end
 
 task :wrec do
@@ -169,6 +176,7 @@ end
 
 # 6pm deploys
 task :chipola do
+  set :design_branch, "chipola"
   set :deploy_to, "/var/www/vhosts/atlas.onestopahead.com/#{application}"
   set :server_name, 'chipola production'
   set :user, 'ola_chip0'
