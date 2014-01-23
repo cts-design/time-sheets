@@ -168,7 +168,7 @@ task :worknetpinellas do
 end
 
 task :temp_worknetpinellas do
-  set :server_name 'TEMP worknetpinellas'
+  set :server_name, '*TEMP* worknetpinellas'
   server "192.168.200.97", :app, :web, :db, :primary => true
 end
 
