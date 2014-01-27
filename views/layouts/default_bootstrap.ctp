@@ -72,6 +72,11 @@
 	{
 		padding:5px;
 	}
+	.no-pad
+	{
+		padding-left:0px;
+		padding-right:0px;
+	}
 	.bread-fit
 	{
 		padding:0px;

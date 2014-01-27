@@ -298,6 +298,8 @@ class UsersController extends AppController {
 			AND Program.show_in_dash = 1"
 		);
 
+		var_dump($programs);
+
 
 		$esignProgram = $this->Program->find('first', array(
 			'conditions' => array(
