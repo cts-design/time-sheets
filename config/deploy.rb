@@ -87,7 +87,7 @@ task :clm do
   server "atlas.clmworkforce.com", :app, :web, :db, :primary => true
 end
 
-task :elc_duval do
+task :elcduval do
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
   set :server_name, 'elc duval'
   set :user, 'deploy'
