@@ -87,6 +87,13 @@ task :clm do
   server "atlas.clmworkforce.com", :app, :web, :db, :primary => true
 end
 
+task :elc_duval do
+  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
+  set :server_name, 'elc duval'
+  set :user, 'deploy'
+  server "atlas.elcofduval.org", :app, :web, :db, :primary => true
+end
+
 task :elcm do
   set :deploy_to, "/var/www/vhosts/atlas.elc-marion.org/#{application}"
   set :server_name, 'elcm production'
