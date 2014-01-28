@@ -171,6 +171,8 @@ end
 
 task :worknetpinellas do
   set :server_name, 'worknetpinellas production'
+  set :design_branch, 'worknet-pinellas'
+  set :design_architecture: 'new'
   server "10.66.49.13", :app, :web, :db, :primary => true
 end
 
