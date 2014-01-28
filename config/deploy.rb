@@ -172,7 +172,7 @@ end
 task :worknetpinellas do
   set :server_name, 'worknetpinellas production'
   set :design_branch, 'worknet-pinellas'
-  set :design_architecture: 'new'
+  set :design_architecture, 'new'
   server "10.66.49.13", :app, :web, :db, :primary => true
 end
 
@@ -228,9 +228,10 @@ namespace :deploy do
     run "ln -s #{shared_path}/storage #{latest_release}/storage"
     run "ln -s #{shared_path}/webroot/files/public #{latest_release}/webroot/files/public"
     run "ln -s #{shared_path}/webroot/img/public #{latest_release}/webroot/img/public"
-    if (remote_file_exists?("#{shared_path}/webroot/img/default/default_header_logo.jpg"))
-      run "ln -s #{shared_path}/webroot/img/default/default_header_logo.jpg #{latest_release}/webroot/img/default/default_header_logo.jpg"
-    end
+    # Commented out 1/28/14 by Bill - was causing deploy to crash if a theme was defined:
+    #if (remote_file_exists?("#{shared_path}/webroot/img/default/default_header_logo.jpg"))
+    #  run "ln -s #{shared_path}/webroot/img/default/default_header_logo.jpg #{latest_release}/webroot/img/default/default_header_logo.jpg"
+    #end
     run "ln -s #{shared_path}/webroot/img/admin/admin_header_logo.jpg #{latest_release}/webroot/img/admin/admin_header_logo.jpg"
     run "ln -s #{shared_path}/webroot/img/kiosk/kiosk_header.jpg #{latest_release}/webroot/img/kiosk/kiosk_header.jpg"
     run "ln -s #{shared_path}/config/core.php #{latest_release}/config/core.php"
