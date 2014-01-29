@@ -71,6 +71,18 @@ namespace :cts do
   end
 end
 
+
+# Temp servers
+task :design2014_chipola do
+  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
+  set :server_name, 'CHIPOLA DESIGN'
+  set :user, 'deploy'
+  set :design_branch, 'chipola-new'
+  set :design_architecture, 'new'
+  server "192.168.200.191", :app, :web, :db, :primary => true
+end
+
+
 # Production servers
 # 5pm deploys
 task :cc do
