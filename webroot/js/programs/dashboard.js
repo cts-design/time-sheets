@@ -27,6 +27,17 @@ Programs = {
     $firstIncompleteItem.css('opacity', '1').addClass('current');
     $currentModule.addClass('current');
 
+    //REMOVES the link from all the incomplete steps that are the not the next step
+    incomps = $('ol.steps ol li.incomplete');
+    incomps.each(function(){
+      var c = $(this);
+
+      if($(this).index() > 1)
+      {
+        $(this).find('a').attr('href', '');
+      }
+    });
+
     if (($programStatus.hasClass('pending_document_review') ||
         $programStatus.hasClass('not_approved')) &&
         $requiredDocs.hasClass('incomplete')) {

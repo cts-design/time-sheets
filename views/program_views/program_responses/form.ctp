@@ -2,15 +2,18 @@
   <div class="show-instructions">
     <a href="#" ><?php __('Show instructions') ?></a>
   </div>
-  <div id="instructions">
-    <?php echo $instructions ?>
-    <div class="hide-instructions">
-      <a href="#"><?php __('Hide these instructions') ?></a>
+
+  <?php if(isset($instructions) && $instructions != NULL): ?>
+    <div id="instructions">
+      <?php echo $instructions ?>
+      <div class="hide-instructions">
+        <a href="#"><?php __('Hide these instructions') ?></a>
+      </div>
     </div>
-  </div>
-	<noscript>
-		<div id="instructions"><?php echo $instructions ?></div>
-	</noscript>
+  	<noscript>
+  		<div id="instructions"><?php echo $instructions ?></div>
+  	</noscript>
+  <?php endif ?>
 
 <br />
 
