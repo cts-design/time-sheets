@@ -59,7 +59,8 @@ namespace :cts do
     set :user, 'design_deploy'
     set :keep_releases, 2
     set :branch, 'staging'
-    set :design_branch, "chipola"
+    set :design_branch, "tbwa-new"
+    set :design_architecture, 'new'
     server "192.168.200.74", :app, :web, :db, :primary => true
   end
 
@@ -163,6 +164,8 @@ task :united_way do
 end
 
 task :worknetpinellas do
+  set :design_branch, 'tbwa-new'
+  set :design_architecture, 'new'
   set :server_name, 'worknetpinellas production'
   server "10.66.49.13", :app, :web, :db, :primary => true
 end
@@ -184,6 +187,8 @@ task :chipola do
 end
 
 task :jobsplus do
+  set :design_branch "jobsplus-new"
+  set :design_architecture "new"
   set :server_name, 'jobs plus production'
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
   set :user, 'deploy'
@@ -214,9 +219,11 @@ namespace :deploy do
     run "ln -s #{shared_path}/storage #{latest_release}/storage"
     run "ln -s #{shared_path}/webroot/files/public #{latest_release}/webroot/files/public"
     run "ln -s #{shared_path}/webroot/img/public #{latest_release}/webroot/img/public"
-    if (remote_file_exists?("#{shared_path}/webroot/img/default/default_header_logo.jpg"))
-      run "ln -s #{shared_path}/webroot/img/default/default_header_logo.jpg #{latest_release}/webroot/img/default/default_header_logo.jpg"
-    end
+    
+    #if (remote_file_exists?("#{shared_path}/webroot/img/default/default_header_logo.jpg"))
+      #run "ln -s #{shared_path}/webroot/img/default/default_header_logo.jpg #{latest_release}/webroot/img/default/default_header_logo.jpg"
+    #end
+
     run "ln -s #{shared_path}/webroot/img/admin/admin_header_logo.jpg #{latest_release}/webroot/img/admin/admin_header_logo.jpg"
     run "ln -s #{shared_path}/webroot/img/kiosk/kiosk_header.jpg #{latest_release}/webroot/img/kiosk/kiosk_header.jpg"
     run "ln -s #{shared_path}/config/core.php #{latest_release}/config/core.php"

@@ -16,6 +16,7 @@
 			</li>
 			<?php $k = 0; ?>
 			<?php $stepNumber = 0; ?>
+			<?php $stepsAfterFirstIncomplete = 0; ?>
 			<?php foreach($program['ProgramStep'] as $step) : ?>
 				<?php if(!$step['type']) : ?>
 				<?php if ($k): ?></ol><?php endif ?>
