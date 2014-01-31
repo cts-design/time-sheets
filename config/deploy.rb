@@ -71,6 +71,18 @@ namespace :cts do
   end
 end
 
+
+# Temp servers
+task :design2014_chipola do
+  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
+  set :server_name, 'CHIPOLA DESIGN'
+  set :user, 'deploy'
+  set :design_branch, 'chipola-new'
+  set :design_architecture, 'new'
+  server "192.168.200.191", :app, :web, :db, :primary => true
+end
+
+
 # Production servers
 # 5pm deploys
 task :cc do
@@ -87,6 +99,13 @@ task :clm do
   server "atlas.clmworkforce.com", :app, :web, :db, :primary => true
 end
 
+task :elcduval do
+  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
+  set :server_name, 'elc duval'
+  set :user, 'deploy'
+  server "atlas.elcofduval.org", :app, :web, :db, :primary => true
+end
+
 task :elcm do
   set :deploy_to, "/var/www/vhosts/atlas.elc-marion.org/#{application}"
   set :server_name, 'elcm production'
@@ -97,7 +116,7 @@ end
 task :elcmdm do
   set :server_name, 'elcmdm production'
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
-  set :user, 'deploy'  
+  set :user, 'deploy'
   server "atlas.elcmdm.org", :app, :web, :db, :primary => true
 end
 
@@ -164,7 +183,14 @@ end
 
 task :worknetpinellas do
   set :server_name, 'worknetpinellas production'
+  set :design_branch, 'worknet-pinellas'
+  set :design_architecture, 'new'
   server "10.66.49.13", :app, :web, :db, :primary => true
+end
+
+task :temp_worknetpinellas do
+  set :server_name, '*TEMP* worknetpinellas'
+  server "192.168.200.97", :app, :web, :db, :primary => true
 end
 
 task :wrec do
@@ -214,9 +240,10 @@ namespace :deploy do
     run "ln -s #{shared_path}/storage #{latest_release}/storage"
     run "ln -s #{shared_path}/webroot/files/public #{latest_release}/webroot/files/public"
     run "ln -s #{shared_path}/webroot/img/public #{latest_release}/webroot/img/public"
-    if (remote_file_exists?("#{shared_path}/webroot/img/default/default_header_logo.jpg"))
-      run "ln -s #{shared_path}/webroot/img/default/default_header_logo.jpg #{latest_release}/webroot/img/default/default_header_logo.jpg"
-    end
+    # Commented out 1/28/14 by Bill - was causing deploy to crash if a theme was defined:
+    #if (remote_file_exists?("#{shared_path}/webroot/img/default/default_header_logo.jpg"))
+    #  run "ln -s #{shared_path}/webroot/img/default/default_header_logo.jpg #{latest_release}/webroot/img/default/default_header_logo.jpg"
+    #end
     run "ln -s #{shared_path}/webroot/img/admin/admin_header_logo.jpg #{latest_release}/webroot/img/admin/admin_header_logo.jpg"
     run "ln -s #{shared_path}/webroot/img/kiosk/kiosk_header.jpg #{latest_release}/webroot/img/kiosk/kiosk_header.jpg"
     run "ln -s #{shared_path}/config/core.php #{latest_release}/config/core.php"
