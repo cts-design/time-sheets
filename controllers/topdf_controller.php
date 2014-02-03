@@ -16,7 +16,7 @@ class TopdfController extends AppController
 		require( APP . 'vendors' . DS . 'MPDF54' . DS . 'mpdf.php' );
 
 		$user_id = $this->Auth->user('id');
-		$stylesheet = file_get_contents(APP . 'webroot' . DS . 'html' . DS . 'first.css');
+		$stylesheet = file_get_contents(APP . 'webroot' . DS . 'html' . DS . 'esign.css');
 		$html = require( APP . 'webroot' . DS . 'html' . DS . $file . '.php' );
 
 		$pdf = new mPDF();
