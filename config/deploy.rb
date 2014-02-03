@@ -71,8 +71,8 @@ namespace :cts do
   end
 end
 
-
-# Temp servers
+###############################
+# Temp Design Servers
 task :design2014_chipola do
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
   set :server_name, 'CHIPOLA DESIGN'
@@ -82,6 +82,63 @@ task :design2014_chipola do
   server "192.168.200.191", :app, :web, :db, :primary => true
 end
 
+######################
+##### ELC's
+task :elc_duval do
+  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
+  set :server_name, 'atlas.elcofduval.org production'
+  set :user, 'deploy'
+  server "atlas.elcofduval.org", :app, :web, :db, :primary => true
+end
+
+task :elc_manatee do
+  set :server_name, 'vpl.elc-manatee.org production'
+  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
+  set :user, 'deploy'
+  server "192.168.200.116", :app, :web, :db, :primary => true
+end
+
+task :elc_marion do
+  set :deploy_to, "/var/www/vhosts/atlas.elc-marion.org/#{application}"
+  set :server_name, 'atlas.elc-marion.org production'
+  set :user, 'elcm_ftp'
+  server "atlas.elc-marion.org", :app, :web, :db, :primary => true
+end
+
+task :elc_mdm do
+  set :server_name, 'atlas.elcmdm.org production'
+  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
+  set :user, 'deploy'
+  server "atlas.elcmdm.org", :app, :web, :db, :primary => true
+end
+
+task :elc_pasco_hernando do
+  set :server_name, 'elc-pasco-hernando production'
+  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
+  set :user, 'deploy'
+  server "atlas.phelc.org", :app, :web, :db, :primary => true
+end
+
+task :elc_pinellas do
+  set :deploy_to, "/var/www/vhosts/vpk.childcarepinellas.org/#{application}"
+  set :server_name, 'vpk.elcpinellas.net production'
+  set :user, 'vpk_ftp'
+  server "vpk.elcpinellas.net", :app, :web, :db, :primary => true
+end
+
+task :elc_polk do
+  set :server_name, 'vpkelcpolk.org production'
+  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
+  set :user, 'deploy'
+  server "www.vpkelcpolk.org", :app, :web, :db, :primary => true
+end
+
+task :elc_seminole
+  set :server_name 'vpk.SeminoleEarlyLearning.org Production'
+  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
+  set :user, 'deploy'
+  server "192.168.200.192", :app, :web, :db, :primary => true
+end
 
 # Production servers
 # 5pm deploys
@@ -99,55 +156,6 @@ task :clm do
   server "atlas.clmworkforce.com", :app, :web, :db, :primary => true
 end
 
-task :elcduval do
-  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
-  set :server_name, 'elc duval'
-  set :user, 'deploy'
-  server "atlas.elcofduval.org", :app, :web, :db, :primary => true
-end
-
-task :elcm do
-  set :deploy_to, "/var/www/vhosts/atlas.elc-marion.org/#{application}"
-  set :server_name, 'elcm production'
-  set :user, 'elcm_ftp'
-  server "atlas.elc-marion.org", :app, :web, :db, :primary => true
-end
-
-task :elcmdm do
-  set :server_name, 'elcmdm production'
-  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
-  set :user, 'deploy'
-  server "atlas.elcmdm.org", :app, :web, :db, :primary => true
-end
-
-task :elcmanatee do
-  set :server_name, 'elc manatee'
-  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
-  set :user, 'deploy'
-  server "192.168.200.116", :app, :web, :db, :primary => true
-end
-
-task :elcp do
-  set :deploy_to, "/var/www/vhosts/vpk.childcarepinellas.org/#{application}"
-  set :server_name, 'elcp production'
-  set :user, 'vpk_ftp'
-  server "vpk.elcpinellas.net", :app, :web, :db, :primary => true
-end
-
-task :elcpolk do
-  set :server_name, 'vpkelcpolk.org production'
-  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
-  set :user, 'deploy'
-  server "www.vpkelcpolk.org", :app, :web, :db, :primary => true
-end
-
-task :phelc do
-  set :server_name, 'phelc production'
-  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
-  set :user, 'deploy'
-  server "atlas.phelc.org", :app, :web, :db, :primary => true
-end
-
 task :rescare do
   set :server_name, 'rescare production'
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
@@ -155,7 +163,6 @@ task :rescare do
   set :port, 23
   server "montgomery.rescare.com", :app, :web, :db, :primary => true
 end
-
 task :suncoast do
   set :server_name, 'suncoast production'
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
