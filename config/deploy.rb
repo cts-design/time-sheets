@@ -134,7 +134,7 @@ task :elc_polk do
 end
 
 task :elc_seminole
-  set :server_name 'vpk.SeminoleEarlyLearning.org Production'
+  set :server_name, 'vpk.SeminoleEarlyLearning.org Production'
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
   set :user, 'deploy'
   server "192.168.200.192", :app, :web, :db, :primary => true
