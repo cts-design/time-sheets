@@ -133,7 +133,7 @@ task :elc_polk do
   server "www.vpkelcpolk.org", :app, :web, :db, :primary => true
 end
 
-task :elc_seminole
+task :elc_seminole do
   set :server_name, 'vpk.SeminoleEarlyLearning.org Production'
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
   set :user, 'deploy'
