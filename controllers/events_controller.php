@@ -483,9 +483,6 @@ class EventsController extends AppController {
 			$events = $this->paginate('Event', $cond);
 			$this->set('events', $events);
 		}
-		
-		
-		
 	}
 
 	public function admin_index() {

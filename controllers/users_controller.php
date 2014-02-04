@@ -715,10 +715,10 @@ class UsersController extends AppController {
 					$conditions['User.ssn LIKE'] = '______' . $password;
 					break;
 				case 4:
-					$conditions['User.ssn LIKE'] = '_____' . $password;
+					$conditions['User.ssn LIKE'] = '%' . $password;
 					break;
 				case 5:
-					$conditions['User.ssn LIKE'] = '____' . $password;
+					$conditions['User.ssn LIKE'] = '%' . $password;
 					break;
 				case 6:
 					$conditions['User.ssn LIKE'] = '___' . $password;

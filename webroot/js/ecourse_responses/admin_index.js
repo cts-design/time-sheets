@@ -208,7 +208,7 @@ Ext.create('Ext.tab.Panel', {
           ecourseResponseProxy.extraParams.status= 'completed';
           break;
       }
-      newCard.getStore().loadPage(1, {start: 0, limit: 10});
+      newCard.getStore().loadPage(1, {start: 0, limit: itemsPerPage}); //was 10
     },
     beforeadd: function(container, component, index) {
       if(this.items.length === 5) {
@@ -360,7 +360,7 @@ Ext.create('Ext.form.Panel', {
       Ext.iterate(vals, function (key, value){
         ecourseResponseProxy.extraParams[key] = value;
       });
-      Ext.getCmp('ecourseResponseTabs').getActiveTab().getStore().loadPage(1, {start: 0, limit: 10});
+      Ext.getCmp('ecourseResponseTabs').getActiveTab().getStore().loadPage(1, {start: 0, limit: itemsPerPage}); //was 10
     }
   }, {
     text : 'Reset',
@@ -372,7 +372,7 @@ Ext.create('Ext.form.Panel', {
       ecourseResponseProxy.extraParams.search = undefined;
       ecourseResponseProxy.extraParams.toDate = undefined;
       ecourseResponseProxy.extraParams.fromDate = undefined;
-      Ext.getCmp('ecourseResponseTabs').getActiveTab().getStore().loadPage(1, {start: 0, limit: 10});
+      Ext.getCmp('ecourseResponseTabs').getActiveTab().getStore().loadPage(1, {start: 0, limit: itemsPerPage}); //was 10
     }
   }]
 });
@@ -397,7 +397,7 @@ Ext.onReady(function() {
 		page = state.currentPage;
 	}
 	if(!loaded) {
-	Ext.getCmp('ecourseResponseTabs').getActiveTab().getStore().loadPage(page, {start: 0, limit: 10});
+	Ext.getCmp('ecourseResponseTabs').getActiveTab().getStore().loadPage(page, {start: 0, limit: itemsPerPage}); //was 10
 		loaded = 1;
 	}
 });
