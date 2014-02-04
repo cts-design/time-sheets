@@ -490,7 +490,7 @@ class EventsController extends AppController {
 
 	public function admin_index() {
 		if($this->RequestHandler->isAjax()) {
-			$date = date('Y-m-d H:i:s', strtotime('today'));
+			$date = date('Y-m-d H:i:s', strtotime('-30 days'));
 			$events = $this->Event->find('all', array(
 				'order' => array('Event.scheduled ASC'),
 				'conditions' => array('Event.scheduled >= ' => $date)));

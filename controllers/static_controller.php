@@ -7,10 +7,15 @@ class StaticController extends AppController
 	function beforeFilter()
 	{
 		parent::beforeFilter();
-		$this->Auth->allow('registration_privacy');
+		$this->Auth->allow('registration_privacy', 'kid_script');
 	}
 
 	function registration_privacy()
+	{
+
+	}
+
+	function kid_script()
 	{
 
 	}

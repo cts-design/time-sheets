@@ -15,7 +15,7 @@ Ext.define('Event', {
     {name: 'address'},
     {name: 'scheduled', type: 'date', dateFormat: 'Y-m-d H:i:s'},
     {name: 'allow_registrations'},
-	{name: 'private'},
+	  {name: 'private'},
     {name: 'seats_available'},
     {name: 'duration'},
     {name: 'event_registration_count'},
@@ -509,9 +509,9 @@ Ext.create('Ext.form.Panel', {
     name: 'url',
     vtype: 'url'
   },{
-	fieldLabel: 'Make Private',
-	name: 'private',
-	xtype: 'checkbox'
+	  fieldLabel: 'Make Private',
+	  name: 'private',
+	  xtype: 'checkbox'
   },{
     fieldLabel: 'Allow Registrations',
     name: 'allow_registrations',
