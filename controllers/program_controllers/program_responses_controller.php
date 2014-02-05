@@ -768,6 +768,10 @@ class ProgramResponsesController extends AppController {
 				$this->render('/elements/program_responses/user_info');
 			}
 			if($type == 'answers') {
+				if (!empty($programResponse['ProgramResponse']['not_approved_comment'])) {
+					$data['notApprovedComment'] = $programResponse['ProgramResponse']['not_approved_comment'];
+				}
+
 				$formActivities = Set::extract('/ProgramResponseActivity[type=form]', $programResponse);
 				if(!empty($formActivities)) {
 					$i = 0;
