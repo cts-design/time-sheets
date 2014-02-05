@@ -644,6 +644,7 @@ Ext.create('Ext.form.Panel', {
     formBind: true,
     handler: function() {
       var form = this.up('form').getForm();
+
       var vals = form.getValues(false, false, false, true);
       if(form.isValid()) {
         var event;
@@ -651,6 +652,7 @@ Ext.create('Ext.form.Panel', {
         if(vals.id !== '') {
           event = store.getById(vals.id);
           event.beginEdit();
+          vals['private'] = (vals['private'] ? 1 : 0);
           event.set(vals);
           event.endEdit();
         }

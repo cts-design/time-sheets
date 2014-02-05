@@ -665,7 +665,8 @@ class UsersController extends AppController {
 			if(!$program_id)
 			{
 				$this->redirect(array(
-					'action' => 'login'
+					'action' => 'login',
+					$loginType
 				));
 			}
 
@@ -740,10 +741,12 @@ class UsersController extends AppController {
 				)
 			);
 
+			//Checks to see if that user exists in the database
 			$login_user = $this->User->find('first', array(
 				'conditions' => $conditions
 			));
 
+			//If the user does not exist they need to be redirected to registration
 			if(empty($login_user['User']))
 			{
 				switch($loginType)

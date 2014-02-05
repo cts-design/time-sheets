@@ -14,6 +14,7 @@ class RfpsController extends AppController {
                 'Rfp.created' => 'desc'
             )
         );
+
 		$this->Rfp->recursive = 0;
 		$this->set('rfps', $this->paginate());
 	}
