@@ -3,6 +3,7 @@
 	var requiresApproval = <?php echo $approval; ?>;
 	var progName = '<?php echo $programName; ?>';
 	var programId = '<?php echo $programId; ?>';
+	var programStatus = '<?php echo $programStatus; ?>';
 <?php $this->Html->scriptEnd() ?>
 <?php echo $this->Html->css('/js/ext/resources/css/BoxSelect', 'stylesheet', array('inline' => false)); ?>
 <?php echo $this->Html->script('ext/ux/BoxSelect', array('inline' => false)); ?>
