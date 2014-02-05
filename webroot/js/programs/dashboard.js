@@ -63,6 +63,10 @@ Programs = {
         e.preventDefault();
       }
     });
+
+    if (!$requiredDocs.parents('li').hasClass('current') && $requiredDocs.hasClass('incomplete')) {
+      $requiredDocs.find('.action').find('a').remove();
+    }
   }
 };
 
