@@ -26,7 +26,8 @@ $(document).ready(function() {
 	<?php if(isset($this->params['pass'][2])):?>
 		<?php array_push($options, $this->params['pass'][2], $this->params['pass'][3]); ?>
 	<?php endif ?>
-    <?php echo $html->link(__('click here', true), $options); ?>
+    <!--<?php echo $html->link(__('click here', true), $options); ?>-->
+    <a href="" class="go-back">Click Here</a>
     <?php __('to return to the login page and try your login information again.') ?>
 </p>
 <br />

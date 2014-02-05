@@ -12,4 +12,10 @@ $(function() {
     $submitButton.button('disable');
     return true;
   });
+
+  $('.go-back').click(function(e){
+  	e.preventDefault();
+
+  	window.history.back();
+  });
 });
