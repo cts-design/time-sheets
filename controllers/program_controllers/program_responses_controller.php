@@ -768,6 +768,10 @@ class ProgramResponsesController extends AppController {
 				$this->render('/elements/program_responses/user_info');
 			}
 			if($type == 'answers') {
+				if (!empty($programResponse['ProgramResponse']['not_approved_comment'])) {
+					$data['notApprovedComment'] = $programResponse['ProgramResponse']['not_approved_comment'];
+				}
+
 				$formActivities = Set::extract('/ProgramResponseActivity[type=form]', $programResponse);
 				if(!empty($formActivities)) {
 					$i = 0;
@@ -847,10 +851,36 @@ class ProgramResponsesController extends AppController {
 		}
 		$programId = $programResponse['Program']['id'];
 		$programName = $programResponse['Program']['name'];
+		$programStatus = $programResponse['ProgramResponse']['status'];
 		$title_for_layout = 'Program Response';
-		$this->set(compact('title_for_layout', 'approval', 'programName', 'programId'));
+		$this->set(compact('title_for_layout', 'approval', 'programName', 'programId', 'programStatus'));
 	}
 
+	function admin_regenerate_docs($programResponseId = null) {
+		if($this->RequestHandler->isAjax()) {
+			if(!$programResponseId) {
+				$data['success'] = false;
+				$data['message'] = 'Invalid program response id.';
+			}
+			else {
+				$programResponse = $this->ProgramResponse->findById($programResponseId);
+				$programDocuments = $this->ProgramResponse->Program->ProgramDocument->find('all', 
+					array('conditions' => array(
+						'ProgramDocument.program_id' => $programResponse['Program']['id'],
+						'ProgramDocument.type' => array('pdf', 'certificate'))));
+				if(!empty($programDocuments)) {
+					$this->ProgramResponse->Program->ProgramDocument->queueProgramDocs($programDocuments, $programResponse);
+				}
+				else {
+					$data['success'] = false;
+					$data['message'] = 'An error occured, please try again.';
+				}
+
+			}
+			$this->set(compact('data'));
+			$this->render(null, null, '/elements/ajaxreturn');
+		}
+	}
 
 	function admin_edit() {
 		if($this->RequestHandler->isAjax()) {

@@ -665,7 +665,8 @@ class UsersController extends AppController {
 			if(!$program_id)
 			{
 				$this->redirect(array(
-					'action' => 'login'
+					'action' => 'login',
+					$loginType
 				));
 			}
 
@@ -715,10 +716,10 @@ class UsersController extends AppController {
 					$conditions['User.ssn LIKE'] = '______' . $password;
 					break;
 				case 4:
-					$conditions['User.ssn LIKE'] = '_____' . $password;
+					$conditions['User.ssn LIKE'] = '%' . $password;
 					break;
 				case 5:
-					$conditions['User.ssn LIKE'] = '____' . $password;
+					$conditions['User.ssn LIKE'] = '%' . $password;
 					break;
 				case 6:
 					$conditions['User.ssn LIKE'] = '___' . $password;
@@ -740,10 +741,12 @@ class UsersController extends AppController {
 				)
 			);
 
+			//Checks to see if that user exists in the database
 			$login_user = $this->User->find('first', array(
 				'conditions' => $conditions
 			));
 
+			//If the user does not exist they need to be redirected to registration
 			if(empty($login_user['User']))
 			{
 				switch($loginType)

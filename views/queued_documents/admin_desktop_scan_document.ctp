@@ -45,6 +45,21 @@
 		<param name="BackColor" value="0xcc8844">
 	</object>
     </div>
+    <script type="text/javascript">
+    	//Don't use this, it's test code - Joseph
+    	/*Eztwain = document.getElementById('Eztwain');
+
+    	$(".scan").click(function(){
+    		Eztwain.ScanWithUI = false
+		    Eztwain.ScanType = 0
+		    Eztwain.ScanDPI = 300
+		    Eztwain.AcquireMultipage()
+		    Eztwain.Deskew
+		    Eztwain.AutoContrast
+		    disableScan()
+		    enableReScan()
+    	});*/
+    </script>
     <script type="text/vbscript">
 	Dim Eztwain
 	set Eztwain = document.getElementById("Eztwain")

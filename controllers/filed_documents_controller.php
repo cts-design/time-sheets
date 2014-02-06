@@ -603,7 +603,7 @@ class FiledDocumentsController extends AppController {
 	function _getParentDocumentFilingCats() {
 		$this->loadModel('DocumentFilingCategory');
 		return $this->DocumentFilingCategory->find('list',
-			array('conditions' => array('DocumentFilingCategory.parent_id' => null)));
+			array('conditions' => array('DocumentFilingCategory.parent_id' => null, 'DocumentFilingCategory.disabled' => 0)));
     }
 	
 	function _processResponseDoc($data, $user) {

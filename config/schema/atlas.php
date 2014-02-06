@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2014-01-22 16:50:38 : 1390427438*/
+/* atlas schema generated on: 2014-02-04 11:10:45 : 1391530245*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -339,6 +339,7 @@ class atlasSchema extends CakeSchema {
 		'cat_3' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10, 'key' => 'index'),
 		'event_registration_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
 		'allow_registrations' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
+		'private' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 4),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'event_category_id' => array('column' => 'event_category_id', 'unique' => 0), 'location_id' => array('column' => 'location_id', 'unique' => 0), 'cat_1' => array('column' => 'cat_1', 'unique' => 0), 'cat_2' => array('column' => 'cat_2', 'unique' => 0), 'cat_3' => array('column' => 'cat_3', 'unique' => 0)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
@@ -541,12 +542,12 @@ class atlasSchema extends CakeSchema {
 	var $navigations = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
 		'title' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'link' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'link' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'parent_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10, 'key' => 'index'),
 		'lft' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10, 'key' => 'index'),
 		'rght' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10, 'key' => 'index'),
-		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
-		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => 'CURRENT_TIMESTAMP'),
+		'modified' => array('type' => 'datetime', 'null' => true, 'default' => 'CURRENT_TIMESTAMP'),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'parent_id' => array('column' => 'parent_id', 'unique' => 0), 'lft' => array('column' => 'lft', 'unique' => 0), 'rght' => array('column' => 'rght', 'unique' => 0)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);

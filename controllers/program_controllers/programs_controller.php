@@ -125,7 +125,7 @@ class ProgramsController extends AppController {
 				$is_saved = $this->ProgramStep->save($document);
 
 				$this->Session->setFlash('Successfully uploaded alternative media for Program Document: ' . $original_document['ProgramStep']['name']);
-				//$this->redirect(array('action' => 'admin_orientation_media'));
+				$this->redirect(array('action' => 'admin_orientation_media'));
 			}
 		}
 

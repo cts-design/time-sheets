@@ -15,7 +15,7 @@ Ext.define('Event', {
     {name: 'address'},
     {name: 'scheduled', type: 'date', dateFormat: 'Y-m-d H:i:s'},
     {name: 'allow_registrations'},
-	{name: 'private'},
+	  {name: 'private'},
     {name: 'seats_available'},
     {name: 'duration'},
     {name: 'event_registration_count'},
@@ -509,9 +509,9 @@ Ext.create('Ext.form.Panel', {
     name: 'url',
     vtype: 'url'
   },{
-	fieldLabel: 'Make Private',
-	name: 'private',
-	xtype: 'checkbox'
+	  fieldLabel: 'Make Private',
+	  name: 'private',
+	  xtype: 'checkbox'
   },{
     fieldLabel: 'Allow Registrations',
     name: 'allow_registrations',
@@ -644,6 +644,7 @@ Ext.create('Ext.form.Panel', {
     formBind: true,
     handler: function() {
       var form = this.up('form').getForm();
+
       var vals = form.getValues(false, false, false, true);
       if(form.isValid()) {
         var event;
@@ -651,6 +652,7 @@ Ext.create('Ext.form.Panel', {
         if(vals.id !== '') {
           event = store.getById(vals.id);
           event.beginEdit();
+          vals['private'] = (vals['private'] ? 1 : 0);
           event.set(vals);
           event.endEdit();
         }
