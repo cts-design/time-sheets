@@ -3,6 +3,47 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+	<h1>Release 3.8.2 (2-8-14)</h1>
+	<h2>
+		Feature Releases
+	</h2>
+	<ol>
+		<li>
+			The ability to regenerate queued/filed documents in the system
+		</li>
+		<li>
+			Ability to delete comments that are not approved
+		</li>
+	</ol>
+	<h2>Minor Bug Fixes</h2>
+	<ol>
+		<li>
+			Fixed login button problems
+		</li>
+		<li>
+			Fixed issue where some users could not log in on the new login system
+		</li>
+		<li>
+			Fixed "blue screen" issue
+		</li>
+		<li>
+			Fixed Allow Registration and ability to set the events to private
+		</li>
+		<li>
+			Added new options to user registration under race and ethnicity
+		</li>
+		<li>
+			Set events to be viewable from 30 days ago instead of current day
+		</li>
+		<li>
+			Fixed some program bugs
+		</li>
+		<li>
+			Stopped allowing users to circumvent the document upload on enrollments
+		</li>
+	</ol>
+
+	<hr />
 
 	<h1>Release 3.8 (1-3-14)</h1>
 	<p>
