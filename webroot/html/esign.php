@@ -1,6 +1,6 @@
 <?php ob_start() ?>
 <body>
-
+	<link rel="stylesheet" href="/html/esign.css" />
 	<div class="header">
 		<div class="left">
 			<img src="/img/admin_header_logo.jpg" />
