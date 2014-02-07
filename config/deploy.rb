@@ -101,11 +101,11 @@ task :elc_duval do
   server "atlas.elcofduval.org", :app, :web, :db, :primary => true
 end
 
-task :elcduval do
+task :elc_hillsborough do
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
-  set :server_name, 'elc duval'
+  set :server_name, 'vpk.elchc.org (ELC-Hillsborough)'
   set :user, 'deploy'
-  server "atlas.elcofduval.org", :app, :web, :db, :primary => true
+  server "192.168.200.193", :app, :web, :db, :primary => true
 end
 
 task :elcm do
