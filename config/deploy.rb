@@ -327,11 +327,13 @@ task :design do
       run "cd #{release_path} && git clone --depth 1 git://github.com/CTSATLAS/atlas-design.git design"
       set :git_flag_quiet, "-q "
       stream "cd #{release_path}/design && git checkout #{git_flag_quiet}#{design_branch}"
-      run "mv #{release_path}/design/img/default/ #{release_path}/webroot/img/"
       run "mv #{release_path}/design/js/default/ #{release_path}/webroot/js/"
       run "mv #{release_path}/design/css/style.css #{release_path}/webroot/css/"
       run "mv #{release_path}/design/views/layouts/default.ctp #{release_path}/views/layouts/default.ctp"
       run "mv #{release_path}/design/views/website_views/pages/home.ctp #{release_path}/views/website_views/pages/home.ctp"
+
+      run "if [ -d #{release_path}/webroot/img/default ]; then rm -rf #{release_path}/webroot/img/default; fi"
+      run "mv #{release_path}/design/img/default/ #{release_path}/webroot/img/"
     end
   end
 end
