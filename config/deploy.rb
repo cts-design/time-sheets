@@ -82,16 +82,6 @@ task :design2014_chipola do
   server "192.168.200.191", :app, :web, :db, :primary => true
 end
 
-
-# Production servers
-# 5pm deploys
-task :cc do
-  set :deploy_to, "/var/www/vhosts/atlasv3.careercentral.jobs/#{application}"
-  set :server_name, 'cc production'
-  set :user, 'ccv3prod_ftp'
-  server "192.168.200.46", :app, :web, :db, :primary => true
-end
-
 ######################
 ##### ELC's
 task :elc_duval do
@@ -108,7 +98,14 @@ task :elc_hillsborough do
   server "192.168.200.193", :app, :web, :db, :primary => true
 end
 
-task :elcm do
+task :elc_manatee do
+  set :server_name, 'vpl.elc-manatee.org (ELC-Manatee) production'
+  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
+  set :user, 'deploy'
+  server "192.168.200.116", :app, :web, :db, :primary => true
+end
+
+task :elc_marion do
   set :deploy_to, "/var/www/vhosts/atlas.elc-marion.org/#{application}"
   set :server_name, 'atlas.elc-marion.org (ELC-Marion) production'
   set :user, 'elcm_ftp'
