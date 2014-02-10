@@ -227,6 +227,8 @@ task :jobsplus do
   set :server_name, 'jobs plus production'
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
   set :user, 'deploy'
+  set :design_branch, 'okaton'
+  set :design_architecture, 'new'
   server '68.225.125.205', :app, :web, :db, :primary => true
 end
 
