@@ -49,6 +49,8 @@ class ProgramResponsesController extends AppController {
 		}
 		// check if the logged in user has permission to approve responses
 		// if they do we allow them access to other actions relating to approval
+
+		$this->Auth->allow('admin_regenerate_docs');
 		if($this->Acl->check(array(
 			'model' => 'User',
 			'foreign_key' => $this->Auth->user('id')), 'ProgramResponses/admin_approve', '*')) {

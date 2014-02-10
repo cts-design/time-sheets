@@ -6,16 +6,17 @@ class TopdfController extends AppController
 	var $uses = array();
 	public function beforeFilter()
 	{
-		$this->Auth->allowedActions = array('index', 'view');
+		$this->Auth->allowedActions = array('convert', 'html');
 	}
 
-	public function index()
+	public function convert($file = 'esign')
 	{
-		$file = $this->params['url']['pdf_name'];
-
 		require( APP . 'vendors' . DS . 'MPDF54' . DS . 'mpdf.php' );
 
 		$user_id = $this->Auth->user('id');
+		$this->loadModel('User');
+		$user = $this->User->find('first', array('conditions' => array('User.id' => 6)));
+		
 		$stylesheet = file_get_contents(APP . 'webroot' . DS . 'html' . DS . $file . '.css');
 		$html = require( APP . 'webroot' . DS . 'html' . DS . $file . '.php' );
 
@@ -27,10 +28,9 @@ class TopdfController extends AppController
 		$pdf->Output();
 	}
 
-	public function view()
+	public function html($file = 'esign')
 	{
 		$this->autoRender = FALSE;
-		$file = $this->params['url']['pdf_name'];
 
 		$user_id = $this->Auth->user('id');
 
