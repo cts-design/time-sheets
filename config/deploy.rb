@@ -178,7 +178,8 @@ task :suncoast do
 end
 
 task :tbwa do
-  set :design_branch, "tbwa"
+  set :design_branch, "tbwa-new"
+  set :design_architecture, 'new'  
   set :server_name, 'tbwa production'
   set :deploy_to, "/var/www/vhosts/workforcetampa.com/#{application}"
   set :user, 'ftp_tbwa'
