@@ -148,7 +148,9 @@ class ProgramsController extends AppController {
 		$under_18 = strtotime($user['User']['dob']) > strtotime("-18 years");
 		$this->set('under_18', $under_18);
 
-		if(!isset($esign_setting['Setting']['value']) || $esign_setting['Setting']['value'] == 'v1.0')
+		if(
+			!isset($esign_setting['Setting']['value']) || $esign_setting['Setting']['value'] == 'v1.0'
+			&& Configure::read('Website.theme') != NULL)
 		{
 			$this->layout = 'default';
 			$this->render('/program_views/programs/esign_old');

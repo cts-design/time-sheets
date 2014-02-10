@@ -50,6 +50,7 @@ namespace :cts do
     set :keep_releases, 2
     set :branch, 'staging'
     set :design_branch, ENV['DESIGN'] if ENV.has_key?('DESIGN')
+    set :design_architecture, 'new'
     server "staging.atlasforworkforce.com", :app, :web, :db, :primary => true
   end
 
@@ -181,7 +182,8 @@ task :suncoast do
 end
 
 task :tbwa do
-  set :design_branch, "tbwa"
+  set :design_branch, "tbwa-new"
+  set :design_architecture, "new"
   set :server_name, 'tbwa production'
   set :deploy_to, "/var/www/vhosts/workforcetampa.com/#{application}"
   set :user, 'ftp_tbwa'
@@ -230,6 +232,8 @@ task :jobsplus do
   set :server_name, 'jobs plus production'
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
   set :user, 'deploy'
+  set :design_branch, 'okaton'
+  set :design_architecture, 'new'
   server '68.225.125.205', :app, :web, :db, :primary => true
 end
 

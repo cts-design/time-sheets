@@ -3,7 +3,7 @@
 	<link rel="stylesheet" href="/html/esign.css" />
 	<div class="header">
 		<div class="left">
-			<img src="/img/admin_header_logo.jpg" />
+			<img src="/img/admin_header_logo.png" class="logo" />
 		</div>
 		
 
@@ -17,15 +17,15 @@
 	<br clear="all" />
 
 	<h3>
-		Tampa Bay WorkForce Alliance Acknowledgement of Electronic Signature
+		CareerSource Tampa Bay Acknowledgement of Electronic Signature
 	</h3>
 
 	<p class="copy">
-		I, the undersigned, acknowledge and agree the use of the Tampa Bay WorkForce Alliance (TBWA) 
-		Electronic Signature when completing required online forms, agreements and acknowledgements for the TBWA 
-		program(s) for which I am obtaining or seeking to obtain services. The information provided may be 
-		used to determine eligibility and suitability for services, to meet program participation requirements 
-		and post employment, follow up services.
+		I, the undersigned, acknowledge and agree the use of the Career Source Tampa Bay
+        Electronic Signature when completing required online forms, agreements and acknowledgements for the TBWA
+        program(s) for which I am obtaining or seeking to obtain services. The information provided may be
+        used to determine eligibility and suitability for services, to meet program participation requirements
+        and post employment, follow up services.
 	</p>
 
 	<table class="form">
@@ -140,16 +140,16 @@
 	</p>
 
 	<h3>
-		Tampa Bay WorkForce Alliance General Release of Information
+		CareerSource Tampa Bay General Release of Information
 	</h3>
 
 	<p class="copy">
-		I hereby give my permission for TBWA Staff to obtain and/or disclose my past, present, and future 
-		information or records that may be needed for eligibility determination, monitoring and follow-up purposes. 
-		This information may include, but shall not be limited to: school records, grade records, attendance records, 
-		employment information, medical records, public assistance records, employment information and vocational 
-		rehabilitation assessment or evaluation tools. A photocopy/facsimile of this signed consent form may be used 
-		to obtain/release information authorized by signature on this form.
+		I hereby give my permission for CareerSource Tampa Bay Staff to obtain and/or disclose my past, present, and future
+        information or records that may be needed for eligibility determination, monitoring and follow-up purposes.
+        This information may include, but shall not be limited to: school records, grade records, attendance records,
+        employment information, medical records, public assistance records, employment information and vocational
+        rehabilitation assessment or evaluation tools. A photocopy/facsimile of this signed consent form may be used
+        to obtain/release information authorized by signature on this form.
 	</p>
 	<p class="copy">
 
@@ -257,7 +257,7 @@
 <?php endif ?>
 
 	<p class="disclaimer">
-		TampaBay WorkForce Alliance is an equal opportunity employer/program. 
+		CareerSource Tampa Bay is an equal opportunity employer/program. 
 		Auxiliary aids and services are available upon request to individuals with disabilities. 
 		All voice telephone numbers listed may be reached by persons using TTY/TDD equipment via the
 	</p>
