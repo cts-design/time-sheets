@@ -46,6 +46,11 @@ namespace :design do
 
     puts "= Removing theme img assets from webroot"
     sh "rm -rf webroot/img/theme"
+
+    config = File.read 'config/atlas.php'
+    File.open('config/atlas.php', 'w') do |file|
+      file.puts config.gsub(/\$config\['Website'\]\['theme'\] = '[\w\S]*';/, "$config['Website']['theme'] = '';")
+    end
   end
 end
 
