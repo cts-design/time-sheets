@@ -9,8 +9,28 @@ class TestController extends AppController
 	public function beforeFilter()
 	{
 		$this->Auth->allowedActions = array(
-			'login'
+			'login',
+			'video'
 		);
+	}
+
+	public function video()
+	{
+		$nextModule = array(
+			array(
+				'media_location' => 'swf/moviee.swf',
+				'instructions' => 'Do stuff',
+				'media_type' => 'swf',
+				'id' => 1
+			)
+		);
+
+		$modResponseTimeId = 100;
+
+		$media = 'swf/movie.swf';
+
+		$this->set(compact('nextModule', 'modResponseTimeId', 'media'));
+		//$this->render('../ecourse_views/ecourses/media');
 	}
 
 	public function login()

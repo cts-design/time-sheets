@@ -143,7 +143,9 @@
 			'empty' => 'Please Select',
 			'options' => array(
 				'Hispanic or Latino' => 'Hispanic or Latino',
-				'Not Hispanic or Latino' => 'Not Hispanic or Latino'), 
+				'Not Hispanic or Latino' => 'Not Hispanic or Latino',
+				'I do not wish to answer' => 'I do not wish to answer',
+				'Other' => 'Other'), 
 			'before' => '<p class="left">',
 			'between' => '</p><p class="left">',
 			'after' => '</p>'));		
@@ -158,7 +160,9 @@
 				'Asian' => 'Asian',
 				'Black or African American' => 'Black or African American',
 				'Hawaiian or Other Pacific Islander' => 'Hawaiian or Other Pacific Islander',
-				'White' => 'White'),
+				'White' => 'White',
+				'I do not wish to answer' => 'I do not wish to answer',
+				'Other' => 'Other'),
 			'before' => '<p class="left">',
 			'between' => '</p><p class="left">',
 			'after' => '</p>'));				
