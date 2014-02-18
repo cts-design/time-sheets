@@ -42,10 +42,10 @@ class QueuedDocument extends AppModel {
 
 	var $validate = array(
 		'submittedfile' => array(
-			/*'pdf' => array(
+			'pdf' => array(
 				'rule' =>'isPDF',
 				'message' => 'Please supply document in .pdf format.'
-			),*/
+			),
 			'lessThen5mb' => array(
 				'rule' => 'lessThen5mb',
 				'message' => 'Document must not be larger then 5mb'
@@ -220,6 +220,21 @@ class QueuedDocument extends AppModel {
 		return true;
 	}
 
+/*
+	function isPDFOrJpg() {
+		if(
+			$this->data['QueuedDocument']['submittedfile']['type'] == 'application/pdf'
+			|| $this->data['QueuedDocument']['submittedfile']['type'] == 'image/jpg'
+		)
+		{
+			return TRUE;
+		}
+		else
+		{
+			return FALSE;
+		}
+	}
+*/
 	function lessThen5mb() {
 		if($this->data['QueuedDocument']['submittedfile']['size'] > 5242880) {
 			return false;
