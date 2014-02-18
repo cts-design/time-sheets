@@ -245,17 +245,14 @@ $(document).ready(function() {
 			'options' => array('1' => 'Yes', '0' => 'No'), 
 			'between' => '<br />',
 			'after' => '<br />'));
+		echo $this->Form->input('disability', array(
+			'label' => __('Do you have a substantial disability', true),
+			'type' => 'select',
+			'empty' => 'Please Select',
+			'options' => array('1' => 'Yes', '0' => 'No'), 
+			'between' => '<br />',
+			'after' => '<br />'));
 
-		if( !Configure::read('Website.elc') )
-		{
-			echo $this->Form->input('disability', array(
-				'label' => __('Do you have a substantial disability', true),
-				'type' => 'select',
-				'empty' => 'Please Select',
-				'options' => array('1' => 'Yes', '0' => 'No'), 
-				'between' => '<br />',
-				'after' => '<br />'));
-		}
 	    echo $this->Form->hidden('registration', array('value' => 'website'));
 	    ?>
 	    <?php echo $this->Form->end(array('label' => __('Submit', true), 'class' => 'self-sign-kiosk-button')); ?>
