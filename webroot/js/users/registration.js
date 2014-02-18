@@ -5,10 +5,10 @@
  */
 $(function() {
   var $registrationForm = $('#UserRegistrationForm'),
-  /*
   $submitButton = $registrationForm.find('input[type="submit"]');
 
   $submitButton.button();
+  /*
   $registrationForm.submit(function() {
     $submitButton.button('disable');
     return true;
