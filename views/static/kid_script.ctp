@@ -1,7 +1,19 @@
 <style>
 .month
 {
-	width:40px;
+	width:140px;
+
+	margin:0px;
+	padding:0px;
+	margin-left:15px;
+
+	line-height:25px;
+	background-color:#FFF;
+
+	vertical-align: middle;
+
+	position: relative;
+	top:-3px;
 }
 .day
 {
@@ -65,7 +77,20 @@ table td:first-child
 			<label for="month">Month:</label>
 		</td>
 		<td>
-			<input type="text" name="month" class="month" pattern=".{1,2}" maxlength="2" />
+			<select name="month" class="month" onchange="" size="1">
+			    <option value="01">January</option>
+			    <option value="02">February</option>
+			    <option value="03">March</option>
+			    <option value="04">April</option>
+			    <option value="05">May</option>
+			    <option value="06">June</option>
+			    <option value="07">July</option>
+			    <option value="08">August</option>
+			    <option value="09">September</option>
+			    <option value="10">October</option>
+			    <option value="11">November</option>
+			    <option value="12">December</option>
+			</select>
 		</td>
 	</tr>
 	<tr>
@@ -73,7 +98,7 @@ table td:first-child
 			<label for="day">Day:</label>
 		</td>
 		<td>
-			<input type="text" name="day" class="day" pattern=".{1,2}" maxlength="2" />
+			<input type="text" name="day" class="day" maxlength="2" />
 		</td>
 	</tr>
 	<tr>
@@ -81,7 +106,7 @@ table td:first-child
 			<label for="day">Year:</label>
 		</td>
 		<td>
-			<input type="text" name="year" class="year" pattern=".{1,4}" maxlength="4" />
+			<input type="text" name="year" class="year" maxlength="4" />
 		</td>
 	</tr>
 	<tr>
@@ -97,6 +122,9 @@ table td:first-child
 <p class="error"></p>
 <script>
 $(document).ready(function(){
+	var monthNames = [ "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December" ];
+
 	var month = $('.month');
 	var day = $('.day');
 	var year = $('.year');
