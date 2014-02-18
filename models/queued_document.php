@@ -42,10 +42,10 @@ class QueuedDocument extends AppModel {
 
 	var $validate = array(
 		'submittedfile' => array(
-			'pdf' => array(
+			/*'pdf' => array(
 				'rule' =>'isPDF',
 				'message' => 'Please supply document in .pdf format.'
-			),
+			),*/
 			'lessThen5mb' => array(
 				'rule' => 'lessThen5mb',
 				'message' => 'Document must not be larger then 5mb'

@@ -50,7 +50,6 @@ namespace :cts do
     set :keep_releases, 2
     set :branch, 'staging'
     set :design_branch, ENV['DESIGN'] if ENV.has_key?('DESIGN')
-    set :design_architecture, 'new'
     server "staging.atlasforworkforce.com", :app, :web, :db, :primary => true
   end
 
@@ -83,16 +82,6 @@ task :design2014_chipola do
   server "192.168.200.191", :app, :web, :db, :primary => true
 end
 
-
-# Production servers
-# 5pm deploys
-task :cc do
-  set :deploy_to, "/var/www/vhosts/atlasv3.careercentral.jobs/#{application}"
-  set :server_name, 'cc production'
-  set :user, 'ccv3prod_ftp'
-  server "192.168.200.46", :app, :web, :db, :primary => true
-end
-
 ######################
 ##### ELC's
 task :elc_duval do
@@ -102,14 +91,21 @@ task :elc_duval do
   server "atlas.elcofduval.org", :app, :web, :db, :primary => true
 end
 
-task :elcduval do
+task :elc_hillsborough do
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
-  set :server_name, 'elc duval'
+  set :server_name, 'vpk.elchc.org (ELC-Hillsborough)'
   set :user, 'deploy'
-  server "atlas.elcofduval.org", :app, :web, :db, :primary => true
+  server "192.168.200.193", :app, :web, :db, :primary => true
 end
 
-task :elcm do
+task :elc_manatee do
+  set :server_name, 'vpl.elc-manatee.org (ELC-Manatee) production'
+  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
+  set :user, 'deploy'
+  server "192.168.200.116", :app, :web, :db, :primary => true
+end
+
+task :elc_marion do
   set :deploy_to, "/var/www/vhosts/atlas.elc-marion.org/#{application}"
   set :server_name, 'atlas.elc-marion.org (ELC-Marion) production'
   set :user, 'elcm_ftp'
@@ -183,7 +179,7 @@ end
 
 task :tbwa do
   set :design_branch, "tbwa-new"
-  set :design_architecture, "new"
+  set :design_architecture, 'new'  
   set :server_name, 'tbwa production'
   set :deploy_to, "/var/www/vhosts/workforcetampa.com/#{application}"
   set :user, 'ftp_tbwa'
@@ -221,8 +217,7 @@ end
 
 # 6pm deploys
 task :chipola do
-  set :design_branch, "chipola-new"
-  set :design_architecture, "new"
+  set :design_branch, "chipola"
   set :deploy_to, "/var/www/vhosts/atlas.onestopahead.com/#{application}"
   set :server_name, 'chipola production'
   set :user, 'ola_chip0'
@@ -264,7 +259,7 @@ namespace :deploy do
     run "ln -s #{shared_path}/webroot/img/public #{latest_release}/webroot/img/public"
     # Commented out 1/28/14 by Bill - was causing deploy to crash if a theme was defined:
     #if (remote_file_exists?("#{shared_path}/webroot/img/default/default_header_logo.jpg"))
-    #  run "ln -s #{shared_path}/webroot/img/default/default_header_logo.jpg #{latest_release}/webroot/img/default/default_header_logo.jpg"
+    run "ln -s #{shared_path}/webroot/img/default/default_header_logo.jpg #{latest_release}/webroot/img/default/default_header_logo.jpg"
     #end
     run "ln -s #{shared_path}/webroot/img/admin/admin_header_logo.jpg #{latest_release}/webroot/img/admin/admin_header_logo.jpg"
     run "ln -s #{shared_path}/webroot/img/kiosk/kiosk_header.jpg #{latest_release}/webroot/img/kiosk/kiosk_header.jpg"
@@ -332,11 +327,13 @@ task :design do
       run "cd #{release_path} && git clone --depth 1 git://github.com/CTSATLAS/atlas-design.git design"
       set :git_flag_quiet, "-q "
       stream "cd #{release_path}/design && git checkout #{git_flag_quiet}#{design_branch}"
-      run "mv #{release_path}/design/img/default/ #{release_path}/webroot/img/"
       run "mv #{release_path}/design/js/default/ #{release_path}/webroot/js/"
       run "mv #{release_path}/design/css/style.css #{release_path}/webroot/css/"
       run "mv #{release_path}/design/views/layouts/default.ctp #{release_path}/views/layouts/default.ctp"
       run "mv #{release_path}/design/views/website_views/pages/home.ctp #{release_path}/views/website_views/pages/home.ctp"
+
+      run "if [ -d #{release_path}/webroot/img/default ]; then rm -rf #{release_path}/webroot/img/default; fi"
+      run "mv #{release_path}/design/img/default/ #{release_path}/webroot/img/"
     end
   end
 end
