@@ -140,12 +140,12 @@ $(document).ready(function(){
 	$('.calc').click(function(){
 		var fullDate = new Date(year.val(), (month.val() - 1), day.val());
 
-		if(fullDate >= vpk2013_start && fullDate <= vpk2013_end)
+		if(fullDate >= vpk2013_start && fullDate < vpk2013_end)
 		{
 			console.log('VPK2013');
 			window.location = 'https://vpk.elc-manatee.org/users/login/program/1';
 		}
-		else if(fullDate >= vpk2014_start && fullDate <= vpk2014_end)
+		else if(fullDate >= vpk2014_start && fullDate < vpk2014_end)
 		{
 			console.log('VPK2014');
 			window.location = 'https://vpk.elc-manatee.org/users/login/program/2';

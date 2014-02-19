@@ -43,7 +43,7 @@
 						</h5>
 						<p>
 							I, the undersigned, acknowledge and agree the use of the <?= Configure::read('Company.name') ?> 
-		Electronic Signature when completing required online forms, agreements and acknowledgements for the <?= Configure::read('Company.name') ?>  
+		Electronic Signature when completing required online forms, agreements and acknowledgements for the <?= Configure::read('Company.abbr') ?>  
 		program(s) for which I am obtaining or seeking to obtain services. The information provided may be 
 		used to determine eligibility and suitability for services, to meet program participation requirements 
 		and post employment, follow up services.
@@ -56,7 +56,7 @@
 						</h5>
 
 						<p>
-							I hereby give my permission for <?= Configure::read('Company.name') ?> Staff to obtain and/or disclose my past, present, and future 
+							I hereby give my permission for <?= Configure::read('Company.abbr') ?> Staff to obtain and/or disclose my past, present, and future 
 		information or records that may be needed for eligibility determination, monitoring and follow-up purposes. 
 		This information may include, but shall not be limited to: school records, grade records, attendance records, 
 		employment information, medical records, public assistance records, employment information and vocational 
