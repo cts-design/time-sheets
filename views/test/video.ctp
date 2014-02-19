@@ -4,9 +4,10 @@
 </noscript>
 <div id="player" style="width:600px;height:400px;"></div>
 <script>
-$(document).ready(function(){
 <?php if (empty($this->validationErrors)) : ?>
+	$(document).ready(function(){
 	$('#Acknowledge').hide();
+	})
 <?php endif ?>
 flowplayer("player", "/swf/flowplayer-3.2.7.swf", {
 	clip: {
@@ -17,6 +18,5 @@ flowplayer("player", "/swf/flowplayer-3.2.7.swf", {
 			$('#Acknowledge').show();
 		}
 	}
-});
 });
 </script>

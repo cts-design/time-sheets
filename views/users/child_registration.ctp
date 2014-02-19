@@ -242,13 +242,13 @@ $(document).ready(function() {
 				'White' => 'White'),
 				'between' => '<br />',
 				'after' => '<br />'));
-		echo $this->Form->input('disability', array(
+		/*echo $this->Form->input('disability', array(
 			'label' => __('Do you have a substantial disability', true),
 			'type' => 'select',
 			'empty' => 'Please Select',
 			'options' => array('1' => 'Yes', '0' => 'No'), 
 			'between' => '<br />',
-			'after' => '<br />'));				
+			'after' => '<br />'));*/		
 	    echo $this->Form->hidden('registration', array('value' => 'child_website'));
 	    ?>    
 	<br />

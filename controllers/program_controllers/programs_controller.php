@@ -148,16 +148,23 @@ class ProgramsController extends AppController {
 		$under_18 = strtotime($user['User']['dob']) > strtotime("-18 years");
 		$this->set('under_18', $under_18);
 
-		if(
-			!isset($esign_setting['Setting']['value']) || $esign_setting['Setting']['value'] == 'v1.0'
-			&& Configure::read('Website.theme') != NULL)
+		$theme = Configure::read('Website.theme');
+
+		if($theme != NULL && $theme != '')
 		{
 			$this->layout = 'default';
-			$this->render('/program_views/programs/esign_old');
 		}
 		else
 		{
 			$this->layout = 'default_bootstrap';
+		}
+
+		if(!isset($esign_setting['Setting']['value']) || $esign_setting['Setting']['value'] == 'v1.0')
+		{
+			$this->render('/program_views/programs/esign_old');
+		}
+		else
+		{
 			$this->render('/program_views/programs/esign');
 		}
 	}

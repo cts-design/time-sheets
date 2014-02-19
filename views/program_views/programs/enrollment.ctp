@@ -80,11 +80,19 @@
 											'action' => 'upload_docs',
 											$program['Program']['id'],
 											$step['id'])) ?>
-										<?php $link2 = $this->Html->link('Drop Off/Fax Documents', array(
-											'controller' => 'program_responses',
-											'action' => 'drop_off_docs',
-											$program['Program']['id'],
-											$step['id'])) ?>
+
+
+										<?php
+
+										if(Configure::read('Website.fax'))
+										{
+											$link2 = $this->Html->link('Drop Off/Fax Documents', array(
+												'controller' => 'program_responses',
+												'action' => 'drop_off_docs',
+												$program['Program']['id'],
+												$step['id']));
+										}
+										?>
 									<?php endif ?>
 									<span class="action">
 										<?php echo ( isset($link) ? $link : "" ) ?>

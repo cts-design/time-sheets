@@ -8,10 +8,11 @@ $(function() {
     $submitButton = $registrationForm.find('input[type="submit"]');
 
   $submitButton.button();
+  /*
   $registrationForm.submit(function() {
     $submitButton.button('disable');
     return true;
-  });
+  });*/
 
   $('.go-back').click(function(e){
   	e.preventDefault();
