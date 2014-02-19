@@ -3,6 +3,18 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+	<h1>Release 3.8.3 (2-19-14)</h1>
+	<h2>
+		Minor Bug Fixes
+	</h2>
+	<ol>
+		<li>
+			Change list coming soon
+		</li>
+	</ol>
+
+	<hr />
+
 	<h1>Release 3.8.2 (2-8-14)</h1>
 	<h2>
 		Feature Releases
