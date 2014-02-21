@@ -55,6 +55,6 @@
 				echo $form->hidden('User.program_id', array('value' => $this->params['pass'][1]));
 			}
 		    echo $this->Form->end(array('label' => __('Login', true)));
-		  ?>
+		    ?>
 	  </fieldset>
 </div>

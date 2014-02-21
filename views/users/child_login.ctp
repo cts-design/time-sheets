@@ -46,9 +46,9 @@
 			if(isset($this->params['pass'][0]) && $this->params['pass'][0] === 'program') {
 				echo $form->hidden('User.program_id', array('value' => $this->params['pass'][1]));
 			}
+			echo $this->Form->end(__('Login', true));
 		  ?>
 	  </fieldset>
 	  <br />
-	 <?php echo $form->end(__('Login', true)); ?>
 
 </div>
