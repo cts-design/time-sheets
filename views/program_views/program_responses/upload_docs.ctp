@@ -32,8 +32,17 @@
 		<strong>
 			<?php echo $html->link(__('I am finished uploading my documents.', true), 
 			'/program_responses/provided_docs/' . $this->params['pass'][0] . '/' . $this->params['pass'][1] .'/uploaded_docs'); ?>
-		</strong>		
+		</strong>
 	</p>
-	
-
 </div>
+
+<script>
+$(document).ready(function(){
+	var flash = '<?= $this->Session->flash() ?>';
+
+	if(flash !== '')
+	{
+		Ext.Msg.alert('Upload Status', flash);
+	}
+});
+</script>
