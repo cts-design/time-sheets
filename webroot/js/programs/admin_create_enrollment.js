@@ -1899,6 +1899,10 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                   name: 'answer'
                 }, {
                   xtype: 'checkbox',
+                  fieldLabel: 'Number Only',
+                  name: 'numeric'
+                }, {
+                  xtype: 'checkbox',
                   fieldLabel: 'Read only',
                   id: 'readOnlyCb',
                   name: 'read_only',
@@ -1998,6 +2002,10 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                       validation.rule = 'notEmpty';
                     }
 
+                    if(vals.number_only === 'on') {
+                      validation.rule = 'numeric';
+                    }
+
                     vals.attributes      = encodeObject(attributes);
                     vals.options         = encodeObject(options);
                     vals.validation      = encodeObject(validation);
@@ -2071,6 +2079,10 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                     } else {
                       vals.required = 'off';
                       validation = {};
+                    }
+
+                    if(vals.number_only === 'on') {
+                      validation.rule = 'numeric';
                     }
 
                     vals.attributes      = encodeObject(attributes);

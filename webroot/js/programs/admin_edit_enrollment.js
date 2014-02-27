@@ -1919,6 +1919,10 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                   name: 'answer'
                 }, {
                   xtype: 'checkbox',
+                  fieldLabel: 'Number Only',
+                  name: 'number_only'
+                }, {
+                  xtype: 'checkbox',
                   fieldLabel: 'Read only',
                   id: 'readOnlyCb',
                   name: 'read_only',
@@ -2021,6 +2025,12 @@ formBuilderContainer = Ext.create('Ext.panel.Panel', {
                     if (vals.answer) {
                       validation.rule = ['looseEqualTo', vals.answer];
                       validation.message = 'Incorrect';
+                    }
+
+                    console.log(vals);
+
+                    if(vals.number_only === 'on') {
+                      validation.rule = 'numeric';
                     }
 
                     vals.attributes      = encodeObject(attributes);
@@ -2501,7 +2511,6 @@ watchedFilingCats = Ext.create('Ext.panel.Panel', {
       dataIndex: 'cat_3_name',
       flex: 1,
       renderer: function (val, tdStyle, rec) {
-        console.log(rec);
         if (rec.data.cat_3) {
           return rec.data.cat_3_name;
         } else if (rec.data.cat_2) {

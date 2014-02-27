@@ -1,4 +1,5 @@
 <?php echo $html->script('program_responses/toggle_instructions', array('inline' => false)) ?>
+<?php echo $this->Html->script('program_responses/upload_docs', array('inline' => FALSE));?>
   <div class="show-instructions">
     <a href="#" ><?php __('Show instructions') ?></a>
   </div>
@@ -38,11 +39,11 @@
 
 <script>
 $(document).ready(function(){
-	var flash = '<?= $this->Session->flash() ?>';
-
 	if(flash !== '')
 	{
-		Ext.Msg.alert('Upload Status', flash);
+		var $message = $('<?= str_replace("\n", "", $this->Session->flash()) ?>');
+		var flash = $message.find('.ui-state-error-text').text();
+		alert(flash);
 	}
 });
 </script>
