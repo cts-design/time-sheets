@@ -86,9 +86,16 @@ end
 ##### ELC's
 task :elc_duval do
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
-  set :server_name, 'atlas.elcofduval.org (ELC-Duval) production'
+  set :server_name, 'atlas.elcofduval.org (ELC-Duval)'
   set :user, 'deploy'
   server "atlas.elcofduval.org", :app, :web, :db, :primary => true
+end
+
+task :elc_heartland do
+  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
+  set :server_name, 'vpkelcfh.org (ELC-Heartland)'
+  set :user, 'deploy'
+  server "192.168.202.150", :app, :web, :db, :primary => true
 end
 
 task :elc_hillsborough do
@@ -99,7 +106,7 @@ task :elc_hillsborough do
 end
 
 task :elc_manatee do
-  set :server_name, 'vpl.elc-manatee.org (ELC-Manatee) production'
+  set :server_name, 'vpl.elc-manatee.org (ELC-Manatee)'
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
   set :user, 'deploy'
   server "192.168.200.116", :app, :web, :db, :primary => true
@@ -107,20 +114,20 @@ end
 
 task :elc_marion do
   set :deploy_to, "/var/www/vhosts/atlas.elc-marion.org/#{application}"
-  set :server_name, 'atlas.elc-marion.org (ELC-Marion) production'
+  set :server_name, 'atlas.elc-marion.org (ELC-Marion)'
   set :user, 'elcm_ftp'
   server "atlas.elc-marion.org", :app, :web, :db, :primary => true
 end
 
 task :elc_mdm do
-  set :server_name, 'atlas.elcmdm.org (ELC-Miami-Dade-Monroe) production'
+  set :server_name, 'atlas.elcmdm.org (ELC-Miami-Dade-Monroe)'
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
   set :user, 'deploy'
   server "atlas.elcmdm.org", :app, :web, :db, :primary => true
 end
 
 task :elc_pasco_hernando do
-  set :server_name, 'elc-pasco-hernando (ELC-Pasco-Hernando) production'
+  set :server_name, 'elc-pasco-hernando (ELC-Pasco-Hernando)'
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
   set :user, 'deploy'
   server "atlas.phelc.org", :app, :web, :db, :primary => true
@@ -128,20 +135,20 @@ end
 
 task :elc_pinellas do
   set :deploy_to, "/var/www/vhosts/vpk.childcarepinellas.org/#{application}"
-  set :server_name, 'vpk.elcpinellas.net (ELC-Pinellas) production'
+  set :server_name, 'vpk.elcpinellas.net (ELC-Pinellas)'
   set :user, 'vpk_ftp'
   server "vpk.elcpinellas.net", :app, :web, :db, :primary => true
 end
 
 task :elc_polk do
-  set :server_name, 'vpkelcpolk.org (ELC-Polk) production'
+  set :server_name, 'vpkelcpolk.org (ELC-Polk)'
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
   set :user, 'deploy'
   server "www.vpkelcpolk.org", :app, :web, :db, :primary => true
 end
 
 task :elc_seminole do
-  set :server_name, 'vpk.SeminoleEarlyLearning.org (ELC-Seminole) Production'
+  set :server_name, 'vpk.SeminoleEarlyLearning.org (ELC-Seminole)'
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
   set :user, 'deploy'
   server "192.168.200.192", :app, :web, :db, :primary => true
