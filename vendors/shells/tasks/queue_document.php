@@ -95,7 +95,7 @@ class QueueDocumentTask extends Shell {
 			if(!preg_match('[\@]', $v)) {
 				$data['User'][$k] = ucwords($v);
 			}
-			$html .= '<li><span class="question">' . Inflector::humanize($k); 
+			$html .= '<li><span class="question" style="font-weight:bold">' . Inflector::humanize($k); 
 			$html .= ':&nbsp;</span><span class="answer">' . Inflector::humanize($v) . '</span>';
 		}
 		$html .= '<hr />';

@@ -9,7 +9,10 @@
 	</h2>
 	<ol>
 		<li>
-			Change list coming soon
+			Fixed child login button while google translation is active
+		</li>
+		<li>
+			
 		</li>
 	</ol>
 

@@ -127,6 +127,7 @@ class EventsController extends AppController {
 			)
 		);
 
+
 		if ($categoryConditions) {
 			$conditions = array_merge($conditions, $categoryConditions);
 		}
@@ -265,6 +266,7 @@ class EventsController extends AppController {
 		}
 
 		$conditions = array_merge($time_conditions, array(
+			'Event.private' => 0,
 			'OR' => array(
 				array('Event.allow_registrations' => 0),
 				array(
@@ -287,6 +289,7 @@ class EventsController extends AppController {
 		if ($categoryConditions) {
 			$conditions = array_merge($conditions, $categoryConditions);
 		}
+
 
 		$events = $this->paginate(
 			'Event',

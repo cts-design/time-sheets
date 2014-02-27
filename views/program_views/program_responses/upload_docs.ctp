@@ -1,4 +1,5 @@
 <?php echo $html->script('program_responses/toggle_instructions', array('inline' => false)) ?>
+<?php echo $this->Html->script('program_responses/upload_docs', array('inline' => FALSE));?>
   <div class="show-instructions">
     <a href="#" ><?php __('Show instructions') ?></a>
   </div>
@@ -32,8 +33,17 @@
 		<strong>
 			<?php echo $html->link(__('I am finished uploading my documents.', true), 
 			'/program_responses/provided_docs/' . $this->params['pass'][0] . '/' . $this->params['pass'][1] .'/uploaded_docs'); ?>
-		</strong>		
+		</strong>
 	</p>
-	
-
 </div>
+
+<script>
+$(document).ready(function(){
+	if(flash !== '')
+	{
+		var $message = $('<?= str_replace("\n", "", $this->Session->flash()) ?>');
+		var flash = $message.find('.ui-state-error-text').text();
+		alert(flash);
+	}
+});
+</script>
