@@ -153,6 +153,8 @@ task :cc do
   set :deploy_to, "/var/www/vhosts/atlasv3.careercentral.jobs/#{application}"
   set :server_name, 'cc production'
   set :user, 'ccv3prod_ftp'
+  set :design_branch, "ccentral-new"
+  set :design_architecture, 'new'
   server "192.168.200.46", :app, :web, :db, :primary => true
 end
 

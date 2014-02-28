@@ -100,6 +100,8 @@ class QueueDocumentTask extends Shell {
 		}
 		$html .= '<hr />';
 
+		$html .= '<div style="page-break-after: always"></div>';
+
 		foreach($data['steps'] as $step) {
 			$html .= '<h2>' . $step['name'] . '</h2>';
 			$html .= '<ol>';
@@ -111,7 +113,7 @@ class QueueDocumentTask extends Shell {
 					$html .= '<span class="answer">' . Inflector::humanize($v) . '</p></span></div>';
 				}
 				else {
-					$html .= '<li><span class="question">' . Inflector::humanize($k); 
+					$html .= '<li><span class="question" style="font-weight:bold">' . Inflector::humanize($k); 
 					$html .= ':&nbsp;</span><span class="answer">' . Inflector::humanize($v) . '</span>';
 				}
 			}
