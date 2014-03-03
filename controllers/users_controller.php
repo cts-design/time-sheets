@@ -639,119 +639,59 @@ class UsersController extends AppController {
 		$this->layout = 'kiosk';
 	}
 
-	function login($type = NULL) {
-		$loginType 	= 'website';
-		$render 	= 'login';
-		$program 	= FALSE;
-		$program_id = FALSE;
+	function login($type = 'website', $program_id = NULL) {
+		$this->set('title_for_layout', 'Login');
+		$this->set('type', $type);
 
-		if( isset($this->params['pass'][0]) )
+		//If user is already logged in, send them to dashboard
+		if($this->Auth->user())
 		{
-			$loginType 	= $this->params['pass'][0]; //Represents program type ie. program/child/website/auditor
+			$this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
 		}
 
-		if( isset($this->params['pass'][1]) )
-		{
-			$program_id = $this->params['pass'][1]; //Represents program id if type == program
-		}
-
-		$ssn_length = Configure::read('Login.' . $loginType . '.ssn_length');
-		$this->set('ssn_length', $ssn_length);
-
+		//Get the config and check it for ssn_length
+		$ssn_length = Configure::read('Login.' . $type . '.ssn_length');
 		$this->User->setValidation('last' . $ssn_length . 'ssn');
+		$this->set(compact('ssn_length'));
 
-		if($this->User->validates())
+		if(!empty($this->data))
 		{
-			if($loginType === 'program')
-			{
-				if(!$program_id)
-				{
-					$this->redirect(array(
-						'action' => 'login',
-						$loginType
-					));
-				}
+			$username 	= $_POST['data']['User']['username'];
+			$password	= $_POST['data']['User']['password'];
+			$validation_data = array(
+				'User' => array(
+					'username' => $username,
+					'password' => $password
+				)
+			);
 
-				$this->loadModel('Program');
-				$this->Program->contain(array(
-					'ProgramInstruction' => array(
-						'conditions' => array('ProgramInstruction.type' => 'login')
-					)
-				));
+			$this->User->set($validation_data);
 
-				$program = $this->Program->findById( $program_id );
-
-				$session_redirect = '/programs/' . $program['Program']['type'] . '/' . $program_id;
-				$this->Session->write( 'Auth.redirect', $session_redirect );
-
-				$title_for_layout = $program['Program']['name'] . ' Login';
-
-				if( !empty($program['ProgramInstruction'][0]) )
-				{
-					$instructions = $program['ProgramInstruction'][0]['text'];
-					$this->set('instructions', $instructions);
-				}
-
-				if($program['Program']['atlas_registration_type'] == 'child')
-				{
-					$loginType = $program['Program']['atlas_registration_type'];
-				}
-			}
-
-			if(!empty($this->data) && !$this->Auth->user())
-			{
-				$username 			= $_POST['data']['User']['username'];
-				$password			= $_POST['data']['User']['password'];
-				
+			if($this->User->validates())
+			{	
 				$this->User->recursive = -1;
 
 				$conditions = array(
 					'User.username' => $username
 				);
 
-				switch($ssn_length)
+				if($ssn_length < 9)
 				{
-					case 2:
-						$conditions['User.ssn LIKE'] = '_______' . $password;
-						break;
-					case 3:
-						$conditions['User.ssn LIKE'] = '______' . $password;
-						break;
-					case 4:
-						$conditions['User.ssn LIKE'] = '%' . $password;
-						break;
-					case 5:
-						$conditions['User.ssn LIKE'] = '%' . $password;
-						break;
-					case 6:
-						$conditions['User.ssn LIKE'] = '___' . $password;
-						break;
-					case 7:
-						$conditions['User.ssn LIKE'] = '__' . $password;
-						break;
-					case 8:
-						$conditions['User.ssn LIKE'] = '_' . $password;
-						break;
-					default:
-						$conditions['User.ssn'] =  $password;
+					$conditions['User.ssn LIKE'] = '%' . $password;
+				}
+				else
+				{
+					$conditions['User.ssn'] = $password;
 				}
 
-				$validation_data = array(
-					'User' => array(
-						'username' => $username,
-						'password' => $password
-					)
-				);
-
-				//Checks to see if that user exists in the database
-				$login_user = $this->User->find('first', array(
+				$user = $this->User->find('first', array(
 					'conditions' => $conditions
 				));
 
-				//If the user does not exist they need to be redirected to registration
-				if(empty($login_user['User']))
-				{
-					switch($loginType)
+				if(empty($user))
+				{	
+					//Redirect them to a registration form
+					switch($type)
 					{
 						case 'website':
 							$this->redirect(array(
@@ -785,81 +725,119 @@ class UsersController extends AppController {
 		                		'child', 
 		                		'program',
 	                        	$this->data['User']['username'], 
-	                        	'kisok' => false
+	                        	'kiosk' => false
 	                        ));
 		                	break;
-					}
-				}
-
-				$this->User->set($validation_data);
-
-				if($this->User->validates())
-				{
-					$this->Auth->login($login_user['User']['id']);
-				}
-			}
-
-			
-			if($this->Auth->user()){
-				if ($this->Auth->user('role_id') > 3)
-				{
-					$this->User->Role->recursive = -1;
-					$role = $this->User->Role->find('first', array(
-						'fields' => array('Role.name'),
-						'conditions' => array('Role.id' => $this->Auth->user('role_id'))
-					));
-					$this->Session->write('Auth.User.role_name', $role['Role']['name']);
-				}
-
-				if (preg_match('/auditor/i', $this->Auth->user('role_name')))
-				{
-					$this->Transaction->createUserTransaction('Auditor', null, null, 'Logged into auditor dashboard');
-					$this->redirect(array('action' => 'dashboard', 'auditor' => true));
-				}
+		                default:
+		                	$this->redirect(array(
+		                		'action' => 'registration', 
+	                        	$this->data['User']['username'], 
+	                        	'kiosk' => false
+	                        ));
+					} // switch statement
+				} //User not empty
 				else
-				{	
-					$this->Transaction->createUserTransaction('Website',
-						null, null, 'Logged in using website.' );
-					if($this->Auth->user('email') == null || preg_match('(none|nobody|noreply)', $this->Auth->user('email')))
-					{
-						$this->Session->setFlash('Please complete your profile to continue.', 'flash_success');
-						$this->redirect(array(
-							'controller' => 'users', 
-							'action' => 'edit', 
-							$this->Auth->user('id')
-						));
-					}
-					
-					if($this->Session->read('Auth.redirect') != '')
-					{
-						$this->redirect($this->Session->read('Auth.redirect'));
-					}
-					else {
-						$this->redirect(array('action' => 'dashboard', 'admin' => false));
+				{
+					$this->Auth->login($user['User']['id']);
+
+					if($this->Auth->user()){
+						if($type === 'program')
+						{
+							if($program_id == NULL)
+							{
+								$this->redirect(array(
+									'action' => 'login',
+									$type
+								));
+							}
+
+							$this->loadModel('Program');
+							$this->Program->contain(array(
+								'ProgramInstruction' => array(
+									'conditions' => array('ProgramInstruction.type' => 'login')
+								)
+							));
+
+							$program = $this->Program->findById( $program_id );
+
+							$session_redirect = '/programs/' . $program['Program']['type'] . '/' . $program_id;
+							$this->Session->write( 'Auth.redirect', $session_redirect );
+
+							$title_for_layout = $program['Program']['name'] . ' Login';
+
+							if( !empty($program['ProgramInstruction'][0]) )
+							{
+								$instructions = $program['ProgramInstruction'][0]['text'];
+								$this->set('instructions', $instructions);
+							}
+
+							if($program['Program']['atlas_registration_type'] == 'child')
+							{
+								$type = $program['Program']['atlas_registration_type'];
+							}
+						}
+						
+						if ($this->Auth->user('role_id') > 3)
+						{
+							$this->User->Role->recursive = -1;
+							$role = $this->User->Role->find('first', array(
+								'fields' => array('Role.name'),
+								'conditions' => array('Role.id' => $this->Auth->user('role_id'))
+							));
+							$this->Session->write('Auth.User.role_name', $role['Role']['name']);
+						}
+
+						if (preg_match('/auditor/i', $this->Auth->user('role_name')))
+						{
+							$this->Transaction->createUserTransaction('Auditor', null, null, 'Logged into auditor dashboard');
+							$this->redirect(array('action' => 'dashboard', 'auditor' => true));
+						}
+						else
+						{	
+							$this->Transaction->createUserTransaction('Website',
+								null, null, 'Logged in using website.' );
+							if($this->Auth->user('email') == null || preg_match('(none|nobody|noreply)', $this->Auth->user('email')))
+							{
+								$this->Session->setFlash('Please complete your profile to continue.', 'flash_success');
+								$this->redirect(array(
+									'controller' => 'users', 
+									'action' => 'edit', 
+									$this->Auth->user('id')
+								));
+							}
+							
+							if($this->Session->read('Auth.redirect') != '')
+							{
+								$this->redirect($this->Session->read('Auth.redirect'));
+							}
+							else {
+								$this->redirect(array('action' => 'dashboard', 'admin' => false));
+							}
+						}
 					}
 				}
-				
-			}
+			} // validates user if
 		}
-
-		switch($loginType)
+		else //this->data is empty
 		{
-			case 'child':
-				$title_for_layout 	= 'Child Login';
-				$render 			= 'child_login';
-				break;
+			switch($type)
+			{
+				case 'child':
+					$title_for_layout 	= 'Child Login';
+					$render 			= 'child_login';
+					break;
 
-			case 'auditor':
-				$title_for_layout 	= 'Auditor Login';
-				$render 			= 'auditor_login';
-				break;
-			default:
-				$title_for_layout 	= 'User Login';
-				$render 			= 'login';
+				case 'auditor':
+					$title_for_layout 	= 'Auditor Login';
+					$render 			= 'auditor_login';
+					break;
+				default:
+					$title_for_layout 	= 'User Login';
+					$render 			= 'login';
+			}
+
+			$this->render($render);
 		}
-
-		$this->set(compact('loginType', 'title_for_layout'));
-		$this->render($render);
 	}
 
 	function logout($type=null, $logoutMsg=null) {
