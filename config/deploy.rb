@@ -177,6 +177,13 @@ task :clm do
   server "atlas.clmworkforce.com", :app, :web, :db, :primary => true
 end
 
+task :cs_capital_region do
+  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
+  set :server_name, 'CareerSource Capital Region'
+  set :user, 'deploy'
+  server "199.44.92.153", :app, :web, :db, :primary => true
+end
+
 task :rescare do
   set :server_name, 'rescare production'
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
