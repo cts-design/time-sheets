@@ -147,6 +147,13 @@ task :elc_polk do
   server "www.vpkelcpolk.org", :app, :web, :db, :primary => true
 end
 
+task :elc_sarasota do
+  set :server_name, 'vpk.earlylearningcoalitionsarasota.org (ELC-Sarasota)'
+  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
+  set :user, 'deploy'
+  server "192.168.200.194", :app, :web, :db, :primary => true
+end
+
 task :elc_seminole do
   set :server_name, 'vpk.SeminoleEarlyLearning.org (ELC-Seminole)'
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
