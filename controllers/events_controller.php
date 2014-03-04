@@ -59,23 +59,11 @@ class EventsController extends AppController {
 		$nextMonth = date('m/Y', strtotime("+1 day", strtotime($endDate)));
 		$nextMonthUrl = "$url/$nextMonth";
 
-		$conditions = array(
-			'Event.private' => 0,
-			'Event.scheduled BETWEEN ? AND ?' => array($date, $endDate),
-			'OR' => array(
-				array('Event.allow_registrations' => 0),
-				array(
-					'AND' => array(
-						array('Event.allow_registrations' => 1),
-						array('Event.event_registration_count < Event.seats_available')
-					)
-				)
-			)
-		);
-
 		$ec_query = "SELECT EventCategory.name, EventCategory.id FROM event_categories as EventCategory
 					JOIN events as Event
 					ON EventCategory.id = Event.event_category_id
+					AND Event.scheduled >= '" . $date . "'
+					AND Event.scheduled <= '" . $endDate . "'
 					AND Event.allow_registrations = 1
 					AND Event.event_registration_count < Event.seats_available
 					GROUP BY EventCategory.name
