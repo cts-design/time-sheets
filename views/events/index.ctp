@@ -4,9 +4,15 @@
 		<form class="event_categories" action="<?= $this->Url->currentUrl(); ?>" method="get">
 			<label class="event_categories_label" for="category_id"><?php __('Filter by event category') ?>:</label>
 			<select id="event_categories_dropdown" name="category_id">
-			<?php foreach($categories as $id => $category): ?>
-				<option value="<?= $id ?>"<?= ($id == $selectedCategory) ? ' selected="selected"' : '' ?>><?= $category ?></option>
-			<?php endforeach; ?>
+			<?php foreach($categories as $category): ?>
+				<option 
+					value="<?= $category['EventCategory']['id'] ?>"
+					<?= $selectedCategory == $category['EventCategory']['id'] ? 'selected' : '' ?>
+					>
+					<?= $category['EventCategory']['name'] ?>
+				</option>
+
+			<?php endforeach ?>
 			</select>
 			<label class="event_locations_label" for="location_id"><?php __('Filter by event location') ?>:</label>
 			<select id="event_locations_dropdown" name="location_id">
