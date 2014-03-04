@@ -142,13 +142,11 @@ $(document).ready(function(){
 
 		if(fullDate >= vpk2013_start && fullDate < vpk2013_end)
 		{
-			console.log('VPK2013');
-			window.location = 'https://vpk.elc-manatee.org/users/login/program/1';
+			window.location = location.origin + '/users/login/program/1';
 		}
 		else if(fullDate >= vpk2014_start && fullDate < vpk2014_end)
 		{
-			console.log('VPK2014');
-			window.location = 'https://vpk.elc-manatee.org/users/login/program/2';
+			window.location = location.origin + '/users/login/program/2';
 		}
 		else
 		{

@@ -4,6 +4,7 @@
 		<form class="event_categories" action="<?= $this->Url->currentUrl(); ?>" method="get">
 			<label class="event_categories_label" for="category_id"><?php __('Filter by event category') ?>:</label>
 			<select id="event_categories_dropdown" name="category_id">
+			<option value="">All Categories</option>
 			<?php foreach($categories as $category): ?>
 				<option 
 					value="<?= $category['EventCategory']['id'] ?>"
