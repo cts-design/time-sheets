@@ -105,8 +105,15 @@ task :elc_hillsborough do
   server "192.168.200.193", :app, :web, :db, :primary => true
 end
 
+task :elc_lake do
+  set :server_name, 'atlas.elclc.org (ELC-Lake)'
+  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
+  set :user, 'deploy'
+  server "192.168.200.195", :app, :web, :db, :primary => true
+end
+
 task :elc_manatee do
-  set :server_name, 'vpl.elc-manatee.org (ELC-Manatee)'
+  set :server_name, 'vpk.elc-manatee.org (ELC-Manatee)'
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
   set :user, 'deploy'
   server "192.168.200.116", :app, :web, :db, :primary => true
