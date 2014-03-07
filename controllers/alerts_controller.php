@@ -50,8 +50,6 @@ class AlertsController extends AppController {
     }
 
     public function admin_index() {
-
-        /*
         if($this->RequestHandler->isAjax()) {
             $alerts = $this->Alert->find('all', array(
                 'conditions' => array('Alert.user_id' => $this->Auth->user('id'))));
@@ -72,8 +70,8 @@ class AlertsController extends AppController {
             $data['success'] = true;
             $this->set(compact('data'));
             $this->render(null, null, '/elements/ajaxreturn');
-        }*/
-
+        }
+        /*
         if($this->RequestHandler->isPost())
         {
             $this->Alert->create();
@@ -89,7 +87,7 @@ class AlertsController extends AppController {
         $alerts = $this->paginate('Alert');
 
         $this->set(compact('locations', 'alerts'));
-        $this->layout = 'default_bootstrap';
+        $this->layout = 'default_bootstrap';*/
     }
 
     public function admin_add_self_sign_alert() {
