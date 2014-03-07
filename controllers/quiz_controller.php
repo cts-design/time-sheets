@@ -1,7 +1,9 @@
 <?php
 
 class QuizController extends AppController {
-	var $name = 'Quiz';
+	public $name = 'Quiz';
+	
+	public $helpers = array('request');
 
 	var $paginate = array(
 		'limit' => 20,
@@ -10,14 +12,40 @@ class QuizController extends AppController {
 
 	function admin_listing() {
 
-		$this->Quiz->find('all');
-		$quizzes = $this->paginate('Quiz');
-		$this->set(compact('quizzes'));
+		$category 	= $this->get('category');
+		$name 		= $this->get('name');
 
+		$quizzes = $this->paginate('Quiz', array(
+			'Quiz.name LIKE' => '%' . $name . '%',
+			'Quiz.quiz_category_id' => $category
+		));
+		
+		$quiz_categories = $this->Quiz->QuizCategory->find('all');
+
+		$this->set(compact('quizzes', 'quiz_categories'));
 	}
 
 	function admin_create() {
-
+		if($this->RequestHandler->isPost())
+		{
+			$this->Quiz->create();
+			$is_saved = $this->Quiz->save($this->data);
+			
+			if($is_saved)
+			{
+				$this->redirect(array('action' => 'admin_listing'));
+			}
+			else
+			{
+				$this->Session->flash('The Program was not saved');
+				$this->redirect(array('action' => 'admin_create'));
+			}
+		}
+		else
+		{
+			$quiz_categories = $this->Quiz->QuizCategory->find('all');
+			$this->set(compact('quiz_categories'));
+		}
 	}
 
 	function admin_edit() {

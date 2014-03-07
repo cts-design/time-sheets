@@ -1,5 +1,5 @@
 <?php echo $html->script('program_responses/toggle_instructions', array('inline' => false)) ?>
-  <div class="show-instructions">
+  <div class="show-instructions" style="display:none">
     <a href="#" ><?php __('Show instructions') ?></a>
   </div>
 

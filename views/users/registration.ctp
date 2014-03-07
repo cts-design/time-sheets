@@ -51,6 +51,7 @@ $(document).ready(function() {
 			'after' => '<br />'));
 	    echo $this->Form->input('middle_initial', array(
 			'label' => __('Middle Initial', true),
+			'maxlength' => '50',
 			'between' => '<br />',
 			'after' => '<br />'));
 		echo $this->Form->input('surname', array(

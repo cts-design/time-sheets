@@ -741,7 +741,7 @@ class UsersController extends AppController {
 					$this->Auth->login($user['User']['id']);
 
 					if($this->Auth->user()){
-						if($type === 'program')
+						if($type == 'program')
 						{
 							if($program_id == NULL)
 							{
@@ -759,6 +759,16 @@ class UsersController extends AppController {
 							));
 
 							$program = $this->Program->findById( $program_id );
+							
+
+							if(!$program)
+							{
+								$this->Session->setFlash('That program was not found');
+								$this->redirect(array(
+									'action' => 'dashboard',
+									$type
+								));
+							}
 
 							$session_redirect = '/programs/' . $program['Program']['type'] . '/' . $program_id;
 							$this->Session->write( 'Auth.redirect', $session_redirect );

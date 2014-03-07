@@ -1,0 +1,66 @@
+.container-content {
+	margin-top:5px;
+}
+.container-content > div > div {
+	background-color:#FFF;
+	height:350px;
+
+	padding-top:10px;
+}
+
+.container-content > div > div:first-child {
+	border-right:1px solid #CCC;
+	padding:5px;
+}
+.container-content > div > div:last-child {
+	border-left:1px solid #CCC;
+
+	padding:0px;
+}
+
+.table {
+	border-bottom:1px solid #CCC;
+	height:80%;
+}
+.table > thead > tr >th {
+	padding:5px;
+}
+h3 {
+	margin:0px;
+	padding:0px;
+	font-size:14pt;
+
+	margin-bottom:10px;
+}
+label {
+	display:block;
+}
+label p {
+	display:inline-block;
+	width:75px;
+	text-align: right;
+
+	font-weight:200;
+
+}
+label select {
+	width:30%;
+}
+input[type=text] {
+}
+input[type=submit] {
+	position:absolute;
+	bottom:10px;
+	right:10px;
+}
+.pager {
+	padding:10px 10px;
+}
+/*
+.pager {
+	position:absolute;
+	bottom:0px;
+	width:100%;
+	padding:10px 10px;
+	margin:0px;
+}*/

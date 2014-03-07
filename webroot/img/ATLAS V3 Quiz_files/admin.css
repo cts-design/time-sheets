@@ -1,0 +1,4326 @@
+/*
+Document   : admin.css
+Created on : Oct 7, 2010, 3:06:41 PM
+Author     : Daniel Nolan
+Description: admin area style sheet
+Copyright  : Complete Technology Solutions
+
+ */
+
+/* HTML Elements */
+
+html {
+  background: #1875BB;
+}
+
+body.admin-layout {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  overflow-y: scroll;
+}
+
+
+
+a {
+  color: #3B71A0;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+h1 {
+  color: orange;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+h2 {
+  color: orange;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+strong {
+  font-weight: bold;
+}
+
+
+/* Text */
+.small {
+  font-size: 11px;
+}
+
+.normal {
+  font-weight: normal;
+}
+
+/* Margin Classes */
+.bot-mar-10 {
+  margin-bottom: 10px;
+}
+
+.right-mar-10 {
+  margin-right: 10px;
+}
+
+.left-mar-10 {
+  margin-left: 10px;
+}
+
+/* Structure Elements */
+
+#container {
+  margin: 0 auto;
+  width: 970px;
+}
+
+#header {
+  width: 970px;
+  color: #333;
+  height: 90px;
+  margin: 0px 0 5px 0;
+  background: #FFF;
+}
+
+#nav {
+  color: white;
+  background-color: #333;
+  height: 30px;
+
+}
+
+#nav li {
+  float: left;
+  margin: 8px 10px 0 ;
+
+}
+
+#nav a {
+  color: white;
+
+}
+
+#content {
+  width: 970px;
+  color: #333;
+  background: #fff;
+  margin: 0px 0px 5px 0px;
+  min-height: 400px;
+  overflow: hidden;
+  color: white;
+
+}
+
+#content {
+  width: 970px;
+  color: #333;
+  background: #fff;
+  margin: 0px 0px 5px 0px;
+  min-height: 400px;
+  overflow: hidden;
+}
+
+#content > div,
+#footer > div,
+#content #ecourses > div,
+#content #administration > div,
+#content #information > div {
+  padding: 10px;
+}
+
+#footer {
+  background-color: #fff;
+  font-size: 10px;
+  font-weight: normal;
+  color: #000;
+  width: 970px;
+  border: none;
+  margin: 0px 0px 10px 0px;
+}
+
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
+}
+
+.clear {
+  clear: both;
+}
+
+
+/* Forms */
+
+fieldset {
+  padding: 10px;
+  border: 1px solid #000;
+}
+
+legend {
+  margin-left: 10px;
+}
+
+.input label {
+  font-weight: bold;
+}
+
+.input input  {
+  width: 200px;
+}
+
+.input input[type=submit] {
+  width: 100px;
+  padding: 2px;
+}
+
+.input input[type=submit]:hover {
+  cursor: pointer;
+}
+
+.input select {
+  width: 150px;
+  padding: 0;
+  margin: 0
+}
+
+.scrollingCheckboxes {
+  height: 60px;
+  width: 175px;
+  overflow: auto;
+  border: thin solid #999;
+  padding: 4px;
+  background-color: #fff;
+  color: #000;
+  font-size: 12px;
+}
+
+.checkbox input {
+  width: 25px;
+}
+
+.checkbox label {
+  font-weight: normal;
+}
+
+/* Tables */
+
+.admin table {
+  background: #fff;
+  border-right:0;
+  clear: both;
+  color: #333;
+  margin-bottom: 10px;
+  width: 100%;
+  font-size: 11px;
+}
+.admin th {
+  border:0;
+  border-bottom:2px solid #555;
+  text-align: left;
+  padding:4px;
+  color: #ffffff;
+}
+.admin th a {
+  display: block;
+  padding: 2px 4px;
+  text-decoration: none;
+  color: #ffffff;
+}
+
+.admin th a:hover {
+  text-decoration: underline;
+}
+
+.admin th a.asc:after {
+  content: url(../img/icons/arrow_down.png);
+  vertical-align: middle;
+
+}
+
+.admin th a.desc:after {
+  content: url(../img/icons/arrow_up.png);
+  vertical-align: middle;
+}
+
+.admin table tr td {
+  padding: 6px;
+  text-align: left;
+  vertical-align: middle;
+  border-bottom:1px solid #ddd;
+}
+
+.admin thead tr{
+  background-color: #333;
+}
+
+.admin td.actions {
+  white-space: nowrap;
+}
+
+.admin table td.actions a {
+  margin: 0;
+  padding: 0;
+  font-size: 10px;
+}
+
+.admin table .actions .ui-button {
+  margin-left:0;
+  margin-right:-0.4em;
+}
+
+.altrow {
+  background-color: #f9f9f9;
+}
+
+.open td {
+  font-weight: bold;
+  background-color: #BFFABE;
+}
+
+.closed td {
+  background-color: #FCC5C5;
+}
+
+.paging {
+  font-size: 11px;
+}
+
+.paging-counter {
+  font-size: 11px;
+}
+/*Specific Styles */
+.tree-wrapper {
+  width: 300px;
+  float: left;
+  margin-right: 25px;
+}
+
+#content h1 {
+  margin: 5px 10px 5px 0;
+}
+
+.error-message {
+  color: red;
+  font-size: 11px;
+  margin-left: 120px;
+  margin-top: 2px;
+  float: left;
+}
+
+.message {
+  background-color: #fff;
+  margin: 0 0 0 0;
+  padding: 2px 5px 2px 5px;
+  font-size: 20px;
+  float: left;
+}
+
+.flash-failure .ui-icon{
+  margin: 5px 10px 0 0;
+}
+
+.flash-success .ui-icon{
+  margin: 5px 10px 0 0;
+}
+
+#UserAdminLoginForm p {
+  width: 75px;
+}
+
+.admin h1 {
+  margin-bottom: 10px;
+}
+
+#logo{
+  font-size: 40px;
+  margin: 5px 0 0 10px;
+}
+
+#logoLogout {
+  text-align: right;
+  margin: 0 10px 10px 0;
+}
+
+#logoLogout img{
+  margin-top: 15px;
+  margin-bottom: 5px;
+}
+
+#logoLogout p{
+  height: 15px;
+  width: 450px;
+}
+
+#dashboardAdminTree {
+  background-color: #FFFFFF
+}
+
+#administration {
+  width: 350px;
+  margin: 10px 175px 0 25px;
+  border: 1px solid #B5D3DF;
+  background-color:#F1F8FB
+}
+
+#administration h3 {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+#information,
+#ecourses {
+  margin: 10px 25px 0 0;
+  width: 350px;
+}
+
+#ecourses > div {
+  background-color:#F1F8FB;
+  height: 226px;
+  overflow: auto;
+  padding: 10px;
+}
+
+#ecourses {
+  border: 1px solid #B5D3DF;
+  background-color:#F1F8FB;
+  position: relative;
+}
+
+#ecourses #toggle-completed {
+  display: block;
+  margin-bottom: 8px;
+}
+
+#ecourses h4 {
+  color: #565656;
+  font-weight: bold;
+  margin-bottom: 3px;
+}
+
+#ecourses li {
+  border-bottom: 1px solid #B5D3DF;
+  margin-bottom: 4px;
+  padding-bottom: 4px;
+  position: relative;
+}
+
+#ecourses span.action {
+  position: absolute;
+  right: 0;
+  top: 8px;
+}
+
+#ecourses .details {
+  color: #999;
+}
+
+#ecourses .details i {
+  color: #1875BB;
+}
+
+#information #help {
+  border: 1px solid #B5D3DF;
+  padding: 10px;
+  background-color:#F1F8FB
+}
+
+#information #help { height: 125px; }
+
+#ecourses h3 {
+  margin-bottom: 3px;
+}
+
+#help h3 {
+  margin-bottom: 10px;
+}
+
+#ecourses h3,
+#help h3 {
+  font-weight: bold;
+}
+
+#ecourses p,
+#help p {
+  margin-bottom: 5px;
+}
+
+#ecourses p { color: #999; }
+
+#graph {
+  margin: 10px auto;
+}
+
+
+div.actions {
+  height: 35px;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+div.actions ul {
+  padding: 5px;
+}
+
+div.actions li {
+  float: left;
+}
+
+div.actions .ui-button-text {
+  padding: 2px 15px 2px 15px;
+  margin: 0;
+}
+
+.admin dl{
+  margin-top: 25px;
+  width: 400px;
+}
+
+.admin dt{
+  font-weight: bold;
+  float: left;
+  text-align: right;
+  width: 75px;
+  margin-right: 15px;
+}
+
+.admin dd{
+  float: left;
+}
+
+.admin br {
+  line-height: 25px;
+}
+
+.form fieldset {
+  display: inline;
+  min-width: 500px;
+}
+
+.form legend {
+  margin-bottom: 5px;
+}
+
+.form p{
+  line-height: 25px;
+  margin-right: 10px;
+  text-align: right;
+  width: 100px;
+}
+
+.form #PageAdminAddForm p {
+  line-height: 15px;
+}
+
+.mini-form fieldset {
+  display: inline;
+}
+
+.submit {
+  margin: 10px 0 0 10px;
+}
+
+#SelfSignReassign {
+  margin-bottom: 20px;
+}
+
+
+#manageButtons label {
+  margin-right: 10px;
+}
+
+.kiosks p{
+  width: 200px;
+}
+
+.kiosks .error-message {
+  margin-left: 0px;
+}
+
+#kioskButtonTree {
+  background-color: #ffffff;
+}
+
+#MasterKioskButtonAddForm .error-message {
+  float: none;
+  margin-left: 50px;
+}
+
+#masterKioskButtons   .input{ width: 400px;}
+#masterKioskButtons   .input label{ margin-right: 10px;}
+#masterKioskButtons   .tag{width: 300px;}
+
+.search li {
+  float: left;
+  margin: 10px 10px 10px 0;
+}
+
+.search label {
+  margin-right: 3px;
+}
+
+#UserAdminPasswordResetForm label {
+  margin-right: 10px;
+}
+
+#forgotPass {
+  font-size: 10px;
+  margin-left: 205px;
+}
+
+#DocumentFilingCategoryAddForm label {
+  margin-right: 10px;
+}
+
+#DocumentFilingCategoryAddForm .error-message {
+  float: none;
+  margin-left: 50px;
+}
+
+#documentCategoryTree {
+  background: #ffffff;
+}
+
+#DocumentFilingCategoryAdminEditForm label {
+  margin-right: 10px;
+}
+
+.selfSignLogArchives .ui-accordion-content {
+  padding: 10px 0 10px 0;
+}
+
+.selfSignLogArchives .form p{
+  width: 75px;
+}
+
+.selfSignLogArchives .scrollingCheckboxes{
+  width: 255px;
+}
+
+.selfSignLogArchives .scrollingCheckboxes checkbox {
+  width: 245px;
+  display: block;
+}
+
+
+#search .ui-accordion-content{
+  height: 175px;
+  overflow: hidden;
+}
+
+#search .ui-accordion-content {
+  font-size: 12px;
+}
+
+#searchFieldset1 {
+  width: 275px;
+}
+
+#searchFieldset2 {
+  width: 275px;
+}
+
+#searchFieldset3 .submit {
+  margin-left: 190px;
+}
+
+.selfSignLogArchives table {
+  font-size: 10px;
+}
+
+.selfSignLogArchives p {
+  margin-bottom: 5px;
+}
+
+#buttonWrapper {
+  width: 900px;
+  height: 50px;
+}
+
+#reset {
+  width: 75px;
+}
+
+#reset .ui-button-text {
+  padding: 4px 0 4px 0;
+}
+
+#searchButtons {
+  display: inline-block;
+  width: 182px;
+  margin-left: 555px;
+  margin-right: -2px;
+  margin-top: 5px;
+}
+
+#reportForm {
+  display: inline-block;
+  width: 150px;
+  margin-top: 5px;
+}
+
+.queuedDocuments hr {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.queuedDocuments label {
+  margin-right: 10px;
+}
+
+.queuedDocuments select {
+  font-size: 12px;
+}
+
+#queuedDocumentsNav #navButtons {
+  margin-left: 25px;
+}
+
+.cats {
+  margin-bottom: 10px;
+}
+
+.cats .input{
+  display: inline-block;
+  margin-right: 5px;
+}
+
+.cuInfo .input{
+  display: inline-block;
+  margin-right: 2px;
+}
+
+#queuedDocumentsPdf {
+  width: 950px;
+  margin: 0 auto;
+}
+
+#queuedDocumentsFilters {
+  height: 100px;
+}
+
+#queuedDocumentsFilters ul li {
+  float: left
+}
+
+#queuedDocumentsFilters .input {
+  margin-right: 10px;
+}
+
+#QueuedDocumentReassignQueueForm {
+  float: left;
+}
+
+#QueuedDocumentReassignQueueForm .input  {
+  display: inline-block;
+}
+
+#QueuedDocumentReassignQueueForm .submit {
+  display: inline-block;
+}
+
+#QueuedDocumentDeleteForm {
+  float: right;
+}
+
+#QueuedDocumentDeleteForm .input {
+  display: inline-block;
+}
+
+#QueuedDocumentDeleteForm .submit {
+  display: inline-block;
+}
+
+#QueuedDocumentFileDocumentForm h2 {
+  margin-bottom: 5px;
+}
+
+#QueuedDocumentFileDocumentForm select.error {border: 2px red solid}
+#QueuedDocumentFileDocumentForm input.error {border: 2px red solid}
+
+#QueuedDocumentFileDocumentForm #FiledDocumentCat2{
+  display: none;
+}
+#QueuedDocumentFileDocumentForm #FiledDocumentCat3 {
+  display: none;
+}
+#QueuedDocumentFileDocumentForm input[type=text] {
+  width: 215px;
+}
+.queuedDocuments .formErrors {
+  display: block;
+  margin-bottom: 10px;
+  color: red;
+}
+.queuedDocuments .reset .ui-button-text {padding: 1.5px 10px 1.5px 10px}
+.queuedDocuments .reset {margin-top: 10px;}
+
+#idletimeout {
+  background:none repeat scroll 0 0 #CC0000;
+  border:3px solid #000;
+  color:#FFFFFF;
+  display:none;
+  font-size:12px;
+  left:0;
+  padding:10px;
+  position:relative;
+  right:0;
+  text-align:center;
+  top:0;
+  z-index:100000;
+}
+
+#idletimeout a {
+  color:#FFFFFF;
+  font-weight:bold;
+}
+
+#idletimeout span {
+  font-weight:bold;
+}
+
+
+
+#processing {
+  display: none;
+}
+
+#active {
+  display: none;
+}
+
+#crumbWrapper {
+  font-style: italic;
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+
+.deletedDocuments table {
+  font-size: 10px;
+}
+
+.filedDocuments table {
+  font-size: 11px;
+}
+
+#FiledDocumentDeleteForm label {
+  margin-right: 10px;
+}
+
+#FiledDocumentDeleteForm .submit{
+  padding: 0;
+  margin: 10px 0 0 0;
+}
+
+#FiledDocumentAdminEditForm fieldset {
+  width: 925px;
+}
+
+#FiledDocumentAdminEditForm .input {
+  float: left;
+  margin-right: 10px;
+}
+
+#FiledDocumentAdminEditForm label {
+  margin-right: 10px;
+}
+
+#PermissionTabs fieldset{height: 150px; width: 200px; margin-bottom: 10px; margin-right: 10px;}
+#PermissionTabs legend{font-weight: bold;}
+#PermissionTabs .input{margin: 0}
+
+#deletedDoumentsSerach{margin: 0 0 5px 0}
+#deletedDoumentsSerach .input {float: left; margin: 0 10px 0 0;}
+#deletedDoumentsSerach .input label {margin-right: 10px}
+.quick-dates{font-size: 11px;}
+
+
+
+#FiledDocumentUploadDocumentForm .input{
+  float: left;
+  margin: 0 10px 10px 0;
+}
+#FiledDocumentUploadDocumentForm .input label {
+  margin-right: 10px
+}
+#FiledDocumentUploadDocumentForm #FiledDocumentScanDocumentForm, .formErrors {
+  color: red;
+  margin-bottom: 10px;
+}
+#FiledDocumentUploadDocumentForm #FiledDocumentScanDocumentForm #FiledDocumentAdminEditForm #QueuedDocumentDesktopScanDocumentForm, select.error {
+  border: 2px red solid
+}
+#FiledDocumentUploadDocumentForm #FiledDocumentScanDocumentForm #FiledDocumentAdminEditForm, input.error {
+  border: 2px red solid
+}
+#FiledDocumentUploadDocumentForm #FiledDocumentScanDocumentForm #FiledDocumentAdminEditForm, #FiledDocumentCat2{
+  display: none;
+}
+#FiledDocumentUploadDocumentForm #FiledDocumentScanDocumentForm #FiledDocumentAdminEditForm,  #FiledDocumentCat3 {
+  display: none;
+}
+#FiledDocumentUploadDocumentForm input[type=file] {
+  width: 400px;
+}
+
+
+#FiledDocumentScanDoument h3, #QueuedDocumentScanDoument  h3 {margin-bottom: 10px; font-size: 15px; font-weight: bold;}
+#FiledDocumentScanDoument.input, #QueuedDocumentScanDoument  .input{margin: 0 0 10px 15px}
+#FiledDocumentScanDoument .input label, #QueuedDocumentScanDoument  .input label {margin-right: 5px;}
+#FiledDocumentScanDoument input[type=button], #QueuedDocumentScanDoument input[type=button] {width: 100px;}
+#FiledDocumentScanDoument #Eztwain, #QueuedDocumentScanDoument #Eztwain {margin-bottom: 10px;}
+#FiledDocumentScanDoument #scanForm, #QueuedDocumentScanDoument  #scanForm {margin-top: 10px;}
+#FiledDocumentScanDoument #scanWrapper, #QueuedDocumentScanDoument #scanWrapper{margin-top: 10px;}
+
+.selfScanCategories td {
+  font-weight: bold;
+  background-color: #eee;
+}
+.selfScanCategories .child-cat td{
+  font-weight: normal;
+  background-color: #fff;
+}
+
+#SelfScanCategoryCat2, #SelfScanCategoryCat3 {
+  display: none;
+}
+
+#SelfScanCategoryAdminAddForm input[type=text]{
+  width: 150px;
+}
+
+/* Programs  */
+#ProgramResponseUserInfo {padding: 10px; width: 440px;}
+#ProgramResponseUserInfo p {margin-bottom: 5px;}
+#ProgramResponseUserInfo .label {width: 100px; text-align: right; margin-right: 10px;}
+
+#ProgramAnswers {
+  padding: 10px;
+}
+
+#ProgramAnswers h2 {
+  margin-bottom: 10px;
+}
+
+#ProgramAnswers .label {
+  float: left;
+  width: 200px;
+  text-align: right;
+  font-weight: bold;
+  margin: 0 5px 0 5px;
+}
+
+#ProgramResponseDocs {
+  padding: 10px;
+}
+
+#ProgramResponseDocs h2 {
+  margin-bottom: 10px;
+}
+
+.response-doc {
+  border-bottom: 1px solid #666666;
+  margin-bottom: 10px;
+}
+
+#SystemGeneratedDocs{
+  padding: 10px;
+}
+
+#SystemGeneratedDocs h2 {
+  margin-bottom: 10px;
+}
+
+.system-generated-doc{
+  border-bottom: 1px solid #666666;
+  margin-bottom: 10px;
+}
+
+/* Release Notes Page  */
+
+#ReleaseNotes {
+  width: 600px;
+  margin-top: 10px;
+}
+#ReleaseNotes ol {
+  padding-left: 35px;
+}
+
+#ReleaseNotes li {
+  list-style: decimal;
+  margin-bottom: 5px;
+}
+
+
+/* jQuery UI overrides */
+.ui-autocomplete {
+  max-height: 50px;
+  overflow-y: auto;
+}
+
+.expand-wrap {
+  font-size: 11px;
+  margin-left: 7px;
+}
+
+
+
+
+
+.reassign-menu {
+  overflow: visible !important;
+}
+
+.new-sign-in-menu {
+  overflow: visible !important;
+}
+
+
+#modalDeleteForm .input select {
+  width: 300px;
+}
+
+/** Debugging **/
+pre {
+  color: #000;
+  background: #f0f0f0;
+  padding: 1em;
+}
+pre.cake-debug {
+  background: #ffcc00;
+  font-size: 120%;
+  line-height: 140%;
+  margin-top: 1em;
+  overflow: auto;
+  position: relative;
+}
+div.cake-stack-trace {
+  background: #fff;
+  color: #333;
+  margin: 0px;
+  padding: 6px;
+  font-size: 120%;
+  line-height: 140%;
+  overflow: auto;
+  position: relative;
+}
+div.cake-code-dump pre {
+  position: relative;
+  overflow: auto;
+}
+div.cake-stack-trace pre, div.cake-code-dump pre {
+  color: #000;
+  background-color: #F0F0F0;
+  margin: 0px;
+  padding: 1em;
+  overflow: auto;
+}
+div.cake-code-dump pre, div.cake-code-dump pre code {
+  clear: both;
+  font-size: 12px;
+  line-height: 15px;
+  margin: 4px 2px;
+  padding: 4px;
+  overflow: auto;
+}
+div.cake-code-dump span.code-highlight {
+  background-color: #ff0;
+  padding: 4px;
+}
+div.code-coverage-results div.code-line {
+  padding-left:5px;
+  display:block;
+  margin-left:10px;
+}
+div.code-coverage-results div.uncovered span.content {
+  background:#ecc;
+}
+div.code-coverage-results div.covered span.content {
+  background:#cec;
+}
+div.code-coverage-results div.ignored span.content {
+  color:#aaa;
+}
+div.code-coverage-results span.line-num {
+  color:#666;
+  display:block;
+  float:left;
+  width:20px;
+  text-align:right;
+  margin-right:5px;
+}
+div.code-coverage-results span.line-num strong {
+  color:#666;
+}
+div.code-coverage-results div.start {
+  border:1px solid #aaa;
+  border-width:1px 1px 0px 1px;
+  margin-top:30px;
+  padding-top:5px;
+}
+div.code-coverage-results div.end {
+  border:1px solid #aaa;
+  border-width:0px 1px 1px 1px;
+  margin-bottom:30px;
+  padding-bottom:5px;
+}
+div.code-coverage-results div.realstart {
+  margin-top:0px;
+}
+div.code-coverage-results p.note {
+  color:#bbb;
+  padding:5px;
+  margin:5px 0 10px;
+  font-size:10px;
+}
+div.code-coverage-results span.result-bad {
+  color: #a00;
+}
+div.code-coverage-results span.result-ok {
+  color: #fa0;
+}
+div.code-coverage-results span.result-good {
+  color: #0a0;
+}
+
+.url_label {
+  width:auto !important;
+  line-height: 17px !important;
+  margin-right: 2px !important;
+}
+
+fieldset.wide {
+  width: 990px;
+}
+p.wide {
+  width: 800px !important;
+}
+p.short {
+  line-height: 11px !important;
+  margin-right: 1px !important;
+  width: 25px !important;
+}
+
+#not_specified_link {
+  cursor: pointer;
+}
+
+p.time {
+  text-align: left;
+  width: 250px;
+}
+
+p.time select {
+  width: 50px;
+}
+
+p.checkbox {
+  text-align: left;
+  width: 250px;
+  line-height: 12px;
+}
+
+.accordionbtn {
+  margin: 0 0 4px !important;
+  width: 100% !important;
+}
+
+.accordionbtn .x-btn-tl,
+.accordionbtn .x-btn-tr,
+.accordionbtn .x-btn-tc,
+.accordionbtn .x-btn-ml,
+.accordionbtn .x-btn-mr,
+.accordionbtn .x-btn-mc,
+.accordionbtn .x-btn-bl,
+.accordionbtn .x-btn-br,
+.accordionbtn .x-btn-bc{
+  background-image:none;
+}
+
+.x-btn-hover .x-btn-tl,
+.x-btn-hover .x-btn-tr,
+.x-btn-hover .x-btn-tc,
+.x-btn-hover .x-btn-ml,
+.x-btn-hover .x-btn-mr,
+.x-btn-hover .x-btn-mc,
+.x-btn-hover .x-btn-bl,
+.x-btn-hover .x-btn-br,
+.x-btn-hover .x-btn-bc {
+  background-image: url(../../img/ext/default/button/btn.gif);
+  background-position: 0 -2168px;
+}
+
+.accordionbtn .x-btn-text {
+  font-size: 13px;
+  padding-left: 30px !important;
+}
+
+.accordionbtn .x-btn-mc {
+  text-align: left;
+}
+
+.accordionbtn .x-btn-mc em {
+  margin-left: 8px;
+}
+
+.x-careerseeker-row {
+  padding: 4px 0;
+}
+
+.x-careerseeker-row p {
+  font-size: 12px;
+  width: 250px;
+}
+
+.x-careerseeker-row .label {
+  font-weight: bold;
+  margin: 0 15px 0 0;
+  text-align: right;
+}
+
+.x-careerseeker-row ul {
+  margin: 0 0 0 280px;
+  list-style-type: disc;
+}
+
+.x-careerseeker-row li {list-style-type: disc;}
+
+.inTheNews div.date p.date { width: 310px }
+.inTheNews div.date select { width: 100px }
+
+.viewport-layout #logo {
+  background: #fff;
+  float: left;
+  height: 100px;
+  padding: 0; margin: 0;
+  width: 500px;
+}
+
+.viewport-layout #logo a {
+  display: block;
+  margin: 10px 35px;
+}
+
+.viewport-layout #logoLogout {
+  background: #fff;
+  margin: 0;
+  padding: 0 40px 22px 184px;
+  float: right;
+}
+
+
+table.raw-data tr {
+  border-bottom: 1px solid #cdcdcd;
+}
+
+table.raw-data tr th {
+  font-weight: bold;
+}
+
+table.raw-data .total {
+  font-weight: bold;
+}
+
+table.raw-data tr th,
+table.raw-data tr td {
+  padding: 2px 15px;
+}
+
+.x-form-display-field {
+  color: #778899;
+}
+
+.x-text-light em {
+  background: transparent;
+  color: #778899;
+}
+
+.x-action-col-cell div img {
+  cursor: pointer !important;
+}
+
+.x-grid-row.row-disabled {
+  color: #999;
+}
+
+.x-action-col-cell img {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.x-action-col-cell img.editable {
+  background-image: url(../img/icons/edit.png);
+}
+
+.x-action-col-cell img.not-editable {
+  background-image: url(../img/icons/edit-grayed.png);
+}
+
+
+#helpDeskForm .error-message {
+	margin: 0;
+	float: none;
+}
+
+#helpDeskForm .input {
+	margin-bottom: 5px;
+}
+
+.icon-add {
+  background-image: url('../img/icons/add.png');
+}
+
+#EcourseResponsePanel .incorrect-row {
+	color: red;
+}
+
+#EcourseResponsePanel .correct-row {
+	color: green;
+}
+
+#EcourseResponsePanel .x-grid-row-summary {
+	font-style: italic;
+	font-size: 11px;
+}
+
+
+
+// ICONS ***************************************
+.icon_accept {
+  background: url(../img/icons/accept.png);
+}
+.icon_add {
+  background: url(../img/icons/add.png);
+}
+.icon_anchor {
+  background: url(../img/icons/anchor.png);
+}
+.icon_application {
+  background: url(../img/icons/application.png);
+}
+.icon_application_add {
+  background: url(../img/icons/application_add.png);
+}
+.icon_application_cascade {
+  background: url(../img/icons/application_cascade.png);
+}
+.icon_application_delete {
+  background: url(../img/icons/application_delete.png);
+}
+.icon_application_double {
+  background: url(../img/icons/application_double.png);
+}
+.icon_application_edit {
+  background: url(../img/icons/application_edit.png);
+}
+.icon_application_error {
+  background: url(../img/icons/application_error.png);
+}
+.icon_application_form {
+  background: url(../img/icons/application_form.png);
+}
+.icon_application_form_add {
+  background: url(../img/icons/application_form_add.png);
+}
+.icon_application_form_delete {
+  background: url(../img/icons/application_form_delete.png);
+}
+.icon_application_form_edit {
+  background: url(../img/icons/application_form_edit.png);
+}
+.icon_application_form_magnify {
+  background: url(../img/icons/application_form_magnify.png);
+}
+.icon_application_get {
+  background: url(../img/icons/application_get.png);
+}
+.icon_application_go {
+  background: url(../img/icons/application_go.png);
+}
+.icon_application_home {
+  background: url(../img/icons/application_home.png);
+}
+.icon_application_key {
+  background: url(../img/icons/application_key.png);
+}
+.icon_application_lightning {
+  background: url(../img/icons/application_lightning.png);
+}
+.icon_application_link {
+  background: url(../img/icons/application_link.png);
+}
+.icon_application_osx {
+  background: url(../img/icons/application_osx.png);
+}
+.icon_application_osx_terminal {
+  background: url(../img/icons/application_osx_terminal.png);
+}
+.icon_application_put {
+  background: url(../img/icons/application_put.png);
+}
+.icon_application_side_boxes {
+  background: url(../img/icons/application_side_boxes.png);
+}
+.icon_application_side_contract {
+  background: url(../img/icons/application_side_contract.png);
+}
+.icon_application_side_expand {
+  background: url(../img/icons/application_side_expand.png);
+}
+.icon_application_side_list {
+  background: url(../img/icons/application_side_list.png);
+}
+.icon_application_side_tree {
+  background: url(../img/icons/application_side_tree.png);
+}
+.icon_application_split {
+  background: url(../img/icons/application_split.png);
+}
+.icon_application_tile_horizontal {
+  background: url(../img/icons/application_tile_horizontal.png);
+}
+.icon_application_tile_vertical {
+  background: url(../img/icons/application_tile_vertical.png);
+}
+.icon_application_view_columns {
+  background: url(../img/icons/application_view_columns.png);
+}
+.icon_application_view_detail {
+  background: url(../img/icons/application_view_detail.png);
+}
+.icon_application_view_gallery {
+  background: url(../img/icons/application_view_gallery.png);
+}
+.icon_application_view_icons {
+  background: url(../img/icons/application_view_icons.png);
+}
+.icon_application_view_list {
+  background: url(../img/icons/application_view_list.png);
+}
+.icon_application_view_tile {
+  background: url(../img/icons/application_view_tile.png);
+}
+.icon_application_xp {
+  background: url(../img/icons/application_xp.png);
+}
+.icon_application_xp_terminal {
+  background: url(../img/icons/application_xp_terminal.png);
+}
+.icon_arrow_branch {
+  background: url(../img/icons/arrow_branch.png);
+}
+.icon_arrow_divide {
+  background: url(../img/icons/arrow_divide.png);
+}
+.icon_arrow_down {
+  background: url(../img/icons/arrow_down.png);
+}
+.icon_arrow_in {
+  background: url(../img/icons/arrow_in.png);
+}
+.icon_arrow_inout {
+  background: url(../img/icons/arrow_inout.png);
+}
+.icon_arrow_join {
+  background: url(../img/icons/arrow_join.png);
+}
+.icon_arrow_left {
+  background: url(../img/icons/arrow_left.png);
+}
+.icon_arrow_merge {
+  background: url(../img/icons/arrow_merge.png);
+}
+.icon_arrow_out {
+  background: url(../img/icons/arrow_out.png);
+}
+.icon_arrow_redo {
+  background: url(../img/icons/arrow_redo.png);
+}
+.icon_arrow_refresh {
+  background: url(../img/icons/arrow_refresh.png);
+}
+.icon_arrow_refresh_small {
+  background: url(../img/icons/arrow_refresh_small.png);
+}
+.icon_arrow_right {
+  background: url(../img/icons/arrow_right.png);
+}
+.icon_arrow_rotate_anticlockwise {
+  background: url(../img/icons/arrow_rotate_anticlockwise.png);
+}
+.icon_arrow_rotate_clockwise {
+  background: url(../img/icons/arrow_rotate_clockwise.png);
+}
+.icon_arrow_switch {
+  background: url(../img/icons/arrow_switch.png);
+}
+.icon_arrow_turn_left {
+  background: url(../img/icons/arrow_turn_left.png);
+}
+.icon_arrow_turn_right {
+  background: url(../img/icons/arrow_turn_right.png);
+}
+.icon_arrow_undo {
+  background: url(../img/icons/arrow_undo.png);
+}
+.icon_arrow_up {
+  background: url(../img/icons/arrow_up.png);
+}
+.icon_asterisk_orange {
+  background: url(../img/icons/asterisk_orange.png);
+}
+.icon_asterisk_yellow {
+  background: url(../img/icons/asterisk_yellow.png);
+}
+.icon_attach {
+  background: url(../img/icons/attach.png);
+}
+.icon_award_star_add {
+  background: url(../img/icons/award_star_add.png);
+}
+.icon_award_star_bronze_1 {
+  background: url(../img/icons/award_star_bronze_1.png);
+}
+.icon_award_star_bronze_2 {
+  background: url(../img/icons/award_star_bronze_2.png);
+}
+.icon_award_star_bronze_3 {
+  background: url(../img/icons/award_star_bronze_3.png);
+}
+.icon_award_star_delete {
+  background: url(../img/icons/award_star_delete.png);
+}
+.icon_award_star_gold_1 {
+  background: url(../img/icons/award_star_gold_1.png);
+}
+.icon_award_star_gold_2 {
+  background: url(../img/icons/award_star_gold_2.png);
+}
+.icon_award_star_gold_3 {
+  background: url(../img/icons/award_star_gold_3.png);
+}
+.icon_award_star_silver_1 {
+  background: url(../img/icons/award_star_silver_1.png);
+}
+.icon_award_star_silver_2 {
+  background: url(../img/icons/award_star_silver_2.png);
+}
+.icon_award_star_silver_3 {
+  background: url(../img/icons/award_star_silver_3.png);
+}
+.icon_basket {
+  background: url(../img/icons/basket.png);
+}
+.icon_basket_add {
+  background: url(../img/icons/basket_add.png);
+}
+.icon_basket_delete {
+  background: url(../img/icons/basket_delete.png);
+}
+.icon_basket_edit {
+  background: url(../img/icons/basket_edit.png);
+}
+.icon_basket_error {
+  background: url(../img/icons/basket_error.png);
+}
+.icon_basket_go {
+  background: url(../img/icons/basket_go.png);
+}
+.icon_basket_put {
+  background: url(../img/icons/basket_put.png);
+}
+.icon_basket_remove {
+  background: url(../img/icons/basket_remove.png);
+}
+.icon_bell {
+  background: url(../img/icons/bell.png);
+}
+.icon_bell_add {
+  background: url(../img/icons/bell_add.png);
+}
+.icon_bell_delete {
+  background: url(../img/icons/bell_delete.png);
+}
+.icon_bell_error {
+  background: url(../img/icons/bell_error.png);
+}
+.icon_bell_go {
+  background: url(../img/icons/bell_go.png);
+}
+.icon_bell_link {
+  background: url(../img/icons/bell_link.png);
+}
+.icon_bin {
+  background: url(../img/icons/bin.png);
+}
+.icon_bin_closed {
+  background: url(../img/icons/bin_closed.png);
+}
+.icon_bin_empty {
+  background: url(../img/icons/bin_empty.png);
+}
+.icon_bomb {
+  background: url(../img/icons/bomb.png);
+}
+.icon_book {
+  background: url(../img/icons/book.png);
+}
+.icon_book_add {
+  background: url(../img/icons/book_add.png);
+}
+.icon_book_addresses {
+  background: url(../img/icons/book_addresses.png);
+}
+.icon_book_delete {
+  background: url(../img/icons/book_delete.png);
+}
+.icon_book_edit {
+  background: url(../img/icons/book_edit.png);
+}
+.icon_book_error {
+  background: url(../img/icons/book_error.png);
+}
+.icon_book_go {
+  background: url(../img/icons/book_go.png);
+}
+.icon_book_key {
+  background: url(../img/icons/book_key.png);
+}
+.icon_book_link {
+  background: url(../img/icons/book_link.png);
+}
+.icon_book_next {
+  background: url(../img/icons/book_next.png);
+}
+.icon_book_open {
+  background: url(../img/icons/book_open.png);
+}
+.icon_book_previous {
+  background: url(../img/icons/book_previous.png);
+}
+.icon_box {
+  background: url(../img/icons/box.png);
+}
+.icon_brick {
+  background: url(../img/icons/brick.png);
+}
+.icon_brick_add {
+  background: url(../img/icons/brick_add.png);
+}
+.icon_brick_delete {
+  background: url(../img/icons/brick_delete.png);
+}
+.icon_brick_edit {
+  background: url(../img/icons/brick_edit.png);
+}
+.icon_brick_error {
+  background: url(../img/icons/brick_error.png);
+}
+.icon_brick_go {
+  background: url(../img/icons/brick_go.png);
+}
+.icon_brick_link {
+  background: url(../img/icons/brick_link.png);
+}
+.icon_bricks {
+  background: url(../img/icons/bricks.png);
+}
+.icon_briefcase {
+  background: url(../img/icons/briefcase.png);
+}
+.icon_bug {
+  background: url(../img/icons/bug.png);
+}
+.icon_bug_add {
+  background: url(../img/icons/bug_add.png);
+}
+.icon_bug_delete {
+  background: url(../img/icons/bug_delete.png);
+}
+.icon_bug_edit {
+  background: url(../img/icons/bug_edit.png);
+}
+.icon_bug_error {
+  background: url(../img/icons/bug_error.png);
+}
+.icon_bug_go {
+  background: url(../img/icons/bug_go.png);
+}
+.icon_bug_link {
+  background: url(../img/icons/bug_link.png);
+}
+.icon_building {
+  background: url(../img/icons/building.png);
+}
+.icon_building_add {
+  background: url(../img/icons/building_add.png);
+}
+.icon_building_delete {
+  background: url(../img/icons/building_delete.png);
+}
+.icon_building_edit {
+  background: url(../img/icons/building_edit.png);
+}
+.icon_building_error {
+  background: url(../img/icons/building_error.png);
+}
+.icon_building_go {
+  background: url(../img/icons/building_go.png);
+}
+.icon_building_key {
+  background: url(../img/icons/building_key.png);
+}
+.icon_building_link {
+  background: url(../img/icons/building_link.png);
+}
+.icon_bullet_add {
+  background: url(../img/icons/bullet_add.png);
+}
+.icon_bullet_arrow_bottom {
+  background: url(../img/icons/bullet_arrow_bottom.png);
+}
+.icon_bullet_arrow_down {
+  background: url(../img/icons/bullet_arrow_down.png);
+}
+.icon_bullet_arrow_top {
+  background: url(../img/icons/bullet_arrow_top.png);
+}
+.icon_bullet_arrow_up {
+  background: url(../img/icons/bullet_arrow_up.png);
+}
+.icon_bullet_black {
+  background: url(../img/icons/bullet_black.png);
+}
+.icon_bullet_blue {
+  background: url(../img/icons/bullet_blue.png);
+}
+.icon_bullet_delete {
+  background: url(../img/icons/bullet_delete.png);
+}
+.icon_bullet_disk {
+  background: url(../img/icons/bullet_disk.png);
+}
+.icon_bullet_error {
+  background: url(../img/icons/bullet_error.png);
+}
+.icon_bullet_feed {
+  background: url(../img/icons/bullet_feed.png);
+}
+.icon_bullet_go {
+  background: url(../img/icons/bullet_go.png);
+}
+.icon_bullet_green {
+  background: url(../img/icons/bullet_green.png);
+}
+.icon_bullet_key {
+  background: url(../img/icons/bullet_key.png);
+}
+.icon_bullet_orange {
+  background: url(../img/icons/bullet_orange.png);
+}
+.icon_bullet_picture {
+  background: url(../img/icons/bullet_picture.png);
+}
+.icon_bullet_pink {
+  background: url(../img/icons/bullet_pink.png);
+}
+.icon_bullet_purple {
+  background: url(../img/icons/bullet_purple.png);
+}
+.icon_bullet_red {
+  background: url(../img/icons/bullet_red.png);
+}
+.icon_bullet_star {
+  background: url(../img/icons/bullet_star.png);
+}
+.icon_bullet_toggle_minus {
+  background: url(../img/icons/bullet_toggle_minus.png);
+}
+.icon_bullet_toggle_plus {
+  background: url(../img/icons/bullet_toggle_plus.png);
+}
+.icon_bullet_white {
+  background: url(../img/icons/bullet_white.png);
+}
+.icon_bullet_wrench {
+  background: url(../img/icons/bullet_wrench.png);
+}
+.icon_bullet_yellow {
+  background: url(../img/icons/bullet_yellow.png);
+}
+.icon_cake {
+  background: url(../img/icons/cake.png);
+}
+.icon_calculator {
+  background: url(../img/icons/calculator.png);
+}
+.icon_calculator_add {
+  background: url(../img/icons/calculator_add.png);
+}
+.icon_calculator_delete {
+  background: url(../img/icons/calculator_delete.png);
+}
+.icon_calculator_edit {
+  background: url(../img/icons/calculator_edit.png);
+}
+.icon_calculator_error {
+  background: url(../img/icons/calculator_error.png);
+}
+.icon_calculator_link {
+  background: url(../img/icons/calculator_link.png);
+}
+.icon_calendar {
+  background: url(../img/icons/calendar.png);
+}
+.icon_calendar_add {
+  background: url(../img/icons/calendar_add.png);
+}
+.icon_calendar_delete {
+  background: url(../img/icons/calendar_delete.png);
+}
+.icon_calendar_edit {
+  background: url(../img/icons/calendar_edit.png);
+}
+.icon_calendar_link {
+  background: url(../img/icons/calendar_link.png);
+}
+.icon_calendar_view_day {
+  background: url(../img/icons/calendar_view_day.png);
+}
+.icon_calendar_view_month {
+  background: url(../img/icons/calendar_view_month.png);
+}
+.icon_calendar_view_week {
+  background: url(../img/icons/calendar_view_week.png);
+}
+.icon_camera {
+  background: url(../img/icons/camera.png);
+}
+.icon_camera_add {
+  background: url(../img/icons/camera_add.png);
+}
+.icon_camera_delete {
+  background: url(../img/icons/camera_delete.png);
+}
+.icon_camera_edit {
+  background: url(../img/icons/camera_edit.png);
+}
+.icon_camera_error {
+  background: url(../img/icons/camera_error.png);
+}
+.icon_camera_go {
+  background: url(../img/icons/camera_go.png);
+}
+.icon_camera_link {
+  background: url(../img/icons/camera_link.png);
+}
+.icon_camera_small {
+  background: url(../img/icons/camera_small.png);
+}
+.icon_cancel {
+  background: url(../img/icons/cancel.png);
+}
+.icon_car {
+  background: url(../img/icons/car.png);
+}
+.icon_car_add {
+  background: url(../img/icons/car_add.png);
+}
+.icon_car_delete {
+  background: url(../img/icons/car_delete.png);
+}
+.icon_cart {
+  background: url(../img/icons/cart.png);
+}
+.icon_cart_add {
+  background: url(../img/icons/cart_add.png);
+}
+.icon_cart_delete {
+  background: url(../img/icons/cart_delete.png);
+}
+.icon_cart_edit {
+  background: url(../img/icons/cart_edit.png);
+}
+.icon_cart_error {
+  background: url(../img/icons/cart_error.png);
+}
+.icon_cart_go {
+  background: url(../img/icons/cart_go.png);
+}
+.icon_cart_put {
+  background: url(../img/icons/cart_put.png);
+}
+.icon_cart_remove {
+  background: url(../img/icons/cart_remove.png);
+}
+.icon_cd {
+  background: url(../img/icons/cd.png);
+}
+.icon_cd_add {
+  background: url(../img/icons/cd_add.png);
+}
+.icon_cd_burn {
+  background: url(../img/icons/cd_burn.png);
+}
+.icon_cd_delete {
+  background: url(../img/icons/cd_delete.png);
+}
+.icon_cd_edit {
+  background: url(../img/icons/cd_edit.png);
+}
+.icon_cd_eject {
+  background: url(../img/icons/cd_eject.png);
+}
+.icon_cd_go {
+  background: url(../img/icons/cd_go.png);
+}
+.icon_chart_bar {
+  background: url(../img/icons/chart_bar.png);
+}
+.icon_chart_bar_add {
+  background: url(../img/icons/chart_bar_add.png);
+}
+.icon_chart_bar_delete {
+  background: url(../img/icons/chart_bar_delete.png);
+}
+.icon_chart_bar_edit {
+  background: url(../img/icons/chart_bar_edit.png);
+}
+.icon_chart_bar_error {
+  background: url(../img/icons/chart_bar_error.png);
+}
+.icon_chart_bar_link {
+  background: url(../img/icons/chart_bar_link.png);
+}
+.icon_chart_curve {
+  background: url(../img/icons/chart_curve.png);
+}
+.icon_chart_curve_add {
+  background: url(../img/icons/chart_curve_add.png);
+}
+.icon_chart_curve_delete {
+  background: url(../img/icons/chart_curve_delete.png);
+}
+.icon_chart_curve_edit {
+  background: url(../img/icons/chart_curve_edit.png);
+}
+.icon_chart_curve_error {
+  background: url(../img/icons/chart_curve_error.png);
+}
+.icon_chart_curve_go {
+  background: url(../img/icons/chart_curve_go.png);
+}
+.icon_chart_curve_link {
+  background: url(../img/icons/chart_curve_link.png);
+}
+.icon_chart_line {
+  background: url(../img/icons/chart_line.png);
+}
+.icon_chart_line_add {
+  background: url(../img/icons/chart_line_add.png);
+}
+.icon_chart_line_delete {
+  background: url(../img/icons/chart_line_delete.png);
+}
+.icon_chart_line_edit {
+  background: url(../img/icons/chart_line_edit.png);
+}
+.icon_chart_line_error {
+  background: url(../img/icons/chart_line_error.png);
+}
+.icon_chart_line_link {
+  background: url(../img/icons/chart_line_link.png);
+}
+.icon_chart_organisation {
+  background: url(../img/icons/chart_organisation.png);
+}
+.icon_chart_organisation_add {
+  background: url(../img/icons/chart_organisation_add.png);
+}
+.icon_chart_organisation_delete {
+  background: url(../img/icons/chart_organisation_delete.png);
+}
+.icon_chart_pie {
+  background: url(../img/icons/chart_pie.png);
+}
+.icon_chart_pie_add {
+  background: url(../img/icons/chart_pie_add.png);
+}
+.icon_chart_pie_delete {
+  background: url(../img/icons/chart_pie_delete.png);
+}
+.icon_chart_pie_edit {
+  background: url(../img/icons/chart_pie_edit.png);
+}
+.icon_chart_pie_error {
+  background: url(../img/icons/chart_pie_error.png);
+}
+.icon_chart_pie_link {
+  background: url(../img/icons/chart_pie_link.png);
+}
+.icon_clock {
+  background: url(../img/icons/clock.png);
+}
+.icon_clock_add {
+  background: url(../img/icons/clock_add.png);
+}
+.icon_clock_delete {
+  background: url(../img/icons/clock_delete.png);
+}
+.icon_clock_edit {
+  background: url(../img/icons/clock_edit.png);
+}
+.icon_clock_error {
+  background: url(../img/icons/clock_error.png);
+}
+.icon_clock_go {
+  background: url(../img/icons/clock_go.png);
+}
+.icon_clock_link {
+  background: url(../img/icons/clock_link.png);
+}
+.icon_clock_pause {
+  background: url(../img/icons/clock_pause.png);
+}
+.icon_clock_play {
+  background: url(../img/icons/clock_play.png);
+}
+.icon_clock_red {
+  background: url(../img/icons/clock_red.png);
+}
+.icon_clock_stop {
+  background: url(../img/icons/clock_stop.png);
+}
+.icon_cog {
+  background: url(../img/icons/cog.png);
+}
+.icon_cog_add {
+  background: url(../img/icons/cog_add.png);
+}
+.icon_cog_delete {
+  background: url(../img/icons/cog_delete.png);
+}
+.icon_cog_edit {
+  background: url(../img/icons/cog_edit.png);
+}
+.icon_cog_error {
+  background: url(../img/icons/cog_error.png);
+}
+.icon_cog_go {
+  background: url(../img/icons/cog_go.png);
+}
+.icon_coins {
+  background: url(../img/icons/coins.png);
+}
+.icon_coins_add {
+  background: url(../img/icons/coins_add.png);
+}
+.icon_coins_delete {
+  background: url(../img/icons/coins_delete.png);
+}
+.icon_color_swatch {
+  background: url(../img/icons/color_swatch.png);
+}
+.icon_color_wheel {
+  background: url(../img/icons/color_wheel.png);
+}
+.icon_comment {
+  background: url(../img/icons/comment.png);
+}
+.icon_comment_add {
+  background: url(../img/icons/comment_add.png);
+}
+.icon_comment_delete {
+  background: url(../img/icons/comment_delete.png);
+}
+.icon_comment_edit {
+  background: url(../img/icons/comment_edit.png);
+}
+.icon_comments {
+  background: url(../img/icons/comments.png);
+}
+.icon_comments_add {
+  background: url(../img/icons/comments_add.png);
+}
+.icon_comments_delete {
+  background: url(../img/icons/comments_delete.png);
+}
+.icon_compress {
+  background: url(../img/icons/compress.png);
+}
+.icon_computer {
+  background: url(../img/icons/computer.png);
+}
+.icon_computer_add {
+  background: url(../img/icons/computer_add.png);
+}
+.icon_computer_delete {
+  background: url(../img/icons/computer_delete.png);
+}
+.icon_computer_edit {
+  background: url(../img/icons/computer_edit.png);
+}
+.icon_computer_error {
+  background: url(../img/icons/computer_error.png);
+}
+.icon_computer_go {
+  background: url(../img/icons/computer_go.png);
+}
+.icon_computer_key {
+  background: url(../img/icons/computer_key.png);
+}
+.icon_computer_link {
+  background: url(../img/icons/computer_link.png);
+}
+.icon_connect {
+  background: url(../img/icons/connect.png);
+}
+.icon_contrast {
+  background: url(../img/icons/contrast.png);
+}
+.icon_contrast_decrease {
+  background: url(../img/icons/contrast_decrease.png);
+}
+.icon_contrast_high {
+  background: url(../img/icons/contrast_high.png);
+}
+.icon_contrast_increase {
+  background: url(../img/icons/contrast_increase.png);
+}
+.icon_contrast_low {
+  background: url(../img/icons/contrast_low.png);
+}
+.icon_control_eject {
+  background: url(../img/icons/control_eject.png);
+}
+.icon_control_eject_blue {
+  background: url(../img/icons/control_eject_blue.png);
+}
+.icon_control_end {
+  background: url(../img/icons/control_end.png);
+}
+.icon_control_end_blue {
+  background: url(../img/icons/control_end_blue.png);
+}
+.icon_control_equalizer {
+  background: url(../img/icons/control_equalizer.png);
+}
+.icon_control_equalizer_blue {
+  background: url(../img/icons/control_equalizer_blue.png);
+}
+.icon_control_fastforward {
+  background: url(../img/icons/control_fastforward.png);
+}
+.icon_control_fastforward_blue {
+  background: url(../img/icons/control_fastforward_blue.png);
+}
+.icon_control_pause {
+  background: url(../img/icons/control_pause.png);
+}
+.icon_control_pause_blue {
+  background: url(../img/icons/control_pause_blue.png);
+}
+.icon_control_play {
+  background: url(../img/icons/control_play.png);
+}
+.icon_control_play_blue {
+  background: url(../img/icons/control_play_blue.png);
+}
+.icon_control_repeat {
+  background: url(../img/icons/control_repeat.png);
+}
+.icon_control_repeat_blue {
+  background: url(../img/icons/control_repeat_blue.png);
+}
+.icon_control_rewind {
+  background: url(../img/icons/control_rewind.png);
+}
+.icon_control_rewind_blue {
+  background: url(../img/icons/control_rewind_blue.png);
+}
+.icon_control_start {
+  background: url(../img/icons/control_start.png);
+}
+.icon_control_start_blue {
+  background: url(../img/icons/control_start_blue.png);
+}
+.icon_control_stop {
+  background: url(../img/icons/control_stop.png);
+}
+.icon_control_stop_blue {
+  background: url(../img/icons/control_stop_blue.png);
+}
+.icon_controller {
+  background: url(../img/icons/controller.png);
+}
+.icon_controller_add {
+  background: url(../img/icons/controller_add.png);
+}
+.icon_controller_delete {
+  background: url(../img/icons/controller_delete.png);
+}
+.icon_controller_error {
+  background: url(../img/icons/controller_error.png);
+}
+.icon_creditcards {
+  background: url(../img/icons/creditcards.png);
+}
+.icon_cross {
+  background: url(../img/icons/cross.png);
+}
+.icon_css {
+  background: url(../img/icons/css.png);
+}
+.icon_css_add {
+  background: url(../img/icons/css_add.png);
+}
+.icon_css_delete {
+  background: url(../img/icons/css_delete.png);
+}
+.icon_css_go {
+  background: url(../img/icons/css_go.png);
+}
+.icon_css_valid {
+  background: url(../img/icons/css_valid.png);
+}
+.icon_cup {
+  background: url(../img/icons/cup.png);
+}
+.icon_cup_add {
+  background: url(../img/icons/cup_add.png);
+}
+.icon_cup_delete {
+  background: url(../img/icons/cup_delete.png);
+}
+.icon_cup_edit {
+  background: url(../img/icons/cup_edit.png);
+}
+.icon_cup_error {
+  background: url(../img/icons/cup_error.png);
+}
+.icon_cup_go {
+  background: url(../img/icons/cup_go.png);
+}
+.icon_cup_key {
+  background: url(../img/icons/cup_key.png);
+}
+.icon_cup_link {
+  background: url(../img/icons/cup_link.png);
+}
+.icon_cursor {
+  background: url(../img/icons/cursor.png);
+}
+.icon_cut {
+  background: url(../img/icons/cut.png);
+}
+.icon_cut_red {
+  background: url(../img/icons/cut_red.png);
+}
+.icon_database {
+  background: url(../img/icons/database.png);
+}
+.icon_database_add {
+  background: url(../img/icons/database_add.png);
+}
+.icon_database_connect {
+  background: url(../img/icons/database_connect.png);
+}
+.icon_database_delete {
+  background: url(../img/icons/database_delete.png);
+}
+.icon_database_edit {
+  background: url(../img/icons/database_edit.png);
+}
+.icon_database_error {
+  background: url(../img/icons/database_error.png);
+}
+.icon_database_gear {
+  background: url(../img/icons/database_gear.png);
+}
+.icon_database_go {
+  background: url(../img/icons/database_go.png);
+}
+.icon_database_key {
+  background: url(../img/icons/database_key.png);
+}
+.icon_database_lightning {
+  background: url(../img/icons/database_lightning.png);
+}
+.icon_database_link {
+  background: url(../img/icons/database_link.png);
+}
+.icon_database_refresh {
+  background: url(../img/icons/database_refresh.png);
+}
+.icon_database_save {
+  background: url(../img/icons/database_save.png);
+}
+.icon_database_table {
+  background: url(../img/icons/database_table.png);
+}
+.icon_date {
+  background: url(../img/icons/date.png);
+}
+.icon_date_add {
+  background: url(../img/icons/date_add.png);
+}
+.icon_date_delete {
+  background: url(../img/icons/date_delete.png);
+}
+.icon_date_edit {
+  background: url(../img/icons/date_edit.png);
+}
+.icon_date_error {
+  background: url(../img/icons/date_error.png);
+}
+.icon_date_go {
+  background: url(../img/icons/date_go.png);
+}
+.icon_date_link {
+  background: url(../img/icons/date_link.png);
+}
+.icon_date_magnify {
+  background: url(../img/icons/date_magnify.png);
+}
+.icon_date_next {
+  background: url(../img/icons/date_next.png);
+}
+.icon_date_previous {
+  background: url(../img/icons/date_previous.png);
+}
+.icon_delete {
+  background: url(../img/icons/delete.png);
+}
+.icon_disconnect {
+  background: url(../img/icons/disconnect.png);
+}
+.icon_disk {
+  background: url(../img/icons/disk.png);
+}
+.icon_disk_multiple {
+  background: url(../img/icons/disk_multiple.png);
+}
+.icon_door {
+  background: url(../img/icons/door.png);
+}
+.icon_door_in {
+  background: url(../img/icons/door_in.png);
+}
+.icon_door_open {
+  background: url(../img/icons/door_open.png);
+}
+.icon_door_out {
+  background: url(../img/icons/door_out.png);
+}
+.icon_drink {
+  background: url(../img/icons/drink.png);
+}
+.icon_drink_empty {
+  background: url(../img/icons/drink_empty.png);
+}
+.icon_drive {
+  background: url(../img/icons/drive.png);
+}
+.icon_drive_add {
+  background: url(../img/icons/drive_add.png);
+}
+.icon_drive_burn {
+  background: url(../img/icons/drive_burn.png);
+}
+.icon_drive_cd {
+  background: url(../img/icons/drive_cd.png);
+}
+.icon_drive_cd_empty {
+  background: url(../img/icons/drive_cd_empty.png);
+}
+.icon_drive_delete {
+  background: url(../img/icons/drive_delete.png);
+}
+.icon_drive_disk {
+  background: url(../img/icons/drive_disk.png);
+}
+.icon_drive_edit {
+  background: url(../img/icons/drive_edit.png);
+}
+.icon_drive_error {
+  background: url(../img/icons/drive_error.png);
+}
+.icon_drive_go {
+  background: url(../img/icons/drive_go.png);
+}
+.icon_drive_key {
+  background: url(../img/icons/drive_key.png);
+}
+.icon_drive_link {
+  background: url(../img/icons/drive_link.png);
+}
+.icon_drive_magnify {
+  background: url(../img/icons/drive_magnify.png);
+}
+.icon_drive_network {
+  background: url(../img/icons/drive_network.png);
+}
+.icon_drive_rename {
+  background: url(../img/icons/drive_rename.png);
+}
+.icon_drive_user {
+  background: url(../img/icons/drive_user.png);
+}
+.icon_drive_web {
+  background: url(../img/icons/drive_web.png);
+}
+.icon_dvd {
+  background: url(../img/icons/dvd.png);
+}
+.icon_dvd_add {
+  background: url(../img/icons/dvd_add.png);
+}
+.icon_dvd_delete {
+  background: url(../img/icons/dvd_delete.png);
+}
+.icon_dvd_edit {
+  background: url(../img/icons/dvd_edit.png);
+}
+.icon_dvd_error {
+  background: url(../img/icons/dvd_error.png);
+}
+.icon_dvd_go {
+  background: url(../img/icons/dvd_go.png);
+}
+.icon_dvd_key {
+  background: url(../img/icons/dvd_key.png);
+}
+.icon_dvd_link {
+  background: url(../img/icons/dvd_link.png);
+}
+.icon_email {
+  background: url(../img/icons/email.png);
+}
+.icon_email_add {
+  background: url(../img/icons/email_add.png);
+}
+.icon_email_attach {
+  background: url(../img/icons/email_attach.png);
+}
+.icon_email_delete {
+  background: url(../img/icons/email_delete.png);
+}
+.icon_email_edit {
+  background: url(../img/icons/email_edit.png);
+}
+.icon_email_error {
+  background: url(../img/icons/email_error.png);
+}
+.icon_email_go {
+  background: url(../img/icons/email_go.png);
+}
+.icon_email_link {
+  background: url(../img/icons/email_link.png);
+}
+.icon_email_open {
+  background: url(../img/icons/email_open.png);
+}
+.icon_email_open_image {
+  background: url(../img/icons/email_open_image.png);
+}
+.icon_emoticon_evilgrin {
+  background: url(../img/icons/emoticon_evilgrin.png);
+}
+.icon_emoticon_grin {
+  background: url(../img/icons/emoticon_grin.png);
+}
+.icon_emoticon_happy {
+  background: url(../img/icons/emoticon_happy.png);
+}
+.icon_emoticon_smile {
+  background: url(../img/icons/emoticon_smile.png);
+}
+.icon_emoticon_surprised {
+  background: url(../img/icons/emoticon_surprised.png);
+}
+.icon_emoticon_tongue {
+  background: url(../img/icons/emoticon_tongue.png);
+}
+.icon_emoticon_unhappy {
+  background: url(../img/icons/emoticon_unhappy.png);
+}
+.icon_emoticon_waii {
+  background: url(../img/icons/emoticon_waii.png);
+}
+.icon_emoticon_wink {
+  background: url(../img/icons/emoticon_wink.png);
+}
+.icon_error {
+  background: url(../img/icons/error.png);
+}
+.icon_error_add {
+  background: url(../img/icons/error_add.png);
+}
+.icon_error_delete {
+  background: url(../img/icons/error_delete.png);
+}
+.icon_error_go {
+  background: url(../img/icons/error_go.png);
+}
+.icon_exclamation {
+  background: url(../img/icons/exclamation.png);
+}
+.icon_eye {
+  background: url(../img/icons/eye.png);
+}
+.icon_feed {
+  background: url(../img/icons/feed.png);
+}
+.icon_feed_add {
+  background: url(../img/icons/feed_add.png);
+}
+.icon_feed_delete {
+  background: url(../img/icons/feed_delete.png);
+}
+.icon_feed_disk {
+  background: url(../img/icons/feed_disk.png);
+}
+.icon_feed_edit {
+  background: url(../img/icons/feed_edit.png);
+}
+.icon_feed_error {
+  background: url(../img/icons/feed_error.png);
+}
+.icon_feed_go {
+  background: url(../img/icons/feed_go.png);
+}
+.icon_feed_key {
+  background: url(../img/icons/feed_key.png);
+}
+.icon_feed_link {
+  background: url(../img/icons/feed_link.png);
+}
+.icon_feed_magnify {
+  background: url(../img/icons/feed_magnify.png);
+}
+.icon_female {
+  background: url(../img/icons/female.png);
+}
+.icon_film {
+  background: url(../img/icons/film.png);
+}
+.icon_film_add {
+  background: url(../img/icons/film_add.png);
+}
+.icon_film_delete {
+  background: url(../img/icons/film_delete.png);
+}
+.icon_film_edit {
+  background: url(../img/icons/film_edit.png);
+}
+.icon_film_error {
+  background: url(../img/icons/film_error.png);
+}
+.icon_film_go {
+  background: url(../img/icons/film_go.png);
+}
+.icon_film_key {
+  background: url(../img/icons/film_key.png);
+}
+.icon_film_link {
+  background: url(../img/icons/film_link.png);
+}
+.icon_film_save {
+  background: url(../img/icons/film_save.png);
+}
+.icon_find {
+  background: url(../img/icons/find.png);
+}
+.icon_flag_blue {
+  background: url(../img/icons/flag_blue.png);
+}
+.icon_flag_green {
+  background: url(../img/icons/flag_green.png);
+}
+.icon_flag_orange {
+  background: url(../img/icons/flag_orange.png);
+}
+.icon_flag_pink {
+  background: url(../img/icons/flag_pink.png);
+}
+.icon_flag_purple {
+  background: url(../img/icons/flag_purple.png);
+}
+.icon_flag_red {
+  background: url(../img/icons/flag_red.png);
+}
+.icon_flag_yellow {
+  background: url(../img/icons/flag_yellow.png);
+}
+.icon_folder {
+  background: url(../img/icons/folder.png);
+}
+.icon_folder_add {
+  background: url(../img/icons/folder_add.png);
+}
+.icon_folder_bell {
+  background: url(../img/icons/folder_bell.png);
+}
+.icon_folder_brick {
+  background: url(../img/icons/folder_brick.png);
+}
+.icon_folder_bug {
+  background: url(../img/icons/folder_bug.png);
+}
+.icon_folder_camera {
+  background: url(../img/icons/folder_camera.png);
+}
+.icon_folder_database {
+  background: url(../img/icons/folder_database.png);
+}
+.icon_folder_delete {
+  background: url(../img/icons/folder_delete.png);
+}
+.icon_folder_edit {
+  background: url(../img/icons/folder_edit.png);
+}
+.icon_folder_error {
+  background: url(../img/icons/folder_error.png);
+}
+.icon_folder_explore {
+  background: url(../img/icons/folder_explore.png);
+}
+.icon_folder_feed {
+  background: url(../img/icons/folder_feed.png);
+}
+.icon_folder_find {
+  background: url(../img/icons/folder_find.png);
+}
+.icon_folder_go {
+  background: url(../img/icons/folder_go.png);
+}
+.icon_folder_heart {
+  background: url(../img/icons/folder_heart.png);
+}
+.icon_folder_image {
+  background: url(../img/icons/folder_image.png);
+}
+.icon_folder_key {
+  background: url(../img/icons/folder_key.png);
+}
+.icon_folder_lightbulb {
+  background: url(../img/icons/folder_lightbulb.png);
+}
+.icon_folder_link {
+  background: url(../img/icons/folder_link.png);
+}
+.icon_folder_magnify {
+  background: url(../img/icons/folder_magnify.png);
+}
+.icon_folder_page {
+  background: url(../img/icons/folder_page.png);
+}
+.icon_folder_page_white {
+  background: url(../img/icons/folder_page_white.png);
+}
+.icon_folder_palette {
+  background: url(../img/icons/folder_palette.png);
+}
+.icon_folder_picture {
+  background: url(../img/icons/folder_picture.png);
+}
+.icon_folder_star {
+  background: url(../img/icons/folder_star.png);
+}
+.icon_folder_table {
+  background: url(../img/icons/folder_table.png);
+}
+.icon_folder_user {
+  background: url(../img/icons/folder_user.png);
+}
+.icon_folder_wrench {
+  background: url(../img/icons/folder_wrench.png);
+}
+.icon_font {
+  background: url(../img/icons/font.png);
+}
+.icon_font_add {
+  background: url(../img/icons/font_add.png);
+}
+.icon_font_delete {
+  background: url(../img/icons/font_delete.png);
+}
+.icon_font_go {
+  background: url(../img/icons/font_go.png);
+}
+.icon_group {
+  background: url(../img/icons/group.png);
+}
+.icon_group_add {
+  background: url(../img/icons/group_add.png);
+}
+.icon_group_delete {
+  background: url(../img/icons/group_delete.png);
+}
+.icon_group_edit {
+  background: url(../img/icons/group_edit.png);
+}
+.icon_group_error {
+  background: url(../img/icons/group_error.png);
+}
+.icon_group_gear {
+  background: url(../img/icons/group_gear.png);
+}
+.icon_group_go {
+  background: url(../img/icons/group_go.png);
+}
+.icon_group_key {
+  background: url(../img/icons/group_key.png);
+}
+.icon_group_link {
+  background: url(../img/icons/group_link.png);
+}
+.icon_heart {
+  background: url(../img/icons/heart.png);
+}
+.icon_heart_add {
+  background: url(../img/icons/heart_add.png);
+}
+.icon_heart_delete {
+  background: url(../img/icons/heart_delete.png);
+}
+.icon_help {
+  background: url(../img/icons/help.png);
+}
+.icon_hourglass {
+  background: url(../img/icons/hourglass.png);
+}
+.icon_hourglass_add {
+  background: url(../img/icons/hourglass_add.png);
+}
+.icon_hourglass_delete {
+  background: url(../img/icons/hourglass_delete.png);
+}
+.icon_hourglass_go {
+  background: url(../img/icons/hourglass_go.png);
+}
+.icon_hourglass_link {
+  background: url(../img/icons/hourglass_link.png);
+}
+.icon_house {
+  background: url(../img/icons/house.png);
+}
+.icon_house_go {
+  background: url(../img/icons/house_go.png);
+}
+.icon_house_link {
+  background: url(../img/icons/house_link.png);
+}
+.icon_html {
+  background: url(../img/icons/html.png);
+}
+.icon_html_add {
+  background: url(../img/icons/html_add.png);
+}
+.icon_html_delete {
+  background: url(../img/icons/html_delete.png);
+}
+.icon_html_go {
+  background: url(../img/icons/html_go.png);
+}
+.icon_html_valid {
+  background: url(../img/icons/html_valid.png);
+}
+.icon_image {
+  background: url(../img/icons/image.png);
+}
+.icon_image_add {
+  background: url(../img/icons/image_add.png);
+}
+.icon_image_delete {
+  background: url(../img/icons/image_delete.png);
+}
+.icon_image_edit {
+  background: url(../img/icons/image_edit.png);
+}
+.icon_image_link {
+  background: url(../img/icons/image_link.png);
+}
+.icon_images {
+  background: url(../img/icons/images.png);
+}
+.icon_information {
+  background: url(../img/icons/information.png);
+}
+.icon_ipod {
+  background: url(../img/icons/ipod.png);
+}
+.icon_ipod_cast {
+  background: url(../img/icons/ipod_cast.png);
+}
+.icon_ipod_cast_add {
+  background: url(../img/icons/ipod_cast_add.png);
+}
+.icon_ipod_cast_delete {
+  background: url(../img/icons/ipod_cast_delete.png);
+}
+.icon_ipod_sound {
+  background: url(../img/icons/ipod_sound.png);
+}
+.icon_joystick {
+  background: url(../img/icons/joystick.png);
+}
+.icon_joystick_add {
+  background: url(../img/icons/joystick_add.png);
+}
+.icon_joystick_delete {
+  background: url(../img/icons/joystick_delete.png);
+}
+.icon_joystick_error {
+  background: url(../img/icons/joystick_error.png);
+}
+.icon_key {
+  background: url(../img/icons/key.png);
+}
+.icon_key_add {
+  background: url(../img/icons/key_add.png);
+}
+.icon_key_delete {
+  background: url(../img/icons/key_delete.png);
+}
+.icon_key_go {
+  background: url(../img/icons/key_go.png);
+}
+.icon_keyboard {
+  background: url(../img/icons/keyboard.png);
+}
+.icon_keyboard_add {
+  background: url(../img/icons/keyboard_add.png);
+}
+.icon_keyboard_delete {
+  background: url(../img/icons/keyboard_delete.png);
+}
+.icon_keyboard_magnify {
+  background: url(../img/icons/keyboard_magnify.png);
+}
+.icon_layers {
+  background: url(../img/icons/layers.png);
+}
+.icon_layout {
+  background: url(../img/icons/layout.png);
+}
+.icon_layout_add {
+  background: url(../img/icons/layout_add.png);
+}
+.icon_layout_content {
+  background: url(../img/icons/layout_content.png);
+}
+.icon_layout_delete {
+  background: url(../img/icons/layout_delete.png);
+}
+.icon_layout_edit {
+  background: url(../img/icons/layout_edit.png);
+}
+.icon_layout_error {
+  background: url(../img/icons/layout_error.png);
+}
+.icon_layout_header {
+  background: url(../img/icons/layout_header.png);
+}
+.icon_layout_link {
+  background: url(../img/icons/layout_link.png);
+}
+.icon_layout_sidebar {
+  background: url(../img/icons/layout_sidebar.png);
+}
+.icon_lightbulb {
+  background: url(../img/icons/lightbulb.png);
+}
+.icon_lightbulb_add {
+  background: url(../img/icons/lightbulb_add.png);
+}
+.icon_lightbulb_delete {
+  background: url(../img/icons/lightbulb_delete.png);
+}
+.icon_lightbulb_off {
+  background: url(../img/icons/lightbulb_off.png);
+}
+.icon_lightning {
+  background: url(../img/icons/lightning.png);
+}
+.icon_lightning_add {
+  background: url(../img/icons/lightning_add.png);
+}
+.icon_lightning_delete {
+  background: url(../img/icons/lightning_delete.png);
+}
+.icon_lightning_go {
+  background: url(../img/icons/lightning_go.png);
+}
+.icon_link {
+  background: url(../img/icons/link.png);
+}
+.icon_link_add {
+  background: url(../img/icons/link_add.png);
+}
+.icon_link_break {
+  background: url(../img/icons/link_break.png);
+}
+.icon_link_delete {
+  background: url(../img/icons/link_delete.png);
+}
+.icon_link_edit {
+  background: url(../img/icons/link_edit.png);
+}
+.icon_link_error {
+  background: url(../img/icons/link_error.png);
+}
+.icon_link_go {
+  background: url(../img/icons/link_go.png);
+}
+.icon_lock {
+  background: url(../img/icons/lock.png);
+}
+.icon_lock_add {
+  background: url(../img/icons/lock_add.png);
+}
+.icon_lock_break {
+  background: url(../img/icons/lock_break.png);
+}
+.icon_lock_delete {
+  background: url(../img/icons/lock_delete.png);
+}
+.icon_lock_edit {
+  background: url(../img/icons/lock_edit.png);
+}
+.icon_lock_go {
+  background: url(../img/icons/lock_go.png);
+}
+.icon_lock_open {
+  background: url(../img/icons/lock_open.png);
+}
+.icon_lorry {
+  background: url(../img/icons/lorry.png);
+}
+.icon_lorry_add {
+  background: url(../img/icons/lorry_add.png);
+}
+.icon_lorry_delete {
+  background: url(../img/icons/lorry_delete.png);
+}
+.icon_lorry_error {
+  background: url(../img/icons/lorry_error.png);
+}
+.icon_lorry_flatbed {
+  background: url(../img/icons/lorry_flatbed.png);
+}
+.icon_lorry_go {
+  background: url(../img/icons/lorry_go.png);
+}
+.icon_lorry_link {
+  background: url(../img/icons/lorry_link.png);
+}
+.icon_magifier_zoom_out {
+  background: url(../img/icons/magifier_zoom_out.png);
+}
+.icon_magnifier {
+  background: url(../img/icons/magnifier.png);
+}
+.icon_magnifier_zoom_in {
+  background: url(../img/icons/magnifier_zoom_in.png);
+}
+.icon_male {
+  background: url(../img/icons/male.png);
+}
+.icon_map {
+  background: url(../img/icons/map.png);
+}
+.icon_map_add {
+  background: url(../img/icons/map_add.png);
+}
+.icon_map_delete {
+  background: url(../img/icons/map_delete.png);
+}
+.icon_map_edit {
+  background: url(../img/icons/map_edit.png);
+}
+.icon_map_go {
+  background: url(../img/icons/map_go.png);
+}
+.icon_map_magnify {
+  background: url(../img/icons/map_magnify.png);
+}
+.icon_medal_bronze_1 {
+  background: url(../img/icons/medal_bronze_1.png);
+}
+.icon_medal_bronze_2 {
+  background: url(../img/icons/medal_bronze_2.png);
+}
+.icon_medal_bronze_3 {
+  background: url(../img/icons/medal_bronze_3.png);
+}
+.icon_medal_bronze_add {
+  background: url(../img/icons/medal_bronze_add.png);
+}
+.icon_medal_bronze_delete {
+  background: url(../img/icons/medal_bronze_delete.png);
+}
+.icon_medal_gold_1 {
+  background: url(../img/icons/medal_gold_1.png);
+}
+.icon_medal_gold_2 {
+  background: url(../img/icons/medal_gold_2.png);
+}
+.icon_medal_gold_3 {
+  background: url(../img/icons/medal_gold_3.png);
+}
+.icon_medal_gold_add {
+  background: url(../img/icons/medal_gold_add.png);
+}
+.icon_medal_gold_delete {
+  background: url(../img/icons/medal_gold_delete.png);
+}
+.icon_medal_silver_1 {
+  background: url(../img/icons/medal_silver_1.png);
+}
+.icon_medal_silver_2 {
+  background: url(../img/icons/medal_silver_2.png);
+}
+.icon_medal_silver_3 {
+  background: url(../img/icons/medal_silver_3.png);
+}
+.icon_medal_silver_add {
+  background: url(../img/icons/medal_silver_add.png);
+}
+.icon_medal_silver_delete {
+  background: url(../img/icons/medal_silver_delete.png);
+}
+.icon_money {
+  background: url(../img/icons/money.png);
+}
+.icon_money_add {
+  background: url(../img/icons/money_add.png);
+}
+.icon_money_delete {
+  background: url(../img/icons/money_delete.png);
+}
+.icon_money_dollar {
+  background: url(../img/icons/money_dollar.png);
+}
+.icon_money_euro {
+  background: url(../img/icons/money_euro.png);
+}
+.icon_money_pound {
+  background: url(../img/icons/money_pound.png);
+}
+.icon_money_yen {
+  background: url(../img/icons/money_yen.png);
+}
+.icon_monitor {
+  background: url(../img/icons/monitor.png);
+}
+.icon_monitor_add {
+  background: url(../img/icons/monitor_add.png);
+}
+.icon_monitor_delete {
+  background: url(../img/icons/monitor_delete.png);
+}
+.icon_monitor_edit {
+  background: url(../img/icons/monitor_edit.png);
+}
+.icon_monitor_error {
+  background: url(../img/icons/monitor_error.png);
+}
+.icon_monitor_go {
+  background: url(../img/icons/monitor_go.png);
+}
+.icon_monitor_lightning {
+  background: url(../img/icons/monitor_lightning.png);
+}
+.icon_monitor_link {
+  background: url(../img/icons/monitor_link.png);
+}
+.icon_mouse {
+  background: url(../img/icons/mouse.png);
+}
+.icon_mouse_add {
+  background: url(../img/icons/mouse_add.png);
+}
+.icon_mouse_delete {
+  background: url(../img/icons/mouse_delete.png);
+}
+.icon_mouse_error {
+  background: url(../img/icons/mouse_error.png);
+}
+.icon_music {
+  background: url(../img/icons/music.png);
+}
+.icon_new {
+  background: url(../img/icons/new.png);
+}
+.icon_newspaper {
+  background: url(../img/icons/newspaper.png);
+}
+.icon_newspaper_add {
+  background: url(../img/icons/newspaper_add.png);
+}
+.icon_newspaper_delete {
+  background: url(../img/icons/newspaper_delete.png);
+}
+.icon_newspaper_go {
+  background: url(../img/icons/newspaper_go.png);
+}
+.icon_newspaper_link {
+  background: url(../img/icons/newspaper_link.png);
+}
+.icon_note {
+  background: url(../img/icons/note.png);
+}
+.icon_note_add {
+  background: url(../img/icons/note_add.png);
+}
+.icon_note_delete {
+  background: url(../img/icons/note_delete.png);
+}
+.icon_note_edit {
+  background: url(../img/icons/note_edit.png);
+}
+.icon_note_error {
+  background: url(../img/icons/note_error.png);
+}
+.icon_note_go {
+  background: url(../img/icons/note_go.png);
+}
+.icon_overlays {
+  background: url(../img/icons/overlays.png);
+}
+.icon_package {
+  background: url(../img/icons/package.png);
+}
+.icon_package_add {
+  background: url(../img/icons/package_add.png);
+}
+.icon_package_delete {
+  background: url(../img/icons/package_delete.png);
+}
+.icon_package_go {
+  background: url(../img/icons/package_go.png);
+}
+.icon_package_green {
+  background: url(../img/icons/package_green.png);
+}
+.icon_package_link {
+  background: url(../img/icons/package_link.png);
+}
+.icon_page {
+  background: url(../img/icons/page.png);
+}
+.icon_page_add {
+  background: url(../img/icons/page_add.png);
+}
+.icon_page_attach {
+  background: url(../img/icons/page_attach.png);
+}
+.icon_page_code {
+  background: url(../img/icons/page_code.png);
+}
+.icon_page_copy {
+  background: url(../img/icons/page_copy.png);
+}
+.icon_page_delete {
+  background: url(../img/icons/page_delete.png);
+}
+.icon_page_edit {
+  background: url(../img/icons/page_edit.png);
+}
+.icon_page_error {
+  background: url(../img/icons/page_error.png);
+}
+.icon_page_excel {
+  background: url(../img/icons/page_excel.png);
+}
+.icon_page_find {
+  background: url(../img/icons/page_find.png);
+}
+.icon_page_gear {
+  background: url(../img/icons/page_gear.png);
+}
+.icon_page_go {
+  background: url(../img/icons/page_go.png);
+}
+.icon_page_green {
+  background: url(../img/icons/page_green.png);
+}
+.icon_page_key {
+  background: url(../img/icons/page_key.png);
+}
+.icon_page_lightning {
+  background: url(../img/icons/page_lightning.png);
+}
+.icon_page_link {
+  background: url(../img/icons/page_link.png);
+}
+.icon_page_paintbrush {
+  background: url(../img/icons/page_paintbrush.png);
+}
+.icon_page_paste {
+  background: url(../img/icons/page_paste.png);
+}
+.icon_page_red {
+  background: url(../img/icons/page_red.png);
+}
+.icon_page_refresh {
+  background: url(../img/icons/page_refresh.png);
+}
+.icon_page_save {
+  background: url(../img/icons/page_save.png);
+}
+.icon_page_white {
+  background: url(../img/icons/page_white.png);
+}
+.icon_page_white_acrobat {
+  background: url(../img/icons/page_white_acrobat.png);
+}
+.icon_page_white_actionscript {
+  background: url(../img/icons/page_white_actionscript.png);
+}
+.icon_page_white_add {
+  background: url(../img/icons/page_white_add.png);
+}
+.icon_page_white_c {
+  background: url(../img/icons/page_white_c.png);
+}
+.icon_page_white_camera {
+  background: url(../img/icons/page_white_camera.png);
+}
+.icon_page_white_cd {
+  background: url(../img/icons/page_white_cd.png);
+}
+.icon_page_white_code {
+  background: url(../img/icons/page_white_code.png);
+}
+.icon_page_white_code_red {
+  background: url(../img/icons/page_white_code_red.png);
+}
+.icon_page_white_coldfusion {
+  background: url(../img/icons/page_white_coldfusion.png);
+}
+.icon_page_white_compressed {
+  background: url(../img/icons/page_white_compressed.png);
+}
+.icon_page_white_copy {
+  background: url(../img/icons/page_white_copy.png);
+}
+.icon_page_white_cplusplus {
+  background: url(../img/icons/page_white_cplusplus.png);
+}
+.icon_page_white_csharp {
+  background: url(../img/icons/page_white_csharp.png);
+}
+.icon_page_white_cup {
+  background: url(../img/icons/page_white_cup.png);
+}
+.icon_page_white_database {
+  background: url(../img/icons/page_white_database.png);
+}
+.icon_page_white_delete {
+  background: url(../img/icons/page_white_delete.png);
+}
+.icon_page_white_dvd {
+  background: url(../img/icons/page_white_dvd.png);
+}
+.icon_page_white_edit {
+  background: url(../img/icons/page_white_edit.png);
+}
+.icon_page_white_error {
+  background: url(../img/icons/page_white_error.png);
+}
+.icon_page_white_excel {
+  background: url(../img/icons/page_white_excel.png);
+}
+.icon_page_white_find {
+  background: url(../img/icons/page_white_find.png);
+}
+.icon_page_white_flash {
+  background: url(../img/icons/page_white_flash.png);
+}
+.icon_page_white_freehand {
+  background: url(../img/icons/page_white_freehand.png);
+}
+.icon_page_white_gear {
+  background: url(../img/icons/page_white_gear.png);
+}
+.icon_page_white_get {
+  background: url(../img/icons/page_white_get.png);
+}
+.icon_page_white_go {
+  background: url(../img/icons/page_white_go.png);
+}
+.icon_page_white_h {
+  background: url(../img/icons/page_white_h.png);
+}
+.icon_page_white_horizontal {
+  background: url(../img/icons/page_white_horizontal.png);
+}
+.icon_page_white_key {
+  background: url(../img/icons/page_white_key.png);
+}
+.icon_page_white_lightning {
+  background: url(../img/icons/page_white_lightning.png);
+}
+.icon_page_white_link {
+  background: url(../img/icons/page_white_link.png);
+}
+.icon_page_white_magnify {
+  background: url(../img/icons/page_white_magnify.png);
+}
+.icon_page_white_medal {
+  background: url(../img/icons/page_white_medal.png);
+}
+.icon_page_white_office {
+  background: url(../img/icons/page_white_office.png);
+}
+.icon_page_white_paint {
+  background: url(../img/icons/page_white_paint.png);
+}
+.icon_page_white_paintbrush {
+  background: url(../img/icons/page_white_paintbrush.png);
+}
+.icon_page_white_paste {
+  background: url(../img/icons/page_white_paste.png);
+}
+.icon_page_white_php {
+  background: url(../img/icons/page_white_php.png);
+}
+.icon_page_white_picture {
+  background: url(../img/icons/page_white_picture.png);
+}
+.icon_page_white_powerpoint {
+  background: url(../img/icons/page_white_powerpoint.png);
+}
+.icon_page_white_put {
+  background: url(../img/icons/page_white_put.png);
+}
+.icon_page_white_ruby {
+  background: url(../img/icons/page_white_ruby.png);
+}
+.icon_page_white_stack {
+  background: url(../img/icons/page_white_stack.png);
+}
+.icon_page_white_star {
+  background: url(../img/icons/page_white_star.png);
+}
+.icon_page_white_swoosh {
+  background: url(../img/icons/page_white_swoosh.png);
+}
+.icon_page_white_text {
+  background: url(../img/icons/page_white_text.png);
+}
+.icon_page_white_text_width {
+  background: url(../img/icons/page_white_text_width.png);
+}
+.icon_page_white_tux {
+  background: url(../img/icons/page_white_tux.png);
+}
+.icon_page_white_vector {
+  background: url(../img/icons/page_white_vector.png);
+}
+.icon_page_white_visualstudio {
+  background: url(../img/icons/page_white_visualstudio.png);
+}
+.icon_page_white_width {
+  background: url(../img/icons/page_white_width.png);
+}
+.icon_page_white_word {
+  background: url(../img/icons/page_white_word.png);
+}
+.icon_page_white_world {
+  background: url(../img/icons/page_white_world.png);
+}
+.icon_page_white_wrench {
+  background: url(../img/icons/page_white_wrench.png);
+}
+.icon_page_white_zip {
+  background: url(../img/icons/page_white_zip.png);
+}
+.icon_page_word {
+  background: url(../img/icons/page_word.png);
+}
+.icon_page_world {
+  background: url(../img/icons/page_world.png);
+}
+.icon_paintbrush {
+  background: url(../img/icons/paintbrush.png);
+}
+.icon_paintcan {
+  background: url(../img/icons/paintcan.png);
+}
+.icon_palette {
+  background: url(../img/icons/palette.png);
+}
+.icon_paste_plain {
+  background: url(../img/icons/paste_plain.png);
+}
+.icon_paste_word {
+  background: url(../img/icons/paste_word.png);
+}
+.icon_pencil {
+  background: url(../img/icons/pencil.png);
+}
+.icon_pencil_add {
+  background: url(../img/icons/pencil_add.png);
+}
+.icon_pencil_delete {
+  background: url(../img/icons/pencil_delete.png);
+}
+.icon_pencil_go {
+  background: url(../img/icons/pencil_go.png);
+}
+.icon_phone {
+  background: url(../img/icons/phone.png);
+}
+.icon_phone_add {
+  background: url(../img/icons/phone_add.png);
+}
+.icon_phone_delete {
+  background: url(../img/icons/phone_delete.png);
+}
+.icon_phone_sound {
+  background: url(../img/icons/phone_sound.png);
+}
+.icon_photo {
+  background: url(../img/icons/photo.png);
+}
+.icon_photo_add {
+  background: url(../img/icons/photo_add.png);
+}
+.icon_photo_delete {
+  background: url(../img/icons/photo_delete.png);
+}
+.icon_photo_link {
+  background: url(../img/icons/photo_link.png);
+}
+.icon_photos {
+  background: url(../img/icons/photos.png);
+}
+.icon_picture {
+  background: url(../img/icons/picture.png);
+}
+.icon_picture_add {
+  background: url(../img/icons/picture_add.png);
+}
+.icon_picture_delete {
+  background: url(../img/icons/picture_delete.png);
+}
+.icon_picture_edit {
+  background: url(../img/icons/picture_edit.png);
+}
+.icon_picture_empty {
+  background: url(../img/icons/picture_empty.png);
+}
+.icon_picture_error {
+  background: url(../img/icons/picture_error.png);
+}
+.icon_picture_go {
+  background: url(../img/icons/picture_go.png);
+}
+.icon_picture_key {
+  background: url(../img/icons/picture_key.png);
+}
+.icon_picture_link {
+  background: url(../img/icons/picture_link.png);
+}
+.icon_picture_save {
+  background: url(../img/icons/picture_save.png);
+}
+.icon_pictures {
+  background: url(../img/icons/pictures.png);
+}
+.icon_pilcrow {
+  background: url(../img/icons/pilcrow.png);
+}
+.icon_pill {
+  background: url(../img/icons/pill.png);
+}
+.icon_pill_add {
+  background: url(../img/icons/pill_add.png);
+}
+.icon_pill_delete {
+  background: url(../img/icons/pill_delete.png);
+}
+.icon_pill_go {
+  background: url(../img/icons/pill_go.png);
+}
+.icon_plugin {
+  background: url(../img/icons/plugin.png);
+}
+.icon_plugin_add {
+  background: url(../img/icons/plugin_add.png);
+}
+.icon_plugin_delete {
+  background: url(../img/icons/plugin_delete.png);
+}
+.icon_plugin_disabled {
+  background: url(../img/icons/plugin_disabled.png);
+}
+.icon_plugin_edit {
+  background: url(../img/icons/plugin_edit.png);
+}
+.icon_plugin_error {
+  background: url(../img/icons/plugin_error.png);
+}
+.icon_plugin_go {
+  background: url(../img/icons/plugin_go.png);
+}
+.icon_plugin_link {
+  background: url(../img/icons/plugin_link.png);
+}
+.icon_printer {
+  background: url(../img/icons/printer.png);
+}
+.icon_printer_add {
+  background: url(../img/icons/printer_add.png);
+}
+.icon_printer_delete {
+  background: url(../img/icons/printer_delete.png);
+}
+.icon_printer_empty {
+  background: url(../img/icons/printer_empty.png);
+}
+.icon_printer_error {
+  background: url(../img/icons/printer_error.png);
+}
+.icon_rainbow {
+  background: url(../img/icons/rainbow.png);
+}
+.icon_report {
+  background: url(../img/icons/report.png);
+}
+.icon_report_add {
+  background: url(../img/icons/report_add.png);
+}
+.icon_report_delete {
+  background: url(../img/icons/report_delete.png);
+}
+.icon_report_disk {
+  background: url(../img/icons/report_disk.png);
+}
+.icon_report_edit {
+  background: url(../img/icons/report_edit.png);
+}
+.icon_report_go {
+  background: url(../img/icons/report_go.png);
+}
+.icon_report_key {
+  background: url(../img/icons/report_key.png);
+}
+.icon_report_link {
+  background: url(../img/icons/report_link.png);
+}
+.icon_report_magnify {
+  background: url(../img/icons/report_magnify.png);
+}
+.icon_report_picture {
+  background: url(../img/icons/report_picture.png);
+}
+.icon_report_user {
+  background: url(../img/icons/report_user.png);
+}
+.icon_report_word {
+  background: url(../img/icons/report_word.png);
+}
+.icon_resultset_first {
+  background: url(../img/icons/resultset_first.png);
+}
+.icon_resultset_last {
+  background: url(../img/icons/resultset_last.png);
+}
+.icon_resultset_next {
+  background: url(../img/icons/resultset_next.png);
+}
+.icon_resultset_previous {
+  background: url(../img/icons/resultset_previous.png);
+}
+.icon_rosette {
+  background: url(../img/icons/rosette.png);
+}
+.icon_rss {
+  background: url(../img/icons/rss.png);
+}
+.icon_rss_add {
+  background: url(../img/icons/rss_add.png);
+}
+.icon_rss_delete {
+  background: url(../img/icons/rss_delete.png);
+}
+.icon_rss_go {
+  background: url(../img/icons/rss_go.png);
+}
+.icon_rss_valid {
+  background: url(../img/icons/rss_valid.png);
+}
+.icon_ruby {
+  background: url(../img/icons/ruby.png);
+}
+.icon_ruby_add {
+  background: url(../img/icons/ruby_add.png);
+}
+.icon_ruby_delete {
+  background: url(../img/icons/ruby_delete.png);
+}
+.icon_ruby_gear {
+  background: url(../img/icons/ruby_gear.png);
+}
+.icon_ruby_get {
+  background: url(../img/icons/ruby_get.png);
+}
+.icon_ruby_go {
+  background: url(../img/icons/ruby_go.png);
+}
+.icon_ruby_key {
+  background: url(../img/icons/ruby_key.png);
+}
+.icon_ruby_link {
+  background: url(../img/icons/ruby_link.png);
+}
+.icon_ruby_put {
+  background: url(../img/icons/ruby_put.png);
+}
+.icon_script {
+  background: url(../img/icons/script.png);
+}
+.icon_script_add {
+  background: url(../img/icons/script_add.png);
+}
+.icon_script_code {
+  background: url(../img/icons/script_code.png);
+}
+.icon_script_code_red {
+  background: url(../img/icons/script_code_red.png);
+}
+.icon_script_delete {
+  background: url(../img/icons/script_delete.png);
+}
+.icon_script_edit {
+  background: url(../img/icons/script_edit.png);
+}
+.icon_script_error {
+  background: url(../img/icons/script_error.png);
+}
+.icon_script_gear {
+  background: url(../img/icons/script_gear.png);
+}
+.icon_script_go {
+  background: url(../img/icons/script_go.png);
+}
+.icon_script_key {
+  background: url(../img/icons/script_key.png);
+}
+.icon_script_lightning {
+  background: url(../img/icons/script_lightning.png);
+}
+.icon_script_link {
+  background: url(../img/icons/script_link.png);
+}
+.icon_script_palette {
+  background: url(../img/icons/script_palette.png);
+}
+.icon_script_save {
+  background: url(../img/icons/script_save.png);
+}
+.icon_server {
+  background: url(../img/icons/server.png);
+}
+.icon_server_add {
+  background: url(../img/icons/server_add.png);
+}
+.icon_server_chart {
+  background: url(../img/icons/server_chart.png);
+}
+.icon_server_compressed {
+  background: url(../img/icons/server_compressed.png);
+}
+.icon_server_connect {
+  background: url(../img/icons/server_connect.png);
+}
+.icon_server_database {
+  background: url(../img/icons/server_database.png);
+}
+.icon_server_delete {
+  background: url(../img/icons/server_delete.png);
+}
+.icon_server_edit {
+  background: url(../img/icons/server_edit.png);
+}
+.icon_server_error {
+  background: url(../img/icons/server_error.png);
+}
+.icon_server_go {
+  background: url(../img/icons/server_go.png);
+}
+.icon_server_key {
+  background: url(../img/icons/server_key.png);
+}
+.icon_server_lightning {
+  background: url(../img/icons/server_lightning.png);
+}
+.icon_server_link {
+  background: url(../img/icons/server_link.png);
+}
+.icon_server_uncompressed {
+  background: url(../img/icons/server_uncompressed.png);
+}
+.icon_shading {
+  background: url(../img/icons/shading.png);
+}
+.icon_shape_align_bottom {
+  background: url(../img/icons/shape_align_bottom.png);
+}
+.icon_shape_align_center {
+  background: url(../img/icons/shape_align_center.png);
+}
+.icon_shape_align_left {
+  background: url(../img/icons/shape_align_left.png);
+}
+.icon_shape_align_middle {
+  background: url(../img/icons/shape_align_middle.png);
+}
+.icon_shape_align_right {
+  background: url(../img/icons/shape_align_right.png);
+}
+.icon_shape_align_top {
+  background: url(../img/icons/shape_align_top.png);
+}
+.icon_shape_flip_horizontal {
+  background: url(../img/icons/shape_flip_horizontal.png);
+}
+.icon_shape_flip_vertical {
+  background: url(../img/icons/shape_flip_vertical.png);
+}
+.icon_shape_group {
+  background: url(../img/icons/shape_group.png);
+}
+.icon_shape_handles {
+  background: url(../img/icons/shape_handles.png);
+}
+.icon_shape_move_back {
+  background: url(../img/icons/shape_move_back.png);
+}
+.icon_shape_move_backwards {
+  background: url(../img/icons/shape_move_backwards.png);
+}
+.icon_shape_move_forwards {
+  background: url(../img/icons/shape_move_forwards.png);
+}
+.icon_shape_move_front {
+  background: url(../img/icons/shape_move_front.png);
+}
+.icon_shape_rotate_anticlockwise {
+  background: url(../img/icons/shape_rotate_anticlockwise.png);
+}
+.icon_shape_rotate_clockwise {
+  background: url(../img/icons/shape_rotate_clockwise.png);
+}
+.icon_shape_square {
+  background: url(../img/icons/shape_square.png);
+}
+.icon_shape_square_add {
+  background: url(../img/icons/shape_square_add.png);
+}
+.icon_shape_square_delete {
+  background: url(../img/icons/shape_square_delete.png);
+}
+.icon_shape_square_edit {
+  background: url(../img/icons/shape_square_edit.png);
+}
+.icon_shape_square_error {
+  background: url(../img/icons/shape_square_error.png);
+}
+.icon_shape_square_go {
+  background: url(../img/icons/shape_square_go.png);
+}
+.icon_shape_square_key {
+  background: url(../img/icons/shape_square_key.png);
+}
+.icon_shape_square_link {
+  background: url(../img/icons/shape_square_link.png);
+}
+.icon_shape_ungroup {
+  background: url(../img/icons/shape_ungroup.png);
+}
+.icon_shield {
+  background: url(../img/icons/shield.png);
+}
+.icon_shield_add {
+  background: url(../img/icons/shield_add.png);
+}
+.icon_shield_delete {
+  background: url(../img/icons/shield_delete.png);
+}
+.icon_shield_go {
+  background: url(../img/icons/shield_go.png);
+}
+.icon_sitemap {
+  background: url(../img/icons/sitemap.png);
+}
+.icon_sitemap_color {
+  background: url(../img/icons/sitemap_color.png);
+}
+.icon_sound {
+  background: url(../img/icons/sound.png);
+}
+.icon_sound_add {
+  background: url(../img/icons/sound_add.png);
+}
+.icon_sound_delete {
+  background: url(../img/icons/sound_delete.png);
+}
+.icon_sound_low {
+  background: url(../img/icons/sound_low.png);
+}
+.icon_sound_mute {
+  background: url(../img/icons/sound_mute.png);
+}
+.icon_sound_none {
+  background: url(../img/icons/sound_none.png);
+}
+.icon_spellcheck {
+  background: url(../img/icons/spellcheck.png);
+}
+.icon_sport_8ball {
+  background: url(../img/icons/sport_8ball.png);
+}
+.icon_sport_basketball {
+  background: url(../img/icons/sport_basketball.png);
+}
+.icon_sport_football {
+  background: url(../img/icons/sport_football.png);
+}
+.icon_sport_golf {
+  background: url(../img/icons/sport_golf.png);
+}
+.icon_sport_raquet {
+  background: url(../img/icons/sport_raquet.png);
+}
+.icon_sport_shuttlecock {
+  background: url(../img/icons/sport_shuttlecock.png);
+}
+.icon_sport_soccer {
+  background: url(../img/icons/sport_soccer.png);
+}
+.icon_sport_tennis {
+  background: url(../img/icons/sport_tennis.png);
+}
+.icon_star {
+  background: url(../img/icons/star.png);
+}
+.icon_status_away {
+  background: url(../img/icons/status_away.png);
+}
+.icon_status_busy {
+  background: url(../img/icons/status_busy.png);
+}
+.icon_status_offline {
+  background: url(../img/icons/status_offline.png);
+}
+.icon_status_online {
+  background: url(../img/icons/status_online.png);
+}
+.icon_stop {
+  background: url(../img/icons/stop.png);
+}
+.icon_style {
+  background: url(../img/icons/style.png);
+}
+.icon_style_add {
+  background: url(../img/icons/style_add.png);
+}
+.icon_style_delete {
+  background: url(../img/icons/style_delete.png);
+}
+.icon_style_edit {
+  background: url(../img/icons/style_edit.png);
+}
+.icon_style_go {
+  background: url(../img/icons/style_go.png);
+}
+.icon_sum {
+  background: url(../img/icons/sum.png);
+}
+.icon_tab {
+  background: url(../img/icons/tab.png);
+}
+.icon_tab_add {
+  background: url(../img/icons/tab_add.png);
+}
+.icon_tab_delete {
+  background: url(../img/icons/tab_delete.png);
+}
+.icon_tab_edit {
+  background: url(../img/icons/tab_edit.png);
+}
+.icon_tab_go {
+  background: url(../img/icons/tab_go.png);
+}
+.icon_table {
+  background: url(../img/icons/table.png);
+}
+.icon_table_add {
+  background: url(../img/icons/table_add.png);
+}
+.icon_table_delete {
+  background: url(../img/icons/table_delete.png);
+}
+.icon_table_edit {
+  background: url(../img/icons/table_edit.png);
+}
+.icon_table_error {
+  background: url(../img/icons/table_error.png);
+}
+.icon_table_gear {
+  background: url(../img/icons/table_gear.png);
+}
+.icon_table_go {
+  background: url(../img/icons/table_go.png);
+}
+.icon_table_key {
+  background: url(../img/icons/table_key.png);
+}
+.icon_table_lightning {
+  background: url(../img/icons/table_lightning.png);
+}
+.icon_table_link {
+  background: url(../img/icons/table_link.png);
+}
+.icon_table_multiple {
+  background: url(../img/icons/table_multiple.png);
+}
+.icon_table_refresh {
+  background: url(../img/icons/table_refresh.png);
+}
+.icon_table_relationship {
+  background: url(../img/icons/table_relationship.png);
+}
+.icon_table_row_delete {
+  background: url(../img/icons/table_row_delete.png);
+}
+.icon_table_row_insert {
+  background: url(../img/icons/table_row_insert.png);
+}
+.icon_table_save {
+  background: url(../img/icons/table_save.png);
+}
+.icon_table_sort {
+  background: url(../img/icons/table_sort.png);
+}
+.icon_tag {
+  background: url(../img/icons/tag.png);
+}
+.icon_tag_blue {
+  background: url(../img/icons/tag_blue.png);
+}
+.icon_tag_blue_add {
+  background: url(../img/icons/tag_blue_add.png);
+}
+.icon_tag_blue_delete {
+  background: url(../img/icons/tag_blue_delete.png);
+}
+.icon_tag_blue_edit {
+  background: url(../img/icons/tag_blue_edit.png);
+}
+.icon_tag_green {
+  background: url(../img/icons/tag_green.png);
+}
+.icon_tag_orange {
+  background: url(../img/icons/tag_orange.png);
+}
+.icon_tag_pink {
+  background: url(../img/icons/tag_pink.png);
+}
+.icon_tag_purple {
+  background: url(../img/icons/tag_purple.png);
+}
+.icon_tag_red {
+  background: url(../img/icons/tag_red.png);
+}
+.icon_tag_yellow {
+  background: url(../img/icons/tag_yellow.png);
+}
+.icon_telephone {
+  background: url(../img/icons/telephone.png);
+}
+.icon_telephone_add {
+  background: url(../img/icons/telephone_add.png);
+}
+.icon_telephone_delete {
+  background: url(../img/icons/telephone_delete.png);
+}
+.icon_telephone_edit {
+  background: url(../img/icons/telephone_edit.png);
+}
+.icon_telephone_error {
+  background: url(../img/icons/telephone_error.png);
+}
+.icon_telephone_go {
+  background: url(../img/icons/telephone_go.png);
+}
+.icon_telephone_key {
+  background: url(../img/icons/telephone_key.png);
+}
+.icon_telephone_link {
+  background: url(../img/icons/telephone_link.png);
+}
+.icon_television {
+  background: url(../img/icons/television.png);
+}
+.icon_television_add {
+  background: url(../img/icons/television_add.png);
+}
+.icon_television_delete {
+  background: url(../img/icons/television_delete.png);
+}
+.icon_text_align_center {
+  background: url(../img/icons/text_align_center.png);
+}
+.icon_text_align_justify {
+  background: url(../img/icons/text_align_justify.png);
+}
+.icon_text_align_left {
+  background: url(../img/icons/text_align_left.png);
+}
+.icon_text_align_right {
+  background: url(../img/icons/text_align_right.png);
+}
+.icon_text_allcaps {
+  background: url(../img/icons/text_allcaps.png);
+}
+.icon_text_bold {
+  background: url(../img/icons/text_bold.png);
+}
+.icon_text_columns {
+  background: url(../img/icons/text_columns.png);
+}
+.icon_text_dropcaps {
+  background: url(../img/icons/text_dropcaps.png);
+}
+.icon_text_heading_1 {
+  background: url(../img/icons/text_heading_1.png);
+}
+.icon_text_heading_2 {
+  background: url(../img/icons/text_heading_2.png);
+}
+.icon_text_heading_3 {
+  background: url(../img/icons/text_heading_3.png);
+}
+.icon_text_heading_4 {
+  background: url(../img/icons/text_heading_4.png);
+}
+.icon_text_heading_5 {
+  background: url(../img/icons/text_heading_5.png);
+}
+.icon_text_heading_6 {
+  background: url(../img/icons/text_heading_6.png);
+}
+.icon_text_horizontalrule {
+  background: url(../img/icons/text_horizontalrule.png);
+}
+.icon_text_indent {
+  background: url(../img/icons/text_indent.png);
+}
+.icon_text_indent_remove {
+  background: url(../img/icons/text_indent_remove.png);
+}
+.icon_text_italic {
+  background: url(../img/icons/text_italic.png);
+}
+.icon_text_kerning {
+  background: url(../img/icons/text_kerning.png);
+}
+.icon_text_letter_omega {
+  background: url(../img/icons/text_letter_omega.png);
+}
+.icon_text_letterspacing {
+  background: url(../img/icons/text_letterspacing.png);
+}
+.icon_text_linespacing {
+  background: url(../img/icons/text_linespacing.png);
+}
+.icon_text_list_bullets {
+  background: url(../img/icons/text_list_bullets.png);
+}
+.icon_text_list_numbers {
+  background: url(../img/icons/text_list_numbers.png);
+}
+.icon_text_lowercase {
+  background: url(../img/icons/text_lowercase.png);
+}
+.icon_text_padding_bottom {
+  background: url(../img/icons/text_padding_bottom.png);
+}
+.icon_text_padding_left {
+  background: url(../img/icons/text_padding_left.png);
+}
+.icon_text_padding_right {
+  background: url(../img/icons/text_padding_right.png);
+}
+.icon_text_padding_top {
+  background: url(../img/icons/text_padding_top.png);
+}
+.icon_text_replace {
+  background: url(../img/icons/text_replace.png);
+}
+.icon_text_signature {
+  background: url(../img/icons/text_signature.png);
+}
+.icon_text_smallcaps {
+  background: url(../img/icons/text_smallcaps.png);
+}
+.icon_text_strikethrough {
+  background: url(../img/icons/text_strikethrough.png);
+}
+.icon_text_subscript {
+  background: url(../img/icons/text_subscript.png);
+}
+.icon_text_superscript {
+  background: url(../img/icons/text_superscript.png);
+}
+.icon_text_underline {
+  background: url(../img/icons/text_underline.png);
+}
+.icon_text_uppercase {
+  background: url(../img/icons/text_uppercase.png);
+}
+.icon_textfield {
+  background: url(../img/icons/textfield.png);
+}
+.icon_textfield_add {
+  background: url(../img/icons/textfield_add.png);
+}
+.icon_textfield_delete {
+  background: url(../img/icons/textfield_delete.png);
+}
+.icon_textfield_key {
+  background: url(../img/icons/textfield_key.png);
+}
+.icon_textfield_rename {
+  background: url(../img/icons/textfield_rename.png);
+}
+.icon_thumb_down {
+  background: url(../img/icons/thumb_down.png);
+}
+.icon_thumb_up {
+  background: url(../img/icons/thumb_up.png);
+}
+.icon_tick {
+  background: url(../img/icons/tick.png);
+}
+.icon_time {
+  background: url(../img/icons/time.png);
+}
+.icon_time_add {
+  background: url(../img/icons/time_add.png);
+}
+.icon_time_delete {
+  background: url(../img/icons/time_delete.png);
+}
+.icon_time_go {
+  background: url(../img/icons/time_go.png);
+}
+.icon_timeline_marker {
+  background: url(../img/icons/timeline_marker.png);
+}
+.icon_transmit {
+  background: url(../img/icons/transmit.png);
+}
+.icon_transmit_add {
+  background: url(../img/icons/transmit_add.png);
+}
+.icon_transmit_blue {
+  background: url(../img/icons/transmit_blue.png);
+}
+.icon_transmit_delete {
+  background: url(../img/icons/transmit_delete.png);
+}
+.icon_transmit_edit {
+  background: url(../img/icons/transmit_edit.png);
+}
+.icon_transmit_error {
+  background: url(../img/icons/transmit_error.png);
+}
+.icon_transmit_go {
+  background: url(../img/icons/transmit_go.png);
+}
+.icon_tux {
+  background: url(../img/icons/tux.png);
+}
+.icon_user {
+  background: url(../img/icons/user.png);
+}
+.icon_user_add {
+  background: url(../img/icons/user_add.png);
+}
+.icon_user_comment {
+  background: url(../img/icons/user_comment.png);
+}
+.icon_user_delete {
+  background: url(../img/icons/user_delete.png);
+}
+.icon_user_edit {
+  background: url(../img/icons/user_edit.png);
+}
+.icon_user_female {
+  background: url(../img/icons/user_female.png);
+}
+.icon_user_go {
+  background: url(../img/icons/user_go.png);
+}
+.icon_user_gray {
+  background: url(../img/icons/user_gray.png);
+}
+.icon_user_green {
+  background: url(../img/icons/user_green.png);
+}
+.icon_user_orange {
+  background: url(../img/icons/user_orange.png);
+}
+.icon_user_red {
+  background: url(../img/icons/user_red.png);
+}
+.icon_user_suit {
+  background: url(../img/icons/user_suit.png);
+}
+.icon_vcard {
+  background: url(../img/icons/vcard.png);
+}
+.icon_vcard_add {
+  background: url(../img/icons/vcard_add.png);
+}
+.icon_vcard_delete {
+  background: url(../img/icons/vcard_delete.png);
+}
+.icon_vcard_edit {
+  background: url(../img/icons/vcard_edit.png);
+}
+.icon_vector {
+  background: url(../img/icons/vector.png);
+}
+.icon_vector_add {
+  background: url(../img/icons/vector_add.png);
+}
+.icon_vector_delete {
+  background: url(../img/icons/vector_delete.png);
+}
+.icon_wand {
+  background: url(../img/icons/wand.png);
+}
+.icon_weather_clouds {
+  background: url(../img/icons/weather_clouds.png);
+}
+.icon_weather_cloudy {
+  background: url(../img/icons/weather_cloudy.png);
+}
+.icon_weather_lightning {
+  background: url(../img/icons/weather_lightning.png);
+}
+.icon_weather_rain {
+  background: url(../img/icons/weather_rain.png);
+}
+.icon_weather_snow {
+  background: url(../img/icons/weather_snow.png);
+}
+.icon_weather_sun {
+  background: url(../img/icons/weather_sun.png);
+}
+.icon_webcam {
+  background: url(../img/icons/webcam.png);
+}
+.icon_webcam_add {
+  background: url(../img/icons/webcam_add.png);
+}
+.icon_webcam_delete {
+  background: url(../img/icons/webcam_delete.png);
+}
+.icon_webcam_error {
+  background: url(../img/icons/webcam_error.png);
+}
+.icon_world {
+  background: url(../img/icons/world.png);
+}
+.icon_world_add {
+  background: url(../img/icons/world_add.png);
+}
+.icon_world_delete {
+  background: url(../img/icons/world_delete.png);
+}
+.icon_world_edit {
+  background: url(../img/icons/world_edit.png);
+}
+.icon_world_go {
+  background: url(../img/icons/world_go.png);
+}
+.icon_world_link {
+  background: url(../img/icons/world_link.png);
+}
+.icon_wrench {
+  background: url(../img/icons/wrench.png);
+}
+.icon_wrench_orange {
+  background: url(../img/icons/wrench_orange.png);
+}
+.icon_xhtml {
+  background: url(../img/icons/xhtml.png);
+}
+.icon_xhtml_add {
+  background: url(../img/icons/xhtml_add.png);
+}
+.icon_xhtml_delete {
+  background: url(../img/icons/xhtml_delete.png);
+}
+.icon_xhtml_go {
+  background: url(../img/icons/xhtml_go.png);
+}
+.icon_xhtml_valid {
+  background: url(../img/icons/xhtml_valid.png);
+}
+.icon_zoom {
+  background: url(../img/icons/zoom.png);
+}
+.icon_zoom_in {
+  background: url(../img/icons/zoom_in.png);
+}
+.icon_zoom_out {
+  background: url(../img/icons/zoom_out.png);
+}
+
+.x-grid-cell-inner .user-assignment-required {
+  background: transparent url(../img/icons/group_link.png) 0 0 !important;
+}
+
+.x-grid-cell-inner img.x-action-col-icon.user-assignment-disabled {
+  background: transparent url(../img/icons/group_link_disabled.png) 0 0 !important;
+  cursor: default !important;
+}
+
+.x-livesearch-match {
+  font-weight: bold;
+  background-color: yellow;
+}
+
+.x-toolbar .x-form-cb-wrap {
+  line-height: 22px;
+}
+.x-toolbar .x-form-checkbox {
+  vertical-align: 0;
+}
+
+.current_image {
+  margin-left: 110px;
+  margin-bottom: 28px;
+}
+
+.current_image h6 {
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+

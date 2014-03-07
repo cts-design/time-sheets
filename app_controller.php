@@ -79,6 +79,18 @@ class AppController extends Controller {
 		'WV'=>"West Virginia",
 		'WI'=>"Wisconsin",
 		'WY'=>"Wyoming");
+
+	public function get($parameter, $otherwise = NULL) {
+		if(isset($_GET[$parameter])) {
+			return $_GET[$parameter];
+		}
+		else if($otherwise != NULL){
+			return $otherwise;
+		}
+		else {
+			return FALSE;
+		}
+	}
 		
     function beforeFilter() {
 		parent::beforeFilter();

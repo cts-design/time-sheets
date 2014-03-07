@@ -11,7 +11,7 @@
                     'options' => $options
                 );
 
-                if($v['attributes'] != '' && $v['attributes'] == NULL)
+                if($v['attributes'] != '' || $v['attributes'] != NULL)
                 {
                     $attributes['between'] = '<p class="field-instructions">' . $v['instructions'] . '</p>';
                 }

@@ -140,13 +140,14 @@ $(document).ready(function(){
 	$('.calc').click(function(){
 		var fullDate = new Date(year.val(), (month.val() - 1), day.val());
 
+		window.location.origin = window.location.protocol + "//" + window.location.hostname;
 		if(fullDate >= vpk2013_start && fullDate < vpk2013_end)
 		{
-			window.location = location.origin + '/users/login/program/1';
+			window.location = window.location.origin + '/users/login/program/1';
 		}
 		else if(fullDate >= vpk2014_start && fullDate < vpk2014_end)
 		{
-			window.location = location.origin + '/users/login/program/2';
+			window.location = window.location.origin + '/users/login/program/2';
 		}
 		else
 		{
