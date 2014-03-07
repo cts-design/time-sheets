@@ -59,16 +59,19 @@ class EventsController extends AppController {
 		$nextMonth = date('m/Y', strtotime("+1 day", strtotime($endDate)));
 		$nextMonthUrl = "$url/$nextMonth";
 
-		$categories = $this->Event->EventCategory->find('list', array(
-			'fields' => array(
-				'EventCategory.id',
-				'EventCategory.name'
-			),
-			'recursive' => -1
-		));
+		$ec_query = "SELECT EventCategory.name, EventCategory.id FROM event_categories as EventCategory
+					JOIN events as Event
+					ON EventCategory.id = Event.event_category_id
+					AND Event.scheduled >= '" . $date . "'
+					AND Event.scheduled <= '" . $endDate . "'
+					AND Event.allow_registrations = 1
+					AND Event.event_registration_count < Event.seats_available
+					GROUP BY EventCategory.name
+					ORDER BY EventCategory.name";
+		$categories = $this->Event->EventCategory->query($ec_query);
 
-		asort($categories);
-		$this->array_unshift_assoc($categories, 0, 'All Categories');
+		//asort($categories);
+		//$this->array_unshift_assoc($categories, 0, 'All Categories');
 
 		$locations = $this->Event->Location->find('list', array(
 			'conditions' => array(

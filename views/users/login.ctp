@@ -50,8 +50,9 @@
 					'maxlength' => $ssn_length
 			    ));
 			}
-		   echo $form->hidden('User.login_type', array('value' => $loginType));
-			if(isset($this->params['pass'][0]) && $this->params['pass'][0] === 'program') {
+		   echo $form->hidden('User.login_type', array('value' => $type));
+			if(isset($this->params['pass'][0]) && $this->params['pass'][0] === 'program'
+				&& isset($this->params['pass'][1])) {
 				echo $form->hidden('User.program_id', array('value' => $this->params['pass'][1]));
 			}
 		    echo $this->Form->end(array('label' => __('Login', true)));

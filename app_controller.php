@@ -153,7 +153,7 @@ class AppController extends Controller {
 		}
 		else {
 			$this->Auth->authError = "You must login to access that location.";	
-			$this->Auth->loginAction = array('admin' => false, 'controller' => 'users', 'action' => 'login');
+			//$this->Auth->loginAction = array('admin' => false, 'controller' => 'users', 'action' => 'login');
 		}
 		$this->Auth->flashElement = 'flash_auth';
 	        $this->loadModel('ModuleAccessControl');
