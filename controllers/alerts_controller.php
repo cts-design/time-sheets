@@ -71,6 +71,23 @@ class AlertsController extends AppController {
             $this->set(compact('data'));
             $this->render(null, null, '/elements/ajaxreturn');
         }
+        /*
+        if($this->RequestHandler->isPost())
+        {
+            $this->Alert->create();
+            $this->Alert->save($this->data);
+        }
+
+        $this->loadModel('Location');
+        $locations = $this->Location->find('all');
+
+        $this->paginate = array(
+            'limit' => 4,
+        );
+        $alerts = $this->paginate('Alert');
+
+        $this->set(compact('locations', 'alerts'));
+        $this->layout = 'default_bootstrap';*/
     }
 
     public function admin_add_self_sign_alert() {

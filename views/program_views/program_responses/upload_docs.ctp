@@ -39,7 +39,7 @@
 
 <script>
 $(document).ready(function(){
-	if(flash !== '')
+	if(flash != '')
 	{
 		var $message = $('<?= str_replace("\n", "", $this->Session->flash()) ?>');
 		var flash = $message.find('.ui-state-error-text').text();

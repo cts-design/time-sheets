@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2014-02-27 17:35:49 : 1393540549*/
+/* atlas schema generated on: 2014-03-10 17:35:30 : 1394487330*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -752,6 +752,23 @@ class atlasSchema extends CakeSchema {
 		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'queue_category_id' => array('column' => 'queue_category_id', 'unique' => 0), 'bar_code_definition_id' => array('column' => 'bar_code_definition_id', 'unique' => 0), 'scanned_location_id' => array('column' => 'scanned_location_id', 'unique' => 0), 'locked_by' => array('column' => 'locked_by', 'unique' => 0), 'self_scan_cat_id' => array('column' => 'self_scan_cat_id', 'unique' => 0), 'last_activity_admin_id' => array('column' => 'last_activity_admin_id', 'unique' => 0), 'user_id' => array('column' => 'user_id', 'unique' => 0)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
+	);
+	var $quiz_categories = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+		'name' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 150, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+		'active' => array('type' => 'boolean', 'null' => true, 'default' => '1'),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
+		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'InnoDB')
+	);
+	var $quiz_pages = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+		'name' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 45, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+		'description' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 45, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+		'quiz_id' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 45, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+		'order' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 4),
+		'active' => array('type' => 'boolean', 'null' => true, 'default' => '1'),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
+		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'InnoDB')
 	);
 	var $quizzes = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
