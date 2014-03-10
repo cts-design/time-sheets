@@ -739,6 +739,8 @@ class UsersController extends AppController {
 				else
 				{
 					$this->Auth->login($user['User']['id']);
+					$this->Session->delete('Message.flash');
+					$this->Session->delete('Message.auth');
 
 					if($this->Auth->user()){
 						if($type === 'program')
