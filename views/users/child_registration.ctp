@@ -70,14 +70,14 @@ $(document).ready(function() {
 		if($ssn_length == 9)
 		{
 			echo $this->Form->input('ssn', array(
-				'label' => 'Your Social Security Number',
+				'label' => 'Your child\'s Social Security Number',
 				'type' => 'password',
 				'maxlength' => $ssn_length,
 				'between' => '<br />',
 				'after' => '<br />'
 			));
 			echo $this->Form->input('ssn_confirm', array(
-				'label' => 'Confirm your Social Security Number',
+				'label' => 'Confirm your child\'s Social Security Number',
 				'type' => 'password',
 				'maxlength' => $ssn_length,
 				'between' => '<br />',
