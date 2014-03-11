@@ -659,11 +659,13 @@ class UsersController extends AppController {
 		$this->set(compact('ssn_length'));
 
 		//This is to asses if the program is for a child, if so we render the child view
+
+		$loginType = $type;
 		if($type == 'program' && $program_id != NULL)
 		{
 			$this->loadModel('Program');
 			$program = $this->Program->findById($program_id);
-			$type = $program['Program']['atlas_registration_type'];
+			$loginType = $program['Program']['atlas_registration_type'];
 		}
 
 		if(!empty($this->data))
@@ -700,24 +702,6 @@ class UsersController extends AppController {
 					'conditions' => $conditions
 				));
 
-
-				if($type == 'program')
-				{
-					$this->loadModel('Program');
-					$this->Program->contain(array(
-						'ProgramInstruction' => array(
-							'conditions' => array('ProgramInstruction.type' => 'login')
-						)
-					));
-
-					$program = $this->Program->findById( $program_id );
-					$loginType = $program['Program']['atlas_registration_type'];
-				}
-				else
-				{
-					$loginType = 'regular';
-				}
-
 				if(empty($user))
 				{	
 					//Redirect them to a registration form
@@ -734,7 +718,7 @@ class UsersController extends AppController {
 						case 'child':
 							$this->redirect(array(
 								'action' => 'registration', 
-								'child',
+								'program',
 			                    $username, 
 			                    'kiosk' => false
 		                    ));
@@ -742,9 +726,7 @@ class UsersController extends AppController {
 						case 'program':
 							$this->redirect(array(
 								'action' => 'registration', 
-								$loginType,
-			                    $username,
-			                    'program',
+								'program',
 			                    $program_id, 
 			                    'kiosk' => false
 		                    ));
@@ -773,7 +755,7 @@ class UsersController extends AppController {
 					$this->Session->delete('Message.auth');
 
 					if($this->Auth->user()){
-						if($type === 'program')
+						if($type == 'program')
 						{
 							if($program_id == NULL)
 							{
@@ -843,7 +825,7 @@ class UsersController extends AppController {
 		}
 		else //this->data is empty
 		{
-			switch($type)
+			switch($loginType)
 			{
 				case 'child':
 					$title_for_layout 	= 'Child Login';
@@ -983,13 +965,17 @@ class UsersController extends AppController {
 		$usePassword 		= Configure::read('Registration.usePassword');
 		$title_for_layout	= 'Registration';
 
+		$this->set('type', $type);
+		$this->set('program_id', $program_id);
+
 		if($type != NULL)
 			$ssn_length		= Configure::read('Registration.' . $type . '.ssn_length');
 		else
 			$ssn_length		= Configure::read('Registration.default.ssn_length');
 
-		if($type == 'program')
+		if($type == 'program' && $program_id != NULL)
 		{
+
 			$this->loadModel('Program');
 			$this->Program->contain(array(
 				'ProgramInstruction' => array(
@@ -998,23 +984,19 @@ class UsersController extends AppController {
 					)
 				)
 			));
+			$program = $this->Program->findById( $program_id );
 
-			if($program_id != NULL)
+			$loginType = $program['Program']['atlas_registration_type'];
+
+			if(!empty( $program['ProgramInstruction'] ))
 			{
-				$program = $this->Program->findById( $program_id );
-
-				$type = $program['Program']['atlas_registration_type'];
-
-				if(!empty( $program['ProgramInstruction'] ))
-				{
-					$this->set('instructions', $program['ProgramInstruction']['text']);
-					$title_for_layout = $program['Program']['name'] . ' Registration';
-				}
+				$this->set('instructions', $program['ProgramInstruction']['text']);
+				$title_for_layout = $program['Program']['name'] . ' Registration';
 			}
-			else
-			{
-				$program = FALSE;
-			}
+		}
+		else
+		{
+			$loginType = $type;
 		}
 
 		if($this->RequestHandler->isPost() && !empty($this->data))
@@ -1032,11 +1014,25 @@ class UsersController extends AppController {
 
 			$this->data['User']['username'] = $this->data['User']['lastname'];
 
-			if($this->User->validates() && $this->User->save($this->data))
+			if($this->User->validates())
 			{
-				$user_id = $this->User->getInsertId();
-				$user = $this->User->findById( $user_id );
-				$this->Auth->login($user);
+				if($this->User->save($this->data))
+				{
+					$user_id = $this->User->getInsertId();
+					$user = $this->User->findById( $user_id );
+					$this->Auth->login($user);
+
+					//Redirects to the program
+					if($type == 'program' && $program_id != NULL)
+					{
+						$this->redirect(array(
+							'controller' => 'programs', 
+							'action' => $program['Program']['type'],
+							$program_id
+						));
+					}
+				}
+
 
 				$this->Transaction->createUserTransaction('Website',
 					$user_id, null, 'User self registered using the website.');
@@ -1058,7 +1054,7 @@ class UsersController extends AppController {
 
 		$this->set(compact('title_for_layout', 'ssn_length', 'usePassword'));
 
-		switch($type)
+		switch($loginType)
 		{
 			case 'child':
 				$this->render('child_registration');
