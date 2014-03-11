@@ -640,6 +640,10 @@ class UsersController extends AppController {
 	}
 
 	function login($type = 'website', $program_id = NULL) {
+
+		$child = $this->get('child');
+		$program = $this->get('program');
+
 		$this->set('title_for_layout', 'Login');
 		$this->set('type', $type);
 
@@ -688,6 +692,24 @@ class UsersController extends AppController {
 					'conditions' => $conditions
 				));
 
+
+				if($type == 'program')
+				{
+					$this->loadModel('Program');
+					$this->Program->contain(array(
+						'ProgramInstruction' => array(
+							'conditions' => array('ProgramInstruction.type' => 'login')
+						)
+					));
+
+					$program = $this->Program->findById( $program_id );
+					$loginType = $program['Program']['atlas_registration_type'];
+				}
+				else
+				{
+					$loginType = 'regular';
+				}
+
 				if(empty($user))
 				{	
 					//Redirect them to a registration form
@@ -712,7 +734,7 @@ class UsersController extends AppController {
 						case 'program':
 							$this->redirect(array(
 								'action' => 'registration', 
-								'regular',
+								$loginType,
 			                    $username,
 			                    'program',
 			                    $program_id, 
@@ -752,15 +774,6 @@ class UsersController extends AppController {
 									$type
 								));
 							}
-
-							$this->loadModel('Program');
-							$this->Program->contain(array(
-								'ProgramInstruction' => array(
-									'conditions' => array('ProgramInstruction.type' => 'login')
-								)
-							));
-
-							$program = $this->Program->findById( $program_id );
 
 							$session_redirect = '/programs/' . $program['Program']['type'] . '/' . $program_id;
 							$this->Session->write( 'Auth.redirect', $session_redirect );
@@ -957,7 +970,7 @@ class UsersController extends AppController {
 			}
 	}*/
 
-	function registration($type = NULL)
+	function registration($type = NULL, $program_id = NULL)
 	{
 		$usePassword 		= Configure::read('Registration.usePassword');
 		$title_for_layout	= 'Registration';
@@ -978,11 +991,17 @@ class UsersController extends AppController {
 				)
 			));
 
-			if(isset( $this->params['pass'][3] ))
+			if($program_id != NULL)
 			{
-				$program = $this->Program->findById($this->params['pass'][3]);
-				$this->set('instructions', $program['ProgramInstruction'][0]['text']);
-				$title_for_layout = $program['Program']['name'] . ' Registration';
+				$program = $this->Program->findById( $program_id );
+
+				$type = $program['Program']['atlas_registration_type'];
+
+				if(!empty( $program['ProgramInstruction'] ))
+				{
+					$this->set('instructions', $program['ProgramInstruction']['text']);
+					$title_for_layout = $program['Program']['name'] . ' Registration';
+				}
 			}
 			else
 			{
