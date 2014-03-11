@@ -658,6 +658,14 @@ class UsersController extends AppController {
 		$this->User->setValidation('last' . $ssn_length . 'ssn');
 		$this->set(compact('ssn_length'));
 
+		//This is to asses if the program is for a child, if so we render the child view
+		if($type == 'program' && $program_id != NULL)
+		{
+			$this->loadModel('Program');
+			$program = $this->Program->findById($program_id);
+			$type = $program['Program']['atlas_registration_type'];
+		}
+
 		if(!empty($this->data))
 		{
 			$username 	= $_POST['data']['User']['username'];
