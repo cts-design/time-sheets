@@ -714,7 +714,7 @@ class UsersController extends AppController {
 						case 'child':
 							$this->redirect(array(
 								'action' => 'registration', 
-								'program',
+								'child',
 			                    $username, 
 			                    'kiosk' => false
 		                    ));
@@ -727,18 +727,10 @@ class UsersController extends AppController {
 			                    'kiosk' => false
 		                    ));
 		                    break;
-		                case 'child_program':
-		                	$this->redirect(array(
-		                		'action' => 'registration', 
-		                		'child', 
-		                		'program',
-	                        	$this->data['User']['username'], 
-	                        	'kiosk' => false
-	                        ));
-		                	break;
 		                default:
 		                	$this->redirect(array(
-		                		'action' => 'registration', 
+		                		'action' => 'registration',
+		                		'regular',
 	                        	$this->data['User']['username'], 
 	                        	'kiosk' => false
 	                        ));
