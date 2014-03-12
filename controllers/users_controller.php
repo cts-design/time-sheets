@@ -654,6 +654,16 @@ class UsersController extends AppController {
 		$this->User->setValidation('last' . $ssn_length . 'ssn');
 		$this->set(compact('ssn_length'));
 
+		//This is to asses if the program is for a child, if so we render the child view
+
+		$loginType = $type;
+		if($type == 'program' && $program_id != NULL)
+		{
+			$this->loadModel('Program');
+			$program = $this->Program->findById($program_id);
+			$loginType = $program['Program']['atlas_registration_type'];
+		}
+
 		if(!empty($this->data))
 		{
 			$username 	= $_POST['data']['User']['username'];
@@ -712,25 +722,15 @@ class UsersController extends AppController {
 						case 'program':
 							$this->redirect(array(
 								'action' => 'registration', 
-								'regular',
-			                    $username,
-			                    'program',
+								'program',
 			                    $program_id, 
 			                    'kiosk' => false
 		                    ));
 		                    break;
-		                case 'child_program':
-		                	$this->redirect(array(
-		                		'action' => 'registration', 
-		                		'child', 
-		                		'program',
-	                        	$this->data['User']['username'], 
-	                        	'kiosk' => false
-	                        ));
-		                	break;
 		                default:
 		                	$this->redirect(array(
-		                		'action' => 'registration', 
+		                		'action' => 'registration',
+		                		'regular',
 	                        	$this->data['User']['username'], 
 	                        	'kiosk' => false
 	                        ));
@@ -743,7 +743,7 @@ class UsersController extends AppController {
 					$this->Session->delete('Message.auth');
 
 					if($this->Auth->user()){
-						if($type === 'program')
+						if($type == 'program')
 						{
 							if($program_id == NULL)
 							{
@@ -752,15 +752,6 @@ class UsersController extends AppController {
 									$type
 								));
 							}
-
-							$this->loadModel('Program');
-							$this->Program->contain(array(
-								'ProgramInstruction' => array(
-									'conditions' => array('ProgramInstruction.type' => 'login')
-								)
-							));
-
-							$program = $this->Program->findById( $program_id );
 
 							$session_redirect = '/programs/' . $program['Program']['type'] . '/' . $program_id;
 							$this->Session->write( 'Auth.redirect', $session_redirect );
@@ -822,7 +813,7 @@ class UsersController extends AppController {
 		}
 		else //this->data is empty
 		{
-			switch($type)
+			switch($loginType)
 			{
 				case 'child':
 					$title_for_layout 	= 'Child Login';
@@ -874,90 +865,7 @@ class UsersController extends AppController {
 		}
 	}
 
-	/*
-	function registration($type=null, $lastname=null) {
-		$usePassword = Configure::read('Registration.usePassword');
-
-		if ($usePassword) {
-			$this->User->editValidation('password');
-		}
-		
-		if(isset($this->params['pass'][2], $this->params['pass'][3]) &&
-			$this->params['pass'][2] === 'program') {
-				$this->loadModel('Program');
-				$this->Program->contain(array('ProgramInstruction' =>
-					array('conditions' => array('ProgramInstruction.type' => 'registration'))));
-				$program = $this->Program->findById($this->params['pass'][3]);
-				if($program) {
-					$this->set('instructions', $program['ProgramInstruction'][0]['text']);
-					$title_for_layout = $program['Program']['name'] . ' Registration';
-				}
-			}
-		if(!empty($this->data)) {
-			$this->User->Behaviors->disable('Disableable');
-			$this->User->create();
-			if ($usePassword) {
-				$this->User->editValidation('password');
-			} else if(Configure::read('Registration.ssn') == 'last4') {
-				if($this->data['User']['registration'] == 'child_website') {
-					$this->User->editValidation('last4');
-				}
-				else {
-					$this->User->editValidation('last4');
-				}
-				$this->data['User']['ssn'] =
-					$this->data['User']['ssn_1'] .
-					$this->data['User']['ssn_2'] .
-					$this->data['User']['ssn_3'];
-				$this->data['User']['ssn_confirm'] =
-					$this->data['User']['ssn_1_confirm'] .
-					$this->data['User']['ssn_2_confirm'] .
-					$this->data['User']['ssn_3_confirm'];
-			}
-			if ($this->User->save($this->data)) {
-				$userId = $this->User->getInsertId();
-				if ($usePassword) {
-					$this->data['User']['password'] = Security::hash($this->data['User']['password'], null, true);
-				} else {
-					$this->data['User']['password'] = Security::hash($this->data['User']['ssn'], null, true);
-				}
-				$this->data['User']['username'] = $this->data['User']['lastname'];
-				$this->Auth->login($this->data);
-				$this->Transaction->createUserTransaction('Website',
-					$userId, null, 'User self registered using the website.');
-				$this->Session->setFlash(__('Your account has been created.', true), 'flash_success');
-				if($this->Session->read('Auth.redirect') != '') {
-					$this->redirect($this->Session->read('Auth.redirect'));
-				}
-				else{
-					$this->redirect('/');
-				}
-			}
-			else {
-				$this->Session->setFlash(__('The information could not be saved. Please, try again.', true), 'flash_failure');
-				if(isset($this->data['User']['ssn']))
-					unset($this->data['User']['ssn']);
-				if(isset($this->data['User']['ssn_confirm']))
-					unset($this->data['User']['ssn_confirm']);
-			}
-		}
-		if (empty($this->data)) {
-			if($lastname) {
-				$this->data['User']['lastname'] = $lastname;
-			}
-		}
-		if(! isset($title_for_layout)) {
-			$title_for_layout = 'Registration';
-		}
-		$states = $this->states;
-		$this->set(compact('title_for_layout', 'states', 'usePassword'));
-		if(isset($type) && $type == 'child' ||
-			isset($this->data['User']['registration']) && $this->data['User']['registration'] == 'child_website') {
-				$this->render('child_registration');
-			}
-	}*/
-
-	function registration($type = NULL)
+	function registration($type = NULL, $program_id = NULL)
 	{
 		$usePassword 		= Configure::read('Registration.usePassword');
 		$title_for_layout	= 'Registration';
@@ -967,8 +875,10 @@ class UsersController extends AppController {
 		else
 			$ssn_length		= Configure::read('Registration.default.ssn_length');
 
-		if($type == 'program')
+		$loginType = $type;
+		if($type == 'program' && $program_id != NULL)
 		{
+
 			$this->loadModel('Program');
 			$this->Program->contain(array(
 				'ProgramInstruction' => array(
@@ -977,16 +887,14 @@ class UsersController extends AppController {
 					)
 				)
 			));
+			$program = $this->Program->findById( $program_id );
 
-			if(isset( $this->params['pass'][3] ))
+			$loginType = $program['Program']['atlas_registration_type'];
+
+			if(!empty( $program['ProgramInstruction'] ))
 			{
-				$program = $this->Program->findById($this->params['pass'][3]);
-				$this->set('instructions', $program['ProgramInstruction'][0]['text']);
+				$this->set('instructions', $program['ProgramInstruction']['text']);
 				$title_for_layout = $program['Program']['name'] . ' Registration';
-			}
-			else
-			{
-				$program = FALSE;
 			}
 		}
 
@@ -1005,11 +913,25 @@ class UsersController extends AppController {
 
 			$this->data['User']['username'] = $this->data['User']['lastname'];
 
-			if($this->User->validates() && $this->User->save($this->data))
+			if($this->User->validates())
 			{
-				$user_id = $this->User->getInsertId();
-				$user = $this->User->findById( $user_id );
-				$this->Auth->login($user);
+				if($this->User->save($this->data))
+				{
+					$user_id = $this->User->getInsertId();
+					$user = $this->User->findById( $user_id );
+					$this->Auth->login($user);
+
+					//Redirects to the program
+					if($type == 'program' && $program_id != NULL)
+					{
+						$this->redirect(array(
+							'controller' => 'programs', 
+							'action' => $program['Program']['type'],
+							$program_id
+						));
+					}
+				}
+
 
 				$this->Transaction->createUserTransaction('Website',
 					$user_id, null, 'User self registered using the website.');
@@ -1029,9 +951,9 @@ class UsersController extends AppController {
 			}
 		}
 
-		$this->set(compact('title_for_layout', 'ssn_length', 'usePassword'));
+		$this->set(compact('title_for_layout', 'ssn_length', 'usePassword', 'type', 'program_id'));
 
-		switch($type)
+		switch($loginType)
 		{
 			case 'child':
 				$this->render('child_registration');

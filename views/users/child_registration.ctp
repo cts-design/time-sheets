@@ -34,7 +34,7 @@ $(document).ready(function() {
 <div class="required"><label></label> <?php __('indicates required fields.') ?></div>
 <br />
   <div id="ChildRegistrationForm">
-	<?php echo $this->Form->create('User', array('url' => '/users/registration/child')); ?>
+	<?php echo $this->Form->create('User', array('url' => '/users/registration/' . $type . '/' . $program_id)); ?>
 	<fieldset>
 		<legend>Register</legend>
 	    <?php
@@ -242,13 +242,13 @@ $(document).ready(function() {
 				'White' => 'White'),
 				'between' => '<br />',
 				'after' => '<br />'));
-		/*echo $this->Form->input('disability', array(
-			'label' => __('Do you have a substantial disability', true),
+		echo $this->Form->input('disability', array(
+			'label' => __('Does your child have a substantial disability', true),
 			'type' => 'select',
 			'empty' => 'Please Select',
 			'options' => array('1' => 'Yes', '0' => 'No'), 
 			'between' => '<br />',
-			'after' => '<br />'));*/		
+			'after' => '<br />'));
 	    echo $this->Form->hidden('registration', array('value' => 'child_website'));
 	    ?>    
 	<br />
