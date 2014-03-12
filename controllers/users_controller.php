@@ -640,10 +640,6 @@ class UsersController extends AppController {
 	}
 
 	function login($type = 'website', $program_id = NULL) {
-
-		$child = $this->get('child');
-		$program = $this->get('program');
-
 		$this->set('title_for_layout', 'Login');
 		$this->set('type', $type);
 
