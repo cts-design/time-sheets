@@ -865,102 +865,17 @@ class UsersController extends AppController {
 		}
 	}
 
-	/*
-	function registration($type=null, $lastname=null) {
-		$usePassword = Configure::read('Registration.usePassword');
-
-		if ($usePassword) {
-			$this->User->editValidation('password');
-		}
-		
-		if(isset($this->params['pass'][2], $this->params['pass'][3]) &&
-			$this->params['pass'][2] === 'program') {
-				$this->loadModel('Program');
-				$this->Program->contain(array('ProgramInstruction' =>
-					array('conditions' => array('ProgramInstruction.type' => 'registration'))));
-				$program = $this->Program->findById($this->params['pass'][3]);
-				if($program) {
-					$this->set('instructions', $program['ProgramInstruction'][0]['text']);
-					$title_for_layout = $program['Program']['name'] . ' Registration';
-				}
-			}
-		if(!empty($this->data)) {
-			$this->User->Behaviors->disable('Disableable');
-			$this->User->create();
-			if ($usePassword) {
-				$this->User->editValidation('password');
-			} else if(Configure::read('Registration.ssn') == 'last4') {
-				if($this->data['User']['registration'] == 'child_website') {
-					$this->User->editValidation('last4');
-				}
-				else {
-					$this->User->editValidation('last4');
-				}
-				$this->data['User']['ssn'] =
-					$this->data['User']['ssn_1'] .
-					$this->data['User']['ssn_2'] .
-					$this->data['User']['ssn_3'];
-				$this->data['User']['ssn_confirm'] =
-					$this->data['User']['ssn_1_confirm'] .
-					$this->data['User']['ssn_2_confirm'] .
-					$this->data['User']['ssn_3_confirm'];
-			}
-			if ($this->User->save($this->data)) {
-				$userId = $this->User->getInsertId();
-				if ($usePassword) {
-					$this->data['User']['password'] = Security::hash($this->data['User']['password'], null, true);
-				} else {
-					$this->data['User']['password'] = Security::hash($this->data['User']['ssn'], null, true);
-				}
-				$this->data['User']['username'] = $this->data['User']['lastname'];
-				$this->Auth->login($this->data);
-				$this->Transaction->createUserTransaction('Website',
-					$userId, null, 'User self registered using the website.');
-				$this->Session->setFlash(__('Your account has been created.', true), 'flash_success');
-				if($this->Session->read('Auth.redirect') != '') {
-					$this->redirect($this->Session->read('Auth.redirect'));
-				}
-				else{
-					$this->redirect('/');
-				}
-			}
-			else {
-				$this->Session->setFlash(__('The information could not be saved. Please, try again.', true), 'flash_failure');
-				if(isset($this->data['User']['ssn']))
-					unset($this->data['User']['ssn']);
-				if(isset($this->data['User']['ssn_confirm']))
-					unset($this->data['User']['ssn_confirm']);
-			}
-		}
-		if (empty($this->data)) {
-			if($lastname) {
-				$this->data['User']['lastname'] = $lastname;
-			}
-		}
-		if(! isset($title_for_layout)) {
-			$title_for_layout = 'Registration';
-		}
-		$states = $this->states;
-		$this->set(compact('title_for_layout', 'states', 'usePassword'));
-		if(isset($type) && $type == 'child' ||
-			isset($this->data['User']['registration']) && $this->data['User']['registration'] == 'child_website') {
-				$this->render('child_registration');
-			}
-	}*/
-
 	function registration($type = NULL, $program_id = NULL)
 	{
 		$usePassword 		= Configure::read('Registration.usePassword');
 		$title_for_layout	= 'Registration';
-
-		$this->set('type', $type);
-		$this->set('program_id', $program_id);
 
 		if($type != NULL)
 			$ssn_length		= Configure::read('Registration.' . $type . '.ssn_length');
 		else
 			$ssn_length		= Configure::read('Registration.default.ssn_length');
 
+		$loginType = $type;
 		if($type == 'program' && $program_id != NULL)
 		{
 
@@ -981,10 +896,6 @@ class UsersController extends AppController {
 				$this->set('instructions', $program['ProgramInstruction']['text']);
 				$title_for_layout = $program['Program']['name'] . ' Registration';
 			}
-		}
-		else
-		{
-			$loginType = $type;
 		}
 
 		if($this->RequestHandler->isPost() && !empty($this->data))
@@ -1040,7 +951,7 @@ class UsersController extends AppController {
 			}
 		}
 
-		$this->set(compact('title_for_layout', 'ssn_length', 'usePassword'));
+		$this->set(compact('title_for_layout', 'ssn_length', 'usePassword', 'type', 'program_id'));
 
 		switch($loginType)
 		{
