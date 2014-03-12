@@ -39,11 +39,13 @@
 
 <script>
 $(document).ready(function(){
-	if(flash != '')
-	{
-		var $message = $('<?= str_replace("\n", "", $this->Session->flash()) ?>');
-		var flash = $message.find('.ui-state-error-text').text();
-		alert(flash);
-	}
+
+	var $message = $('<?= str_replace("\n", "", $form->error('QueuedDocument.submittedfile')) ?>');
+    var flash = $message.text();
+    if(flash != '')
+    {
+            alert(flash);
+    }
+    
 });
 </script>
