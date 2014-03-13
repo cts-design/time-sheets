@@ -50,8 +50,6 @@ class ProgramResponsesController extends AppController {
 		// check if the logged in user has permission to approve responses
 		// if they do we allow them access to other actions relating to approval
 
-		$this->Auth->allow('new_upload_docs');
-
 		$this->Auth->allow('admin_regenerate_docs');
 		if($this->Acl->check(array(
 			'model' => 'User',
@@ -390,29 +388,6 @@ class ProgramResponsesController extends AppController {
             $this->set($params);
             return $params;
         }
-    }
-
-    function new_upload_docs() {
-    	$title_for_layout = 'Upload Documents';
-
-    	if(isset( $this->params['pass'][0] ))
-    	{
-    		$program_id = $this->params['pass'][0];
-    	}
-    	else
-    	{
-    		$program_id = 0;
-    	}
-
-    	if(isset( $this->params['pass'][1] ))
-    	{
-    		$step_id = $this->params['pass'][1];
-    	}
-    	else
-    	{
-    		$step_id = 0;
-    	}
-    	$this->set(compact('title_for_layout', 'program_id', 'step_id'));
     }
 	
 	function upload_docs($programId=null, $stepId=null) {
