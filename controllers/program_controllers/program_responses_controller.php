@@ -393,7 +393,7 @@ class ProgramResponsesController extends AppController {
 	function upload_docs($programId=null, $stepId=null) {
 		if(!$programId){
 			$this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');
-			//$this->redirect($this->referer());
+			$this->redirect($this->referer());
 		}
         $program = $this->ProgramResponse->Program->getProgramAndResponse($programId, $this->Auth->user('id'));
 		$this->whatsNext($program, $stepId);
