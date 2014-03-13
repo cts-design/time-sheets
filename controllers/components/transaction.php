@@ -61,7 +61,15 @@ class TransactionComponent extends Object {
 	$Location = ClassRegistry::init('Location');
 	$locations = $Location->find('list');
 	if($locationId == null && ($this->Auth->user('role_id') != 1 && !preg_match('/auditor/i', $this->Auth->User('role_name')))) {
-	   $location = $locations[$this->Auth->user('location_id')];
+	   
+	   if($this->Auth->user('location_id') != NULL)
+	   {
+	   	  $location = $locations[$this->Auth->user('location_id')];
+	   }
+	   else
+	   {
+	   	  $location = 'Unknown';
+	   }
 	}
 	elseif($locationId != null) {
 	    $location = $locations[$locationId];

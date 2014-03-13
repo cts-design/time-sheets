@@ -50,6 +50,8 @@ class ProgramResponsesController extends AppController {
 		// check if the logged in user has permission to approve responses
 		// if they do we allow them access to other actions relating to approval
 
+		$this->Auth->allow('new_upload_docs');
+
 		$this->Auth->allow('admin_regenerate_docs');
 		if($this->Acl->check(array(
 			'model' => 'User',
@@ -389,11 +391,34 @@ class ProgramResponsesController extends AppController {
             return $params;
         }
     }
+
+    function new_upload_docs() {
+    	$title_for_layout = 'Upload Documents';
+
+    	if(isset( $this->params['pass'][0] ))
+    	{
+    		$program_id = $this->params['pass'][0];
+    	}
+    	else
+    	{
+    		$program_id = 0;
+    	}
+
+    	if(isset( $this->params['pass'][1] ))
+    	{
+    		$step_id = $this->params['pass'][1];
+    	}
+    	else
+    	{
+    		$step_id = 0;
+    	}
+    	$this->set(compact('title_for_layout', 'program_id', 'step_id'));
+    }
 	
 	function upload_docs($programId=null, $stepId=null) {
 		if(!$programId){
 			$this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');
-			$this->redirect($this->referer());
+			//$this->redirect($this->referer());
 		}
         $program = $this->ProgramResponse->Program->getProgramAndResponse($programId, $this->Auth->user('id'));
 		$this->whatsNext($program, $stepId);
@@ -407,15 +432,21 @@ class ProgramResponsesController extends AppController {
 					$this->Transaction->createUserTransaction('Programs', null, null,
 						'Uploaded document for ' . $program['Program']['name']);
 					$this->Session->setFlash(__('Document uploaded successfully.', true), 'flash_success');
+
+					$success = "Thank you for uploading your document. If you have other document to upload please do so now. If you are finished uploading documents, please click \"I am finished uploading my documents\"";
+					$this->Session->setFlash(__($success, true), null, null, 'upload_success');
 					$this->redirect(array('action' => 'upload_docs', $programId, $stepId));
 				}
 				else {
 					$this->Session->setFlash(__('Unable to upload document, please try again', true), 'flash_failure');
+					$this->Session->setFlash( $this->QueuedDocument->invalidFields()['submittedfile'], null, null, 'upload_error' );
 					$this->redirect(array('action' => 'upload_docs', $programId, $stepId));
 				}
 			}
 			else {
 				$this->Session->setFlash(__('Unable to upload document, please try again', true), 'flash_failure');
+
+				$this->Session->setFlash( $this->QueuedDocument->invalidFields()['submittedfile'], null, null, 'upload_error' );
 				$this->validationErrors['QueuedDocument'] = $this->QueuedDocument->invalidFields();
 			}
 

@@ -27,6 +27,7 @@ class UsersController extends AppController {
 				$this->data['User'][$k] = trim($v, ' ');
 			}
 		}
+		
 		if(isset($this->data['User']['username'])) {
 			// TODO add the other login types
 			if($this->params['action'] == 'admin_login' || $this->params['action'] == 'kiosk_self_sign_login')
@@ -42,6 +43,7 @@ class UsersController extends AppController {
 				}
 			}
 		}
+
 		if($this->params['action'] == 'kiosk_mini_registration')
 		{
 			$this->Security->validatePost = false;
@@ -742,14 +744,44 @@ class UsersController extends AppController {
 					$this->Session->delete('Message.flash');
 					$this->Session->delete('Message.auth');
 
+
+					if (preg_match('/auditor/i', $this->Auth->user('role_name')))
+					{
+						$this->Transaction->createUserTransaction('Auditor', null, null, 'Logged into auditor dashboard');
+						$this->redirect(array('controller' => 'User', 'action' => 'dashboard', 'auditor' => true));
+					}
+					else
+					{	
+						$this->Transaction->createUserTransaction('Website',
+							null, null, 'Logged in using website.' );
+						if($this->Auth->user('email') == null || preg_match('(none|nobody|noreply)', $this->Auth->user('email')))
+						{
+							$this->Session->setFlash('Please complete your profile to continue.', 'flash_success');
+							$this->redirect(array(
+								'controller' => 'users', 
+								'action' => 'edit', 
+								$this->Auth->user('id')
+							));
+						}
+						
+						if($this->Session->read('Auth.redirect') != '')
+						{
+							$this->redirect($this->Session->read('Auth.redirect'));
+						}
+						else {
+							$this->redirect(array('action' => 'dashboard', 'admin' => false));
+						}
+					}
+
+
+
 					if($this->Auth->user()){
 						if($type == 'program')
 						{
 							if($program_id == NULL)
 							{
 								$this->redirect(array(
-									'action' => 'login',
-									$type
+									'action' => 'dashboard'
 								));
 							}
 
@@ -778,34 +810,6 @@ class UsersController extends AppController {
 								'conditions' => array('Role.id' => $this->Auth->user('role_id'))
 							));
 							$this->Session->write('Auth.User.role_name', $role['Role']['name']);
-						}
-
-						if (preg_match('/auditor/i', $this->Auth->user('role_name')))
-						{
-							$this->Transaction->createUserTransaction('Auditor', null, null, 'Logged into auditor dashboard');
-							$this->redirect(array('action' => 'dashboard', 'auditor' => true));
-						}
-						else
-						{	
-							$this->Transaction->createUserTransaction('Website',
-								null, null, 'Logged in using website.' );
-							if($this->Auth->user('email') == null || preg_match('(none|nobody|noreply)', $this->Auth->user('email')))
-							{
-								$this->Session->setFlash('Please complete your profile to continue.', 'flash_success');
-								$this->redirect(array(
-									'controller' => 'users', 
-									'action' => 'edit', 
-									$this->Auth->user('id')
-								));
-							}
-							
-							if($this->Session->read('Auth.redirect') != '')
-							{
-								$this->redirect($this->Session->read('Auth.redirect'));
-							}
-							else {
-								$this->redirect(array('action' => 'dashboard', 'admin' => false));
-							}
 						}
 					}
 				}
