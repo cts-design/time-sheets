@@ -427,6 +427,7 @@ class ProgramResponsesController extends AppController {
 			$this->loadModel('QueuedDocument');
 			$this->data['QueuedDocument']['req_program_doc'] = 1;
 			$this->QueuedDocument->set($this->data);
+
 			if($this->QueuedDocument->validates()) {
 				if($this->QueuedDocument->uploadDocument($this->data, 'Program Upload', $this->Auth->user('id'))) {
 					$this->Transaction->createUserTransaction('Programs', null, null,
@@ -439,14 +440,19 @@ class ProgramResponsesController extends AppController {
 				}
 				else {
 					$this->Session->setFlash(__('Unable to upload document, please try again', true), 'flash_failure');
-					$this->Session->setFlash( $this->QueuedDocument->invalidFields()['submittedfile'], null, null, 'upload_error' );
+
+					$invalid_fields = $this->QueuedDocument->invalidFields();
+
+					$this->Session->setFlash( $invalid_fields['submittedfile'], null, null, 'upload_error' );
 					$this->redirect(array('action' => 'upload_docs', $programId, $stepId));
 				}
 			}
 			else {
 				$this->Session->setFlash(__('Unable to upload document, please try again', true), 'flash_failure');
 
-				$this->Session->setFlash( $this->QueuedDocument->invalidFields()['submittedfile'], null, null, 'upload_error' );
+				$invalid_fields = $this->QueuedDocument->invalidFields();
+
+				$this->Session->setFlash( $invalid_fields['submittedfile'], null, null, 'upload_error' );
 				$this->validationErrors['QueuedDocument'] = $this->QueuedDocument->invalidFields();
 			}
 
