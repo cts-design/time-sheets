@@ -3,7 +3,7 @@
   <fieldset>
     <legend>Login</legend>
     <?php
-        echo $form->create('User', array('action' => 'login'));
+        echo $form->create('User', array('url' => '/users/login/auditor'));
         echo $form->input('username', array(
           'label' => 'Auditor Username', 
           'between' => '<br />',
