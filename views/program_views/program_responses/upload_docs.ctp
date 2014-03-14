@@ -58,10 +58,10 @@ $(document).ready(function(){
 			draggable : false,
 			resizable : false,
 			buttons : {
-				"I am finished" : function(){
+				/*"I am finished" : function(){
 					window.location.href = window.location.protocol + '//' + window.location.host + '/program_responses/provided_docs/<?= $this->params['pass'][0] ?>/<?= $this->params['pass'][1] ?>/uploaded_docs';
-				},
-				Ok : function() {
+				},*/
+				"Upload another document" : function() {
 					$(this).dialog('close');
 				}
 			}

@@ -409,7 +409,7 @@ class ProgramResponsesController extends AppController {
 						'Uploaded document for ' . $program['Program']['name']);
 					$this->Session->setFlash(__('Document uploaded successfully.', true), 'flash_success');
 
-					$success = "Thank you for uploading your document. If you have other document to upload please do so now. If you are finished uploading documents, please click \"I am finished uploading my documents\"";
+					$success = "Thank you for uploading your document. If you have other documents to upload please do so now. If you are finished uploading documents, please click \"I am finished uploading my documents\"";
 					$this->Session->setFlash(__($success, true), null, null, 'upload_success');
 					$this->redirect(array('action' => 'upload_docs', $programId, $stepId));
 				}
