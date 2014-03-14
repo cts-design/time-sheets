@@ -701,6 +701,9 @@ class UsersController extends AppController {
 				break;
 				case 'auditor': //AUDITOR TYPE
 
+					//$this->User->setValidation('auditor_login');
+					//$this->User->set($validation_data);
+
 					if($this->User->validates())
 					{
 						$user = $this->User->find('first', array(
