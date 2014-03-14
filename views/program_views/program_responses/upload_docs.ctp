@@ -37,13 +37,52 @@
 	</p>
 </div>
 
+<div id="dialog">
+
+	<p>
+		You can only upload forms
+	</p>
+
+</div>
 <script>
+var upload_success = '<?= $this->Session->flash('upload_success') ?>';
+var upload_error = '<?= $this->Session->flash('upload_error') ?>';
 $(document).ready(function(){
-	if(flash != '')
+	if(upload_success != '')
 	{
-		var $message = $('<?= str_replace("\n", "", $this->Session->flash()) ?>');
-		var flash = $message.find('.ui-state-error-text').text();
-		alert(flash);
+		$('.dialog').attr('title', 'Successfully Uploaded');
+		$('#dialog').find('p').text(upload_success);
+		//Declare dialog
+	    $('#dialog').dialog({
+			modal: true,
+			draggable : false,
+			resizable : false,
+			buttons : {
+				/*"I am finished" : function(){
+					window.location.href = window.location.protocol + '//' + window.location.host + '/program_responses/provided_docs/<?= $this->params['pass'][0] ?>/<?= $this->params['pass'][1] ?>/uploaded_docs';
+				},*/
+				"Upload another document" : function() {
+					$(this).dialog('close');
+				}
+			}
+		});
 	}
+	else if(upload_error != '')
+	{
+		$('.dialog').attr('title', 'Upload Issue');
+		$('#dialog').find('p').text(upload_error);
+		//Declare dialog
+	    $('#dialog').dialog({
+			modal: true,
+			draggable : false,
+			resizable : false,
+			buttons : {				
+				Ok : function() {
+					$(this).dialog('close');
+				}
+			}
+		});
+	}
+    
 });
 </script>

@@ -366,6 +366,16 @@ class User extends AppModel {
 				'message' => 'This username already exists in the system'
 			)
 		),
+		'auditor_login' => array(
+			'username' => array(
+				'rule' => 'notEmpty',
+				'message' => 'Please provide a username'
+			),
+			'password' => array(
+				'rule' => 'notEmpty',
+				'message' => 'Please provide a password'
+			)
+		),
 		'customerLogin' => array(
 			'username' => array(
 				'notEmpty' => array(
@@ -543,6 +553,20 @@ class User extends AppModel {
 					'rule' => 'notEmpty',
 					'message' => 'Please provide a password.',
 					'required' => false
+				)
+			)
+		),
+		'auditor' => array(
+			'password' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a password'
+				)
+			),
+			'username' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Please provide a username'
 				)
 			)
 		),
