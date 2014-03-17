@@ -36,7 +36,7 @@ $(document).ready(function() {
 <div class="required"><label></label> <?php __('indicates required fields.') ?></div>
 <br />
   <div id="WebRegistrationForm">
-	<?php echo $this->Form->create('User', array('action' => 'registration')); ?>
+	<?php echo $this->Form->create('User', array('url' => '/users/registration/' . $type . '/' . $program_id)); ?>
 	<fieldset>
 		<legend>Register</legend>
 	    <?php
