@@ -16,11 +16,9 @@
 	<?php if(isset($settings['Users']['LoginAdditionalText'])) : ?>
 		<?php $text = json_decode($settings['Users']['LoginAdditionalText'], true); ?> 
 	<?php endif ?>
+
 	<?php if(isset($text[0]['value'])) : ?>
 		<p><?= $text[0]['value'] ?></p>
-	<?php endif ?>
-	<?php if(isset($instructions)) : ?>
-		<p><?php echo __($instructions) ?></p>
 	<?php endif ?>
 	<br />	
 	<fieldset>

@@ -905,6 +905,79 @@ class UsersController extends AppController {
 
 		$loginType = $type;
 
+		$this->loadModel('Program');
+
+		if( $this->RequestHandler->isPost() )
+		{
+			switch($type)
+			{
+				case 'program':
+
+					if($type == 'program' && $program_id != NULL)
+					{
+						$this->Program->contain(array(
+							'ProgramInstruction' => array(
+								'conditions' => array(
+									'ProgramInstruction.type' => 'registration'
+								)
+							)
+						));
+						$program = $this->Program->findById( $program_id );
+					}
+					else
+					{
+						//$this->redirect(array());
+					}
+
+				break;
+				case 'child':
+
+				break;
+				case 'normal':
+
+				break;
+				default:
+
+				break;
+			}
+		}
+		else
+		{
+			switch($type)
+			{
+				case 'program':
+
+					if($type == 'program' && $program_id != NULL)
+					{
+						$this->Program->contain(array(
+							'ProgramInstruction' => array(
+								'conditions' => array(
+									'ProgramInstruction.type' => 'registration'
+								)
+							)
+						));
+						$program = $this->Program->findById( $program_id );
+
+						$view = $program['Program']['atlas_registration_type'];
+					}
+					else
+					{
+						//$this->redirect(array());
+					}
+
+				break;
+				case 'child':
+
+				break;
+				case 'normal':
+
+				break;
+				default:
+
+				break;
+			}
+		}
+
 		if($type == 'program' && $program_id != NULL)
 		{
 
