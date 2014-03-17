@@ -642,9 +642,49 @@ class UsersController extends AppController {
 	}
 
 	function login($type = 'normal', $program_id = NULL) {
-		$ssn_length = Configure::read('Login.' . $type . '.ssn_length');
 		$this->set(compact('ssn_length', 'type'));
 		$this->loadModel('Program');
+
+
+		//Decides what view to render based on the type that is passed
+		switch($type)
+		{
+			case 'program':
+				$program = $this->Program->findById($program_id);
+				$loginType = $program['Program']['atlas_registration_type'];
+
+				$ssn_length = Configure::read('Login.program.ssn_length');
+
+				$this->set('title_for_layout', $program['Program']['name'] . ' Login');
+
+				if( !empty($program['ProgramInstruction'][0]) )
+				{
+					$instructions = $program['ProgramInstruction'][0]['text'];
+					$this->set(compact('instructions'));
+				}
+				
+				if($loginType == 'child')
+				{
+					$view = 'child_login';
+				}
+				else
+				{
+					$view = 'login';
+				}
+			break;
+			case 'child':
+				$ssn_length = Configure::read('Login.child.ssn_length');
+				$view = 'child_login';
+			break;
+			case 'auditor':
+			$ssn_length = Configure::read('Login.auditor.ssn_length');
+				$view = 'auditor_login';
+			break;
+			default:
+				$ssn_length = Configure::read('Login.normal.ssn_length');
+				$view = 'login';
+			break;
+		}
 
 		if($this->RequestHandler->isPost())
 		{
@@ -772,7 +812,7 @@ class UsersController extends AppController {
 					}
 
 				break;
-				case 'normal': //NORMAL TYPE
+				default: //NORMAL TYPE
 
 					$this->User->setValidation('last' . $ssn_length . 'ssn');
 					$this->User->set($validation_data);
@@ -783,7 +823,7 @@ class UsersController extends AppController {
 
 						if(!$user)
 						{
-							//$this->Session->setFlash(__('That user was not found', true), 'flash_failure');
+							$this->Session->setFlash(__('That user was not found', true), 'flash_failure');
 							$this->redirect('/users/registration');
 						}
 						else
@@ -796,46 +836,9 @@ class UsersController extends AppController {
 				break;
 			}
 		}
-		else
-		{
-			//Decides what view to render based on the type that is passed
-			switch($type)
-			{
-				case 'program':
-					$program = $this->Program->findById($program_id);
-					$loginType = $program['Program']['atlas_registration_type'];
-
-					$this->set('title_for_layout', $program['Program']['name'] . ' Login');
-
-					if( !empty($program['ProgramInstruction'][0]) )
-					{
-						$instructions = $program['ProgramInstruction'][0]['text'];
-						$this->set(compact('instructions'));
-					}
-					
-					if($loginType == 'child')
-					{
-						$view = 'child_login';
-					}
-					else
-					{
-						$view = 'login';
-					}
-				break;
-				case 'child':
-					$view = 'child_login';
-				break;
-				case 'auditor':
-					$view = 'auditor_login';
-				break;
-				default:
-					$view = 'login';
-				break;
-			}
-
-			$this->render($view);
-		}
-
+		
+		$this->set(compact('ssn_length'));
+		$this->render($view);
 	}
 
 	private function get_user($username, $password, $ssn_length = 9)
