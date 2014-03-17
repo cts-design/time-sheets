@@ -906,13 +906,50 @@ class UsersController extends AppController {
 		$this->loadModel('Program');
 
 		$usePassword = Configure::read('Registration.usePassword');
-		if( $usePassword )
+
+		switch($type)
 		{
-			$this->data['User']['password'] = Security::hash($this->data['User']['password'], null, true);
-		}
-		else
-		{
-			$this->data['User']['password'] = Security::hash($this->data['User']['ssn'], null, true);
+			case 'child':
+				$ssn_length			= Configure::read('Registration.child.ssn_length');
+				$view = 'child_registration';
+			break;
+			case 'program':
+				$ssn_length	= Configure::read('Registration.program.ssn_length');
+				if($type == 'program' && $program_id != NULL)
+				{
+					$this->Program->contain(array(
+						'ProgramInstruction' => array(
+							'conditions' => array(
+								'ProgramInstruction.type' => 'registration'
+							)
+						)
+					));
+					$program = $this->Program->findById( $program_id );
+
+					$program_type = $program['Program']['atlas_registration_type'];
+
+					if($program_type == 'child')
+					{
+						$view = 'child_registration';
+					}
+					else
+					{
+						$view = 'registration';
+					}
+				}
+				else if($program_id == NULL)
+				{
+					$this->Session->setFlash(__('Program ID was not specified', true), 'flash_failure');
+					$this->redirect('/users/registration');
+				}
+			break;
+			case 'normal':
+				$ssn_length = Configure::read('Registration.normal.ssn_length');
+				$view = 'registration';
+			break;
+			default:
+				$ssn_length = Configure::read('Registration.normal.ssn_length');
+				$view = 'registration';
 		}
 
 		if( $this->RequestHandler->isPost() )
@@ -920,6 +957,15 @@ class UsersController extends AppController {
 			$this->User->editValidation('last' . $ssn_length . 'ssn');
 
 			$this->User->set($this->data);
+
+			if( $usePassword )
+			{
+				$this->data['User']['password'] = Security::hash($this->data['User']['password'], null, true);
+			}
+			else
+			{
+				$this->data['User']['password'] = Security::hash($this->data['User']['ssn'], null, true);
+			}
 
 			switch($type)
 			{
@@ -984,45 +1030,6 @@ class UsersController extends AppController {
 						}
 					}
 			}
-		}
-		switch($type)
-		{
-			case 'child':
-				$view = 'child_registration';
-			break;
-			case 'program':
-
-				if($type == 'program' && $program_id != NULL)
-				{
-					$this->Program->contain(array(
-						'ProgramInstruction' => array(
-							'conditions' => array(
-								'ProgramInstruction.type' => 'registration'
-							)
-						)
-					));
-					$program = $this->Program->findById( $program_id );
-
-					$program_type = $program['Program']['atlas_registration_type'];
-
-					if($program_type == 'child')
-					{
-						$view = 'child_registration';
-					}
-					else
-					{
-						$view = 'registration';
-					}
-				}
-				else if($program_id == NULL)
-				{
-					$this->Session->setFlash(__('Program ID was not specified', true), 'flash_failure');
-					$this->redirect('/users/registration');
-				}
-			break;
-			case 'normal':
-			default:
-				$view = 'registration';
 		}
 
 		$this->set(compact('title_for_layout', 'ssn_length', 'usePassword', 'type', 'program_id'));
