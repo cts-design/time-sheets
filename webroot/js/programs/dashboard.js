@@ -29,6 +29,7 @@ Programs = {
 
     //REMOVES the link from all the incomplete steps that are the not the next step
     incomps = $('ol.steps ol li.incomplete');
+    /*
     incomps.each(function(){
       var c = $(this);
 
@@ -36,7 +37,7 @@ Programs = {
       {
         $(this).find('a').attr('href', '');
       }
-    });
+    });*/
 
     if (($programStatus.hasClass('pending_document_review') ||
         $programStatus.hasClass('not_approved')) &&
