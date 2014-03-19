@@ -730,12 +730,12 @@ class UsersController extends AppController {
 						if(!$user)
 						{
 							$this->Session->setFlash(__('That user was not found', true), 'flash_failure');
-							$this->redirect('/users/registration/programs/' . $program_id);
+							$this->redirect('/users/registration/program/' . $program_id);
 						}
 						else
 						{
 							$this->Auth->login($user['User']['id']);
-							$this->redirect('/programs/' . $program['Program']['type'] . '/' . $program_id);
+							$this->redirect('/program/' . $program['Program']['type'] . '/' . $program_id);
 						}
 					}
 				break;
