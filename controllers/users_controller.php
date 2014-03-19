@@ -735,7 +735,7 @@ class UsersController extends AppController {
 						else
 						{
 							$this->Auth->login($user['User']['id']);
-							$this->redirect('/program/' . $program['Program']['type'] . '/' . $program_id);
+							$this->redirect('/programs/' . $program['Program']['type'] . '/' . $program_id);
 						}
 					}
 				break;
