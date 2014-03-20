@@ -21,12 +21,9 @@ $(document).ready(function() {
     <?php __('Please register your information using the following form.') ?>
 	<br />	
     <?php __('If you have already created a login, please') ?>
-	<?php $options = array('controller' => 'users', 'action' => 'login')?>
-	<?php if(isset($this->params['pass'][2]) && $this->params['pass']['2'] === 'program') :?>
-		<?php array_push($options, $this->params['pass'][2], $this->params['pass'][3]); ?>
-	<?php endif ?>
-	<!--<?php echo $this->Html->link(__('click here', true), $options); ?>-->
-	<a href="" class="go-back">Click Here</a>
+
+	<?php echo $this->Html->link('click here', '/users/login/' . $type . '/' . $program_id); ?>
+    
     <?php __('to return to the login page and try your login information again.') ?>
 </p>
 <?php if(isset($instructions)) : ?>
@@ -36,7 +33,7 @@ $(document).ready(function() {
 <div class="required"><label></label> <?php __('indicates required fields.') ?></div>
 <br />
   <div id="WebRegistrationForm">
-	<?php echo $this->Form->create('User', array('action' => 'registration')); ?>
+	<?php echo $this->Form->create('User', array('url' => '/users/registration/' . $type . '/' . $program_id)); ?>
 	<fieldset>
 		<legend>Register</legend>
 	    <?php

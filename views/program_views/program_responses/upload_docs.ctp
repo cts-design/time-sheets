@@ -40,7 +40,6 @@
 <div id="dialog">
 
 	<p>
-		You can only upload forms
 	</p>
 
 </div>
@@ -50,7 +49,7 @@ var upload_error = '<?= $this->Session->flash('upload_error') ?>';
 $(document).ready(function(){
 	if(upload_success != '')
 	{
-		$('.dialog').attr('title', 'Successfully Uploaded');
+		$('#dialog').attr('title', 'Successfully Uploaded');
 		$('#dialog').find('p').text(upload_success);
 		//Declare dialog
 	    $('#dialog').dialog({
@@ -58,9 +57,6 @@ $(document).ready(function(){
 			draggable : false,
 			resizable : false,
 			buttons : {
-				/*"I am finished" : function(){
-					window.location.href = window.location.protocol + '//' + window.location.host + '/program_responses/provided_docs/<?= $this->params['pass'][0] ?>/<?= $this->params['pass'][1] ?>/uploaded_docs';
-				},*/
 				"Upload another document" : function() {
 					$(this).dialog('close');
 				}
@@ -69,7 +65,7 @@ $(document).ready(function(){
 	}
 	else if(upload_error != '')
 	{
-		$('.dialog').attr('title', 'Upload Issue');
+		$('#dialog').attr('title', 'Upload Issue');
 		$('#dialog').find('p').text(upload_error);
 		//Declare dialog
 	    $('#dialog').dialog({

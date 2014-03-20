@@ -22,12 +22,9 @@ $(document).ready(function() {
     <?php __('Please register your child\'s information using the following form.') ?>
 	<br />	
     <?php __('If you have already created a login, please') ?>
-	<?php $options = array('controller' => 'users', 'action' => 'login')?>
-	<?php if(isset($this->params['pass'][2])):?>
-		<?php array_push($options, $this->params['pass'][2], $this->params['pass'][3]); ?>
-	<?php endif ?>
-    <!--<?php echo $html->link(__('click here', true), $options); ?>-->
-    <a href="" class="go-back">Click Here</a>
+
+    <?php echo $this->Html->link('click here', '/users/login/' . $type . '/' . $program_id); ?>
+
     <?php __('to return to the login page and try your login information again.') ?>
 </p>
 <br />
@@ -101,65 +98,6 @@ $(document).ready(function() {
 				'after' => '<br />'
 			));
 		}
-
-		/*
-		if(Configure::read('Registration.ssn') == 'full') {
-		    echo $this->Form->input('ssn', array(
-				'label' => __('Child\'s Social Security Number', true),
-				'maxlength' => 9,
-				'type' => 'password',
-				'between' => '<br />'));
-		    echo $this->Form->input('ssn_confirm', array(
-				'label' => __('Please confirm child\'s Social Security Number', true),
-				'maxlength' => 9,
-				'type' => 'password',
-				'between' => '<br />',
-				'after' => '<br />'));
-		}
-		elseif(Configure::read('Registration.ssn') == 'last4') {
-			echo '<div class="input required">';
-				echo $this->Form->label(__('Child\'s Social Security Number', true));
-				echo '<br />';	
-				echo $this->Form->input('ssn_1', array(
-					'type' => 'password',
-					'div' => false,
-					'maxlength' => 3, 
-					'label' => false));
-				echo $this->Form->input('ssn_2', array(
-					'type' => 'password',
-					'maxlength' => 2,
-					'label' => false,
-					'div' => false));
-				echo $this->Form->input('ssn_3', array(
-					'type' => 'password',
-					'maxLength' => 4,
-					'label' => false,
-					'div' => false));
-				echo "<br class='clear' />";	
-				echo $this->Form->error('ssn');
-			echo '</div>';
-			echo '<div class="input required">';
-				echo $this->Form->label(__('Please confirm child\'s Social Security Number', true));
-				echo '<br />';			
-				echo $this->Form->input('ssn_1_confirm', array(
-					'type' => 'text',
-					'maxlength' => 3,
-					'label' => false,
-					'div' => false));
-				echo $this->Form->input('ssn_2_confirm', array(
-					'type' => 'text',
-					'maxlength' => 2,
-					'label' => false,
-					'div' => false));
-				echo $this->Form->input('ssn_3_confirm', array(
-					'type' => 'text',
-					'maxlength' => 4,
-					'label' => false,
-					'div' => false,
-					'after' => '<br />'));
-				echo $this->Form->error('ssn_confirm');
-			echo '</div>';					
-		}*/
 	    echo $this->Form->input('dob', array(
 			'label' => __('Child\'s Birth Date <span class="small gray">(mm/dd/yyyy)</span>', true),
 			'type' => 'text',

@@ -25,7 +25,10 @@ class ProgramResponse extends AppModel {
 		$programResponse = $this->find('first', array(
 			'conditions' => array(
 				'ProgramResponse.user_id' => $userId,
-				'ProgramResponse.program_id' => $programId)));
+				'ProgramResponse.program_id' => $programId
+			),
+			'order' => array('ProgramResponse.created DESC')
+		));
 		if($programResponse['ProgramResponse']['expires_on'] <= date('Y-m-d H:i:s') &&
 			$programResponse['ProgramResponse']['status'] === 'incomplete') {
 				$expiredResponse = $this->expireResponse($programResponse['ProgramResponse']['id']);
