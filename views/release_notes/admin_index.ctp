@@ -3,6 +3,41 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+	<h1>Release 3.8.4 (3-20-14)</h1>
+	<h2>Feature Releases</h2>
+	<ol>
+		<li>
+			Added additional upload document feedback modal
+		</li>
+		<li>
+			Added additional upload feedback on fail/document size
+		</li>
+		<li>
+			Developed config variable for the Age Check feature to pull url from config file
+		</li>
+	</ol>
+
+	<h2>
+		Minor Bug Fixes
+	</h2>
+
+	<ol>
+		<li>
+			Fixed issue with inconsistent Login auth when using the Auditors module
+		</li>
+		<li>
+			Fixed issue with improper layout being applied to program response forms
+		</li>
+		<li>
+			Adjusted the order of the regenerated pdf's to always display the most recently generated certificate within the customers dashboard
+		</li>
+		<li>
+			Resolved issue that was causing a "invalid username or password" flash on certain logins
+		</li>
+	</ol>
+
+	<hr />
+
 	<h1>Release 3.8.3 (2-19-14)</h1>
 	<h2>
 		Minor Bug Fixes
