@@ -95,7 +95,7 @@ task :elc_heartland do
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
   set :server_name, 'vpkelcfh.org (ELC-Heartland)'
   set :user, 'deploy'
-  server "192.168.202.150", :app, :web, :db, :primary => true
+  server "75.148.105.140", :app, :web, :db, :primary => true
 end
 
 task :elc_hillsborough do
