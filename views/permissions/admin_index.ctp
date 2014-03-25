@@ -76,7 +76,7 @@
                <?php echo $this->Form->input('Alerts.admin_add_program_response_status_alert', array(
                 'type' => 'checkbox',
                 'label' => 'Program Response Status',
-                'checked' => (isset($controllers['Alerts']['admin_add_program_response_status__alert'])) ? $controllers['Alerts']['admin_add_program_response_status_alert'] : '' ));?>
+                'checked' => (isset($controllers['Alerts']['admin_add_program_response_status_alert'])) ? $controllers['Alerts']['admin_add_program_response_status_alert'] : '' ));?>
             </fieldset>
             <?php echo $this->PluginPermissions->buildFieldset('alerts') ?>
             <br class="clear" />
