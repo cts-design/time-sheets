@@ -1,5 +1,13 @@
 var dt = new Date();
 
+/*
+  WHEN ADDING A CHECKBOX FIELD
+  Make sure that in the 'Save' button's save method you create something like this:
+
+  vals['<your field name>'] = (vals['<your field name>'] ? 1 : 0);
+
+  This will set the true/false of the checkbox to the TINYINT(1) of the database
+*/
 Ext.define('Event', {
   extend: 'Ext.data.Model',
   fields: [
@@ -16,6 +24,7 @@ Ext.define('Event', {
     {name: 'scheduled', type: 'date', dateFormat: 'Y-m-d H:i:s'},
     {name: 'allow_registrations'},
 	  {name: 'private'},
+    {name: 'active'},
     {name: 'seats_available'},
     {name: 'duration'},
     {name: 'event_registration_count'},
@@ -295,7 +304,7 @@ Ext.create('Ext.form.Panel', {
   frame: true,
   bodyPadding: 5,
   width: 950,
-  height: 610, //550
+  height: 630, //550
   layout: 'column',
   fieldDefaults: {
     labelAlign: 'left',
@@ -304,7 +313,7 @@ Ext.create('Ext.form.Panel', {
   items: [{
     columnWidth: 0.7,
     xtype: 'gridpanel',
-    height: 555, //500
+    height: 565, //500
     id: 'eventsGrid',
     store: Ext.data.StoreManager.lookup('eventsStore'),
     scroll: false,
@@ -509,11 +518,15 @@ Ext.create('Ext.form.Panel', {
     name: 'url',
     vtype: 'url'
   },{
-	  fieldLabel: 'Make Private',
+	  fieldLabel: 'Private',
 	  name: 'private',
 	  xtype: 'checkbox'
   },{
-    fieldLabel: 'Allow Registrations',
+    fieldLabel: 'Active',
+    name: 'active',
+    xtype: 'checkbox'
+  },{
+    fieldLabel: 'Allow Public Registrations',
     name: 'allow_registrations',
     xtype: 'checkbox',
     listeners: {
@@ -653,6 +666,7 @@ Ext.create('Ext.form.Panel', {
           event = store.getById(vals.id);
           event.beginEdit();
           vals['private'] = (vals['private'] ? 1 : 0);
+          vals['active'] = (vals['active'] ? 1 : 0);
           event.set(vals);
           event.endEdit();
         }

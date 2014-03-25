@@ -66,6 +66,7 @@ class EventsController extends AppController {
 					AND Event.scheduled <= '" . $endDate . "'
 					AND Event.allow_registrations = 1
 					AND Event.event_registration_count < Event.seats_available
+					AND Event.active = 1
 					GROUP BY EventCategory.name
 					ORDER BY EventCategory.name";
 		$categories = $this->Event->EventCategory->query($ec_query);
@@ -433,19 +434,20 @@ class EventsController extends AppController {
 
 	public function admin_list_events_registration()
 	{
+		$conditions = array();
+
 		$this->loadModel('Event');
-		
-		//$this->Event->recursive = -1;
-		
+
 		if( empty($this->params['named']) )
 		{
 			$this->Session->delete('ler_paginate');
 			$this->Session->delete('ler');
 		}
+
+		$conditions['Event.active'] = 1;
 		
 		if($this->RequestHandler->isPost())
 		{
-			$conditions = array();
 			if( isset($_POST['today']) )
 			{
 				$conditions['Event.scheduled >'] = date('Y/m/d H:i:s');
@@ -480,6 +482,7 @@ class EventsController extends AppController {
 		else
 		{
 			$cond = $this->Session->read('ler_paginate');
+			$cond['Event.active'] = 1;
 			
 			if( !isset($cond['Event.scheduled >']) )
 			{
