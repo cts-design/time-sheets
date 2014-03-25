@@ -765,12 +765,10 @@ class AlertsController extends AppController {
                     'action' => 'Alerts/admin_add_customer_details_alert',
                     'label' => 'Customer Details',
                     'id' => 'customerDetailsAlertFromPanel'),
-                /*
                 array(
                     'action' => 'Alerts/admin_add_queued_document_alert',
                     'label' => 'Queued Document',
                     'id' => 'queuedDocumentAlertFormPanel'),
-                 */
                 array(
                     'action' => 'Alerts/admin_add_staff_filed_document_alert',
                     'label' => 'Staff Filed Document',
