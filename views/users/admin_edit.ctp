@@ -65,6 +65,15 @@
 		    'after' => '</p>'
 	    ));
 	    echo '<br class="clear" />' ;
+	    echo $this->Form->input('id_card_number', array(
+		    'type' => 'text',
+		    'value' => $this->data['User']['id_card_number'],
+		    'label' => __('Id Card Number', true),
+		    'before' => '<p class="left">',
+		    'between' => '</p><p class="left">',
+		    'after' => '</p>'
+	    ));
+	    echo '<br class="clear" />' ;
 	    echo $this->Form->input('address_1', array(
 		    'label' => 'Address',
 		    'before' => '<p class="left">',
