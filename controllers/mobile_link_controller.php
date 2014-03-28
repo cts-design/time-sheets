@@ -31,7 +31,13 @@ class MobileLinkController extends AppController {
 			$link['MobileLink']['phone_number'] = $this->params['form']['phone_number'];
 
 			$this->MobileLink->create();
-			$result = $this->MobileLink->save( $link );
+			$result = $this->MobileLink->find('first', array(
+				'conditions' => array(
+					'MobileLink.user_id' => $user_id,
+				),
+				'order' => array('created DESC')
+			));
+
 			$mobile_link_id = $result['MobileLink']['id'];
 
 			//Send email to users's phone
