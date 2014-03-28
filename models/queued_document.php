@@ -167,8 +167,6 @@ class QueuedDocument extends AppModel {
 		}
 		$data['QueuedDocument']['entry_method'] = $entryMethod;
 
-		var_dump($path);
-
 		if(!isset($data['QueuedDocument']['submittedfile']) || !move_uploaded_file($data['QueuedDocument']['submittedfile']['tmp_name'], $path . $docName)) {
 		    return false;
 		}
@@ -222,11 +220,6 @@ class QueuedDocument extends AppModel {
 		
 		//Temporarily save the image for converting
 		$image_directory = $this->temporaryImageSave($file);
-
-		if(!file_exists($image_directory))
-		{
-			var_dump("The temporary image directory was not found");
-		}
 
 		$save_directory = APP . 'storage' . DS . date('Y') . DS . date('m');
 
