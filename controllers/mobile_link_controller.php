@@ -83,6 +83,7 @@ class MobileLinkController extends AppController {
 
 			if($is_saved)
 			{
+				$this->MobileLink->delete($mobile_link['MobileLink']['id']);
 				$this->redirect('/mobile_link/success');
 			}
 			else
