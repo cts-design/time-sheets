@@ -31,9 +31,8 @@ class MobileLinkController extends AppController {
 			$link['MobileLink']['phone_number'] = $this->params['form']['phone_number'];
 
 			$this->MobileLink->create();
-			$this->MobileLink->save( $link );
-
-			$mobile_link_id = $this->MobileLink->getInsertID();
+			$result = $this->MobileLink->save( $link );
+			$mobile_link_id = $result['MobileLink']['id'];
 
 			//Send email to users's phone
 			$to 		= $link['MobileLink']['phone_number'] . $link['MobileLink']['provider'];
