@@ -29,7 +29,7 @@
 
         <button class="slate">Capture Image from Phone</button>
 
-        <button type="submit" class="sky submit" style="margin-top:10px">Upload</button>
+        <button type="submit" class="sky submit" style="margin-top:20px">Upload</button>
         </div>
 	<?= $this->Form->end() ?> 
 </div>
