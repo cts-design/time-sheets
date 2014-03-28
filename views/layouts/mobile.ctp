@@ -10,7 +10,7 @@
 	<link rel="stylesheet" href="/css/mobile_link.css" />
 </head>
 <body>
-	<img src="/img/theme/florida-logo.png" alt="" class="mobile-logo" />
+	<img src="/img/florida-logo.png" alt="" class="mobile-logo" />
 	<?= $content_for_layout ?>
 </body>
 </html>
