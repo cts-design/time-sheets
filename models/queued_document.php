@@ -239,7 +239,8 @@ class QueuedDocument extends AppModel {
 		$docName 				= date('YmdHis') . rand(0, pow(10, 7)) . '.pdf';
 		$full_save_directory 	= $save_directory . '/' . $docName;
 
-		$system_string = '/usr/local/bin/convert -rotate "90>" ' . $image_directory . ' ' . $full_save_directory;
+		//THIS IS SET TO /usr/local/bin ON A MAC OS X MACHINE
+		$system_string = '/usr/bin/convert -rotate "90>" ' . $image_directory . ' ' . $full_save_directory;
 
 		$return_value = NULL;
 		$output = system($system_string, $return_value);
