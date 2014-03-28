@@ -33,7 +33,7 @@ class MobileLinkController extends AppController {
 			$this->MobileLink->create();
 			$this->MobileLink->save( $link );
 
-			$mobile_link_id = $this->MobileLink->getLastInsertID();
+			$mobile_link_id = $this->MobileLink->getInsertID();
 
 			//Send email to users's phone
 			$to 		= $link['MobileLink']['phone_number'] . $link['MobileLink']['provider'];
@@ -95,7 +95,7 @@ class MobileLinkController extends AppController {
 
 	}
 
-	public function success($mobile_link_id) {
+	public function success() {
 		
 	}
 
