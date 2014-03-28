@@ -33,14 +33,16 @@ class MobileLinkController extends AppController {
 			$this->MobileLink->create();
 			$this->MobileLink->save( $link );
 
+			$mobile_link_id = $this->MobileLink->getLastInsertID();
+
 			//Send email to users's phone
 			$to 		= $link['MobileLink']['phone_number'] . $link['MobileLink']['provider'];
 			$headers	= "From: " . Configure::read('System.email') . "\r\n";
-			$sms_link	= Router::url('/mobile_link/upload/' . $link['MobileLink']['id'], true);
+			$sms_link	= Router::url('/mobile_link/upload/' . $mobile_link_id, true);
 			$message 	= "To upload your document, click the link and follow the instructions on your phone: " . $sms_link;
+			$is_sent 	= mail($to, "", $message, $headers);
 
-			$is_sent = mail($to, "", $message, $headers);
-			$this->redirect('/mobile_link/wait');
+			$this->Session->setFlash('You should recieve a text message shortly, if you do not recieve one, re-enter your phone number', null, null, 'flash_success');
 		}
 	}
 

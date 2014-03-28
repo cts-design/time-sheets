@@ -12,10 +12,23 @@ label > p {
 label > input {
 	display:inline-block;
 }
+#upload_docs p {
+	margin:10px 0px;
+	padding:0px;
+}
+.success {
+	color:#2ecc71 !important;
+	font-family:Verdana;
+	font-size:14pt !important;
+}
 </style>
 <div id="upload_docs">
+
+	<p class="success">
+		<?= $this->Session->flash('flash_success') ?>
+	</p>
 	
-	<p class="center">
+	<p>
 		You have chosen to upload your document via mobile upload, enter your phone number and service provider
 	</p>
 
