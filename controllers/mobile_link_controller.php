@@ -48,6 +48,7 @@ class MobileLinkController extends AppController {
 	}
 
 	public function show_code($mobile_link_id = NULL) {
+		$this->layout = 'default';
 		$link = $this->MobileLink->findById($mobile_link_id);
 		$this->set(compact('link'));
 	}
@@ -84,7 +85,7 @@ class MobileLinkController extends AppController {
 			if($is_saved)
 			{
 				$this->MobileLink->delete($mobile_link['MobileLink']['id']);
-				$this->redirect('/mobile_link/success');
+				$this->redirect('/mobile_link/success/');
 			}
 			else
 			{
@@ -94,8 +95,8 @@ class MobileLinkController extends AppController {
 
 	}
 
-	public function success() {
-
+	public function success($mobile_link_id) {
+		
 	}
 
 	public function confirm($mobile_link_id = null) {
