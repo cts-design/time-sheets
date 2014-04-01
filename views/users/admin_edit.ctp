@@ -42,7 +42,7 @@
 		echo $this->Form->input('surname', array(
 			'type' => 'select',
 			'empty' => 'Please Select',
-			'options' => array('Sr' => 'Sr', 'Jr' => 'Jr', 'III' => 'III'),
+			'options' => array('Jr' => 'Jr', 'Sr' => 'Sr', 'III' => 'III', 'IV' => 'IV', 'V' => 'V', 'VI' => 'VI', 'VII' => 'VII'),
 		    'before' => '<p class="left">',
 		    'between' => '</p><p class="left">',
 		    'after' => '</p>'
