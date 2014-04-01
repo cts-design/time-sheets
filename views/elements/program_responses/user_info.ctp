@@ -6,6 +6,8 @@
 	<br class="clear" />
 	<p class="left label"><strong><?php __('Last Name:') ?></strong></p><p class="left"><?php echo ucwords($user['lastname'])?></p>
 	<br class="clear" />
+	<p class="left label"><strong><?php __('SurName:') ?></strong></p><p class="left"><?php echo ucwords($user['surname'])?></p>
+	<br class="clear" />	
 	<p class="left label"><strong><?php __('SSN:') ?></strong></p><p class="left"><?php echo $user['ssn']?></p>
 	<br class="clear" />
 	<p class="left label"><strong><?php __('Address:') ?></strong></p><p class="left"><?php echo ucwords($user['address_1'])?></p>
