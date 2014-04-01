@@ -52,7 +52,7 @@ $(document).ready(function() {
 			'label' => __('Child\'s Surname', true),
 			'type' => 'select',
 			'empty' => 'None',
-			'options' => array('Jr' => 'Jr', 'Sr' => 'Sr', 'III' => 'III'),
+			'options' => array('Jr' => 'Jr', 'Sr' => 'Sr', 'III' => 'III', 'IV' => 'IV', 'V' => 'V', 'VI' => 'VI', 'VII' => 'VII'),
 			'between' => '<br />',
 			'after' => '<br />'));
 		echo $this->Form->input('gender', array(
