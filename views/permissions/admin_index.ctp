@@ -1,11 +1,3 @@
-<?php
-/**
- * @author Daniel Nolan
- * @copyright Complete Technology Solutions 2010
- * @link http://ctsfla.com
- */
-
-?>
 <script type="text/javascript">
     Ext.onReady(function(){
         Ext.QuickTips.init();
@@ -92,6 +84,10 @@
                 'type' => 'checkbox',
                 'label' => 'Index',
                 'checked' => (isset($controllers['Ecourses']['admin_index'])) ? $controllers['Ecourses']['admin_index'] : '' ));?>
+               <?php echo $this->Form->input('EcourseUsers.admin_assign_customers', array(
+                'type' => 'checkbox',
+                'label' => 'Assign Customers',
+                'checked' => (isset($controllers['EcourseUsers']['admin_assign_customers'])) ? $controllers['EcourseUsers']['admin_assign_customers'] : '' ));?>
             </fieldset>
             <?php echo $this->PluginPermissions->buildFieldset('ecourses') ?>
             <br class="clear" />

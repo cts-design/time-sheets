@@ -328,6 +328,7 @@ Ext.onReady(function() {
 		data : [
 			{type: 'firstname', label: 'First Name'},
 			{type: 'lastname', label : 'Last Name'},
+			{type: 'surname', label: 'Surname'},
 			{type: 'last4', label: 'Last 4 SSN'},
 			{type: 'fullssn', label: 'Full SSN'}
 		]
