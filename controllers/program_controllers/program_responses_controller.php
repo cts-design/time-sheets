@@ -708,6 +708,7 @@ class ProgramResponsesController extends AppController {
 				$report[$k]['Last Name'] = $v['User']['lastname'];
 				$report[$k]['Sur Name'] = $v['User']['surname'];
 				$report[$k]['Last 4 SSN'] = substr($v['User']['ssn'], -4);
+				$report[$k]['Confirmation Id'] = $v['ProgramResponse']['confirmation_id'];
 				$report[$k]['Address'] = $v['User']['address_1'];
 				$report[$k]['City'] = $v['User']['city'];
 				$report[$k]['County'] = $v['User']['county'];
