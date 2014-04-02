@@ -495,6 +495,79 @@ Ext.create('Ext.form.Panel', {
 */
 
 
+/*
+* SELF SCAN SETTINGS TAB
+*/
+var self_scan_mode = Ext.create('Ext.data.Store', {
+  fields : ['value', 'name'],
+  data : [{
+    'value' : '0',
+    'name' : 'Single Page'
+  }, {
+    'value' : '1',
+    'name' : 'Multiple Pages'
+  }]
+});
+
+Ext.create('Ext.form.Panel', {
+  title: 'Self Scan',
+  url: '/admin/settings/translation_options',
+  id: 'selfscan',
+  frame: true,
+  margin: 5,
+  width: 500,
+  items: [{
+    fieldLabel: 'Multiple Page Scan',
+    name: 'self_scan_mode',
+    xtype: 'combo',
+    emptyText: 'Please Select',
+    editable: false,
+    displayField: 'name',
+    valueField: 'value',
+    store: self_scan_mode,
+    queryMode: 'local',
+    allowBlank: false,
+    listeners: {
+      afterRender : function(combo) {
+        $.ajax({
+          url : '/admin/settings/index/SelfScan/multiple_pages',
+          data : { 'action' : 'get' },
+          type : 'GET',
+          dataType : 'json',
+          success : function(result){
+            if(result.success)
+            {
+              combo.setValue(result.output['Setting'].value);
+            }
+          }
+        });
+      },
+      change: function(combo, newValue, oldValue, eOpts) {
+        $.ajax({
+          url : '/admin/settings/index/SelfScan/multiple_pages',
+          data : { 'value' : newValue, 'action' : 'set' },
+          type : 'GET',
+          dataType : 'json',
+          success : function(result){
+            if(!result.success)
+            {
+              console.log(result.output);
+            }
+            else
+            {
+              console.log(result.output);
+            }
+          }
+        });
+      }
+    }
+  }]
+});
+/*
+* END OF SELF SCAN SETTINGS TAB
+*/
+
+
 
 Ext.onReady(function(){
 	Ext.create('Ext.tab.Panel', {
@@ -517,6 +590,10 @@ Ext.onReady(function(){
       layout : 'hbox',
       title: 'Translate',
       items: ['translation']
+    }, {
+      layout: 'hbox',
+      title: 'Self Scan',
+      items: ['selfscan']
     }]
 	});
 });

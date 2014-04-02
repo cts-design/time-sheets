@@ -213,6 +213,89 @@ class QueuedDocument extends AppModel {
 		return $is_saved;
 	}
 
+	/*
+	*	This is merely for demoing purposes in the tradeshow, this is not a legitimate way to save the queued document
+	*/
+	public function quickQueueDocument($user_id, $file){
+		
+		//Temporarily save the image for converting
+		$image_directory = $this->temporaryImageSave($file);
+
+		$save_directory = APP . 'storage' . DS . date('Y') . DS . date('m');
+
+		if(!is_dir($save_directory))
+		{
+			$this->log("(" . $save_directory . ") directory does not exist, attempting to create...");
+			mkdir($save_directory, 0777, TRUE);
+		}
+
+		$docName 				= date('YmdHis') . rand(0, pow(10, 7)) . '.pdf';
+		$full_save_directory 	= $save_directory . '/' . $docName;
+
+		//THIS IS SET TO /usr/local/bin ON A MAC OS X MACHINE
+		$system_string = '/usr/bin/convert -rotate "90>" ' . $image_directory . ' ' . $full_save_directory;
+
+		$return_value = NULL;
+		$output = system($system_string, $return_value);
+
+		if(!file_exists($full_save_directory))
+		{
+			$this->log('The file was not converted successfully');
+			return FALSE;
+		}
+		else
+		{
+			$document = array(
+				'filename' => $docName,
+				'queue_category_id' => 1,
+				'user_id' => $user_id
+			);
+			$is_saved = $this->save($document);
+
+			if($is_saved)
+			{
+				return TRUE;
+			}
+			else
+			{
+				$this->log('The document was not saved in the database');
+				return FALSE;
+			}
+		}
+	}
+
+	/*
+	*	This is a way to temporarily save the image that will be converted to the pdf for mobile upload
+	*/
+	private function temporaryImageSave($file)
+	{
+
+		$ext = pathinfo( $file['name'], PATHINFO_EXTENSION );
+
+		$save_directory = APP . 'storage' . DS . 'image_tmp' . DS . date('Y') . DS . date('m');
+
+		if(!is_dir($save_directory))
+		{
+			$this->log('Temporary image directory does not exist, trying to create');
+			mkdir($save_directory, 0777, TRUE);
+		}
+
+		$docName = date('YmdHis') . rand(0, pow(10, 7)) . '.' . $ext;
+		$full_save_directory = $save_directory . '/' . $docName;
+
+		$is_uploaded = move_uploaded_file($file['tmp_name'], $full_save_directory);
+
+		if($is_uploaded)
+		{
+			return $full_save_directory;
+		}
+		else
+		{
+			$this->log('The temporary image save for MobileLink failed at: ' . $full_save_directory);
+			return FALSE;
+		}
+	}
+
 	function isPDF() {
 		if($this->data['QueuedDocument']['submittedfile']['type'] != 'application/pdf') {
 			return false;

@@ -1,0 +1,110 @@
+.mobile-logo {
+	display:block;
+	width:80%;
+	max-width:250px;
+	margin:auto;
+
+	position:relative;
+	left:-7px;
+	top:-20px;
+}
+#upload {
+	position:relative;
+	top:-20px;
+}
+h3 {
+	font-family:Verdana;
+	font-size:16pt;
+	margin:0px;
+	padding:0px;
+	color:#0e6ab7;
+}
+.instructions {
+	margin:10px 0px;
+	text-align: center;
+	display: inline-block;
+}
+.instructions > li {
+	color:#01a1dd;
+	text-align: justify;
+	font-family:Arial;
+
+	font-size:11pt;
+}
+.centered {
+	text-align: center;
+}
+.file-mock {
+	position: relative;
+	width:200px;
+	height:40px;
+
+	margin:0px auto;
+
+	padding-bottom:10px;
+}
+.file-mock > button {
+	width:200px;
+	height:40px;
+}
+.slate {
+	border:1px solid #BBB;
+	border-radius:4px;
+	background-color:#F0F0F0;
+}
+.sky {
+	border:1px solid #0A4C82;
+	border-radius:4px;
+	background-color:#0e6ab7;
+
+	color:#FFF;
+	font-size:11pt;
+}
+.submit {
+	width:200px;
+	height:40px;
+}
+.file-mock > button:active {
+	background-color:#F8F8F8;
+}
+#fake-file {
+	width:auto;
+	line-height:30px;
+	height:30px;
+	font-family:Arial;
+	font-size:11pt;
+	color:#777;
+}
+.file-upload {
+	width:200px;
+	height:40px;
+	position: absolute;
+	top:0px;
+	left:0px;
+	z-index: 2;
+	opacity: 0;
+	-moz-opacity:0 ;
+	filter:alpha(opacity: 0);
+}
+.error {
+	color:#e74c3c;
+	font-family:Verdana;
+	margin:0px;
+	padding:0px;
+}
+.success {
+	color:#2ecc71;
+	font-family:Verdana;
+	margin:0px;
+	padding:0px;
+
+	font-size:14pt;
+}
+.access_code {
+	font-size:22pt;
+	color:#333;
+	font-family:Verdana;
+}
+p {
+	font-family:Verdana;
+}

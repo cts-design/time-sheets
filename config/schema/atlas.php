@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2014-03-10 17:35:30 : 1394487330*/
+/* atlas schema generated on: 2014-03-28 17:59:06 : 1396043946*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -340,6 +340,7 @@ class atlasSchema extends CakeSchema {
 		'event_registration_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
 		'allow_registrations' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'private' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 4),
+		'active' => array('type' => 'boolean', 'null' => false, 'default' => '1'),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'event_category_id' => array('column' => 'event_category_id', 'unique' => 0), 'location_id' => array('column' => 'location_id', 'unique' => 0), 'cat_1' => array('column' => 'cat_1', 'unique' => 0), 'cat_2' => array('column' => 'cat_2', 'unique' => 0), 'cat_3' => array('column' => 'cat_3', 'unique' => 0)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
 	);
@@ -529,6 +530,17 @@ class atlasSchema extends CakeSchema {
 		'name' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 60, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'parent_id' => array('column' => 'parent_id', 'unique' => 0)),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'MyISAM')
+	);
+	var $mobile_links = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+		'passcode' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 4),
+		'phone_number' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 11, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+		'provider' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 60, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+		'user_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+		'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'id_UNIQUE' => array('column' => 'id', 'unique' => 1)),
+		'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'InnoDB')
 	);
 	var $module_access_controls = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),

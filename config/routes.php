@@ -68,4 +68,6 @@
 	}*/
 	Router::connect('/kiosk', array('controller' => 'users', 'action' => 'sign_in_redirect', 'kiosk' => true));
 
+	Router::connect('/mobile', array('controller' => 'mobile_link', 'action' => 'upload'));
+
 
