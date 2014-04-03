@@ -140,6 +140,7 @@ task :elc_pasco_hernando do
   server "atlas.phelc.org", :app, :web, :db, :primary => true
 end
 
+# This one is really old, don't deploy to it unless to
 task :elc_pinellas do
   set :deploy_to, "/var/www/vhosts/vpk.childcarepinellas.org/#{application}"
   set :server_name, 'vpk.elcpinellas.net (ELC-Pinellas)'
