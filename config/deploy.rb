@@ -151,7 +151,7 @@ task :elc_polk do
   set :server_name, 'vpkelcpolk.org (ELC-Polk)'
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
   set :user, 'deploy'
-  server "www.vpkelcpolk.org", :app, :web, :db, :primary => true
+  server "192.168.200.57", :app, :web, :db, :primary => true
 end
 
 task :elc_sarasota do
