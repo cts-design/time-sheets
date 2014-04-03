@@ -3,6 +3,30 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+	<h1>Release 3.8.5 (4-2-2014)</h1>
+	<h2>Feature Releases</h2>
+	<ol>
+		<li>
+			Added certificate number to Excel Report
+		</li>
+		<li>
+			Added ID card number to customer profile
+		</li>
+		<li>
+			Added functionality to "activate" an event
+		</li>
+	</ol>
+
+	<h2>Minor Bug Fixes</h2>
+	<ol>
+		<li>
+			Fixed issue with Alerts permission that was prohibiting admins from creating alerts for program responses for staff
+		</li>
+		<li>
+			Fixed issue that was causing intermittent loss of Step logic tracking, Causing user to not be able to complete program applications with more that 3 steps wihtina module
+		</li>
+	</ol>
+
 	<h1>Release 3.8.4 (3-20-14)</h1>
 	<h2>Feature Releases</h2>
 	<ol>
