@@ -89,7 +89,7 @@ class EcoursesController extends AppController {
 				}
 			}
 		}
-		if(empty($ecourse['EcourseResponse'])) {
+		if(empty($ecourse['EcourseResponse']) && $id != 'undefined') {
 			$this->data['EcourseResponse']['user_id'] = $this->Auth->user('id');
 			$this->data['EcourseResponse']['ecourse_id'] = $id;
 			$this->Ecourse->EcourseResponse->save($this->data);
