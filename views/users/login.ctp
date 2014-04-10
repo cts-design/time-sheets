@@ -24,7 +24,7 @@
 	<fieldset>
 		<legend>Login</legend>
 		<?php
-		    echo $form->create('User', array('url' => $this->Html->url()));
+		    echo $form->create('User', array('url' => $this->here));
 			echo $form->input('username', array(
 				'label' =>__('Last Name', true),
 				'between' => '<br />',
