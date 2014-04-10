@@ -277,7 +277,8 @@ class QueuedDocument extends AppModel {
 		if(!is_dir($save_directory))
 		{
 			$this->log('Temporary image directory does not exist, trying to create');
-			mkdir($save_directory, 0777, TRUE);
+			$is_created = mkdir($save_directory, 0777, TRUE);
+			$this->log('Success of temporary directory: ' . var_export($is_created, true));
 		}
 
 		$docName = date('YmdHis') . rand(0, pow(10, 7)) . '.' . $ext;
