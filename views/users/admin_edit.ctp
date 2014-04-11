@@ -53,7 +53,8 @@
 		    'label' => __('SSN', true),
 		    'before' => '<p class="left">',
 		    'between' => '</p><p class="left">',
-		    'after' => '</p>'
+		    'after' => '</p>',
+		    'maxlength' => '9'
 	    ));
 	    echo '<br class="clear" />' ;
 	    echo $this->Form->input('ssn_confirm', array(
@@ -62,7 +63,8 @@
 		    'label' => __('SSN Confirm', true),
 		    'before' => '<p class="left">',
 		    'between' => '</p><p class="left">',
-		    'after' => '</p>'
+		    'after' => '</p>',
+		    'maxlength' => '9'
 	    ));
 	    echo '<br class="clear" />' ;
 	    echo $this->Form->input('id_card_number', array(
