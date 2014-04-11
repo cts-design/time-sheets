@@ -243,12 +243,16 @@ class UsersController extends AppController {
 	function admin_edit($id = null) {
 		$this->User->Behaviors->disable('Disableable');
 		$this->set('title_for_layout', 'Edit Customer');
-		if (!$id && empty($this->data)) {
+
+		if (!$id && empty($this->data))
+		{
 			$this->Session->setFlash(__('Invalid customer', true), 'flash_failure');
 			$this->redirect(array('action' => 'index'));
 		}
-		if (!empty($this->data)) {
+		if (!empty($this->data))
+		{
 			$this->User->setValidation('customerMinimum');
+
 			if ($this->User->save($this->data)) {
 				$this->Transaction->createUserTransaction('Customer',
 					null, null, 'Edited customer '. $this->data['User']['lastname'] .
@@ -262,6 +266,7 @@ class UsersController extends AppController {
 		}
 		if (empty($this->data)) {
 			$this->data = $this->User->read(null, $id);
+
 			if($this->data['User']['role_id'] != 1) {
 				$this->Session->setFlash(__('Invalid customer', true), 'flash_failure');
 				$this->redirect($this->referer());
@@ -272,6 +277,7 @@ class UsersController extends AppController {
 			'genders' => $this->genders,
 			'statuses' => $this->statuses
 		);
+
 		$this->set($data);
 	}
 
@@ -908,7 +914,10 @@ class UsersController extends AppController {
 
 		$this->loadModel('Program');
 
+		$this->set('states', $this->states);
+
 		$usePassword = Configure::read('Registration.usePassword');
+
 
 		switch($type)
 		{

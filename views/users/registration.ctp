@@ -62,7 +62,7 @@ $(document).ready(function() {
 			'label' => __('Gender', true),
 			'type' => 'select',
 			'empty' => 'Select Gender',
-			'options' => array('Male' => 'Male', 'Female' => 'Female'),
+			'options' => array('male' => 'Male', 'female' => 'Female'),
 			'between' => '<br />',
 			'after' => '<br />'));
 
@@ -100,67 +100,6 @@ $(document).ready(function() {
 				'after' => '<br />'
 			));
 		}
-
-		/*
-		if(Configure::read('Registration.ssn') == 'full') {
-		    echo $this->Form->input('ssn', array(
-				'label' => __('Social Security Number', true),
-				'type' => 'password',
-				'maxlength' => 9,
-				'between' => '<br />',
-				'after' => '<br />'));
-		    echo $this->Form->input('ssn_confirm', array(
-				'label' => __('Please confirm your Social Security Number', true),
-				'type' => 'password',
-				'maxlength' => 9,
-				'between' => '<br />',
-				'after' => '<br />'));
-		}
-		elseif(Configure::read('Registration.ssn') == 'last4') {
-			echo '<div class="input required">';
-				echo $this->Form->label(__('Social Security Number', true));
-				echo '<br />';	
-				echo $this->Form->input('ssn_1', array(
-					'type' => 'text',
-					'div' => false,
-					'maxlength' => 3, 
-					'label' => false));
-				echo $this->Form->input('ssn_2', array(
-					'type' => 'text',
-					'maxlength' => 2,
-					'label' => false,
-					'div' => false));
-				echo $this->Form->input('ssn_3', array(
-					'type' => 'text',
-					'maxLength' => 4,
-					'label' => false,
-					'div' => false));
-				echo "<br class='clear' />";
-				echo '<div class="small">Please see the <a href="#">privacy act</a> statement concerning social security numbers.</div>';	
-				echo $this->Form->error('ssn');
-			echo '</div>';
-			echo '<div class="input required">';
-				echo $this->Form->label(__('Please confirm your Social Security Number', true));
-				echo '<br />';			
-				echo $this->Form->input('ssn_1_confirm', array(
-					'type' => 'password',
-					'maxlength' => 3,
-					'label' => false,
-					'div' => false));
-				echo $this->Form->input('ssn_2_confirm', array(
-					'type' => 'password',
-					'maxlength' => 2,
-					'label' => false,
-					'div' => false));
-				echo $this->Form->input('ssn_3_confirm', array(
-					'type' => 'password',
-					'maxlength' => 4,
-					'label' => false,
-					'div' => false,
-					'after' => '<br />'));
-				echo $this->Form->error('ssn_confirm');
-			echo '</div>';					
-		}	*/
 	    echo $this->Form->input('dob', array(
 			'label' => __('Birth Date <span class="small gray">(mm/dd/yyyy)</span>', true),
 			'type' => 'text',
@@ -180,8 +119,10 @@ $(document).ready(function() {
 			'between' => '<br />',
 			'after' => '<br />'));
 		echo $this->Form->input('state', array(
-			'empty' => 'Please Select',
 			'label' => __('State', true),
+			'type' => 'select',
+			'empty' => 'Select State',
+			'options' => $states,
 			'between' => '<br />',
 			'after' => '<br />'));
 	    echo $this->Form->input('zip', array(
