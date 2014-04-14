@@ -248,6 +248,7 @@ end
 # 6pm deploys
 task :chipola do
   set :design_branch, "chipola-new"
+  set :design_architecture, 'new'
   set :deploy_to, "/var/www/vhosts/atlas.onestopahead.com/#{application}"
   set :server_name, 'chipola production'
   set :user, 'ola_chip0'
