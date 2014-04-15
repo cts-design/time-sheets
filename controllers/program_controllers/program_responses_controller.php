@@ -726,7 +726,7 @@ class ProgramResponsesController extends AppController {
                                         } else {
                                           $vet_response = "Yes";
                                         }
-                                $report[$k]['Veteran'] = $vet_response;				
+                                $report[$k]['Veteran'] = $vet_response;			
 				
 				$report[$k]['Status'] = ucfirst($v['ProgramResponse']['status']);
 				$report[$k]['Created'] = date('m/d/Y g:i a', strtotime($v['ProgramResponse']['created']));
