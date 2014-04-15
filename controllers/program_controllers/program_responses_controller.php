@@ -721,6 +721,12 @@ class ProgramResponsesController extends AppController {
 				$report[$k]['Language'] = $v['User']['language'];
 				$report[$k]['Ethnicity'] = $v['User']['ethnicity'];
 				$report[$k]['Race'] = $v['User']['race'];
+                                if ( (!$v['User']['veteran']) || ($v['User']['veteran'] == '0') ) {
+                                          $vet_response = "No";
+                                        } else {
+                                          $vet_response = "Yes";
+                                        }
+                                $report[$k]['Veteran'] = $vet_response;				
 				
 				$report[$k]['Status'] = ucfirst($v['ProgramResponse']['status']);
 				$report[$k]['Created'] = date('m/d/Y g:i a', strtotime($v['ProgramResponse']['created']));
