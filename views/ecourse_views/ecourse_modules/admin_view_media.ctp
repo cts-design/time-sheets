@@ -1,5 +1,6 @@
-<?php $this->Html->script('flowplayer-3.2.6.min') ?>
-<?php $this->Html->script('swfobject', array('inline' => false)) ?>
+<?= $this->Html->script('flowplayer-3.2.6.min') ?>
+<?= $this->Html->script('jquery1102.min') ?>
+<?= $this->Html->script('swfobject', array('inline' => false)) ?>
 
 <?php if ($module['EcourseModule']['media_type'] == 'pdf'): ?>
 	<div id="EcoursePdf">
@@ -9,8 +10,9 @@
 <?php elseif ($module['EcourseModule']['media_type'] == 'flv'): ?>
 	<noscript><?php __('You must have Javascript enabled to view this video.') ?></noscript>
 	<div id="player" style="width:600px;height:400px;"></div>
+
 	<script>
-		(function() {
+		$(document).ready(function() {
 			flowplayer("player", "/swf/flowplayer-3.2.7.swf", {
 				clip: {
 					url: '<?= "/ecourses/load_media/{$module['EcourseModule']['media_location']}" ?>',
@@ -18,7 +20,7 @@
 					autoPlay: false
 				}
 			});
-		}());
+		});
 	</script>
 <?php elseif ($module['EcourseModule']['media_type'] == 'swf'): ?>
 	<noscript><?php __('You must have Javascript enabled to view this video.') ?></noscript>
