@@ -196,7 +196,6 @@ margin-left: 100px;
 
 .self-sign-survey-wrapper div .ui-button.self-sign-survey-button, .self-scan-survey-button {
     /* width:200px;*/
-    height: 50px;
     font-size: 19px;
     line-height: 2em !important;
     margin: 0 0 24px;
@@ -219,7 +218,7 @@ margin-left: 100px;
 
 .actions .ui-button-text{
   position: relative;
-  top: 25%;
+  /* top: 25%; */
   font-family:Arial,Helvetica,sans-serif;
   font-size: 16px;
 }

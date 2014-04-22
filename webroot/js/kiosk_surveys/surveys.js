@@ -27,7 +27,8 @@ var surveyPanel = {
       data: [
         [ 'yesno', 'Yes/No' ],
         [ 'truefalse', 'True/False' ],
-        [ 'multi', 'Multiple Choice' ]
+        [ 'multi', 'Multiple Choice' ],
+        [ 'text', 'Text Box']
       ]
     });
 
@@ -128,7 +129,7 @@ var surveyPanel = {
 						selectOnFocus: true,
 						listeners: {
 							select: function (combo, rec, index) {
-								if (rec[0].data.shortname === 'yesno' || rec[0].data.shortname === 'truefalse') {
+								if (rec[0].data.shortname === 'yesno' || rec[0].data.shortname === 'truefalse'  || rec[0].data.shortname === 'text') {
 									Ext.getCmp('optionsField').disable().reset();
 								} else {
 									Ext.getCmp('optionsField').enable();
@@ -434,6 +435,8 @@ var surveyPanel = {
 							return 'True/False';
 						case 'multi':
 							return 'Multiple Choice';
+						case 'text':
+ 							return 'Text Box';
 						}
 
 						return value;
@@ -451,28 +454,27 @@ var surveyPanel = {
 		    },
 		    select: {
 		      fn: function (rm, rec, index, opts) {
-						this.selectedQuestion = rec;
+					this.selectedQuestion = rec;
 						
-						var form = Ext.getCmp('questionForm').getForm(),
-		          questionField = Ext.getCmp('questionField'),
-		          typeField = Ext.getCmp('typeField'),
-		          optionsField = Ext.getCmp('optionsField'),
-              orderField = Ext.getCmp('orderField');
+					var form = Ext.getCmp('questionForm').getForm(),
+					questionField = Ext.getCmp('questionField'),
+					typeField = Ext.getCmp('typeField'),
+					optionsField = Ext.getCmp('optionsField'),
+					orderField = Ext.getCmp('orderField');
 
-							if (questionField.disabled) {
-              	questionField.enable();
-                typeField.enable();
-                orderField.enable();
-							} else {
-                if (rec.data.type === "yesno" || rec.data.type === "truefalse") {
-                  optionsField.disable();
-                }
-              }
-                if (rec.data.type !== "yesno" && rec.data.type !== 'truefalse') {
-                  optionsField.enable();
-                }
+					if (rec.data.type === "yesno" || rec.data.type === "truefalse" || rec.data.type === "text") {
+						questionField.enable();
+	 	                typeField.enable();
+						orderField.enable();
+						optionsField.disable();
+	         		} else {
+						questionField.enable();
+						typeField.enable();
+						orderField.enable();
+						optionsField.enable();        			
+	         		}
 
-								form.loadRecord(rec);
+					form.loadRecord(rec);
                 Ext.getCmp('deleteQuestionButton').enable();
 		      },
 		      scope: this
