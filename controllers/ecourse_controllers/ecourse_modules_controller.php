@@ -13,11 +13,14 @@ class EcourseModulesController extends AppController {
 	public function beforeFilter() {
 		parent::beforeFilter();
 		if($this->Auth->user()) {
+
 		    if($this->Acl->check(array(
 				'model' => 'User',
 				'foreign_key' => $this->Auth->user('id')), 'Ecourses/admin_index', '*')){
 					$this->Auth->allow('admin_index', 'admin_update', 'admin_create', 'admin_destroy', 'admin_upload_media');
 			}
+
+			$this->Auth->allow('admin_view_media');
 		}
 	}
 
