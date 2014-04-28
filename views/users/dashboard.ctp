@@ -3,8 +3,35 @@
 		.widget .header { filter: none; }
 	</style>
 <![endif]-->
+
 <div id="dashboard">
+    <div class="grid-buttons">
+        <?php if(!empty($ecourses)) : ?>
+        <a href="#" class="">Ecourses  <i class="fa fa-arrow-circle-o-right"></i> </a>
+        <?php endif ?>
+       <?php if(!empty($eventRegistrations)) : ?> 
+        <a href="#" class="">Event Registrations <i class="fa fa-arrow-circle-o-right"></i> </a>
+       <?php endif ?>
+        <?php if(!empty($registrations)) : ?>
+        <a href="#" class="">Registrations <i class="fa fa-arrow-circle-o-right"></i> </a>
+        <?php endif ?>
+        <?php if(!empty($enrollments)) : ?>
+        <a href="#" class="">Enrollments <i class="fa fa-arrow-circle-o-right"></i> </a>
+        <?php endif ?>
+        <?php if(!empty($orientations)) : ?>
+        <a href="#" class="">Orientations <i class="fa fa-arrow-circle-o-right"></i> </a>
+        <?php endif ?>
+        <?php if ($esignProgram): ?>
+        <a href="#" class="">Esign <i class="fa fa-arrow-circle-o-right"></i> </a>
+        <?php endif ?>
+        
+    </div>
+    <div class="grids-2">
+    
 	<?php if(!empty($eventRegistrations)) : ?>
+    <!--Registrations-->
+    <div class="">
+        <div class="items">
 	<div id="event-registrations" class="widget">
 		<div class="widget-header">
 			<h2>
@@ -51,9 +78,15 @@
 			</ul>
 		</div>
 	</div>
+        </div>       
+    </div>
 	<?php endif ?>
 
+    
 	<?php if(!empty($ecourses)) : ?>
+    <!--ecourses-->
+    <div class="">
+        <div class="items">
 	<div id="online-ecourses" class="widget">
 		<div class="widget-header">
 			<h2>
@@ -101,9 +134,14 @@
 			</ul>
 		</div>
 	</div>
+        </div>
+    </div>
 	<?php endif ?>
 
 	<?php if(!empty($registrations)) : ?>
+    <!--Registrations-->
+    <div class="">
+        <div class="items">
 	<div id="online-registrations" class="widget">
 		<div class="widget-header">
 			<h2>
@@ -142,9 +180,14 @@
 			</ul>
 		</div>
 	</div>
+        </div>
+    </div>
 	<?php endif ?>
 
 	<?php if(!empty($orientations)) : ?>
+    <!--orientation's-->
+    <div class="">
+        <div class="items">
 	<div id="online-orientations" class="widget">
 		<div class="widget-header">
 			<h2>
@@ -183,9 +226,14 @@
 			</ul>
 		</div>
 	</div>
+        </div>
+    </div>
 	<?php endif ?>
 
 	<?php if(!empty($enrollments)) : ?>
+    <!--enrollments-->
+    <div class="">
+        <div class="items">
 	<div id="online-enrollments" class="widget">
 		<div class="widget-header">
 			<h2>
@@ -224,10 +272,16 @@
 			</ul>
 		</div>
 	</div>
+        </div>
+    </div>
 	<?php endif ?>
 
 	<?php if ($esignProgram): ?>
-	<?php $currentUser = $this->Session->read('Auth.User') ?>
+	  
+               <?php $currentUser = $this->Session->read('Auth.User') ?>
+  <!--esign-->
+  <div class="">
+      <div class="items">
 	<div id="online-esignature" class="widget">
 		<div class="widget-header">
 			<h2>
@@ -282,5 +336,9 @@
 			</ul>
 		</div>
 	</div>
+      </div>
+  </div>
 	<?php endif ?>
 </div>
+        
+    </div>
