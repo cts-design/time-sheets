@@ -20,7 +20,7 @@
         <div class="location">
 		<div class="left-">
 			<address>
-                            <h1><?php echo $location['Location']['public_name'] ?></h1>
+                            <h3><?php echo $location['Location']['public_name'] ?></h3>
 			<?php echo $location['Location']['address_1']; ?><br />
 			<?php echo (!empty($location['Location']['address_2'])) ? $location['Location']['address_2'] . '<br />' : ''; ?>
 			<?php echo $location['Location']['city']; ?>, <?php echo $location['Location']['state']; ?>&nbsp;<?php echo $location['Location']['zip']; ?><br />
