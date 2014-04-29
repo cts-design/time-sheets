@@ -35,7 +35,7 @@
 	<div id="event-registrations" class="widget">
 		<div class="widget-header">
 			<h2>
-				<i class="icon-file-alt"></i>
+				<i class="fa fa-user"></i>
 				Event Registrations
 			</h2>
 		</div>
@@ -90,7 +90,7 @@
 	<div id="online-ecourses" class="widget">
 		<div class="widget-header">
 			<h2>
-				<i class="icon-tasks"></i>
+				<i class="fa fa-book"></i>
 				Online Ecourses
 			</h2>
 		</div>
@@ -145,7 +145,7 @@
 	<div id="online-registrations" class="widget">
 		<div class="widget-header">
 			<h2>
-				<i class="icon-file-alt"></i>
+				<i class="fa fa-pencil-square"></i>
 				Online Registrations
 			</h2>
 		</div>
@@ -176,6 +176,77 @@
 						</a>
 					</span>
 				</li>
+                                <li>
+					<div class="title">
+						<a href="/ecourses/index/3">Customer Test</a>
+					</div>
+					<div class="details">
+						<i class="icon-book"></i>
+						0 of
+						1						module						completed
+											</div>
+
+					<span class="action">
+						<a href="/ecourses/index/3" class="button gray">
+															Get Started													</a>
+					</span>
+				</li><li>
+					<div class="title">
+						<a href="/ecourses/index/3">Customer Test</a>
+					</div>
+					<div class="details">
+						<i class="icon-book"></i>
+						0 of
+						1						module						completed
+											</div>
+
+					<span class="action">
+						<a href="/ecourses/index/3" class="button gray">
+															Get Started													</a>
+					</span>
+				</li><li>
+					<div class="title">
+						<a href="/ecourses/index/3">Customer Test</a>
+					</div>
+					<div class="details">
+						<i class="icon-book"></i>
+						0 of
+						1						module						completed
+											</div>
+
+					<span class="action">
+						<a href="/ecourses/index/3" class="button gray">
+															Get Started													</a>
+					</span>
+				</li><li>
+					<div class="title">
+						<a href="/ecourses/index/3">Customer Test</a>
+					</div>
+					<div class="details">
+						<i class="icon-book"></i>
+						0 of
+						1						module						completed
+											</div>
+
+					<span class="action">
+						<a href="/ecourses/index/3" class="button gray">
+															Get Started													</a>
+					</span>
+				</li><li>
+					<div class="title">
+						<a href="/ecourses/index/3">Customer Test</a>
+					</div>
+					<div class="details">
+						<i class="icon-book"></i>
+						0 of
+						1						module						completed
+											</div>
+
+					<span class="action">
+						<a href="/ecourses/index/3" class="button gray">
+															Get Started													</a>
+					</span>
+				</li>
 			<?php endforeach ?>
 			</ul>
 		</div>
@@ -191,7 +262,7 @@
 	<div id="online-orientations" class="widget">
 		<div class="widget-header">
 			<h2>
-				<i class="icon-facetime-video"></i>
+				<i class="fa fa-users"></i>
 				Online Orientations
 			</h2>
 		</div>
@@ -237,7 +308,8 @@
 	<div id="online-enrollments" class="widget">
 		<div class="widget-header">
 			<h2>
-				<i class="icon-inbox"></i>
+				
+                                <i class="fa fa-sign-in"></i>
 				Online Enrollments
 			</h2>
 		</div>
