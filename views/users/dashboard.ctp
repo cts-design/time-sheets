@@ -176,77 +176,7 @@
 						</a>
 					</span>
 				</li>
-                                <li>
-					<div class="title">
-						<a href="/ecourses/index/3">Customer Test</a>
-					</div>
-					<div class="details">
-						<i class="icon-book"></i>
-						0 of
-						1						module						completed
-											</div>
-
-					<span class="action">
-						<a href="/ecourses/index/3" class="button gray">
-															Get Started													</a>
-					</span>
-				</li><li>
-					<div class="title">
-						<a href="/ecourses/index/3">Customer Test</a>
-					</div>
-					<div class="details">
-						<i class="icon-book"></i>
-						0 of
-						1						module						completed
-											</div>
-
-					<span class="action">
-						<a href="/ecourses/index/3" class="button gray">
-															Get Started													</a>
-					</span>
-				</li><li>
-					<div class="title">
-						<a href="/ecourses/index/3">Customer Test</a>
-					</div>
-					<div class="details">
-						<i class="icon-book"></i>
-						0 of
-						1						module						completed
-											</div>
-
-					<span class="action">
-						<a href="/ecourses/index/3" class="button gray">
-															Get Started													</a>
-					</span>
-				</li><li>
-					<div class="title">
-						<a href="/ecourses/index/3">Customer Test</a>
-					</div>
-					<div class="details">
-						<i class="icon-book"></i>
-						0 of
-						1						module						completed
-											</div>
-
-					<span class="action">
-						<a href="/ecourses/index/3" class="button gray">
-															Get Started													</a>
-					</span>
-				</li><li>
-					<div class="title">
-						<a href="/ecourses/index/3">Customer Test</a>
-					</div>
-					<div class="details">
-						<i class="icon-book"></i>
-						0 of
-						1						module						completed
-											</div>
-
-					<span class="action">
-						<a href="/ecourses/index/3" class="button gray">
-															Get Started													</a>
-					</span>
-				</li>
+                                
 			<?php endforeach ?>
 			</ul>
 		</div>
