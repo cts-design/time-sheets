@@ -1,0 +1,32 @@
+.left
+{
+	width:45%;
+	float:left;
+}
+#scan-container
+{
+	width:54%;
+	float:right;
+}
+.scan, .rescan, .save
+{
+	display:block;
+	background-color:#e67e22;
+	color:#FFF;
+	font-size:16pt;
+
+	border:1px solid #CCC;
+
+	padding:10px 0px;
+
+	width:200px;
+}
+.scan:hover, .rescan:hover, .save:hover
+{
+	background-color:#d35400;
+}
+.step 
+{
+	font-size:14pt;
+	margin-top:20px;
+}

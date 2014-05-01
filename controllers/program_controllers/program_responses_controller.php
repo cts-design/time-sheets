@@ -391,6 +391,19 @@ class ProgramResponsesController extends AppController {
     }
 	
 	function upload_docs($programId=null, $stepId=null) {
+		$this->loadModel('Kiosk');
+
+		$is_kiosk = TRUE; //$this->Kiosk->isKiosk();
+
+		if($is_kiosk)
+		{
+			$this->set('is_kiosk', $is_kiosk);
+		}
+		else
+		{
+
+		}
+
 		if(!$programId){
 			$this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');
 			$this->redirect($this->referer());
