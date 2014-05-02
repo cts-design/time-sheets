@@ -112,14 +112,12 @@ class Kiosk extends AppModel {
 
 		if(!isset($arrOneStop[1]))
 		{
-			$oneStopLocation = '';
+			$oneStopLocation = 'demo';
 		}
 		else
 		{
 			$oneStopLocation = $arrOneStop[1];
 		}
-
-		$this->recursive = -1;
 		$kiosk = $this->find('first', array(
 			'conditions' => array(
 				'location_recognition_name' => $oneStopLocation, 

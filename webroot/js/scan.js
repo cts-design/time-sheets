@@ -19,12 +19,15 @@ jQuery.fn.KioskScan = function(options) {
 	var self_scan_field		= "data[QueuedDocument][self_scan_cat_id]";
 	var queue_cat_field		= "data[QueuedDocument][queue_category_id]";
 
-	options.$scan.click(function(e){
+	options.$scan.click(scan);
+	options.$rescan.click(scan);
+
+	function scan(e) {
 		twain.ScanWithUI 	= false;
 	    twain.ScanType 		= 0;
 	    twain.ScanDPI 		= 300;
 	    twain.AcquireSingleImage();
-	});
+	}
 
 	options.$save.click(function(e){
 		twain.UploadExtraField(location_field, location_id);

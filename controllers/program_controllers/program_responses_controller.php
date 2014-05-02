@@ -393,15 +393,14 @@ class ProgramResponsesController extends AppController {
 	function upload_docs($programId=null, $stepId=null) {
 		$this->loadModel('Kiosk');
 
-		$is_kiosk = TRUE; //$this->Kiosk->isKiosk();
+		$kiosk = $this->Kiosk->isKiosk();
 
-		if($is_kiosk)
+		if($kiosk)
 		{
-			$this->set('is_kiosk', $is_kiosk);
-		}
-		else
-		{
-
+			$this->set('is_kiosk', $kiosk);
+			$this->set('locationId', $kiosk['Location']['id']);
+			$this->set('queueCatId', 0);
+			$this->set('selfScanCatId', 0);
 		}
 
 		if(!$programId){

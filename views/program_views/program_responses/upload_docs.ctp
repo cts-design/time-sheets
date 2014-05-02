@@ -71,6 +71,7 @@ $(document).ready(function(){
 
 	$('#scan-container').KioskScan({
 		$scan			: $('.scan'),
+		$rescan 		: $('.rescan'),
 		$save 			: $('.save'),
 		company			: 'ATLAS',
 		location_id		: '<?= isset($locationId) ? $locationId : '' ?>',
