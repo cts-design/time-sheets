@@ -31,8 +31,8 @@ jQuery.fn.KioskScan = function(options) {
 
 	options.$save.click(function(e){
 		twain.UploadExtraField(location_field, location_id);
-		twain.UploadExtraField(self_scan_field, self_scan_cat_id);
-		twain.UploadExtraField(queue_cat_field, queue_cat_id);
+		//twain.UploadExtraField(self_scan_field, self_scan_cat_id);
+		//twain.UploadExtraField(queue_cat_field, queue_cat_id);
 		twain.UploadExtraField(user_field, user_id);
 		twain.UploadAddCookie ("PHPSESSID=" + php_session_id);
 	    

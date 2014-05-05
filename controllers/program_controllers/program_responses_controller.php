@@ -399,8 +399,8 @@ class ProgramResponsesController extends AppController {
 		{
 			$this->set('is_kiosk', $kiosk);
 			$this->set('locationId', $kiosk['Location']['id']);
-			$this->set('queueCatId', 0);
-			$this->set('selfScanCatId', 0);
+			$this->set('queueCatId', null);
+			$this->set('selfScanCatId', null);
 		}
 
 		if(!$programId){
