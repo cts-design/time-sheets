@@ -40,7 +40,7 @@ jQuery.fn.KioskScan = function(options) {
 
 	    if(is_uploaded)
 	    {
-	    	window.location.href = "/";
+	    	window.location.reload();
 	    }
 	    else
 	    {
