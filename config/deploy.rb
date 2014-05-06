@@ -49,7 +49,8 @@ namespace :cts do
     set :user, 'atlas_staging'
     set :keep_releases, 2
     set :branch, 'staging'
-    set :design_branch, ENV['DESIGN'] if ENV.has_key?('DESIGN')
+    set :design_branch, 'tbwa-new'
+    set :design_architecture, 'new'
     server "staging.atlasforworkforce.com", :app, :web, :db, :primary => true
   end
 
