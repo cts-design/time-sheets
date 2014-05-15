@@ -112,7 +112,7 @@ class Kiosk extends AppModel {
 
 		if(!isset($arrOneStop[1]))
 		{
-			$oneStopLocation = 'demo';
+			$oneStopLocation = '';
 		}
 		else
 		{
