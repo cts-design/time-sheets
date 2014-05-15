@@ -78,7 +78,9 @@ $(document).ready(function(){
 		self_scan_cat_id: '<?= isset($selfScanCatId) ? $selfScanCatId : '' ?>',
 		queue_cat_id 	: '<?= isset($queueCatId) ? $queueCatId : '' ?>',
 		user_id			: '<?= $session->read('Auth.User.id') != NULL ? $session->read('Auth.User.id') : '' ?>',
-		php_session_id	: '<?= $this->Session->id() ?>'
+		php_session_id	: '<?= $this->Session->id() ?>',
+		program_id		: '<?= $this->params['pass'][0] ?>',
+		program_step	: '<?= $this->params['pass'][1] ?>'
 	});
 
 	if(upload_success != '')

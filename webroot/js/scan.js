@@ -40,7 +40,7 @@ jQuery.fn.KioskScan = function(options) {
 
 	    if(is_uploaded)
 	    {
-	    	window.location.reload();
+	    	window.location.href = "/program_responses/upload_docs_confirm/" + options.program_id + '/' + options.program_step;
 	    }
 	    else
 	    {

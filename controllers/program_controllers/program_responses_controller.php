@@ -452,6 +452,11 @@ class ProgramResponsesController extends AppController {
 		$this->set($data);
 	}
 
+	public function upload_docs_confirm()
+	{
+		//This view exists for after the scanned document is successfull
+	}
+
 	public function drop_off_docs($programId) {
 		if(!$programId){
 			$this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');

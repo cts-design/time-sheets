@@ -30,3 +30,7 @@
 	font-size:14pt;
 	margin-top:20px;
 }
+.ui-dialog
+{
+	z-index:40000 !important;
+}
