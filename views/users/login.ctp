@@ -23,37 +23,6 @@
 	<br />	
 	<fieldset>
 		<legend>Login</legend>
-		<?php
-		    echo $form->create('User', array('url' => $this->here));
-			echo $form->input('username', array(
-				'label' =>__('Last Name', true),
-				'between' => '<br />',
-				'after' => '<br />'));
-
-			if($ssn_length != 9)
-			{
-				echo $form->input('password', array(
-					'label' => __('Last ' . $ssn_length . ' SSN Digits', true),
-					'between' => '<br />',
-					'after' => '<br />',
-					'maxlength' => $ssn_length
-			    ));
-			}
-			else
-			{
-				echo $form->input('password', array(
-					'label' => __('9 Digit Social Security Number', true),
-					'between' => '<br />',
-					'after' => '<br />',
-					'maxlength' => $ssn_length
-			    ));
-			}
-		   echo $form->hidden('User.login_type', array('value' => $type));
-			if(isset($this->params['pass'][0]) && $this->params['pass'][0] === 'program'
-				&& isset($this->params['pass'][1])) {
-				echo $form->hidden('User.program_id', array('value' => $this->params['pass'][1]));
-			}
-		    echo $this->Form->end(array('label' => __('Login', true)));
-		    ?>
+		<?= $this->element('users/login_form', array('login_method' => Configure::read('Login.method'))) ?>
 	  </fieldset>
 </div>

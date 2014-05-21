@@ -420,17 +420,6 @@ class User extends AppModel {
 					'rule' => 'notEmpty',
 					'message' => 'Last name field is required.'
 				)
-			),
-			'password' => array(
-				'numeric' => array(
-					'rule' => 'numeric',
-					'message' => 'SSN must only be numbers'
-				),
-				'minLength' => array(
-					'rule' => array('minLength', 5),
-					'message' => 'SSN must be 5 digits',
-					'required' => true
-				)
 			)
 		),
 		'last4ssn' => array(
@@ -438,17 +427,6 @@ class User extends AppModel {
 				'notEmpty' => array(
 					'rule' => 'notEmpty',
 					'message' => 'Last name field is required.'
-				)
-			),
-			'password' => array(
-				'numeric' => array(
-					'rule' => 'numeric',
-					'message' => 'SSN must only be numbers'
-				),
-				'minLength' => array(
-					'rule' => array('minLength', 4),
-					'message' => 'SSN must be 4 digits',
-					'required' => true
 				)
 			)
 		),
@@ -837,7 +815,12 @@ class User extends AppModel {
 		if (!Configure::read('Registration.usePassword') && !empty($this->data['User']['ssn'])) {
 			$this->data['User']['password'] = Security::hash($this->data['User']['ssn'], null, true);
 		}
-		if(!empty($this->data['User']['firstname']) && !empty($this->data['User']['lastname'])) {
+
+		if(Configure::read('Login.method') == 'ssn')
+		{
+			$this->data['User']['username'] = $this->data['User']['lastname'];
+		}
+		/*if(!empty($this->data['User']['firstname']) && !empty($this->data['User']['lastname'])) {
 			if(!empty($this->data['User']['role_id']) && $this->data['User']['role_id'] > 1) {
 				$this->data['User']['username'] = substr($this->data['User']['firstname'], 0, 1) . $this->data['User']['lastname'];
 			}
@@ -845,7 +828,7 @@ class User extends AppModel {
 				$this->data['User']['username'] = $this->data['User']['lastname'];
 			}
 
-		}
+		}*/
 		if (isset($this->data['User']['dob']) && !empty($this->data['User']['dob'])) {
 			$this->data['User']['dob'] = date('Y-m-d', strtotime($this->data['User']['dob']));
 		}
@@ -1006,4 +989,138 @@ class User extends AppModel {
 		}
 		return $return;
 	}
+
+	public function setLoginValidation($type = 'normal')
+	{
+		$login_method 	= Configure::read('Login.method');
+		$ssn_length		= Configure::read('Registration.' . $type . '.ssn_length');
+
+		if($login_method == 'ssn')
+		{
+			$this->validate['lastname']['notEmpty'] = array(
+				'rule' => 'notEmpty',
+				'message' => 'Your last name is required'
+			);
+
+			$this->validate['ssn']['notEmpty'] = array(
+				'rule' => 'notEmpty',
+				'message' => 'Your SSN is required'
+			);
+			$this->validate['ssn']['numeric'] = array(
+				'rule' => 'numeric',
+				'message' => 'Your SSN can only be comprised of digits'
+			);
+
+			$this->validate['ssn']['minLength'] = array(
+				'rule' => array('minLength', $ssn_length),
+				'message' => 'Your SSN must be at least ' . $ssn_length . ' characters long'
+			);
+			$this->validate['ssn']['maxLength'] = array(
+				'rule' => array('maxLength', $ssn_length),
+				'message' => 'Your SSN can only be comprised of digits'
+			);
+		}
+		else
+		{
+			$this->validate['username']['notEmpty'] = array(
+				'rule' => 'notEmpty',
+				'message' => 'Your username is required'
+			);
+			$this->validate['password']['notEmpty'] = array(
+				'rule' => 'notEmpty',
+				'message' => 'Password is required'
+			);
+		}
+	}
+
+	public function findUser($username, $password, $type = 'normal')
+	{
+		$login_method = Configure::read('Login.method');
+
+		if($login_method == 'ssn')
+		{
+			$search['lastname'] = $username;
+			$search['ssn LIKE'] = '%' . $password;
+		}
+		else
+		{
+			$search['username'] = $username;
+			$search['password'] = Security::hash($password, null, true);
+		}
+
+		$user = $this->find('first', array(
+			'conditions' => $search
+		));
+
+		if(!$user)
+		{
+			return FALSE;
+		}
+		else
+		{
+			return $user;
+		}
+	}
+
+	public function setUserDataReq($type = 'normal')
+	{
+		$login_method 	= Configure::read('Login.method');
+		$ssn_length		= Configure::read('Registration.' . $type . '.ssn_length');
+
+		if($login_method == 'ssn')
+		{
+			$this->validate['ssn']['notEmpty'] = array(
+				'rule' => 'notEmpty',
+				'message' => 'Your SSN is required'
+			);
+			$this->validate['ssn']['numeric'] = array(
+				'rule' => 'numeric',
+				'message' => 'Your SSN can only be comprised of digits'
+			);
+
+			$this->validate['ssn_confirm']['notEmpty'] = array(
+				'rule' => 'notEmpty',
+				'message' => 'Re-Enter your SSN number'
+			);
+			$this->validate['ssn_confirm']['identical'] = array(
+				'rule' => array('identicalFieldValues', 'ssn'),
+				'message' => 'Your SSN numbers do not match'
+			);
+			$this->validate['ssn']['isUnique'] = array(
+				'rule' => 'isUnique',
+				'message' => 'Cannot register you with that SSN'
+			);
+		}
+		else
+		{
+			$this->validate['username']['notEmpty'] = array(
+				'rule' => 'notEmpty',
+				'message' => 'A Username is required'
+			);
+			$this->validate['username']['isUnique'] = array(
+				'rule' => 'isUnique',
+				'message' => 'That username is not available'
+			);
+
+			$this->validate['password']['notEmpty'] = array(
+				'rule' => 'notEmpty',
+				'message' => 'Your password is required'
+			);
+			$this->validate['password']['identical'] = array(
+				'rule' => array('identicalFieldValues', 'password_confirm'),
+				'message' => 'Your passwords do not match'
+			);
+		}
+	}
+
+	public function identicalFieldValues(&$data, $compareField)
+	{
+	    // $data array is passed using the form field name as the key
+	    // so let's just get the field name to compare
+	    $value = array_values($data);
+	    $comparewithvalue = $value[0];
+	    return ($this->data[$this->name][$compareField] == $comparewithvalue);
+	}
 }
+
+
