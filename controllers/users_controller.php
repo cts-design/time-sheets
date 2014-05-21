@@ -1040,7 +1040,7 @@ class UsersController extends AppController {
 				default:
 					if($this->User->validates())
 					{
-						$is_saved = $this->User->save( $save_user);
+						$is_saved = $this->User->save( $save_user );
 						if( $is_saved )
 						{
 							$user_id 	= $this->User->getInsertId();
@@ -1054,6 +1054,11 @@ class UsersController extends AppController {
 
 							$this->redirect('/users/dashboard');
 						}
+					}
+					else
+					{
+						$this->data['User']['password'] 		= '';
+						$this->data['User']['password_confirm'] = '';
 					}
 			}
 		}
