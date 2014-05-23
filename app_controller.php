@@ -177,6 +177,8 @@ class AppController extends Controller {
 		            }
 	        	}
 	        }
+
+	    $this->Auth->loginAction = array('controller' => 'none', 'action' => 'index');
     }
 
     public function constructClasses() {

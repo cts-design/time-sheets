@@ -44,8 +44,6 @@ class UsersController extends AppController {
 			}
 		}
 
-		$this->Auth->loginAction = array('controller' => 'none', 'action' => 'index');
-
 		if($this->params['action'] == 'kiosk_mini_registration')
 		{
 			$this->Security->validatePost = false;
