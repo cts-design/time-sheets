@@ -896,7 +896,7 @@ class UsersController extends AppController {
 		return $user;
 	}
 
-	function logout($type=null, $logoutMsg=null) {
+	function logout($type='web', $logoutMsg=null) {
 		$this->autoRender = false;
 		if ($this->Auth->user('role_id') == '1') {
 
