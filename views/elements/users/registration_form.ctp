@@ -7,18 +7,17 @@
 	echo $this->Form->hidden('role_id', array('value' => '1'));
 	echo $this->Form->input('firstname', array(
 		'label' => __('First Name', true),
-		'between' => '<br />',
 		'after' => '<br />'
 	));
 	echo $this->Form->input('lastname', array(
 		'label' => __('Last Name', true),
-		'between' => '<br />',
+		'before' => '<br />',
 		'after' => '<br />'
 	));
 	echo $this->Form->input('middle_initial', array(
 		'label' => __('Middle Initial', true),
 		'maxlength' => '50',
-		'between' => '<br />',
+		'before' => '<br />',
 		'after' => '<br />'
 	));
 	echo $this->Form->input('surname', array(
@@ -26,7 +25,7 @@
 		'type' => 'select',
 		'empty' => 'None',
 		'options' => array('Jr' => 'Jr', 'Sr' => 'Sr', 'III' => 'III'),
-		'between' => '<br />',
+		'before' => '<br />',
 		'after' => '<br />'
 	));
 	echo $this->Form->input('gender', array(
@@ -34,7 +33,7 @@
 		'type' => 'select',
 		'empty' => 'Select Gender',
 		'options' => array('male' => 'Male', 'female' => 'Female'),
-		'between' => '<br />',
+		'before' => '<br />',
 		'after' => '<br />'
 	));
 
@@ -46,14 +45,14 @@
 				'label' => 'Your Social Security Number',
 				'type' => 'password',
 				'maxlength' => $ssn_length,
-				'between' => '<br />',
+				'before' => '<br />',
 				'after' => '<br />'
 			));
 			echo $this->Form->input('ssn_confirm', array(
 				'label' => 'Confirm your Social Security Number',
 				'type' => 'password',
 				'maxlength' => $ssn_length,
-				'between' => '<br />',
+				'before' => '<br />',
 				'after' => '<br />'
 			));
 		}
@@ -63,14 +62,14 @@
 				'label' => 'The last ' . $ssn_length . ' digits of your Social Security Number',
 				'type' => 'password',
 				'maxlength' => $ssn_length,
-				'between' => '<br />',
+				'before' => '<br />',
 				'after' => '<br />'
 			));
 			echo $this->Form->input('ssn_confirm', array(
 				'label' => 'Confirm the last ' . $ssn_length . ' digits of your Social Security Number',
 				'type' => 'password',
 				'maxlength' => $ssn_length,
-				'between' => '<br />',
+				'before' => '<br />',
 				'after' => '<br />'
 			));
 		}
@@ -79,19 +78,19 @@
 	{
 		echo $this->Form->input('username', array(
 				'label' => 'Username',
-				'between' => '<br />',
+				'before' => '<br />',
 				'after' => '<br />'
 		));
 		echo $this->Form->input('password', array(
 				'label' => 'Password',
 				'type' => 'password',
-				'between' => '<br />',
+				'before' => '<br />',
 				'after' => '<br />'
 		));
 		echo $this->Form->input('password_confirm', array(
 			'label' => 'Confirm your password',
 			'type' => 'password',
-			'between' => '<br />',
+			'before' => '<br />',
 			'after' => '<br />'
 		));
 	}
@@ -100,22 +99,22 @@
 		'label' => __('Birth Date <span class="small gray">(mm/dd/yyyy)</span>', true),
 		'type' => 'text',
 		'maxlength' => 10,
-		'between' => '<br />',
+		'before' => '<br />',
 		'after' => '<br />'
 	));
 	echo $this->Form->input('address_1', array(
 		'label' => __('Address', true),
-		'between' => '<br />',
+		'before' => '<br />',
 		'after' => '<strong>&nbspNo P.O. Box Addresses accepted.<strong></span><br />'
 	));
 	echo $this->Form->input('city', array(
 		'label' => __('City', true),
-		'between' => '<br />',
+		'before' => '<br />',
 		'after' => '<br />'
 	));
 	echo $this->Form->input('county', array(
 		'label' => __('County', true),
-		'between' => '<br />',
+		'before' => '<br />',
 		'after' => '<br />'
 	));
 	echo $this->Form->input('state', array(
@@ -123,22 +122,22 @@
 		'type' => 'select',
 		'empty' => 'Select State',
 		'options' => $states,
-		'between' => '<br />',
+		'before' => '<br />',
 		'after' => '<br />'
 	));
 	echo $this->Form->input('zip', array(
 		'label' => __('Zip Code', true),
-		'between' => '<br />',
+		'before' => '<br />',
 		'after' => '<br />'
 	));
 	echo $this->Form->input('phone', array(
 		'label' => __('Phone', true),
-		'between' => '<br />',
+		'before' => '<br />',
 		'after' => '<br />'
 	));
 	echo $this->Form->input('email', array(
 		'label' => __('Email Address', true),
-		'between' => '<br />',
+		'before' => '<br />',
 		'after' => '<br />'
 	));
 
@@ -147,7 +146,7 @@
 		'type' => 'select',
 		'empty' => 'Please Select',
 		'options' => array('English' => 'English', 'Spanish' => 'Spanish', 'Other' => 'Other'), 
-		'between' => '<br />',
+		'before' => '<br />',
 		'after' => '<br />'
 	));	
 	echo $this->Form->input('ethnicity', array(
@@ -159,7 +158,7 @@
 		'Not Hispanic or Latino' => 'Not Hispanic or Latino',
 		'Other' => 'Other',
 		'I do not wish to answer' => 'I do not wish to answer'), 
-		'between' => '<br />',
+		'before' => '<br />',
 		'after' => '<br />'
 	));
 
@@ -175,7 +174,7 @@
 		'White' => 'White',
 		'Other' => 'Other',
 		'I do not wish to answer' => 'I do not wish to answer'),
-		'between' => '<br />',
+		'before' => '<br />',
 		'after' => '<br />'
 	));
 
@@ -184,7 +183,7 @@
 		'type' => 'select',
 		'empty' => 'Please Select',
 		'options' => array('1' => 'Yes', '0' => 'No'), 
-		'between' => '<br />',
+		'before' => '<br />',
 		'after' => '<br />'
 	));
 
@@ -193,11 +192,11 @@
 		'type' => 'select',
 		'empty' => 'Please Select',
 		'options' => array('1' => 'Yes', '0' => 'No'), 
-		'between' => '<br />',
+		'before' => '<br />',
 		'after' => '<br />'
 	));
 
 	echo $this->Form->hidden('registration', array('value' => 'website'));
 ?>
 	</fieldset>
-<?php echo $this->Form->end(array('label' => __('Submit', true), 'class' => 'self-sign-kiosk-button')); ?>
+<?php echo $this->Form->end(array('label' => 'Submit', 'class' => 'self-sign-kiosk-button btn btn-inverse')); ?>

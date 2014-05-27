@@ -5,7 +5,6 @@
 	{
 		echo $form->input('lastname', array(
 			'label' => 'Child\'s Last Name', 
-			'between' => '<br />',
 			'after' => '<br />'
 		));
 	}
@@ -13,7 +12,6 @@
 	{
 		echo $form->input('username', array(
 			'label' => 'Child\'s Username', 
-			'between' => '<br />',
 			'after' => '<br />'
 		));
 	}
@@ -28,7 +26,7 @@
 				'label' => __('Child\'s last ' . $ssn_length . ' Digits of SSN', true),
 				'maxlength' => $ssn_length,
 				'type' => 'password',
-				'between' => '<br />',
+				'before' => '<br />',
 				'after' => '<br />'
 			));
 		}
@@ -38,7 +36,7 @@
 				'label' => __('Child\'s Full 9 Digit SSN', true),
 				'maxlength' => $ssn_length,
 				'type' => 'password',
-				'between' => '<br />',
+				'before' => '<br />',
 				'after' => '<br />'
 			));
 		}
@@ -47,7 +45,7 @@
 	{
 		echo $form->input('password', array(
 			'label' => __('Child\'s Password', true),
-			'between' => '<br />',
+			'before' => '<br />',
 			'after' => '<br />'
 		));
 	}
@@ -57,5 +55,5 @@
 	{
 		echo $form->hidden('User.program_id', array('value' => $this->params['pass'][1]));
 	}
-	echo $this->Form->end(__('Login', true));
+	echo $this->Form->end(array('label' => 'Login', 'class' => 'login-sumit btn btn-inverse'));
 ?>
