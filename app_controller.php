@@ -95,6 +95,8 @@ class AppController extends Controller {
     function beforeFilter() {
 		parent::beforeFilter();
 
+		$this->Auth->loginAction = array('controller' => 'none', 'action' => 'index');
+
 		if (Configure::read('Website.theme')) {
 			$this->view = 'Theme';
 			$this->theme = Configure::read('Website.theme');
@@ -177,8 +179,6 @@ class AppController extends Controller {
 		            }
 	        	}
 	        }
-
-	    $this->Auth->loginAction = array('controller' => 'none', 'action' => 'index');
     }
 
     public function constructClasses() {
