@@ -694,8 +694,18 @@ class UsersController extends AppController {
 
 		if($this->RequestHandler->isPost())
 		{
-			$username 		= $_POST['data']['User']['username'];
-			$password		= $_POST['data']['User']['password'];
+			$login_method = Configure::read('Login.method');
+
+			if($login_method == 'ssn')
+			{
+				$username 		= $_POST['data']['User']['lastname'];
+				$password		= $_POST['data']['User']['ssn'];
+			}
+			else
+			{
+				$username 		= $_POST['data']['User']['username'];
+				$password		= $_POST['data']['User']['password'];
+			}
 
 			//Add to validation array to pass
 			$validation_data = array(
@@ -704,9 +714,6 @@ class UsersController extends AppController {
 					'password' => $password
 				)
 			);
-
-			//We do this because password is filled with something strange
-			$this->data['User']['password'] = '';
 
 			switch($type)
 			{
@@ -726,12 +733,13 @@ class UsersController extends AppController {
 					}
 
 					$this->User->setValidation('last' . $ssn_length . 'ssn');
-					$this->User->set($validation_data);
+					$this->User->setLoginValidation('program');
+					$this->User->set($this->data['User']);
 
 					//Validate the user form
 					if($this->User->validates())
 					{
-						$user = $this->get_user($username, $password, $ssn_length);
+						$user = $this->User->findUser($username, $password, $ssn_length);
 
 						if(!$user)
 						{
@@ -743,6 +751,10 @@ class UsersController extends AppController {
 							$this->Auth->login($user['User']['id']);
 							$this->redirect('/programs/' . $program['Program']['type'] . '/' . $program_id);
 						}
+					}
+					else
+					{
+						$this->data['User']['password'] = '';
 					}
 				break;
 				case 'auditor': //AUDITOR TYPE
@@ -794,17 +806,22 @@ class UsersController extends AppController {
 							}
 						}
 					}
+					else
+					{
+						$this->data['User']['password'] = '';
+					}
 
 				break;
 				case 'child': //CHILD TYPE
 
 					$this->User->setValidation('last' . $ssn_length . 'ssn');
-					$this->User->set($validation_data);
+					$this->User->setLoginValidation('child');
+					$this->User->set($this->data['User']);
 
 					if($this->User->validates())
 					{
-						$user = $this->get_user($username, $password, $ssn_length);
-
+						$user = $this->User->findUser($username, $password, $ssn_length);
+						
 						if(!$user)
 						{
 							$this->Session->setFlash(__('That child was not found', true), 'flash_failure');
@@ -816,17 +833,21 @@ class UsersController extends AppController {
 							$this->redirect('/users/dashboard');
 						}
 					}
+					else
+					{
+						$this->data['User']['password'] = '';
+					}
 
 				break;
 				default: //NORMAL TYPE
-
 					$this->User->setValidation('last' . $ssn_length . 'ssn');
-					$this->User->set($validation_data);
+					$this->User->setLoginValidation('normal');
+					$this->User->set($this->data['User']);
 
 					if($this->User->validates())
 					{
-						$user = $this->get_user($username, $password, $ssn_length);
-
+						$user = $this->User->findUser($username, $password, 'normal');
+						
 						if(!$user)
 						{
 							$this->Session->setFlash(__('That user was not found', true), 'flash_failure');
@@ -837,6 +858,10 @@ class UsersController extends AppController {
 							$this->Auth->login($user['User']['id']);
 							$this->redirect('/users/dashboard/normal');
 						}
+					}
+					else
+					{
+						$this->data['User']['password'] = '';
 					}
 
 				break;
@@ -910,6 +935,7 @@ class UsersController extends AppController {
 	{
 		$usePassword 		= Configure::read('Registration.usePassword');
 		$ssn_length			= Configure::read('Registration.' . $type . '.ssn_length');
+		$login_method		= Configure::read('Login.method');
 		$title_for_layout	= 'Registration';
 
 		$this->loadModel('Program');
@@ -917,7 +943,6 @@ class UsersController extends AppController {
 		$this->set('states', $this->states);
 
 		$usePassword = Configure::read('Registration.usePassword');
-
 
 		switch($type)
 		{
@@ -966,18 +991,22 @@ class UsersController extends AppController {
 
 		if( $this->RequestHandler->isPost() )
 		{
-			$this->User->editValidation('last' . $ssn_length . 'ssn');
-
-			$this->User->set($this->data);
-
-			if( $usePassword )
+			if( $login_method == 'password' )
 			{
-				$this->data['User']['password'] = Security::hash($this->data['User']['password'], null, true);
+				$this->data['User']['password_confirm'] = Security::hash($this->data['User']['password_confirm'], null, true);
 			}
 			else
 			{
 				$this->data['User']['password'] = Security::hash($this->data['User']['ssn'], null, true);
+				$this->data['User']['password_confirm'] = Security::hash($this->data['User']['ssn_confirm'], null, true);
 			}
+
+			$this->User->editValidation('last' . $ssn_length . 'ssn');
+			$this->User->set($this->data);
+
+			$this->User->setUserDataReq($type);
+
+			$save_user = $this->data['User'];
 
 			switch($type)
 			{
@@ -1003,7 +1032,7 @@ class UsersController extends AppController {
 
 					if($this->User->validates())
 					{
-						$is_saved = $this->User->save( $this->data );
+						$is_saved = $this->User->save( $save_user );
 						if( $is_saved )
 						{
 							$user_id 	= $this->User->getInsertId();
@@ -1023,10 +1052,9 @@ class UsersController extends AppController {
 				case 'child':
 				case 'normal':
 				default:
-
 					if($this->User->validates())
 					{
-						$is_saved = $this->User->save( $this->data );
+						$is_saved = $this->User->save( $save_user );
 						if( $is_saved )
 						{
 							$user_id 	= $this->User->getInsertId();
@@ -1040,6 +1068,11 @@ class UsersController extends AppController {
 
 							$this->redirect('/users/dashboard');
 						}
+					}
+					else
+					{
+						$this->data['User']['password'] 		= '';
+						$this->data['User']['password_confirm'] = '';
 					}
 			}
 		}
