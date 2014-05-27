@@ -733,7 +733,7 @@ class UsersController extends AppController {
 					}
 
 					$this->User->setValidation('last' . $ssn_length . 'ssn');
-					$this->User->setLoginValidation();
+					$this->User->setLoginValidation('program');
 					$this->User->set($this->data['User']);
 
 					//Validate the user form
@@ -751,6 +751,10 @@ class UsersController extends AppController {
 							$this->Auth->login($user['User']['id']);
 							$this->redirect('/programs/' . $program['Program']['type'] . '/' . $program_id);
 						}
+					}
+					else
+					{
+						$this->data['User']['password'] = '';
 					}
 				break;
 				case 'auditor': //AUDITOR TYPE
@@ -802,6 +806,10 @@ class UsersController extends AppController {
 							}
 						}
 					}
+					else
+					{
+						$this->data['User']['password'] = '';
+					}
 
 				break;
 				case 'child': //CHILD TYPE
@@ -824,6 +832,10 @@ class UsersController extends AppController {
 							$this->Auth->login($user['User']['id']);
 							$this->redirect('/users/dashboard');
 						}
+					}
+					else
+					{
+						$this->data['User']['password'] = '';
 					}
 
 				break;
