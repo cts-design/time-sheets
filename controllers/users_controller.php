@@ -847,6 +847,10 @@ class UsersController extends AppController {
 							$this->redirect('/users/dashboard/normal');
 						}
 					}
+					else
+					{
+						$this->data['User']['password'] = '';
+					}
 
 				break;
 			}
