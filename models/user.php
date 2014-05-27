@@ -787,15 +787,15 @@ class User extends AppModel {
 		{
 			$this->data['User']['username'] = $this->data['User']['lastname'];
 		}
-		/*if(!empty($this->data['User']['firstname']) && !empty($this->data['User']['lastname'])) {
-			if(!empty($this->data['User']['role_id']) && $this->data['User']['role_id'] > 1) {
+		if(!empty($this->data['User']['firstname']) && !empty($this->data['User']['lastname'])) {
+			if(!empty($this->data['User']['role_id']) && $this->data['User']['role_id'] > 1 && !isset($this->data['User']['username'])) {
 				$this->data['User']['username'] = substr($this->data['User']['firstname'], 0, 1) . $this->data['User']['lastname'];
 			}
 			else {
 				$this->data['User']['username'] = $this->data['User']['lastname'];
 			}
 
-		}*/
+		}
 		if (isset($this->data['User']['dob']) && !empty($this->data['User']['dob'])) {
 			$this->data['User']['dob'] = date('Y-m-d', strtotime($this->data['User']['dob']));
 		}

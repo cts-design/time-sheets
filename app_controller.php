@@ -95,7 +95,7 @@ class AppController extends Controller {
     function beforeFilter() {
 		parent::beforeFilter();
 
-		$this->Auth->loginAction = array('controller' => 'none', 'action' => 'index');
+		$this->Auth->loginAction = array('controller' => 'none', 'action' => 'login');
 
 		if (Configure::read('Website.theme')) {
 			$this->view = 'Theme';
