@@ -37,9 +37,9 @@
 				'label' => __('Password', true),
 				'before' => '<br />'
 			));
-	}
 
-	echo $html->link('Forgot Password?', array('controller' => 'users', 'action' => 'forgot_password'));
+		echo $html->link('Forgot Password?', array('controller' => 'users', 'action' => 'forgot_password'));
+	}
 	echo $form->hidden('User.login_type', array('value' => $type));
 
 	$params = $this->params['pass'];
