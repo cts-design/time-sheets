@@ -761,37 +761,48 @@ class User extends AppModel {
 			return null;
 		}
 		$data = $this->data;
-		if (empty($this->data)) {
+		if (empty($this->data))
+		{
 			$data = $this->read();
 		}
-		if (empty($data['User']['role_id'])) {
+		if (empty($data['User']['role_id']))
+		{
 			return null;
 		}
-		else {
+		else
+		{
 			return array('Role' => array('id' => $data['User']['role_id']));
 		}
 	}
 
 	public function beforeSave($options = array()) {
-		if (Configure::read('Registration.usePassword')) {
+		if (Configure::read('Registration.usePassword'))
+		{
 			$this->data['User']['password'] = Security::hash($this->data['User']['password'], null, true);
 		}
-		if (!Configure::read('Registration.usePassword') && isset($this->data['User']['pass'])) {
+
+		if (!Configure::read('Registration.usePassword') && isset($this->data['User']['pass']))
+		{
 			$this->data['User']['password'] = Security::hash($this->data['User']['pass'], null, true);
 		}
-		if (!Configure::read('Registration.usePassword') && !empty($this->data['User']['ssn'])) {
+
+		if (!Configure::read('Registration.usePassword') && !empty($this->data['User']['ssn']))
+		{
 			$this->data['User']['password'] = Security::hash($this->data['User']['ssn'], null, true);
 		}
 
-		if(Configure::read('Login.method') == 'ssn')
+		$firstAndLast = ($this->data['User']['firstname'] != '' && $this->data['User']['lastname'] != '');
+
+		$this->log( var_export($firstAndLast, true) );
+		$this->log( var_export($this->data['User'], true) );
+
+		if($firstAndLast && empty($this->data['User']['username']))
 		{
-			$this->data['User']['username'] = $this->data['User']['lastname'];
+			$first_initial = substr( $this->data['User']['firstname'], 0, 1 );
+			$username = $first_initial . $this->data['User']['lastname'];
+			$this->data['User']['username'] = $username;
 		}
-		if(!empty($this->data['User']['firstname']) && !empty($this->data['User']['lastname'])) {
-			if(!empty($this->data['User']['role_id']) && $this->data['User']['role_id'] > 1 && !isset($this->data['User']['username'])) {
-				$this->data['User']['username'] = substr($this->data['User']['firstname'], 0, 1) . $this->data['User']['lastname'];
-			}
-		}
+
 		if (isset($this->data['User']['dob']) && !empty($this->data['User']['dob'])) {
 			$this->data['User']['dob'] = date('Y-m-d', strtotime($this->data['User']['dob']));
 		}
