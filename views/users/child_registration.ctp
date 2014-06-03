@@ -31,7 +31,6 @@ $(document).ready(function() {
 <div class="required"><label></label> <?php __('indicates required fields.') ?></div>
 <br />
   <div id="ChildRegistrationForm">
-	<?php echo $this->Form->create('User', array('url' => '/users/registration/' . $type . '/' . $program_id)); ?>
 	<fieldset>
 		<legend>Register</legend>
 	    <?= $this->element('users/child_registration_form', array('login_method' => Configure::read('Login.method'))) ?>
