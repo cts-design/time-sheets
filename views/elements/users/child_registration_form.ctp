@@ -1,4 +1,5 @@
 <?php
+	echo $this->Form->create('User', array('url' => '/users/registration/' . $type . '/' . $program_id));
 	echo $this->Form->hidden('role_id', array('value' => '1'));
 	echo $this->Form->input('firstname', array(
 		'label' => __('Child\'s First Name', true),
