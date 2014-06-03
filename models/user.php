@@ -327,8 +327,8 @@ class User extends AppModel {
 					'required' => false
 				),
 				'minLength' => array(
-					'rule' => array('minLength', 4),
-					'message' => 'SSN must be at least 4 digits',
+					'rule' => array('minLength', 9),
+					'message' => 'SSN must be at least 9 digits',
 					'required' => false
 				)
 			),
