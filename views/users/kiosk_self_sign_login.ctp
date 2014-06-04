@@ -21,12 +21,12 @@
     <?php
 	    echo $this->Session->flash('auth');
 	    echo $form->create('User', array('action' => 'self_sign_login'));
-	    echo $form->input('User.username', array(
+	    echo $form->input('lastname', array(
 			'label' => __('Last Name', true),
 			'before' => '<p class="left">',
 			'between' => '</p><p class="left">',
 			'after' => '</p><br class="clear"/>'));
-	    echo $form->input('User.password', array(
+	    echo $form->input('ssn', array(
 			'label' => __('9 Digit SSN', true),
 			'before' => '<p class="left">',
 			'between' => '</p><p class="left">',

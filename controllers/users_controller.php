@@ -30,7 +30,7 @@ class UsersController extends AppController {
 		
 		if(isset($this->data['User']['username'])) {
 			// TODO add the other login types
-			if($this->params['action'] == 'admin_login' || $this->params['action'] == 'kiosk_self_sign_login')
+			if($this->params['action'] == 'admin_login')
 			{
 				$this->User->Behaviors->disable('Disableable');
 				$user = $this->User->find('first', array('conditions' => array(
@@ -74,7 +74,7 @@ class UsersController extends AppController {
 			);
 		}
 
-		if($this->params['action'] == 'kiosk_self_sign_login' && $this->RequestHandler->isPost())
+		/*if($this->params['action'] == 'kiosk_self_sign_login' && $this->RequestHandler->isPost())
 		{
 			$this->User->setValidation('customerLogin');
             $this->User->set($this->data);
@@ -97,7 +97,7 @@ class UsersController extends AppController {
             		);
             	}
             }
-		}
+		}*/
 		
 		if($this->Auth->user() &&  $this->params['action'] == 'admin_dashboard' ) {
 			if(! $this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Users/admin_dashboard', '*')) {
@@ -516,51 +516,81 @@ class UsersController extends AppController {
 	function kiosk_self_sign_login() {
 		$this->loadModel('Kiosk');
 		$kiosk = $this->Kiosk->isKiosk('demo');
+		$login_method = Configure::read('Login.method');
 
-		if(!empty( $this->data ))
+		$settings = Cache::read('settings');
+		$fields = Set::extract('/field',  json_decode($settings['SelfSign']['KioskRegistration'], true));
+
+		if($login_method == 'ssn')
 		{
-			$user = $this->Auth->user();
+			$this->User->setValidation('SsnKioskLogin');
+		}
+		else
+		{
+			$this->User->setValidation('passwordKioskLogin');	
+		}
 
-			$this->User->setValidation('kioskLogin');
-			$this->User->set($this->data);
-			if($user && $this->User->validates())
-			{				
-				if($kiosk['Kiosk']['default_sign_in'] == 'id_card')
+		if($this->RequestHandler->isPost())
+		{	
+			$this->User->set($this->data['User']);
+			if($this->User->validates())
+			{
+				if($login_method == 'ssn')
 				{
-					$idCard = $this->Session->read('idCard');
-					if(!empty($idCard) && $idCard != NULL)
-					{
-						$this->User->create();
-						$this->User->id = $this->Auth->user('id');
-						$this->User->saveField('id_card_number', $idCard['id_full']);
-						$this->User->save();
-						$this->Session->delete('idCard');
-					}
+					$user = $this->User->findUser(
+						$this->data['User']['lastname'],
+						$this->data['User']['ssn']
+					);
 				}
-				$this->sendCustomerLoginAlert($user, $kiosk);
-
-				if($user['User']['veteran'])
+				else
 				{
-					$this->sendCustomerDetailsAlert('veteran', $user, $kiosk);
+					$user = $this->User->findUser(
+						$this->data['User']['username'],
+						$this->data['User']['password']
+					);
 				}
 
-				foreach($user['User'] as $k => $v)
+				if($user)
 				{
-					if($v === 'Spanish')
+					$this->sendCustomerLoginAlert($user, $kiosk);
+
+					//Sees if any fields set in settings match fields that the user needs to fill out
+					foreach($fields as $field)
 					{
-						$this->sendCustomerDetailsAlert('spanish', $user, $kiosk);
+						$user_field = $user['User'][$field];
+
+						// if it's set to zero then we don't need to worry about it
+						if( $user_field == NULL && $user_field !== 0 )
+						{
+							$this->redirect('/kiosk/kiosks/self_sign_edit/' . $user['User']['id']);
+						}
+
+						if($user['User']['veteran'])
+						{
+							$this->sendCustomerDetailsAlert('veteran', $user, $kiosk);
+						}
+
+						if(preg_match('/spanish/', $user['User']['language']))
+						{
+							$this->sendCustomerDetailsAlert('spanish', $user, $kiosk);
+						}
 					}
 
-					if(in_array($k, $fields) && empty($v) && $v != 0)
+					$this->Auth->login($user['User']['id']);
+
+					if(isset($settings['SelfSign']['KioskConfirmation']) && $settings['SelfSign']['KioskConfirmation'] == 'on')
 					{
-						$this->redirect(
-							array(
-								'controller' => 'kiosks', 
-								'action' => 'self_sign_edit', 
-								$user['User']['id']
-							)
-						);
+						$this->redirect('/kiosk/kiosks/self_sign_confirm');
 					}
+					else
+					{
+						$this->redirect('/kiosk/kiosks/self_sign_service_selection');
+					}
+					
+				}
+				else
+				{
+					$this->Session->setFlash('The credentials provided are incorrect', 'flash_failure');
 				}
 
 				$kiosk_location_id = $this->User->SelfSignLog->Kiosk->getKioskLocationId();
@@ -575,6 +605,7 @@ class UsersController extends AppController {
 				}
 			}
 		}
+		
 		/* end of if */
 		$this->set('kioskHasSurvey', (empty($kiosk['KioskSurvey'])) ? false : true);
 		$this->set('kiosk', $kiosk);

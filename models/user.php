@@ -355,7 +355,7 @@ class User extends AppModel {
 				)
 			)
 		),
-		'kioskLogin' => array(
+		'passwordKioskLogin' => array(
 			'username' => array(
 				'notEmpty' => array(
 					'rule' => 'notEmpty',
@@ -363,6 +363,20 @@ class User extends AppModel {
 				)
 			),
 			'password' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Your 9 digit SSN is required'
+				)
+			)
+		),
+		'SsnKioskLogin' => array(
+			'lastname' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Your Last name is required'
+				)
+			),
+			'ssn' => array(
 				'notEmpty' => array(
 					'rule' => 'notEmpty',
 					'message' => 'Your 9 digit SSN is required'
