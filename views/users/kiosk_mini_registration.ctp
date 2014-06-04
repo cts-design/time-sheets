@@ -19,12 +19,12 @@
     <div class="miniRegistrationForm">
 	<?php echo $this->Form->create('User') ?>
 	<fieldset>
+		<?php $data = $this->Session->read('driver_card') ?>
 	    <?php
 	    echo $this->Form->hidden('role_id', array('value' => '1'));
 	    echo $this->Form->hidden('id_card_number', array('value' => $data['id_number']));
 		// required fields
 		if($hideFields) {
-			$data = $this->Session->read('driver_card');
 			echo $this->Form->hidden('firstname', array( 
 				'value' => ucfirst(strtolower($data['first_name'])) ));
 			echo $this->Form->hidden('lastname');
