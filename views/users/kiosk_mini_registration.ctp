@@ -17,14 +17,14 @@
     </h2>
     <?php echo $this->Session->flash(); ?>
     <div class="miniRegistrationForm">
-	<?php echo $this->Form->create('User'); ?>
+	<?php echo $this->Form->create('User') ?>
 	<fieldset>
 	    <?php
 	    echo $this->Form->hidden('role_id', array('value' => '1'));
-	    echo $this->Form->hidden('id_card_number');
+	    echo $this->Form->hidden('id_card_number', array('value' => $data['id_number']));
 		// required fields
 		if($hideFields) {
-			$data = $this->Session->read('idCard');
+			$data = $this->Session->read('driver_card');
 			echo $this->Form->hidden('firstname', array( 
 				'value' => ucfirst(strtolower($data['first_name'])) ));
 			echo $this->Form->hidden('lastname');
@@ -34,7 +34,7 @@
 			'label' => __('First Name', true),
 			'before' => '<p class="left">',
 			'between' => '</p><p class="left">',
-			'after' => '</p>'
+			'after' => '</p>',
 			));
 			echo $this->Form->input('lastname', array(
 			'label' => __('Last Name', true),

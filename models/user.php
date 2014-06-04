@@ -369,7 +369,7 @@ class User extends AppModel {
 				)
 			)
 		),
-		'SsnKioskLogin' => array(
+		'ssnKioskLogin' => array(
 			'lastname' => array(
 				'notEmpty' => array(
 					'rule' => 'notEmpty',
@@ -827,10 +827,10 @@ class User extends AppModel {
 			$this->data['User']['password'] = Security::hash($this->data['User']['ssn'], null, true);
 		}
 
-		$firstAndLast = ($this->data['User']['firstname'] != '' && $this->data['User']['lastname'] != '');
-
-		$this->log( var_export($firstAndLast, true) );
-		$this->log( var_export($this->data['User'], true) );
+		if(isset($this->data['User']['firstname']) && isset($this->data['User']['lastname']))
+			$firstAndLast = ($this->data['User']['firstname'] != '' && $this->data['User']['lastname'] != '');
+		else
+			$firstAndLast = false;
 
 		if($firstAndLast && empty($this->data['User']['username']))
 		{
@@ -845,7 +845,6 @@ class User extends AppModel {
 		else {
 			$this->data['User']['dob'] = null;
 		}
-
 		return true;
 	}
 
