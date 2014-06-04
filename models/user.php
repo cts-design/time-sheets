@@ -355,6 +355,42 @@ class User extends AppModel {
 				)
 			)
 		),
+		'passwordKioskLogin' => array(
+			'username' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Your Last name is required'
+				)
+			),
+			'password' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Your 9 digit SSN is required'
+				)
+			)
+		),
+		'ssnKioskLogin' => array(
+			'lastname' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Your Last name is required'
+				)
+			),
+			'ssn' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Your 9 digit SSN is required'
+				),
+				'numeric' => array(
+					'rule' => 'numeric',
+					'message' => 'Your SSN can only consist of numbers'
+				),
+				'minLength' => array(
+					'rule' => array('minLength', 9),
+					'message' => 'Your SSN must be at least 9 digits long'
+				)
+			)
+		),
 		'auditor' => array(
 			'ssn' => array(
 				'rule' => 'notEmpty',
@@ -791,10 +827,10 @@ class User extends AppModel {
 			$this->data['User']['password'] = Security::hash($this->data['User']['ssn'], null, true);
 		}
 
-		$firstAndLast = ($this->data['User']['firstname'] != '' && $this->data['User']['lastname'] != '');
-
-		$this->log( var_export($firstAndLast, true) );
-		$this->log( var_export($this->data['User'], true) );
+		if(isset($this->data['User']['firstname']) && isset($this->data['User']['lastname']))
+			$firstAndLast = ($this->data['User']['firstname'] != '' && $this->data['User']['lastname'] != '');
+		else
+			$firstAndLast = false;
 
 		if($firstAndLast && empty($this->data['User']['username']))
 		{
@@ -809,7 +845,6 @@ class User extends AppModel {
 		else {
 			$this->data['User']['dob'] = null;
 		}
-
 		return true;
 	}
 
