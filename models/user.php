@@ -355,6 +355,28 @@ class User extends AppModel {
 				)
 			)
 		),
+		'kioskLogin' => array(
+			'username' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Your Last name is required'
+				)
+			),
+			'password' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Your 9 digit SSN is required'
+				),
+				'numeric' => array(
+					'rule' => 'numeric',
+					'message' => 'Your SSN can only consist of numbers'
+				),
+				'minLength' => array(
+					'rule' => array('minLength', 9),
+					'message' => 'Your SSN must be at least 9 digits long'
+				)
+			)
+		),
 		'auditor' => array(
 			'ssn' => array(
 				'rule' => 'notEmpty',
