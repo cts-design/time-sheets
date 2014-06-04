@@ -541,7 +541,7 @@ class UsersController extends AppController {
 					$this->data['User']['ssn']
 				);
 
-				if($user)
+				if($user != NULL && $user != FALSE)
 				{
 					$this->Auth->login($user['User']['id']);
 					$this->sendCustomerLoginAlert($user, $kiosk);
@@ -570,7 +570,9 @@ class UsersController extends AppController {
 				}
 				else
 				{
-					$this->Session->setFlash('The credentials provided are incorrect', 'flash_failure');
+					$this->Session->setFlash('You don\'t appear to be in the system. please register', 'flash_failure');
+					$this->redirect('/kiosk/users/mini_registration/' . $this->data['User']['lastname']);
+
 				}
 
 				$kiosk_location_id = $this->User->SelfSignLog->Kiosk->getKioskLocationId();
@@ -664,7 +666,7 @@ class UsersController extends AppController {
 
 		$settings = Cache::read('settings');
 		$fields = Set::extract('/field',  json_decode($settings['SelfSign']['KioskRegistration'], true));
-		
+
 		if($this->RequestHandler->isPost())
 		{
 			$this->User->set( $this->data['User'] );
@@ -1201,6 +1203,8 @@ class UsersController extends AppController {
 				$this->Transaction->createUserTransaction('Self Sign',
 					$userId, $this->Kiosk->getKioskLocationId(), 'User self registered using a kiosk.');
 				$this->Session->setFlash(__('Your account has been created.', true), 'flash_success');
+				
+				$this->Auth->login($this->User->id);
 				$this->redirect(array('controller' => 'kiosks', 'action' => 'self_sign_confirm'));
 			}
 			else {
