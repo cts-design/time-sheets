@@ -536,10 +536,15 @@ class UsersController extends AppController {
 			$this->User->set($this->data['User']);
 			if($this->User->validates())
 			{
-				$user = $this->User->findUser(
-					$this->data['User']['lastname'],
-					$this->data['User']['ssn']
-				);
+				$user = $this->User->find('first', array(
+					'conditions' => array(
+						'lastname' => $this->data['User']['lastname'],
+						'ssn' => $this->data['User']['ssn']
+					)
+				));
+
+
+				$this->log(var_export($this->data, true));
 
 				if($user != NULL && $user != FALSE)
 				{
