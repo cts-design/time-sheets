@@ -700,7 +700,10 @@ class UsersController extends AppController {
 				else
 				{
 					// if we have a driver's liscense we have enough to register a user
-					if($driver_card != NULL)
+
+					$this->redirect('/kiosk/users/mini_registration/' . $this->data['User']['lastname']);
+
+					/*if($driver_card != NULL)
 					{
 						$user = array(
 							'role_id' 		=> 1,
@@ -735,7 +738,7 @@ class UsersController extends AppController {
 					else
 					{
 						$this->redirect('/kiosk');
-					}
+					}*/
 				}
 			}
 		}
