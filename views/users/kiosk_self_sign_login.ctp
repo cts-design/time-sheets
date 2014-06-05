@@ -28,6 +28,7 @@
 			'after' => '</p><br class="clear"/>'));
 	    echo $form->input('ssn', array(
 			'label' => __('9 Digit SSN', true),
+			'type' => 'password',
 			'before' => '<p class="left">',
 			'between' => '</p><p class="left">',
 			'after' => '</p><br class="clear"/>',
