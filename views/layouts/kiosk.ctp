@@ -42,11 +42,25 @@
 			$exclude = array('kiosk_self_scan_document', 'question', 'kiosk_id_card_login');
 		}
 		else {
-			$exclude = array('kiosk_self_scan_document', 'question', 'kiosk_self_sign_login');
+			$exclude = array('kiosk_self_scan_document', 'question');
 		}
 
-		
-	    if (!in_array($this->params['action'], $exclude) && $user_logged_in) {
+
+		// this is for when the user is asked to find themself if they use an id_card_login
+		// it will allow for the timeout to occur if they leave this page for any reason
+		if(isset($this->params['url']['btn']))
+		{
+			if($this->params['url']['btn'] == true)
+				$exclude[] = 'kiosk_self_sign_login';
+		}
+		else
+		{
+			$exclude[] = 'kiosk_self_sign_login';
+		}
+
+		$exclude[] = 'kiosk_mini_registration';
+
+	    if (!in_array($this->params['action'], $exclude)) {
 		echo $this->Html->scriptBlock(
 			"$(document).ready(function(){
 		      $(document).idleTimeout({
@@ -54,7 +68,7 @@
 			  noconfirm: ".$timeOut[1]['value'].",
 			  sessionAlive: false,
 			  logout_url: '/',
-			  redirect_url: '/kiosk/users/auto_logout'
+			  redirect_url: '/users/logout/kiosk'
 			})
 		});");
 	    }

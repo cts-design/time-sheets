@@ -1122,6 +1122,47 @@ class User extends AppModel {
 		}
 	}
 
+	public function setSSNLength($ssn_length)
+	{
+		$this->validate['ssn']['notEmpty'] = array(
+			'rule' => 'notEmpty',
+			'message' => 'Your SSN is required'
+		);
+		$this->validate['ssn']['minLength'] = array(
+			'rule' => array('minLength', $ssn_length),
+			'message' => 'Your SSN must be at least ' . $ssn_length . ' digits long'
+		);
+		$this->validate['ssn']['maxLength'] = array(
+			'rule' => array('maxLength', $ssn_length),
+			'message' => 'Your SSN must be ' . $ssn_length . ' digits long'
+		);
+
+		$this->validate['ssn_confirm']['notEmpty'] = array(
+			'rule' => 'notEmpty',
+			'message' => 'SSN Confirmation required'
+		);
+		$this->validate['ssn_confirm']['maxLength'] = array(
+			'rule' => array('maxLength', $ssn_length),
+			'message' => 'Your SSN must be ' . $ssn_length . ' digits long'
+		);
+		$this->validate['ssn_confirm']['maxLength'] = array(
+			'rule' => array('maxLength', $ssn_length),
+			'message' => 'Your SSN must be ' . $ssn_length . ' digits long'
+		);
+	}
+
+	public function setUsernamePasswordRegistration()
+	{
+		$this->validate['username']['notEmpty'] = array(
+			'rule' => 'notEmpty',
+			'message' => 'Username is required'
+		);
+		$this->validate['password']['notEmpty'] = array(
+			'rule' => 'notEmpty',
+			'message' => 'Password is required'
+		);
+	}
+
 	public function identicalFieldValues(&$data, $compareField)
 	{
 	    // $data array is passed using the form field name as the key
