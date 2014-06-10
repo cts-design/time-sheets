@@ -322,7 +322,7 @@
 		</li>	
 	</ul>
 	<?php echo $this->Form->end(array('label' => __('Submit', true), 'class' => 'self-sign-kiosk-button left')); ?>
-	<?php echo $this->Html->link(__('Cancel', true), '/kiosk/users/self_sign_login?btn=0',
+	<?php echo $this->Html->link(__('Cancel', true), '/kiosk/users/self_sign_login',
 		 array('class' => 'self-sign-kiosk-link left'))?>
 		 <br class='clear' />
     </div>

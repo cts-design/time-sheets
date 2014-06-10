@@ -46,7 +46,8 @@ class AtlasAuthComponent extends AuthComponent {
 			return false;
 		}
 
-		$this->data = $controller->data = $this->hashPasswords($controller->data);
+		//if($controller->data['User']['password'] != '')
+			$this->data = $controller->data = $this->hashPasswords($controller->data);
 		$url = '';
 
 		if (isset($controller->params['url']['url'])) {

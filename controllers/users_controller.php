@@ -523,7 +523,7 @@ class UsersController extends AppController {
 		$ssn_length		= Configure::read('Login.kiosk.ssn_length');
 		$login_method	= Configure::read('Login.method');
 		$show_buttons	= (isset($this->params['url']['btn']) ? $this->params['url']['btn'] : true);
-
+		$driver_card	= $this->Session->read('driver_card');
 		$this->set(compact('ssn_length', 'login_method', 'show_buttons'));
 
 		if($login_method == 'ssn')
@@ -534,6 +534,7 @@ class UsersController extends AppController {
 		else
 		{
 			$this->User->setValidation('passwordKioskLogin');
+			$this->User->setUsernamePasswordValidation();
 		}
 
 		if($this->RequestHandler->isPost())
@@ -560,8 +561,18 @@ class UsersController extends AppController {
 					));
 				}
 
+				$this->log( var_export($this->data['User'], true) );
+
 				if($user != NULL && $user != FALSE)
 				{
+					if($show_buttons == FALSE)
+					{
+						$this->User->create();
+						$this->User->id = $user['User']['id'];
+						$this->User->saveField('id_card_number', $driver_card['id_full']);
+						$this->Session->setFlash(__('Your driver\'s license has been linked to your account', true));
+					}
+
 					$this->Auth->login($user['User']['id']);
 					$this->sendCustomerLoginAlert($user, $kiosk);
 
@@ -620,7 +631,7 @@ class UsersController extends AppController {
 
 		$settings = Cache::read('settings');
 		$fields = Set::extract('/field',  json_decode($settings['SelfSign']['KioskRegistration'], true));
-		
+		$login_method = Configure::read('Login.method');
 		if($this->RequestHandler->isPost())
 		{
 			$data = $this->User->decodeIdString($this->data);
@@ -679,72 +690,6 @@ class UsersController extends AppController {
 		$this->set('kiosk', $kiosk);
 		$this->set('title_for_layout', 'Self Sign Kiosk');
 		$this->layout = 'kiosk';
-	}
-
-	/*
-		Users visit this action when they swipe their ID card but the card is not found on the system,
-		we ask them to enter their information to see if they might already be in the system.
-	*/
-	public function kiosk_id_card_confirm()
-	{
-		$this->layout = 'kiosk';
-		$this->User->setValidation('ssnKioskLogin');
-		$driver_card 	= $this->Session->read('driver_card');
-		$settings 		= Cache::read('settings');
-		$fields 		= Set::extract('/field',  json_decode($settings['SelfSign']['KioskRegistration'], true));
-		$ssn_length		= Configure::read('Login.kiosk.ssn_length');
-		$login_method	= Configure::read('Login.method');
-
-		if($login_method == 'ssn')
-		{
-			$this->User->setSSNLength($ssn_length);
-		}
-
-		$this->set(compact('ssn_length', 'login_method'));
-
-		if($this->RequestHandler->isPost())
-		{
-			$this->User->set( $this->data['User'] );
-			if($this->User->validates())
-			{
-				if($login_method == 'ssn')
-				{
-					$user = $this->User->find('first', array(
-					'conditions' => array(
-						'lastname' => $this->data['User']['lastname'],
-						'ssn LIKE' => '%' . $this->data['User']['ssn']
-						)
-					));
-				}
-				else
-				{
-					$user = $this->User->find('first', array(
-					'conditions' => array(
-						'username' => $this->data['User']['username'],
-						'password' => $this->data['User']['password']
-						)
-					));
-				}
-
-				if($user)
-				{
-					$this->User->create();
-					$this->User->id = $user['User']['id'];
-					$this->User->saveField('id_card_number', $driver_card['id_full']);
-					$this->Auth->login($user['User']['id']);
-
-					$this->Session->setFlash('Your drivers liscense has been added and you are logged in', 'flash_success');
-
-					$this->fieldRequirementDetermine($user, $fields);
-
-					$this->redirect('/kiosk/kiosks/self_sign_service_selection');
-				}
-				else
-				{
-					$this->redirect('/kiosk/users/mini_registration/');
-				}
-			}
-		}
 	}
 
 	function login($type = 'normal', $program_id = NULL) {

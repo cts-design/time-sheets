@@ -21,7 +21,7 @@
 
     <?php 
     echo $this->Session->flash('auth');
-    echo $form->create('User', array('action' => 'self_sign_login'));
+    echo $form->create('User', array('url' => '/kiosk/users/self_sign_login?btn=' . $show_buttons));
     if($login_method == 'ssn')
     {
 	    echo $form->input('lastname', array(
@@ -78,18 +78,21 @@
 
     if((isset($kiosk['Kiosk']) && isset($kiosk['Kiosk']['default_sign_in'])) && $show_buttons == true)
     {
-    	if($kiosk['Kiosk']['default_sign_in'] == 'id_card'){
-    		?>
+    	if($kiosk['Kiosk']['default_sign_in'] == 'id_card'){ ?>
     		<p style="margin: 10px 0 10px 300px">
-				<a class="translate-button" href="/kiosk/users/id_card_login">I'd prefer to login with License or ID</a>
+				<a class="translate-button" href="/kiosk/users/id_card_login">
+					I'd prefer to login with License or ID
+				</a>
 			</p>
-    		<?php
+    <?php
     	}
     }
     ?>
     <?php if ($kioskHasSurvey): ?>
     	<div class="survey-button">
-		<a href="/kiosk/survey/<?php echo $kiosk['KioskSurvey'][0]['id'] ?>">Take Survey</a>
+			<a href="/kiosk/survey/<?php echo $kiosk['KioskSurvey'][0]['id'] ?>">
+				Take Survey
+			</a>
     	</div>
     <?php endif ?>
 </div>

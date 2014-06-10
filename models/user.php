@@ -1151,6 +1151,18 @@ class User extends AppModel {
 		);
 	}
 
+	public function setUsernamePasswordValidation()
+	{
+		$this->validate['username']['notEmpty'] = array(
+			'rule' => 'notEmpty',
+			'message' => 'Username is required'
+		);
+		$this->validate['password']['notEmpty'] = array(
+			'rule' => 'notEmpty',
+			'message' => 'Password is required'
+		);
+	}
+
 	public function setUsernamePasswordRegistration()
 	{
 		$this->validate['username']['notEmpty'] = array(
