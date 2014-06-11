@@ -87,7 +87,7 @@
 			if($ssn_length == 9)
 			{
 				echo $this->Form->input('ssn', array(
-					'label' => __('SSN', true),
+					'label' => __('9 Digit SSN', true),
 					'before' => '<p class="left">',
 					'between' => '</p><p class="left">',
 					'maxlength' => $ssn_length,
@@ -97,7 +97,7 @@
 				echo '<br class="clear"/>';
 
 				echo $this->Form->input('ssn_confirm', array(
-					'label' => __('SSN', true),
+					'label' => __('Confirm 9 Digit SSN', true),
 					'before' => '<p class="left">',
 					'between' => '</p><p class="left">',
 					'maxlength' => $ssn_length,

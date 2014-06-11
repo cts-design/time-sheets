@@ -827,6 +827,11 @@ class User extends AppModel {
 			$this->data['User']['password'] = Security::hash($this->data['User']['ssn'], null, true);
 		}
 
+		if(isset($this->data['User']['password']) && !empty($this->data['User']['password']))
+		{
+			$this->data['User']['password'] = Security::hash($this->data['User']['password'], null, true);
+		}
+
 		if(isset($this->data['User']['firstname']) && isset($this->data['User']['lastname']))
 			$firstAndLast = ($this->data['User']['firstname'] != '' && $this->data['User']['lastname'] != '');
 		else
@@ -912,7 +917,8 @@ class User extends AppModel {
 		}
 		return true;
 	}
-
+	// $formatted_id_card = $this->User->decodeIdString($this->data['User']['raw_id']);
+	// $formatted_id_card['id_full']; // returns somethign like S2556457845
 	public function decodeIdString($data) {
 		$return = array(
 			'first_name' => null,
@@ -1136,18 +1142,26 @@ class User extends AppModel {
 			'rule' => array('maxLength', $ssn_length),
 			'message' => 'Your SSN must be ' . $ssn_length . ' digits long'
 		);
+		$this->validate['ssn']['numeric'] = array(
+			'rule' => 'numeric',
+			'message' => 'Your SSN may only be numbers'
+		);
 
 		$this->validate['ssn_confirm']['notEmpty'] = array(
 			'rule' => 'notEmpty',
 			'message' => 'SSN Confirmation required'
 		);
-		$this->validate['ssn_confirm']['maxLength'] = array(
-			'rule' => array('maxLength', $ssn_length),
-			'message' => 'Your SSN must be ' . $ssn_length . ' digits long'
+		$this->validate['ssn_confirm']['minLength'] = array(
+			'rule' => array('minLength', $ssn_length),
+			'message' => 'Your Confirmation SSN must be at least ' . $ssn_length . ' digits long'
 		);
 		$this->validate['ssn_confirm']['maxLength'] = array(
 			'rule' => array('maxLength', $ssn_length),
-			'message' => 'Your SSN must be ' . $ssn_length . ' digits long'
+			'message' => 'Your Confirmation SSN must be ' . $ssn_length . ' digits long'
+		);
+		$this->validate['ssn_confirm']['numeric'] = array(
+			'rule' => 'numeric',
+			'message' => 'Your Confirmation SSN may only be numbers'
 		);
 	}
 
@@ -1169,9 +1183,21 @@ class User extends AppModel {
 			'rule' => 'notEmpty',
 			'message' => 'Username is required'
 		);
+		$this->validate['username']['isUnique'] = array(
+			'rule' => 'isUnique',
+			'message' => 'That Username is already taken'
+		);
 		$this->validate['password']['notEmpty'] = array(
 			'rule' => 'notEmpty',
 			'message' => 'Password is required'
+		);
+		$this->validate['password']['identical'] = array(
+			'rule' => array('identicalFieldValues', 'password_confirm'),
+			'message' => 'Your passwords do not match'
+		);
+		$this->validate['password_confirm']['notEmpty'] = array(
+			'rule' => 'notEmpty',
+			'message' => 'Password Confirmation is required'
 		);
 	}
 

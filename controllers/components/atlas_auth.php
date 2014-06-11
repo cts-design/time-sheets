@@ -46,7 +46,12 @@ class AtlasAuthComponent extends AuthComponent {
 			return false;
 		}
 
-		//if($controller->data['User']['password'] != '')
+		$excluded = array(
+			'kiosk_self_sign_login',
+			'kiosk_mini_registration'
+		);
+
+		if(!in_array($action, $excluded))
 			$this->data = $controller->data = $this->hashPasswords($controller->data);
 		$url = '';
 
@@ -109,7 +114,21 @@ class AtlasAuthComponent extends AuthComponent {
 						$url .= Router::queryString($query, array());
 					}
 					$this->Session->write('Auth.redirect', $url);
-					$controller->redirect($loginAction);
+
+					$prefix = (isset($controller->params['prefix']) ? $controller->params['prefix'] : '');
+					switch($prefix)
+					{
+						case 'admin':
+							$controller->redirect('/admin');
+						break;
+						case 'kiosk':
+							$controller->redirect('/kiosk');
+						break;
+						default:
+							$controller->redirect('/users/login');
+						break;
+					}
+					//$controller->redirect($loginAction);
 					return false;
 				} elseif (!empty($this->ajaxLogin)) {
 					$controller->viewPath = 'elements';

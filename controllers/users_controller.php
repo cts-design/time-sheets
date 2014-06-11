@@ -556,7 +556,7 @@ class UsersController extends AppController {
 					$user = $this->User->find('first', array(
 						'conditions' => array(
 							'username' => $this->data['User']['username'],
-							'password' => $this->data['User']['password']
+							'password' => Security::hash($this->data['User']['password'], null, true)
 						)
 					));
 				}
@@ -1191,20 +1191,20 @@ class UsersController extends AppController {
 				$this->User->create();
 				if (!$user && $this->User->save($this->data))
 				{
-					$userId = $this->User->getInsertId();
-					$this->data['User']['password'] = Security::hash($this->data['User']['ssn'], null, true);
-					$this->data['User']['username'] = $this->data['User']['lastname'];
-					$this->Auth->login($this->data);
 					$this->Transaction->createUserTransaction('Self Sign',
-						$userId, $this->Kiosk->getKioskLocationId(), 'User self registered using a kiosk.');
+						$this->User->id, $this->Kiosk->getKioskLocationId(), 'User self registered using a kiosk.');
 					$this->Session->setFlash(__('Your account has been created.', true), 'flash_success');
 					
 					$this->Auth->login($this->User->id);
 
 					if(isset($settings['SelfSign']['KioskConfirmation']) && $settings['SelfSign']['KioskConfirmation'] === 'on')
+					{
 						$this->redirect('/kiosk/kiosks/self_sign_confirm');
+					}
 					else
+					{
 						$this->redirect('/kiosk/kiosks/self_sign_service_selection');
+					}
 				}
 				else
 				{
