@@ -45,9 +45,11 @@
 	{
 		echo $form->input('password', array(
 			'label' => __('Child\'s Password', true),
+			'type' => 'password',
 			'before' => '<br />',
 			'after' => '<br />'
 		));
+		echo $html->link('Forgot Password?', array('controller' => 'users', 'action' => 'forgot_password'));
 	}
 	echo $form->hidden('User.login_type', array('value' => 'child_website'));
 	echo '<br class="clear"/>';
