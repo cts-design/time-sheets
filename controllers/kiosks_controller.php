@@ -152,9 +152,7 @@ class KiosksController extends AppController {
 				$this->Session->setFlash(__('The information could not be saved. Please, try again.', true), 'flash_failure');
 			}
 		}
-		if(empty($this->data)) {
-			$this->data = $this->User->read(null, $id);
-		}
+		$this->data = $this->User->read(null, $id);
 		$title_for_layout = 'Self Sign Kiosk';
 		$states = $this->states;
 		$genders = $this->genders;

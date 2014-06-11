@@ -21,4 +21,14 @@ class AppModel extends Model {
 			$this->validate = Set::merge($this->validate, $rules);
 		}		
 	}
+
+	public function appendValidation($validation, $override = TRUE) {
+		foreach($validation as $name => $rule)
+		{
+			if(($override) || (!isset($this->validate[$name]) && !$override))
+			{
+				$this->validate[$name] = $rule;
+			}
+		}
+	}
 }

@@ -372,6 +372,10 @@ margin-left: 100px;
     margin-left: 225px;
 }
 
+.self-sign-wrapper .error-message {
+    margin-left:410px;
+}
+
 #copyright {
     width: 775px;
 }

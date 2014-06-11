@@ -32,18 +32,56 @@
     <?php
 	    echo $this->Session->flash('auth');
 	    echo $form->create('User', array('action' => 'kiosk_id_card_confirm'));
-	    echo $form->input('lastname', array(
-			'label' => __('Last Name', true),
-			'before' => '<p class="left">',
-			'between' => '</p><p class="left">',
-			'after' => '</p><br class="clear"/>'));
-	    echo $form->input('ssn', array(
-			'label' => __('9 Digit SSN', true),
-			'type' => 'password',
-			'before' => '<p class="left">',
-			'between' => '</p><p class="left">',
-			'after' => '</p><br class="clear"/>',
-			'maxlength' => 9));
+
+	    if($login_method == 'ssn')
+	    {
+		    echo $form->input('lastname', array(
+				'label' => __('Last Name', true),
+				'before' => '<p class="left">',
+				'between' => '</p><p class="left">',
+				'after' => '</p><br class="clear"/>'
+			));
+
+		    if($ssn_length == 9)
+		    {
+			    echo $form->input('ssn', array(
+					'label' => __('9 Digit SSN', true),
+					'type' => 'password',
+					'before' => '<p class="left">',
+					'between' => '</p><p class="left">',
+					'after' => '</p><br class="clear"/>',
+					'maxlength' => $ssn_length
+				));
+			}
+			else
+			{
+				echo $form->input('ssn', array(
+					'label' => __('Last ' . $ssn_length . ' Digits of SSN', true),
+					'type' => 'password',
+					'before' => '<p class="left">',
+					'between' => '</p><p class="left">',
+					'after' => '</p><br class="clear"/>',
+					'maxlength' => $ssn_length
+				));
+			}
+		}
+		else
+		{
+			echo $form->input('username', array(
+				'label' => __('Username', true),
+				'before' => '<p class="left">',
+				'between' => '</p><p class="left">',
+				'after' => '</p><br class="clear"/>'
+			));
+
+			echo $form->input('password', array(
+					'label' => __('Password', true),
+					'type' => 'password',
+					'before' => '<p class="left">',
+					'between' => '</p><p class="left">',
+					'after' => '</p><br class="clear"/>'
+				));
+		}
 	    echo $form->end(array('label' => __('Login', true), 'class' => 'self-sign-kiosk-button'));
     ?>
 </div>
