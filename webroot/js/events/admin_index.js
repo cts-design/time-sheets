@@ -659,14 +659,16 @@ Ext.create('Ext.form.Panel', {
       var form = this.up('form').getForm();
 
       var vals = form.getValues(false, false, false, true);
+
+      vals['private'] = (vals['private'] ? 1 : 0);
+      vals['active'] = (vals['active'] ? 1 : 0);
+      vals['allow_registrations'] = (vals['allow_registrations'] ? 1 : 0);
       if(form.isValid()) {
         var event;
         var store = Ext.data.StoreManager.lookup('eventsStore');
         if(vals.id !== '') {
           event = store.getById(vals.id);
           event.beginEdit();
-          vals['private'] = (vals['private'] ? 1 : 0);
-          vals['active'] = (vals['active'] ? 1 : 0);
           event.set(vals);
           event.endEdit();
         }
