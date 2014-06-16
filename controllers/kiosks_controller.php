@@ -135,15 +135,24 @@ class KiosksController extends AppController {
 			if($this->User->save($this->data)) {
 				$this->Transaction->createUserTransaction('Self Sign', $id, $this->Kiosk->getKioskLocationId(), 'Edited information');
 				$this->Session->setFlash(__('The information has been saved', true), 'flash_success');
-				$this->redirect(array('action' => 'self_sign_service_selection', 'kiosk' => true));
+				
+				$settings = Cache::read('settings');
+
+				if(isset($settings['SelfSign']['KioskConfirmation']) && $settings['SelfSign']['KioskConfirmation'] === 'on')
+				{
+					$this->redirect(array('action' => 'self_sign_confirm', 'kiosk' => true));
+				}
+				else
+				{
+					$this->redirect(array('action' => 'self_sign_service_selection', 'kiosk' => true));
+				}
+				
 			}
 			else {
 				$this->Session->setFlash(__('The information could not be saved. Please, try again.', true), 'flash_failure');
 			}
 		}
-		if(empty($this->data)) {
-			$this->data = $this->User->read(null, $id);
-		}
+		$this->data = $this->User->read(null, $id);
 		$title_for_layout = 'Self Sign Kiosk';
 		$states = $this->states;
 		$genders = $this->genders;

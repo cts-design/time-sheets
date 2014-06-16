@@ -97,6 +97,11 @@ class AppController extends Controller {
 
 		$this->Auth->loginAction = array('controller' => 'none', 'action' => 'login');
 
+		/*if($this->params['prefix'] == 'admin' && $this->params['action'] != 'admin_login' && !($this->Auth->user()))
+		{
+			$this->redirect('/admin/users/login');
+		}*/
+
 		if (Configure::read('Website.theme')) {
 			$this->view = 'Theme';
 			$this->theme = Configure::read('Website.theme');
@@ -157,9 +162,9 @@ class AppController extends Controller {
 		    $this->Auth->loginAction = array('admin' => true, 'controller' => 'users', 'action' => 'login');
 	
 		} 
-		elseif(isset($this->params['prefix']) && $this->params['prefix'] == 'kiosk') {
+		/*elseif(isset($this->params['prefix']) && $this->params['prefix'] == 'kiosk') {
 		   $this->Auth->loginAction = array('admin' => false, 'kiosk' => true, 'controller' => 'users', 'action' => 'self_sign_login');
-		}
+		}*/
 		elseif(isset($this->params['controller'], $this->params['pass'][1]) && $this->params['controller'] == 'programs' 
 			&& $this->params['pass'][1] == 'child'){
 			$this->Auth->authError = "You must login to access that location.";	

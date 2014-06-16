@@ -37,6 +37,9 @@
 	    'after' => '</p><br class="clear"/>'
 	));
 	
+	echo $this->Form->input('User.username', array(
+		'type' => 'hidden'
+	));
 	// Begin dynamic fields
 	if(in_array('middle_initial', $fields)) {
 	    echo $this->Form->input('User.middle_initial', array(

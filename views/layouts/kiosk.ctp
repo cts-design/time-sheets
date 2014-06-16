@@ -42,11 +42,25 @@
 			$exclude = array('kiosk_self_scan_document', 'question', 'kiosk_id_card_login');
 		}
 		else {
-			$exclude = array('kiosk_self_scan_document', 'question', 'kiosk_self_sign_login');
+			$exclude = array('kiosk_self_scan_document', 'question');
 		}
 
-		
-	    if (!in_array($this->params['action'], $exclude) && $user_logged_in) {
+
+		// this is for when the user is asked to find themself if they use an id_card_login
+		// it will allow for the timeout to occur if they leave this page for any reason
+		if(isset($this->params['url']['btn']))
+		{
+			if($this->params['url']['btn'] == true)
+				$exclude[] = 'kiosk_self_sign_login';
+		}
+		else
+		{
+			$exclude[] = 'kiosk_self_sign_login';
+		}
+
+		$exclude[] = 'kiosk_mini_registration';
+
+	    if (!in_array($this->params['action'], $exclude)) {
 		echo $this->Html->scriptBlock(
 			"$(document).ready(function(){
 		      $(document).idleTimeout({
@@ -54,7 +68,7 @@
 			  noconfirm: ".$timeOut[1]['value'].",
 			  sessionAlive: false,
 			  logout_url: '/',
-			  redirect_url: '/kiosk/users/auto_logout'
+			  redirect_url: '/users/logout/kiosk'
 			})
 		});");
 	    }
@@ -79,6 +93,17 @@
 			});
 		});')
 	?>
+
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-51687253-1', 'careersourcetampabay.com');
+	  ga('send', 'pageview');
+
+	</script>
     </head>
     <body>
 	<div id="container">

@@ -355,6 +355,42 @@ class User extends AppModel {
 				)
 			)
 		),
+		'passwordKioskLogin' => array(
+			'username' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Your Last name is required'
+				)
+			),
+			'password' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Your 9 digit SSN is required'
+				)
+			)
+		),
+		'ssnKioskLogin' => array(
+			'lastname' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Your Last name is required'
+				)
+			),
+			'ssn' => array(
+				'notEmpty' => array(
+					'rule' => 'notEmpty',
+					'message' => 'Your 9 digit SSN is required'
+				),
+				'numeric' => array(
+					'rule' => 'numeric',
+					'message' => 'Your SSN can only consist of numbers'
+				),
+				'minLength' => array(
+					'rule' => array('minLength', 9),
+					'message' => 'Your SSN must be at least 9 digits long'
+				)
+			)
+		),
 		'auditor' => array(
 			'ssn' => array(
 				'rule' => 'notEmpty',
@@ -791,10 +827,15 @@ class User extends AppModel {
 			$this->data['User']['password'] = Security::hash($this->data['User']['ssn'], null, true);
 		}
 
-		$firstAndLast = ($this->data['User']['firstname'] != '' && $this->data['User']['lastname'] != '');
+		if(isset($this->data['User']['password']) && !empty($this->data['User']['password']))
+		{
+			$this->data['User']['password'] = Security::hash($this->data['User']['password'], null, true);
+		}
 
-		$this->log( var_export($firstAndLast, true) );
-		$this->log( var_export($this->data['User'], true) );
+		if(isset($this->data['User']['firstname']) && isset($this->data['User']['lastname']))
+			$firstAndLast = ($this->data['User']['firstname'] != '' && $this->data['User']['lastname'] != '');
+		else
+			$firstAndLast = false;
 
 		if($firstAndLast && empty($this->data['User']['username']))
 		{
@@ -809,7 +850,6 @@ class User extends AppModel {
 		else {
 			$this->data['User']['dob'] = null;
 		}
-
 		return true;
 	}
 
@@ -877,7 +917,8 @@ class User extends AppModel {
 		}
 		return true;
 	}
-
+	// $formatted_id_card = $this->User->decodeIdString($this->data['User']['raw_id']);
+	// $formatted_id_card['id_full']; // returns somethign like S2556457845
 	public function decodeIdString($data) {
 		$return = array(
 			'first_name' => null,
@@ -1085,6 +1126,79 @@ class User extends AppModel {
 				'message' => 'Your passwords do not match'
 			);
 		}
+	}
+
+	public function setSSNLength($ssn_length)
+	{
+		$this->validate['ssn']['notEmpty'] = array(
+			'rule' => 'notEmpty',
+			'message' => 'Your SSN is required'
+		);
+		$this->validate['ssn']['minLength'] = array(
+			'rule' => array('minLength', $ssn_length),
+			'message' => 'Your SSN must be at least ' . $ssn_length . ' digits long'
+		);
+		$this->validate['ssn']['maxLength'] = array(
+			'rule' => array('maxLength', $ssn_length),
+			'message' => 'Your SSN must be ' . $ssn_length . ' digits long'
+		);
+		$this->validate['ssn']['numeric'] = array(
+			'rule' => 'numeric',
+			'message' => 'Your SSN may only be numbers'
+		);
+
+		$this->validate['ssn_confirm']['notEmpty'] = array(
+			'rule' => 'notEmpty',
+			'message' => 'SSN Confirmation required'
+		);
+		$this->validate['ssn_confirm']['minLength'] = array(
+			'rule' => array('minLength', $ssn_length),
+			'message' => 'Your Confirmation SSN must be at least ' . $ssn_length . ' digits long'
+		);
+		$this->validate['ssn_confirm']['maxLength'] = array(
+			'rule' => array('maxLength', $ssn_length),
+			'message' => 'Your Confirmation SSN must be ' . $ssn_length . ' digits long'
+		);
+		$this->validate['ssn_confirm']['numeric'] = array(
+			'rule' => 'numeric',
+			'message' => 'Your Confirmation SSN may only be numbers'
+		);
+	}
+
+	public function setUsernamePasswordValidation()
+	{
+		$this->validate['username']['notEmpty'] = array(
+			'rule' => 'notEmpty',
+			'message' => 'Username is required'
+		);
+		$this->validate['password']['notEmpty'] = array(
+			'rule' => 'notEmpty',
+			'message' => 'Password is required'
+		);
+	}
+
+	public function setUsernamePasswordRegistration()
+	{
+		$this->validate['username']['notEmpty'] = array(
+			'rule' => 'notEmpty',
+			'message' => 'Username is required'
+		);
+		$this->validate['username']['isUnique'] = array(
+			'rule' => 'isUnique',
+			'message' => 'That Username is already taken'
+		);
+		$this->validate['password']['notEmpty'] = array(
+			'rule' => 'notEmpty',
+			'message' => 'Password is required'
+		);
+		$this->validate['password']['identical'] = array(
+			'rule' => array('identicalFieldValues', 'password_confirm'),
+			'message' => 'Your passwords do not match'
+		);
+		$this->validate['password_confirm']['notEmpty'] = array(
+			'rule' => 'notEmpty',
+			'message' => 'Password Confirmation is required'
+		);
 	}
 
 	public function identicalFieldValues(&$data, $compareField)

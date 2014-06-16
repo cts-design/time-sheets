@@ -17,14 +17,14 @@
     </h2>
     <?php echo $this->Session->flash(); ?>
     <div class="miniRegistrationForm">
-	<?php echo $this->Form->create('User'); ?>
+	<?php echo $this->Form->create('User') ?>
 	<fieldset>
+		<?php $data = $this->Session->read('driver_card') ?>
 	    <?php
 	    echo $this->Form->hidden('role_id', array('value' => '1'));
-	    echo $this->Form->hidden('id_card_number');
+	    echo $this->Form->hidden('id_card_number', array('value' => $data['id_number']));
 		// required fields
 		if($hideFields) {
-			$data = $this->Session->read('idCard');
 			echo $this->Form->hidden('firstname', array( 
 				'value' => ucfirst(strtolower($data['first_name'])) ));
 			echo $this->Form->hidden('lastname');
@@ -34,7 +34,7 @@
 			'label' => __('First Name', true),
 			'before' => '<p class="left">',
 			'between' => '</p><p class="left">',
-			'after' => '</p>'
+			'after' => '</p>',
 			));
 			echo $this->Form->input('lastname', array(
 			'label' => __('Last Name', true),
@@ -82,81 +82,79 @@
 		}
 		
 		// required fields
-		
-		if(Configure::read('Registration.ssn') == 'full') {
-			
-		    echo $this->Form->input('ssn', array(
-			'label' => __('SSN', true),
-			'before' => '<p class="left">',
-			'between' => '</p><p class="left">',
-			'maxlength' => 9,
-			'type' => 'password',
-			'after' => '</p>'));
-		    echo '<br class="clear"/>';
-		    echo $this->Form->input('ssn_confirm', array(
-			'label' => __('SSN Confirm', true),
-			'maxlength' => 9,
-			'type' => 'password',
-			'before' => '<p class="left">',
-			'between' => '</p><p class="left">',
-			'after' => '</p>'));
-		    echo '<br class="clear"/>';
+		if($login_method == 'ssn')
+		{
+			if($ssn_length == 9)
+			{
+				echo $this->Form->input('ssn', array(
+					'label' => __('9 Digit SSN', true),
+					'before' => '<p class="left">',
+					'between' => '</p><p class="left">',
+					'maxlength' => $ssn_length,
+					'type' => 'password',
+					'after' => '</p>'
+				));
+				echo '<br class="clear"/>';
+
+				echo $this->Form->input('ssn_confirm', array(
+					'label' => __('Confirm 9 Digit SSN', true),
+					'before' => '<p class="left">',
+					'between' => '</p><p class="left">',
+					'maxlength' => $ssn_length,
+					'type' => 'password',
+					'after' => '</p>'
+				));
+				echo '<br class="clear"/>';
+			}
+			else
+			{
+				echo $this->Form->input('ssn', array(
+					'label' => __('Last ' . $ssn_length . ' digits of SSN', true),
+					'before' => '<p class="left">',
+					'between' => '</p><p class="left">',
+					'maxlength' => $ssn_length,
+					'type' => 'password',
+					'after' => '</p>'
+				));
+				echo '<br class="clear"/>';
+
+				echo $this->Form->input('ssn_confirm', array(
+					'label' => __('Confirm last ' . $ssn_length . ' digits of SSN', true),
+					'before' => '<p class="left">',
+					'between' => '</p><p class="left">',
+					'maxlength' => $ssn_length,
+					'type' => 'password',
+					'after' => '</p>'
+				));
+				echo '<br class="clear"/>';
+			}
 		}
-		elseif(Configure::read('Registration.ssn') == 'last4') {
-			echo '<div class="input text required ssn4">';
-				echo '<p class="left">';
-					echo $this->Form->label(__('Social Security Number', true));
-				echo '</p><p class="left">';
-					echo $this->Form->input('ssn_1', array(
-						'type' => 'text',
-						'div' => false,
-						'maxlength' => 3, 
-						'type' => 'password',
-						'label' => false));
-					echo $this->Form->input('ssn_2', array(
-						'type' => 'text',
-						'maxlength' => 2,
-						'type' => 'password',
-						'label' => false,
-						'div' => false));
-					echo $this->Form->input('ssn_3', array(
-						'type' => 'text',
-						'maxLength' => 4,
-						'type' => 'password',
-						'label' => false,
-						'div' => false));
-				
-				echo '</p>';	
-				echo $this->Form->error('ssn');
-			echo '</div>';
-			echo "<br class='clear' />";
-			echo '<div class="input required ssn4">';
-				echo '<p class="left">';
-					echo $this->Form->label(__('Confirm Social Security Number', true));
-				echo '</p><p class="left">';			
-					echo $this->Form->input('ssn_1_confirm', array(
-						'type' => 'text',
-						'maxlength' => 3,
-						'type' => 'password',
-						'label' => false,
-						'div' => false));
-					echo $this->Form->input('ssn_2_confirm', array(
-						'type' => 'text',
-						'maxlength' => 2,
-						'label' => false,
-						'type' => 'password',
-						'div' => false));
-					echo $this->Form->input('ssn_3_confirm', array(
-						'type' => 'text',
-						'maxlength' => 4,
-						'label' => false,
-						'div' => false,
-						'type' => 'password',
-						'after' => '<br />'));
-				echo '</p>';	
-					echo $this->Form->error('ssn_confirm');
-			echo '</div>';					
-		}		
+		else // login method == password
+		{
+			echo $this->Form->input('username', array(
+					'label' => __('Username', true),
+					'before' => '<p class="left">',
+					'between' => '</p><p class="left">',
+					'after' => '</p>'
+				));
+			echo '<br class="clear"/>';
+
+			echo $this->Form->input('password', array(
+				'label' => __('Password', true),
+				'before' => '<p class="left">',
+				'between' => '</p><p class="left">',
+				'after' => '</p>'
+			));
+			echo '<br class="clear"/>';
+
+			echo $this->Form->input('password_confirm', array(
+				'label' => __('Confirm Password', true),
+				'before' => '<p class="left">',
+				'between' => '</p><p class="left">',
+				'after' => '</p>'
+			));
+			echo '<br class="clear"/>';
+		}
 		
 		//dynamic fields
 		if(in_array('dob', $fields)) {
@@ -324,7 +322,7 @@
 		</li>	
 	</ul>
 	<?php echo $this->Form->end(array('label' => __('Submit', true), 'class' => 'self-sign-kiosk-button left')); ?>
-	<?php echo $this->Html->link(__('Cancel', true), array('controller' => 'users', 'action' => 'self_sign_login'),
+	<?php echo $this->Html->link(__('Cancel', true), '/kiosk/users/self_sign_login',
 		 array('class' => 'self-sign-kiosk-link left'))?>
 		 <br class='clear' />
     </div>
