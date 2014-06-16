@@ -123,7 +123,6 @@ class EventsController extends AppController {
 			'Event.scheduled BETWEEN ? AND ?' => array($date, $endDate)
 		);
 
-
 		if ($categoryConditions) {
 			$conditions = array_merge($conditions, $categoryConditions);
 		}
