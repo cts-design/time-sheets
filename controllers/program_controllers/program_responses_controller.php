@@ -391,6 +391,17 @@ class ProgramResponsesController extends AppController {
     }
 	
 	function upload_docs($programId=null, $stepId=null) {
+		$this->loadModel('Kiosk');
+
+		$kiosk = $this->Kiosk->isKiosk();
+		$this->set('is_kiosk', $kiosk);
+		if($kiosk)
+		{
+			$this->set('locationId', $kiosk['Location']['id']);
+			$this->set('queueCatId', null);
+			$this->set('selfScanCatId', null);
+		}
+
 		if(!$programId){
 			$this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');
 			$this->redirect($this->referer());
@@ -439,6 +450,11 @@ class ProgramResponsesController extends AppController {
 		$data['title_for_layout'] = $program['Program']['name'] . ' Upload Required Documentation';
 		$data['queueCategoryId'] = $program['Program']['queue_category_id'];
 		$this->set($data);
+	}
+
+	public function upload_docs_confirm()
+	{
+		//This view exists for after the scanned document is successfull
 	}
 
 	public function drop_off_docs($programId) {

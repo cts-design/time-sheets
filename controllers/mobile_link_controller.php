@@ -43,7 +43,7 @@ class MobileLinkController extends AppController {
 			$to 		= $result['MobileLink']['phone_number'] . $result['MobileLink']['provider'];
 			$headers	= "From: " . Configure::read('System.email') . "\r\n";
 			$sms_link	= Router::url('/mobile_link/confirm/' . $result['MobileLink']['id'], true);
-			$message 	= "To upload your document, click the link and follow the instructions on your phone: " . $sms_link;
+			$message 	= "To upload your document, click this link: " . $sms_link;
 			$is_sent 	= mail($to, "", $message, $headers);
 
 			$this->Session->setFlash('You should recieve a text message shortly, if you do not recieve one, re-enter your phone number', null, null, 'flash_success');

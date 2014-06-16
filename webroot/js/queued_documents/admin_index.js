@@ -242,6 +242,8 @@ function autoPopulateFilingCats(doc) {
 		else {
 			cat = Ext.data.StoreManager.lookup('barCodeDefinitionsStore').getById(doc.data.bar_code_definition_id);
 		}
+
+		console.log(cat);
 		if(cat.data.cat_1 !== null) {
 			Ext.getCmp('mainFilingCats').select(cat.data.cat_1);
 			cat2Store = Ext.data.StoreManager.lookup('documentFilingCats2');
