@@ -10,6 +10,7 @@ $(document).ready(function(){
 
 	var $edit_button 		= $('.edit-button');
 	var $delete_button		= $('.delete-button');
+	var $create_button		= $('.create-button');
 
 	var name 				= '';
 	var id 					= null;
@@ -55,6 +56,19 @@ $(document).ready(function(){
 		}
 	},
 	plugins : [ "themes", "html_data", "ui", "cookies", "types" ]
+    });
+
+    $name_field.keyup(function(){
+    	var button_name = $(this).val();
+
+    	if(button_name != '')
+    	{
+    		$create_button.removeAttr('disabled');
+    	}
+    	else
+    	{
+    		$create_button.attr('disabled', 'disabled');
+    	}
     });
 
     $('.create-root-button').click(function(){

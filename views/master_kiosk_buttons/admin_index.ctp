@@ -75,10 +75,10 @@ span.ui-icon
 				</h4>
 
 				<?= $this->Form->create('MasterKioskButton', array('action' => 'add')) ?>
-				<?= $this->Form->input('name', array('class' => 'form-control', 'maxlength' => 29)) ?>
+				<?= $this->Form->input('name', array('class' => 'form-control', 'maxlength' => 29, 'autocomplete' => 'off')) ?>
 				<?= $this->Form->input('parent_id', array('type' => 'hidden', 'value' => NULL)) ?>
 				<?= $this->Form->input('id', array('type' => 'hidden', 'value' => NULL)) ?>
-				<button type="submit" class="btn btn-primary btn-lg" style="margin-top:10px">
+				<button class="btn btn-primary btn-lg create-button" disabled style="margin-top:10px">
 					Create
 				</button>
 				<?= $this->Form->end() ?>
