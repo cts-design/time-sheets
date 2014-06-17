@@ -1,15 +1,14 @@
-/*
- * @author Daniel Nolan
- * @copyright Complete Technology Solutions 2010
- * @link http://ctsfla.com
- */
 $(document).ready(function(){
+	var domain = window.location.hostname;
+
     $("#masterKioskButtonTree").bind("select_node.jstree", function (e, data) {
-	node = '#' + data.rslt.obj.attr("id");
-	$("#MasterKioskButtonParentId").attr('value', data.rslt.obj.attr("id"));
-	$("#editButton").attr('href', '/admin/master_kiosk_buttons/edit/' + data.rslt.obj.attr("id"));
+
+		node = '#' + data.rslt.obj.attr("id");
+		$("#MasterKioskButtonParentId").attr('value', data.rslt.obj.attr("id"));
+		$("#editButton").attr('href', '/admin/master_kiosk_buttons/edit/' + data.rslt.obj.attr("id"));
+
     }).bind("delete_node.jstree", function (e, data) {
-	window.location = '/admin/master_kiosk_buttons/delete/' + data.rslt.obj.attr("id");
+		window.location = '/admin/master_kiosk_buttons/delete/' + data.rslt.obj.attr("id");
     }).jstree({
 	themes : {
 	    dots : true,
