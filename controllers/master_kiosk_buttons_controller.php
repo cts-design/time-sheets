@@ -19,7 +19,8 @@ class MasterKioskButtonsController extends AppController {
 	}
 
     function admin_index($id = null) {
-	$this->_setTreeData($id);
+    	$this->layout = 'default_bootstrap';
+		$this->_setTreeData($id);
     }
 
     function admin_add() {
@@ -42,13 +43,17 @@ class MasterKioskButtonsController extends AppController {
 		    'MasterKioskButton.parent_id' => $this->data['MasterKioskButton']['parent_id'],
 		    'MasterKioskButton.name' => $this->data['MasterKioskButton']['name']),
 		    'MasterKioskButton.deleted' => 1));
-	    if($button) {
-		$this->data['MasterKioskButton']['id'] = $button['MasterKioskButton']['id'];
-		$this->data['MasterKioskButton']['deleted'] = 0;
-	     }
-	    else {
-		$this->MasterKioskButton->create();
+
+	    if($button)
+	    {
+			$this->data['MasterKioskButton']['id'] = $button['MasterKioskButton']['id'];
+			$this->data['MasterKioskButton']['deleted'] = 0;
 	    }
+	    else
+	    {
+			$this->MasterKioskButton->create();
+	    }
+
 	    if ($this->MasterKioskButton->save($this->data)) {
 		$this->Transaction->createUserTransaction('Kiosk', null, null,
 			'Added master kiosk button ' . $this->data['MasterKioskButton']['name']);
@@ -114,12 +119,14 @@ class MasterKioskButtonsController extends AppController {
     }
 
     function _setTreeData() {
-	$this->MasterKioskButton->recursive = -1;
-	$data = $this->MasterKioskButton->find('threaded', array(
-		    'conditions' => array(
-			'MasterKioskButton.deleted !=' => 1),
-		    'order' => array('MasterKioskButton.id', 'MasterKioskButton.id DESC')));
-	$this->set('data', $data);
+		$this->MasterKioskButton->recursive = -1;
+		$data = $this->MasterKioskButton->find('threaded', array(
+			    'conditions' => array(
+					'MasterKioskButton.deleted !=' => 1),
+			    	'order' => array('MasterKioskButton.id', 'MasterKioskButton.id DESC')
+			    ));
+
+		$this->set('data', $data);
     }
 
 	function admin_get_button_path($id=null) {
