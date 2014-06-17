@@ -166,8 +166,11 @@ class KioskButtonsController extends AppController {
 			'fields' => array('MasterKioskButton.parent_id')));
 
 		$this->KioskButton->primaryKey = 'id';
-		$locationButtons = $this->KioskButton->find('threaded', array('conditions' => array('KioskButton.status !=' => 1,
-			'KioskButton.kiosk_id' => $id),
+		$locationButtons = $this->KioskButton->find('threaded', array(
+			'conditions' => array(
+				'KioskButton.status !=' => 1,
+				'KioskButton.kiosk_id' => $id
+			),
 			'order' => array('KioskButton.order' => 'asc')));
 
 		// this is needed for the translations

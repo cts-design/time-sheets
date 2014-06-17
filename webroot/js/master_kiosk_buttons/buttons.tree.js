@@ -15,6 +15,8 @@ $(document).ready(function(){
 	var name 				= '';
 	var id 					= null;
 
+	$name_field.focus();
+
     $tree.bind("select_node.jstree", function (e, data) {
 
 		id = data.rslt.obj.attr("id");
@@ -33,6 +35,8 @@ $(document).ready(function(){
     	$edit_button.removeAttr('disabled');
     	$delete_button.removeAttr('disabled');
     	$delete_button.attr('href', '/admin/master_kiosk_buttons/delete/' + id);
+
+    	$name_field.focus();
 
     }).bind("delete_node.jstree", function (e, data) {
 		window.location = '/admin/master_kiosk_buttons/delete/' + data.rslt.obj.attr("id");
