@@ -37,9 +37,13 @@ span.ui-icon
 						Create Master Button
 					</button>
 
-					<button class="btn btn-default navbar-btn edit-button">
+					<button class="btn btn-default navbar-btn edit-button" disabled>
 						Edit Master Button
 					</button>
+
+					<a href class="btn btn-danger pull-right navbar-btn delete-button" disabled>
+						Delete Master Button
+					</a>
 
 				</div>
 			</nav>

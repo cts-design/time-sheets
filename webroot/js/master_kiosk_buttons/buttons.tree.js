@@ -8,6 +8,9 @@ $(document).ready(function(){
 	var $name_field			= $('input[name="data[MasterKioskButton][name]"]');
 	var $id_field 			= $('input[name="data[MasterKioskButton][id]"');
 
+	var $edit_button 		= $('.edit-button');
+	var $delete_button		= $('.delete-button');
+
 	var name 				= '';
 	var id 					= null;
 
@@ -25,6 +28,10 @@ $(document).ready(function(){
 		$name_field.val('');
 		$id_field.val('');
     	$action.text('Add');
+
+    	$edit_button.removeAttr('disabled');
+    	$delete_button.removeAttr('disabled');
+    	$delete_button.attr('href', '/admin/master_kiosk_buttons/delete/' + id);
 
     }).bind("delete_node.jstree", function (e, data) {
 		window.location = '/admin/master_kiosk_buttons/delete/' + data.rslt.obj.attr("id");
@@ -57,6 +64,9 @@ $(document).ready(function(){
 
     	$.jstree._reference("#masterKioskButtonTree").deselect_all();
 		$(this).removeClass('ui-state-focus');
+
+		$edit_button.attr('disabled', 'disabled');
+		$delete_button.attr('disabled', 'disabled');
     });
 
     $('.edit-button').click(function(){
