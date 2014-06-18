@@ -12,14 +12,17 @@ class KioskButtonsController extends AppController {
 	var $helpers = array('Tree');
 	var $components = array('Cookie');
 
-	function admin_index($id =null) {
-		if($id == null) {
+	function admin_index($id = null) {
+		$this->layout = 'default_bootstrap';
+		if($id == null)
+		{
 			$this->Session->setFlash(__('Invalid Kiosk Id.', true), 'flash_failure');
 			$this->redirect( array('controller' => 'users',
 				'action' => 'dashboard',
 				'admin' => true));
 		}
-		else {
+		else
+		{
 			$this->Cookie->write('kiosk_id', $id, false, '1 hour');
 		}
 		$this->set('locations', $this->KioskButton->Kiosk->Location->find('list'));

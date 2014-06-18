@@ -1,10 +1,5 @@
-/*
- * @author Daniel Nolan
- * @copyright Complete Technology Solutions 2010
- * @link http://ctsfla.com
- */
-
 $(document).ready( function() {
+	var domain = window.location.hostname;
 	buttonId = null;
 	$("#enableButton").hide();
 	$("#disableButton").hide();
