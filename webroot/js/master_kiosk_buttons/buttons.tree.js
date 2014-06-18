@@ -12,8 +12,12 @@ $(document).ready(function(){
 	var $delete_button		= $('.delete-button');
 	var $create_button		= $('.create-button');
 
+	var $confirm_delete_button = $('.confirm-delete-button');
+
 	var name 				= '';
 	var id 					= null;
+
+	var href				= '/admin/master_kiosk_buttons/delete/';
 
 	$name_field.focus();
 
@@ -34,7 +38,8 @@ $(document).ready(function(){
 
     	$edit_button.removeAttr('disabled');
     	$delete_button.removeAttr('disabled');
-    	$delete_button.attr('href', '/admin/master_kiosk_buttons/delete/' + id);
+
+    	$confirm_delete_button.attr('href', href + id);
 
     	$name_field.focus();
 
@@ -105,12 +110,6 @@ $(document).ready(function(){
 		$.cookie('master_kiosk_buttons_opened', null, {domain: domain, path: '/'});
 		$.jstree._reference("#masterKioskButtonTree").deselect_all();
 		$(this).removeClass('ui-state-focus');
-    });
-
-    $("#deleteButton").click(function(){
-		$.jstree._reference("#masterKioskButtonTree").delete_node(node.toString());
-		$(this).removeClass('ui-state-focus');
-		return false;
     });
 
     $('.expand').toggle(function(){

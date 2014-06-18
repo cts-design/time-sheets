@@ -41,9 +41,9 @@ span.ui-icon
 						Edit Master Button
 					</button>
 
-					<a href class="btn btn-danger pull-right navbar-btn delete-button" disabled>
+					<button class="btn btn-danger pull-right navbar-btn delete-button" disabled data-toggle="modal" data-target="#confirm-dialog">
 						Delete Master Button
-					</a>
+					</button>
 
 				</div>
 			</nav>
@@ -86,10 +86,37 @@ span.ui-icon
 		</div>
 	</div>
 </div>
+
+<div class="modal fade" id="confirm-dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        		<h4 class="modal-title">Deleting a Master Button</h4>
+			</div>
+			<div class="modal-body">
+				Are you sure you want to delete a master button? This will delete
+				the button for all kiosks on the systemm
+			</div>
+			<div class="modal-footer">
+				<a href="" class="btn btn-danger confirm-delete-button" >
+					Delete
+				</a>
+				<a href="#" class="btn btn-success" data-dismiss="modal">
+					Cancel
+				</a>
+			</div>
+		</div>
+</div>
+
+</div>
 <script>
 $(document).ready(function(){
 	var parent_id_field = $('input[name="data[MasterKioskButton][parent_id]"]');
 
 	console.log(parent_id_field);
 });
+window.onbeforeunload = function(){
+
+};
 </script>
