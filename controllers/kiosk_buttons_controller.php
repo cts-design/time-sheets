@@ -30,138 +30,72 @@ class KioskButtonsController extends AppController {
 	}
 
 	function admin_enable_button($masterButtonId = NULL) {
-		$kiosk_id = $this->cookie->read('kiosk_id');
+		$kiosk_id = $this->Cookie->read('kiosk_id');
 		$order = 1;
 
-		if($masterButtonId == NULL)
-		{
-			$this->redirect('/admin/kiosk_buttons');
-		}
+		$this->loadModel('MasterKioskButton');
+		
+		//Get the button as a master button
+		$masterButton = $this->MasterKioskButton->find('first', array(
+			'conditions' => array(
+				'MasterKioskButton.id' => $masterButtonId,
+			)
+		));
 
 		//Check if kiosk button is already enabled
 		$kioskButton = $this->KioskButton->find('first', array(
 			'conditions' => array(
 				'KioskButton.id' => $masterButtonId,
-				'KioskButton.kiosk_id' => $data['KioskButton']['kiosk_id'],
+				'KioskButton.kiosk_id' => $kiosk_id,
 				'KioskButton.status' => 0
 			)
 		));
+
 		if($kioskButton)
 		{
 			$this->Session->setFlash('That button is already enabled at this location', 'flash_failure');
-			$this->redirect('/admin/kiosk_buttons/');
+			$this->redirect('/admin/kiosk_buttons/index/' . $kiosk_id);
 		}
 
-		$masterButton = $this->KioskButton->find('first', array(
-			'conditions' => array(
-				'MasterKioskButton.id' => $data['KioskButton']['parent_id'],
-				'MasterKioskButton.kiosk_id' => $data['KioskButton']['kiosk_id'],
-			)
-		));
-
-		if(!$masterButton)
-		{
-			$this->Session->setFlash('You must add that button\'s parent first', 'flash_failure');
-			$this->redirect('/admin/kiosk_buttons/');
-		}
-		else
-		{
-			$this->KioskButton->create();
-			$is_saved = $this->KioskButton->save($data);
-
-			if($is_saved)
-			{
-
-			}
-		}
-
-		/* End of new code */
-
-		$count = $this->KioskButton->find('count', array(
-			'conditions' => array(
-				'KioskButton.id' => $data['KioskButton']['id'],
-				'KioskButton.kiosk_id' => $data['KioskButton']['kiosk_id'],
-				'KioskButton.status' => 0
-			)
-		));
-
-		if($count > 0)
-		{
-			$this->Session->setFlash(__('The kiosk button already exists for the current location.', true), 'flash_failure');
-			$this->redirect( array('action' => 'admin_index',
-				$data['KioskButton']['kiosk_id']));
-		}
-
-		$this->loadModel('MasterKioskButton');
-
-		$masterButton = $this->MasterKioskButton->find('first', array(
-			'conditions' => array(
-				'MasterKioskButton.id' => $data['KioskButton']['id']
-			)
-		));
-
-		$this->log(var_export($masterButton, true));
-
+		//Check to see if it's parent is added
 		if($masterButton['MasterKioskButton']['parent_id'] != NULL)
 		{
-			$data['KioskButton']['parent_id'] = $masterButton['MasterKioskButton']['parent_id'];
-			$possibleParentCount = $this->KioskButton->find('count', array(
+			$parentMasterButton = $this->MasterKioskButton->find('first', array(
 				'conditions' => array(
-					'KioskButton.id' => $data['KioskButton']['parent_id'],
-					'KioskButton.kiosk_id' => $data['KioskButton']['kiosk_id'],
-					'KioskButton.status' => 1
+					'MasterKioskButton.id' => $masterButton['MasterKioskButton']['parent_id']
 				)
 			));
 
-			if($possibleParentCount == 0)
+			if(!$parentMasterButton)
 			{
-				$this->Session->setFlash(__('You must add the parent button before enabling a child button.', true), 'flash_failure');
-				$this->redirect( array('action' => 'index',
-					$data['KioskButton']['kiosk_id']));
+				$this->Session->setFlash('You need to add the button parent before adding this button', 'flash_failure');
+				$this->redirect('/admin/kiosk_buttons/index/' . $kiosk_id);
 			}
 		}
 
-		$button = $this->KioskButton->find('first', array(
-			'conditions' => array(
-				'KioskButton.id' => $data['KioskButton']['id'],
-				'KioskButton.kiosk_id' => $data['KioskButton']['kiosk_id'],
-				'KioskButton.status' => 1
+		$this->KioskButton->create();
+		$newButton = array(
+			'KioskButton' 	=> array(
+				'parent_id' => $masterButton['MasterKioskButton']['parent_id'],
+				'kiosk_id' 	=> $kiosk_id,
+				'id' 		=> $masterButtonId,
+				'order' 	=> 9999,
+				'status'	=> 1
 			)
-		));
-
-		/*if($button['KioskButton']['status'] == 1 && !!$button)
-		{
-			$data['KioskButton']['button_id'] = $button['KioskButton']['button_id'];
-			$data['KioskButton']['status'] = 0;
-		}
-		else
-		{
-			$this->KioskButton->create();
-		}*/
-
-		$this->KioskButton->create();
-		if(!!$button)
-		{
-			$data['KioskButton']['button_id'] = $button['KioskButton']['button_id'];
-			$data['KioskButton']['status'] = 0;
-		}
-
-		$this->KioskButton->create();
-		$this->log(var_export($data, true));
-		$is_saved = $this->KioskButton->save($data);
+		);
+		$is_saved = $this->KioskButton->save($newButton);
 
 		if($is_saved)
 		{
-			$button = $this->KioskButton->MasterKioskButton->findById($data['KioskButton']['id']);
-			$this->Transaction->createUserTransaction('Kiosk', null, null, 'Enabled kiosk button ' . $button['MasterKioskButton']['name']);
-			$this->Session->setFlash(__('The kiosk button has been enabled', true), 'flash_success');
+			$this->Transaction->createUserTransaction('Kiosk', null, null, 'Enabled kiosk button ' . $masterButton['MasterKioskButton']['name']);
+			$this->Session->setFlash('The kiosk button has been enabled', 'flash_success');
 		}
 		else
 		{
-			$this->Session->setFlash(__('The kiosk button could not be enabled. Please, try again.', true), 'flash_failure');
+			$this->Session->setFlash('The kiosk button could not be enabled', 'flash_failure');
 		}
 
-		$this->redirect( array('action' => 'index', $data['KioskButton']['kiosk_id']));
+		$this->redirect('/admin/kiosk_buttons/index/' . $kiosk_id);
 	}
 
 	function admin_disable_button() {
