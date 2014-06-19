@@ -1,9 +1,10 @@
 $(document).ready( function() {
 	var domain = window.location.hostname;
-	buttonId = null;
-	$("#enableButton").hide();
-	$("#disableButton").hide();
-	$("#EditMessageButton").hide();
+	var enable_button_url = '/admin/kiosk_buttons/enable_button/';
+	var id = null;
+
+	var $enable_button = $('.enable-button');
+
 	$("#masterKioskButtonTree").jstree({
 		themes : {
 			dots : true,
@@ -61,13 +62,19 @@ $(document).ready( function() {
 	})
 	$("#masterKioskButtonTree").bind("select_node.jstree", function (e, data) {
 		var tree1 = $.jstree._reference("kioskButtonTree");
-		if(tree1 != null) {
+
+		id = data.rslt.obj.attr('id');
+		$enable_button.attr('href', enable_button_url + id);
+
+		console.log(id);
+		
+		if(tree1 != null)
+		{
 			tree1.deselect_all();
 		}
-		$("#enableButton").show();
-		$("#disableButton").hide();
-		$("#EditMessageButton").hide();
-		$("#enableButton").attr('href', '/admin/kiosk_buttons/enable_button/' + data.rslt.obj.attr("id"));
+
+		$enable_button.removeAttr('disabled');
+
 	});
 	$("#kioskButtonTree").bind("select_node.jstree", function (e, data) {
 		$.jstree._reference("#masterKioskButtonTree").deselect_all();
@@ -77,7 +84,7 @@ $(document).ready( function() {
 		$("#disableButton").attr('href', '/admin/kiosk_buttons/disable_button/' + data.rslt.obj.attr("id"));
 		buttonId = data.rslt.obj.attr("id");
 	});
-	var buttons = {}
+	var buttons = {};
 	$("#kioskButtonTree").bind("move_node.jstree", function(e, data) {
 		$("#kioskButtonTree li").each( function(index) {
 			buttons[index] = $(this).attr('id');

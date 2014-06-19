@@ -7,6 +7,13 @@
 	padding:0px 0px 20px 10px;
 	font-size:12pt;
 }
+.ui-icon {
+	display: inline-block;
+}
+.navbar {
+	margin-bottom:10px;
+	padding:0px 10px;
+}
 </style>
 <script src="/js/jquery.jstree.js"></script>
 <script src="/js/jquery.cookie.js"></script>
@@ -16,14 +23,21 @@
 	<div class="row">
 		<div class="col-sm-10 col-sm-offset-1 no-pad bleach">
 
-			<nav class="navbar navbar-default navbar-static-top" style="padding:0px 10px">
-				<button class="btn btn-default navbar-btn enable-button" disabled>
+			<nav class="navbar navbar-default navbar-static-top">
+				<a href class="btn btn-default navbar-btn enable-button" disabled>
 					Add Button
-				</button>
-				<button class="btn btn-default navbar-btn enable-button" disabled>
+				</a>
+				<a href class="btn btn-default navbar-btn disable-button" disabled>
 					Remove Button
-				</button>
+				</a>
+
 			</nav>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-sm-10 col-sm-offset-1 bleach" style="padding-bottom:10px">
+			<?= $this->Session->flash() ?>
 		</div>
 	</div>
 
@@ -31,7 +45,7 @@
 		<div class="col-sm-10 col-sm-offset-1 bleach">
 
 			<div class="row">
-				<div class="col-sm-6">
+				<div class="col-sm-6" style="padding-right:10px">
 
 					<div class="panel panel-primary">
 						<div class="panel-heading">
@@ -50,7 +64,7 @@
 					</div>
 
 				</div>
-				<div class="col-sm-6">
+				<div class="col-sm-6" style="padding-left:10px">
 
 					<div class="panel panel-primary">
 						<div class="panel-heading">
