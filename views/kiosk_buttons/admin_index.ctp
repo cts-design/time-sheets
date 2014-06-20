@@ -25,10 +25,13 @@
 
 			<nav class="navbar navbar-default navbar-static-top">
 				<a href class="btn btn-default navbar-btn enable-button" disabled>
-					Add Button
+					Enable Button
 				</a>
-				<a href class="btn btn-default navbar-btn disable-button" disabled>
-					Remove Button
+				<a href class="btn btn-danger navbar-btn disable-button navbar-right" disabled>
+					Disable Kiosk Button
+				</a>
+				<a data-toggle="modal" data-target="#edit-button-modal" style="margin-right:5px" href class="btn btn-default navbar-btn edit-button navbar-right" disabled>
+					View/Edit Kiosk Button
 				</a>
 
 			</nav>
@@ -92,3 +95,57 @@
 		</div>
 	</div>
 </div>
+
+<div class="modal fade" id="edit-button-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">
+					Edit Button
+				</h4>
+			</div>
+			<div class="modal-body" style="overflow:hidden">
+
+				<?= $this->Form->create('KioskButton', array('action' => 'add_action')) ?>
+				<?= $this->Form->input('action', array(
+					'options' => array(
+						'' => 'Choose an Action',
+						'link' => 'Link',
+						'logout' => 'Logout'
+					),
+					'class' => 'form-control'
+				)) ?>
+				<br />
+				<?= $this->Form->input('action_meta', array('label' => '', 'type' => 'textarea', 'class' => 'form-control')) ?>
+				<?= $this->Form->input('button_id', array('type' => 'hidden')) ?>
+				<input type="submit" class="btn btn-primary pull-right" style="margin-top:5px"/>
+				<?= $this->Form->end() ?>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+$(document).ready(function(){
+	var $select = $('select[name="data[KioskButton][action]"]');
+
+	var textAreaLabel = $('label[for=KioskButtonActionMeta]');
+	$select.change(function(){
+		var value =$(this).val();
+
+		if(value == 'link')
+		{
+			textAreaLabel.text('Enter valid link');
+		}
+		else if(value == 'logout')
+		{
+			textAreaLabel.text('Enter a Logout Message');
+		}
+	});
+});
+</script>
+
+
+
+
