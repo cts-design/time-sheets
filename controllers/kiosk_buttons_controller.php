@@ -60,9 +60,9 @@ class KioskButtonsController extends AppController {
 		//Check to see if it's parent is added
 		if($masterButton['MasterKioskButton']['parent_id'] != NULL)
 		{
-			$parentMasterButton = $this->MasterKioskButton->find('first', array(
+			$parentMasterButton = $this->KioskButton->find('first', array(
 				'conditions' => array(
-					'MasterKioskButton.id' => $masterButton['MasterKioskButton']['parent_id']
+					'KioskButton.id' => $masterButton['MasterKioskButton']['parent_id']
 				)
 			));
 
