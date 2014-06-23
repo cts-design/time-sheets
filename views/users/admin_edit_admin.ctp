@@ -31,12 +31,13 @@
 		    'after' => '</p>'
 		)); ?>
 	    <?php echo  '<br class="clear"/>' ?>
-	    <?php echo $this->Form->input('pass', array(
+	    <?php echo $this->Form->input('password', array(
 		    'label' => __('Password', TRUE),
 		    'type' => 'password',
 		    'before' => '<p class="left">',
 		    'between' => '</p><p class="left">',
-		    'after' => '</p>'
+		    'after' => '</p>',
+		    'value' => ''
 		)); ?>
 	    <?php echo  '<br class="clear"/>' ?>
 	    <?php echo $this->Form->input('email', array(

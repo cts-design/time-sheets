@@ -1440,12 +1440,12 @@ class UsersController extends AppController {
 			$this->redirect(array('action' => 'index_admin'));
 		}
 		if (!empty($this->data)) {
-			if ($this->data['User']['pass'] == '') {
-				unset($this->data['User']['pass']);
+			if ($this->data['User']['password'] == '') {
+				unset($this->data['User']['password']);
 			}
 			else {
-				$message = 'Your password has been changed' . "\r\n\r\n";
-				$message .= 'Your new password is: ' . $this->data['User']['pass'] . "\r\n\r\n";
+				$message = ' This email is to confirm that your password has been changed' . "\r\n\r\n";
+				$message .= 'If you did not expect this email, contact another administrator immediately' . "\r\n\r\n";
 				$this->Email->from = Configure::read('System.email');
 				$this->Email->to = $this->data['User']['firstname']." ".$this->data['User']['lastname']."<".$this->data['User']['email'].">";
 				$this->Email->subject = 'Your Atlas password has been changed.';
