@@ -3,14 +3,17 @@ $(document).ready(function(){
 
 	var $tree 				= $("#masterKioskButtonTree");
 	var $parent_id_field 	= $('input[name="data[MasterKioskButton][parent_id]"]');
-	var $action				= $('.action');
-	var $parent_identify 	= $('.button-identify');
+	var $action				= $('#addform .action');
+	var $parent_identify 	= $('#addform .button-identify');
 	var $name_field			= $('input[name="data[MasterKioskButton][name]"]');
 	var $id_field 			= $('input[name="data[MasterKioskButton][id]"');
 
 	var $edit_button 		= $('.edit-button');
 	var $delete_button		= $('.delete-button');
 	var $create_button		= $('.create-button');
+
+	var $add_form			= $('#addform');
+	var $edit_form			= $('#editform');
 
 	var $confirm_delete_button = $('.confirm-delete-button');
 
@@ -22,6 +25,8 @@ $(document).ready(function(){
 	$name_field.focus();
 
     $tree.bind("select_node.jstree", function (e, data) {
+    	$add_form.show();
+    	$edit_form.hide();
 
 		id = data.rslt.obj.attr("id");
 		var names = data.rslt.obj.text();
@@ -81,6 +86,7 @@ $(document).ready(function(){
     });
 
     $('.create-root-button').click(function(){
+    	showAddForm();
     	$parent_identify.text("");
     	$parent_id_field.val('');
     	$name_field.focus();
@@ -90,26 +96,22 @@ $(document).ready(function(){
 
 		$edit_button.attr('disabled', 'disabled');
 		$delete_button.attr('disabled', 'disabled');
+
+
     });
 
     $('.edit-button').click(function(){
-    	$action.text('Edit');
-    	$parent_identify.text('');
+    	$add_form.hide();
+    	$edit_form.show();
+
+    	//$action.text('Edit');
+    	//$parent_identify.text('');
 
     	$id_field.val(id);
-    	$parent_id_field.val('');
 
     	$name_field.val(name);
     	$name_field.focus();
     	$name_field.select();
-    });
-
-    $("#addButton").click(function(){
-		$("#MasterKioskButtonParentId").attr('value', '');
-		$.cookie('master_kiosk_buttons_selected', null, {domain: domain, path: '/'});
-		$.cookie('master_kiosk_buttons_opened', null, {domain: domain, path: '/'});
-		$.jstree._reference("#masterKioskButtonTree").deselect_all();
-		$(this).removeClass('ui-state-focus');
     });
 
     $('.expand').toggle(function(){

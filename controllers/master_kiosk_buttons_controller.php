@@ -67,28 +67,43 @@ class MasterKioskButtonsController extends AppController {
 	$this->render('/master_kiosk_buttons/admin_index/');
     }
 
-    function admin_edit($id = null) {
-	if (!$id && empty($this->data)) {
-	    $this->Session->setFlash(__('Invalid kiosk button', true), 'flash_failure');
-	    $this->redirect(array('controller' => 'kiosks', 'action' => 'index'));
-	}
-	if (!empty($this->data)) {
-	    if ($this->MasterKioskButton->save($this->data)) {
-		$this->Transaction->createUserTransaction('Kiosk', null, null,
-			'Edited master kiosk button ' . $this->data['MasterKioskButton']['name']);
-		$this->Session->setFlash(__('The kiosk button has been saved', true), 'flash_success');
-		$this->redirect(array('action' => 'index', $this->data['MasterKioskButton']['kiosk_id']));
-	    } else {
-		$this->Session->setFlash(__('The kiosk button could not be saved. Please, try again.', true), 'flash_failure');
-		$this->redirect(array('action' => 'index', $this->data['MasterKioskButton']['kiosk_id']));
+    function admin_edit()
+    {
+
+	if (!empty($this->data))
+	{
+		$master_button = $this->MasterKioskButton->findById($this->data['MasterKioskButton']['id']);
+
+		if(!$master_button)
+		{
+			$this->Session->setFlash('Could not find the master button associated');
+			$this->redirect(array('action' => 'index'));
+		}
+
+		$master_button['MasterKioskButton']['name'] = $this->data['MasterKioskButton']['name'];
+		$is_saved = $this->MasterKioskButton->save($master_button);
+
+	    if($is_saved)
+	    {
+			$this->Transaction->createUserTransaction('Kiosk', null, null,
+				'Edited master kiosk button ' . $this->data['MasterKioskButton']['name']);
+			$this->Session->setFlash(__('The kiosk button has been saved', true), 'flash_success');
+			$this->redirect(array('action' => 'index'));
+	    }
+	    else
+	    {
+			$this->Session->setFlash(__('The kiosk button could not be saved. Please, try again.', true), 'flash_failure');
+			$this->redirect(array('action' => 'index'));
 	    }
 	}
-	if (empty($this->data)) {
+	if (empty($this->data))
+	{
 	    $this->MasterKioskButton->recursive = 0;
  	    $this->data = $this->MasterKioskButton->read(null, $id);
-	    $this->set('count', $this->MasterKioskButton->find('count', array('conditions' => array(
-		'MasterKioskButton.parent_id' => $id,
-		'MasterKioskButton.deleted' => 0
+	    $this->set('count', $this->MasterKioskButton->find('count', array(
+	    	'conditions' => array(
+				'MasterKioskButton.parent_id' => $id,
+				'MasterKioskButton.deleted' => 0
 	    ))));
 	}
     }

@@ -22,6 +22,10 @@ span.ui-icon
 	position: relative;
 	top:3px;
 }
+.edit-form
+{
+	display:none;
+}
 </style>
 <script src="/js/jquery.jstree.js"></script>
 <script src="/js/jquery.cookie.js"></script>
@@ -67,14 +71,31 @@ span.ui-icon
 				</div>
 			</div>
 
-			<div class="col-sm-6 bleach">
+			<div class="col-sm-6 bleach" id="addform">
 				<?= $this->Session->flash() ?>
 
 				<h4 class="small-header" style="margin-bottom:20px">
 					<span class="action">Create</span> Button <span class="button-identify"></span>
 				</h4>
 
-				<?= $this->Form->create('MasterKioskButton', array('action' => 'add')) ?>
+				<?= $this->Form->create('MasterKioskButton', array('action' => 'add', 'class' => 'button-form')) ?>
+				<?= $this->Form->input('name', array('class' => 'form-control', 'maxlength' => 29, 'autocomplete' => 'off')) ?>
+				<?= $this->Form->input('parent_id', array('type' => 'hidden', 'value' => NULL)) ?>
+				<?= $this->Form->input('id', array('type' => 'hidden', 'value' => NULL)) ?>
+				<button class="btn btn-primary btn-lg create-button" disabled style="margin-top:10px">
+					Create
+				</button>
+				<?= $this->Form->end() ?>
+			</div>
+
+			<div class="col-sm-6 bleach" id="editform" style="display:none">
+				<?= $this->Session->flash() ?>
+
+				<h4 class="small-header" style="margin-bottom:20px">
+					<span class="action">Edit</span> Button <span class="button-identify"></span>
+				</h4>
+
+				<?= $this->Form->create('MasterKioskButton', array('action' => 'edit', 'class' => 'button-form')) ?>
 				<?= $this->Form->input('name', array('class' => 'form-control', 'maxlength' => 29, 'autocomplete' => 'off')) ?>
 				<?= $this->Form->input('parent_id', array('type' => 'hidden', 'value' => NULL)) ?>
 				<?= $this->Form->input('id', array('type' => 'hidden', 'value' => NULL)) ?>

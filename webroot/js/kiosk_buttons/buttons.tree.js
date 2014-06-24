@@ -80,6 +80,8 @@ $(document).ready( function() {
 		}
 
 		$enable_button.removeAttr('disabled');
+		$disable_button.attr('disabled', 'disabled');
+		$edit_button.attr('disabled', 'disabled');
 
 	});
 
