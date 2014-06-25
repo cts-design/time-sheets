@@ -35,20 +35,30 @@
     <?php echo $this->Session->flash(); ?>
     <div class="actions">
 	<?php
-	if (!empty($rootButtons)) {
+	if (!empty($rootButtons))
+	{
 	    $i = 0;
 	    $count = count($rootButtons);
-	    while ($i < $count) {
-		echo $this->Html->link($masterButtonList[$rootButtons[$i]['KioskButton']['id']], array(
-		    'action' => 'self_sign_service_selection',
-		    $rootButtons[$i]['KioskButton']['id']), array('class' => 'self-sign-kiosk-link'));
+	    while ($i < $count)
+	    {
+	    	$root_button 	= $rootButtons[$i]['Kiosk']['id'];
+	    	$master_button 	= $master_button[$root_button];
+			echo $this->Html->link($master_button, array(
+		    	'action' => 'self_sign_service_selection',
+		    	$rootButtons[$i]['KioskButton']['id']),
+		    	array('class' => 'self-sign-kiosk-link'
+		    	)
+		    );
 		$i++;
 	    }
 	}
-	if (!empty($childButtons)) {
+
+	if (!empty($childButtons))
+	{
 	    $i = 0;
 	    $count = count($childButtons);
-	    while ($i < $count) {
+	    while ($i < $count)
+	    {
 		echo $this->Html->link($masterButtonList[$childButtons[$i]['KioskButton']['id']], array('action' => 'self_sign_service_selection',
 		    $childButtons[$i]['KioskButton']['id'], true), array('class' => 'self-sign-kiosk-link'));
 		$i++;
