@@ -41,14 +41,24 @@
 	    $count = count($rootButtons);
 	    while ($i < $count)
 	    {
-	    	$root_button 	= $rootButtons[$i]['Kiosk']['id'];
-	    	$master_button 	= $master_button[$root_button];
-			echo $this->Html->link($master_button, array(
-		    	'action' => 'self_sign_service_selection',
-		    	$rootButtons[$i]['KioskButton']['id']),
-		    	array('class' => 'self-sign-kiosk-link'
-		    	)
-		    );
+	    	$button = $rootButtons[$i]['KioskButton'];
+
+	    	$master_button_name = $masterButtonList[$rootButtons[$i]['KioskButton']['id']];
+	    	if($button['action'] == 'link')
+	    	{
+				echo $this->Html->link($master_button_name, $button['action_meta'],
+			    	array('class' => 'self-sign-kiosk-link')
+			    );
+			}
+		    else
+		    {
+		    	echo $this->Html->link($masterButtonList[$rootButtons[$i]['KioskButton']['id']], array(
+			    	'action' => 'self_sign_service_selection',
+			    	$rootButtons[$i]['KioskButton']['id']),
+			    	array('class' => 'self-sign-kiosk-link'
+			    	)
+			    );
+		    }
 		$i++;
 	    }
 	}
