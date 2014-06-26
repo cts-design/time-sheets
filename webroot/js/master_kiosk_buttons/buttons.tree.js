@@ -86,7 +86,8 @@ $(document).ready(function(){
     });
 
     $('.create-root-button').click(function(){
-    	showAddForm();
+    	$add_form.show();
+    	$edit_form.hide();
     	$parent_identify.text("");
     	$parent_id_field.val('');
     	$name_field.focus();

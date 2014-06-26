@@ -47,7 +47,7 @@ class KioskButtonsController extends AppController {
 			'conditions' => array(
 				'KioskButton.id' => $masterButtonId,
 				'KioskButton.kiosk_id' => $kiosk_id,
-				'KioskButton.status' => 1
+				'KioskButton.status' => 0
 			)
 		));
 
@@ -80,7 +80,7 @@ class KioskButtonsController extends AppController {
 				'kiosk_id' 	=> $kiosk_id,
 				'id' 		=> $masterButtonId,
 				'order' 	=> 9999,
-				'status'	=> 1
+				'status'	=> 0
 			)
 		);
 		$is_saved = $this->KioskButton->save($newButton);
@@ -251,7 +251,7 @@ class KioskButtonsController extends AppController {
 		$this->KioskButton->primaryKey = 'id';
 		$locationButtons = $this->KioskButton->find('threaded', array(
 			'conditions' => array(
-				'KioskButton.status' => 1,
+				'KioskButton.status' => 0,
 				'KioskButton.kiosk_id' => $id
 			),
 			'order' => array('KioskButton.order' => 'asc')));
