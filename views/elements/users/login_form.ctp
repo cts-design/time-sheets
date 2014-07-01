@@ -22,6 +22,7 @@
 			echo $form->input('ssn', array(
 				'label' => __('9 Digit Social Security Number', true),
 				'before' => '<br />',
+				'type' => 'password',
 				'after' => '<br />',
 				'maxlength' => $ssn_length
 			));

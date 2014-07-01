@@ -1008,7 +1008,7 @@ class User extends AppModel {
 	public function setLoginValidation($type = 'normal')
 	{
 		$login_method 	= Configure::read('Login.method');
-		$ssn_length		= Configure::read('Registration.' . $type . '.ssn_length');
+		$ssn_length		= Configure::read('Login.' . $type . '.ssn_length');
 
 		if($login_method == 'ssn')
 		{
@@ -1032,7 +1032,7 @@ class User extends AppModel {
 			);
 			$this->validate['ssn']['maxLength'] = array(
 				'rule' => array('maxLength', $ssn_length),
-				'message' => 'Your SSN can only be comprised of digits'
+				'message' => 'Your SSN cannot be longer than ' . $ssn_length . ' digits'
 			);
 		}
 		else
