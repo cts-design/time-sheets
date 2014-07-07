@@ -35,22 +35,65 @@
     <?php echo $this->Session->flash(); ?>
     <div class="actions">
 	<?php
-	if (!empty($rootButtons)) {
+	if (!empty($rootButtons))
+	{
 	    $i = 0;
 	    $count = count($rootButtons);
-	    while ($i < $count) {
-		echo $this->Html->link($masterButtonList[$rootButtons[$i]['KioskButton']['id']], array(
-		    'action' => 'self_sign_service_selection',
-		    $rootButtons[$i]['KioskButton']['id']), array('class' => 'self-sign-kiosk-link'));
+	    while ($i < $count)
+	    {
+	    	$button = $rootButtons[$i]['KioskButton'];
+
+	    	$master_button_name = $masterButtonList[$rootButtons[$i]['KioskButton']['id']];
+	    	if($button['action'] == 'link')
+	    	{
+				echo $this->Html->link($master_button_name, $button['action_meta'],
+			    	array('class' => 'self-sign-kiosk-link')
+			    );
+			}
+		    else
+		    {
+		    	echo $this->Html->link($masterButtonList[$rootButtons[$i]['KioskButton']['id']], array(
+			    	'action' => 'self_sign_service_selection',
+			    	$rootButtons[$i]['KioskButton']['id']),
+			    	array('class' => 'self-sign-kiosk-link'
+			    	)
+			    );
+		    }
 		$i++;
 	    }
 	}
-	if (!empty($childButtons)) {
+
+	if (!empty($childButtons))
+	{
 	    $i = 0;
 	    $count = count($childButtons);
-	    while ($i < $count) {
-		echo $this->Html->link($masterButtonList[$childButtons[$i]['KioskButton']['id']], array('action' => 'self_sign_service_selection',
-		    $childButtons[$i]['KioskButton']['id'], true), array('class' => 'self-sign-kiosk-link'));
+	    while ($i < $count)
+	    {
+	    	$child_button = $childButtons[$i]['KioskButton'];
+	    	$child_button_name = $masterButtonList[$childButtons[$i]['KioskButton']['id']];
+
+	    	if($child_button['action'] == 'link')
+	    	{
+	    		echo $this->Html->link($child_button_name,
+					$child_button['action_meta'],
+					array(
+						'class' => 'self-sign-kiosk-link'
+					)
+				);
+	    	}
+	    	else
+	    	{
+				echo $this->Html->link($child_button_name,
+					array(
+						'action' => 'self_sign_service_selection',
+				    	$child_button['id'], 
+				    	true
+				    ),
+					array(
+						'class' => 'self-sign-kiosk-link'
+					)
+				);
+			}
 		$i++;
 	    }
 	    if($referer != null) {

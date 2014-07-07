@@ -94,18 +94,17 @@ class Kiosk extends AppModel {
 		else return false;
 	}
 
-	function isKiosk($setbackKiosk = '')
+	function isKiosk($defaultKiosk = '')
 	{
 		$oneStop = env('HTTP_USER_AGENT');
 		$arrOneStop = explode('##', $oneStop);
 
-		$oneStopLocation = ( isset($arrOneStop[1]) ? $arrOneStop[1] : $setbackKiosk );
+		$oneStopLocation = (isset($arrOneStop[1]) && $arrOneStop[1] != '' ? $arrOneStop[1] : $defaultKiosk);
 
 		$this->recursive = -1;
 		$this->Behaviors->attach('Containable');
 		$this->contain(array('KioskSurvey', 'Location'));
-		$settings = Cache::read('settings');
-		$fields = Set::extract('/field',  json_decode($settings['SelfSign']['KioskRegistration'], true));
+
 		$kiosk = $this->find('first', array(
 			'conditions' => array(
 				'location_recognition_name' => $oneStopLocation,

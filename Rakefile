@@ -109,3 +109,27 @@ namespace :symlink do
     end
   end
 end
+
+namespace :database do 
+  desc "Reformats the kiosk button table for it's newer version"
+  task :kioskbutton do 
+    require 'mysql'
+    pass          = ENV['pass']
+    database      = ENV['db']
+    con           = Mysql.new 'localhost', 'root', pass, database
+    kiosk_buttons = con.query("SELECT * FROM kiosk_buttons");
+
+    con.autocommit(false);
+
+    puts "---Preparing statement---"
+    statement = con.prepare("UPDATE kiosk_buttons SET action_meta = ?, action = ? WHERE button_id = ?")
+    kiosk_buttons.each_hash do |row|
+      if (row['logout_message'] != nil && row['logout_message'] != '') && (row['action_meta'] == nil || row['action_meta'] == '')
+        puts 'Setting button: ' + row['button_id'] + ' action_meta to: ' + row['logout_message'].to_s
+        statement.execute row['logout_message'], 'logout', row['button_id']
+      end
+    end
+
+    con.commit
+  end
+end

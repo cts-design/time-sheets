@@ -1,14 +1,16 @@
-/*
- * @author Daniel Nolan
- * @copyright Complete Technology Solutions 2010
- * @link http://ctsfla.com
- */
-
 $(document).ready( function() {
-	buttonId = null;
-	$("#enableButton").hide();
-	$("#disableButton").hide();
-	$("#EditMessageButton").hide();
+	var domain = window.location.hostname;
+	var enable_button_url = '/admin/kiosk_buttons/enable_button/';
+	var id = null;
+
+	var $enable_button = $('.enable-button');
+	var $edit_button = $('.edit-button');
+	var $disable_button = $('.disable-button');
+	var $button_id	= $('input[name="data[KioskButton][button_id]"]')
+
+	var $action_field = $('select[name="data[KioskButton][action]"');
+	var $action_meta_field = $('textarea[name="data[KioskButton][action_meta]"');
+
 	$("#masterKioskButtonTree").jstree({
 		themes : {
 			dots : true,
@@ -55,34 +57,65 @@ $(document).ready( function() {
 			save_selected : false,
 			save_opened : 'kiosk_secondary_open',
 			auto_save: true,
-			cookie_options: {
+			/*cookie_options: {
 				expires: 7,
 				path: "/",
 				domain: domain,
 				secure: false
-			}
+			}*/
 		},
 		plugins : [ "themes", "html_data", "ui", "cookies", "types", "dnd", "crrm" ]
 	})
 	$("#masterKioskButtonTree").bind("select_node.jstree", function (e, data) {
 		var tree1 = $.jstree._reference("kioskButtonTree");
-		if(tree1 != null) {
+
+		id = data.rslt.obj.attr('id');
+		$enable_button.attr('href', enable_button_url + id);
+
+		console.log(id);
+		
+		if(tree1 != null)
+		{
 			tree1.deselect_all();
 		}
-		$("#enableButton").show();
-		$("#disableButton").hide();
-		$("#EditMessageButton").hide();
-		$("#enableButton").attr('href', '/admin/kiosk_buttons/enable_button/' + data.rslt.obj.attr("id"));
+
+		$enable_button.removeAttr('disabled');
+		$disable_button.attr('disabled', 'disabled');
+		$edit_button.attr('disabled', 'disabled');
+
 	});
+
 	$("#kioskButtonTree").bind("select_node.jstree", function (e, data) {
-		$.jstree._reference("#masterKioskButtonTree").deselect_all();
-		$("#disableButton").show();
-		$("#enableButton").hide();
-		$("#EditMessageButton").show();
-		$("#disableButton").attr('href', '/admin/kiosk_buttons/disable_button/' + data.rslt.obj.attr("id"));
-		buttonId = data.rslt.obj.attr("id");
+
+		var id = data.rslt.obj.attr('id');
+		$edit_button.removeAttr('disabled');
+		$disable_button.removeAttr('disabled');
+
+		$disable_button.attr('href', '/admin/kiosk_buttons/disable_button/' + id);
+
+		$button_id.val(id);
+
+		$.ajax({
+			url : '/admin/kiosk_buttons/get_button',
+			dataType : 'json',
+			type : 'GET',
+			data : { button_id : $button_id.val() },
+			success : function(data) {
+				console.log($button_id.val());
+				if(data)
+				{
+					console.log(data.KioskButton);
+					$action_field.val(data.KioskButton.action);
+					$action_meta_field.val(data.KioskButton.action_meta);
+				}
+			},
+			error : function(data, err) {
+				console.log(err);
+			}
+		});
 	});
-	var buttons = {}
+
+	var buttons = {};
 	$("#kioskButtonTree").bind("move_node.jstree", function(e, data) {
 		$("#kioskButtonTree li").each( function(index) {
 			buttons[index] = $(this).attr('id');

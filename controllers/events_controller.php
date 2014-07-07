@@ -119,18 +119,9 @@ class EventsController extends AppController {
 		$conditions = array(
 			'Event.scheduled >' => date('Y-m-d H:i:s'),
 			'Event.private' => 0,
-			'Event.scheduled BETWEEN ? AND ?' => array($date, $endDate),
-			'OR' => array(
-				array('Event.allow_registrations' => 0),
-				array(
-					'AND' => array(
-						array('Event.allow_registrations' => 1),
-						array('Event.event_registration_count < Event.seats_available')
-					)
-				)
-			)
+			'Event.active' => 1,
+			'Event.scheduled BETWEEN ? AND ?' => array($date, $endDate)
 		);
-
 
 		if ($categoryConditions) {
 			$conditions = array_merge($conditions, $categoryConditions);

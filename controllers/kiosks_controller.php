@@ -58,14 +58,17 @@ class KiosksController extends AppController {
 	}
 
     function admin_add() {
-		if(!empty($this->data)) {
+		if(!empty($this->data))
+		{
 			$this->Kiosk->create();
-			if($this->Kiosk->save($this->data)) {
+			if($this->Kiosk->save($this->data))
+			{
 				$this->Transaction->createUserTransaction('Kiosk', null, null, 'Added kiosk ' . $this->data['Kiosk']['location_recognition_name']);
 				$this->Session->setFlash(__('The kiosk has been saved', true), 'flash_success');
 				$this->redirect( array('action' => 'index'));
 			}
-			else {
+			else
+			{
 				$this->Session->setFlash(__('The kiosk could not be saved. Please, try again.', true), 'flash_failure');
 			}
 		}
@@ -163,24 +166,15 @@ class KiosksController extends AppController {
 
     function kiosk_self_sign_service_selection($buttonId =null, $isChild =false) {
 		if(empty($buttonId)) {
-			$oneStop = env('HTTP_USER_AGENT');
-			$arrOneStop = explode('##', $oneStop);
-
-			if(!isset($arrOneStop[1])) {
-				$oneStopLocation = 'demo';
-			}
-			else {
-				$oneStopLocation = $arrOneStop[1];
-			}
-			$this->Kiosk->recursive = -1;
-			$kiosk = $this->Kiosk->find('first', array(
-				'conditions' => array(
-					'Kiosk.location_recognition_name' => $oneStopLocation, 'Kiosk.deleted' => 0)));
+			$kiosk = $this->Kiosk->isKiosk('');
 			$this->Cookie->write('location', $kiosk['Kiosk']['location_id']);
 			$this->Cookie->write('kioskId', $kiosk['Kiosk']['id']);
-			if($kiosk['Kiosk']['logout_message']) {
+			
+			if($kiosk['Kiosk']['logout_message'])
+			{
 				$this->Cookie->write('logout_message', $kiosk['Kiosk']['logout_message']);	
 			}
+
 			$this->Kiosk->KioskButton->recursive = -1;
 			$rootButtons = $this->Kiosk->KioskButton->find('all', array(
 				'conditions' => array(
@@ -192,28 +186,47 @@ class KiosksController extends AppController {
 		}
 		$this->loadModel('MasterKioskButton');
 		$this->MasterKioskButton->recursive = -1;
-		$masterButtonList = $this->MasterKioskButton->find('list', array('fields' => 'MasterKioskButton.name'));
+		$masterButtonList = $this->MasterKioskButton->find('list', array(
+			'fields' => 'MasterKioskButton.name'
+		));
+		
 		$masterButtonTagList = $this->MasterKioskButton->find('list', array(
-			'fields' => array('MasterKioskButton.id', 'MasterKioskButton.tag'), 
-			'conditions' => array('MasterKioskButton.deleted' => 0)));
+			'fields' => array(
+				'MasterKioskButton.id', 
+				'MasterKioskButton.tag'
+			), 
+			'conditions' => array(
+				'MasterKioskButton.deleted' => 0
+			)
+		));
 			
-		if($buttonId) {
+		if($buttonId)
+		{
 			$message = $this->Kiosk->KioskButton->getLogoutMessage($buttonId, null, $this->Cookie->read('kioskId'));
-			if($message) {
+			
+			if($message)
+			{
 				$this->Cookie->write('logout_message', $message);
 			}
-			if(preg_match('(Scan Documents|scan documents|Escanear Documentos|escanear documentos)', 
-				$masterButtonList[$buttonId])) {
-					$this->redirect( array('action' => 'self_scan_program_selection'));
+
+			$scan_match = '(Scan Documents|scan documents|Escanear Documentos|escanear documentos)';
+			if(preg_match($scan_match, $masterButtonList[$buttonId]))
+			{
+				$this->redirect( array('action' => 'self_scan_program_selection'));
 			}
+
 			$possibleChildren = $this->Kiosk->KioskButton->find('all', array(
 				'conditions' => array(
 					'KioskButton.parent_id' => $buttonId, 
 					'KioskButton.kiosk_id' => $this->Cookie->read('kioskId'), 
 					'KioskButton.status' => 0), 
-				'order' => array('KioskButton.order' => 'asc')));
+				'order' => array('KioskButton.order' => 'asc'
+				)
+			));
+
 			$tag = $masterButtonTagList[$buttonId];
-			if(empty($possibleChildren) && $isChild == false) {
+			if(empty($possibleChildren) && $isChild == false)
+			{
 				if(preg_match('(other|Other|otro|Otro)', $masterButtonList[$buttonId])) {
 					$this->Cookie->write('level.1', $buttonId);
 					$this->Cookie->delete('level.2');
@@ -241,7 +254,8 @@ class KiosksController extends AppController {
 						'kiosk' => false));
 				}
 			}
-			else {
+			else
+			{
 				$button = $this->Kiosk->KioskButton->find('first', array(
 					'conditions' => array(
 						'KioskButton.id' => $buttonId, 
