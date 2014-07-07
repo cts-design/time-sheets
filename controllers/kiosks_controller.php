@@ -166,7 +166,7 @@ class KiosksController extends AppController {
 
     function kiosk_self_sign_service_selection($buttonId =null, $isChild =false) {
 		if(empty($buttonId)) {
-			$kiosk = $this->Kiosk->isKiosk('demo');
+			$kiosk = $this->Kiosk->isKiosk('');
 			$this->Cookie->write('location', $kiosk['Kiosk']['location_id']);
 			$this->Cookie->write('kioskId', $kiosk['Kiosk']['id']);
 			
