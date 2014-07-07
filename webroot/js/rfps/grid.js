@@ -37,8 +37,8 @@ var rfpForm = Ext.create('Ext.form.Panel', {
 	        name: 'title',
         	allowBlank: false,
         	width: 200,
-        	anchor: '95%',
-        	vtype: 'alphaspace'
+        	anchor: '95%'
+        	//vtype: 'alphaspace'
     		},{
     			xtype: 'textfield',
           fieldLabel: 'Byline',
@@ -99,7 +99,7 @@ var rfpForm = Ext.create('Ext.form.Panel', {
 				var vals = f.getValues();
 				f.submit({
 					url: '/admin/rfps/upload',
-					waitMsg: 'uploading',
+					waitMsg: 'Uploading',
 					success: function(form,action) {
 						f.reset();						
 						Ext.data.StoreManager.lookup('rfpStore').add({
