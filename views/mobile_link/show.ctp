@@ -49,6 +49,9 @@ label > input {
 				<option value="@message.alltel.com">
 					Alltel
 				</option>
+				<option value="@txt.att.net">
+					AT&amp;T
+				</option>
 		        <option value="@myboostmobile.com">
 		        	Boost
 		        </option>
