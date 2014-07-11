@@ -154,6 +154,9 @@ Ext.onReady(function () {
             return 'URL';
             break;
 
+          case 'youtube':
+            return 'Youtube';
+            break;
           default:
             return value;
         }
@@ -216,6 +219,10 @@ Ext.onReady(function () {
             break;
 
           case 'url':
+            media_icon = '/img/icons/link.png';
+            break;
+
+          case 'youtube':
             media_icon = '/img/icons/link.png';
             break;
         }
@@ -446,7 +453,7 @@ Ext.onReady(function () {
           var uploadField = Ext.getCmp('mediaUpload'),
             locationField = Ext.getCmp('mediaLocation');
 
-          if (newVal === 'url') {
+          if (newVal === 'url' || newVal === 'youtube') {
             if (typeof oldVal !== 'undefined') {
               uploadField.disable();
               uploadField.allowBlank = true;
@@ -455,7 +462,7 @@ Ext.onReady(function () {
             locationField.enable();
             locationField.allowBlank = false;
           } else if (newVal === 'pdf' || newVal === 'ppt' || newVal === 'flv' || newVal === 'swf') {
-            if (oldVal === 'url') {
+            if (oldVal === 'url' || oldVal === 'youtube') {
               locationField.disable();
               locationField.allowBlank = true;
             }
@@ -473,7 +480,8 @@ Ext.onReady(function () {
           { dbVal: 'pdf', stringVal: 'PDF Document' },
           { dbVal: 'ppt', stringVal: 'PowerPoint Presentation' },
           { dbVal: 'swf', stringVal: 'Shockwave Video' },
-          { dbVal: 'url', stringVal: 'URL' }
+          { dbVal: 'url', stringVal: 'URL' },
+          { dbVal: 'youtube', stringVal: 'Youtube' }
         ]
       }),
       queryMode: 'local',

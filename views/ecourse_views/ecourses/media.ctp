@@ -72,6 +72,12 @@ scribd_doc.write('embedded_doc');
 		<a href="<?= $nextModule[0]['media_location'] ?>" target="_blank">Open link in a new window</a>
 		<i class="icon-external-link"></i>
 	</div>
+<?php elseif ($nextModule[0]['media_type'] == 'youtube'): ?>
+	<div class="ecourse youtube" style="text-align:center">
+		<h3 style="text-align:left"><?= $nextModule[0]['media_name'] ?></h3>
+
+		<iframe width="560" height="315" src="<?= $nextModule[0]['media_location'] ?>" frameborder="0" allowfullscreen></iframe>
+	</div>
 <?php endif ?>
 <br />
 <br />
