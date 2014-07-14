@@ -1,22 +1,17 @@
 <?php
-
-/**
- * @author Daniel Nolan
- * @copyright Complete Technology Solutions 2010
- * @link http://ctsfla.com
- * @package ATLAS V3
- */
 class UserTransactionsController extends AppController {
 
     var $name = 'UserTransactions';
-	
+
 	var $helpers = array('Excel', 'Time');
 
-    function admin_index($userId=null) {
-		if(!$userId) {
-		    $this->Session->setFlash(__('Invalid user id.', true), 'flash_failure');
-		    $this->redirect($this->referer());
-		}
+    function admin_index($userId=null)
+    {
+    	if(!$userId)
+        {
+        	$this->Session->setFlash(__('Invalid user id.', true), 'flash_failure');
+        	$this->redirect($this->referer());
+    	}
 
 		$conditions = array('UserTransaction.user_id' => $userId);
 
@@ -79,42 +74,73 @@ class UserTransactionsController extends AppController {
 		if(!empty($user['User']['lastname'])) {
 		    $title_for_layout = 'Activity for ' . $user['User']['lastname'] . ', ' . $user['User']['firstname'] ;
 		}
-		else {
+		else
+        {
 		    $title_for_layout = 'Activity';
 		}
 		$this->set(compact('userTransactions', 'title_for_layout'));
     }
-	
-	function admin_report($userId=null) {
-		if(!$userId) {
+
+	function admin_report($userId = FALSE)
+	{
+		if(!$userId)
+		{
 		    $this->Session->setFlash(__('Invalid user id.', true), 'flash_failure');
 		    $this->redirect($this->referer());
 		}
+
 		$this->UserTransaction->recursive = 0;
-		$userTransactions = $this->UserTransaction->findAllByUserId($userId, array(), 
-			 array('UserTransaction.id DESC'), 1000);
-		if($userTransactions) {
-			foreach($userTransactions as $k => $v) {
-				$report[$k]['Name'] = $v['User']['firstname'] . ' ' . $v['User']['lastname'];
-				$report[$k]['Location'] = $v['UserTransaction']['location'];
-				$report[$k]['Module'] = $v['UserTransaction']['module'];
-				$report[$k]['Details'] = $v['UserTransaction']['details'];
-				$report[$k]['Created'] =  date('m/d/Y h:i a', strtotime($v['UserTransaction']['created']));
+		$userTransactions = $this->UserTransaction->findAllByUserId($userId, array(), array('UserTransaction.id DESC'), 1000);
+
+		$conditions = array(
+			'user_id' => $userId
+		);
+
+		if(isset($this->params['url']['from_date']) && isset($this->params['url']['to_date']))
+		{
+			$conditions['created BETWEEN'] = array($this->params['url']['from_date'], $this->params['url']['to_date']);
+		}
+		else if(isset($this->params['url']['from_date']) && !isset($this->params['url']['to_date']))
+		{
+			$conditions['created >='] = $this->params['url']['from_date'];
+		}
+		else if(!isset($this->params['url']['from_date']) && isset($this->params['url']['to_date']))
+		{
+			$conditions['created <='] = $this->params['url']['to_date'];
+		}
+
+		$userTransactions = $this->UserTransaction->find('all', array(
+			'conditions' => $conditions,
+			'order' => array('UserTransaction.id DESC')
+		));
+
+		if($userTransactions)
+		{
+			foreach($userTransactions as $k => $v)
+			{
+                $report[$k]['Name'] 		= $v['User']['firstname'] . ' ' . $v['User']['lastname'];
+			    $report[$k]['Location']     = $v['UserTransaction']['location'];
+				$report[$k]['Module'] 	  = $v['UserTransaction']['module'];
+				$report[$k]['Details']      = $v['UserTransaction']['details'];
+				$report[$k]['Created']      =  date('m/d/Y h:i a', strtotime($v['UserTransaction']['created']));
 			}
 		}
-		else {
+		else
+		{
 		    $this->Session->setFlash(__('No results to generate a report.', true), 'flash_failure');
-		    $this->redirect($this->referer());			
+		    $this->redirect($this->referer());
 		}
-		if(!empty($userTransactions[0]['User']['lastname'])) {
+
+		if(!empty($userTransactions[0]['User']['lastname']))
+		{
 		    $title = 'Activity report for ' . $userTransactions[0]['User']['lastname'] . ', ' . $userTransactions[0]['User']['firstname'] ;
 		}
-		else {
+		else
+		{
 		    $title = 'Activity report.';
 		}
-		$data = array('data' => $report,
-			'title' => $title);
-        Configure::write('debug', 0);
+
+		$data = array('data' => $report, 'title' => $title);
         $this->layout = 'ajax';
         $this->set($data);
 	}

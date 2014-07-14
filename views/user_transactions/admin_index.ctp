@@ -19,7 +19,10 @@
     <div class="actions ui-widget-header">
 	<ul>
 	    <li><?php echo $this->Html->link(__('Docs', true), array('controller' => 'filed_documents', 'action' => 'index', $this->params['pass'][0])); ?></li>
-	    <li><?php echo $this->Html->link(__('Activity Report', true), array('controller' => 'user_transactions', 'action' => 'report', 'admin' => true, $this->params['pass'][0])); ?>
+	    <li>
+	    	<a href="/admin/user_transactions/index/<?= $this->params['pass'][0] ?>?from_date=<?= $human_from_date ?>&to_date=<?= $human_to_date ?>">
+	    		Activity Report
+	    	</a>
 	    </li>
 
 	    <li style="float:right;vertical-align:middle">
