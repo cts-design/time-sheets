@@ -181,21 +181,6 @@ app.controller('ActivityController', function($scope, $http){
 		}
 	};
 
-	$scope.setOrder = function(order) {
-		if($scope.order == order)
-		{
-			$scope.asc = !$scope.asc;
-			$scope.filtered_transactions.reverse();
-		}
-		else
-		{
-			$scope.filtered_transactions = _.sortBy($scope.filtered_transactions, function(trans){
-				return trans[order];
-			});
-		}
-		$scope.order = order;
-	};
-
 	$scope.filter = function() {
 		$scope.filtered_transactions = [];
 		for(var i = 0; i < $scope.all_transactions.length; i+=1)
@@ -204,6 +189,23 @@ app.controller('ActivityController', function($scope, $http){
 			if($scope.passesModule(transaction) && $scope.passesDate(transaction))
 				$scope.filtered_transactions.push(transaction);
 		}
+	};
+
+	$scope.setOrder = function(order) {
+		if($scope.order == order)
+		{
+			$scope.asc = !$scope.asc;
+			$scope.all_transactions.reverse();
+		}
+		else
+		{
+			$scope.all_transactions = _.sortBy($scope.all_transactions, function(trans){
+				return trans[order];
+			});
+		}
+		$scope.order = order;
+
+		$scope.filter();
 	};
 
 	$scope.sendToActivityReport = function() {
