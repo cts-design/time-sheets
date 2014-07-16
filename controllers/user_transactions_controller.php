@@ -31,6 +31,9 @@ class UserTransactionsController extends AppController {
     function admin_modules() {
     	$this->autoRender = false;
     	$modules = $this->UserTransaction->find('list', array(
+    		'conditions' => array(
+    			'UserTransaction.module !=' => ''
+    		),
 			'fields' => array('UserTransaction.module'),
 			'group' => array('UserTransaction.module')
 		));
