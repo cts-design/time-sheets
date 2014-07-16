@@ -26,9 +26,8 @@
 	<link rel="stylesheet" href="/css/font-awesome.min.css" />
 	<script type="text/javascript" src="/js/underscore.min.js"></script>
 
-	<!-- ng-grid include -->
-	<script src="/js/ng-grid-2.0.11.min.js"></script>
-	<link rel="stylesheet" href="/css/ng-grid.min.css" />
+	<!-- ng-infinite-scroll -->
+	<script src="/js/ng-infinite-scroll.min.js"></script>
 
 	<style>
 	body, html

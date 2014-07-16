@@ -18,6 +18,11 @@
 							</a>
 						</li>
 						<li>
+							<a href>
+								{{ (offset/limit) + 1 }}
+							</a>
+						</li>
+						<li>
 							<a href ng-click="nextPage()" disabled>
 								<i class="fa fa-angle-right"></i>
 							</a>
@@ -87,8 +92,8 @@
 	<div class="row">
 		<div class="col-sm-10 col-sm-offset-1 bleach no-pad" style="height:350px;overflow-y:scroll">
 
-			<table class="table table-striped">
-				<tr ng-repeat="user_transaction in all_transactions" ng-if="passesModule(user_transaction) && passesDate(user_transaction)">
+			<table class="table table-striped" >
+				<tr ng-repeat="user_transaction in filtered_transactions.slice(offset, offset+limit)">
 					<td style="width:50%">
 						{{ user_transaction.details }}
 					</td>
@@ -112,7 +117,7 @@
 
 <script>
 var user_id = '<?= $this->params['pass'][0] ?>';
-var app = angular.module('activity-report', []);
+var app = angular.module('activity-report', ['infinite-scroll']);
 
 $('.dater').datepicker();
 
@@ -120,10 +125,12 @@ app.controller('ActivityController', function($scope, $http){
 	$scope.from 	= '';
 	$scope.to 		= '';
 	$scope.offset 	= 0;
-	$scope.limit 	= 10;
+	$scope.limit 	= 20;
 	$scope.asc 		= false;
 	$scope.order 	= 'created';
 	$scope.smodule 	= '';
+	$scope.all_transactions = [];
+	$scope.filtered_transactions = [];
 
 	$scope.passesDate = function(transaction) {
 		var to = new Date($scope.to);
@@ -153,23 +160,50 @@ app.controller('ActivityController', function($scope, $http){
 			return true;
 	};
 
-	$scope.isOnPage = function(index) {
-		return (index >= $scope.offset && index <= $scope.offset + $scope.limit);
+	$scope.nextPage = function() {
+		var newOffset = $scope.offset + $scope.limit;
+
+		if(newOffset <= $scope.all_transactions.length)
+		{
+			$scope.offset = newOffset;
+		}
+	};
+
+	$scope.previousPage = function() {
+		var newOffset = $scope.offset - $scope.limit;
+		if(newOffset <= 0)
+		{
+			$scope.offset = 0;
+		}
+		else
+		{
+			$scope.offset = newOffset;
+		}
 	};
 
 	$scope.setOrder = function(order) {
 		if($scope.order == order)
 		{
 			$scope.asc = !$scope.asc;
-			$scope.all_transactions.reverse();
+			$scope.filtered_transactions.reverse();
 		}
 		else
 		{
-			$scope.all_transactions = _.sortBy($scope.all_transactions, function(trans){
+			$scope.filtered_transactions = _.sortBy($scope.filtered_transactions, function(trans){
 				return trans[order];
 			});
 		}
 		$scope.order = order;
+	};
+
+	$scope.filter = function() {
+		$scope.filtered_transactions = [];
+		for(var i = 0; i < $scope.all_transactions.length; i+=1)
+		{
+			var transaction = $scope.all_transactions[i];
+			if($scope.passesModule(transaction) && $scope.passesDate(transaction))
+				$scope.filtered_transactions.push(transaction);
+		}
 	};
 
 	$scope.sendToActivityReport = function() {
@@ -193,12 +227,17 @@ app.controller('ActivityController', function($scope, $http){
 	$http.post('/admin/user_transactions/index/' + user_id)
 	.success(function(resp){
 		$scope.all_transactions = resp.output;
+		$scope.filter();
 	});
 
 	$http.get('/admin/user_transactions/modules')
 	.success(function(resp){
 		$scope.modules = resp.output;
 	});
+
+	$scope.$watch('smodule', $scope.filter);
+	$scope.$watch('from', $scope.filter);
+	$scope.$watch('to', $scope.filter);
 });
 
 app.filter('todate', function(){
