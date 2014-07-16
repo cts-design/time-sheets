@@ -116,10 +116,6 @@ var app = angular.module('activity-report', []);
 
 $('.dater').datepicker();
 
-//transactiosn represents all of the rows
-//filtered_transactions represent a list of transactions after passed through filter
-//viewable_transactions represents to currently viewable transactions, usually the page
-
 app.controller('ActivityController', function($scope, $http){
 	$scope.from 	= '';
 	$scope.to 		= '';
