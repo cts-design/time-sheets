@@ -4,81 +4,38 @@ class UserTransactionsController extends AppController {
     var $name = 'UserTransactions';
 
 	var $helpers = array('Excel', 'Time');
+	var $components = array('RequestHandler');
 
-    function admin_index($userId=null)
+    function admin_index($user_id = NULL)
     {
-    	if(!$userId)
-        {
-        	$this->Session->setFlash(__('Invalid user id.', true), 'flash_failure');
-        	$this->redirect($this->referer());
-    	}
-
-		$conditions = array('UserTransaction.user_id' => $userId);
-
-		//Checks if module param exists
-		if( isset($this->params['url']['module']) && $this->params['url']['module'] != "" )
+		if($this->RequestHandler->isPost())
 		{
-			$selected_module = $this->params['url']['module'];
-			$conditions['UserTransaction.module'] = $selected_module;
+			$this->autoRender = FALSE;
+			$user_transactions = $this->UserTransaction->find('all', array(
+				'conditions' => array(
+					'user_id' => $user_id
+				),
+				'order' => array('created DESC'),
+				'recursive' => -1
+			));
+
+			$user_transactions = Set::extract('/UserTransaction/.', $user_transactions);
+			echo json_encode(array('success' => TRUE, 'output' => $user_transactions));
 		}
 		else
 		{
-			$selected_module = "";
+			$this->layout = 'default_bootstrap';
 		}
-		$this->set('selected_module', $selected_module);
+    }
 
-		//Checks if from-to date param exists
-		if( isset($this->params['url']['from']) && $this->params['url']['from'] != "")
-		{
-			$human_from_date = $this->params['url']['from'];
-			$from_date = date( "Y-m-d H:i:s", strtotime($human_from_date) );
-			$conditions['UserTransaction.created >='] = $from_date;
-		}
-		else
-		{
-			$human_from_date = "";
-			$from_date = "";
-		}
-		$this->set('human_from_date', $human_from_date);
-
-		//Checks if to date param exists
-		if( isset($this->params['url']['to']) && $this->params['url']['to'] != "")
-		{
-			$human_to_date = $this->params['url']['to'];
-			$to_date = date( "Y-m-d H:i:s", strtotime($human_to_date) );
-			$conditions['UserTransaction.created <='] = $to_date;
-		}
-		else
-		{
-			$human_to_date = "";
-			$to_date = "";
-		}
-		$this->set('human_to_date', $human_to_date);
-
-		//Get's available modules from table
-		$modules = $this->UserTransaction->find('list', array(
+    function admin_modules() {
+    	$this->autoRender = false;
+    	$modules = $this->UserTransaction->find('list', array(
 			'fields' => array('UserTransaction.module'),
 			'group' => array('UserTransaction.module')
 		));
-		$this->set('modules', $modules);
 
-		$this->UserTransaction->recursive = 0;
-
-		$this->paginate = array(
-		    'conditions' => $conditions,
-		    'order' => array('UserTransaction.id' => 'desc')
-		);
-		$userTransactions = $this->paginate();
-		$user = $this->UserTransaction->User->read(null, $userId);
-
-		if(!empty($user['User']['lastname'])) {
-		    $title_for_layout = 'Activity for ' . $user['User']['lastname'] . ', ' . $user['User']['firstname'] ;
-		}
-		else
-        {
-		    $title_for_layout = 'Activity';
-		}
-		$this->set(compact('userTransactions', 'title_for_layout'));
+		echo json_encode(array('success' => TRUE, 'output' => $modules));
     }
 
 	function admin_report($userId = FALSE)
@@ -89,29 +46,49 @@ class UserTransactionsController extends AppController {
 		    $this->redirect($this->referer());
 		}
 
-		$this->UserTransaction->recursive = 0;
-		$userTransactions = $this->UserTransaction->findAllByUserId($userId, array(), array('UserTransaction.id DESC'), 1000);
-
+		// Handle get parameters that are passed to the url, some of these will always exist
+		// but it's better to check `isset()` anyway
+		$get = $this->params['url'];
 		$conditions = array(
 			'user_id' => $userId
 		);
+		$order = array();
 
-		if(isset($this->params['url']['from_date']) && isset($this->params['url']['to_date']))
+		if(isset($get['smodule']))
 		{
-			$conditions['created BETWEEN'] = array($this->params['url']['from_date'], $this->params['url']['to_date']);
-		}
-		else if(isset($this->params['url']['from_date']) && !isset($this->params['url']['to_date']))
-		{
-			$conditions['created >='] = $this->params['url']['from_date'];
-		}
-		else if(!isset($this->params['url']['from_date']) && isset($this->params['url']['to_date']))
-		{
-			$conditions['created <='] = $this->params['url']['to_date'];
+			$conditions['module'] = $get['smodule'];
 		}
 
+		if(isset($get['from']) && isset($get['to']))
+		{
+			$conditions['and']['UserTransaction.created >='] = date('Y-m-d H:i:s', strtotime($get['from']));
+			$conditions['and']['UserTransaction.created <='] = date('Y-m-d H:i:s', strtotime($get['to']));
+		}
+		else if(isset($get['from']) && !isset($get['to']))
+		{
+			$conditions['UserTransaction.created >='] = date('Y-m-d H:i:s', strtotime($get['from']));
+		}
+		else if(!isset($get['from']) && isset($get['to']))
+		{
+			$conditions['UserTransaction.created <='] = date('Y-m-d H:i:s', strtotime($get['to']));
+		}
+
+		//Get what we are ordering by
+		if(isset($get['order']))
+		{
+			$order = array('UserTransaction.' . $get['order']);
+		}
+
+		//We ascend by default
+		if(isset($get['order']) && isset($get['asc']) && $get['asc'] == 'false')
+		{
+			$order[0] = $order[0] . ' DESC';
+		}
+
+		$this->UserTransaction->recursive = 0;
 		$userTransactions = $this->UserTransaction->find('all', array(
 			'conditions' => $conditions,
-			'order' => array('UserTransaction.id DESC')
+			'order' => $order
 		));
 
 		if($userTransactions)
@@ -144,4 +121,6 @@ class UserTransactionsController extends AppController {
         $this->layout = 'ajax';
         $this->set($data);
 	}
+
+
 }
