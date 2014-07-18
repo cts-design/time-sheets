@@ -34,6 +34,7 @@ Ext.define('EcourseModule', {
     'media_name',
     'media_type',
     'media_location',
+    'embeded_html',
     { name: 'order', type: 'int' },
     { name: 'passing_percentage', type: 'int' }
   ]
@@ -390,7 +391,7 @@ Ext.onReady(function () {
     bodyPadding: 10,
     collapsible: true,
     collapsed: true,
-    height: 500,
+    height: 570,
     renderTo: 'ecourseModuleForm',
     title: 'New Module Form',
     fieldDefaults: {
@@ -451,9 +452,11 @@ Ext.onReady(function () {
       listeners: {
         change: function (field, newVal, oldVal) {
           var uploadField = Ext.getCmp('mediaUpload'),
-            locationField = Ext.getCmp('mediaLocation');
+            locationField = Ext.getCmp('mediaLocation'),
+            embededField = Ext.getCmp('embededHtml');
 
-          if (newVal === 'url' || newVal === 'youtube') {
+          if (newVal === 'url')
+          {
             if (typeof oldVal !== 'undefined') {
               uploadField.disable();
               uploadField.allowBlank = true;
@@ -461,10 +464,29 @@ Ext.onReady(function () {
 
             locationField.enable();
             locationField.allowBlank = false;
-          } else if (newVal === 'pdf' || newVal === 'ppt' || newVal === 'flv' || newVal === 'swf') {
-            if (oldVal === 'url' || oldVal === 'youtube') {
+          }
+
+          if(newVal === 'youtube') {
+            if (typeof oldVal !== 'undefined') {
+              uploadField.disable();
+              uploadField.allowBlank = true;
+            }
+
+            embededField.show();
+            embededField.enable();
+            embededField.allowBlank = false;
+          }
+
+          if (newVal === 'pdf' || newVal === 'ppt' || newVal === 'flv' || newVal === 'swf') {
+            if (oldVal === 'url') {
               locationField.disable();
               locationField.allowBlank = true;
+            }
+
+            if (oldVal === 'youtube') {
+              embededField.disable();
+              embededField.hide();
+              embededField.allowBlank = true;
             }
 
             uploadField.enable();
@@ -499,6 +521,13 @@ Ext.onReady(function () {
       fieldLabel: 'Media Location',
       id: 'mediaLocation',
       name: 'media_location'
+    }, {
+      xtype: 'textarea',
+      disabled: true,
+      hidden: true,
+      fieldLabel: 'Youtube Embeded HTML',
+      id: 'embededHtml',
+      name: 'embeded_html'
     }],
     dockedItems: [{
       xtype: 'toolbar',
@@ -517,8 +546,10 @@ Ext.onReady(function () {
 
           // Is this a new record?
           if (typeof form.getRecord() === 'undefined') {
-            if (formValues.media_type === 'url') {
-              if (!formValues.media_location.match(/http:\/\//gi)) {
+            if (formValues.media_type === 'url' || formValues.media_type === 'youtube') {
+              
+              if (formValues.media_type === 'url' && !formValues.media_location.match(/http:\/\//gi))
+              {
                 formValues.media_location = 'http://' + formValues.media_location;
               }
 
