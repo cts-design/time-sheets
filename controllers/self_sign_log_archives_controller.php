@@ -82,40 +82,52 @@ class SelfSignLogArchivesController extends AppController {
 		}
 	}
 
-	function admin_report() {
-		if(!empty($this->data['SelfSignLogArchive']['locations']) && $this->data['SelfSignLogArchive']['locations'] != 'null') {
+	function admin_report()
+	{
+		if(!empty($this->data['SelfSignLogArchive']['locations']) && $this->data['SelfSignLogArchive']['locations'] != 'null')
+		{
 			$this->data['SelfSignLogArchive']['locations'] = explode(',', $this->data['SelfSignLogArchive']['locations']);
 		}
-		if(!empty($this->data['SelfSignLogArchive']['search'])) {
+
+		if(!empty($this->data['SelfSignLogArchive']['search']))
+		{
 			$conditions = $this->_setConditions($this->data);
 		}
 		$this->SelfSignLogArchive->recursive = 0;
 
-		if(isset($conditions)) {
+		if(isset($conditions))
+		{
 
 			$count = $this->SelfSignLogArchive->find('count', array('conditions' => $conditions));
 
-			if($count <= 20000) {
+			if($count <= 20000)
+			{
 				$data = $this->SelfSignLogArchive->find('all', array('conditions' => $conditions));
 			}
-			else {
+			else
+			{
 				$this->Session->setFlash(__('Your results exceed 20000 records, please filter results further.', true), 'flash_failure');
 				$this->redirect( array('action' => 'index'));
 			}
 		}
-		else {
+		else
+		{
 			$this->Session->setFlash(__('You must filter results to generate a report.', true), 'flash_failure');
 			$this->redirect( array('action' => 'index'));
 		}
 
-		$statuses = array('Open',
-			'Closed', 'Not Helped');
-		$locations = $this->SelfSignLogArchive->Kiosk->Location->find('list');
-		$buttons = $this->SelfSignLogArchive->Kiosk->KioskButton->MasterKioskButton->find('list', array('fields' => array('MasterKioskButton.name')));
+		$statuses 	= array('Open', 'Closed', 'Not Helped');
+		$locations 	= $this->SelfSignLogArchive->Kiosk->Location->find('list');
+		$buttons 	= $this->SelfSignLogArchive->Kiosk->KioskButton->MasterKioskButton->find('list', 
+			array(
+				'fields' => array('MasterKioskButton.name')
+			)
+		);
 		
 		$closedInTimes = array();
 
-		foreach($data as $k => $v) {
+		foreach($data as $k => $v)
+		{
 			$report[$k]['Last 4 SSN'] = substr($v['User']['ssn'], -4);
 			$report[$k]['First Name'] = $v['User']['firstname'];
 			$report[$k]['Last Name'] = $v['User']['lastname'];

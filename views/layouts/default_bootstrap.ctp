@@ -12,6 +12,8 @@
 
 	<script type="text/javascript" src="/js/jqueryui_signature/jquery.signature.min.js"></script>
 
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.15/angular.min.js"></script>
+
 	<?= $this->Html->script('pdfobject_min.js') ?>
 
 	<?= $this->Html->script('respond.min') ?>
@@ -20,6 +22,12 @@
 	<script type="text/javascript" src="js/excanvas.js"></script>
 	<?= $this->Html->script('jqueryui_signature/excanvas') ?>
 	<![endif]-->
+
+	<link rel="stylesheet" href="/css/font-awesome.min.css" />
+	<script type="text/javascript" src="/js/underscore.min.js"></script>
+
+	<!-- ng-infinite-scroll -->
+	<script src="/js/ng-infinite-scroll.min.js"></script>
 
 	<style>
 	body, html
