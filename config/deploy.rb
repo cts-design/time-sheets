@@ -202,7 +202,7 @@ task :rescare do
   set :port, 23
   server "montgomery.rescare.com", :app, :web, :db, :primary => true
 end
-task :suncoast do
+task :suncoast do # deploy@atlas.suncoastworkforce.org
   set :server_name, 'suncoast production'
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
   set :user, 'deploy'
