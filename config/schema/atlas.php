@@ -1,5 +1,5 @@
 <?php 
-/* atlas schema generated on: 2014-06-19 17:23:53 : 1403213033*/
+/* atlas schema generated on: 2014-07-22 14:50:31 : 1406055031*/
 class atlasSchema extends CakeSchema {
 	var $name = 'atlas';
 
@@ -247,7 +247,8 @@ class atlasSchema extends CakeSchema {
 		'instructions' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'media_name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'media_type' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'media_location' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'media_location' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 100, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'embeded_html' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'order' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'passing_percentage' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 3),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
