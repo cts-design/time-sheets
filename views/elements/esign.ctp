@@ -1,4 +1,3 @@
-<?php ob_start() ?>
 <body>
 	<link rel="stylesheet" href="/html/esign.css" />
 	<div class="header">
@@ -6,7 +5,6 @@
 			<img src="/img/admin_header_logo.png" class="logo" />
 		</div>
 		
-
 		<div class="right">
 			<ul class="list">
 				<li></li>
@@ -17,12 +15,12 @@
 	<br clear="all" />
 
 	<h3>
-		<?= $company_name ?> Acknowledgement of Electronic Signature
+		<?= Configure::read('Company.name') ?> Acknowledgement of Electronic Signature
 	</h3>
 
 	<p class="copy">
-		I, the undersigned, acknowledge and agree the use of the <?= $company_name ?>
-        Electronic Signature when completing required online forms, agreements and acknowledgements for the <?= $company_abbr ?>
+		I, the undersigned, acknowledge and agree the use of the <?= Configure::read('Company.name') ?>
+        Electronic Signature when completing required online forms, agreements and acknowledgements for the <?= Configure::read('Company.abbr') ?>
         program(s) for which I am obtaining or seeking to obtain services. The information provided may be
         used to determine eligibility and suitability for services, to meet program participation requirements
         and post employment, follow up services.
@@ -140,11 +138,11 @@
 	</p>
 
 	<h3>
-		<?= $company_name ?> General Release of Information
+		<?= Configure::read('Company.name') ?> General Release of Information
 	</h3>
 
 	<p class="copy">
-		I hereby give my permission for <?= $company_name ?> Staff to obtain and/or disclose my past, present, and future
+		I hereby give my permission for <?= Configure::read('Company.name') ?> Staff to obtain and/or disclose my past, present, and future
         information or records that may be needed for eligibility determination, monitoring and follow-up purposes.
         This information may include, but shall not be limited to: school records, grade records, attendance records,
         employment information, medical records, public assistance records, employment information and vocational
@@ -257,9 +255,8 @@
 <?php endif ?>
 
 	<p class="disclaimer">
-		<?= $company_name ?> is an equal opportunity employer/program. 
+		<?= Configure::read('Company.name') ?> is an equal opportunity employer/program. 
 		Auxiliary aids and services are available upon request to individuals with disabilities. 
 		All voice telephone numbers listed may be reached by persons using TTY/TDD equipment via the
 	</p>
 </body>
-<?php return ob_get_clean() ?>
