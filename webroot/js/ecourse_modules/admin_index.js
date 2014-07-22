@@ -455,42 +455,31 @@ Ext.onReady(function () {
             locationField = Ext.getCmp('mediaLocation'),
             embededField = Ext.getCmp('embededHtml');
 
-          if (newVal === 'url')
-          {
-            if (typeof oldVal !== 'undefined') {
-              uploadField.disable();
-              uploadField.allowBlank = true;
-            }
+          // Takes the javascript object that represents a field in the form
+          function enable(field) {
+            field.enable();
+            field.show();
+            field.allowBlank = false;
+          };
 
-            locationField.enable();
-            locationField.allowBlank = false;
-          }
+          function disable(field) {
+            field.disable();
+            field.hide();
+            field.allowBlank = true;
+          };
 
-          if(newVal === 'youtube') {
-            if (typeof oldVal !== 'undefined') {
-              uploadField.disable();
-              uploadField.allowBlank = true;
-            }
-
-            embededField.show();
-            embededField.enable();
-            embededField.allowBlank = false;
-          }
-
-          if (newVal === 'pdf' || newVal === 'ppt' || newVal === 'flv' || newVal === 'swf') {
-            if (oldVal === 'url') {
-              locationField.disable();
-              locationField.allowBlank = true;
-            }
-
-            if (oldVal === 'youtube') {
-              embededField.disable();
-              embededField.hide();
-              embededField.allowBlank = true;
-            }
-
-            uploadField.enable();
-            uploadField.allowBlank = false;
+          if(newVal === 'pdf' || newVal === 'ppt' || newVal === 'flv' || newVal === 'swf') {
+            disable(embededField);
+            disable(locationField);
+            enable(uploadField);
+          } else if (newVal === 'youtube') {
+            disable(uploadField);
+            disable(locationField);
+            enable(embededField);
+          } else if(newVal === 'url') {
+            disable(uploadField);
+            disable(embededField);
+            enable(locationField);
           }
         }
       },
@@ -512,12 +501,14 @@ Ext.onReady(function () {
     }, {
       xtype: 'filefield',
       disabled: true,
+      hidden: true,
       fieldLabel: 'Media Upload',
       id: 'mediaUpload',
       name: 'media'
     }, {
       xtype: 'textfield',
       disabled: true,
+      hidden : true,
       fieldLabel: 'Media Location',
       id: 'mediaLocation',
       name: 'media_location'
