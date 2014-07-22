@@ -197,8 +197,11 @@ class QueuedDocument extends AppModel {
 
 		$content_base = APP . 'webroot' . DS . 'html';
 
+		$company_name = Configure::read('Company.name');
+		$company_abbr = Configure::read('Company.abbr');
+
 		$html = include($content_base . DS . 'esign.php');
-		$css = file_get_contents( $content_base . DS . 'esign.css');
+		$css = file_get_contents( APP . 'webroot' . DS . 'css' . DS . 'esign.css');
 		$mpdf = new mPDF();
 
 		$mpdf->WriteHtml($css, 1);
