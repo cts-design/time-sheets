@@ -567,6 +567,53 @@ Ext.create('Ext.form.Panel', {
 * END OF SELF SCAN SETTINGS TAB
 */
 
+/*
+* EMAIL CC
+*/
+Ext.create('Ext.form.Panel', {
+  title: 'Email CC (seperated by comma)',
+  url: '/admin/settings/emailcc',
+  id: 'emailcc',
+  margin: 5,
+  frame: true,
+  items: [{
+    xtype: 'textarea',
+    width: 300,
+    name: 'ccemails',
+    afterRender: function(combo) {
+      $.ajax({
+        url: '/admin/settings/emailcc/get',
+        type: 'GET',
+        dataType: 'json',
+        success: function(resp) {
+          console.log(resp);
+        }
+      });
+    }
+  }],
+  buttons: [{
+    text: 'Update',
+    formBind: true,
+    handler: function() {
+      var form = this.up('form').getForm();
+      if(form.isValid()) {
+        form.submit({
+          waitMsg: 'Updating Settings',
+          success: function(form, action) {
+             Ext.Msg.alert('Success', action.result.message);
+          },
+          failure: function(form, action) {
+              Ext.Msg.alert('Failed', action.result.message);
+          }
+        });
+      }
+    }
+  }]
+});
+/*
+* END OF EMAIL CC
+*/
+
 
 
 Ext.onReady(function(){
@@ -594,6 +641,10 @@ Ext.onReady(function(){
       layout: 'hbox',
       title: 'Self Scan',
       items: ['selfscan']
+    }, {
+      layout: 'hbox',
+      title: 'Email CC',
+      items: ['emailcc']
     }]
 	});
 });

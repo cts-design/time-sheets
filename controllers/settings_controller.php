@@ -281,6 +281,32 @@ class SettingsController extends AppController {
 		}
 	}
 
+	public function admin_emailcc($action = 'get')
+	{
+		$this->autoRender = FALSE;
+
+		if($this->RequestHandler->isAjax())
+		{
+
+			if($action == 'get')
+			{
+				$setting = $this->Settings->find('first', array(
+					'conditions' => array(
+						'module' => 'Email',
+						'name' => 'CC'
+					)
+				));
+
+				$this->ajaxMessage(TRUE, $setting['Settings']);
+			}
+			else if($action == 'set')
+			{
+				$data = $this->params['form'];
+				$this->ajaxMessage(TRUE, '{}');
+			}
+		}
+	}
+
 	public function admin_esign_options()
 	{
 		$this->autoRender = FALSE;
