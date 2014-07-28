@@ -112,11 +112,13 @@ end
 
 namespace :database do 
   desc "Reformats the kiosk button table for it's newer version"
-  task :kioskbutton do 
+  task :kioskbutton do
+    require 'rubygems'
     require 'mysql'
+    user          = ENV['user']
     pass          = ENV['pass']
     database      = ENV['db']
-    con           = Mysql.new 'localhost', 'root', pass, database
+    con           = Mysql.new 'localhost', user, pass, database
     kiosk_buttons = con.query("SELECT * FROM kiosk_buttons");
 
     con.autocommit(false);
