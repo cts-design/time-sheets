@@ -3,6 +3,22 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+	<h1>Release 3.8.6 (July 27th 2014)</h1>
+	<h2>Features</h2>
+	<ol>
+		<li>
+			Kiosk Buttons can now link to other pages
+		</li>
+	</ol>
+	<h2>Bug Fixes</h2>
+	<ol>
+		<li>
+			Master Kiosk Buttons Interface Improvement
+		</li>
+		<li>
+			Kiosk Buttons Interface Improvement
+		</li>
+	</ol>
 	<h1>Release 3.8.5 (4-2-2014)</h1>
 	<h2>Feature Releases</h2>
 	<ol>
