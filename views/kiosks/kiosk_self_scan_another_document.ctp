@@ -23,7 +23,7 @@
     <?php echo $this->Session->flash(); ?>
     <div class="actions">
 	<?php echo $this->Html->link(__('Yes Scan Another', true), array('action' => 'self_scan_program_selection', 'kiosk' => true), array('class' => 'self-scan-kiosk-link'))?>
-	<?php echo $this->Html->link(__('No Logout', true), array( 'controller'  => 'users',  'action' => 'logout', 'kiosk' => false), array('class' => 'self-scan-kiosk-link'))?>
+	<?php echo $this->Html->link(__('No Logout', true), '/users/logout/kiosk', array('class' => 'self-scan-kiosk-link'))?>
   
     </div>
 </div>
