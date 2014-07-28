@@ -91,6 +91,10 @@
 		margin:0px;
 		background-color:transparent;
 	}
+	.fa
+	{
+		font-family:FontAwesome !important;
+	}
 	</style>
 </head>
 <body>
