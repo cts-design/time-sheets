@@ -18,6 +18,9 @@
 		<li>
 			Kiosk Buttons Interface Improvement
 		</li>
+		<li>
+			Activity Reports now get created based on the search options
+		</li>
 	</ol>
 	<h1>Release 3.8.5 (4-2-2014)</h1>
 	<h2>Feature Releases</h2>
