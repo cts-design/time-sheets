@@ -561,8 +561,6 @@ class UsersController extends AppController {
 					));
 				}
 
-				$this->log( var_export($this->data['User'], true) );
-
 				if($user != NULL && $user != FALSE)
 				{
 					if($show_buttons == FALSE)
