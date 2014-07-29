@@ -1405,6 +1405,13 @@ class UsersController extends AppController {
 				$message .= 'You can now login at ' . Router::url('/admin', true);
 				$this->Email->from = Configure::read('System.email');
 				$this->Email->to = $this->data['User']['firstname']." ".$this->data['User']['lastname']."<".$this->data['User']['email'].">";
+
+				$this->loadModel('Setting');
+				$cc = $this->Setting->getEmails();
+
+				if(count($cc))
+					$this->Email->cc = $cc;
+				
 				$this->Email->subject = 'Welcome to Atlas.';
 				$this->Email->send($message);
 				$this->Transaction->createUserTransaction('Administrator',
@@ -1448,6 +1455,13 @@ class UsersController extends AppController {
 				$message .= 'If you did not expect this email, contact another administrator immediately' . "\r\n\r\n";
 				$this->Email->from = Configure::read('System.email');
 				$this->Email->to = $this->data['User']['firstname']." ".$this->data['User']['lastname']."<".$this->data['User']['email'].">";
+
+				$this->loadModel('Setting');
+				$cc = $this->Setting->getEmails();
+
+				if(count($cc))
+					$this->Email->cc = $cc;
+
 				$this->Email->subject = 'Your Atlas password has been changed.';
 				$this->Email->send($message);
 			}
@@ -1593,6 +1607,13 @@ class UsersController extends AppController {
 					$message = Router::url('/admin', true) . "\n\n" . 'Temp Password: ' . $tempPassword ;
 					$this->Email->from = Configure::read('System.email');
 					$this->Email->to = $user['User']['firstname']." ".$user['User']['lastname']." <".$user['User']['email'].">";
+
+					$this->loadModel('Setting');
+					$cc = $this->Setting->getEmails();
+
+					if(count($cc))
+						$this->Email->cc = $cc;
+
 					$this->Email->subject = 'Password Reset Request';
 					if($this->Email->send($message)) {
 						// Set flash message
@@ -1760,6 +1781,13 @@ class UsersController extends AppController {
 				$this->Email->from = $this->Auth->user('firstname') .' ' .
 					$this->Auth->user('lastname') . '<'.$this->Auth->user('email') .'>';
 				$this->Email->to = $admin['User']['email'];
+
+				$this->loadModel('Setting');
+				$cc = $this->Setting->getEmails();
+
+				if(count($cc))
+					$this->Email->cc = $cc;
+
 				$this->Email->subject = 'SSN Change Request';
 				$message = 'A Social Security Number edit has been requested by ' .
 					$this->Auth->user('firstname'). ' ' . $this->Auth->user('lastname') . '.' .  "\r\n" .
@@ -2051,6 +2079,13 @@ class UsersController extends AppController {
 			if(!empty($to)) {
 				$to = trim($to, ',');
 				$this->Email->to = $to;
+
+				$this->loadModel('Setting');
+				$cc = $this->Setting->getEmails();
+
+				if(count($cc))
+					$this->Email->cc = $cc;
+
 				$this->Email->from = Configure::read('System.email');
 				$this->Email->subject = $subject;
 				$this->Email->send($alert['message'] . "\r\n" . $alert['url']);
@@ -2275,6 +2310,13 @@ class UsersController extends AppController {
 		$systemEmail = Configure::read('System.email');
 
 		$this->Email->to = $userData['email'];
+
+		$this->loadModel('Setting');
+		$cc = $this->Setting->getEmails();
+
+		if(count($cc))
+			$this->Email->cc = $cc;
+
 		$this->Email->subject = 'Password Reset Request - ' . $companyName;
 		$this->Email->from = "$companyName <$systemEmail>";
 		$this->Email->template = 'forgot_password';
