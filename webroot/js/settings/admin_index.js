@@ -572,7 +572,6 @@ Ext.create('Ext.form.Panel', {
 */
 Ext.create('Ext.form.Panel', {
   title: 'Email CC (seperated by comma)',
-  url: '/admin/settings/emailcc',
   id: 'emailcc',
   margin: 5,
   frame: true,
@@ -580,15 +579,19 @@ Ext.create('Ext.form.Panel', {
     xtype: 'textarea',
     width: 300,
     name: 'ccemails',
-    afterRender: function(combo) {
-      $.ajax({
-        url: '/admin/settings/emailcc/get',
-        type: 'GET',
-        dataType: 'json',
-        success: function(resp) {
-          console.log(resp);
-        }
-      });
+    listeners: {
+      afterRender: function(field) {
+        console.log(field);
+        $.ajax({
+          url: '/admin/settings/index/Email/cc/?action=get',
+          type: 'GET',
+          dataType: 'json',
+          data : { action : 'get' },
+          success: function(resp) {
+            field.setValue(resp.output.Setting.value);
+          }
+        });
+      }
     }
   }],
   buttons: [{
@@ -596,17 +599,16 @@ Ext.create('Ext.form.Panel', {
     formBind: true,
     handler: function() {
       var form = this.up('form').getForm();
-      if(form.isValid()) {
-        form.submit({
-          waitMsg: 'Updating Settings',
-          success: function(form, action) {
-             Ext.Msg.alert('Success', action.result.message);
-          },
-          failure: function(form, action) {
-              Ext.Msg.alert('Failed', action.result.message);
-          }
-        });
-      }
+
+      $.ajax({
+        url: '/admin/settings/index/Email/cc',
+        data: { action : 'set', value : form.findField('ccemails').value },
+        dataType: 'json',
+        type: 'GET',
+        success : function(resp) {
+          console.log(resp);
+        }
+      });
     }
   }]
 });
