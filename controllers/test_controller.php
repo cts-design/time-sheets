@@ -17,14 +17,12 @@ class TestController extends AppController
 	public function email()
 	{
 		$this->autoRender = FALSE;
-		$this->loadModel('Setting');
-
 		$this->Email->to = 'flynnarite@gmail.com';
 		$this->Email->subject = 'Success';
+
+		$this->loadModel('Setting');
 		$cc = $this->Setting->getEmails();
 
-
-		var_dump($cc);
 		if(count($cc))
 			$this->Email->cc = $cc;
 		
