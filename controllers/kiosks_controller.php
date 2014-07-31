@@ -117,8 +117,11 @@ class KiosksController extends AppController {
 
 	function kiosk_self_sign_confirm() {
 		$fields = $this->getKioskRegistraionFields();
+
+		$this->loadModel('User');
+		$user = $this->User->findbyId($this->Auth->user('id'));
 		$title_for_layout = 'Self Sign Kiosk';		
-		$this->set(compact('title_for_layout', 'fields'));
+		$this->set(compact('title_for_layout', 'fields', 'user'));
 		$this->layout = 'kiosk';
 	}
 
