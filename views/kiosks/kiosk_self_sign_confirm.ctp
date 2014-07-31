@@ -174,7 +174,7 @@
 		<strong><?php __('Do you have a substantial disability:') ?> </strong>
 	    </p>
 	    <p class="left">
-		<?php echo ($user['User']['veteran'] ? 'Yes' : 'No'); ?>
+		<?php echo ($user['User']['disability'] ? 'Yes' : 'No'); ?>
 	    </p>
 	    <br class="clear"/>
 	<?php endif ?>     
