@@ -599,7 +599,7 @@ class UsersController extends AppController {
 				else
 				{
 					$this->Session->setFlash('You don\'t appear to be in the system. please register', 'flash_failure');
-					$this->redirect('/kiosk/users/mini_registration/');
+					$this->redirect('/kiosk/users/mini_registration/' . $this->data['User']['lastname']);
 
 				}
 
