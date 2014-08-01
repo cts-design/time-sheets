@@ -24,14 +24,14 @@
 	<strong><?php __('First Name:') ?> </strong>
     </p>
     <p class="left">
-	<?php echo $session->read('Auth.User.firstname'); ?>
+	<?= $user['User']['firstname'] ?>
     </p>
     <br class="clear" />
     <p class="left align-right">
 	<strong><?php __('Last Name:') ?> </strong>
     </p>
     <p class="left">
-	<?php echo $session->read('Auth.User.lastname'); ?>
+	<?= $user['User']['lastname'] ?>
     </p>
     <br class="clear" />
     <?php if(in_array('middle_initial', $fields)) : ?>
@@ -39,7 +39,7 @@
 		<strong><?php __('Middle Initial:') ?> </strong>
 	    </p>
 	    <p class="left">
-		<?php echo $session->read('Auth.User.middle_initial'); ?>
+		<?= $user['User']['middle_initial'] ?>
 	    </p>
 	    <br class="clear"/>
     <?php endif ?>
@@ -48,7 +48,7 @@
 		<strong><?php __('Surname:') ?> </strong>
 	    </p>
 	    <p class="left">
-		<?php echo $session->read('Auth.User.surname'); ?>
+		<?= $user['User']['surname'] ?>
 	    </p>
 	    <br class="clear"/>
     <?php endif ?>   
@@ -57,7 +57,7 @@
 		<strong><?php __('Gender:') ?> </strong>
 	    </p>
 	    <p class="left">
-		<?php echo $session->read('Auth.User.gender'); ?>
+		<?= $user['User']['gender'] ?>
 	    </p>
 	    <br class="clear"/>
     <?php endif ?>
@@ -66,7 +66,7 @@
 		<strong><?php __('Birth Date:') ?> </strong>
 	    </p>
 	    <p class="left">
-		<?php echo $session->read('Auth.User.dob'); ?>
+		<?= $user['User']['dob'] ?>
 	    </p>
 	    <br class="clear"/>
     <?php endif ?>  
@@ -75,7 +75,7 @@
 		<strong><?php __('Address:') ?> </strong>
 	    </p>
 	    <p class="left">
-		<?php echo $session->read('Auth.User.address_1'); ?>
+		<?= $user['User']['address_1'] ?>
 	    </p>
 	    <br class="clear"/>
     <?php endif ?>
@@ -84,7 +84,7 @@
 		<strong><?php __('City:') ?> </strong>
 	    </p>
 	    <p class="left">
-		<?php echo $session->read('Auth.User.city'); ?>
+		<?= $user['User']['city'] ?>
 	    </p>
 	    <br class="clear"/>
     <?php endif ?>
@@ -93,7 +93,7 @@
 		<strong><?php __('County:') ?> </strong>
 	    </p>
 	    <p class="left">
-		<?php echo $session->read('Auth.User.county'); ?>
+		<?= $user['User']['county'] ?>
 	    </p>
 	    <br class="clear"/>
     <?php endif ?> 
@@ -102,7 +102,7 @@
 		<strong><?php __('State:') ?> </strong>
 	    </p>
 	    <p class="left">
-		<?php echo $session->read('Auth.User.state'); ?>
+		<?= $user['User']['state'] ?>
 	    </p>
 	    <br class="clear"/>
     <?php endif ?>
@@ -111,7 +111,7 @@
 		<strong><?php __('Zip Code:') ?> </strong>
 	    </p>
 	    <p class="left">
-		<?php echo $session->read('Auth.User.zip'); ?>
+		<?= $user['User']['zip'] ?>
 	    </p>
 	    <br class="clear"/>
     <?php endif ?>          
@@ -120,7 +120,7 @@
 		<strong><?php __('Phone:') ?> </strong>
 	    </p>
 	    <p class="left">
-		<?php echo $session->read('Auth.User.phone'); ?>
+		<?= $user['User']['phone'] ?>
 	    </p>
 	    <br class="clear"/>
     <?php endif ?>
@@ -129,7 +129,7 @@
 		<strong><?php __('Email Address:') ?> </strong>
 	    </p>
 	    <p class="left">
-		<?php echo $session->read('Auth.User.email'); ?>
+		<?= $user['User']['email'] ?>
 	    </p>
 	    <br class="clear"/>
     <?php endif ?>  
@@ -138,7 +138,7 @@
 		<strong><?php __('Primary Spoken Language:') ?> </strong>
 	    </p>
 	    <p class="left">
-		<?php echo $session->read('Auth.User.language'); ?>
+		<?= $user['User']['language'] ?>
 	    </p>
 	    <br class="clear"/>
     <?php endif ?> 
@@ -147,7 +147,7 @@
 		<strong><?php __('Ethnicity:') ?> </strong>
 	    </p>
 	    <p class="left">
-		<?php echo $session->read('Auth.User.ethnicity'); ?>
+		<?= $user['User']['ethnicity'] ?>
 	    </p>
 	    <br class="clear"/>
     <?php endif ?> 
@@ -156,7 +156,7 @@
 		<strong><?php __('Race:') ?> </strong>
 	    </p>
 	    <p class="left">
-		<?php echo $session->read('Auth.User.race'); ?>
+		<?= $user['User']['race'] ?>
 	    </p>
 	    <br class="clear"/>
     <?php endif ?> 
@@ -165,7 +165,7 @@
 		<strong><?php __('US veteran:') ?> </strong>
 	    </p>
 	    <p class="left">
-		<?php echo ($session->read('Auth.User.veteran') ? 'Yes' : 'No'); ?>
+		<?php echo ($user['User']['veteran'] ? 'Yes' : 'No'); ?>
 	    </p>
 	    <br class="clear"/>
     <?php endif ?>                       
@@ -174,7 +174,7 @@
 		<strong><?php __('Do you have a substantial disability:') ?> </strong>
 	    </p>
 	    <p class="left">
-		<?php echo ($session->read('Auth.User.disability') ? 'Yes' : 'No'); ?>
+		<?php echo ($user['User']['disability'] ? 'Yes' : 'No'); ?>
 	    </p>
 	    <br class="clear"/>
 	<?php endif ?>     
