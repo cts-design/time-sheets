@@ -694,6 +694,7 @@ class UsersController extends AppController {
 		$this->set(compact('ssn_length', 'type'));
 		$this->loadModel('Program');
 
+		$referer = $this->Session->read('referer');
 
 		//Decides what view to render based on the type that is passed
 		switch($type)
@@ -792,7 +793,11 @@ class UsersController extends AppController {
 						else
 						{
 							$this->Auth->login($user['User']['id']);
-							$this->redirect('/programs/' . $program['Program']['type'] . '/' . $program_id);
+
+							if($referer != '')
+								$this->redirect( $referer );
+							else
+								$this->redirect('/programs/' . $program['Program']['type'] . '/' . $program_id);
 						}
 					}
 					else
@@ -873,7 +878,11 @@ class UsersController extends AppController {
 						else
 						{
 							$this->Auth->login($user['User']['id']);
-							$this->redirect('/users/dashboard');
+
+							if($referer != '')
+								$this->redirect( $referer );
+							else
+								$this->redirect('/users/dashboard');
 						}
 					}
 					else
@@ -899,7 +908,11 @@ class UsersController extends AppController {
 						else
 						{
 							$this->Auth->login($user['User']['id']);
-							$this->redirect('/users/dashboard/normal');
+							
+							if($referer != '')
+								$this->redirect( $referer );
+							else
+								$this->redirect('/users/dashboard/normal');
 						}
 					}
 					else
@@ -909,6 +922,10 @@ class UsersController extends AppController {
 
 				break;
 			}
+		}
+		else
+		{
+			$this->Session->write('referer', $this->referer());
 		}
 		
 		$this->set(compact('ssn_length'));
