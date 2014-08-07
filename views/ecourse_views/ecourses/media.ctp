@@ -5,6 +5,8 @@
 	  $(".button" ).button();
   });
 <?php $this->Html->scriptEnd(); ?>
+
+<a href="" class="showhide_instructions">Hide Instructions</a>
 <div id="instructions"><?php echo $nextModule[0]['instructions'] ?></div>
 
 <?php if ($nextModule[0]['media_type'] == 'pdf'): ?>
@@ -72,9 +74,38 @@ scribd_doc.write('embedded_doc');
 		<a href="<?= $nextModule[0]['media_location'] ?>" target="_blank">Open link in a new window</a>
 		<i class="icon-external-link"></i>
 	</div>
+<?php elseif ($nextModule[0]['media_type'] == 'youtube'): ?>
+	<div class="ecourse youtube" style="text-align:center">
+		<h3 style="text-align:left"><?= $nextModule[0]['media_name'] ?></h3>
+
+		<?= $nextModule[0]['embeded_html'] ?>
+	</div>
 <?php endif ?>
 <br />
 <br />
 <div>
 	<a class="button" href="/ecourses/quiz/<?php echo $nextModule[0]['id'] . '/' . $modResponseTimeId?>">Proceed to quiz.</a>
 </div>
+
+<script>
+var instructions_hidden = false;
+$(document).ready(function() {
+	console.log('hey');
+	$('.showhide_instructions').click(function(e){
+		e.preventDefault();
+		instructions_hidden = !instructions_hidden;
+
+		if(instructions_hidden)
+		{
+			$('#instructions').show();
+			$('.showhide_instructions').text('Hide Instructions');
+		}
+		else
+		{
+			$('#instructions').hide();
+			$('.showhide_instructions').text('Show Instructions');
+		}
+	});
+});
+</script>
+

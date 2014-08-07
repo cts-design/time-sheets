@@ -34,6 +34,7 @@ Ext.define('EcourseModule', {
     'media_name',
     'media_type',
     'media_location',
+    'embeded_html',
     { name: 'order', type: 'int' },
     { name: 'passing_percentage', type: 'int' }
   ]
@@ -154,6 +155,9 @@ Ext.onReady(function () {
             return 'URL';
             break;
 
+          case 'youtube':
+            return 'Youtube';
+            break;
           default:
             return value;
         }
@@ -216,6 +220,10 @@ Ext.onReady(function () {
             break;
 
           case 'url':
+            media_icon = '/img/icons/link.png';
+            break;
+
+          case 'youtube':
             media_icon = '/img/icons/link.png';
             break;
         }
@@ -383,7 +391,7 @@ Ext.onReady(function () {
     bodyPadding: 10,
     collapsible: true,
     collapsed: true,
-    height: 500,
+    height: 570,
     renderTo: 'ecourseModuleForm',
     title: 'New Module Form',
     fieldDefaults: {
@@ -444,24 +452,34 @@ Ext.onReady(function () {
       listeners: {
         change: function (field, newVal, oldVal) {
           var uploadField = Ext.getCmp('mediaUpload'),
-            locationField = Ext.getCmp('mediaLocation');
+            locationField = Ext.getCmp('mediaLocation'),
+            embededField = Ext.getCmp('embededHtml');
 
-          if (newVal === 'url') {
-            if (typeof oldVal !== 'undefined') {
-              uploadField.disable();
-              uploadField.allowBlank = true;
-            }
+          // Takes the javascript object that represents a field in the form
+          function enable(field) {
+            field.enable();
+            field.show();
+            field.allowBlank = false;
+          };
 
-            locationField.enable();
-            locationField.allowBlank = false;
-          } else if (newVal === 'pdf' || newVal === 'ppt' || newVal === 'flv' || newVal === 'swf') {
-            if (oldVal === 'url') {
-              locationField.disable();
-              locationField.allowBlank = true;
-            }
+          function disable(field) {
+            field.disable();
+            field.hide();
+            field.allowBlank = true;
+          };
 
-            uploadField.enable();
-            uploadField.allowBlank = false;
+          if(newVal === 'pdf' || newVal === 'ppt' || newVal === 'flv' || newVal === 'swf') {
+            disable(embededField);
+            disable(locationField);
+            enable(uploadField);
+          } else if (newVal === 'youtube') {
+            disable(uploadField);
+            disable(locationField);
+            enable(embededField);
+          } else if(newVal === 'url') {
+            disable(uploadField);
+            disable(embededField);
+            enable(locationField);
           }
         }
       },
@@ -473,7 +491,8 @@ Ext.onReady(function () {
           { dbVal: 'pdf', stringVal: 'PDF Document' },
           { dbVal: 'ppt', stringVal: 'PowerPoint Presentation' },
           { dbVal: 'swf', stringVal: 'Shockwave Video' },
-          { dbVal: 'url', stringVal: 'URL' }
+          { dbVal: 'url', stringVal: 'URL' },
+          { dbVal: 'youtube', stringVal: 'Youtube' }
         ]
       }),
       queryMode: 'local',
@@ -482,15 +501,24 @@ Ext.onReady(function () {
     }, {
       xtype: 'filefield',
       disabled: true,
+      hidden: true,
       fieldLabel: 'Media Upload',
       id: 'mediaUpload',
       name: 'media'
     }, {
       xtype: 'textfield',
       disabled: true,
+      hidden : true,
       fieldLabel: 'Media Location',
       id: 'mediaLocation',
       name: 'media_location'
+    }, {
+      xtype: 'textarea',
+      disabled: true,
+      hidden: true,
+      fieldLabel: 'Youtube Embeded HTML',
+      id: 'embededHtml',
+      name: 'embeded_html'
     }],
     dockedItems: [{
       xtype: 'toolbar',
@@ -509,8 +537,10 @@ Ext.onReady(function () {
 
           // Is this a new record?
           if (typeof form.getRecord() === 'undefined') {
-            if (formValues.media_type === 'url') {
-              if (!formValues.media_location.match(/http:\/\//gi)) {
+            if (formValues.media_type === 'url' || formValues.media_type === 'youtube') {
+              
+              if (formValues.media_type === 'url' && !formValues.media_location.match(/http:\/\//gi))
+              {
                 formValues.media_location = 'http://' + formValues.media_location;
               }
 
