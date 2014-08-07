@@ -33,7 +33,7 @@ var enabledFields = Ext.create('Ext.data.Store', {
 var fields = Ext.create('Ext.data.Store', {
     fields: ['field', 'label'],
     data : [
-      {"field":"middle_initital", "label": "Middle Initial"},
+      {"field":"middle_initial", "label": "Middle Initial"},
       {"field":"surname", "label": "Surname"},
       {"field":"address_1", "label": "Address"},
       {"field":"city", "label":"City"},
