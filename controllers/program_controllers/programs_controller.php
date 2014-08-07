@@ -190,7 +190,10 @@ class ProgramsController extends AppController {
 
 	public function enrollment($id=null) {
 		$this->loadProgram($id);
-		//$this->render('new_enrollment');
+
+		$this->loadModel('Kiosk');
+		$is_kiosk = $this->Kiosk->isKiosk();
+		$this->set(compact('is_kiosk'));
 	}
 
 	public function admin_index() {
