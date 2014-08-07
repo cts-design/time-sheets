@@ -364,7 +364,9 @@ class EventsController extends AppController {
 		));
 		$user = $this->User->findById($this->Auth->user('id'));
 
-		$redirectAction = ($eventType === 'workshop') ? 'workshop' : 'index';
+		//$redirectAction = ($eventType === 'workshop') ? 'workshop' : 'index';
+
+		$redirectAction = 'index';
 
 		if (isset($user['EventRegistration']) && !empty($user['EventRegistration'])) {
 			$this->Session->setFlash(__('You are already registered for this event', true), 'flash_failure');
@@ -418,7 +420,9 @@ class EventsController extends AppController {
 			$this->Session->setFlash(__('You\'ve successfully un-registered for this event', true), 'flash_success');
 		}
 
-		$this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
+		//$this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
+
+		$this->redirect('/events');
 	}
 
 	public function view() {}
