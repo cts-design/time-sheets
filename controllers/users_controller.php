@@ -909,8 +909,6 @@ class UsersController extends AppController {
 						{
 							$this->Auth->login($user['User']['id']);
 							
-							$this->log(var_export($referer, true));
-
 							if($referer != '/')
 								$this->redirect( $referer );
 							else
