@@ -74,12 +74,22 @@
 												$step['id'])) ?>
 										<?php endif ?>
 									<?php elseif($step['type'] === 'required_docs') : ?>
-										<img class="ico" src="/img/icons/doc_upload.png" />
-										<?php $link = $this->Html->link('Upload Documents', array(
-											'controller' => 'program_responses',
-											'action' => 'upload_docs',
-											$program['Program']['id'],
-											$step['id'])) ?>
+
+										<?php if($is_kiosk): ?>
+											<img class="ico" src="/img/icons/doc_upload.png" />
+											<?php $link = $this->Html->link('Scan Documents', array(
+												'controller' => 'program_responses',
+												'action' => 'upload_docs',
+												$program['Program']['id'],
+												$step['id'])) ?>
+										<?php else: ?>
+											<img class="ico" src="/img/icons/doc_upload.png" />
+											<?php $link = $this->Html->link('Upload Documents', array(
+												'controller' => 'program_responses',
+												'action' => 'upload_docs',
+												$program['Program']['id'],
+												$step['id'])) ?>
+										<?php endif ?>
 
 
 										<?php
