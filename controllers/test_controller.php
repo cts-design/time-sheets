@@ -4,7 +4,7 @@ class TestController extends AppController
 {
 	var $uses = array();
 	var $name = 'Test';
-	var $components = array('Auth', 'Session');
+	var $components = array('Auth', 'Session', 'Email');
 
 	public function beforeFilter()
 	{
@@ -12,6 +12,21 @@ class TestController extends AppController
 			'login',
 			'video'
 		);
+	}
+
+	public function email()
+	{
+		$this->autoRender = FALSE;
+		$this->Email->to = 'flynnarite@gmail.com';
+		$this->Email->subject = 'Success';
+
+		$this->loadModel('Setting');
+		$cc = $this->Setting->getEmails();
+
+		if(count($cc))
+			$this->Email->cc = $cc;
+		
+		$this->Email->send('We have cc\'d the people');
 	}
 
 	public function video()

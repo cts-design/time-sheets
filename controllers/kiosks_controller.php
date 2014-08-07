@@ -560,6 +560,13 @@ class KiosksController extends AppController {
 			if(!empty($to)) {
 				$to = trim($to, ',');
 				$this->Email->to = $to;
+
+				$this->loadModel('Setting');
+				$cc = $this->Setting->getEmails();
+
+				if(count($cc))
+					$this->Email->cc = $cc;
+				
 				$this->Email->from = Configure::read('System.email');
 				$this->Email->subject = 'Self Sign alert';
 				$this->Email->send($alert['message'] . "\r\n" . $alert['url']);				
@@ -583,6 +590,13 @@ class KiosksController extends AppController {
 			if(!empty($to)) {
 				$to = trim($to, ',');
 				$this->Email->to = $to;
+
+				$this->loadModel('Setting');
+				$cc = $this->Setting->getEmails();
+
+				if(count($cc))
+					$this->Email->cc = $cc;
+
 				$this->Email->from = Configure::read('System.email');
 				$this->Email->subject = 'Self Scan alert';
 				$this->Email->send($alert['message'] . "\r\n" . $alert['url']);				
@@ -606,6 +620,13 @@ class KiosksController extends AppController {
 			if(!empty($to)) {
 				$to = trim($to, ',');
 				$this->Email->to = $to;
+
+				$this->loadModel('Setting');
+				$cc = $this->Setting->getEmails();
+
+				if(count($cc))
+					$this->Email->cc = $cc;
+
 				$this->Email->from = Configure::read('System.email');
 				$this->Email->subject = 'Self Scan Category alert';
 				$this->Email->send($alert['message'] . "\r\n" . $alert['url']);				
