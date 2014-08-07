@@ -192,10 +192,8 @@ class ProgramsController extends AppController {
 		$this->loadProgram($id);
 
 		$this->loadModel('Kiosk');
-		$is_kiosk = $this->Kiosk->isKiosk('demo');
-		var_dump($is_kiosk);
+		$is_kiosk = $this->Kiosk->isKiosk();
 		$this->set(compact('is_kiosk'));
-		//$this->render('new_enrollment');
 	}
 
 	public function admin_index() {
