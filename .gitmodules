@@ -16,3 +16,6 @@
 [submodule "vendors/simpletest"]
 	path = vendors/simpletest
 	url = git://github.com/99designs/simpletest.git
+[submodule "vendors/Requests"]
+	path = vendors/Requests
+	url = git://github.com:rmccue/Requests.git
