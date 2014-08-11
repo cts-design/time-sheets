@@ -793,11 +793,7 @@ class UsersController extends AppController {
 						else
 						{
 							$this->Auth->login($user['User']['id']);
-
-							if($referer != '/')
-								$this->redirect( $referer );
-							else
-								$this->redirect('/programs/' . $program['Program']['type'] . '/' . $program_id);
+							$this->redirect('/programs/' . $program['Program']['type'] . '/' . $program_id);
 						}
 					}
 					else
@@ -878,11 +874,7 @@ class UsersController extends AppController {
 						else
 						{
 							$this->Auth->login($user['User']['id']);
-
-							if($referer != '/')
-								$this->redirect( $referer );
-							else
-								$this->redirect('/users/dashboard');
+							$this->redirect('/users/dashboard');
 						}
 					}
 					else
