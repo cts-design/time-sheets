@@ -475,6 +475,24 @@ Ext.onReady( function() {
       }
 	  }]
 	});
+
+	function renderVetDisIcon() {
+		console.log(arguments);
+
+		var result = arguments[2].raw;
+
+		var fullString = '';
+		if(result.disability != '' && result.disability != 0)
+		{
+			fullString += 'D'
+		}
+
+		if(result.veteran != '' && result.veteran != 0)
+		{
+			fullString += 'V'
+		}
+		return fullString;
+	}
 	
 	Ext.define('Atlas.grid.SelfSignLogsPanel', {
 		extend: 'Ext.grid.Panel',
@@ -484,6 +502,12 @@ Ext.onReady( function() {
 		frame: true,
 		invalidateScrollerOnRefresh: false,
 		columns: [{
+			text : 'Special',
+			renderer : renderVetDisIcon,
+			sortable : false,
+			width : 50,
+			align: 'center'
+		}, {
 			text: 'Id',
 			dataIndex: 'id',
 			sortable: true,
