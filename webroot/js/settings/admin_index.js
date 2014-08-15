@@ -199,6 +199,15 @@ Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.form.Panel', {
+  title   : 'Kiosk Survey',
+  id      : 'kioskSurvey',
+  frame   : true,
+  width   : 150,
+  margin  : 5,
+  items   : []
+});
+
+Ext.create('Ext.form.Panel', {
   title: 'Kiosk Time Out',
   id: 'kioskTimeOut',
   url: '/admin/settings/kiosk_time_out',
@@ -626,7 +635,7 @@ Ext.onReady(function(){
 		items: [{
       layout: 'hbox',
 			title: 'Self Sign',
-			items: [kioskRegistration, 'kioskConfirmation', 'kioskTimeOut']
+			items: [kioskRegistration, 'kioskConfirmation', 'kioskTimeOut', 'kioskSurvey']
 		},{
       layout: 'hbox',
       title: 'Users',

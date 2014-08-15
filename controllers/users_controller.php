@@ -516,7 +516,7 @@ class UsersController extends AppController {
 
 	function kiosk_self_sign_login() {
 		$this->loadModel('Kiosk');
-		$kiosk 			= $this->Kiosk->isKiosk('demo');
+		$kiosk 			= $this->Kiosk->isKiosk();
 		$login_method 	= Configure::read('Login.method');
 		$settings 		= Cache::read('settings');
 		$fields 		= Set::extract('/field',  json_decode($settings['SelfSign']['KioskRegistration'], true));
@@ -592,6 +592,19 @@ class UsersController extends AppController {
 					}
 					else
 					{
+						// Redirects to a survey if: Kiosk Survey == 'forced'
+						$this->loadModel('Settings');
+						$kiosk_survey_setting = $this->Settings->getSettings('Kiosk', 'Survey');
+
+						if($kiosk_survey_setting == 'force')
+						{
+							$this->redirect('/kiosk/kiosks/survey/' . $kiosk['Kiosk']['id']);
+						}
+						else if($kiosk_survey_setting == 'prompt')
+						{
+							$this->redirect('/kiosk/kiosks/prompt/' . $kiosk['Kiosk']['id']);
+						}
+
 						$this->redirect('/kiosk/kiosks/self_sign_service_selection');
 					}
 					

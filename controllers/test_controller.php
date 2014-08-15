@@ -10,8 +10,19 @@ class TestController extends AppController
 	{
 		$this->Auth->allowedActions = array(
 			'login',
-			'video'
+			'video',
+			'index'
 		);
+	}
+
+	public function index() {
+		$this->autoRender = FALSE;
+		$this->loadModel('Setting');
+
+
+		$settings = $this->Setting->getSettings('SelfSign', 'KioskRegistration');
+
+		var_dump($settings);
 	}
 
 	public function email()
