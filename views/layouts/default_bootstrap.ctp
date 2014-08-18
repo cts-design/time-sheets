@@ -11,8 +11,9 @@
 	<link rel="stylesheet" href="/js/jqueryui_signature/jquery.signature.css" />
 
 	<script type="text/javascript" src="/js/jqueryui_signature/jquery.signature.min.js"></script>
+	<script type="text/javascript" src="/js/moment.js"></script>
 
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.15/angular.min.js"></script>
+	<script src="/js/angular-1.2.js"></script>
 
 	<?= $this->Html->script('pdfobject_min.js') ?>
 
