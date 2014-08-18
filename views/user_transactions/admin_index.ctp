@@ -1,6 +1,6 @@
 <div class="container" ng-app="activity-report" ng-controller="ActivityController">
 	<div class="row">
-		<div class="col-sm-10 col-sm-offset-1 bleach no-pad">
+		<div class="col-sm-10 col-sm-offset-1 col-xs-10 col-xs-offset-1 bleach no-pad">
 
 			<nav class="navbar navbar-default navbar-static-top" style="margin:0px;padding-left:5px;padding-right:5px;border-bottom:none">
 				<div class="container-fluid">
@@ -11,14 +11,14 @@
 						Activity Report
 					</button>
 
-					<ul class="nav navbar-nav navbar-right" style="margin-right:-5px">
+					<ul class="nav navbar-nav" style="margin-right:-5px">
 						<li>
 							<a href ng-click="previousPage()" disabled>
 								<i class="fa fa-angle-left"></i>
 							</a>
 						</li>
 						<li>
-							<a href>
+							<a href style="display:inline-block">
 								{{ (offset/limit) + 1 }}
 							</a>
 						</li>

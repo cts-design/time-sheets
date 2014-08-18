@@ -17,18 +17,23 @@
 
 	<?= $this->Html->script('pdfobject_min.js') ?>
 
-	<?= $this->Html->script('respond.min') ?>
+	
 
-	<!--[if IE]> 
-	<script type="text/javascript" src="js/excanvas.js"></script>
-	<?= $this->Html->script('jqueryui_signature/excanvas') ?>
-	<![endif]-->
+	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
 
 	<link rel="stylesheet" href="/css/font-awesome.min.css" />
 	<script type="text/javascript" src="/js/underscore.min.js"></script>
 
 	<!-- ng-infinite-scroll -->
 	<script src="/js/ng-infinite-scroll.min.js"></script>
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 	<style>
 	body, html
@@ -101,7 +106,7 @@
 <body>
 	<div class="container top-nav">
 		<div class="row">
-			<div class="col-lg-5 col-lg-offset-1 col-md-5 col-md-offset-1 col-sm-3 col-sm-offset-1">
+			<div class="col-lg-5 col-lg-offset-1 col-md-5 col-md-offset-1 col-sm-3 col-sm-offset-1 col-xs-3 col-xs-offset-1">
 
 				<?php echo $this->Html->link($this->Html->image('/img/default/default_header_logo.jpg'),
 				array('controller' => 'pages',
@@ -110,15 +115,15 @@
 			    ?>
 
 			</div>
-			<div class="col-lg-5 col-md-5 col-sm-7">
+			<div class="col-lg-5 col-md-5 col-sm-7 col-xs-7">
 
 				<div class="row">
-					<div class="col-sm-12">
+					<div class="col-xs-12">
 						<?php echo $this->Html->image('atlas_logo_100.jpg', array('class' => 'pull-right')) ?>
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-sm-12">
+					<div class="col-xs-12">
 
 						<p class="pull-right">
 						<?php
@@ -137,7 +142,7 @@
 		</div>
 
 		<div class="row"> <!-- This is the large white line -->
-			<div class="col-sm-10 col-sm-offset-1">
+			<div class="col-sm-10 col-sm-offset-1 col-xs-10 col-xs-offset-1">
 				<span><?php __('You are here') ?> > </span>
 				<?php echo $crumb->getHtml(__($title_for_layout, true), null, 'unique') ; ?>
 			</div>
