@@ -593,8 +593,8 @@ class UsersController extends AppController {
 					else
 					{
 						// Redirects to a survey if: Kiosk Survey == 'forced'
-						$this->loadModel('Settings');
-						$kiosk_survey_setting = $this->Settings->getSettings('Kiosk', 'Survey');
+						$this->loadModel('Setting');
+						$kiosk_survey_setting = $this->Setting->getSetting('Kiosk', 'Survey');
 
 						if($kiosk_survey_setting == 'force')
 						{

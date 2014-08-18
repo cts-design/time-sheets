@@ -20,7 +20,7 @@ class Setting extends AppModel {
 		)
 	);
 
-	public function getSettings($module, $name) {
+	public function getSetting($module, $name) {
 
 		$settings = Set::extract('/Setting/.', $this->find('first', array(
 			'conditions' => array(

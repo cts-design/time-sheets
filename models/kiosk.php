@@ -125,4 +125,20 @@ class Kiosk extends AppModel {
 	}
 	return false;
     }
+
+    public function redirectToSurvey()
+    {
+    	// Redirects to a survey if: Kiosk Survey == 'forced'
+    	$this->loadModel('Setting');
+		$kiosk_survey_setting = $this->Setting->getSettings('Kiosk', 'Survey');
+
+		if($kiosk_survey_setting == 'force')
+		{
+			$this->redirect('/kiosk/kiosks/survey/' . $kiosk['Kiosk']['id']);
+		}
+		else if($kiosk_survey_setting == 'prompt')
+		{
+			$this->redirect('/kiosk/kiosks/prompt/' . $kiosk['Kiosk']['id']);
+		}
+    }
 }

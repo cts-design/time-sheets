@@ -57,6 +57,16 @@ class KiosksController extends AppController {
         $this->set('surveys', $surveys);
 	}
 
+
+	public function kiosk_survey_prompt()
+	{
+		$this->layout = 'kiosk';
+		$this->loadModel('Setting');
+		$kiosk = $this->Kiosk->isKiosk('demo');
+		$kiosk_survey_setting = $this->Setting->getSetting('Kiosk', 'Survey');
+		$this->set(compact('kiosk', 'kiosk_survey_setting'));
+	}
+
     function admin_add() {
 		if(!empty($this->data))
 		{
@@ -117,11 +127,16 @@ class KiosksController extends AppController {
 
 	function kiosk_self_sign_confirm() {
 		$fields = $this->getKioskRegistraionFields();
+		$kiosk = $this->Kiosk->isKiosk('demo');
 
 		$this->loadModel('User');
-		$user = $this->User->findbyId($this->Auth->user('id'));
-		$title_for_layout = 'Self Sign Kiosk';		
-		$this->set(compact('title_for_layout', 'fields', 'user'));
+		$user 				 = $this->User->findbyId($this->Auth->user('id'));
+		$this->loadModel('Setting');
+		$kiosk_survey_setting= $this->Setting->getSetting('Kiosk', 'Survey');
+
+		var_dump($kiosk_survey_setting);
+		$title_for_layout 	 = 'Self Sign Kiosk';
+		$this->set(compact('title_for_layout', 'fields', 'user', 'kiosk_survey_setting', 'kiosk'));
 		$this->layout = 'kiosk';
 	}
 

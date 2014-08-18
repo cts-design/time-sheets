@@ -179,8 +179,13 @@
 	    <br class="clear"/>
 	<?php endif ?>     
 	<div class="actions">
+		<?php if($kiosk_survey_setting == 'prompt' || $kiosk_survey_setting == 'force' && count($kiosk['KioskSurvey'])): ?>
+			<a href="/kiosk/kiosks/survey_prompt" class="self-sign-kiosk-link">Correct</a>
+		<?php else: ?>
+			<a href="/kiosk/kiosks/self_sign_service_selection" class="self-sign-kiosk-link">Correct</a>
+		<?php endif ?>
+
 	<?php
-	echo $html->link(__('Correct', true), 'self_sign_service_selection', array('class' => 'self-sign-kiosk-link'));
 	echo '&nbsp;';
 	echo $html->link(__('Incorrect', true), 'self_sign_edit/' . $session->read('Auth.User.id'), array('class' => 'self-sign-kiosk-link'));
 	?>

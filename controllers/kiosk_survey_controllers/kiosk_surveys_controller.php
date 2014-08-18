@@ -14,10 +14,14 @@ class KioskSurveysController extends AppController {
 	function start() {
         $surveyId = $this->params['survey_id'];
 
+
+        $user_id = $this->Auth->user('id') ? $this->Auth->user('id') : 0;
+
         // create the response record
         $this->KioskSurvey->KioskSurveyResponse->create(
             array(
-                'kiosk_survey_id' => $surveyId
+                'kiosk_survey_id' => $surveyId,
+                'user_id' => $user_id
             )
         );
         $this->KioskSurvey->KioskSurveyResponse->save();
