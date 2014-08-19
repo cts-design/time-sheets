@@ -108,7 +108,7 @@
 		<div class="row">
 			<div class="col-lg-5 col-lg-offset-1 col-md-5 col-md-offset-1 col-sm-3 col-sm-offset-1 col-xs-3 col-xs-offset-1">
 
-				<?php echo $this->Html->link($this->Html->image('/img/default/default_header_logo.jpg'),
+				<?php echo $this->Html->link($this->Html->image('/img/default/default_header_logo.jpg', array('style' => 'height:100%')),
 				array('controller' => 'pages',
 					'action' => 'display',
 					'admin' => false, 'home'), array('escape' => false));
@@ -123,7 +123,7 @@
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-xs-12">
+					<div class="col-xs-12 col-sm-12">
 
 						<p class="pull-right">
 						<?php
@@ -141,8 +141,9 @@
 			</div>
 		</div>
 
-		<div class="row"> <!-- This is the large white line -->
-			<div class="col-sm-10 col-sm-offset-1 col-xs-10 col-xs-offset-1">
+		<div class="row" style="margin-top:5px;height:30px">
+			<!-- This is the large white line -->
+			<div class="col-sm-10 col-sm-offset-1 col-xs-10 col-xs-offset-1" style="height:30px">
 				<span><?php __('You are here') ?> > </span>
 				<?php echo $crumb->getHtml(__($title_for_layout, true), null, 'unique') ; ?>
 			</div>

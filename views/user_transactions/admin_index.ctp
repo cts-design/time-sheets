@@ -1,4 +1,4 @@
-<div class="container" ng-app="activity-report" ng-controller="ActivityController">
+<div class="container" ng-app="activity-report" ng-controller="ActivityController" style="margin-top:5px">
 	<div class="row">
 		<div class="col-sm-10 col-sm-offset-1 col-xs-10 col-xs-offset-1 bleach no-pad">
 
@@ -11,7 +11,7 @@
 						Activity Report
 					</button>
 
-					<ul class="nav navbar-nav" style="margin-right:-5px">
+					<ul class="nav navbar-nav navbar-right" style="margin-right:-5px">
 						<li>
 							<a href ng-click="previousPage()" disabled>
 								<i class="fa fa-angle-left"></i>
