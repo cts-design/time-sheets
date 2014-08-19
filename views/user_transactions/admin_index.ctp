@@ -13,7 +13,7 @@
 
 					<ul class="nav navbar-nav navbar-right" style="margin-right:-5px">
 						<li>
-							<a href ng-click="previousPage()" disabled>
+							<a href ng-click="previousPage()">
 								<i class="fa fa-angle-left"></i>
 							</a>
 						</li>
@@ -23,7 +23,7 @@
 							</a>
 						</li>
 						<li>
-							<a href ng-click="nextPage()" disabled>
+							<a href ng-click="nextPage()">
 								<i class="fa fa-angle-right"></i>
 							</a>
 						</li>
