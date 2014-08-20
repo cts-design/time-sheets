@@ -395,12 +395,6 @@ class ProgramResponsesController extends AppController {
 
 		$kiosk = $this->Kiosk->isKiosk();
 		$this->set('is_kiosk', $kiosk);
-		if($kiosk)
-		{
-			$this->set('locationId', $kiosk['Location']['id']);
-			$this->set('queueCatId', null);
-			$this->set('selfScanCatId', null);
-		}
 
 		if(!$programId){
 			$this->Session->setFlash(__('Invalid Program Id', true), 'flash_failure');
@@ -408,8 +402,14 @@ class ProgramResponsesController extends AppController {
 		}
         $program = $this->ProgramResponse->Program->getProgramAndResponse($programId, $this->Auth->user('id'));
 
-        $this->set('queueCatId', $program['Program']['queue_category_id']);
-        
+        // For kiosk
+        if($kiosk)
+        {
+        	$this->set('queueCatId', $program['Program']['queue_category_id']);
+        	$this->set('locationId', $kiosk['Location']['id']);
+			$this->set('selfScanCatId', null);
+        }
+
 		$this->whatsNext($program, $stepId);
 		
 		if(!empty($this->data)) {
