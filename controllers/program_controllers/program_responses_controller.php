@@ -407,6 +407,9 @@ class ProgramResponsesController extends AppController {
 			$this->redirect($this->referer());
 		}
         $program = $this->ProgramResponse->Program->getProgramAndResponse($programId, $this->Auth->user('id'));
+
+        $this->set('queueCatId', $program['Program']['queue_category_id']);
+        
 		$this->whatsNext($program, $stepId);
 		
 		if(!empty($this->data)) {
