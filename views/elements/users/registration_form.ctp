@@ -24,7 +24,7 @@
 		'label' => __('Surname', true),
 		'type' => 'select',
 		'empty' => 'None',
-		'options' => array('Jr' => 'Jr', 'Sr' => 'Sr', 'III' => 'III'),
+		'options' => array('Jr' => 'Jr', 'Sr' => 'Sr', 'II' => 'II', 'III' => 'III'),
 		'before' => '<br />',
 		'after' => '<br />'
 	));
