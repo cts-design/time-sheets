@@ -134,7 +134,6 @@ class KiosksController extends AppController {
 		$this->loadModel('Setting');
 		$kiosk_survey_setting= $this->Setting->getSetting('Kiosk', 'Survey');
 
-		var_dump($kiosk_survey_setting);
 		$title_for_layout 	 = 'Self Sign Kiosk';
 		$this->set(compact('title_for_layout', 'fields', 'user', 'kiosk_survey_setting', 'kiosk'));
 		$this->layout = 'kiosk';
