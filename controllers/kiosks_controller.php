@@ -130,11 +130,11 @@ class KiosksController extends AppController {
 		$kiosk = $this->Kiosk->isKiosk('demo');
 
 		$this->loadModel('User');
-		$user 				 = $this->User->findbyId($this->Auth->user('id'));
 		$this->loadModel('Setting');
-		$kiosk_survey_setting= $this->Setting->getSetting('Kiosk', 'Survey');
-
-		$title_for_layout 	 = 'Self Sign Kiosk';
+		$user 				 	= $this->User->findbyId($this->Auth->user('id'));
+		$kiosk_survey_setting	= $this->Setting->getSetting('Kiosk', 'Survey');
+		$title_for_layout 	 	= 'Self Sign Kiosk';
+		
 		$this->set(compact('title_for_layout', 'fields', 'user', 'kiosk_survey_setting', 'kiosk'));
 		$this->layout = 'kiosk';
 	}
@@ -182,8 +182,37 @@ class KiosksController extends AppController {
 	}
 
     function kiosk_self_sign_service_selection($buttonId =null, $isChild =false) {
+    	$this->loadModel('Setting');
+    	$this->loadModel('KioskSurveyResponses');
+
+    	$kiosk 						= $this->Kiosk->isKiosk('demo');
+    	$kiosk_survey_setting 		= $this->Setting->getSetting('Kiosk', 'Survey');
+    	$kiosk_expiration_setting 	= $this->Setting->getSetting('Kiosk', 'Expiration');
+    	$user 						= $this->Auth->user();
+
+    	// Query kiosk survey responses for matching user_id and survey id
+    	$kiosk_survey_response = $this->KioskSurveyResponses->find('first', array(
+    		'conditions' => array(
+    			'user_id' => $this->Auth->user('id'),
+   				'kiosk_survey_id' => $kiosk['KioskSurvey'][0]['id']
+    		),
+    		'order' => 'created DESC'
+    	));
+
+    	// If kiosk matches and if there is a survey attached
+    	$kiosk_survey_exists = ($kiosk && count($kiosk['KioskSurvey']));
+
+    	// If the last response is less than the expiration that means we need to prompt them with the quiz
+    	$kiosk_survey_expired = strtotime($kiosk_survey_response['KioskSurveyResponses']['created']) < strtotime($kiosk_expiration_setting);
+    	
+    	if(($kiosk_survey_exists && !$kiosk_survey_response) || ($kiosk_survey_exists && $kiosk_survey_expired) && !$this->Session->read('prompted_for_survey'))
+    	{
+    		// Keep the survey from prompting on every k.s.s.s.s. action
+    		$this->Session->write('prompted_for_survey', TRUE);
+    		$this->redirect('/kiosk/kiosks/survey_prompt/' . $kiosk['KioskSurvey'][0]['id']);
+    	}
+
 		if(empty($buttonId)) {
-			$kiosk = $this->Kiosk->isKiosk('');
 			$this->Cookie->write('location', $kiosk['Kiosk']['location_id']);
 			$this->Cookie->write('kioskId', $kiosk['Kiosk']['id']);
 			

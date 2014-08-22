@@ -19,7 +19,7 @@
 		</a>
 	<?php else: ?>
 
-		<h1>Optional Self Sign Survey</h1>
+		<h1>Self Sign Survey</h1>
 		<!-- TODO: Allow for customization of kiosk survey prompt -->
 		<p class="center" style="text-align:center">Before continuing you will have to complete a survey</p>
 
