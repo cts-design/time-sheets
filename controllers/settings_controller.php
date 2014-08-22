@@ -7,8 +7,7 @@ class SettingsController extends AppController {
 	{
 		parent::beforeFilter();
 		$this->Auth->allow('admin_esign_options');
-
-		$this->Auth->allow('admin_translation', 'admin_translation_mode', 'admin_set');
+		$this->Auth->allow('admin_translation', 'admin_translation_mode');
 	}
 
 	public function admin_index() {
