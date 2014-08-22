@@ -17,18 +17,18 @@ class KioskSurveyQuestionsController extends AppController {
             $surveyId = $this->data['KioskSurveyQuestions']['survey_id'];
 
             $this->KioskSurveyQuestion->KioskSurvey
-                                      ->KioskSurveyResponse
-                                      ->KioskSurveyResponseAnswer->create(
-                                        array(
-                                            'kiosk_survey_response_id' => $responseId,
-                                            'question_id' => $this->data['KioskSurveyQuestions']['question_id'],
-                                            'answer' => $this->data['KioskSurveyQuestions']['answer']
-                                        )
-                                      );
+                ->KioskSurveyResponse
+                ->KioskSurveyResponseAnswer->create(
+                array(
+                    'kiosk_survey_response_id' => $responseId,
+                    'question_id' => $this->data['KioskSurveyQuestions']['question_id'],
+                    'answer' => $this->data['KioskSurveyQuestions']['answer']
+                )
+                );
 
             $this->KioskSurveyQuestion->KioskSurvey
-                                      ->KioskSurveyResponse
-                                      ->KioskSurveyResponseAnswer->save();
+                ->KioskSurveyResponse
+                ->KioskSurveyResponseAnswer->save();
 
             $nextQuestion = $questionNumber + 1;
             $this->redirect("/kiosk/survey/{$surveyId}/question/{$nextQuestion}");
@@ -57,11 +57,13 @@ class KioskSurveyQuestionsController extends AppController {
         );
 
         // check to see if there are more questions
-        if (count($survey[0]['KioskSurveyQuestion']) < $questionNumber) {
+        $more_questions = count($survey[0]['KioskSurveyQuestion']) < $questionNumber;
+        if($more_questions)
+        {
             $this->Session->setFlash(__('Thank you for taking the time to complete the survey. Your input is very important to us.', true), 'flash_success');
-            $this->redirect('/kiosk');
+            $this->redirect('/kiosk/kiosks/self_sign_service_selection');
         }
-
+        
         $question = Set::extract("/KioskSurveyQuestion/.[{$questionNumber}]", $survey);
 
         if ($question[0]['type'] === 'multi') {
