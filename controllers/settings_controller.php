@@ -182,6 +182,74 @@ class SettingsController extends AppController {
 		}
 	}
 
+	public function admin_kiosk_survey() {
+		$this->log(var_export($this->params['form'], true));
+
+		$setting = $this->Setting->find('first', array(
+			'conditions' => array(
+				'module' => 'Kiosk',
+				'name' => 'Survey',
+			)
+		));
+
+		$data['kiosk_survey']['value'] = $setting['Setting']['value'];
+
+		$setting['Setting']['value'] = $this->params['form']['kiosk_survey'];
+
+		$this->Setting->save($setting);
+		Cache::delete('settings');
+
+		$data = array(
+			'success' => TRUE,
+			'message' => 'Kiosk Survey has been saved'
+		);
+
+		$this->set(compact('data'));
+		$this->render(null, null, '/elements/ajaxreturn');
+	}
+
+	public function admin_kiosk_survey_expiration() {
+		$data 		= array();
+		$date 		= array($this->params['form']['numeric'], $this->params['form']['label']);
+		$setting 	= $this->Setting->find('first', array(
+			'conditions' => array(
+				'module' => 'Kiosk',
+				'name' => 'SurveyExpiration',
+			)
+		));
+
+		if(isset($this->params['form']['numeric']) && isset($this->params['form']['label'])) {
+
+			if($setting) {
+				$setting['Setting']['value'] = json_encode($date);
+			} else {
+				$this->Setting->create();
+				$setting = array(
+					'module' 	=> 'Kiosk',
+					'name' 		=> 'SurveyExpiration',
+					'value' 	=> json_encode($date)
+				);
+			}
+
+			$this->Setting->save($setting);
+			Cache::delete('settings');
+
+			$data = array(
+				'success' => TRUE,
+				'message' => 'Kiosk Survey Expiration date has been saved'
+			);
+		}
+		else
+		{
+			$value = json_decode($setting['Setting']['value']);
+			$data['numeric'][0]['value'] = $value[0];
+			$data['label'][0]['value'] = $value[1];
+		}		
+
+		$this->set(compact('data'));
+		$this->render(null, null, '/elements/ajaxreturn');
+	}
+
 	public function admin_kiosk_confirmation() {
 		if($this->RequestHandler->isAjax()) {
 			$settings = $this->Setting->findByName('KioskConfirmation', array('id','value'));

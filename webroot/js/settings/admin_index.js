@@ -212,42 +212,6 @@ var kiosk_survey_combo = Ext.create('Ext.data.Store', {
 });
 
 Ext.create('Ext.form.Panel', {
-  title   : 'Kiosk Survey',
-  id      : 'kioskSurvey',
-  frame   : true,
-  width   : 150,
-  margin  : 5,
-  items   : [
-    {
-      xtype: 'combo',
-      name: 'kiosk_survey',
-      displayField: 'name',
-      valueField: 'value',
-      store: kiosk_survey_combo,
-    }
-  ],
-  buttons : [
-    {
-      text: 'Update',
-      formBind: true,
-      handler: function() {
-        var form = this.up('form').getForm();
-        $.ajax({
-          url: '/admin/settings/index/Kiosk/Survey',
-          data: { action : 'set', value : form.findField('kiosk_survey').value },
-          dataType: 'json',
-          type: 'GET',
-          success : function(resp) {
-            console.log(resp);
-          }
-        });
-      }
-    }
-  ],
-  flex    : 1,
-});
-
-Ext.create('Ext.form.Panel', {
   title: 'Kiosk Time Out',
   id: 'kioskTimeOut',
   url: '/admin/settings/kiosk_time_out',
@@ -278,10 +242,85 @@ Ext.create('Ext.form.Panel', {
         form.submit({
           waitMsg: 'Updating Settings',
           success: function(form, action) {
-            $.ajax({
-              url : '/admin/settings/kiosk_survey',
-              data : {  },
-            });
+             Ext.Msg.alert('Success', action.result.message);
+          },
+          failure: function(form, action) {
+              Ext.Msg.alert('Failed', action.result.message);
+          }
+        });
+      }
+    }
+  }]
+});
+
+Ext.create('Ext.form.Panel', {
+  title: 'Kiosk Survey',
+  id: 'KioskSurveyPanel',
+  url: '/admin/settings/kiosk_survey',
+  frame: true,
+  margin: 5,
+  flex: 1,
+  items: [{
+    xtype: 'combo',
+    fieldLabel: 'Survey Prompt',
+    displayField: 'name',
+    valueField: 'value',
+    store: kiosk_survey_combo,
+    name: 'kiosk_survey'
+  }],
+  buttons: [{
+    text: 'Update',
+    formBind: true,
+    handler: function() {
+      var form = this.up('form').getForm();
+      if(form.isValid()) {
+        form.submit({
+          waitMsg: 'Updating Settings',
+          success: function(form, action) {
+             Ext.Msg.alert('Success', action.result.message);
+          },
+          failure: function(form, action) {
+              Ext.Msg.alert('Failed', action.result.message);
+          }
+        });
+      }
+    }
+  }]
+});
+
+Ext.create('Ext.form.Panel', {
+  title: 'Kiosk Survey Expiration',
+  id: 'KioskSurveyExpirationPanel',
+  url: '/admin/settings/kiosk_survey_expiration',
+  frame: true,
+  margin: 5,
+  flex: 1,
+  items: [{
+    xtype: 'numberfield',
+    fieldLabel: '',
+    name: 'numeric'
+  }, {
+    xtype: 'combo',
+    fieldLabel: '',
+    displayField: 'name',
+    valueField: 'value',
+    name: 'label',
+    store: Ext.create('Ext.data.Store', {
+      fields : ['value', 'name'],
+      data : [
+        { name: 'day(s)', value: 'days' },
+        { name: 'month(s)', value: 'months' }
+      ]})
+  }],
+  buttons: [{
+    text: 'Update',
+    formBind: true,
+    handler: function() {
+      var form = this.up('form').getForm();
+      if(form.isValid()) {
+        form.submit({
+          waitMsg: 'Updating Settings',
+          success: function(form, action) {
              Ext.Msg.alert('Success', action.result.message);
           },
           failure: function(form, action) {
@@ -679,7 +718,7 @@ Ext.onReady(function(){
 		items: [{
       layout: 'hbox',
 			title: 'Self Sign',
-			items: [kioskRegistration, 'kioskConfirmation', 'kioskTimeOut', 'kioskSurvey']
+			items: [kioskRegistration, 'kioskConfirmation', 'kioskTimeOut']
 		},{
       layout: 'hbox',
       title: 'Users',
@@ -700,6 +739,10 @@ Ext.onReady(function(){
       layout: 'hbox',
       title: 'Email CC',
       items: ['emailcc']
+    }, {
+      layout: 'hbox',
+      title: 'Survey',
+      items: ['KioskSurveyPanel', 'KioskSurveyExpirationPanel']
     }]
 	});
 });
