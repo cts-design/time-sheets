@@ -50,7 +50,7 @@ var fields = Ext.create('Ext.data.Store', {
       {"field":"veteran", "label":"Veteran"},
       {"field":"disability", "label":"Disability"}
     ]
-});	
+});
 
 // Max Selection validation to only allow x number of selections in a boxselect menu
 Ext.apply(Ext.form.field.VTypes, {
@@ -200,13 +200,50 @@ Ext.create('Ext.data.Store', {
   }
 });
 
+var kiosk_survey_combo = Ext.create('Ext.data.Store', {
+  fields : ['value', 'name'],
+  data : [{
+    'value' : 'prompt',
+    'name' : 'Prompt'
+  }, {
+    'value' : 'force',
+    'name' : 'Force'
+  }]
+});
+
 Ext.create('Ext.form.Panel', {
   title   : 'Kiosk Survey',
   id      : 'kioskSurvey',
   frame   : true,
   width   : 150,
   margin  : 5,
-  items   : [],
+  items   : [
+    {
+      xtype: 'combo',
+      name: 'kiosk_survey',
+      displayField: 'name',
+      valueField: 'value',
+      store: kiosk_survey_combo,
+    }
+  ],
+  buttons : [
+    {
+      text: 'Update',
+      formBind: true,
+      handler: function() {
+        var form = this.up('form').getForm();
+        $.ajax({
+          url: '/admin/settings/index/Kiosk/Survey',
+          data: { action : 'set', value : form.findField('kiosk_survey').value },
+          dataType: 'json',
+          type: 'GET',
+          success : function(resp) {
+            console.log(resp);
+          }
+        });
+      }
+    }
+  ],
   flex    : 1,
 });
 
@@ -241,6 +278,10 @@ Ext.create('Ext.form.Panel', {
         form.submit({
           waitMsg: 'Updating Settings',
           success: function(form, action) {
+            $.ajax({
+              url : '/admin/settings/kiosk_survey',
+              data : {  },
+            });
              Ext.Msg.alert('Success', action.result.message);
           },
           failure: function(form, action) {
