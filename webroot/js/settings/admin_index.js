@@ -81,7 +81,8 @@ var kioskRegistration = Ext.create('Ext.form.Panel', {
   url: '/admin/settings/kiosk_registration',
   margin: 5,
   frame: true,
-  width: 295,	
+  width: 295,
+  flex: 1,
   items: [fieldsSelect],
   buttons: [{
     text: 'Update',
@@ -140,7 +141,8 @@ Ext.create('Ext.form.Panel', {
   id: 'kioskConfirmation',
   frame: true,
   margin: 5,
-  width: 295,	
+  width: 295,
+  flex: 1,
   items: [{
     xtype: 'checkboxfield',
     fieldLabel: 'Customer Info Confirmation',
@@ -204,7 +206,8 @@ Ext.create('Ext.form.Panel', {
   frame   : true,
   width   : 150,
   margin  : 5,
-  items   : []
+  items   : [],
+  flex    : 1,
 });
 
 Ext.create('Ext.form.Panel', {
