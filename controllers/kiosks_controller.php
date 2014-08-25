@@ -62,7 +62,7 @@ class KiosksController extends AppController {
 	{
 		$this->layout = 'kiosk';
 		$this->loadModel('Setting');
-		$kiosk = $this->Kiosk->isKiosk('demo');
+		$kiosk = $this->Kiosk->isKiosk();
 		$kiosk_survey_setting = $this->Setting->getSetting('Kiosk', 'Survey');
 		$this->set(compact('kiosk', 'kiosk_survey_setting'));
 	}
@@ -127,7 +127,7 @@ class KiosksController extends AppController {
 
 	function kiosk_self_sign_confirm() {
 		$fields = $this->getKioskRegistraionFields();
-		$kiosk = $this->Kiosk->isKiosk('demo');
+		$kiosk = $this->Kiosk->isKiosk();
 
 		$this->loadModel('User');
 		$this->loadModel('Setting');
@@ -185,7 +185,7 @@ class KiosksController extends AppController {
     	$this->loadModel('Setting');
     	$this->loadModel('KioskSurveyResponses');
 
-    	$kiosk 						= $this->Kiosk->isKiosk('demo');
+    	$kiosk 						= $this->Kiosk->isKiosk();
     	$kiosk_survey_setting 		= $this->Setting->getSetting('Kiosk', 'Survey');
     	$kiosk_expiration_setting 	= $this->Setting->getSetting('Kiosk', 'Expiration');
     	$user 						= $this->Auth->user();
