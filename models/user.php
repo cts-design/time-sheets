@@ -931,7 +931,8 @@ class User extends AppModel {
 			'birth_year' => null,
 			'id_full' => null,
 			'success' => true);
-
+		
+		$return['success'] = true;
 		$first_test = substr($data['User']['id_card'], 0, 18);
 
 		if (!preg_match("/\^/", $first_test)) {
