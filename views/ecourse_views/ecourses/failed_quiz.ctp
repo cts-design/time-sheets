@@ -28,7 +28,7 @@ $(function () {
 		A score of <?= $ecourseModule['EcourseModule']['passing_percentage'] ?>% or higher is required to pass
 	</p>
 	<p class="shoulders big light">
-		You may review your test results in more detail below or use the "Return To Course Overview" button at the bottom of the page.
+		You may review your test results in more detail below. When finished please use the "Return to Module Media" link at the bottom of the page to return the module material.
 	</p>
 </div>
 <ol id="ecourse-quiz-results">
@@ -47,5 +47,5 @@ $(function () {
 </ol>
 <br />
 <p>
-	<?php echo $this->Html->link('Return to Course Overview', '/ecourses/media/'.$ecourseModule['EcourseModule']['ecourse_id'], array('class' => 'button'))?>
+	<?php echo $this->Html->link('Return to Module Media', '/ecourses/media/'.$ecourseModule['EcourseModule']['ecourse_id'], array('class' => 'button'))?>
 </p>
