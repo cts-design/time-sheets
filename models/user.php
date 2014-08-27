@@ -920,6 +920,7 @@ class User extends AppModel {
 	// $formatted_id_card = $this->User->decodeIdString($this->data['User']['raw_id']);
 	// $formatted_id_card['id_full']; // returns somethign like S2556457845
 	public function decodeIdString($data) {
+	$this->log($_SERVER['REMOTE_ADDR'] . ":" . $data['User']['id_card'], 'debug');
 		$return = array(
 			'first_name' => null,
 			'last_name' => null,
@@ -931,10 +932,37 @@ class User extends AppModel {
 			'id_full' => null,
 			'success' => true);
 
-		$return['success'] = true;
+		$first_test = substr($data['User']['id_card'], 0, 18);
 
-		if (preg_match("/(\w{2})(.*?)\^(.*?)\^(.*?)\?;(\d+)=(\d+)=\?/", $data['User']['id_card'], $my_results)) {
+		if (!preg_match("/\^/", $first_test)) {
+			$return['city'] = substr($data['User']['id_card'], 3, 13);
+			$remaining_dl = substr($data['User']['id_card'], 16);
+			if (preg_match("/(.*?)\^(.*?)\?;(\d+)=(\d+)=\?#!(\s+)(\d{5,})(.*?)\?/", $remaining_dl, $my_results)) {
+				$return['street'] = $my_results[2];
+				$return['street'] = preg_replace('/[^a-zA-Z0-9_-\s]/', '', $return['street']);
+				$return['state'] = substr($data['User']['id_card'], 1,2);
+
+				$full_name = $my_results[1];
+				$name_parts = explode('$',$full_name);
+				$return['first_name'] = $name_parts[1];
+				$return['last_name'] = $name_parts[0];
+				$return['middle_name'] = $name_parts[2];
+
+				$id_raw = $my_results[3];
+				$return['id_number'] = substr($id_raw,8,11);
+
+				$birth_raw = $my_results[4];
+				$return['birth_month'] = substr($birth_raw,2,2);
+				$return['birth_day'] = substr($birth_raw,10,2);
+				$return['birth_year'] = substr($birth_raw,4,4);
+			
+				$return['zip_code'] = $my_results[6];
+			}
+		}
+
+		elseif (preg_match("/(\w{2})(.*?)\^(.*?)\^(.*?)\?;(\d+)=(\d+)=\?/", $data['User']['id_card'], $my_results)) {
 			$return['street'] = $my_results[4];
+			$return['street'] = preg_replace('/[^a-zA-Z0-9_-\s]/', '', $return['street']);
 			$return['state'] = $my_results[1];
 			$return['city'] = $my_results[2];
 
@@ -955,6 +983,7 @@ class User extends AppModel {
 
 		elseif (preg_match("/(\w{2})(.*?)\^(.*?)\^(.*?)\^(.*?)\?;(\d+)=(\d+)=\?/", $data['User']['id_card'], $my_results)) {
 			$return['street'] = $my_results[4];
+			$return['street'] = preg_replace('/[^a-zA-Z0-9_-\s]/', '', $return['street']);
 			$return['state'] = $my_results[1];
 			$return['city'] = $my_results[2];
 
@@ -975,6 +1004,7 @@ class User extends AppModel {
 
 		elseif (preg_match("/(\w{2})(.*?)\^(.*?)\^(.*?)\^(.*?)\?;(\d+)=(\d+)=\?#!(\s+)(\d{5,})(.*?)\?/", $data['User']['id_card'], $my_results)) {
 			$return['street'] = $my_results[4];
+			$return['street'] = preg_replace('/[^a-zA-Z0-9_-\s]/', '', $return['street']);
 			$return['state'] = $my_results[1];
 			$return['city'] = $my_results[2];
 
@@ -998,10 +1028,16 @@ class User extends AppModel {
 		$return['id_full'] = substr($return['last_name'],0,1) . $return['id_number'];
 		foreach($return as $k => $v) {
 			if(empty($return[$k])) {
-				$return['success'] = false;
-				$return['message'] = 'ID card swipe issue (Not all info present). <br/>Please swipe again.';
+				if ($k != 'middle_name') {
+					$return['success'] = false;
+					$return['message'] = 'ID card swipe issue (Not all info present). <br/>Please swipe again.';
+				}
 			}
 		}
+
+	    $my_return = print_r($return,true);
+	    $this->log($my_return, 'debug');
+
 		return $return;
 	}
 
