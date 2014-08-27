@@ -2,7 +2,10 @@
 <div id="events">
 	<div class="filters">
 		<form class="event_categories" action="<?= $this->Url->currentUrl(); ?>" method="get">
-			<label class="event_categories_label" for="category_id"><?php __('Filter by event category') ?>:</label>
+		<table>
+			<tr>
+				<td>
+<label class="event_categories_label" for="category_id"><?php __('Filter by event category') ?>:</label>
 			<select id="event_categories_dropdown" name="category_id">
 			<option value="">All Categories</option>
 			<?php foreach($categories as $category): ?>
@@ -15,12 +18,20 @@
 
 			<?php endforeach ?>
 			</select>
+				</td>
+				<td>
+
 			<label class="event_locations_label" for="location_id"><?php __('Filter by event location') ?>:</label>
 			<select id="event_locations_dropdown" name="location_id">
 			<?php foreach($locations as $id => $location): ?>
 				<option value="<?= $id ?>"<?= ($id == $selectedLocation) ? ' selected="selected"' : '' ?>><?= $location ?></option>
 			<?php endforeach; ?>
 			</select>
+
+				</td>
+			</tr>
+		</table>
+			
 			<input type="submit" class="button gray" id="reset_filters" value="<?php __('Reset Filters') ?>" />
 			<input type="submit" class="button green" id="filter_submit" value="<?php __('Go') ?>" />
 		</form>
