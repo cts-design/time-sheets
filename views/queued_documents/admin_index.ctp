@@ -1,5 +1,5 @@
 <?php echo $this->Html->css('/js/ext/resources/css/BoxSelect', 'stylesheet', array('inline' => false)); ?>
-<?php echo $this->Html->script('pdfobject_min', array('inline' => false)) ?>
+<?php echo $this->Html->script('jquery', array('inline' => false)) ?>
 <?php echo $this->Html->script('ext/ux/BoxSelect', array('inline' => false)); ?>
 <script type="text/javascript">
 	var adminId = <?php echo $this->Session->read('Auth.User.id'); ?>;

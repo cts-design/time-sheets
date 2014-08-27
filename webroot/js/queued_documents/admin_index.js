@@ -188,6 +188,7 @@ Ext.define('QueuedDocument', {
 						if(this.data.queued_to_customer_id) {
 							autoPopulateCustomerInfo(this);
 						}
+
 						embedPDF(text.QueuedDocument);
 						Ext.getCmp('fileDocumentForm').getComponent('docId').setValue(text.QueuedDocument.id);
 						Ext.getCmp('reassignQueueForm').getComponent('docId').setValue(text.QueuedDocument.id);
@@ -243,7 +244,6 @@ function autoPopulateFilingCats(doc) {
 			cat = Ext.data.StoreManager.lookup('barCodeDefinitionsStore').getById(doc.data.bar_code_definition_id);
 		}
 
-		console.log(cat);
 		if(cat.data.cat_1 !== null) {
 			Ext.getCmp('mainFilingCats').select(cat.data.cat_1);
 			cat2Store = Ext.data.StoreManager.lookup('documentFilingCats2');
@@ -1848,7 +1848,7 @@ Ext.onReady(function(){
 					id: 'queuedDocumentsPdf',
 					width: '100%',
 					flex: 1,
-					html: '<p>No document currently loaded</p>'
+					html: '<p>No Document Loaded</p>'
 					//TODO: look into possibly having a no acrobat installed message here
 				}]
 			}]
@@ -1889,7 +1889,7 @@ Ext.onReady(function(){
 });
 
 function embedPDF(doc){
-	var myPDF = new PDFObject({
+	/*var myPDF = new PDFObject({
 		url: '/admin/queued_documents/view/'+doc.id,
 		pdfOpenParams: {
 			scrollbars: '1',
@@ -1899,8 +1899,10 @@ function embedPDF(doc){
 			navpanes: '0',
 			view: "FitH"
 		}
-	}).embed('queuedDocumentsPdf');
-
+	}).embed('queuedDocumentsPdf');*/
+	
+	jQuery('#queuedDocumentsPdf').html('<iframe style="width:100%;height:100%" frameborder="0" src="/admin/queued_documents/view/' + doc.id + '"></iframe>');
+	
 	if(doc.secure) {
 		Ext.getCmp('secureDocMessage').show();
 	}
