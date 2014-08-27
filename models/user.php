@@ -1031,7 +1031,7 @@ class User extends AppModel {
 			if(empty($return[$k])) {
 				if ($k != 'middle_name') {
 					$return['success'] = false;
-					$return['message'] = 'ID card swipe issue (Not all info present). <br/>Please swipe again.';
+					$return['message'] = 'Sorry, there was a problem reading your card.<br/>Please swipe again.';
 				}
 			}
 		}
