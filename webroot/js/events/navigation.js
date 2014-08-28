@@ -4,6 +4,32 @@
 */
 
 $(document).ready(function() {
+
+  var icon = $('#dialog-message .fa');
+
+  if(flash != '') {
+    
+    if(flash.match(/successfully/)) {
+      icon.addClass('.fa-times');
+      icon.removeClass('.fa-check');
+    }
+    else
+    {
+      icon.addClass('.fa-check');
+      icon.removeClass('.fa-times');
+    }
+
+    $('.flash-message').html(flash);
+    $('#dialog-message').dialog({
+      modal: true,
+      buttons: {
+        Ok: function() {
+          $(this).dialog('close');
+        }
+      }
+    });
+  }
+
   // Resets the form and hits submit
   $("#reset_filters").click(function(e){
     e.preventDefault();

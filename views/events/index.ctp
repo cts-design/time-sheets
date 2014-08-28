@@ -1,3 +1,6 @@
+<script type="text/javascript">
+var flash = '<?php echo addslashes($this->Session->read('Message.flash.message')) ?>';
+</script>
 <?php echo $this->Html->script('events/navigation.js', array('inline' => true)) ?>
 <div id="events">
 	<div class="filters">
@@ -159,4 +162,10 @@
 	<?php endif; ?>
 
 	<?php //echo $this->element('frontend_pagination') ?>
+</div>
+<div id="dialog-message" title="Event Attendence">
+	<p>
+		<i class="fa fa-check" style="float:left;margin:0px 5px 20px 0px;font-size:18pt"></i>
+		<span class="flash-message"></span>
+	</p>
 </div>
