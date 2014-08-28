@@ -988,6 +988,11 @@ class UsersController extends AppController {
 		$usePassword 		= Configure::read('Registration.usePassword');
 		$ssn_length			= Configure::read('Registration.' . $type . '.ssn_length');
 		$login_method		= Configure::read('Login.method');
+
+		// In case they have to make a new account while trying to do something like clicking "Attend Event"
+		// They will get redirected back to that page
+		$referer 			= $this->Session->read('referer');
+
 		$title_for_layout	= 'Registration';
 
 		$this->loadModel('Program');
@@ -1117,6 +1122,11 @@ class UsersController extends AppController {
 							$this->Transaction->createUserTransaction('Website',
 							$user_id, null, 'User self registered using the website.');
 							$this->Session->setFlash(__('Your account has been created.', true), 'flash_success');
+
+							if($referer != '')
+							{
+								$this->redirect($referer);
+							}
 
 							$this->redirect('/users/dashboard');
 						}
