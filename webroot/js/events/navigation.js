@@ -7,7 +7,7 @@ $(document).ready(function() {
 
   var icon = $('#dialog-message .fa');
 
-  if(flash != '') {
+  if(flash != '' && flash.match(/event/)) {
     
     if(flash.match(/successfully/)) {
       icon.addClass('.fa-times');
