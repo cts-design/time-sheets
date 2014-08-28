@@ -158,5 +158,5 @@
 			</div>
 	<?php endif; ?>
 
-	<?= $this->element('frontend_pagination') ?>
+	<?php //echo $this->element('frontend_pagination') ?>
 </div>
