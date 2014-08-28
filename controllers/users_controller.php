@@ -1125,6 +1125,7 @@ class UsersController extends AppController {
 
 							if($referer != '')
 							{
+								$this->Session->delete('referer');
 								$this->redirect($referer);
 							}
 
