@@ -22,6 +22,7 @@ $(document).ready(function() {
     $('.flash-message').html(flash);
     $('#dialog-message').dialog({
       modal: true,
+      width: 400,
       buttons: {
         Ok: function() {
           $(this).dialog('close');

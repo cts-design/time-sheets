@@ -166,6 +166,6 @@ var flash = '<?php echo addslashes($this->Session->read('Message.flash.message')
 <div id="dialog-message" title="Event Attendence" style="display:none">
 	<p>
 		<i class="fa fa-check" style="float:left;margin:0px 5px 20px 0px;font-size:18pt"></i>
-		<span class="flash-message"></span>
+		<span class="flash-message" style="font-size:12pt"></span>
 	</p>
 </div>
