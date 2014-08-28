@@ -1,4 +1,4 @@
-<?php echo $this->Html->script('events/navigation.js', array('inline' => false)) ?>
+<?php //echo $this->Html->script('events/navigation.js', array('inline' => false)) ?>
 <div id="events">
 	<div class="filters">
 		<form class="event_categories" action="<?= $this->Url->currentUrl(); ?>" method="get">

@@ -364,16 +364,12 @@ class EventsController extends AppController {
 		));
 		$user = $this->User->findById($this->Auth->user('id'));
 
-		//$redirectAction = ($eventType === 'workshop') ? 'workshop' : 'index';
-
-		$redirectAction = 'index';
-
 		if (isset($user['EventRegistration']) && !empty($user['EventRegistration'])) {
 			$this->Session->setFlash(__('You are already registered for this event', true), 'flash_failure');
-			$this->redirect(array('action' => $redirectAction));
+			$this->redirect($this->referer());
 		} else if ($event['Event']['event_registration_count'] >= $event['Event']['seats_available']){
 			$this->Session->setFlash(__('We\'re sorry, but this event is full', true), 'flash_failure');
-			$this->redirect(array('action' => $redirectAction));
+			$this->redirect($this->referer());
 		} else {
 			$data = array(
 				'user_id' => $this->Auth->user('id'),
@@ -390,10 +386,10 @@ class EventsController extends AppController {
 					'Registered for event ID ' . $event['Event']['id']
 				);
 				$this->Session->setFlash(__('You\'ve successfully registered for this event', true), 'flash_success');
-				$this->redirect(array('action' => $redirectAction));
+				$this->redirect($this->referer());
 			} else {
 				$this->Session->setFlash(__('Something went wrong while registering you for this event. Please try again', true), 'flash_failure');
-				$this->redirect(array('action' => $redirectAction));
+				$this->redirect($this->referer());
 			}
 		}
 	}
