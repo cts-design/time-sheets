@@ -17,7 +17,7 @@ class EventsController extends AppController {
 
 	function beforeFilter() {
 		parent::beforeFilter();
-		$this->Auth->allow('view', 'index', 'workshop', 'upcoming');
+		$this->Auth->allow('view', 'index', 'workshop', 'upcoming', 'attend');
 		if($this->Auth->user() && $this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Events/admin_index', '*')) {
 
 			$this->Auth->allow('admin_add', 'admin_edit', 'admin_delete', 'admin_get_event_category_list', 'admin_list_events_registration');
@@ -347,7 +347,9 @@ class EventsController extends AppController {
 	}
 
 	public function attend($eventId, $eventType = null) {
-		if($this->Auth->user() == NULL) {
+		if(!$this->Auth->user('id')) {
+			$this->Session->write('login_referer', '/events/attend/' . $eventId . '/' . $eventType);
+			$this->Session->write('events_referer', $this->referer());
 			$this->redirect('/users/login');
 		}
 
@@ -357,6 +359,12 @@ class EventsController extends AppController {
 		$this->User->contain('EventRegistration.event_id = ' . $eventId);
 		$this->Event->Behaviors->attach('Containable');
 		$this->Event->recursive = -1;
+
+		$referer = $this->Session->read('events_referer');
+		if(!$referer)
+		{
+			$referer = '/events';
+		}
 
 		$event = $this->Event->find('first', array(
 			'conditions' => array(
@@ -370,10 +378,10 @@ class EventsController extends AppController {
 
 		if (isset($user['EventRegistration']) && !empty($user['EventRegistration'])) {
 			$this->Session->setFlash(__('You are already registered for this event', true), 'flash_failure');
-			$this->redirect($this->referer());
+			$this->redirect($referer);
 		} else if ($event['Event']['event_registration_count'] >= $event['Event']['seats_available']){
 			$this->Session->setFlash(__('We\'re sorry, but this event is full', true), 'flash_failure');
-			$this->redirect($this->referer());
+			$this->redirect($referer);
 		} else {
 			$data = array(
 				'user_id' => $this->Auth->user('id'),
@@ -390,10 +398,10 @@ class EventsController extends AppController {
 					'Registered for event ID ' . $event['Event']['id']
 				);
 				$this->Session->setFlash(__('You\'ve successfully registered for this event', true), 'flash_success');
-				$this->redirect($this->referer());
+				$this->redirect($referer);
 			} else {
 				$this->Session->setFlash(__('Something went wrong while registering you for this event. Please try again', true), 'flash_failure');
-				$this->redirect($this->referer());
+				$this->redirect($referer);
 			}
 		}
 	}
