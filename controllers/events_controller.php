@@ -347,6 +347,10 @@ class EventsController extends AppController {
 	}
 
 	public function attend($eventId, $eventType = null) {
+		if($this->Auth->user() == NULL) {
+			$this->redirect('/users/login');
+		}
+
 		$this->loadModel('User');
 		$this->User->recursive = -1;
 		$this->User->Behaviors->attach('Containable');
