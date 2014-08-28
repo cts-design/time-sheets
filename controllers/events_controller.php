@@ -416,9 +416,7 @@ class EventsController extends AppController {
 			$this->Session->setFlash(__('You\'ve successfully un-registered for this event', true), 'flash_success');
 		}
 
-		//$this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
-
-		$this->redirect('/events');
+		$this->redirect($this->referer());
 	}
 
 	public function view() {}
