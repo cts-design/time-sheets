@@ -1147,11 +1147,6 @@ class UsersController extends AppController {
 	}
 
 	function kiosk_auto_logout() {
-		$user = $this->User->findById( $this->Auth->user('id') );
-		$user['User']['last_kiosk_login'] = date('Y-m-d H:i:s');
-		$this->User->create();
-		$this->User->save($user);
-
 		$this->Session->destroy();
 		$this->Session->setFlash(__('You have been logged out due to inactivity.', true), 'flash_failure');
 		$this->redirect('/kiosk');
