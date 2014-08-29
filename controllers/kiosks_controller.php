@@ -185,7 +185,7 @@ class KiosksController extends AppController {
     	$this->loadModel('Setting');
     	$this->loadModel('KioskSurveyResponses');
 
-    	$kiosk 						= $this->Kiosk->isKiosk();
+    	$kiosk 						= $this->Kiosk->isKiosk('demo');
     	$kiosk_expiration 			= $this->Setting->getSetting('Kiosk', 'SurveyExpiration');
 
     	//Format kiosk_expiration for proper strtotime format "-x days or -y months"

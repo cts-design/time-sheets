@@ -10,7 +10,7 @@
 		<!-- TODO: Allow for customization of kiosk survey prompt -->
 		<p class="center" style="text-align:center">Would you like to take this moment to fill out our survey?</p>
 
-		<a class="self-sign-kiosk-link" href="/kiosk/survey/<?= $kiosk['KioskSurvey'][0]['id'] ?>">
+		<a class="self-sign-kiosk-link" href="/kiosk/survey/<?= $this->params['pass'][0] ?>">
 			Yes
 		</a>
 
@@ -23,7 +23,7 @@
 		<!-- TODO: Allow for customization of kiosk survey prompt -->
 		<p class="center" style="text-align:center">Before continuing you will have to complete a survey</p>
 
-		<a class="self-sign-kiosk-link" href="/kiosk/survey/<?= $kiosk['KioskSurvey'][0]['id'] ?>">
+		<a class="self-sign-kiosk-link" href="/kiosk/survey/<?= $this->params['pass'][0] ?>">
 			Continue
 		</a>
 
