@@ -1,4 +1,7 @@
-<?php echo $this->Html->script('events/navigation.js', array('inline' => false)) ?>
+<script type="text/javascript">
+var flash = '<?php echo addslashes($this->Session->read('Message.flash.message')) ?>';
+</script>
+<?php echo $this->Html->script('events/navigation.js', array('inline' => true)) ?>
 <div id="events">
 	<div class="filters">
 		<form class="event_categories" action="<?= $this->Url->currentUrl(); ?>" method="get">
@@ -158,5 +161,11 @@
 			</div>
 	<?php endif; ?>
 
-	<?= $this->element('frontend_pagination') ?>
+	<?php //echo $this->element('frontend_pagination') ?>
+</div>
+<div id="dialog-message" title="Event Attendence" style="display:none">
+	<p>
+		<i class="fa fa-check" style="float:left;margin:0px 5px 20px 0px;font-size:18pt"></i>
+		<span class="flash-message" style="font-size:12pt"></span>
+	</p>
 </div>
