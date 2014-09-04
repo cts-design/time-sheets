@@ -172,47 +172,55 @@ end
 
 # Production servers
 # 5pm deploys
-task :cc do
+
+task :cs_south_florida do
+  set :deploy_to, "/var/www/vhosts/deploy/#{application}"
+  set :server_name, 'careersource south florida'
+  set :user, 'deploy'
+  server "68.17.60.50", :app, :web, :db, :primary => true
+end
+
+task :cs_pasco_hernando do
   set :deploy_to, "/var/www/vhosts/atlasv3.careercentral.jobs/#{application}"
-  set :server_name, 'cc production'
+  set :server_name, 'careersource pasco hernando'
   set :user, 'ccv3prod_ftp'
   set :design_branch, "ccentral-new"
   set :design_architecture, 'new'
   server "192.168.200.46", :app, :web, :db, :primary => true
 end
 
-task :clm do
+task :cs_clm do
   set :deploy_to, "/var/www/vhosts/atlas.clmworkforce.com/#{application}"
-  set :server_name, 'clm production'
+  set :server_name, 'careersource clm'
   set :user, 'clm_ftp'
   server "atlas.clmworkforce.com", :app, :web, :db, :primary => true
 end
 
 task :cs_capital_region do
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
-  set :server_name, 'CareerSource Capital Region'
+  set :server_name, 'careersource capital region'
   set :user, 'deploy'
   server "199.44.92.153", :app, :web, :db, :primary => true
 end
 
 task :rescare do
-  set :server_name, 'rescare production'
+  set :server_name, 'rescare'
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
   set :user, 'deploy'
   set :port, 23
   server "montgomery.rescare.com", :app, :web, :db, :primary => true
 end
-task :suncoast do # deploy@atlas.suncoastworkforce.org
+task :cs_suncoast do # deploy@atlas.suncoastworkforce.org
   set :server_name, 'suncoast production'
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
   set :user, 'deploy'
   server "atlas.suncoastworkforce.org", :app, :web, :db, :primary => true
 end
 
-task :tbwa do
+task :cs_tampa_bay do
   set :design_branch, "tbwa-new"
   set :design_architecture, 'new'  
-  set :server_name, 'tbwa production'
+  set :server_name, 'careersource tampa bay'
   set :deploy_to, "/var/www/vhosts/workforcetampa.com/#{application}"
   set :user, 'ftp_tbwa'
   server "workforcetampa.com", :app, :web, :db, :primary => true
@@ -228,8 +236,8 @@ task :united_way do
   server "jobsmarttampabay.com", :app, :web, :db, :primary => true
 end
 
-task :worknetpinellas do
-  set :server_name, 'worknetpinellas production'
+task :cs_pinellas do
+  set :server_name, 'careersource pinellas'
   set :design_branch, 'worknet-pinellas'
   set :design_architecture, 'new'
   server "10.66.49.13", :app, :web, :db, :primary => true
@@ -248,17 +256,17 @@ task :wrec do
 end
 
 # 6pm deploys
-task :chipola do
+task :cs_chipola do
   set :design_branch, "chipola-new"
   set :design_architecture, 'new'
   set :deploy_to, "/var/www/vhosts/atlas.onestopahead.com/#{application}"
-  set :server_name, 'chipola production'
+  set :server_name, 'careersource chipola'
   set :user, 'ola_chip0'
   server "23.25.183.162", :app, :web, :db, :primary => true
 end
 
-task :jobsplus do
-  set :server_name, 'jobs plus production'
+task :cs_okaloosa_walton do
+  set :server_name, 'careersource okaloosa walton'
   set :deploy_to, "/var/www/vhosts/deploy/#{application}"
   set :user, 'deploy'
   set :design_branch, 'okaton'
