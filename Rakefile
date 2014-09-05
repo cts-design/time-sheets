@@ -11,6 +11,7 @@ namespace :design do
 
     Rake::Task['symlink:stylesheets'].invoke branch
     Rake::Task['symlink:javascripts'].invoke branch
+    Rake::Task['symlink:html'].invoke branch
     Rake::Task['symlink:images'].invoke branch
     Rake::Task['design:set_theme_config'].invoke branch
   end
@@ -47,6 +48,9 @@ namespace :design do
     puts "= Removing theme img assets from webroot"
     sh "rm -rf webroot/img/theme"
 
+    puts "= Removing theme html assets from webroot"
+    sh "rm -rf webroot/html/theme"
+
     config = File.read 'config/atlas.php'
     File.open('config/atlas.php', 'w') do |file|
       file.puts config.gsub(/\$config\['Website'\]\['theme'\] = '[\w\S]*';/, "$config['Website']['theme'] = '';")
@@ -80,6 +84,24 @@ namespace :symlink do
     ignore = ['.', '..']
 
     puts "= Symlinking js assets"
+
+    Dir.foreach source do |file|
+      next if ignore.include? file
+
+      absolute_source = "#{source}/#{file}"
+      absolute_dest = "#{dest}/#{file}"
+
+      sh "ln -fs #{absolute_source} #{absolute_dest}"
+    end
+  end
+
+  task :html, :branch do |t, args|
+    branch = args.branch
+    source = File.absolute_path "views/themed/#{branch}/webroot/html"
+    dest = File.absolute_path 'webroot/html'
+    ignore = ['.', '..']
+
+    puts "= Symlinking html assets"
 
     Dir.foreach source do |file|
       next if ignore.include? file
