@@ -3,6 +3,45 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
+	<h1>Release 3.8.7 (August 25th 2014)</h1>
+	<h2>Features</h2>
+	<ol>
+		<li>
+			Orientations that are being accessed from the kiosk can now
+			scan their documents to ATLAS
+		</li>
+		<li>
+			Admins can now choose to recieve a carbon copy of all the outgoing ATLAS System emails
+		</li>
+		<li>
+			Kiosks Buttons can now be assigned actions and logout messages
+		</li>
+		<li>
+			Ecourse Media now supports embeded Youtube videos.
+		<li>
+		<li>
+			Systems can now be configured to allow customers to login using their username and password instead of their lastname and social security number
+		</li>
+		<li>
+			Users that click the, "Attend this Event", button, while not logged in, will automatically be registered for the event on login.
+		</li>
+		<li>
+			Users are presented with a small modal on successful registration for an event.
+		</li>
+	</ol>
+	<h2>Bug Fixes</h2>
+	<ol>
+		<li>
+			Events now save properly no matter which checkboxes are selected
+		</li>
+		<li>
+			Filed Documents dropdown no longer shows an error message inside the dropdown menu.
+		</li>
+		<li>
+			The public /events page now has paginates correctly.
+		</li>
+	</ol>
+
 	<h1>Release 3.8.6 (July 27th 2014)</h1>
 	<h2>Features</h2>
 	<ol>
