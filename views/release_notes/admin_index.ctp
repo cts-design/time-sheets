@@ -14,7 +14,7 @@
 			Admins can now choose to recieve a carbon copy of all the outgoing ATLAS System emails
 		</li>
 		<li>
-			Kiosks Buttons can now be assigned actions and logout messages
+			Self Sign Service Selection Buttons can now be assigned actions and logout messages
 		</li>
 		<li>
 			Ecourse Media now supports embeded Youtube videos.
@@ -23,10 +23,10 @@
 			Systems can now be configured to allow customers to login using their username and password instead of their lastname and social security number
 		</li>
 		<li>
-			Users that click the, "Attend this Event", button, while not logged in, will automatically be registered for the event on login.
+			Customers that click the, "Attend this Event", button, while not logged in, will automatically be registered for the event on login.
 		</li>
 		<li>
-			Users are presented with a small modal on successful registration for an event.
+			Customers are presented with a small modal on successful registration for an event.
 		</li>
 	</ol>
 	<h2>Bug Fixes</h2>
