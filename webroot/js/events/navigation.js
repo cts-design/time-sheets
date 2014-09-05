@@ -1,94 +1,47 @@
-/**
- * @author Brandon Cordell
- * @copyright Complete Technology Solutions 2011
- * @link http://ctsfla.com
- * @package ATLAS V3
- */
+/*
+  Author : Joseph Shering
+  Date : 08/28/2014
+*/
 
-var currentPath,
-  queryString;
+$(document).ready(function() {
 
-currentPath = function () {
-  return window.location.pathname;
-}
+  var icon = $('#dialog-message .fa');
 
-queryString = function(url) {
-  return url.slice(url.indexOf('?')).split('&')[0];
-}
-
-$(function() {
-  var eventCategory = 0,
-    currentUrl = currentPath(),
-    currentQueryString;
-
-  $('body').attr('class', 'js');
-
-  $('#event_categories_dropdown').live('change', function(e) {
-    e.preventDefault();
-
-    $.get(currentUrl, $('.event_categories').serialize(), function(data) {
-      $('#events').replaceWith(data);
-    });
-
-    $("#events").empty().html('<img src="/img/ajaxLoader.gif" height="16" width="16" />');
-  });
-
-  $('#event_locations_dropdown').live('change', function(e) {
-    e.preventDefault();
-
-    $.get(currentUrl, $('.event_categories').serialize(), function(data) {
-      $('#events').replaceWith(data);
-    });
-
-    $("#events").empty().html('<img src="/img/ajaxLoader.gif" height="16" width="16" />');
-  });
-
-  $('.pagination a').live('click', function(e) {
-    e.preventDefault();
-
-    var target = $(this).attr('href'),
-      content;
-
-    if (currentQueryString) {
-      target += currentQueryString;
+  if(flash != '' && flash.match(/event/)) {
+    
+    if(flash.match(/successfully/)) {
+      icon.addClass('.fa-times');
+      icon.removeClass('.fa-check');
+    }
+    else
+    {
+      icon.addClass('.fa-check');
+      icon.removeClass('.fa-times');
     }
 
-    $.get(target, $('.event_categories').serialize(), function(data) {
-      $('#events').html(data);
+    $('.flash-message').html(flash);
+    $('#dialog-message').dialog({
+      modal: true,
+      width: 400,
+      buttons: {
+        Ok: function() {
+          $(this).dialog('close');
+        }
+      }
     });
+  }
 
-    $("#events").empty().html('<img src="/img/ajaxLoader.gif" height="16" width="16" />');
-
-    currentUrl = target;
-  });
-
-  $('.calnav a').live('click', function(e) {
+  // Resets the form and hits submit
+  $("#reset_filters").click(function(e){
     e.preventDefault();
 
-    var target = $(this).attr('href'),
-      content;
+    var $events_category  = $('#event_categories_dropdown');
+    var $events_location  = $('#event_locations_dropdown');
+    var $events_form      = $('.event_categories');
 
-    currentQueryString = queryString(target);
+    $events_category.val('');
+    $events_location.val('');
 
-    $.get(target, $('.event_categories').serialize(), function(data) {
-      $('#events').html(data);
-    });
-
-    $("#events").empty().html('<img src="/img/ajaxLoader.gif" height="16" width="16" />');
-
-    currentUrl = target;
-  });
-
-  $('#reset_filters').live('click', function(e) {
-    e.preventDefault();
-
-    $('#event_locations_dropdown').val(0);
-    $('#event_categories_dropdown').val(0);
-
-    $.get(currentUrl, $('.event_categories').serialize(), function(data) {
-      $('#events').html(data);
-    });
-
-    $("#events").empty().html('<img src="/img/ajaxLoader.gif" height="16" width="16" />');
+    $events_form.submit();
   });
 });
