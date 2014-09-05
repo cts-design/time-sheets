@@ -11,7 +11,7 @@
 			scan their documents to ATLAS
 		</li>
 		<li>
-			Admins can now choose to recieve a carbon copy of all the outgoing ATLAS System emails
+			Admins can now choose to receive a carbon copy of all the outgoing ATLAS System emails
 		</li>
 		<li>
 			Self Sign Service Selection Buttons can now be assigned actions and logout messages
