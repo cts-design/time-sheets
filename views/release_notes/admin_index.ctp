@@ -42,6 +42,8 @@
 		</li>
 	</ol>
 
+	<br />
+
 	<h1>Release 3.8.6 (July 27th 2014)</h1>
 	<h2>Features</h2>
 	<ol>
