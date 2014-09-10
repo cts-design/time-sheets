@@ -46,17 +46,20 @@ class SelfSignLogsController extends AppController {
 				$status = $this->params['url']['status'];
 			}
 			$conditions['SelfSignLog.status'] = $status;				
-				
+			
 			$selfSignLogs = $this->SelfSignLog->find('all', array(
 				'conditions' => $conditions,
 				'order' => array('SelfSignLog.created DESC')));
 			$i = 0;
+
+			$this->log(var_export($selfSignLogs, true));
+
 			$masterKioskButtonList = $this->_getAllMasterButtonNames();
 			$data = array();
 			$data['results'] = $this->SelfSignLog->find('count', array('conditions' => $conditions));
 			$data['success'] = true;
 			$data['logs'] = array();
-			if($selfSignLogs)	{
+			if($selfSignLogs){
 				$kiosks = $this->_getKioskNames();
 				foreach($selfSignLogs as $selfSignLog) {
 					$data['logs'][$i]['id'] = $selfSignLog['SelfSignLog']['id'];
@@ -64,7 +67,9 @@ class SelfSignLogsController extends AppController {
 					$data['logs'][$i]['lastname'] = ucfirst($selfSignLog['User']['lastname']);		 
 					$data['logs'][$i]['firstname'] = ucfirst($selfSignLog['User']['firstname']);
 					$data['logs'][$i]['last4'] = substr($selfSignLog['User']['ssn'], -4);
-					$data['logs'][$i]['userId'] = $selfSignLog['User']['id']; 
+					$data['logs'][$i]['userId'] = $selfSignLog['User']['id'];
+					$data['logs'][$i]['veteran'] = $selfSignLog['User']['veteran'];
+					$data['logs'][$i]['disability'] = $selfSignLog['User']['disability'];
 					$level2 = null;
 					$level3 = null;
 					$other = null;
