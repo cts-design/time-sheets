@@ -88,6 +88,8 @@ class ProgramResponsesController extends AppController {
 				else {
 					$redirect = array('action' => $this->nextStep[0]['type'], $programId, $this->nextStep[0]['id']);
 				}
+
+				$status = 'incomplete';
 			}
 			else {
 				if($program['Program']['approval_required']) {
@@ -98,6 +100,8 @@ class ProgramResponsesController extends AppController {
 				}
 				$this->data['ProgramResponse']['status'] = $status;
 			}
+
+
 			// TODO: make sure validation works
 			if($this->ProgramResponse->saveAll($this->data)) {
 				$program = $this->ProgramResponse->Program->getProgramAndResponse($programId, $this->Auth->user('id'));
