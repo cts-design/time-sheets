@@ -20,6 +20,25 @@ class Setting extends AppModel {
 		)
 	);
 
+	public function getSetting($module, $name) {
+
+		$settings = Set::extract('/Setting/.', $this->find('first', array(
+			'conditions' => array(
+				'module' => $module,
+				'name' => $name
+			)
+		)));
+
+		if(!$settings)
+		{
+			return FALSE;
+		}
+		else
+		{
+			return $settings[0]['value'];
+		}
+	}
+
 	public function getEmails() {
 		$setting = $this->find('first', array(
 			'conditions' => array(

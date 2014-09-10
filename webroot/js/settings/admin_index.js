@@ -50,7 +50,7 @@ var fields = Ext.create('Ext.data.Store', {
       {"field":"veteran", "label":"Veteran"},
       {"field":"disability", "label":"Disability"}
     ]
-});	
+});
 
 // Max Selection validation to only allow x number of selections in a boxselect menu
 Ext.apply(Ext.form.field.VTypes, {
@@ -81,7 +81,8 @@ var kioskRegistration = Ext.create('Ext.form.Panel', {
   url: '/admin/settings/kiosk_registration',
   margin: 5,
   frame: true,
-  width: 295,	
+  width: 295,
+  flex: 1,
   items: [fieldsSelect],
   buttons: [{
     text: 'Update',
@@ -140,7 +141,8 @@ Ext.create('Ext.form.Panel', {
   id: 'kioskConfirmation',
   frame: true,
   margin: 5,
-  width: 295,	
+  width: 295,
+  flex: 1,
   items: [{
     xtype: 'checkboxfield',
     fieldLabel: 'Customer Info Confirmation',
@@ -198,6 +200,17 @@ Ext.create('Ext.data.Store', {
   }
 });
 
+var kiosk_survey_combo = Ext.create('Ext.data.Store', {
+  fields : ['value', 'name'],
+  data : [{
+    'value' : 'prompt',
+    'name' : 'Prompt'
+  }, {
+    'value' : 'force',
+    'name' : 'Force'
+  }]
+});
+
 Ext.create('Ext.form.Panel', {
   title: 'Kiosk Time Out',
   id: 'kioskTimeOut',
@@ -220,6 +233,85 @@ Ext.create('Ext.form.Panel', {
     minValue: 5,
     maxValue: 60
  }],
+  buttons: [{
+    text: 'Update',
+    formBind: true,
+    handler: function() {
+      var form = this.up('form').getForm();
+      if(form.isValid()) {
+        form.submit({
+          waitMsg: 'Updating Settings',
+          success: function(form, action) {
+             Ext.Msg.alert('Success', action.result.message);
+          },
+          failure: function(form, action) {
+              Ext.Msg.alert('Failed', action.result.message);
+          }
+        });
+      }
+    }
+  }]
+});
+
+Ext.create('Ext.form.Panel', {
+  title: 'Kiosk Survey',
+  id: 'KioskSurveyPanel',
+  url: '/admin/settings/kiosk_survey',
+  frame: true,
+  margin: 5,
+  flex: 1,
+  items: [{
+    xtype: 'combo',
+    fieldLabel: 'Survey Prompt',
+    displayField: 'name',
+    valueField: 'value',
+    store: kiosk_survey_combo,
+    name: 'kiosk_survey'
+  }],
+  buttons: [{
+    text: 'Update',
+    formBind: true,
+    handler: function() {
+      var form = this.up('form').getForm();
+      if(form.isValid()) {
+        form.submit({
+          waitMsg: 'Updating Settings',
+          success: function(form, action) {
+             Ext.Msg.alert('Success', action.result.message);
+          },
+          failure: function(form, action) {
+              Ext.Msg.alert('Failed', action.result.message);
+          }
+        });
+      }
+    }
+  }]
+});
+
+Ext.create('Ext.form.Panel', {
+  title: 'Kiosk Survey Expiration',
+  id: 'KioskSurveyExpirationPanel',
+  url: '/admin/settings/kiosk_survey_expiration',
+  frame: true,
+  margin: 5,
+  flex: 1,
+  items: [{
+    xtype: 'numberfield',
+    fieldLabel: '',
+    name: 'numeric'
+  }, {
+    xtype: 'combo',
+    fieldLabel: '',
+    displayField: 'name',
+    valueField: 'value',
+    name: 'label',
+    store: Ext.create('Ext.data.Store', {
+      fields : ['value', 'name'],
+      data : [
+        { name: 'day(s)', value: 'days' },
+        { name: 'month(s)', value: 'months' }
+      ]})
+  }],
   buttons: [{
     text: 'Update',
     formBind: true,
@@ -647,6 +739,10 @@ Ext.onReady(function(){
       layout: 'hbox',
       title: 'Email CC',
       items: ['emailcc']
+    }, {
+      layout: 'hbox',
+      title: 'Survey',
+      items: ['KioskSurveyPanel', 'KioskSurveyExpirationPanel']
     }]
 	});
 });

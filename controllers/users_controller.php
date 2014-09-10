@@ -516,7 +516,7 @@ class UsersController extends AppController {
 
 	function kiosk_self_sign_login() {
 		$this->loadModel('Kiosk');
-		$kiosk 			= $this->Kiosk->isKiosk('demo');
+		$kiosk 			= $this->Kiosk->isKiosk();
 		$login_method 	= Configure::read('Login.method');
 		$settings 		= Cache::read('settings');
 		$fields 		= Set::extract('/field',  json_decode($settings['SelfSign']['KioskRegistration'], true));
@@ -625,7 +625,7 @@ class UsersController extends AppController {
 
 	public function kiosk_id_card_login() {
 		$this->loadModel('Kiosk');
-		$kiosk = $this->Kiosk->isKiosk('demo');
+		$kiosk = $this->Kiosk->isKiosk();
 
 		$settings = Cache::read('settings');
 		$fields = Set::extract('/field',  json_decode($settings['SelfSign']['KioskRegistration'], true));
@@ -956,6 +956,11 @@ class UsersController extends AppController {
 	function logout($type='web', $logoutMsg = 'You have logged out successfully.') {
 		$this->autoRender = false;
 		if ($this->Auth->user('role_id') == '1' || !$this->Auth->user()) {
+
+			$this->User->create();
+			$this->User->id = $this->Auth->user('id');
+			$this->User->saveField('last_kiosk_login', date('Y-m-d H:i:s'));
+
 			switch($type)
 			{
 				case 'kiosk':
