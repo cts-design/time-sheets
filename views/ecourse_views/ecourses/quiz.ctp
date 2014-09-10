@@ -11,10 +11,11 @@ $(function () {
   $.validator.messages.required = 'Question must be answered';
 });
 <?php $this->Html->scriptEnd(); ?>
-
 <div id="ecourse-quiz">
 	<?= $this->Form->create(null, array('url' => '/ecourses/grade', 'id' => 'quiz-form')) ?>
 	<ol class="questions">
+	<?php $userSessionAnswers = $session->read('userAnswers') ?>
+	<?php $quizSessionAnswers = $session->read('quizAnswers') ?>
 	<?php foreach ($ecourseModule['EcourseModuleQuestion'] as $question): ?>
 		<?php $answers = array() ?>
 		<?php $attributes = array(
@@ -23,8 +24,13 @@ $(function () {
 			'class' =>  'required answer',
 			'message' => 'text'
 		) ?>
+		<?php $count = 0 ?>
 		<?php foreach($question['EcourseModuleQuestionAnswer'] as $answer): ?>
 			<?php $answers[$answer['id']] = Sanitize::html($answer['text']) ?>
+			<?php if($userSessionAnswers != NULL && $quizSessionAnswers != NULL && in_array($answer['id'], $userSessionAnswers) &&  in_array($answer['id'], $quizSessionAnswers)) { 
+				$attributes['value'] = $answer['id']; 
+			} ?>
+			<?php $count += 1 ?>
 		<?php endforeach ?>
 		<li class="question">
 			<?= $this->Form->label(Inflector::slug($question['text']), $question['text'], array('class' => 'main-label') ); ?>

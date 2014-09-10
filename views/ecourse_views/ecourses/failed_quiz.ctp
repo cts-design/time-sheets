@@ -3,7 +3,34 @@ $(function () {
   $(".button").button();
 });
 <?php $this->Html->scriptEnd(); ?>
-
+<style>
+.big
+{
+	font-size:1em;
+}
+.light
+{
+	color:#636363;
+}
+.shoulders
+{
+	margin:5px 0px;
+}
+</style>
+<div style="margin:10px 0px;font-size:12pt">
+	<p class="shoulders big light">
+		You got a <?= round($quizScore, 1) ?>%
+	</p>
+	<p class="shoulders big light">
+		You have answered <?= $numberCorrect ?> questions right out of <?= count($quizAnswers) ?> questions
+	</p>
+	<p class="shoulders big light">
+		A score of <?= $ecourseModule['EcourseModule']['passing_percentage'] ?>% or higher is required to pass
+	</p>
+	<p class="shoulders big light">
+		You may review your test results in more detail below. When finished please use the "Return to Module Media" link at the bottom of the page to return the module material.
+	</p>
+</div>
 <ol id="ecourse-quiz-results">
 	<?php foreach($ecourseModule['EcourseModuleQuestion'] as $question) : ?> 
 		<li>
@@ -20,5 +47,5 @@ $(function () {
 </ol>
 <br />
 <p>
-	<?php echo $this->Html->link('Return to course', '/ecourses/media/'.$ecourseModule['EcourseModule']['ecourse_id'], array('class' => 'button'))?>
+	<?php echo $this->Html->link('Return to Module Media', '/ecourses/media/'.$ecourseModule['EcourseModule']['ecourse_id'], array('class' => 'button'))?>
 </p>

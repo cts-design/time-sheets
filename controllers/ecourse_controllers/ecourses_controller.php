@@ -148,7 +148,7 @@ class EcoursesController extends AppController {
 			'contain' => array(
 				'EcourseModuleQuestion' => array(
 					'order' => array('EcourseModuleQuestion.order ASC'),
-					'EcourseModuleQuestionAnswer' => array('fields' => array('id', 'text'))
+					'EcourseModuleQuestionAnswer' => array('fields' => array('id', 'text', 'correct'))
 				)
 			)
 		));
@@ -199,6 +199,10 @@ class EcoursesController extends AppController {
 		$wrongAnswers = Set::diff($userAnswers, $quizAnswers);
 		$numberCorrect = count($quizAnswers) - count($wrongAnswers);
 		$quizScore = ($numberCorrect / count($quizAnswers)) * 100;
+
+		$this->set(compact('quizScore', 'numberCorrect', 'wrongAnswers', 'quizAnswers', 'userAnswers'));
+		$this->Session->write('userAnswers', $userAnswers);
+		$this->Session->write('quizAnswers', $quizAnswers);
 		
 		$this->data['EcourseModuleResponse']['id'] = $ecourseResponse['EcourseModuleResponse'][0]['id'];
 		$this->data['EcourseModuleResponse']['ecourse_module_id'] = $ecourseModule['EcourseModule']['id'];
@@ -214,6 +218,9 @@ class EcoursesController extends AppController {
 
 		if($this->Ecourse->EcourseResponse->EcourseModuleResponse->save($this->data['EcourseModuleResponse'])) {
 			if($ecourseModule['EcourseModule']['passing_percentage'] <= $quizScore) {
+				$this->Session->delete('userAnswers');
+				$this->Session->delete('quizAnswers');
+
 				$nextModule = $this->Ecourse->EcourseModule->find('first',
 					array('conditions' => array(
 						'EcourseModule.ecourse_id' => $ecourseModule['EcourseModule']['ecourse_id'],
