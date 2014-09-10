@@ -1,6 +1,6 @@
-<div class="container" ng-app="activity-report" ng-controller="ActivityController">
+<div class="container" ng-app="activity-report" ng-controller="ActivityController" style="margin-top:5px">
 	<div class="row">
-		<div class="col-sm-10 col-sm-offset-1 bleach no-pad">
+		<div class="col-sm-10 col-sm-offset-1 col-xs-10 col-xs-offset-1 bleach no-pad">
 
 			<nav class="navbar navbar-default navbar-static-top" style="margin:0px;padding-left:5px;padding-right:5px;border-bottom:none">
 				<div class="container-fluid">
@@ -13,17 +13,17 @@
 
 					<ul class="nav navbar-nav navbar-right" style="margin-right:-5px">
 						<li>
-							<a href ng-click="previousPage()" disabled>
+							<a href ng-click="previousPage()">
 								<i class="fa fa-angle-left"></i>
 							</a>
 						</li>
 						<li>
-							<a href>
+							<a href style="display:inline-block">
 								{{ (offset/limit) + 1 }}
 							</a>
 						</li>
 						<li>
-							<a href ng-click="nextPage()" disabled>
+							<a href ng-click="nextPage()">
 								<i class="fa fa-angle-right"></i>
 							</a>
 						</li>
@@ -104,7 +104,7 @@
 						{{ user_transaction.module }}
 					</td>
 					<td>
-						{{ user_transaction.created | todate | date:'short' }}
+						{{ user_transaction.created | todate }}
 					</td>
 				</tr>
 			</table>
@@ -133,9 +133,12 @@ app.controller('ActivityController', function($scope, $http){
 	$scope.filtered_transactions = [];
 
 	$scope.passesDate = function(transaction) {
-		var to = new Date($scope.to);
-		var from = new Date($scope.from);
-		var created	= new Date(transaction.created);
+		//var to = new Date($scope.to);
+		var to = moment($scope.to, 'MM/DD/YYYY');
+		//var from = new Date($scope.from);
+		var from = moment($scope.from, 'MM/DD/YYYY');
+		//var created	= new Date(transaction.created);
+		var created = moment(transaction.created, 'YYYY/MM/DD HH:mm:ss');
 
 		if($scope.from != '' && $scope.to != '')
 		{
@@ -244,7 +247,7 @@ app.controller('ActivityController', function($scope, $http){
 
 app.filter('todate', function(){
 	return function(input){
-		var date = new Date(input);
+		var date = moment(input, 'YYYY/MM/DD HH:mm:ss').format('MMM Do h:mm A');
 		return date;
 	};
 });
