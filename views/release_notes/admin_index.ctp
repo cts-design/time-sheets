@@ -3,7 +3,36 @@
     <?php echo $crumb->getHtml('Release Notes', null, 'unique'); ?>
 </div>
 <div id="ReleaseNotes">
-	<h1>Release 3.8.7 (August 25th 2014)</h1>
+	<h1>Release 3.8.9 (September 11th 2014)</h1>
+	<h2>Features</h2>
+	<ol>
+		<li>
+			Kiosk Surveys are now based on the last time a user has logged in via the kiosk.
+		</li>
+		<li>
+			Kiosk Surveys can be set to optional or mandatory on the <a href="/admin/settings">settings page</a> in the Survey tab.
+		</li>
+		<li>
+			Survey expirations can be set on the ATLAS <a href="/admin/settings">settings page</a> in the Survey tab.
+		</li>
+		<li>
+			Customers can now register as "II" instead of "Jr" if they prefer.
+		</li>
+		<li>
+			Ecourses now present the customer with their score, the correct out of total questions and informs them of the grade they needed to pass.
+		</li>
+		<li>
+			Ecourse question answers are now automatically saved if a customer answers correctly but still fails the ecourse module.
+		</li>
+	</ol>
+	<h2>Bug Fixes</h2>
+	<ol>
+		<li>
+			Fixed issues with queued documents not rendering properly on Internet Explorer 11
+		</li>
+	</ol>
+	<br />
+	<h1>Release 3.8.8 (August 25th 2014)</h1>
 	<h2>Features</h2>
 	<ol>
 		<li>
