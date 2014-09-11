@@ -95,7 +95,10 @@ $(document).ready(function(){
 			buttons : {
 				"Upload another document" : function() {
 					$(this).dialog('close');
-				}
+				},
+				"Finish" : function() {
+                	window.location.href = '<?= '/program_responses/provided_docs/' . $this->params['pass'][0] .  '/' . $this->params['pass'][1] .'/uploaded_docs' ?>';
+                }
 			}
 		});
 	}
