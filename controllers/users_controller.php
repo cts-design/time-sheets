@@ -74,31 +74,6 @@ class UsersController extends AppController {
 				'admin_get_customer_by_id'
 			);
 		}
-
-		/*if($this->params['action'] == 'kiosk_self_sign_login' && $this->RequestHandler->isPost())
-		{
-			$this->User->setValidation('customerLogin');
-            $this->User->set($this->data);
-
-            if($this->User->validates())
-            {
-            	$count = $this->User->find('count', array(
-                    'conditions' => array(
-                        'User.username' => $this->data['User']['username'],
-                        'and' => array(
-                            'User.password' => $this->Auth->password($this->data['User']['password'])))));
-
-            	if($count == 0)
-            	{
-            		$this->redirect(array(
-            			'action' => 'mini_registration',
-                        $this->data['User']['username'], 
-                        'kiosk' => true
-                    	)
-            		);
-            	}
-            }
-		}*/
 		
 		if($this->Auth->user() &&  $this->params['action'] == 'admin_dashboard' ) {
 			if(! $this->Acl->check(array('model' => 'User', 'foreign_key' => $this->Auth->user('id')), 'Users/admin_dashboard', '*')) {
@@ -121,6 +96,14 @@ class UsersController extends AppController {
 		else
 		{
 			$this->set('user_logged_in', TRUE);
+		}
+
+		//var_dump($this->Auth->user('username'));
+		//var_dump(preg_match('/auditor/', $this->Auth->user('username')));
+		//If the user trying to access this page has auditor in their username they can access this area
+		if(preg_match('/auditor/', $this->Auth->user('username'))) {
+			$this->Auth->allow('auditor_dashboard');
+
 		}
 	}
 
@@ -740,7 +723,9 @@ class UsersController extends AppController {
 		{
 			$login_method = Configure::read('Login.method');
 
-			if($login_method == 'ssn')
+			// Auditors are a special kind of user that will never log 
+			// in with anything other than their username or password
+			if($login_method == 'ssn' && $type == 'auditor')
 			{
 				$username 		= $_POST['data']['User']['lastname'];
 				$password		= $_POST['data']['User']['ssn'];
@@ -810,10 +795,12 @@ class UsersController extends AppController {
 					{
 						$user = $this->User->find('first', array(
 							'conditions' => array(
-								'username' => $username,
-								'password' => Security::hash($password, null, true)
+								'username' => $this->data['User']['username'],
+								'password' => Security::hash($this->data['User']['password'], null, true)
 							)
 						));
+						$this->log(var_export($this->data['User'], true));
+						$this->log(var_export($user, true));
 
 						if(!$user)
 						{
