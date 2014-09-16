@@ -409,5 +409,37 @@ class SettingsController extends AppController {
 		echo json_encode($message);
 	}
 
+	public function admin_survey_required() {
+		if($this->RequestHandler->isAjax()) {
+			$settings = $this->Setting->findByName('Survey', array('id','value'));
+			
+
+			if(!empty($this->params['form'])) {
+				$this->log(var_export($this->params['form'], true));
+
+
+				if($settings) {
+					$this->data['Setting']['id'] = $settings['Setting']['id'];
+				}	
+				$this->data['Setting']['value'] = $this->params['form']['kiosk_survey'];
+				$this->data['Setting']['module'] = 'Kiosk';
+				$this->data['Setting']['name'] = 'Survey';
+
+				$this->Setting->save($this->data);
+
+				$data['success'] = true;
+				$data['message'] = 'The survey prompt setting was saved';
+			} else {
+				$data['success'] = true;
+				$data['message'] = '';
+			}
+
+			$data['kiosk_survey'][0]['value'] = $settings['Setting']['value'];
+
+			$this->set(compact('data'));	
+			$this->render(null, null, '/elements/ajaxreturn');	
+		}
+	}
+
 }
 ?>
