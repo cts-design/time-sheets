@@ -415,8 +415,6 @@ class SettingsController extends AppController {
 			
 
 			if(!empty($this->params['form'])) {
-				$this->log(var_export($this->params['form'], true));
-
 
 				if($settings) {
 					$this->data['Setting']['id'] = $settings['Setting']['id'];
@@ -439,6 +437,36 @@ class SettingsController extends AppController {
 			$this->set(compact('data'));	
 			$this->render(null, null, '/elements/ajaxreturn');	
 		}
+	}
+
+	public function admin_survey_numeric() {
+		$settings = $this->Setting->findByName('SurveyExpiration', array('id','value'));
+		if(!empty($this->params['form'])) {
+			foreach($this->params['form'] as $k => $v) {
+				$values[]['value'] = $v;
+			}
+			if($settings) {
+				$this->data['Setting']['id'] = $settings['Setting']['id'];
+			}	
+			$this->data['Setting']['value'] = json_encode($values);
+			$this->data['Setting']['module'] = 'Survey';
+			$this->data['Setting']['name'] = 'SurveyExpiration';				
+			if($this->Setting->save($this->data)) {
+				Cache::delete('settings');
+				$data['success'] = true;
+				$data['message'] = 'Survey expiration was saved correctly';
+				$settings = $this->Setting->findByName('SurveyExpiration', array('id','value'));
+			}
+			else {
+				$data['success'] = false;
+				$data['message'] = 'Survey expiration was not saved correctly';					
+			}				
+		}
+		else {			
+			$data['survey_expiration'] = json_decode($settings['Setting']['value'], true);
+		}
+		$this->set(compact('data'));	
+		$this->render(null, null, '/elements/ajaxreturn');	
 	}
 
 }

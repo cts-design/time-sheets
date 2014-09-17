@@ -320,20 +320,20 @@ Ext.create('Ext.form.Panel', {
 
 
 
-Ext.define('KioskSurveyNumeric', {
+Ext.define('KioskSurveyExpiration', {
   extend: 'Ext.data.Model',
   fields: ['value']
 });
 
 Ext.create('Ext.data.Store', {
-  model: 'KioskSurveyNumeric',
-  id: 'kioskSurveyNumeric',
+  model: 'KioskSurveyExpiration',
+  id: 'kioskSurveyExpiration',
   proxy: {
     type: 'ajax',
     url: '/admin/settings/survey_numeric',
     reader: {
       type: 'json',
-      root: 'numeric'
+      root: 'survey_expiration'
     },
     pageParam: undefined,
     limitParam: undefined,
@@ -342,8 +342,10 @@ Ext.create('Ext.data.Store', {
   autoLoad: true,
   listeners: {
     load: function(store, records, successful, operation, eOpts) {
+      console.log(records);
       if(records[0] !== undefined) {
         Ext.getCmp('KioskSurveyExpirationPanel').getComponent('numeric').setValue(records[0].data.value);
+        Ext.getCmp('KioskSurveyExpirationPanel').getComponent('label').setValue(records[1].data.value);
       }
     }
   }
