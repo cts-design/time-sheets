@@ -253,10 +253,39 @@ Ext.create('Ext.form.Panel', {
   }]
 });
 
+Ext.define('KioskSurvey', {
+  extend: 'Ext.data.Model',
+  fields: ['value']
+});
+
+Ext.create('Ext.data.Store', {
+  model: 'KioskSurvey',
+  id: 'kioskRequiredStore',
+  proxy: {
+    type: 'ajax',
+    url: '/admin/settings/survey_required',
+    reader: {
+      type: 'json',
+      root: 'kiosk_survey'
+    },
+    pageParam: undefined,
+    limitParam: undefined,
+    startParam: undefined     
+  },
+  autoLoad: true,
+  listeners: {
+    load: function(store, records, successful, operation, eOpts) {
+      if(records[0] !== undefined) {
+       Ext.getCmp('KioskSurveyPanel').getComponent('kiosk_survey').setValue(records[0].data.value);
+      }
+    }
+  }
+});
+
 Ext.create('Ext.form.Panel', {
   title: 'Kiosk Survey',
   id: 'KioskSurveyPanel',
-  url: '/admin/settings/kiosk_survey',
+  url: '/admin/settings/survey_required',
   frame: true,
   margin: 5,
   flex: 1,
@@ -266,7 +295,8 @@ Ext.create('Ext.form.Panel', {
     displayField: 'name',
     valueField: 'value',
     store: kiosk_survey_combo,
-    name: 'kiosk_survey'
+    name: 'kiosk_survey',
+    id : 'kiosk_survey'
   }],
   buttons: [{
     text: 'Update',
@@ -288,6 +318,39 @@ Ext.create('Ext.form.Panel', {
   }]
 });
 
+
+
+Ext.define('KioskSurveyExpiration', {
+  extend: 'Ext.data.Model',
+  fields: ['value']
+});
+
+Ext.create('Ext.data.Store', {
+  model: 'KioskSurveyExpiration',
+  id: 'kioskSurveyExpiration',
+  proxy: {
+    type: 'ajax',
+    url: '/admin/settings/survey_numeric',
+    reader: {
+      type: 'json',
+      root: 'survey_expiration'
+    },
+    pageParam: undefined,
+    limitParam: undefined,
+    startParam: undefined     
+  },
+  autoLoad: true,
+  listeners: {
+    load: function(store, records, successful, operation, eOpts) {
+      console.log(records);
+      if(records[0] !== undefined) {
+        Ext.getCmp('KioskSurveyExpirationPanel').getComponent('numeric').setValue(records[0].data.value);
+        Ext.getCmp('KioskSurveyExpirationPanel').getComponent('label').setValue(records[1].data.value);
+      }
+    }
+  }
+});
+
 Ext.create('Ext.form.Panel', {
   title: 'Kiosk Survey Expiration',
   id: 'KioskSurveyExpirationPanel',
@@ -298,13 +361,15 @@ Ext.create('Ext.form.Panel', {
   items: [{
     xtype: 'numberfield',
     fieldLabel: '',
-    name: 'numeric'
+    name: 'numeric',
+    id : 'numeric'
   }, {
     xtype: 'combo',
     fieldLabel: '',
     displayField: 'name',
     valueField: 'value',
     name: 'label',
+    id : 'label',
     store: Ext.create('Ext.data.Store', {
       fields : ['value', 'name'],
       data : [
