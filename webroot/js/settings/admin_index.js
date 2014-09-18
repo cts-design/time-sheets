@@ -342,10 +342,9 @@ Ext.create('Ext.data.Store', {
   autoLoad: true,
   listeners: {
     load: function(store, records, successful, operation, eOpts) {
-      console.log(records);
       if(records[0] !== undefined) {
-        Ext.getCmp('KioskSurveyExpirationPanel').getComponent('numeric').setValue(records[0].data.value);
-        Ext.getCmp('KioskSurveyExpirationPanel').getComponent('label').setValue(records[1].data.value);
+        Ext.getCmp('KioskSurveyExpirationPanel').getComponent('numeric').setValue(records[0].raw);
+        Ext.getCmp('KioskSurveyExpirationPanel').getComponent('label').setValue(records[1].raw);
       }
     }
   }
@@ -376,6 +375,81 @@ Ext.create('Ext.form.Panel', {
         { name: 'day(s)', value: 'days' },
         { name: 'month(s)', value: 'months' }
       ]})
+  }],
+  buttons: [{
+    text: 'Update',
+    formBind: true,
+    handler: function() {
+      var form = this.up('form').getForm();
+      if(form.isValid()) {
+        form.submit({
+          waitMsg: 'Updating Settings',
+          success: function(form, action) {
+             Ext.Msg.alert('Success', action.result.message);
+          },
+          failure: function(form, action) {
+              Ext.Msg.alert('Failed', action.result.message);
+          }
+        });
+      }
+    }
+  }]
+});
+
+
+// Kiosk Survey Ask Once Data Store
+Ext.define('KioskAskOnce', {
+  extend: 'Ext.data.Model',
+  fields: ['value']
+});
+
+Ext.create('Ext.data.Store', {
+  model: 'KioskAskOnce',
+  id: 'kioskAskOnce',
+  proxy: {
+    type: 'ajax',
+    url: '/admin/settings/ask_once',
+    reader: {
+      type: 'json',
+      root: 'survey_ask_once'
+    },
+    pageParam: undefined,
+    limitParam: undefined,
+    startParam: undefined     
+  },
+  autoLoad: true,
+  listeners: {
+    load: function(store, records, successful, operation, eOpts) {
+      if(records[0] !== undefined) {
+          Ext.getCmp('KioskAskOnce').getComponent('askOnce').setValue(records[0].data.value);
+      }
+    }
+  }
+});
+
+/*
+| Kiosk Survey Ask Once Widget
+*/
+Ext.create('Ext.form.Panel', {
+  title : 'Ask Once',
+  id : 'KioskAskOnce',
+  url: '/admin/settings/ask_once',
+  margin : 5,
+  frame : true,
+  flex : 1,
+  items : [{
+    xtype : 'combo',
+    fieldLabel : '',
+    displayField : 'name',
+    valueField : 'value',
+    id : 'askOnce',
+    store : Ext.create('Ext.data.Store', {
+      fields : ['value', 'name'],
+      data : [
+        { name : 'Yes', value : 'Yes' },
+        { name : 'No', value : 'No' }
+      ]
+    })
   }],
   buttons: [{
     text: 'Update',
@@ -807,7 +881,7 @@ Ext.onReady(function(){
     }, {
       layout: 'hbox',
       title: 'Survey',
-      items: ['KioskSurveyPanel', 'KioskSurveyExpirationPanel']
+      items: ['KioskSurveyPanel', 'KioskSurveyExpirationPanel', 'KioskAskOnce']
     }]
 	});
 });

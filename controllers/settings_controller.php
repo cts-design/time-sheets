@@ -467,5 +467,35 @@ class SettingsController extends AppController {
 		$this->render(null, null, '/elements/ajaxreturn');	
 	}
 
+	public function admin_ask_once() {
+		$settings = $this->Setting->findByName('KioskAskOnce', array('id','value'));
+		if(!empty($this->params['form'])) {
+			foreach($this->params['form'] as $k => $v) {
+				$values[]['value'] = $v;
+			}
+			if($settings) {
+				$this->data['Setting']['id'] = $settings['Setting']['id'];
+			}	
+			$this->data['Setting']['value'] = json_encode($values);
+			$this->data['Setting']['module'] = 'Survey';
+			$this->data['Setting']['name'] = 'KioskAskOnce';				
+			if($this->Setting->save($this->data)) {
+				Cache::delete('settings');
+				$data['success'] = true;
+				$data['message'] = 'Survey ask once was saved correctly';
+				$settings = $this->Setting->findByName('KioskAskOnce', array('id','value'));
+			}
+			else {
+				$data['success'] = false;
+				$data['message'] = 'Survey ask once was not saved correctly';					
+			}				
+		}
+		else {			
+			$data['survey_ask_once'] = json_decode($settings['Setting']['value'], true);
+		}
+		$this->set(compact('data'));	
+		$this->render(null, null, '/elements/ajaxreturn');	
+	}
+
 }
 ?>
