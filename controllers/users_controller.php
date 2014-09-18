@@ -101,7 +101,7 @@ class UsersController extends AppController {
 		//var_dump($this->Auth->user('username'));
 		//var_dump(preg_match('/auditor/', $this->Auth->user('username')));
 		//If the user trying to access this page has auditor in their username they can access this area
-		if(preg_match('/auditor/', $this->Auth->user('username'))) {
+		if(preg_match('/auditor/i', $this->Auth->user('username'))) {
 			$this->Auth->allow('auditor_dashboard');
 
 		}
@@ -725,7 +725,7 @@ class UsersController extends AppController {
 
 			// Auditors are a special kind of user that will never log 
 			// in with anything other than their username or password
-			if($login_method == 'ssn' && $type == 'auditor')
+			if($login_method == 'ssn')
 			{
 				$username 		= $_POST['data']['User']['lastname'];
 				$password		= $_POST['data']['User']['ssn'];
@@ -799,8 +799,6 @@ class UsersController extends AppController {
 								'password' => Security::hash($this->data['User']['password'], null, true)
 							)
 						));
-						$this->log(var_export($this->data['User'], true));
-						$this->log(var_export($user, true));
 
 						if(!$user)
 						{
