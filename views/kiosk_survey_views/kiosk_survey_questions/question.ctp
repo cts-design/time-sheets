@@ -16,6 +16,15 @@
         <?php elseif ($question['type'] === 'truefalse'): ?>
             <a href="#" class="self-sign-survey-button" data-value="true">True</a>
             <a href="#" class="self-sign-survey-button" data-value="false">False</a>
+        <?php elseif ($question['type'] === 'text'): ?>
+             <script language="Javascript">
+                 function set_value() {
+                     var my_answer = document.forms["KioskSurveyQuestionsQuestionForm"]["my_answer"].value;
+                     var d = document.getElementById("my_result");
+                     d.setAttribute('data-value', my_answer);
+                 }
+             </script>        
+             <input type="text" name="my_answer" size="50"> <a id="my_result" href="#" onclick="set_value()" class="self-sign-survey-button" data-value="">NEXT</a>
         <?php else: ?>
             <?php foreach ($question['options'] as $key => $value): ?>
             <a href="#" class="self-sign-survey-button" data-value="<?php echo trim($value) ?>"><?php echo $value ?></a>
