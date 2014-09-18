@@ -52,8 +52,6 @@ class SelfSignLogsController extends AppController {
 				'order' => array('SelfSignLog.created DESC')));
 			$i = 0;
 
-			$this->log(var_export($selfSignLogs, true));
-
 			$masterKioskButtonList = $this->_getAllMasterButtonNames();
 			$data = array();
 			$data['results'] = $this->SelfSignLog->find('count', array('conditions' => $conditions));

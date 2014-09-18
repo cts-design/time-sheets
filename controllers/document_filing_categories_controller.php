@@ -56,13 +56,10 @@ class DocumentFilingCategoriesController extends AppController {
     function admin_add() {
 		if($this->RequestHandler->isAjax()) {
 
-			$this->log("Ajax request");
 			if(!empty($this->params['form']['parentId']) && !empty($this->params['form']['catName'])){
-
-				$this->log("Both fields were not empty");		
+	
 				$parents = $this->DocumentFilingCategory->getpath($this->params['form']['parentId']);
 
-				$this->log( var_export($parents, true) );
 				if(count($parents) > 2) {
 					$data['success'] = false;
 					$data['message'] = 'Categories cannot be more than three levels deep.';
@@ -80,9 +77,7 @@ class DocumentFilingCategoriesController extends AppController {
 					}
 					else{
 						$data['message'] = 'Unable to save category at this time, please try again.';
-						$data['success'] = false;
-
-						$this->log( var_export(mysql_error(), true) );		
+						$data['success'] = false;	
 					} 			
 				}		
 			}

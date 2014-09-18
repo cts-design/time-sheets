@@ -183,8 +183,6 @@ class SettingsController extends AppController {
 	}
 
 	public function admin_kiosk_survey() {
-		$this->log(var_export($this->params['form'], true));
-
 		$setting = $this->Setting->find('first', array(
 			'conditions' => array(
 				'module' => 'Kiosk',
