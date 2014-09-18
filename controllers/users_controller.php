@@ -1416,7 +1416,7 @@ class UsersController extends AppController {
 			if ($this->User->save($this->data)) {
 				$message = 'Welcome to the Atlas system.' . "\r\n\r\n";
 				$message .= 'Your username is: ' . substr($this->data['User']['firstname'], 0, 1).$this->data['User']['lastname'] . "\r\n\r\n";
-				$message .= 'Your password is: ' . $this->data['User']['pass'] . "\r\n\r\n";
+				$message .= 'Your password is: ' . $this->data['User']['password'] . "\r\n\r\n";
 				$message .= 'You can now login at ' . Router::url('/admin', true);
 				$this->Email->from = Configure::read('System.email');
 				$this->Email->to = $this->data['User']['firstname']." ".$this->data['User']['lastname']."<".$this->data['User']['email'].">";
