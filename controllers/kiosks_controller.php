@@ -186,31 +186,39 @@ class KiosksController extends AppController {
     	$this->loadModel('KioskSurveyResponses');
 
     	$kiosk 				= $this->Kiosk->isKiosk('demo');
-    	$kiosk_expiration 	= $this->Setting->getSetting('Kiosk', 'SurveyExpiration');
+    	$kiosk_expiration 	= $this->Setting->findByName('SurveyExpiration', array('value'));
+    	$kiosk_expiration	= json_decode($kiosk_expiration['Setting']['value'], true);
 
+    	$kiosk_ask_once		= $this->Setting->findByName('KioskAskOnce', array('value'));
+    	$kiosk_ask_once		= json_decode($kiosk_ask_once['Setting']['value'], true);
+    	
     	//Format kiosk_expiration for proper strtotime format "-x days or -y months"
-    	$kiosk_expiration 	= json_decode($kiosk_expiration);
-    	$kiosk_expiration 	= "- " . $kiosk_expiration[0] . " " . $kiosk_expiration[1];
+    	$kiosk_expiration 	= "-" . $kiosk_expiration[0] . " " . $kiosk_expiration[1];
 
     	$user 				= $this->Auth->user();
 
-    	// Query kiosk survey responses for matching user_id and survey id
-    	$kiosk_survey_response = $this->KioskSurveyResponses->find('first', array(
-    		'conditions' => array(
-    			'user_id' => $this->Auth->user('id'),
-   				'kiosk_survey_id' => $kiosk['KioskSurvey'][0]['id']
-    		),
-    		'order' => 'created DESC'
-    	));
+    	if($kiosk_ask_once[0]['value'] == 'Yes') {
+    		// Query kiosk survey responses for matching user_id and survey id
+	    	$kiosk_survey_response = $this->KioskSurveyResponses->find('first', array(
+	    		'conditions' => array(
+	    			'user_id' => $this->Auth->user('id'),
+	   				'kiosk_survey_id' => $kiosk['KioskSurvey'][0]['id']
+	    		),
+	    		'order' => 'created DESC'
+	    	));
+    	} else {
+    		$kiosk_survey_response = FALSE; //Setting this to false makes it think they havent responded to the survey
+    	}
 
     	// If kiosk matches and if there is a survey attached
     	$kiosk_survey_exists = ($kiosk && count($kiosk['KioskSurvey']));
     	
     	// If the last_kiosk_login date is in the range specified in the settings then prompt them with the quiz
-    	$kiosk_survey_expired = $user['User']['last_kiosk_login'] > strtotime( $kiosk_expiration );
+    	$kiosk_survey_expired = strtotime($user['User']['last_kiosk_login']) > strtotime( $kiosk_expiration );
 
-    	//if((($kiosk_survey_exists && !$kiosk_survey_response) || ($kiosk_survey_exists && !$kiosk_survey_expired)) && !$this->Session->read('prompted_for_survey'))
-    	if($kiosk_survey_exists && (!$kiosk_survey_response || $kiosk_survey_expired) && !$this->Session->read('prompted_for_survey'))
+    	$survey_valid = (!$kiosk_survey_response && $kiosk_survey_expired);
+
+    	if($kiosk_survey_exists && $survey_valid && !$this->Session->read('prompted_for_survey'))
     	{
     		// Keep the survey from prompting on every k.s.s.s.s. action
     		$this->Session->write('prompted_for_survey', TRUE);
