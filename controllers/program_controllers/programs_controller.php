@@ -150,14 +150,14 @@ class ProgramsController extends AppController {
 
 		$theme = Configure::read('Website.theme');
 
-		if($theme != NULL && $theme != '')
+		/*if($theme != NULL && $theme != '')
 		{
 			$this->layout = 'default';
 		}
 		else
 		{
 			$this->layout = 'default_bootstrap';
-		}
+		}*/
 
 		if(!isset($esign_setting['Setting']['value']) || $esign_setting['Setting']['value'] == 'v1.0')
 		{
