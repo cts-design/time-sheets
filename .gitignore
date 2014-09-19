@@ -45,9 +45,8 @@ shared/
 .rvmrc
 .vagrant/*
 views/themed/*
-/views/themed/*
 webroot/css/theme
 webroot/img/theme
 webroot/js/theme
 webroot/img/social-stream
-webroot/vendors
+webroot/html/theme
