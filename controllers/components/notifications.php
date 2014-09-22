@@ -137,12 +137,6 @@ class NotificationsComponent extends Object {
 				$this->Email = &new EmailComponent();
 				$this->Email->to = $to;
 
-				$this->loadModel('Setting');
-				$cc = $this->Setting->getEmails();
-
-				if(count($cc))
-					$this->Email->cc = $cc;
-
 				$this->Email->from = Configure::read('System.email');
 				$this->Email->subject = 'Program Response Status Alert';
 				$this->Email->send($alert['message'] . "\r\n" . $alert['url']);				
