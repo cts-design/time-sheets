@@ -188,7 +188,7 @@ class ProgramsController extends AppController {
 		exit();
 	}
 
-	public function enrollment($id=null) {
+	public function enrollment($id = null) {
 		$this->loadProgram($id);
 
 		$this->loadModel('Kiosk');
