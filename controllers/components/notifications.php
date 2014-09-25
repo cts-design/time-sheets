@@ -106,12 +106,6 @@ class NotificationsComponent extends Object {
 		$this->Email = &new EmailComponent();
 		$this->Email->from = Configure::read('Admin.alert.email');
 		$this->Email->to = Configure::read('Admin.alert.email');
-
-		$this->loadModel('Setting');
-		$cc = $this->Setting->getEmails();
-
-		if(count($cc))
-			$this->Email->cc = $cc;
 				
 		$this->Email->subject = Configure::read('domain').": $mySubject";
 		$this->Email->send($myMessage);
