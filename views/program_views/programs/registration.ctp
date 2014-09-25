@@ -14,10 +14,10 @@
 			</span>
 			<ol>
 			<?php if($programResponse['ProgramResponse']['status'] === 'incomplete') : ?>
-				<?php $redoable = ($program['ProgramStep'][1]['redoable']) ? 'redoable' : '' ?>
+				<?php $redoable = ($program['ProgramStep'][0]['redoable']) ? 'redoable' : '' ?>
 				<li class="step incomplete <?= $redoable ?>">
 					<div class="inner-container">
-						<?= $program['ProgramStep'][1]['name'] ?>
+						<?= $program['ProgramStep'][0]['name'] ?>
 						<img class="ico" src="/img/icons/form.png" />
 						<span class="action">
 							<?php echo $html->link(
@@ -26,7 +26,7 @@
 									'controller' => 'program_responses',
 									'action' => 'form',
 									$program['Program']['id'],
-									$program['ProgramStep'][1]['id']
+									$program['ProgramStep'][0]['id']
 								)
 							)
 							?>
@@ -39,7 +39,7 @@
 				&& $programResponse['ProgramResponse']['status'] === 'not_approved') : ?>
 				<li class="step complete">
 					<div class="inner-container">
-						<?= $program['ProgramStep'][1]['name'] ?>
+						<?= $program['ProgramStep'][0]['name'] ?>
 						<span class="action">
 							<?php echo $html->link(
 								'Edit Form',
@@ -47,7 +47,7 @@
 									'controller' => 'program_responses',
 									'action' => 'edit_form',
 									$program['Program']['id'],
-									$program['ProgramStep'][1]['id']
+									$program['ProgramStep'][0]['id']
 								)
 							)
 							?>
