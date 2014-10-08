@@ -24,7 +24,6 @@ webroot/js/default
 webroot/files/pdftk.exe
 webroot/test.php
 webroot/files/presenter/*
-views/layouts/default.ctp
 views/website_views/pages/home.ctp
 *.sdocml
 *.DS_STORE
@@ -50,3 +49,4 @@ webroot/img/theme
 webroot/js/theme
 webroot/img/social-stream
 webroot/html/theme
+views/layouts/adv-kiosks-home.ctp
